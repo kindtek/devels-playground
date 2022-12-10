@@ -19,8 +19,8 @@ RUN echo -e "[user]\ndefault=${username:-dev0}" >> /etc/wsl.conf
 RUN sudo passwd -d ${username:-dev0}
 
 FROM dbp-essential AS dbp-git
-RUN sudo apt-get update && \
-apt-get install git gh
+RUN sudo apt-get update -y && \
+apt-get install -y git gh
 
 FROM dbp-git AS dbp-docker
 # https://docs.docker.com/engine/install/ubuntu/
