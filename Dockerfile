@@ -22,16 +22,16 @@ FROM dbp-essential AS dbp-git
 RUN sudo apt-get update -y && \
 apt-get install -y git gh
 
-FROM dbp-git AS dbp-docker
-# https://docs.docker.com/engine/install/ubuntu/
-RUN sudo apt-get update -y &&  \
-sudo apt-get install -y ca-certificates curl gnupg lsb-release
-RUN sudo mkdir -p /etc/apt/keyrings && \
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-# RUN sudo dpkg-reconfigure debconf -f noninteractive -p critical
-RUN echo \
-  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
-  $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-RUN sudo apt-get update && sudo apt-get install ./docker-desktop-$(lsb_release -cs)-$(dpkg --print-architecture).deb
-# && sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+# FROM dbp-git AS dbp-docker
+# # https://docs.docker.com/engine/install/ubuntu/
+# RUN sudo apt-get update -y &&  \
+# sudo apt-get install -y ca-certificates curl gnupg lsb-release
+# RUN sudo mkdir -p /etc/apt/keyrings && \
+# curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+# # RUN sudo dpkg-reconfigure debconf -f noninteractive -p critical
+# RUN echo \
+#   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
+#   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+# RUN sudo apt-get update && sudo apt-get install ./docker-desktop-$(lsb_release -cs)-$(dpkg --print-architecture).deb
+# # && sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
