@@ -8,7 +8,7 @@
 
 ### 2 - Follow the prompts
 
-#### Docker will ask to be installed on your system. Click through this and other prompts as shown
+#### Docker Desktop will ask to be installed on your system and/or open this repo in their app. Click through this and other prompts as shown
 
 ![1](https://raw.githubusercontent.com/kindtek/dev_boilerplate/dev/Screenshot%202022-12-10%20015314.png)
 ![2](https://raw.githubusercontent.com/kindtek/dev_boilerplate/dev/Screenshot%202022-12-10%20015246.png)
