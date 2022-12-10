@@ -17,12 +17,12 @@
 
 ### 3 - Finally, use this terminal interface built in to Docker Desktop (Execute in CLI) or use the external terminal option to export/import the image in a Command Line Interface
 
-#### For help with that, follow along with the instructions on this webpage
+#### For detailed instructions on how to do that that, follow along with the instructions on this webpage. They havebroken it down into simple steps so mainly all you have to do is copypasta
 
 #### <https://learn.microsoft.com/en-us/windows/wsl/use-custom-distro>
 
 ##### BONUS: Use the "OPEN IN VS CODE" option to customize the Docker image yourself
 
-![5](https://raw.githubusercontent.com/kindtek/dev_boilerplate/dev/blob/dev/Screenshot%202022-12-10%20021715.png)
+![5](https://raw.githubusercontent.com/kindtek/dev_boilerplate/dev/Screenshot%202022-12-10%20021715.png)
 
 ###### ( DOUBLE BONUS: you can also accomplish this by changing the top level domain of this (and any other) github repo url from .com to .dev - ie <https://github.dev/kindtek/dev_boilerplate/tree/dev> )
