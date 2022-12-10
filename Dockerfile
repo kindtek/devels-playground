@@ -1,6 +1,6 @@
 # to build, for exemple, run: 
 # `username=mine groupname=ours docker run -d -i`
-FROM Ubuntu:latest AS dbp-essential
+FROM ubuntu:latest AS dbp-essential
 ARG username
 ARG groupname
 RUN apt-get update -yq && \
