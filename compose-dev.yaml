@@ -3,7 +3,7 @@ services:
     entrypoint:
     - sleep
     - infinity
-    image: kindtek/dbp-essential
+    # image: kindtek/dbp-essential
     build:
       context: .
       # target: dbp-essential
@@ -17,7 +17,7 @@ services:
     entrypoint:
     - sleep
     - infinity
-    image: kindtek/dbp-git
+    # image: kindtek/dbp-git
     build:
       context: .
       # target: dbp-git
@@ -31,7 +31,7 @@ services:
     entrypoint:
     - sleep
     - infinity
-    image: kindtek/dbp-docker
+    # image: kindtek/dbp-docker
     build:
       context: .
       # target: dbp-docker
