@@ -6,7 +6,7 @@ services:
     image: kindtek/dbp-essential
     build:
       context: .
-      target: dbp-essential
+      # target: dbp-essential
     platform: linux/amd64
     init: true
     volumes:
@@ -20,7 +20,7 @@ services:
     image: kindtek/dbp-git
     build:
       context: .
-      target: dbp-git
+      # target: dbp-git
     platform: linux/amd64
     init: true
     volumes:
@@ -34,7 +34,7 @@ services:
     image: kindtek/dbp-docker
     build:
       context: .
-      target: dbp-docker
+      # target: dbp-docker
     platform: linux/amd64
     init: true
     volumes:
