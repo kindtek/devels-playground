@@ -11,9 +11,9 @@
 #### Docker will ask to be installed on your system. Click through this and other prompts as shown
 
 ![1](https://raw.githubusercontent.com/kindtek/dev_boilerplate/dev/Screenshot%202022-12-10%20015314.png)
-![2](https://raw.githubusercontent.com/kindtek/dev_boilerplate/dev/blob/dev/Screenshot%202022-12-10%20015246.png)
-![3](https://raw.githubusercontent.com/kindtek/dev_boilerplate/dev/blob/dev/Screenshot%202022-12-10%20021715.png)
-![4](https://raw.githubusercontent.com/kindtek/dev_boilerplate/dev/blob/dev/Screenshot%202022-12-10%20020509.png)
+![2](https://raw.githubusercontent.com/kindtek/dev_boilerplate/dev/Screenshot%202022-12-10%20015246.png)
+![3](https://raw.githubusercontent.com/kindtek/dev_boilerplate/dev/Screenshot%202022-12-10%20021715.png)
+![4](https://raw.githubusercontent.com/kindtek/dev_boilerplate/dev/Screenshot%202022-12-10%20020509.png)
 
 ### 3 - Finally, use this terminal interface built in to Docker Desktop (Execute in CLI) or use the external terminal option to export/import the image in a Command Line Interface
 
