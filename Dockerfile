@@ -1,6 +1,6 @@
 # to build, for exemple, run: 
 # `username=mine groupname=ours docker run -d -i`
-FROM Ubuntu:latest AS kindtek/dbp:essential
+FROM Ubuntu:latest AS dbp-essential
 ARG username
 ARG groupname
 RUN apt-get update -yq && \
@@ -13,18 +13,16 @@ RUN sudo apt install python3 python3-pip && \
 pip3 install cdir --user
 RUN echo "alias cdir='source cdir.sh'" >> ~/.bashrc && \
 source ~/.bashrc
-
 # no time for passwords since this is a dev environment but a sudo guardrail is nice
-sudo usermod -aG sudo ${username:-dev0} 
+RUN sudo usermod -aG sudo ${username:-dev0} 
+RUN echo -e "[user]\ndefault=${username:-dev0}" >> /etc/wsl.conf
+RUN sudo passwd -d ${username:-dev0}
 
-echo -e "[user]\ndefault=${username:-dev0}" >> /etc/wsl.conf
-sudo passwd -d ${username:-dev0}
-
-FROM kindtek/dbp:essential AS kindtek/dbp:git
+FROM dbp-essential:essential AS dbp-git
 RUN sudo apt-get update && \
 apt-get install git gh
 
-FROM kindtek/dbp:git AS kindtek/dbp:docker
+FROM dbp-git AS dbp-docker
 # https://docs.docker.com/engine/install/ubuntu/
 RUN sudo apt-get update &&  \
 sudo apt-get install ca-certificates curl gnupg lsb-release

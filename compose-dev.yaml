@@ -1,9 +1,38 @@
 services:
-  app:
+  essential:
     entrypoint:
     - sleep
     - infinity
-    image: docker/dev-environments-default:stable-1
+    image: kindtek/dbp-essential
+    build:
+      context: .
+      target: dbp-essential
+    init: true
+    volumes:
+    - type: bind
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
+  git:
+    entrypoint:
+    - sleep
+    - infinity
+    image: kindtek/dbp-git
+    build:
+      context: .
+      target: dbp-git
+    init: true
+    volumes:
+    - type: bind
+      source: /var/run/docker.sock
+      target: /var/run/docker.sock
+  docker:
+    entrypoint:
+    - sleep
+    - infinity
+    image: kindtek/dbp-docker
+    build:
+      context: .
+      target: dbp-docker
     init: true
     volumes:
     - type: bind
