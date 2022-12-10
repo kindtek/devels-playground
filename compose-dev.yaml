@@ -7,6 +7,7 @@ services:
     build:
       context: .
       target: dbp-essential
+    platform: linux/amd64
     init: true
     volumes:
     - type: bind
@@ -20,6 +21,7 @@ services:
     build:
       context: .
       target: dbp-git
+    platform: linux/amd64
     init: true
     volumes:
     - type: bind
@@ -33,6 +35,7 @@ services:
     build:
       context: .
       target: dbp-docker
+    platform: linux/amd64
     init: true
     volumes:
     - type: bind
