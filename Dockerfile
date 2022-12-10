@@ -15,7 +15,9 @@ RUN echo "alias cdir='source cdir.sh'" >> ~/.bashrc \
 source ~/.bashrc
 # no time for passwords since this is a dev environment but a sudo guardrail is nice
 RUN sudo usermod -aG sudo ${username:-dev0} 
+# make default user
 RUN echo -e "[user]\ndefault=${username:-dev0}" >> /etc/wsl.conf
+# remove password
 RUN sudo passwd -d ${username:-dev0}
 
 FROM dbp-essential AS dbp-git
@@ -25,9 +27,9 @@ apt-get install -y git gh
 FROM dbp-git AS dbp-docker
 # https://docs.docker.com/engine/install/ubuntu/
 RUN sudo apt-get update -y &&  \
-  sudo apt-get install -y ca-certificates curl gnupg lsb-release
+sudo apt-get install -y ca-certificates curl gnupg lsb-release
 RUN sudo mkdir -p /etc/apt/keyrings && \
-  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 # RUN sudo dpkg-reconfigure debconf -f noninteractive -p critical
 RUN echo \
   "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
