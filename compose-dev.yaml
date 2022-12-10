@@ -27,18 +27,5 @@ services:
     - type: bind
       source: /var/run/docker.sock
       target: /var/run/docker.sock
-  # docker:
-  #   entrypoint:
-  #   - sleep
-  #   - infinity
-  #   image: kindtek/dbp-docker
-  #   build:
-  #     context: .
-  #     target: dbp-docker
-  #   platform: linux/amd64
-  #   init: true
-  #   volumes:
-  #   - type: bind
-  #     source: /var/run/docker.sock
-  #     target: /var/run/docker.sock
+  
 
