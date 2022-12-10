@@ -18,7 +18,7 @@ RUN sudo usermod -aG sudo ${username:-dev0}
 RUN echo -e "[user]\ndefault=${username:-dev0}" >> /etc/wsl.conf
 RUN sudo passwd -d ${username:-dev0}
 
-FROM dbp-essential:essential AS dbp-git
+FROM dbp-essential AS dbp-git
 RUN sudo apt-get update && \
 apt-get install git gh
 
