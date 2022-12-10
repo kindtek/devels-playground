@@ -23,6 +23,6 @@
 
 ##### BONUS: Use the "OPEN IN VS CODE" option to customize the Docker image yourself
 
-![5](https://raw.githubusercontent.com/kindtek/dev_boilerplate/dev/Screenshot%202022-12-10%20021715.png)
+![5](https://raw.githubusercontent.com/kindtek/dev_boilerplate/dev/Screenshot%202022-12-10%20021317.png)
 
 ###### ( DOUBLE BONUS: you can also accomplish this by changing the top level domain of this (and any other) github repo url from .com to .dev - ie <https://github.dev/kindtek/dev_boilerplate/tree/dev> )
