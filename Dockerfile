@@ -4,7 +4,7 @@ FROM ubuntu:latest AS dbp-essential
 ARG username
 ARG groupname
 RUN apt-get update -yq && \
-apt-get upgrade && \
+apt-get upgrade -y && \
 apt-get install -y build-essential sudo && \
 addgroup --system --gid 1000 ${group:-dev} && \
 adduser --system --home /home/${username:-dev0} --shell /bin/bash --uid 1000 --gid 1000 --disabled-password ${username:-dev0} 
