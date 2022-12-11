@@ -15,7 +15,7 @@ RUN sudo passwd -d ${username:-dev0}
 # no pw so a sudo guardrail is nice
 RUN sudo usermod -aG ${username:-dev0} 
 # make default user
-RUN echo -e "[user]\ndefault=${username:-dev0}" >> /etc/wsl.conf
+RUN sudo echo -e "[user]\ndefault=${username:-dev0}" >> /etc/wsl.conf
 
 # biggest headache saver of all time - https://www.tecmint.com/cdir-navigate-folders-and-files-on-linux/
 RUN sudo apt install -y python3 python3-pip && \
