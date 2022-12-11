@@ -21,7 +21,7 @@ RUN apt-get install -y build-essential sudo
 RUN sudo passwd -d ${username:-dev0}
 # make default user
 RUN sudo echo -e "[user]\ndefault=${username:-dev0}" >> /etc/wsl.conf
-RUN echo "alias cdir='source cdir.sh'" >> ~/.bashrc && source ~/.bashrc
+# RUN echo "alias cdir='source cdir.sh'" >> ~/.bashrc && source ~/.bashrc
 
 
 FROM dbp_essential-cdir AS dbp_git-cdir
