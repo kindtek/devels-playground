@@ -11,8 +11,6 @@ adduser --system --home /home/${username:-dev0} --shell /bin/bash --uid 1000 --g
 # biggest headache saver of all time - https://www.tecmint.com/cdir-navigate-folders-and-files-on-linux/
 RUN sudo apt install -y python3 python3-pip && \
 sudo pip3 install cdir
-RUN echo "alias cdir='source cdir.sh'" >> ~/.bashrc \
-source ~/.bashrc
 # no time for passwords since this is a dev environment but a sudo guardrail is nice
 RUN sudo usermod -aG sudo ${username:-dev0} 
 # make default user
@@ -23,6 +21,7 @@ RUN sudo passwd -d ${username:-dev0}
 FROM dbp_essential-cdir AS dbp_git-cdir
 RUN sudo apt-get update -y && \
 apt-get install -y git gh
+ENTRYPOINT [ "echo "alias cdir='source cdir.sh'" >> ~/.bashrc && source ~/.bashrc" ]
 
 FROM dbp_git-cdir AS dbp_docker-git-cdir
 # https://docs.docker.com/engine/install/ubuntu/
