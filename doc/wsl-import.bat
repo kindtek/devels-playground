@@ -41,6 +41,7 @@ SET save_location=%install_location%\%save_directory%
 SET distro_orig=%image_name%-%username%
 SET distro=%distro_orig%
 SET /p "distro=Save image as: %save_location%\(%distro%).tar > "
+SET %image_save_path%=%save_location%\(%distro%).tar
 
 
 
@@ -67,13 +68,13 @@ ECHO CONFIRM YOUR SETTINGS
 ECHO username: %username%
 ECHO group name: %groupname%
 ECHO image source/name: %image_repo%/%image_name%
-ECHO image destination: %save_location%\%distro%.tar
+ECHO image destination: %image_save_path%
 ECHO WSL alias: %distro%
 ECHO -----------------------------------------------------------------------------------------------------
 
 ECHO pulling image (%image_name%) from repo (%image_repo%)...
-ECHO saving as %save_location%\%distro%.tar...
-docker save %image_repo%/%image_name% > %save_location%\%distro%.tar
+ECHO saving as %image_save_path%...
+docker save %image_repo%/%image_name% > %image_save_path%
 
 ECHO DONE
 
