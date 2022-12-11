@@ -12,8 +12,6 @@ adduser --system --home /home/${username:-dev0} --shell /bin/bash --uid 1000 --g
 RUN apt-get install -y build-essential sudo
 # remove password
 RUN sudo passwd -d ${username:-dev0}
-# no pw so a sudo guardrail is nice
-RUN sudo usermod -aG ${username:-dev0} 
 # make default user
 RUN sudo echo -e "[user]\ndefault=${username:-dev0}" >> /etc/wsl.conf
 
