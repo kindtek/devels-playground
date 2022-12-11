@@ -17,7 +17,7 @@ RUN sudo echo -e "[user]\ndefault=${username:-dev0}" >> /etc/wsl.conf
 
 # biggest headache saver of all time - https://www.tecmint.com/cdir-navigate-folders-and-files-on-linux/
 RUN sudo apt install -y python3 python3-pip && \
-sudo pip3 install cdir \
+sudo pip3 install cdir --local \
 exec $SHELL
 # RUN echo "alias cdir='source /usr/local/bin/cdir.sh'" >> /etc/profile.d/cdir.sh
 
