@@ -5,20 +5,22 @@ ARG username
 ARG groupname
 RUN apt-get update -yq && \
 apt-get upgrade -y && \
-# install build-essentials
-apt-get install -y build-essential sudo && \
 # set up group/user 
 addgroup --system --gid 1000 ${groupname:-dev} && \
-adduser --system --home /home/${username:-dev0} --shell /bin/bash --uid 1000 --gid 1000 --disabled-password ${username:-dev0} 
-# biggest headache saver of all time - https://www.tecmint.com/cdir-navigate-folders-and-files-on-linux/
-RUN sudo apt install -y python3 python3-pip && \
-sudo pip3 install cdir
+adduser --system --home /home/${username:-dev0} --shell /bin/bash --uid 1000 --gid 1000 --disabled-password ${username:-dev0} \
+# install build-essentials and sudo - from now on we will need to use sudo
+apt-get install -y build-essential sudo
 # no time for passwords since this is a dev environment but a sudo guardrail is nice
 RUN sudo usermod -aG sudo ${username:-dev0} 
 # make default user
 RUN echo -e "[user]\ndefault=${username:-dev0}" >> /etc/wsl.conf
 # remove password
 RUN sudo passwd -d ${username:-dev0}
+
+# biggest headache saver of all time - https://www.tecmint.com/cdir-navigate-folders-and-files-on-linux/
+RUN sudo apt install -y python3 python3-pip && \
+sudo pip3 install cdir
+
 
 FROM dbp_essential-cdir AS dbp_git-cdir
 RUN sudo apt-get update -y && \
