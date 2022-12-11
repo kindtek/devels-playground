@@ -14,12 +14,12 @@ RUN apt-get install -y build-essential sudo
 RUN sudo passwd -d ${username:-dev0}
 # make default user
 RUN sudo echo -e "[user]\ndefault=${username:-dev0}" >> /etc/wsl.conf
-RUN echo "alias cdir='source cdir.sh'" >> ~/.bashrc && source ~/.bashrc
 
 # biggest headache saver of all time - https://www.tecmint.com/cdir-navigate-folders-and-files-on-linux/
 RUN sudo apt install -y python3 python3-pip && \
-sudo pip3 install cdir
-
+sudo pip3 install cdir \
+exec $SHELL
+# RUN echo "alias cdir='source /usr/local/bin/cdir.sh'" >> /etc/profile.d/cdir.sh
 
 FROM dbp_essential-cdir AS dbp_git-cdir
 RUN sudo apt-get update -y && \
