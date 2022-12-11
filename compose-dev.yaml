@@ -3,6 +3,7 @@ services:
     entrypoint:
     - sleep
     - infinity
+    command: /bin/bash echo "alias cdir='source cdir.sh'" >> ~/.bashrc && source ~/.bashrc
     image: kindtek/dbp_essential-cdir
     build:
       context: .
@@ -13,6 +14,7 @@ services:
     - type: bind
       source: /var/run/docker.sock
       target: /var/run/docker.sock
+
   git-cdir:
     entrypoint:
     - sleep
@@ -27,6 +29,7 @@ services:
     - type: bind
       source: /var/run/docker.sock
       target: /var/run/docker.sock
+      
   docker-git-cdir:
     entrypoint:
     - sleep
