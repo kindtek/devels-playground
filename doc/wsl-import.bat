@@ -1,4 +1,16 @@
 @echo off
+SET mount_drive=C
+SET username=dev0
+SET groupname=dev
+SET image_repo=kindtek
+SET image_name=dbp_docker-git-cdir
+SET install_directory=wsl-distros
+SET save_directory=docker
+
+
+
+
+
 :redo
 ECHO  ___________________________________________________________________ 
 ECHO /                          DEV BOILERPLATE                          \
@@ -15,29 +27,22 @@ SET /p "continue=(continue) > "
 @REM IF NOT "%continue%"=="(continue) > "  ( goto quit ) 
 
 
-SET username=dev0
+
 ECHO username:
 SET /p "username=(%username%) > "
 
-SET groupname=dev
+
 ECHO group name:
 SET /p "groupname=(%groupname%) > "
 
 SET image_repo=kindtek
 SET /p "image_repo=image repository: (%image_repo%) > "
-
-SET image_name=dbp_docker-git-cdir
 SET /p "image_name=image name in %image_repo%: (%image_name%) > "
-
-SET install_directory=wsl-distros
 SET /p "install_directory=installation folder: %mount_drive%:\(%install_directory%) > "
-SET save_directory=docker
 SET /p "save_directory=download folder: %mount_drive%:\%install_directory%\(%save_directory%) > "
-
 
 SET install_location=%mount_drive%:\%install_directory%
 SET save_location=%install_location%\%save_directory%
-
 SET distro_orig=%image_name%-%username%
 SET distro=%distro_orig%
 SET /p "distro=Save image as: %save_location%\(%distro%).tar > "
@@ -48,8 +53,6 @@ SET image_save_path=%save_location%\%distro%.tar
 @REM directory structure: 
 @REM %mount_drive%:\%install_directory%\%save_directory%
 @REM ie: C:\wsl-distros\docker
-
-SET mount_drive=C
 
 ECHO setting up install directory (%install_directory%)...
 mkdir %install_location%
@@ -74,7 +77,6 @@ ECHO ---------------------------------------------------------------------------
 
 ECHO pulling image (%image_name%) from repo (%image_repo%)...
 ECHO saving as %image_save_path%...
-docker save %image_repo%/%image_name% > %image_save_path%
 
 ECHO DONE
 
