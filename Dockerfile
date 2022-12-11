@@ -1,6 +1,6 @@
 # to build, for exemple, run: 
 # `username=mine groupname=ours docker run -d -i`
-FROM ubuntu:latest AS dbp-essential-cdir
+FROM ubuntu:latest AS dbp_essential-cdir
 ARG username
 ARG groupname
 RUN apt-get update -yq && \
@@ -20,11 +20,11 @@ RUN echo -e "[user]\ndefault=${username:-dev0}" >> /etc/wsl.conf
 # remove password
 RUN sudo passwd -d ${username:-dev0}
 
-FROM dbp-essential-cdir AS dbp-git-cdir
+FROM dbp_essential-cdir AS dbp_git-cdir
 RUN sudo apt-get update -y && \
 apt-get install -y git gh
 
-FROM dbp-git-cdir AS dbp-docker-git-cdir
+FROM dbp_git-cdir AS dbp_docker-git-cdir
 # https://docs.docker.com/engine/install/ubuntu/
 RUN sudo apt-get update -y &&  \
 sudo apt-get install -y ca-certificates curl gnupg lsb-release

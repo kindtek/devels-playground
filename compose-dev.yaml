@@ -3,10 +3,10 @@ services:
     entrypoint:
     - sleep
     - infinity
-    image: kindtek/dbp-essential-cdir
+    image: kindtek/dbp_essential-cdir
     build:
       context: .
-      target: dbp-essential-cdir
+      target: dbp_essential-cdir
     platform: linux/amd64
     init: true
     volumes:
@@ -17,10 +17,10 @@ services:
     entrypoint:
     - sleep
     - infinity
-    image: kindtek/dbp-git-cdir
+    image: kindtek/dbp_git-cdir
     build:
       context: .
-      target: dbp-git-cdir
+      target: dbp_git-cdir
     platform: linux/amd64
     init: true
     volumes:
@@ -31,10 +31,10 @@ services:
     entrypoint:
     - sleep
     - infinity
-    image: kindtek/dbp-docker-git-cdir
+    image: kindtek/dbp_docker-git-cdir
     build:
       context: .
-      target: dbp-docker-git-cdir
+      target: dbp_docker-git-cdir
     platform: linux/amd64
     init: true
     volumes:
