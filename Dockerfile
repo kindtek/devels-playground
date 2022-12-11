@@ -5,21 +5,24 @@ ARG username
 ARG groupname
 RUN apt-get update -yq && \
 apt-get upgrade -y
+
+# biggest headache saver of all time - https://github.com/EskelinenAntti/cdir
+RUN sudo apt install -y python3 python3-pip && \
+sudo pip3 install cdir --local \
+exec $SHELL
+
 # set up group/user 
 RUN addgroup --system --gid 1000 ${groupname:-dev} && \
 adduser --system --home /home/${username:-dev0} --shell /bin/bash --uid 1000 --gid 1000 --disabled-password ${username:-dev0}
+
 # install build-essentials and sudo - from now on we will need to use sudo
 RUN apt-get install -y build-essential sudo
 # remove password
 RUN sudo passwd -d ${username:-dev0}
 # make default user
 RUN sudo echo -e "[user]\ndefault=${username:-dev0}" >> /etc/wsl.conf
+RUN echo "alias cdir='source cdir.sh'" >> ~/.bashrc && source ~/.bashrc
 
-# biggest headache saver of all time - https://www.tecmint.com/cdir-navigate-folders-and-files-on-linux/
-RUN sudo apt install -y python3 python3-pip && \
-sudo pip3 install cdir --local \
-exec $SHELL
-# RUN echo "alias cdir='source /usr/local/bin/cdir.sh'" >> /etc/profile.d/cdir.sh
 
 FROM dbp_essential-cdir AS dbp_git-cdir
 RUN sudo apt-get update -y && \
