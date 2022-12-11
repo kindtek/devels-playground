@@ -1,9 +1,9 @@
 services:
-  essential:
+  essential-cdir:
     entrypoint:
     - sleep
     - infinity
-    image: kindtek/dbp-essential
+    image: kindtek/dbp-essential-cdir
     build:
       context: .
       target: dbp-essential
@@ -13,7 +13,7 @@ services:
     - type: bind
       source: /var/run/docker.sock
       target: /var/run/docker.sock
-  git:
+  cdir-git:
     entrypoint:
     - sleep
     - infinity
@@ -27,7 +27,7 @@ services:
     - type: bind
       source: /var/run/docker.sock
       target: /var/run/docker.sock
-  docker-git:
+  cdir-docker-git:
     entrypoint:
     - sleep
     - infinity
