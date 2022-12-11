@@ -1,14 +1,17 @@
 # to build, for exemple, run: 
 # `username=mine groupname=ours docker run -d -i`
-FROM ubuntu:latest AS dbp_essential-cdir
+FROM ubuntu:latest AS default
 ARG username
 ARG groupname
 RUN apt-get update -yq && \
 apt-get upgrade -y
 
 # biggest headache saver of all time - https://github.com/EskelinenAntti/cdir
-RUN apt install -y python3 python3-pip && \
+RUN apt-get install -y python3 python3-pip && \
 pip3 install cdir --user
+
+# best browser of all time
+RUN apt-get install -y brave-browser
 
 # set up group/user 
 RUN addgroup --system --gid 1000 ${groupname:-dev} && \
