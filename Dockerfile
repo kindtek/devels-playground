@@ -23,7 +23,7 @@ sudo pip3 install cdir
 FROM dbp_essential-cdir AS dbp_git-cdir
 RUN sudo apt-get update -y && \
 apt-get install -y git gh
-ENTRYPOINT [ echo "alias cdir='source cdir.sh'" >> ~/.bashrc && source ~/.bashrc ]
+ENTRYPOINT [ /bin/bash echo "alias cdir='source cdir.sh'" >> ~/.bashrc && source ~/.bashrc ]
 
 FROM dbp_git-cdir AS dbp_docker-git-cdir
 # https://docs.docker.com/engine/install/ubuntu/
