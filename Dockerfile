@@ -8,8 +8,7 @@ apt-get upgrade -y
 
 # biggest headache saver of all time - https://github.com/EskelinenAntti/cdir
 RUN sudo apt install -y python3 python3-pip && \
-sudo pip3 install cdir --local \
-exec $SHELL
+sudo pip3 install cdir --local
 
 # set up group/user 
 RUN addgroup --system --gid 1000 ${groupname:-dev} && \
