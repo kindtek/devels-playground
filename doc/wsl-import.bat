@@ -41,7 +41,7 @@ SET save_location=%install_location%\%save_directory%
 SET distro_orig=%image_name%-%username%
 SET distro=%distro_orig%
 SET /p "distro=Save image as: %save_location%\(%distro%).tar > "
-SET %image_save_path%="%save_location%\(%distro%).tar"
+SET image_save_path=%save_location%\(%distro%).tar
 
 
 
