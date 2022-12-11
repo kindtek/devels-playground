@@ -73,7 +73,7 @@ ECHO ---------------------------------------------------------------------------
 
 ECHO pulling image (%image_name%) from repo (%image_repo%)...
 ECHO saving as %save_location%\%distro%.tar...
-docker save %image_repo%/%image_name% > %distro%.tar
+docker save %image_repo%/%image_name% > %save_location%\%distro%.tar
 
 ECHO DONE
 
@@ -91,6 +91,10 @@ goto askagain
 :install
 ECHO killing current the WSL %distro% process if it is running...
 wsl --terminate %distro%
+ECHO DONE
+
+ECHO killing all WSL processes...
+wsl --shutdown
 ECHO DONE
 
 ECHO deleting WSL distro %distro% if it exists...
