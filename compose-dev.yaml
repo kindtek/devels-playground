@@ -3,7 +3,6 @@ services:
     entrypoint:
     - sleep
     - infinity
-    # command: /bin/bash echo "alias cdir='source cdir.sh'" >> ~/.bashrc && source ~/.bashrc
     image: kindtek/dbp_essential-cdir
     build:
       context: .
