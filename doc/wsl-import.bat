@@ -41,7 +41,7 @@ SET save_location=%install_location%\%save_directory%
 SET distro_orig=%image_name%-%username%
 SET distro=%distro_orig%
 SET /p "distro=Save image as: %save_location%\(%distro%).tar > "
-SET image_save_path=%save_location%\(%distro%).tar
+SET image_save_path=%save_location%\%distro%.tar
 
 
 
@@ -94,16 +94,16 @@ ECHO killing current the WSL %distro% process if it is running...
 wsl --terminate %distro%
 ECHO DONE
 
-ECHO killing all WSL processes...
-wsl --shutdown
-ECHO DONE
+@REM ECHO killing all WSL processes...
+@REM wsl --shutdown
+@REM ECHO DONE
 
 ECHO deleting WSL distro %distro% if it exists...
 wsl --unregister %distro%
 ECHO DONE
 
 ECHO importing  %distro%.tar to %install_location% as %distro%
-wsl --import %distro% %install_location% .\%distro%.tar
+wsl --import %distro% %install_location% .%image_save_path%
 ECHO DONE
 
 ECHO setting  %distro% as default
