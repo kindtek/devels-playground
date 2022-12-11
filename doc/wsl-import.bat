@@ -1,17 +1,21 @@
-@echo off
-SET mount_drive=C
-SET username=dev0
+@echo on
+:redo
+@REM set default variables. set default literally to default
+SET default=default
+SET username=default
 SET groupname=dev
 SET image_repo=kindtek
 SET image_name=dbp_docker-git-cdir
+SET mount_drive=C
 SET install_directory=wsl-distros
 SET save_directory=docker
+SET image_repo=kindtek
+SET image_name=dbp_git-docker-cli
 
+SET image_repo_and_name=%image_repo%/%image_name%
+@REM TODO: update this to SET image_reponame=kindtek/dbp_git_docker
 
-
-
-
-:redo
+:header
 ECHO  ___________________________________________________________________ 
 ECHO /                          DEV BOILERPLATE                          \
 ECHO \___________________    WSL image import tool    ___________________/
@@ -19,15 +23,34 @@ ECHO   .................................................................
 ECHO   .............    Default options in (parentheses)   .............
 ECHO   .................................................................
 
-ECHO Press ENTER to continue.
-@REM ECHO Enter any other key to exit.
+IF %default%==config ( goto custom_config )
 
-SET /p "continue=(continue) > "
+IF "%default%"=="" ( goto display_config )
 
-@REM IF NOT "%continue%"=="(continue) > "  ( goto quit ) 
+@REM default equals default if first time around
+IF %default%==notdefault ( 
+    default=defnotdefault
+    goto display_config 
+)
 
+IF %default%==defnotdefault ( 
+    IF %username%==default (
+        username=dev0
+        goto custom_config 
+    )
+    ELSE goto display_config
+)
 
+ECHO Press ENTER to use default image install configs or enter "config" to customize your image.
+SET /p "default=(continue) > "
 
+@REM catch when default configs NOT chosen AND second time around for user who chose to customize
+@REM display header but skip prompt when user chooses to customize install
+@REM IF %default%==config ( goto header )
+
+:custom_config
+
+if %default%==config (
 ECHO username:
 SET /p "username=(%username%) > "
 
@@ -35,17 +58,23 @@ SET /p "username=(%username%) > "
 ECHO group name:
 SET /p "groupname=(%groupname%) > "
 
-SET image_repo=kindtek
+
 SET /p "image_repo=image repository: (%image_repo%) > "
 SET /p "image_name=image name in %image_repo%: (%image_name%) > "
+SET image_reponame=%image_repo%/%image_name%
 SET /p "install_directory=installation folder: %mount_drive%:\(%install_directory%) > "
 SET /p "save_directory=download folder: %mount_drive%:\%install_directory%\(%save_directory%) > "
+
+)
+
+:display_config
 
 SET install_location=%mount_drive%:\%install_directory%
 SET save_location=%install_location%\%save_directory%
 SET distro_orig=%image_name%-%username%
 SET distro=%distro_orig%
-SET /p "distro=Save image as: %save_location%\(%distro%).tar > "
+ECHO Save image as:
+SET /p "distro=%save_location%\(%distro%).tar > "
 SET image_save_path=%save_location%\%distro%.tar
 
 
@@ -53,6 +82,8 @@ SET image_save_path=%save_location%\%distro%.tar
 @REM directory structure: 
 @REM %mount_drive%:\%install_directory%\%save_directory%
 @REM ie: C:\wsl-distros\docker
+
+
 
 ECHO setting up install directory (%install_directory%)...
 mkdir %install_location%
@@ -66,7 +97,8 @@ ECHO ---------------------------------------------------------------------------
 ECHO Check the list of current WSL distros installed on your system above. 
 ECHO If %distro% is already listed above it will be REPLACED.
 ECHO Use CTRL-C to quit now if this is not what you want.
-ECHO -----------------------------------------------------------------------------------------------------
+ECHO _____________________________________________________________________________________________________
+ECHO =====================================================================================================
 ECHO CONFIRM YOUR SETTINGS
 ECHO username: %username%
 ECHO group name: %groupname%
@@ -74,21 +106,24 @@ ECHO image source/name: %image_repo%/%image_name%
 ECHO image destination: %image_save_path%
 ECHO WSL alias: %distro%
 ECHO -----------------------------------------------------------------------------------------------------
-
+ECHO =====================================================================================================
 ECHO pulling image (%image_name%) from repo (%image_repo%)...
 ECHO saving as %image_save_path%...
-
+docker save %distro% %image_repo% %image_save_path%
 ECHO DONE
 
-:askagain
+:install_prompt
 
 ECHO Would you still like to continue (yes/no/redo)?
 SET /p "continue="
 
+@REM if label exists goto it
+goto %continue%
 
-IF %continue%==yes ( goto install ) ELSE IF %continue%==no ( goto quit ) ELSE IF %continue%==redo ( goto redo )
+@REM otherwise... use the built in error message and repeat install prompt
+goto install_prompt
 
-goto askagain
+:yes
 
 
 :install
@@ -117,4 +152,5 @@ wsl -l -v
 wsl 
 
 :quit
+:no
 echo goodbye
