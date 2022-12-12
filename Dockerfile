@@ -13,8 +13,8 @@ RUN echo -e "[user]\ndefault=${username}" >> /etc/wsl.conf
 RUN passwd -d ${username} && \
   apt-get update -yq && \
   apt-get upgrade -y && \
-  # install github, build-essentials, libssl, etc TODO: add alpine-pkg-glibc musl for wsl compat
-  apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip 
+# install github, build-essentials, libssl, etc
+  apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip
 USER ${username}
 # install cdir - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
 RUN PATH=/home/${username}/.local/bin:$PATH
@@ -41,7 +41,7 @@ RUN echo \
   $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 # brave browser/gui/media/docker support
 RUN apt update -yq && \
-  apt-get install -y gedit gimp nautilus vlc x11-apps apt-transport-https brave-browser alsa-base pulseaudio
+  apt-get install -y gedit gimp nautilus vlc x11-apps apt-transport-https brave-browser
 USER ${username}
 
 # TODO: https://github.com/mbacchi/brave-docker
