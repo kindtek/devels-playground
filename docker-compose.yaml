@@ -1,0 +1,61 @@
+version: "3.8"
+services:
+  skinny:
+    entrypoint:
+      - sleep
+      - infinity
+    image: kindtek/dbp:alpine-skinny
+    build:
+      context: .
+      target: dbp_skinny
+      args:
+        - username=${username:-dev0}
+      dockerfile: dockerfile.alpine
+    init: true
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: ~/
+        target: /home/host
+
+  phat-dockerless:
+    entrypoint:
+      - sleep
+      - infinity
+    image: kindtek/dbp:alpine-phat-dockerless
+    build:
+      context: .
+      target: dbp_phat-dockerless
+      args:
+        - username=${username:-dev0}
+      dockerfile: dockerfile.alpine
+    init: true
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: ~/
+        target: /home/host
+
+  phat:
+    entrypoint:
+      - sleep
+      - infinity
+    image: kindtek/dbp:alpine-phat
+    build:
+      context: .
+      target: dbp_phat
+      args:
+        - username=${username:-dev0}
+      dockerfile: dockerfile.alpine
+    init: true
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: ~/
+        target: /home/host
