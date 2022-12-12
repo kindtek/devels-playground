@@ -1,37 +1,43 @@
 # to build, for exemple, run: 
 # `username=mine groupname=ours docker run -d -i`
-FROM ubuntu:latest AS default
-ARG username
-ARG groupname
-RUN apt-get update -yq && \
-apt-get upgrade -y
-
-# biggest headache saver of all time - https://github.com/EskelinenAntti/cdir
-RUN apt-get install -y python3 python3-pip && \
-pip3 install cdir --user
-
-# best browser of all time
-RUN apt-get install -y brave-browser
-
+FROM ubuntu:latest AS dbp_base
+ARG username=${username:-dev0}
+ARG groupname=${groupname:-dev}
 # set up group/user 
-RUN addgroup --system --gid 1000 ${groupname:-dev} && \
-adduser --system --home /home/${username:-dev0} --shell /bin/bash --uid 1000 --gid 1000 --disabled-password ${username:-dev0}
 
-# install build-essentials and sudo
-RUN apt-get install -y build-essential sudo
-# from now on we will need to use sudo
-# remove password
-RUN sudo passwd -d ${username:-dev0}
+RUN addgroup --system --gid 1000 ${groupname} && \
+  adduser --system --home /home/${username} --shell /bin/bash --uid 1000 --gid 1000 --disabled-password ${username}
+# 
 # make default user
-RUN sudo echo -e "[user]\ndefault=${username:-dev0}" >> /etc/wsl.conf
+RUN echo -e "[user]\ndefault=${username}" >> /etc/wsl.conf
+RUN apt-get update -yq && \
+apt-get upgrade -y && \
+# install build-essentials
+apt-get install -y build-essential
+# best browser ever
+# snapd
+# RUN snap install brave
+
+RUN passwd -d ${username} && \
+# we will need to use sudo from now on
+apt-get -y install sudo && \
+sudo adduser ${username} sudo
+
+USER ${username}
+# biggest headache saver of all time - https://github.com/EskelinenAntti/cdir
+RUN sudo apt-get install -y python3 python3-pip && \
+  sudo pip3 install cdir --user
+  # best browser of all time
+  # sudo apt-get install -y brave-browser
+
 # RUN echo "alias cdir='source cdir.sh'" >> ~/.bashrc && source ~/.bashrc
 
 
-FROM dbp_essential-cdir AS dbp_git-cdir
+FROM dbp_base AS dbp_git
 RUN sudo apt-get update -y && \
-apt-get install -y git gh
+sudo apt-get install -y git gh
 
-FROM dbp_git-cdir AS dbp_docker-git-cdir
+FROM dbp_git AS dbp_docker-git
 # https://docs.docker.com/engine/install/ubuntu/
 RUN sudo apt-get update -y &&  \
 sudo apt-get install -y ca-certificates curl gnupg lsb-release
