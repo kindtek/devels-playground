@@ -10,6 +10,8 @@ services:
       target: dbp_skinny
       args: 
       - username=${username:-dev0}
+      - image_load_id=${image_load_id:-8888888888888888}
+
       dockerfile: Dockerfile.alpine
     init: true
     volumes:
@@ -30,6 +32,8 @@ services:
       target: dbp_phat-dockerless
       args: 
       - username=${username:-dev0}
+      - image_load_id=${image_load_id:-8888888888888888}
+
       dockerfile: Dockerfile.alpine
     init: true
     volumes:
@@ -50,6 +54,8 @@ services:
       target: dbp_phat
       args: 
       - username=${username:-dev0}
+      - image_load_id=${image_load_id:-8888888888888888}
+
       dockerfile: Dockerfile.alpine
     init: true
     volumes:
