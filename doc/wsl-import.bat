@@ -113,10 +113,10 @@ ECHO ---------------------------------------------------------------------------
 
 ECHO =====================================================================================================
 ECHO pulling image (%image_repo_image_name%)...
-docker save %image_repo_image_name%  >  %image_save_path%
+docker save %image_repo_image_name% \> %image_save_path%
 ECHO saving as %image_save_path%...
 ECHO initializing the image container
-docker load %image_save_path%\%distro%.tar
+docker load -i %image_save_path%\%distro%.tar
 ECHO DONE
 
 :install_prompt

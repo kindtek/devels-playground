@@ -4,13 +4,13 @@ services:
     entrypoint:
     - sleep
     - infinity
-    image: kindtek/dbp:ubuntu-skinny
+    image: kindtek/dbp:alpine-skinny
     build:
       context: .
       target: dbp_skinny
       args: 
       - username=${username:-dev0}
-      dockerfile: Dockerfile.ubuntu
+      dockerfile: Dockerfile.alpine
     platform: linux/amd64
     init: true
     volumes:
@@ -25,13 +25,13 @@ services:
     entrypoint:
     - sleep
     - infinity
-    image: kindtek/dbp:ubuntu-phat-dockerless
+    image: kindtek/dbp:alpine-phat-dockerless
     build:
       context: .
       target: dbp_phat-dockerless
       args: 
       - username=${username:-dev0}
-      dockerfile: Dockerfile.ubuntu
+      dockerfile: Dockerfile.alpine
     platform: linux/amd64
     init: true
     volumes:
@@ -46,13 +46,13 @@ services:
     entrypoint:
     - sleep
     - infinity
-    image: kindtek/dbp:ubuntu-phat
+    image: kindtek/dbp:alpine-phat
     build:
       context: .
       target: dbp_phat
       args: 
       - username=${username:-dev0}
-      dockerfile: Dockerfile.ubuntu
+      dockerfile: Dockerfile.alpine
     platform: linux/amd64
     init: true
     volumes:
