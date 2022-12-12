@@ -10,8 +10,7 @@ services:
       target: dbp_skinny
       args: 
       - username=${username:-dev0}
-      - image_load_id=${image_load_id:-8888888888888888}
-      dockerfile: Dockerfile.ubuntu
+      dockerfile: dockerfile.ubuntu
     init: true
     volumes:
     - type: bind
@@ -19,7 +18,7 @@ services:
       target: /var/run/docker.sock
     - type: bind
       source: ~/
-      target: /home/${username}/host
+      target: /home/host
 
   phat-dockerless:
     entrypoint:
@@ -31,9 +30,7 @@ services:
       target: dbp_phat-dockerless
       args: 
       - username=${username:-dev0}
-      - image_load_id=${image_load_id:-8888888888888888}
-
-      dockerfile: Dockerfile.ubuntu
+      dockerfile: dockerfile.ubuntu
     init: true
     volumes:
     - type: bind
@@ -41,7 +38,7 @@ services:
       target: /var/run/docker.sock
     - type: bind
       source: ~/
-      target: /home/${username}/host
+      target: /home/host
   
   phat:
     entrypoint:
@@ -53,9 +50,7 @@ services:
       target: dbp_phat
       args: 
       - username=${username:-dev0}
-      - image_load_id=${image_load_id:-8888888888888888}
-
-      dockerfile: Dockerfile.ubuntu
+      dockerfile: dockerfile.ubuntu
     init: true
     volumes:
     - type: bind
@@ -63,5 +58,5 @@ services:
       target: /var/run/docker.sock
     - type: bind
       source: ~/
-      target: /home/${username}/host
+      target: /home/host
 
