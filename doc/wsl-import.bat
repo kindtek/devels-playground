@@ -5,17 +5,22 @@ SET default=default
 SET username=default
 SET groupname=dev
 SET image_repo=kindtek
-SET image_name=dbp_docker-git-cdir
+SET image_name=dbp
 SET mount_drive=C
 SET install_directory=wsl-distros
 SET save_directory=docker
-SET image_repo=kindtek
-SET image_name=dbp_git-docker-cli
 
+SET "save_location=%install_location%\%save_directory%"
+SET "install_location=%mount_drive%:\%install_directory%"
+SET "distro=%image_name%-%username%"
+:header
+SET save_location=%mount_drive%:\%save_directory%
+SET image_save_path=%save_location%\%distro%.tar
+SET install_location=%save_location%\%image_name%
 SET image_repo_and_name=%image_repo%/%image_name%
 @REM TODO: update this to SET image_reponame=kindtek/dbp_git_docker
 
-:header
+CLS
 ECHO  ___________________________________________________________________ 
 ECHO /                          DEV BOILERPLATE                          \
 ECHO \___________________    WSL image import tool    ___________________/
@@ -25,12 +30,15 @@ ECHO   .................................................................
 
 IF %default%==config ( goto custom_config )
 
-IF "%default%"=="" ( goto display_config )
+IF "%default%"=="" ( 
+    default=confirm
+    goto confirm
+)
 
 @REM default equals default if first time around
 IF %default%==notdefault ( 
     default=defnotdefault
-    goto display_config 
+    goto confirm 
 )
 
 IF %default%==defnotdefault ( 
@@ -38,8 +46,11 @@ IF %default%==defnotdefault (
         username=dev0
         goto custom_config 
     )
-    ELSE goto display_config
+    ELSE goto confirm
 )
+
+IF NOT %default%==default (goto %default%)
+
 
 ECHO Press ENTER to use default image install configs or enter "config" to customize your image.
 SET /p "default=(continue) > "
@@ -61,36 +72,27 @@ SET /p "groupname=(%groupname%) > "
 
 SET /p "image_repo=image repository: (%image_repo%) > "
 SET /p "image_name=image name in %image_repo%: (%image_name%) > "
-SET image_reponame=%image_repo%/%image_name%
-SET /p "install_directory=installation folder: %mount_drive%:\(%install_directory%) > "
-SET /p "save_directory=download folder: %mount_drive%:\%install_directory%\(%save_directory%) > "
+SET /p "save_directory=download folder: %mount_drive%:\(%save_directory%) > "
+SET /p "install_directory=install folder: %mount_drive%:\%save_directory%\(%install_directory%) > "
+SET install_directory=%mount_drive%:/
 
-)
-
-:display_config
-
-SET install_location=%mount_drive%:\%install_directory%
-SET save_location=%install_location%\%save_directory%
-SET distro_orig=%image_name%-%username%
-SET distro=%distro_orig%
 ECHO Save image as:
 SET /p "distro=%save_location%\(%distro%).tar > "
-SET image_save_path=%save_location%\%distro%.tar
 
 
+)
 
 @REM directory structure: 
 @REM %mount_drive%:\%install_directory%\%save_directory%
 @REM ie: C:\wsl-distros\docker
 
-
-
-ECHO setting up install directory (%install_directory%)...
-mkdir %install_location%
-ECHO DONE
+@REM below is for debug ..TODO: comment out eventually
 ECHO setting up save directory (%save_directory%)...
 mkdir %save_location%
-ECHO DONE
+ECHO setting up install directory (%install_directory%)...
+mkdir %install_location%
+
+:confirm
 ECHO -----------------------------------------------------------------------------------------------------
 wsl --list
 ECHO -----------------------------------------------------------------------------------------------------
@@ -102,18 +104,22 @@ ECHO ===========================================================================
 ECHO CONFIRM YOUR SETTINGS
 ECHO username: %username%
 ECHO group name: %groupname%
-ECHO image source/name: %image_repo%/%image_name%
+SET image_repo_image_name=%image_repo%/%image_name%
+ECHO image source/name: %image_repo_image_name%
+SET image_save_path=%save_location%\%distro%.tar
 ECHO image destination: %image_save_path%
-ECHO WSL alias: %distro%
+ECHO WSL alias : %distro% 
 ECHO -----------------------------------------------------------------------------------------------------
+
 ECHO =====================================================================================================
-ECHO pulling image (%image_name%) from repo (%image_repo%)...
+ECHO pulling image (%image_repo_image_name%)...
+docker save %image_repo_image_name%  >  %image_save_path%
 ECHO saving as %image_save_path%...
-docker save %distro% %image_repo% %image_save_path%
+ECHO initializing the image container
+docker load %image_save_path%\%distro%.tar
 ECHO DONE
 
 :install_prompt
-
 ECHO Would you still like to continue (yes/no/redo)?
 SET /p "continue="
 
@@ -123,6 +129,7 @@ goto %continue%
 @REM otherwise... use the built in error message and repeat install prompt
 goto install_prompt
 
+@REM EASTER EGG: typing yes at first prompt bypasses cofirm and restart the default distro
 :yes
 
 
@@ -135,19 +142,21 @@ ECHO DONE
 @REM wsl --shutdown
 @REM ECHO DONE
 
-ECHO deleting WSL distro %distro% if it exists...
-wsl --unregister %distro%
-ECHO DONE
+if NOT default==yes (
+    ECHO deleting WSL distro %distro% if it exists...
+    wsl --unregister %distro%
+    ECHO DONE
 
-ECHO importing  %distro%.tar to %install_location% as %distro%
-wsl --import %distro% %install_location% .%image_save_path%
-ECHO DONE
+    ECHO importing  %distro%.tar to %install_location% as %distro%
+    wsl --import %distro% %install_location% %image_save_path%
+    ECHO DONE
+)
 
 ECHO setting  %distro% as default
 wsl --set-default %distro%
 ECHO DONE
 
-@REM wsl --shutdown
+wsl --shutdown
 wsl -l -v
 wsl 
 

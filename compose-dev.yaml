@@ -1,46 +1,62 @@
+version: "3.8"
 services:
-  base:
+  skinny:
     entrypoint:
     - sleep
     - infinity
-    image: kindtek/dbp:base
+    image: kindtek/dbp:skinny
     build:
       context: .
-      target: dbp_base
+      target: dbp_skinny
+      args: 
+      - username=${username:-dev0}
     platform: linux/amd64
     init: true
     volumes:
     - type: bind
       source: /var/run/docker.sock
       target: /var/run/docker.sock
+    - type: bind
+      source: ~/
+      target: /home/${username}/host
 
-  git:
+  phat-dockerless:
     entrypoint:
     - sleep
     - infinity
-    image: kindtek/dbp:git
+    image: kindtek/dbp:phat-dockerless
     build:
       context: .
-      target: dbp_git
+      target: dbp_phat-dockerless
+      args: 
+      - username=${username:-dev0}
     platform: linux/amd64
     init: true
     volumes:
     - type: bind
       source: /var/run/docker.sock
       target: /var/run/docker.sock
-      
-  docker-git:
+    - type: bind
+      source: ~/
+      target: /home/${username}/host
+  
+  phat:
     entrypoint:
     - sleep
     - infinity
-    image: kindtek/dbp:docker-git
+    image: kindtek/dbp:phat
     build:
       context: .
-      target: dbp_docker-git
+      target: dbp_phat
+      args: 
+      - username=${username:-dev0}
     platform: linux/amd64
     init: true
     volumes:
     - type: bind
       source: /var/run/docker.sock
       target: /var/run/docker.sock
+    - type: bind
+      source: ~/
+      target: /home/${username}/host
 
