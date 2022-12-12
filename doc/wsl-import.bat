@@ -5,18 +5,18 @@ SET default=default
 SET username=default
 SET groupname=dev
 SET image_repo=kindtek
-SET image_name=dbp
+SET image_name=dbp:ubuntu-phat
 SET mount_drive=C
 SET install_directory=wsl-distros
 SET save_directory=docker
 
 SET "save_location=%install_location%\%save_directory%"
 SET "install_location=%mount_drive%:\%install_directory%"
-SET "distro=%image_name%-%username%"
+SET "distro=%image_name::=-%-%username%"
 :header
 SET save_location=%mount_drive%:\%save_directory%
 SET image_save_path=%save_location%\%distro%.tar
-SET install_location=%save_location%\%image_name%
+SET install_location=%save_location%\%image_name::=-%
 SET image_repo_and_name=%image_repo%/%image_name%
 @REM TODO: update this to SET image_reponame=kindtek/dbp_git_docker
 
@@ -77,8 +77,8 @@ SET /p "install_directory=install folder: %mount_drive%:\%save_directory%\(%inst
 SET install_directory=%mount_drive%:/
 
 ECHO Save image as:
-SET /p "distro=%save_location%\(%distro%).tar > "
-
+SET /p "distro=%save_location%\(%distro::=-%).tar > "
+distro=%distro::=-%
 
 )
 
@@ -117,6 +117,9 @@ docker save %image_repo_image_name% \> %image_save_path%
 ECHO saving as %image_save_path%...
 ECHO initializing the image container
 docker load -i %image_save_path%\%distro%.tar
+_WSL_DOCKER_IMG_ID=| docker ps -alq 
+del %image_save_path%\%distro%.tar
+docker export -o %_WSL_DOCKER_IMG_ID% > %image_save_path%\%distro%.tar
 ECHO DONE
 
 :install_prompt
