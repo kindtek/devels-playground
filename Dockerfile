@@ -13,8 +13,8 @@ RUN echo -e "[user]\ndefault=${username}" >> /etc/wsl.conf
 RUN passwd -d ${username} && \
   apt-get update -yq && \
   apt-get upgrade -y && \
-# install github, build-essentials, libssl, etc
-  apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip
+  # install github, build-essentials, libssl, etc
+  apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip alpine-pkg-glibc musl
 USER ${username}
 # install cdir - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
 RUN PATH=/home/${username}/.local/bin:$PATH
