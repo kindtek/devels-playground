@@ -39,7 +39,6 @@ services:
       - type: bind
         source: ~/
         target: /home/host
-
   phat:
     entrypoint:
       - sleep

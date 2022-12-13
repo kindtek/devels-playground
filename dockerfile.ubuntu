@@ -77,14 +77,14 @@ USER root
 # DOCKER
 RUN apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 # GNOME
-RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3
+RUN DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3
 # CUDA
 RUN apt-get -y install nvidia-cuda-toolkit
 # VSCODE
 RUN apt-get -y install software-properties-common apt-transport-https wget -y
 RUN wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | apt-key add -
 RUN add-apt-repository "deb [arch=$(dpkg --print-architecture)] https://packages.microsoft.com/repos/vscode stable main"
-RUN sudo apt-get -y install code
+RUN apt-get -y install code
 RUN apt-get -y update
 
 USER ${username}

@@ -1,13 +1,15 @@
 @echo on
+SETLOCAL EnableDelayedExpansion
 :redo
 @REM set default variables. set default literally to default
 SET default=default
 SET username=default
 SET groupname=dev
 SET image_repo=kindtek
-SET image_name=dbp:ubuntu-phat
+@REM SET image_name=dbp:ubuntu-phat
+SET image_name=dbp:alpine-skinny
 SET mount_drive=C
-SET install_directory=wsl-distros
+SET "install_directory=%image_name::=-%"
 SET save_directory=docker
 
 SET "save_location=%install_location%\%save_directory%"
@@ -16,8 +18,10 @@ SET "distro=%image_name::=-%-%username%"
 :header
 SET save_location=%mount_drive%:\%save_directory%
 SET image_save_path=%save_location%\%distro%.tar
-SET install_location=%save_location%\%image_name::=-%
+SET "install_location=%save_location%\%image_name::=-%"
 SET image_repo_and_name=%image_repo%/%image_name%
+SET docker_container_id_path=%save_location%\.container_id
+SET image_tag=%image_name:*:=%
 @REM TODO: update this to SET image_reponame=kindtek/dbp_git_docker
 
 CLS
@@ -73,12 +77,13 @@ SET /p "groupname=(%groupname%) > "
 SET /p "image_repo=image repository: (%image_repo%) > "
 SET /p "image_name=image name in %image_repo%: (%image_name%) > "
 SET /p "save_directory=download folder: %mount_drive%:\(%save_directory%) > "
-SET /p "install_directory=install folder: %mount_drive%:\%save_directory%\(%install_directory%) > "
-SET install_directory=%mount_drive%:/
+SET /p "install_directory=install folder: %mount_drive%:\%save_directory%\(%image_repo_and_name::=-%) > "
+@REM not possible to set this above bc it will overlap with the default initializing so set it here
+SET install_directory=%install_directory::=-%
 
 ECHO Save image as:
-SET /p "distro=%save_location%\(%distro::=-%).tar > "
-distro=%distro::=-%
+SET /p "distro=%save_location%\(%distro%).tar > "
+SET "distro=%distro::=-%"
 
 )
 
@@ -113,13 +118,22 @@ ECHO ---------------------------------------------------------------------------
 
 ECHO =====================================================================================================
 ECHO pulling image (%image_repo_image_name%)...
-docker save %image_repo_image_name% \> %image_save_path%
-ECHO saving as %image_save_path%...
+@REM pull the image
+docker pull image_repo_image_name
 ECHO initializing the image container
-docker load -i %image_save_path%\%distro%.tar
-_WSL_DOCKER_IMG_ID=| docker ps -alq 
-del %image_save_path%\%distro%.tar
-docker export -o %_WSL_DOCKER_IMG_ID% > %image_save_path%\%distro%.tar
+ECHO %image_tag%
+docker images -aq %image_repo%:%image_tag%
+@REM 
+@REM for /f "delims=" %i% in ('docker ps -alq') do SET _WSL_DOCKER_IMG_ID=%i%
+SET _WSL_DOCKER_IMG_ID=0
+for /f %%a in ('SET "_WSL_DOCKER_IMG_ID=docker images -aq %image_repo%:%image_tag%"') do echo "%%a"
+
+ECHO docker ps -alq > docker_container_id_path
+@REM ECHO docker_container_id_path
+set /p _WSL_DOCKER_IMG_ID=<docker ps -alq %image_repo%:%image_tag
+ 
+SET /p _WSL_DOCKER_IMG_ID=(imageid_%_WSL_DOCKER_IMG_ID%)
+docker export %_WSL_DOCKER_IMG_ID% > "%image_save_path%"
 ECHO DONE
 
 :install_prompt
@@ -159,7 +173,7 @@ ECHO setting  %distro% as default
 wsl --set-default %distro%
 ECHO DONE
 
-wsl --shutdown
+@REM wsl --shutdown
 wsl -l -v
 wsl 
 

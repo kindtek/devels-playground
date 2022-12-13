@@ -47,16 +47,16 @@ RUN adduser -s /bin/ash -h /home/host -G wheel host -D && \
 
 # non-root will need to use sudo from now on
 RUN apk add sudo 
-    # add host and ${username} to sudo group
-    # sudo adduser ${username} sudo && \
-    # sudo adduser host sudo
+# add host and ${username} to sudo group
+# sudo adduser ${username} sudo && \
+# sudo adduser host sudo
 
 # ensure no one has a passwd 
 # RUN sudo passwd -d host &&  sudo passwd -d ${username} && 
 RUN sudo passwd -d root && \
-sudo passwd -l root && \
-sudo passwd -d host && \
-sudo passwd -d  ${username}
+    sudo passwd -l root && \
+    sudo passwd -d host && \
+    sudo passwd -d  ${username}
 USER ${username}:devbp
 WORKDIR /home/${username}
 
