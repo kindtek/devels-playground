@@ -9,7 +9,7 @@ RUN apk update && \
     apk upgrade && \
     # install github, build-essentials, libssl, etc
     apk add git github-cli build-base libressl-dev ca-certificates wget curl gnupg \
-    lsb-release python3 py3-pip shadow musl libgcc libstdc++
+    lsb-release python3 py3-pip shadow musl libgcc libstdc++ g++ make vips-dev
 
 # set up group/user 
 # RUN addgroup -S -g 1000 ${groupname} 
@@ -94,11 +94,12 @@ ARG ALPINE_VERSION=${ALPINE_VERSION:-v3.17}
 # VSCODE
 # RUN apk add code-server
 # DOCKER
-COPY --chown=0:0 --from=alpinelinux/docker-alpine ./ /
+# COPY --chown=0:0 --from=alpinelinux/docker-alpine ./ /
+# COPY --chown=0:0 --from=0 ./etc /etc
 
 # GNOME
 RUN echo "@alpine-comm-reg http://dl-cdn.alpinelinux.org/alpine/${ALPINE_VERSION}/community/" >> /etc/apk/repositories
-RUN echo "set shared/default-x-display-manager lightdm" | debconf-communicate
+# RUN echo "set shared/default-x-display-manager lightdm" | debconf-communicate
 RUN echo "/usr/sbin/lightdm" > /etc/X11/default-display-manager
 RUN apk add gnome@alpine-comm-reg
 # RUN apk add gnome-apps-extra
