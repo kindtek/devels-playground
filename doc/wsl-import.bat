@@ -20,6 +20,7 @@ SET save_location=%mount_drive%:\%save_directory%
 SET image_save_path=%save_location%\%distro%.tar
 SET "install_location=%save_location%\%image_name::=-%"
 SET image_repo_and_name=%image_repo%/%image_name%
+SET docker_image_id_path=%save_location%\.image_id
 SET docker_container_id_path=%save_location%\.container_id
 SET image_tag=%image_name:*:=%
 @REM TODO: update this to SET image_reponame=kindtek/dbp_git_docker
@@ -119,20 +120,17 @@ ECHO ---------------------------------------------------------------------------
 ECHO =====================================================================================================
 ECHO pulling image (%image_repo_image_name%)...
 @REM pull the image
-docker pull image_repo_image_name
+docker pull %image_repo_image_name%
 ECHO initializing the image container
 ECHO %image_tag%
-docker images -aq %image_repo%:%image_tag%
-@REM 
-@REM for /f "delims=" %i% in ('docker ps -alq') do SET _WSL_DOCKER_IMG_ID=%i%
-SET _WSL_DOCKER_IMG_ID=0
-for /f %%a in ('SET "_WSL_DOCKER_IMG_ID=docker images -aq %image_repo%:%image_tag%"') do echo "%%a"
+docker images -aq %image_repo_image_name% > docker_image_id_path
+SET /P _WSL_DOCKER_IMG_ID=<docker_image_id_path
 
-ECHO docker ps -alq > docker_container_id_path
-@REM ECHO docker_container_id_path
-set /p _WSL_DOCKER_IMG_ID=<docker ps -alq %image_repo%:%image_tag
+docker ps -alq > %docker_container_id_path%
+@REM ECHO %docker_container_id_path%
+@REM set /p _WSL_DOCKER_IMG_ID=<docker ps -alq %image_repo%:%image_tag%
  
-SET /p _WSL_DOCKER_IMG_ID=(imageid_%_WSL_DOCKER_IMG_ID%)
+@REM SET /p _WSL_DOCKER_IMG_ID=(imageid_%_WSL_DOCKER_IMG_ID%)
 docker export %_WSL_DOCKER_IMG_ID% > "%image_save_path%"
 ECHO DONE
 
