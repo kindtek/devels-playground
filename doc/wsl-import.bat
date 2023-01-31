@@ -6,22 +6,21 @@ SET default=default
 SET username=default
 SET groupname=dev
 SET image_repo=kindtek
-@REM SET image_name=dbp:ubuntu-phat
-SET image_name=dbp:alpine-skinny
+SET image_name=dbp:ubuntu-skinny
 SET mount_drive=C
 SET "install_directory=%image_name::=-%"
 SET save_directory=docker
 
-SET "save_location=%install_location%\%save_directory%"
-SET "install_location=%mount_drive%:\%install_directory%"
+SET "save_location=%mount_drive%:\%save_directory%"
+SET "install_location=%save_location%\%install_directory%"
 SET "distro=%image_name::=-%-%username%"
 :header
 SET save_location=%mount_drive%:\%save_directory%
 SET image_save_path=%save_location%\%distro%.tar
 SET "install_location=%save_location%\%image_name::=-%"
 SET image_repo_and_name=%image_repo%/%image_name%
-SET docker_image_id_path=%save_location%\.image_id
-SET docker_container_id_path=%save_location%\.container_id
+SET docker_image_id_path=%install_location%\.image_id
+SET docker_container_id_path=%install_location%\.container_id
 SET image_tag=%image_name:*:=%
 @REM TODO: update this to SET image_reponame=kindtek/dbp_git_docker
 
@@ -77,13 +76,15 @@ SET /p "groupname=(%groupname%) > "
 
 SET /p "image_repo=image repository: (%image_repo%) > "
 SET /p "image_name=image name in %image_repo%: (%image_name%) > "
+SET image_repo_and_name=%image_repo%/%image_name%
 SET /p "save_directory=download folder: %mount_drive%:\(%save_directory%) > "
+
 SET /p "install_directory=install folder: %mount_drive%:\%save_directory%\(%image_repo_and_name::=-%) > "
 @REM not possible to set this above bc it will overlap with the default initializing so set it here
 SET install_directory=%install_directory::=-%
 
 ECHO Save image as:
-SET /p "distro=%save_location%\(%distro%).tar > "
+SET /p "distro=%install_location%\(%distro%).tar > "
 SET "distro=%distro::=-%"
 
 )
@@ -123,15 +124,19 @@ ECHO pulling image (%image_repo_image_name%)...
 docker pull %image_repo_image_name%
 ECHO initializing the image container
 ECHO %image_tag%
-docker images -aq %image_repo_image_name% > docker_image_id_path
-SET /P _WSL_DOCKER_IMG_ID=<docker_image_id_path
+docker images -aq %image_repo_image_name% > %docker_image_id_path%
+SET /P _WSL_DOCKER_IMG_ID=<%docker_image_id_path%
 
-docker ps -alq > %docker_container_id_path%
+del %docker_container_id_path%
+docker run -dit --cidfile %docker_container_id_path% %_WSL_DOCKER_IMG_ID% 
+
 @REM ECHO %docker_container_id_path%
 @REM set /p _WSL_DOCKER_IMG_ID=<docker ps -alq %image_repo%:%image_tag%
  
 @REM SET /p _WSL_DOCKER_IMG_ID=(imageid_%_WSL_DOCKER_IMG_ID%)
-docker export %_WSL_DOCKER_IMG_ID% > "%image_save_path%"
+SET /P _WSL_DOCKER_CONTAINER_ID=<%docker_container_id_path%
+
+docker export %_WSL_DOCKER_CONTAINER_ID% > "%image_save_path%"
 ECHO DONE
 
 :install_prompt
