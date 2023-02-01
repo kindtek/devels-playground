@@ -66,11 +66,11 @@ SET /p "default=(continue) > "
 
 if %default%==config (
 ECHO username:
-SET /p "username=(%username%) > "
+SET /p "username=(!username!) > "
 
 
 ECHO group name:
-SET /p "groupname=(%groupname%) > "
+SET /p "groupname=(!groupname!) > "
 
 
 SET /p "image_repo=image repository: (!image_repo!) > "
@@ -89,6 +89,12 @@ SET "distro=!image_name::=-!-!username!"
 SET /p "distro=!install_location!\(!distro!).tar > "
 SET "distro=!distro::=-!"
 
+
+@REM TODO: build images with custom username/groupname then push
+@REM docker build --build-arg username=!username! --build-arg groupname=!groupname! -f ../dockerfile.alpine -t dbp_phat
+@REM docker build --build-arg username=!username! --build-arg groupname=!groupname! -f ../dockerfile.ubuntu -t dbp_phat
+@REM docker image push kindtek/dbp
+
 )
 
 @REM directory structure: 
@@ -96,10 +102,10 @@ SET "distro=!distro::=-!"
 @REM ie: C:\wsl-distros\docker
 
 @REM below is for debug ..TODO: comment out eventually
-ECHO setting up save directory (!!save_directory!!)...
-mkdir !!save_location!!
-ECHO setting up install directory (!!install_directory!!)...
-mkdir !!install_location!!
+ECHO setting up save directory (!save_directory!)...
+mkdir !save_location!
+ECHO setting up install directory (!install_directory!)...
+mkdir !install_location!
 
 :confirm
 ECHO -----------------------------------------------------------------------------------------------------
