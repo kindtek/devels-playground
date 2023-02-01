@@ -22,7 +22,6 @@ SET image_repo_and_name=%image_repo%/%image_name%
 SET docker_image_id_path=%install_location%\.image_id
 SET docker_container_id_path=%install_location%\.container_id
 SET image_tag=%image_name:*:=%
-@REM TODO: update this to SET image_reponame=kindtek/dbp_git_docker
 
 CLS
 ECHO  ___________________________________________________________________ 
@@ -86,8 +85,8 @@ SET save_location=!mount_drive!:\!save_directory!
 SET install_location=!save_location!\!install_directory!
 
 ECHO Save image as:
-SET "distro=!!image_name::=-!-!username!!"
-SET /p "distro=!!install_location!\(!distro!!).tar > "
+SET "distro=!image_name::=-!-!username!"
+SET /p "distro=!install_location!\(!distro!).tar > "
 SET "distro=!distro::=-!"
 
 )
@@ -175,7 +174,7 @@ if NOT default==yes (
     ECHO DONE
 )
 
-ECHO setting  !distro! as default
+ECHO setting !distro! as default
 wsl --set-default !distro!
 ECHO DONE
 
