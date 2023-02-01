@@ -3,8 +3,8 @@ SETLOCAL EnableDelayedExpansion
 :redo
 @REM set default variables. set default literally to default
 SET default=default
-SET username=default
-SET groupname=dev
+@REM SET username=default
+@REM SET groupname=dev
 SET image_repo=kindtek
 SET image_name=dbp:ubuntu-skinny
 SET mount_drive=C
@@ -45,11 +45,12 @@ IF %default%==notdefault (
 )
 
 IF %default%==defnotdefault ( 
-    IF %username%==default (
-        username=dev0
-        goto custom_config 
-    )
-    ELSE goto confirm
+    @REM IF %username%==default (
+    @REM     username=dev0
+    @REM     goto custom_config 
+    @REM )
+    @REM ELSE goto confirm
+    goto confirm
 )
 
 IF NOT %default%==default (goto %default%)
@@ -69,8 +70,8 @@ ECHO username:
 SET /p "username=(!username!) > "
 
 
-ECHO group name:
-SET /p "groupname=(!groupname!) > "
+@REM ECHO group name:
+@REM SET /p "groupname=(!groupname!) > "
 
 
 SET /p "image_repo=image repository: (!image_repo!) > "
@@ -117,8 +118,8 @@ ECHO Use CTRL-C to quit now if this is not what you want.
 ECHO _____________________________________________________________________________________________________
 ECHO =====================================================================================================
 ECHO CONFIRM YOUR SETTINGS
-ECHO username: !username!
-ECHO group name: !groupname!
+@REM ECHO username: !username!
+@REM ECHO group name: !groupname!
 SET image_repo_image_name=!image_repo!/!image_name!
 ECHO image source/name: !image_repo_image_name!
 SET image_save_path=!save_location!\!distro!.tar
