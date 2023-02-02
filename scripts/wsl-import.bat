@@ -54,10 +54,10 @@ ECHO:
 ECHO:
 ECHO Press ENTER to import %image_repo_and_name% as default WSL distro 
 ECHO:
-ECHO ..or type "config" for custom install.
+ECHO   ..or type "config" for custom install.
 ECHO:
 ECHO:
-SET /p "default=(Start default install) > "
+SET /p "default=(Start default install) $ "
 
 @REM catch when default configs NOT chosen AND second time around for user who chose to customize
 @REM display header but skip prompt when user chooses to customize install
@@ -68,12 +68,12 @@ SET /p "default=(Start default install) > "
 if %default%==config (
 
 ECHO:
-SET /p "image_repo=image repository: (!image_repo!) > "
-SET /p "image_name=image name in !image_repo!: (!image_name!) > "
+SET /p "image_repo=image repository: (!image_repo!) $ "
+SET /p "image_name=image name in !image_repo!: (!image_name!) $ "
 SET "image_repo_and_name=!image_repo!/!image_name!"
-SET /p "save_directory=download folder: !mount_drive!:\(!save_directory!) > "
+SET /p "save_directory=download folder: !mount_drive!:\(!save_directory!) $ "
 
-SET /p "install_directory=install folder: !mount_drive!:\!save_directory!\(!image_repo_and_name::=-!) > "
+SET /p "install_directory=install folder: !mount_drive!:\!save_directory!\(!image_repo_and_name::=-!) $ "
 @REM not possible to set this above bc it will overlap with the default initializing so set it here
 SET install_directory=!install_directory::=-!
 SET save_location=!mount_drive!:\!save_directory!
@@ -81,7 +81,7 @@ SET install_location=!save_location!\!install_directory!
 
 ECHO Save image as:
 SET "distro=!image_name::=-!"
-SET /p "distro=!install_location!\(!distro!).tar > "
+SET /p "distro=!install_location!\(!distro!).tar $ "
 SET "distro=!distro::=-!"
 
 )
@@ -116,6 +116,7 @@ ECHO image destination: !image_save_path!
 ECHO WSL alias : !distro! 
 ECHO -----------------------------------------------------------------------------------------------------
 
+:docker_image_container_start
 ECHO =====================================================================================================
 ECHO pulling image (!image_repo_image_name!)...
 @REM pull the image
