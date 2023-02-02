@@ -7,29 +7,42 @@ SET default=default
 SET image_repo=kindtek
 SET image_name=dbp:ubuntu-phat
 SET mount_drive=C
-SET "install_directory=%image_name::=-%"
 SET save_directory=docker
-
+SET "install_directory=%image_repo%-%image_name::=-%"
 SET "save_location=%mount_drive%:\%save_directory%"
 SET "install_location=%save_location%\%install_directory%"
-SET "distro=%image_name::=-%"
+SET "distro=%image_repo%-%image_name::=-%"
 :header
 SET save_location=%mount_drive%:\%save_directory%
 SET image_save_path=%save_location%\%distro%.tar
-SET "install_location=%save_location%\%image_name::=-%"
-SET image_repo_and_name=%image_repo%/%image_name%
+SET "install_location=%save_location%\%install_directory%"
+SET image_repo_image_name=%image_repo%/%image_name%
 SET docker_image_id_path=%install_location%\.image_id
 SET docker_container_id_path=%install_location%\.container_id
 SET image_tag=%image_name:*:=%
+SET image_repo_image_name=!image_repo!/!image_name!
+
 
 CLS
 ECHO:
 ECHO  ___________________________________________________________________ 
 ECHO /                          DEV BOILERPLATE                          \
-ECHO \___________________    WSL image import tool    ___________________/
-ECHO   .................................................................
-ECHO   .............    Default options in (parentheses)   .............
-ECHO   .................................................................
+ECHO \_________________  Docker image WSL import tool  __________________/
+ECHO   -----------------------------------------------------------------
+ECHO   .............    Image settings                     .............
+ECHO   .............---------------------------------------.............
+ECHO   .............    source:                            .............
+ECHO   .............      !image_repo!                          .............
+ECHO   .............                                       .............
+ECHO   .............    name:                              .............
+ECHO   .............      !image_name!                  .............
+ECHO   .............                                       .............
+ECHO   .............    download to:                       .............
+ECHO   .............       !image_save_path!   .....
+ECHO   .............                                       .............
+ECHO   .............    WSL alias:                         .............
+ECHO   .............       !distro!         .............
+ECHO   -----------------------------------------------------------------
 
 IF %default%==config ( goto custom_config )
 
@@ -52,12 +65,12 @@ IF NOT %default%==default (goto %default%)
 
 ECHO:
 ECHO:
-ECHO Press ENTER to import %image_repo_and_name% as default WSL distro 
+ECHO Press ENTER to use settings above and import %image_repo_image_name% as default WSL distro 
 ECHO:
 ECHO   ..or type "config" for custom install.
 ECHO:
 ECHO:
-SET /p "default=(Start default install) $ "
+SET /p "default=$ "
 
 @REM catch when default configs NOT chosen AND second time around for user who chose to customize
 @REM display header but skip prompt when user chooses to customize install
@@ -70,17 +83,19 @@ if %default%==config (
 ECHO:
 SET /p "image_repo=image repository: (!image_repo!) $ "
 SET /p "image_name=image name in !image_repo!: (!image_name!) $ "
-SET "image_repo_and_name=!image_repo!/!image_name!"
+SET "image_repo_image_name=!image_repo!/!image_name!"
 SET /p "save_directory=download folder: !mount_drive!:\(!save_directory!) $ "
-
-SET /p "install_directory=install folder: !mount_drive!:\!save_directory!\(!image_repo_and_name::=-!) $ "
-@REM not possible to set this above bc it will overlap with the default initializing so set it here
+SET install_directory=!image_repo_image_name:/=-!
 SET install_directory=!install_directory::=-!
+SET /p "install_directory=install folder: !mount_drive!:\!save_directory!\(!install_directory!) $ "
+@REM not possible to set this above bc it will overlap with the default initializing so set it here
 SET save_location=!mount_drive!:\!save_directory!
 SET install_location=!save_location!\!install_directory!
+SET docker_image_id_path=%install_location%\.image_id
+SET docker_container_id_path=%install_location%\.container_id
 
 ECHO Save image as:
-SET "distro=!image_name::=-!"
+SET "distro=!image_repo!-!image_name::=-!"
 SET /p "distro=!install_location!\(!distro!).tar $ "
 SET "distro=!distro::=-!"
 
@@ -89,44 +104,21 @@ SET "distro=!distro::=-!"
 @REM directory structure: 
 @REM %mount_drive%:\%install_directory%\%save_directory%
 @REM ie: C:\wsl-distros\docker
-
-@REM below is for debug ..TODO: comment out eventually
-ECHO:
-ECHO setting up save directory (!save_directory!)...
-mkdir !save_location!
-ECHO:
-ECHO setting up install directory (!install_directory!)...
-mkdir !install_location!
-
-:confirm
-ECHO ---------------------------------------------------------------------
-wsl --list
-ECHO ---------------------------------------------------------------------
-ECHO Check the list of current WSL distros installed on your system above. 
-ECHO If !distro! is already listed above it will be REPLACED.
-ECHO Use CTRL-C to quit now if this is not what you want.
-ECHO _____________________________________________________________________
-ECHO =====================================================================
-ECHO CONFIRM YOUR SETTINGS
-
-SET image_repo_image_name=!image_repo!/!image_name!
-ECHO image source/name: !image_repo_image_name!
-SET image_save_path=!save_location!\!distro!.tar
-ECHO image destination: !image_save_path!
-ECHO WSL alias : !distro! 
-ECHO -----------------------------------------------------------------------------------------------------
+mkdir !save_location! > nul 2> nul
+mkdir !install_location! > nul 2> nul
 
 :docker_image_container_start
-ECHO =====================================================================================================
+ECHO =====================================================================
 ECHO pulling image (!image_repo_image_name!)...
 @REM pull the image
 docker pull !image_repo_image_name!
 ECHO initializing the image container
-ECHO !image_tag!
 docker images -aq !image_repo_image_name! > !docker_image_id_path!
+@REM ECHO !docker_container_id_path!
+
 SET /P _WSL_DOCKER_IMG_ID=<!docker_image_id_path!
 
-del !docker_container_id_path!
+del !docker_container_id_path! > nul 2> nul
 docker run -dit --cidfile !docker_container_id_path! !_WSL_DOCKER_IMG_ID! 
 
 @REM ECHO !docker_container_id_path!
@@ -135,8 +127,17 @@ docker run -dit --cidfile !docker_container_id_path! !_WSL_DOCKER_IMG_ID!
 @REM SET /p _WSL_DOCKER_IMG_ID=(imageid_!_WSL_DOCKER_IMG_ID!)
 SET /P _WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path!
 
-docker export !_WSL_DOCKER_CONTAINER_ID! > "!image_save_path!"
+docker export !_WSL_DOCKER_CONTAINER_ID! > !image_save_path!
 ECHO DONE
+
+
+:wsl_list
+ECHO ---------------------------------------------------------------------
+wsl --list
+ECHO ---------------------------------------------------------------------
+ECHO Check the list of current WSL distros installed on your system above. 
+ECHO If !distro! is already listed above it will be REPLACED.
+ECHO _____________________________________________________________________
 
 :install_prompt
 ECHO:
