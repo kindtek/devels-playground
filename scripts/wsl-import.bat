@@ -3,17 +3,16 @@ SETLOCAL EnableDelayedExpansion
 :redo
 @REM set default variables. set default literally to default
 SET default=default
-@REM SET username=default
-@REM SET groupname=dev
+
 SET image_repo=kindtek
-SET image_name=dbp:ubuntu-skinny
+SET image_name=dbp:ubuntu-phat
 SET mount_drive=C
 SET "install_directory=%image_name::=-%"
 SET save_directory=docker
 
 SET "save_location=%mount_drive%:\%save_directory%"
 SET "install_location=%save_location%\%install_directory%"
-SET "distro=%image_name::=-%-%username%"
+SET "distro=%image_name::=-%"
 :header
 SET save_location=%mount_drive%:\%save_directory%
 SET image_save_path=%save_location%\%distro%.tar
@@ -45,11 +44,6 @@ IF %default%==notdefault (
 )
 
 IF %default%==defnotdefault ( 
-    @REM IF %username%==default (
-    @REM     username=dev0
-    @REM     goto custom_config 
-    @REM )
-    @REM ELSE goto confirm
     goto confirm
 )
 
@@ -66,13 +60,6 @@ SET /p "default=(continue) > "
 :custom_config
 
 if %default%==config (
-ECHO username:
-SET /p "username=(!username!) > "
-
-
-@REM ECHO group name:
-@REM SET /p "groupname=(!groupname!) > "
-
 
 SET /p "image_repo=image repository: (!image_repo!) > "
 SET /p "image_name=image name in !image_repo!: (!image_name!) > "
@@ -86,15 +73,9 @@ SET save_location=!mount_drive!:\!save_directory!
 SET install_location=!save_location!\!install_directory!
 
 ECHO Save image as:
-SET "distro=!image_name::=-!-!username!"
+SET "distro=!image_name::=-!"
 SET /p "distro=!install_location!\(!distro!).tar > "
 SET "distro=!distro::=-!"
-
-
-@REM TODO: build images with custom username/groupname then push
-@REM docker build --build-arg username=!username! --build-arg groupname=!groupname! -f ../dockerfile.alpine -t dbp_phat
-@REM docker build --build-arg username=!username! --build-arg groupname=!groupname! -f ../dockerfile.ubuntu -t dbp_phat
-@REM docker image push kindtek/dbp
 
 )
 
@@ -118,8 +99,7 @@ ECHO Use CTRL-C to quit now if this is not what you want.
 ECHO _____________________________________________________________________________________________________
 ECHO =====================================================================================================
 ECHO CONFIRM YOUR SETTINGS
-@REM ECHO username: !username!
-@REM ECHO group name: !groupname!
+
 SET image_repo_image_name=!image_repo!/!image_name!
 ECHO image source/name: !image_repo_image_name!
 SET image_save_path=!save_location!\!distro!.tar
