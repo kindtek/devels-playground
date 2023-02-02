@@ -92,8 +92,7 @@ SET /p "install_directory=install folder: !mount_drive!:\!save_directory!\(!inst
 @REM not possible to set this above bc it will overlap with the default initializing so set it here
 SET save_location=!mount_drive!:\!save_directory!
 SET install_location=!save_location!\!install_directory!
-SET docker_image_id_path=%install_location%\.image_id
-SET docker_container_id_path=%install_location%\.container_id
+
 
 ECHO Save image as:
 SET "distro=!image_repo!-!image_name::=-!"
@@ -101,6 +100,10 @@ SET /p "distro=!install_location!\(!distro!).tar $ "
 SET "distro=!distro::=-!"
 
 )
+ECHO "install location: !install_location!"
+SET docker_image_id_path=%install_location%\.image_id
+SET docker_container_id_path=%install_location%\.container_id
+SET image_save_path=%save_location%\%distro%.tar
 
 @REM directory structure: 
 @REM %mount_drive%:\%install_directory%\%save_directory%
