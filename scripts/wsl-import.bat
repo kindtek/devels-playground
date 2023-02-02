@@ -65,7 +65,7 @@ IF NOT %default%==default (goto %default%)
 
 ECHO:
 ECHO:
-ECHO Press ENTER to use settings above and import %image_repo_image_name% as default WSL distro 
+ECHO Press ENTER to use settings above and import %distro% as default WSL distro 
 ECHO:
 ECHO   ..or type "config" for custom install.
 ECHO:
@@ -80,6 +80,7 @@ SET /p "default=$ "
 
 if %default%==config (
 
+TODO: fix config and default using same save_location, install_location, image_id, and container_id
 ECHO:
 SET /p "image_repo=image repository: (!image_repo!) $ "
 SET /p "image_name=image name in !image_repo!: (!image_name!) $ "
