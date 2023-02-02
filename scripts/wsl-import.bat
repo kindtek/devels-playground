@@ -23,6 +23,7 @@ SET docker_container_id_path=%install_location%\.container_id
 SET image_tag=%image_name:*:=%
 
 CLS
+ECHO:
 ECHO  ___________________________________________________________________ 
 ECHO /                          DEV BOILERPLATE                          \
 ECHO \___________________    WSL image import tool    ___________________/
@@ -49,9 +50,14 @@ IF %default%==defnotdefault (
 
 IF NOT %default%==default (goto %default%)
 
-
-ECHO Press ENTER to use default image install configs or enter "config" to customize your image.
-SET /p "default=(continue) > "
+ECHO:
+ECHO:
+ECHO Press ENTER to import %image_repo_and_name% as default WSL distro 
+ECHO:
+ECHO ..or type "config" for custom install.
+ECHO:
+ECHO:
+SET /p "default=(Start default install) > "
 
 @REM catch when default configs NOT chosen AND second time around for user who chose to customize
 @REM display header but skip prompt when user chooses to customize install
@@ -61,6 +67,7 @@ SET /p "default=(continue) > "
 
 if %default%==config (
 
+ECHO:
 SET /p "image_repo=image repository: (!image_repo!) > "
 SET /p "image_name=image name in !image_repo!: (!image_name!) > "
 SET "image_repo_and_name=!image_repo!/!image_name!"
@@ -84,20 +91,22 @@ SET "distro=!distro::=-!"
 @REM ie: C:\wsl-distros\docker
 
 @REM below is for debug ..TODO: comment out eventually
+ECHO:
 ECHO setting up save directory (!save_directory!)...
 mkdir !save_location!
+ECHO:
 ECHO setting up install directory (!install_directory!)...
 mkdir !install_location!
 
 :confirm
-ECHO -----------------------------------------------------------------------------------------------------
+ECHO ---------------------------------------------------------------------
 wsl --list
-ECHO -----------------------------------------------------------------------------------------------------
+ECHO ---------------------------------------------------------------------
 ECHO Check the list of current WSL distros installed on your system above. 
 ECHO If !distro! is already listed above it will be REPLACED.
 ECHO Use CTRL-C to quit now if this is not what you want.
-ECHO _____________________________________________________________________________________________________
-ECHO =====================================================================================================
+ECHO _____________________________________________________________________
+ECHO =====================================================================
 ECHO CONFIRM YOUR SETTINGS
 
 SET image_repo_image_name=!image_repo!/!image_name!
@@ -129,24 +138,39 @@ docker export !_WSL_DOCKER_CONTAINER_ID! > "!image_save_path!"
 ECHO DONE
 
 :install_prompt
+ECHO:
 ECHO Would you still like to continue (yes/no/redo)?
 SET /p "continue="
 
+@REM if blank -> yes 
+IF "%continue%"=="" ( 
+    SET continue=yes
+)
+
+@REM if y -> yes 
+IF %continue%==y ( 
+    SET continue=yes
+)
+
+@REM if n -> yes no
+IF %continue%==n ( 
+    SET continue=no
+)
+
 @REM if label exists goto it
-goto !continue!
+goto %continue%
 
 @REM otherwise... use the built in error message and repeat install prompt
 goto install_prompt
 
 @REM EASTER EGG: typing yes at first prompt bypasses cofirm and restart the default distro
 :yes
-
-
 :install
-ECHO killing current the WSL !distro! process if it is running...
+ECHO:
+ECHO killing the !distro! WSL process if it is running...
 wsl --terminate !distro!
 ECHO DONE
-
+@REM ECHO:
 @REM ECHO killing all WSL processes...
 @REM wsl --shutdown
 @REM ECHO DONE
@@ -155,15 +179,20 @@ if NOT default==yes (
     ECHO deleting WSL distro !distro! if it exists...
     wsl --unregister !distro!
     ECHO DONE
-
-    ECHO importing  !distro!.tar to !install_location! as !distro!
-    wsl --import !distro! !install_location! !image_save_path!
-    ECHO DONE
 )
 
-ECHO setting !distro! as default
-wsl --set-default !distro!
+ECHO:
+ECHO importing  !distro!.tar to !install_location! as !distro!
+wsl --import !distro! !install_location! !image_save_path!
 ECHO DONE
+
+
+if NOT default==yes (
+    ECHO:
+    ECHO setting !distro! as default
+    wsl --set-default !distro!
+    ECHO DONE
+)
 
 @REM wsl --shutdown
 wsl -l -v
