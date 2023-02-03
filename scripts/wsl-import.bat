@@ -80,7 +80,7 @@ SET /p "default=$ "
 
 if %default%==config (
 
-TODO: fix config and default using same save_location, install_location, image_id, and container_id
+@REM TODO: fix config and default using same save_location, install_location, image_id, and container_id
 ECHO:
 SET /p "image_repo=image repository: (!image_repo!) $ "
 SET /p "image_name=image name in !image_repo!: (!image_name!) $ "
