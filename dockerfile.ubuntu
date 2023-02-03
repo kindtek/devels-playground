@@ -19,7 +19,7 @@ RUN addgroup --gid 1001 ${groupname} && \
 
 RUN adduser --home /home/${username} --shell /bin/bash --uid 1000 --disabled-password ${username}
 # make default user 
-RUN echo -e "[user]\ndefault=${username}" >> /etc/wsl.conf
+RUN echo "[user]\ndefault=${username}" >> /etc/wsl.conf
 
 USER ${username}:devbp
 # install cdir - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
