@@ -26,7 +26,7 @@ RUN addgroup ${username} devbp && \
     addgroup root devbp
 
 # make default user and ensure no password
-RUN echo -e "[user]\ndefault=${username}" >> /etc/wsl.conf 
+RUN echo "[user]\ndefault=${username}" >> /etc/wsl.conf 
 
 USER ${username}:devbp
 # install cdir - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
