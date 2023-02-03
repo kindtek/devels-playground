@@ -5,7 +5,7 @@ SETLOCAL EnableDelayedExpansion
 SET default=default
 
 SET image_repo=kindtek
-SET image_name=dbp:ubuntu-phat
+SET image_name=d2w:ubuntu-phat
 SET mount_drive=C
 SET save_directory=docker
 SET "install_directory=%image_repo%-%image_name::=-%"

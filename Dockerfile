@@ -1,6 +1,6 @@
 # to build, for exemple, run: 
 # `username=mine groupname=ours docker run -d -i`
-FROM ubuntu:latest AS dbp_skinny
+FROM ubuntu:latest AS d2w_skinny
 ARG username=${username:-dev0}
 ARG groupname=${groupname:-dev}
 
@@ -54,7 +54,7 @@ RUN passwd -d ${username} && passwd -d host && passwd -d root && passwd -l root
 USER ${username}
 WORKDIR /home/${username}
 
-FROM dbp_skinny AS dbp_phat-dockerless
+FROM d2w_skinny AS d2w_phat-dockerless
 USER root
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
 RUN curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
@@ -72,7 +72,7 @@ USER ${username}
 
 # TODO: https://github.com/mbacchi/brave-docker
 
-FROM dbp_phat-dockerless as dbp_phat
+FROM d2w_phat-dockerless as d2w_phat
 USER root
 # DOCKER
 RUN apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin

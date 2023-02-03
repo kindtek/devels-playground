@@ -4,10 +4,10 @@ services:
     entrypoint:
     - sleep
     - infinity
-    image: kindtek/dbp:ubuntu-skinny
+    image: kindtek/d2w:ubuntu-skinny
     build:
       context: .
-      target: dbp_skinny
+      target: d2w_skinny
       args: 
       - username=${username:-dev0}
       dockerfile: dockerfile.ubuntu
@@ -24,10 +24,10 @@ services:
     entrypoint:
     - sleep
     - infinity
-    image: kindtek/dbp:ubuntu-phat-dockerless
+    image: kindtek/d2w:ubuntu-phat-dockerless
     build:
       context: .
-      target: dbp_phat-dockerless
+      target: d2w_phat-dockerless
       args: 
       - username=${username:-dev0}
       dockerfile: dockerfile.ubuntu
@@ -44,10 +44,10 @@ services:
     entrypoint:
     - sleep
     - infinity
-    image: kindtek/dbp:ubuntu-phat
+    image: kindtek/d2w:ubuntu-phat
     build:
       context: .
-      target: dbp_phat
+      target: d2w_phat
       args: 
       - username=${username:-dev0}
       dockerfile: dockerfile.ubuntu
