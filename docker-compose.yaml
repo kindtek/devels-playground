@@ -1,61 +1,10 @@
 version: "3.8"
 services:
-  skinny:
-    entrypoint:
-      - sleep
-      - infinity
-    image: kindtek/d2w:alpine-skinny
+  alpine-build:
     build:
       context: .
-      target: d2w_skinny
-      args:
-        - username=${username:-dev0}
-      dockerfile: dockerfile.alpine
-    init: true
-    volumes:
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-      - type: bind
-        source: ~/
-        target: /home/host
-
-  phat-dockerless:
-    entrypoint:
-      - sleep
-      - infinity
-    image: kindtek/d2w:alpine-phat-dockerless
+      dockerfile: docker-compose.alpine.yaml
+  ubuntu-build:
     build:
       context: .
-      target: d2w_phat-dockerless
-      args:
-        - username=${username:-dev0}
-      dockerfile: dockerfile.alpine
-
-    init: true
-    volumes:
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-      - type: bind
-        source: ~/
-        target: /home/host
-  phat:
-    entrypoint:
-      - sleep
-      - infinity
-    image: kindtek/d2w:alpine-phat
-    build:
-      context: .
-      target: d2w_phat
-      args:
-        - username=${username:-dev0}
-      dockerfile: dockerfile.alpine
-    init: true
-    volumes:
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-      - type: bind
-        source: ~/
-        target: /home/host
+      dockerfile: docker-compose.ubuntu.yaml
