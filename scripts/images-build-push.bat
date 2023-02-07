@@ -6,7 +6,7 @@
 @REM alpine
 docker compose -f docker-compose.alpine build
 @REM ubuntu
-docker compose -f compose-dev.ubuntu build
+docker compose -f docker-compose.ubuntu build
 
 @REM docker compose build
 docker compose push
