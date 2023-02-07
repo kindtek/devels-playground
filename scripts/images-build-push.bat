@@ -3,6 +3,11 @@
 @REM docker build --build-arg username=!username! --build-arg groupname=!groupname! -f ../dockerfile.ubuntu -t d2w_phat
 @REM docker image push kindtek/d2w
 
-docker compose build
+@REM alpine
+docker compose -f docker-compose.alpine build
+@REM ubuntu
+docker compose -f compose-dev.ubuntu build
+
+@REM docker compose build
 docker compose push
 docker compose up -d
