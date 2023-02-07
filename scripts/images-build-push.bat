@@ -4,9 +4,9 @@
 @REM docker image push kindtek/d2w
 
 @REM alpine
-docker compose -f docker-compose.alpine build
+docker compose -f ../docker-compose.alpine build
 @REM ubuntu
-docker compose -f docker-compose.ubuntu build
+docker compose -f ../docker-compose.ubuntu build
 
 @REM docker compose build
 docker compose push
