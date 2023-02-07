@@ -8,6 +8,13 @@ docker compose -f ../docker-compose.alpine build
 @REM ubuntu
 docker compose -f ../docker-compose.ubuntu build
 
-@REM docker compose build
-docker compose push
-docker compose up -d
+@REM alpine
+docker compose -f ../docker-compose.alpine push
+@REM ubuntu
+docker compose -f ../docker-compose.ubuntu push
+
+@REM alpine
+docker compose -f ../docker-compose.alpine up -d
+@REM ubuntu
+docker compose -f ../docker-compose.ubuntu up -d
+
