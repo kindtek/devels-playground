@@ -84,7 +84,7 @@ RUN apt-get -y install nvidia-cuda-toolkit
 # VSCODE
 RUN apt-get -y install software-properties-common apt-transport-https wget -y
 RUN wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | apt-key add -
-RUN add-apt-repository "deb [arch=$(dpkg --print-architecture)] https://packages.microsoft.com/repos/vscode stable main"
+RUN add-apt-repository -y "deb [arch=$(dpkg --print-architecture)] https://packages.microsoft.com/repos/vscode stable main"
 RUN apt-get -y install code
 RUN apt-get -y update
 
