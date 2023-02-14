@@ -1,6 +1,6 @@
 # Import Docker images to WSL
 
-## 1) In Windows (with WSL2 installed), run [WSL import tool script](scripts/wsl-import.bat) and hit ENTER to import docker image built with this repo's docker compose files ([[ubuntu](docker-compose.ubuntu)], [[alpine](docker-compose.alpine)]) and dockerfiles ([[ubuntu](dockerfile.ubuntu)], [[alpine](docker-file.alpine)])
+## 1) In Windows (using WSL version 2 and Docker Desktop installed), run [WSL import tool script](scripts/wsl-import.bat) and hit ENTER to import docker image built with this repo's docker compose files ([[ubuntu](docker-compose.ubuntu.yaml)], [[alpine](docker-compose.alpine.yaml)]) and dockerfiles ([[ubuntu](dockerfile.ubuntu)], [[alpine](docker-file.alpine)])
 
 ## 2) instead of pressing ENTER, type "config" then hit ENTER to specify any linux distro on [hub.docker.com](https://hub.docker.com/) you would like to use with WSL
 
