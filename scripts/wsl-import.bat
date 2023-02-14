@@ -6,33 +6,33 @@ on break goto quit
 @REM set default variables. set default literally to default
 SET default=default
 SET image_repo=_
-@REM _mask = human readable
+@REM _mask = human readable - ie 'official' not '_'
 SET image_repo_mask=official
-SET image_name=ubuntu
+SET image_name=ubuntu:latest
 SET mount_drive=C
 SET save_directory=docker
 
-SET "install_directory=%image_repo%-%image_name::=-%"
-SET "install_directory_mask=%image_repo_mask%-%image_name::=-%"
-
+SET "install_directory=%image_repo_mask%-%image_name::=-%"
 SET "save_location=%mount_drive%:\%save_directory%"
 SET "install_location=%save_location%\%install_directory%"
-SET "distro=%image_repo%-%image_name::=-%"
-SET "distro_mask=%image_repo_mask%-%image_name::=-%"
-:header
-SET save_location=%mount_drive%:\%save_directory%
-SET image_save_path=%save_location%\%distro%.tar
-SET image_save_path_mask=!image_save_path:%distro%=%distro_mask%!
-
+@REM distro: meaning local distro
+SET "distro=%install_directory%"
+SET "distro_mask=%distro%"
+@REM :header
+SET image_save_path=%save_location%\%distro_mask%.tar
 SET "install_location=%save_location%\%install_directory%"
-SET image_repo_image_name=%image_repo%/%image_name%
-SET image_repo_image_name_mask=%image_repo_mask%/%image_name%
-SET docker_image_id_path=%install_location%\.image_id
-SET docker_container_id_path=%install_location%\.container_id
-SET image_tag=%image_name:_/:=%
-SET image_repo_image_name=!image_repo!/!image_name!
+SET "image_repo_image_name=%image_repo%/%image_name%"
+@REM special rule for official distros on docker hub
+@REM replaces '_' with 'official' for printing
+IF %image_repo%==_ (
+    SET "image_repo_image_name=%image_name%"
+) 
+SET "docker_image_id_path=%install_location%\.image_id"
+SET "docker_container_id_path=%install_location%\.container_id"
 
 CLS
+ECHO "image_repo_image_name: !image_repo_image_name!"
+
 ECHO:
 ECHO  ___________________________________________________________________ 
 ECHO /                          DEV BOILERPLATE                          \
@@ -44,39 +44,20 @@ ECHO   .............    source:                            .............
 ECHO   .............      !image_repo_mask!                         .............
 ECHO   .............                                       .............
 ECHO   .............    name:                              .............
-ECHO   .............      !image_name!                           .............
+ECHO   .............      !image_name!                    .............
 ECHO   .............                                       .............
 ECHO   .............    download to:                       .............
-ECHO   .............       !image_save_path_mask!   .............
+ECHO   .............       !image_save_path! ........
 ECHO   .............                                       .............
 ECHO   .............    WSL alias:                         .............
-ECHO   .............       !distro_mask!                 .............
+ECHO   .............       !distro_mask!          .............
 ECHO   -----------------------------------------------------------------
-
-IF %default%==config ( goto custom_config )
-
-IF "%default%"=="" ( 
-    default=confirm
-    goto confirm
-)
-
-@REM default equals default if first time around
-IF %default%==notdefault ( 
-    default=defnotdefault
-    goto confirm 
-)
-
-IF %default%==defnotdefault ( 
-    goto confirm
-)
-
-IF NOT %default%==default (goto %default%)
 
 ECHO:
 ECHO:
 ECHO Press ENTER to use settings above and import %distro_mask% as default WSL distro 
 ECHO:
-ECHO   ..or type "config" for custom install.
+ECHO   ..or type 'config' for custom install.
 ECHO:
 ECHO:
 SET /p "default=$ "
@@ -93,71 +74,64 @@ if %default%==config (
 
     @REM TODO: fix config and default using same save_location, install_location, image_id, and container_id
     ECHO:
-    IF !image_repo!=="_" (
-        SET image_repo=official
+    IF "!image_repo!"=="_" (
+        SET "image_repo_mask=official"
     )
     SET /p "image_repo=image repository: (!image_repo_mask!) $ "
+    SET image_repo_mask=!image_repo!
 
-    @REM special rule for official distros on docker hub
-    @REM replaces 'official' with '_' for printing
-    IF image_repo==%image_repo_mask% (
-        SET image_repo=_
+    IF "!image_repo!"=="" (
+        SET "image_repo=_"
+        SET "image_repo_mask=official"
+        ECHO "using an official Docker repo"
     )
+
+
     SET /p "image_name=image name in !image_repo_mask!: (!image_name!) $ "
 
     @REM special rule for official distros on docker hub
     @REM replaces '_' with 'official' for printing
-    IF %image_repo%==_ (
-        SET image_repo_mask=official
+    IF "!image_repo!"=="_" (
+        SET "image_repo_mask=official"
         SET "image_repo_image_name=!image_name!"
-        SET "image_repo_image_name_mask=!image_repo_mask!/!image_name!"
-
-
-    ) else (
-        SET "image_repo_image_name=!image_repo!/!image_name!" 
-        SET "image_repo_image_name_mask=!image_repo_mask!/!image_name!"
-    
+    ) ELSE (
+        SET "image_repo_mask=!image_repo!"
+        SET "image_repo_image_name=!image_repo_mask!/!image_name!"
     )
 
     SET /p "save_directory=download folder: !mount_drive!:\(!save_directory!) $ "
     SET install_directory=!image_repo_image_name:/=-!
     SET install_directory=!install_directory::=-!
 
-
-
-
-
     ECHO Save image as:
-    @REM special rule for official distro
-    if !image_repo!==_ (
-        SET install_directory=official
-        SET /p "install_directory=install folder: !mount_drive!:\!save_directory!\(!install_directory!) $ "
-        @REM not possible to set this above bc it will overlap with the default initializing so set it here
-        SET save_location=!mount_drive!:\!save_directory!
-        SET install_location=!save_location!\!install_directory_mask!
-        SET install_location_mask=!save_location!\!install_directory!
-        SET "distro=!image_name::=-!"
-        SET /p "distro=!install_location!\(!distro!).tar $ "
-        SET "distro=!distro::=-!"
-    ) else (
-        SET /p "install_directory=install folder: !mount_drive!:\!save_directory!\(!install_directory_mask!) $ "
+    SET /p "install_directory=install folder: !mount_drive!:\!save_directory!\(!install_directory!) $ "
+        SET install_directory=!image_repo_image_name:/=-!
+        SET install_directory=!install_directory::=-!
         @REM not possible to set this above bc it will overlap with the default initializing so set it here
         SET save_location=!mount_drive!:\!save_directory!
         SET install_location=!save_location!\!install_directory!
-        SET install_location_mask=!save_location!\!install_directory_mask!
-        SET "distro=!image_repo!-!image_name::=-!"
-        SET /p "distro=!install_location!\(!distro!).tar $ "
-        SET "distro=!distro::=-!"
+    @REM special rule for official distro
+    if "!image_repo!"=="_" (
+        SET "distro=!image_name::=-!"
+    ) ELSE (
+        SET "distro=!image_repo!-!image_name::=-!" 
     )
-        
+
+    SET "distro_mask=!distro::=-!"
+    SET "distro_mask=!distro_mask:/=-!"
+    SET /p "distro=!install_location!\(!distro_mask!).tar $ "
+
+    ECHO "install location: !install_location!"
+
 
     color F
 )
 
-ECHO "install location: !install_location_mask!"
+
+
 SET docker_image_id_path=%install_location%\.image_id
 SET docker_container_id_path=%install_location%\.container_id
-SET image_save_path=%save_location%\%distro%.tar
+SET image_save_path=%save_location%\%distro_mask%.tar
 
 @REM directory structure: 
 @REM %mount_drive%:\%install_directory%\%save_directory%
@@ -166,8 +140,9 @@ mkdir !save_location! > nul 2> nul
 mkdir !install_location! > nul 2> nul
 
 :docker_image_container_start
+
 ECHO =====================================================================
-ECHO pulling image (!image_repo_image_name_mask!)...
+ECHO pulling image (!image_repo_image_name!)...
 
 @REM pull the image
 
@@ -176,7 +151,7 @@ ECHO initializing the image container...
 docker images -aq !image_repo_image_name! > !docker_image_id_path!
 @REM ECHO !docker_container_id_path!
 
-SET /P _WSL_DOCKER_IMG_ID=<!docker_image_id_path!
+SET /P WSL_DOCKER_IMG_ID=<!docker_image_id_path!
 
 del !docker_container_id_path! > nul 2> nul
 
@@ -190,7 +165,7 @@ IF %default%==config (
     ECHO:
     ECHO:
     ECHO:
-    ECHO this container is running as a local copy of the image !image_repo_image_name_mask!
+    ECHO this container is running as a local copy of the image !image_repo_image_name!
     ECHO:
     ECHO ^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!
     ECHO ^^!^^!^^!^^!^^!^^! IMPORTANT: type 'exit' then ENTER to exit container preview ^^!^^!^^!^^!^^!^^!
@@ -198,22 +173,22 @@ IF %default%==config (
     ECHO:
     ECHO:
     color 2
-    docker run -it --cidfile !docker_container_id_path! !_WSL_DOCKER_IMG_ID!
+    docker run -it --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID!
     color F
 
     ECHO =====================================================================
 ) ELSE (
-    docker run -dit --cidfile !docker_container_id_path! !_WSL_DOCKER_IMG_ID! 
+    docker run -dit --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID! 
 )
 
 
 @REM ECHO !docker_container_id_path!
-@REM set /p _WSL_DOCKER_IMG_ID=<docker ps -alq !image_repo!:!image_tag!
+@REM set /p WSL_DOCKER_IMG_ID=<docker ps -alq !image_repo!:!image_tag!
  
-@REM SET /p _WSL_DOCKER_IMG_ID=(imageid_!_WSL_DOCKER_IMG_ID!)
-SET /P _WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path!
+@REM SET /p WSL_DOCKER_IMG_ID=(imageid_!WSL_DOCKER_IMG_ID!)
+SET /P WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path!
 
-docker export !_WSL_DOCKER_CONTAINER_ID! > !image_save_path!
+docker export !WSL_DOCKER_CONTAINER_ID! > !image_save_path!
 ECHO DONE
 
 
@@ -281,6 +256,7 @@ ECHO DONE
 if default==yes (
     goto set_default
 ) else (
+    ECHO: 
     ECHO press ENTER to set !distro_mask! as default WSL distro
     ECHO  ..or enter any character to skip
     SET /p "setdefault=$ "
@@ -312,13 +288,15 @@ ECHO  ..or enter any character to skip
 SET /p "exit=$ "
 IF "%exit%"=="" (
     ECHO:
-    ECHO default WSL with default distro...
+    ECHO launching WSL with default distro...
     ECHO if WSL fails to start try converting the distro version to WSL1:
-    ECHO wsl --set-version !distro! 1
+    ECHO wsl --set-version !distro_mask! 1
     ECHO:
     wsl 
 )
 :quit
 :no
 :exit
-echo goodbye
+ECHO:
+ECHO goodbye
+ECHO:
