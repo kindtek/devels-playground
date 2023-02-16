@@ -11,6 +11,7 @@ SET image_repo_mask=official
 SET image_name=ubuntu:latest
 SET mount_drive=C
 SET save_directory=docker
+SET wsl_version=2
 
 SET "install_directory=%image_repo_mask%-%image_name::=-%"
 SET "save_location=%mount_drive%:\%save_directory%"
@@ -34,24 +35,24 @@ CLS
 ECHO "image_repo_image_name: !image_repo_image_name!"
 
 ECHO:
-ECHO  ___________________________________________________________________ 
-ECHO /                          DEV BOILERPLATE                          \
-ECHO \_______________  WSL import tool for Docker images  _______________/
-ECHO   -----------------------------------------------------------------
-ECHO   .............    Image settings                     .............
-ECHO   .............---------------------------------------.............
-ECHO   .............    source:                            .............
-ECHO   .............      !image_repo_mask!                         .............
-ECHO   .............                                       .............
-ECHO   .............    name:                              .............
-ECHO   .............      !image_name!                    .............
-ECHO   .............                                       .............
-ECHO   .............    download to:                       .............
-ECHO   .............       !image_save_path! ........
-ECHO   .............                                       .............
-ECHO   .............    WSL alias:                         .............
-ECHO   .............       !distro_mask!          .............
-ECHO   -----------------------------------------------------------------
+ECHO  _____________________________________________________________________ 
+ECHO /                          DEV BOILERPLATE                            \
+ECHO \________________  WSL import tool for Docker images  ________________/
+ECHO   -------------------------------------------------------------------
+ECHO   .............    Image settings                       .............
+ECHO   .............-----------------------------------------.............
+ECHO   .............    source:                              .............
+ECHO   .............      !image_repo_mask!                           .............
+ECHO   .............                                         .............
+ECHO   .............    name:                                .............
+ECHO   .............      !image_name!                      .............
+ECHO   .............                                         .............
+ECHO   .............    download to:                         .............
+ECHO   .............       !image_save_path! ..........
+ECHO   .............                                         .............
+ECHO   .............    WSL alias:                           .............
+ECHO   .............       !distro_mask!            .............
+ECHO   -------------------------------------------------------------------
 
 ECHO:
 ECHO:
@@ -103,7 +104,6 @@ if %default%==config (
     SET install_directory=!image_repo_image_name:/=-!
     SET install_directory=!install_directory::=-!
 
-    ECHO Save image as:
     SET /p "install_directory=install folder: !mount_drive!:\!save_directory!\(!install_directory!) $ "
         SET install_directory=!image_repo_image_name:/=-!
         SET install_directory=!install_directory::=-!
@@ -119,10 +119,16 @@ if %default%==config (
 
     SET "distro_mask=!distro::=-!"
     SET "distro_mask=!distro_mask:/=-!"
-    SET /p "distro=!install_location!\(!distro_mask!).tar $ "
+    SET /p "distro=filename: !install_location!\(!distro_mask!).tar $ "
 
-    ECHO "install location: !install_location!"
 
+
+    SET /p "wsl_version=WSL version: (2) $ "
+    if "!wsl_version!"=="1" (
+        SET "wsl_version=1"
+    ) ELSE (
+        SET "wsl_version=2" 
+    )
 
     color F
 )
@@ -141,12 +147,14 @@ mkdir !install_location! > nul 2> nul
 
 :docker_image_container_start
 
-ECHO =====================================================================
+ECHO ========================================================================
+ECHO:
 ECHO pulling image (!image_repo_image_name!)...
 
 @REM pull the image
 
 docker pull !image_repo_image_name!
+ECHO:
 ECHO initializing the image container...
 docker images -aq !image_repo_image_name! > !docker_image_id_path!
 @REM ECHO !docker_container_id_path!
@@ -158,7 +166,7 @@ del !docker_container_id_path! > nul 2> nul
 IF %default%==config (
     ECHO: 
     
-    ECHO =====================================================================
+    ECHO ========================================================================
 
     ECHO:
     ECHO opening container preview...
@@ -175,19 +183,21 @@ IF %default%==config (
     color 2
     docker run -it --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID!
     color F
-
-    ECHO =====================================================================
+    ECHO:
+    ECHO closing preview container...
+    ECHO:
+    ECHO ========================================================================
 ) ELSE (
     docker run -dit --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID! 
 )
-
 
 @REM ECHO !docker_container_id_path!
 @REM set /p WSL_DOCKER_IMG_ID=<docker ps -alq !image_repo!:!image_tag!
  
 @REM SET /p WSL_DOCKER_IMG_ID=(imageid_!WSL_DOCKER_IMG_ID!)
-SET /P WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path!
-
+SET /P WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path! > nul
+ECHO:
+ECHO exporting image...
 docker export !WSL_DOCKER_CONTAINER_ID! > !image_save_path!
 ECHO DONE
 
@@ -240,8 +250,8 @@ ECHO DONE
 @REM ECHO killing all WSL processes...
 @REM wsl --shutdown
 @REM ECHO DONE
-
 if NOT default==yes (
+    ECHO:
     ECHO deleting WSL distro !distro_mask! if it exists...
     wsl --unregister !distro_mask!
     ECHO DONE
@@ -249,7 +259,7 @@ if NOT default==yes (
 
 ECHO:
 ECHO importing !distro_mask!.tar to !install_location! as !distro_mask!...
-wsl --import !distro_mask! !install_location! !image_save_path!
+wsl --import !distro_mask! !install_location! !image_save_path! --version !wsl_version!
 ECHO DONE
 
 
@@ -260,12 +270,12 @@ if default==yes (
     ECHO press ENTER to set !distro_mask! as default WSL distro
     ECHO  ..or enter any character to skip
     SET /p "setdefault=$ "
-    IF "%setdefault%"=="" (
+    IF "!setdefault!"=="" (
 
 :set_default
         ECHO:
         ECHO setting default WSL distro as !distro_mask!...
-        wsl --set-default !distro_mask!
+        wsl --set-default !distro_mask! 
         ECHO DONE!
         ECHO:
         ECHO  ..if starting WSL results in an error, try converting the distro version to WSL1 by running:
