@@ -178,7 +178,7 @@ IF %default%==config (
 SET /P WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path! > nul
 ECHO:
 ECHO exporting image (!WSL_DOCKER_IMG_ID!) as container (!WSL_DOCKER_CONTAINER_ID!)...
-ECHO "docker export !WSL_DOCKER_CONTAINER_ID! > !image_save_path!"
+ECHO docker export !WSL_DOCKER_CONTAINER_ID! ^> !image_save_path!
 docker export !WSL_DOCKER_CONTAINER_ID! > !image_save_path!
 ECHO DONE
 
@@ -188,10 +188,10 @@ ECHO Windows Subsystem for Linux Distributions:
 wsl -l -v
 ECHO ---------------------------------------------------------------------
 ECHO Check the list of current WSL distros installed on your system above. 
-ECHO ^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!
-ECHO ^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!                                       WARNING:                                        ^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!
-ECHO ^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!  If !distro! is already listed above it will be REPLACED.   ^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!
-ECHO ^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!
+ECHO ^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!
+ECHO ^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!                   WARNING:                ^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!
+ECHO If !distro! is already listed above it will be REPLACED.  
+ECHO ^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!
 ECHO _____________________________________________________________________
 
 :install_prompt
@@ -283,7 +283,7 @@ ECHO  ..or enter any character to skip
 SET /p "exit=$ "
 IF "%exit%"=="" (
     ECHO:
-    ECHO launching WSL with default distro...
+    ECHO launching WSL with !distro! distro...
     ECHO wsl -d !distro!
     ECHO:
     wsl -d !distro!
