@@ -59,6 +59,12 @@ ECHO:
 ECHO Press ENTER to use settings above and import %distro_mask% as default WSL distro 
 ECHO:
 ECHO   ..or type 'config' for custom install.
+@REM @TODO: add options ie: 
+@REM ECHO   ..or type:
+@REM ECHO           - 'registry' to specify distro from a registry on the Docker Hub
+@REM ECHO           - 'image' to import a Docker image
+@REM ECHO           - 'container' to import a Docker container
+@REM @TODO: (and eventually add numbered menu)
 ECHO:
 ECHO:
 SET /p "default=$ "
@@ -102,11 +108,11 @@ if %default%==config (
     SET install_directory=!install_directory::=-!
 
     SET /p "install_directory=install folder: !mount_drive!:\!save_directory!\(!install_directory!) $ "
-        SET install_directory=!image_repo_image_name:/=-!
-        SET install_directory=!install_directory::=-!
-        @REM not possible to set this above bc it will overlap with the default initializing so set it here
-        SET save_location=!mount_drive!:\!save_directory!
-        SET install_location=!save_location!\!install_directory!
+    SET install_directory=!install_directory:/=-!
+    SET install_directory=!install_directory::=-!
+    @REM not possible to set this above bc it will overlap with the default initializing so set it here
+    SET save_location=!mount_drive!:\!save_directory!
+    SET install_location=!save_location!\!install_directory!
     @REM special rule for official distro
     if "!image_repo!"=="_" (
         SET "distro=!image_name::=-!"
@@ -116,9 +122,9 @@ if %default%==config (
 
     SET "distro_mask=!distro::=-!"
     SET "distro_mask=!distro_mask:/=-!"
-    SET /p "distro=filename: !install_location!\(!distro_mask!).tar $ "
-
-
+    SET !distro!=!distro_mask!
+    SET /p "distro=filename: !install_location!\(!distro!).tar $ "
+    @REM @TODO: filter/safeguard user input
 
     SET /p "wsl_version=WSL version: (2) $ "
     if "!wsl_version!"=="1" (
@@ -147,12 +153,12 @@ mkdir !install_location! > nul 2> nul
 ECHO ========================================================================
 ECHO:
 ECHO pulling image (!image_repo_image_name!)...
-
+ECHO docker pull !image_repo_image_name!
 @REM pull the image
-
 docker pull !image_repo_image_name!
 ECHO:
 ECHO initializing the image container...
+ECHO docker images -aq !image_repo_image_name! > !docker_image_id_path!
 docker images -aq !image_repo_image_name! > !docker_image_id_path!
 @REM ECHO !docker_container_id_path!
 
@@ -178,6 +184,7 @@ IF %default%==config (
     ECHO:
     ECHO:
     color 2
+    ECHO docker run -it --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID!
     docker run -it --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID!
     color F
     ECHO:
@@ -185,6 +192,7 @@ IF %default%==config (
     ECHO:
     ECHO ========================================================================
 ) ELSE (
+    ECHO docker run -dit --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID!
     docker run -dit --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID! 
 )
 
@@ -195,6 +203,7 @@ IF %default%==config (
 SET /P WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path! > nul
 ECHO:
 ECHO exporting image (!WSL_DOCKER_IMG_ID!) as container (!WSL_DOCKER_CONTAINER_ID!)...
+ECHO docker export !WSL_DOCKER_CONTAINER_ID! > !image_save_path!
 docker export !WSL_DOCKER_CONTAINER_ID! > !image_save_path!
 ECHO DONE
 
@@ -241,6 +250,7 @@ goto install_prompt
 :install
 ECHO:
 ECHO killing the !distro_mask! WSL process if it is running...
+ECHO wsl --terminate !distro_mask!
 wsl --terminate !distro_mask!
 ECHO DONE
 @REM ECHO:
@@ -250,12 +260,14 @@ ECHO DONE
 if NOT default==yes (
     ECHO:
     ECHO deleting WSL distro !distro_mask! if it exists...
+    ECHO wsl --unregister !distro_mask!
     wsl --unregister !distro_mask!
     ECHO DONE
 )
 
 ECHO:
 ECHO importing !distro_mask!.tar to !install_location! as !distro_mask!...
+ECHO wsl --import !distro_mask! !install_location! !image_save_path! --version !wsl_version!
 wsl --import !distro_mask! !install_location! !image_save_path! --version !wsl_version!
 ECHO DONE
 
@@ -272,6 +284,7 @@ if default==yes (
 :set_default
         ECHO:
         ECHO setting default WSL distro as !distro_mask!...
+        ECHO  wsl --set-default !distro_mask! 
         wsl --set-default !distro_mask! 
         ECHO DONE!
         ECHO:
@@ -296,10 +309,12 @@ SET /p "exit=$ "
 IF "%exit%"=="" (
     ECHO:
     ECHO launching WSL with default distro...
-    ECHO if WSL fails to start try converting the distro version to WSL1:
-    ECHO wsl --set-version !distro_mask! 1
+    ECHO wsl -d !distro_mask!
     ECHO:
     wsl -d !distro_mask!
+        
+    ECHO if WSL fails to start try converting the distro version to WSL1:
+    ECHO wsl --set-version !distro_mask! 1
 )
 :quit
 :no
