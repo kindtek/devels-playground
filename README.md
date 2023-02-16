@@ -1,7 +1,16 @@
 # Import Docker images to WSL
 
-## 1) In Windows (using WSL version 2 with Docker Desktop running in the background), run [WSL import tool script](scripts/wsl-import.bat) and hit ENTER to import docker image built with this repo's docker compose files ([[ubuntu](docker-compose.ubuntu.yaml)], [[alpine](docker-compose.alpine.yaml)]) and dockerfiles ([[ubuntu](dockerfile.ubuntu.yaml)], [[alpine](dockerfile.alpine.yaml)])
+## In Windows, clone this repo with git and run [WSL import tool script](scripts/wsl-import.bat)
+`git clone https://github.com/kindtek/docker-to-wsl`
 
-## 2) instead of pressing ENTER, type "config" then hit ENTER to specify any linux distro on [hub.docker.com](https://hub.docker.com/) you would like to use with WSL
+`scripts\wsl-import`
 
-## 3) fork this repo and modify the docker (compose) files to build your own custom docker image(s) to use with the WSL import tool
+## 0) [Example] Continually hit ENTER to import latest ubuntu docker image stored on the hub with default settings
+
+## 1) instead of pressing ENTER, type "config" then hit ENTER to specify any linux distro on [hub.docker.com](https://hub.docker.com/) you would like to use with WSL and customize the save location, distro name, and WSL version
+
+## 2) fork this repo and modify the Docker (-compose) files to build your own custom Docker image(s), push the image to a repo on Docker Hub, and import onto the image onto any Windows machine that is running Docker Desktop (see #1 above) for a ready-to-go dev environment in WSL
+
+### Requirements: github, WSL2, Docker Desktop (running), Visual Studio Code (optional)
+
+### fwiw: fork this repo and build your own dev environment by using template Docker files ([[ubuntu](docker-compose.ubuntu.yaml)], [[alpine](docker-compose.alpine.yaml)]), ([[ubuntu](dockerfile.ubuntu.yaml)], [[alpine](dockerfile.alpine.yaml)])
