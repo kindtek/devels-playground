@@ -8,6 +8,16 @@ SET prompt=prompt
 SET /p "prompt=[u]nregister docker desktop containers, [s]tart docker service (admin req), [r]eset wsl default distro, or [reboot] windows ?"
 goto %prompt%
 
+:d
+net stop docker
+net stop com.docker.service
+taskkill /IM "dockerd.exe" /F
+taskkill /IM "Docker for Windows.exe" /F
+net start docker
+net start com.docker.service
+"C:\Program Files\Docker\Docker\Docker for Windows.exe"
+goto prompt
+
 :u
 @REM force restart for docker containers
 wsl --unregister docker-desktop
