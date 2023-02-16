@@ -197,7 +197,7 @@ IF %default%==config (
 @REM SET /p WSL_DOCKER_IMG_ID=(imageid_!WSL_DOCKER_IMG_ID!)
 SET /P WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path! > nul
 ECHO:
-ECHO exporting image...
+ECHO exporting image (!WSL_DOCKER_IMG_ID!) as container (!WSL_DOCKER_CONTAINER_ID!)...
 docker export !WSL_DOCKER_CONTAINER_ID! > !image_save_path!
 ECHO DONE
 
