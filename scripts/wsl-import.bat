@@ -79,12 +79,13 @@ if %default%==config (
         SET "image_repo_mask=official"
     )
     SET /p "image_repo=image repository: (!image_repo_mask!) $ "
-    SET image_repo_mask=!image_repo!
 
     IF "!image_repo!"=="" (
         SET "image_repo=_"
         SET "image_repo_mask=official"
         ECHO "using an official Docker repo"
+    ) ELSE (
+        SET image_repo_mask=!image_repo!
     )
 
 
