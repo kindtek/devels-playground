@@ -17,4 +17,6 @@ docker compose -f ../docker-compose.ubuntu.yaml push
 docker compose -f ../docker-compose.alpine.yaml up -d
 @REM ubuntu
 docker compose -f ../docker-compose.ubuntu.yaml up -d
+@REM both
+@REM docker compose -f ../docker-compose.ubuntu.yaml -f ../docker-compose.alpine.yaml up -d
 

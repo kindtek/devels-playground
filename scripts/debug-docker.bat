@@ -7,12 +7,13 @@ SETLOCAL EnableDelayedExpansion
 
 SET prompt=prompt
 :prompt
-ECHO [s]soft docker restart (admin req)
-ECHO [u]nregister docker desktop containers
-ECHO [h]ard docker service start (admin req)
-ECHO [r]eset wsl default distro
-ECHO [reboot] windows (^!^!)
-ECHO [q]uit
+ECHO:
+ECHO  [s]soft docker restart (admin req)
+ECHO  [u]nregister docker desktop containers
+ECHO  [h]ard docker service start (admin req)
+ECHO  [r]eset wsl default distro
+ECHO  [reboot] windows (^^!^^!)
+ECHO   [q]uit
 
 SET /p "prompt=$ "
 goto !prompt!
