@@ -32,7 +32,6 @@ SET "docker_image_id_path=%install_location%\.image_id"
 SET "docker_container_id_path=%install_location%\.container_id"
 
 CLS
-ECHO "image_repo_image_name: !image_repo_image_name!"
 
 ECHO:
 ECHO  _____________________________________________________________________ 
