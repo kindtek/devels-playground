@@ -75,17 +75,13 @@ if %default%==config (
 
     @REM TODO: fix config and default using same save_location, install_location, image_id, and container_id
     ECHO:
-    IF "!image_repo!"=="_" (
-        SET "image_repo_mask=official"
-    )
     SET /p "image_repo=image repository: (!image_repo_mask!) $ "
 
-    IF "!image_repo!"=="" (
-        SET "image_repo=_"
+    IF "!image_repo!"=="_" (
         SET "image_repo_mask=official"
-        ECHO "using an official Docker repo"
+        ECHO using an official Docker repo
     ) ELSE (
-        SET image_repo_mask=!image_repo!
+        SET "image_repo_mask=!image_repo!"
     )
 
 
@@ -303,7 +299,7 @@ IF "%exit%"=="" (
     ECHO if WSL fails to start try converting the distro version to WSL1:
     ECHO wsl --set-version !distro_mask! 1
     ECHO:
-    wsl 
+    wsl -d !distro_mask!
 )
 :quit
 :no
