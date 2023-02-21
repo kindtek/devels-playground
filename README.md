@@ -1,6 +1,7 @@
 # Import Docker images to WSL
 
 ## In Windows, clone this repo with git and run [WSL import tool script](scripts/wsl-import.bat)
+
 `git clone https://github.com/kindtek/docker-to-wsl`
 
 `scripts\wsl-import`
@@ -9,7 +10,7 @@
 
 ## 1) instead of pressing ENTER, type "config" then hit ENTER to specify any linux distro on [hub.docker.com](https://hub.docker.com/) you would like to use with WSL and customize the save location, distro name, and WSL version
 
-## 2) fork this repo and modify the Docker (-compose) files to build your own custom Docker image(s), push the image to a repo on Docker Hub, and import onto the image onto any Windows machine that is running Docker Desktop (see #1 above) for a ready-to-go dev environment in WSL
+## 2) fork this repo and modify the Docker (-compose) files to build your own custom Docker image, push the image to a repo on Docker Hub, and import the image onto any Windows machine that is running Docker Desktop (see #1 above) for a ready-to-go dev environment in WSL
 
 ### Requirements: github, WSL2, Docker Desktop (running), Visual Studio Code (optional)
 
