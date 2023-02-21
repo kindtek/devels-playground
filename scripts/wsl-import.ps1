@@ -8,17 +8,48 @@ function main {
     $host.UI.RawUI.ForegroundColor = "White"
     dev_boilerplate
 }
-
+# from https://stackoverflow.com/questions/44703646/determine-the-os-version-linux-and-windows-from-powershell
+function Get-PSPlatform {
+    return [System.Environment]::OSVersion.Platform
+}
 function dev_boilerplate {
 
+    # set default vars
     $image_repo = "_"
-    # @REM _mask = human readable - ie 'official' not '_'
+    # mask = human readable - ie 'official' not '_'
     $image_repo_mask = "official"
     $image_name = "ubuntu:latest"
-    # $mount_drive = "C"
     $mount_drive_letter="c"
-    $linux_mount_drive = "/mnt/$mount_drive_letter"
+    $unix_mount_drive = "/mnt/$mount_drive_letter"
     $windows_mount_drive = "${mount_drive_letter}:/"
+    $mount_drive = $unix_mount_drive
+
+    
+    # check OS to get relevant C drive path
+    # from https://stackoverflow.com/questions/44703646/determine-the-os-version-linux-and-windows-from-powershell
+    switch (Get-PSPlatform) {
+        'Win32NT' { 
+            New-Variable -Option Constant -Name IsWindows -Value $True -ErrorAction SilentlyContinue
+            New-Variable -Option Constant -Name IsLinux  -Value $false -ErrorAction SilentlyContinue
+            New-Variable -Option Constant -Name IsMacOs  -Value $false -ErrorAction SilentlyContinue
+        }
+    }
+
+    if ($IsLinux) {
+        Write-Host "Linux OS detected"
+        $mount_drive = $unix_mount_drive
+
+    }
+    # while we're here might as well
+    elseif ($IsMacOS) {
+        Write-Host "macOS OS detected"
+        $mount_drive = $unix_mount_drive
+    }
+    elseif ($IsWindows) {
+        Write-Host "Windows OS detected"
+        $mount_drive = $windows_mount_drive
+    }
+
 
     $save_directory = "docker"
     $wsl_version = "2"
@@ -29,10 +60,10 @@ function dev_boilerplate {
     $install_directory = $install_directory.replace('/', '-')
 
     # $save_location = "${mount_drive}:/$save_directory"
-    $save_location = "${linux_mount_drive}/$save_directory"
-    write-output "save location: $save_location"
+    $save_location = "${mount_drive}/$save_directory"
+    # write-output "save location: $save_location"
     $install_location = "$save_location/$install_directory"
-    write-output "install location: $install_location"
+    # write-output "install location: $install_location"
 
     # @REM distro - meaning local distro
     $distro = $install_directory
@@ -80,7 +111,7 @@ function dev_boilerplate {
         }
 
         # set default var before prompt
-        $save_directory_prompt = Read-Host -Prompt "download folder ${linux_mount_drive}/($save_directory) $ "
+        $save_directory_prompt = Read-Host -Prompt "download folder ${mount_drive}/($save_directory) $ "
         if ($save_directory_prompt -ne ""){
             $save_directory=$save_directory_prompt
         }
@@ -92,7 +123,7 @@ function dev_boilerplate {
         $install_directory = $install_directory.replace(':', '-')
 
         # set default var before prompt
-        $install_directory_prompt = Read-Host -Prompt "install folder ${linux_mount_drive}/$save_directory/($install_directory) $ "
+        $install_directory_prompt = Read-Host -Prompt "install folder ${mount_drive}/$save_directory/($install_directory) $ "
         if ($install_directory_prompt -ne "") {
             $install_directory = $install_directory_prompt
             $install_directory = $install_directory.replace('/', '-')
@@ -100,7 +131,7 @@ function dev_boilerplate {
 
         }
 
-        $save_location = "${linux_mount_drive}/$save_directory"
+        $save_location = "${mount_drive}/$save_directory"
         $install_location = "$save_location/$install_directory"
         # @REM special rule for official distro
         if ($image_repo -eq "_") {
@@ -222,14 +253,24 @@ function docker_container_start {
     Write-Output $WSL_DOCKER_IMG_ID | Out-File -FilePath $docker_image_id_path
     # $null = Remove-Item $docker_container_id_path
 
+    
+    Write-Output "`r`n "
+    Write-Output "========================================================================"
+    Write-Output "`r`n"
+    Write-Output "testing container..."
+    Write-Output "`r`n"
+    Write-Output "this container is running as a local copy of the image $image_repo_image_name"
+    Write-Output "`r`n"
+
+       
+    Write-Output "docker run -itd --cidfile $docker_container_id_path $WSL_DOCKER_IMG_ID --sig-proxy=false"
+    docker run -itd --cidfile $docker_container_id_path $WSL_DOCKER_IMG_ID --sig-proxy=false
+    
+    # get first line of docker_container_id_path
+    $WSL_DOCKER_CONTAINER_ID = Get-Content -Path $docker_container_id_path -Raw
     if ($config -eq "config") {
-        Write-Output "`r`n "
-        Write-Output "========================================================================"
-        Write-Output "`r`n"
-        Write-Output "opening container preview..."
-        Write-Output "`r`n"
-        Write-Output "this container is running as a local copy of the image $image_repo_image_name"
-        Write-Output "`r`n"
+        
+        Write-Output "docker attach $WSL_DOCKER_CONTAINER_ID"
         $host.UI.RawUI.BackgroundColor = "Black"
         $host.UI.RawUI.ForegroundColor = "Red"     
         Write-Output "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
@@ -238,23 +279,19 @@ function docker_container_start {
         Write-Output "`r`n"
         Write-Output "`r`n"
         $host.UI.RawUI.BackgroundColor = "Black"
-        $host.UI.RawUI.ForegroundColor = "Cyan"        
-        Write-Output "docker run -it --cidfile $docker_container_id_path $WSL_DOCKER_IMG_ID"
-        docker run -it --cidfile $docker_container_id_path $WSL_DOCKER_IMG_ID
+        $host.UI.RawUI.ForegroundColor = "Cyan"    
+        docker attach $WSL_DOCKER_CONTAINER_ID
         $host.UI.RawUI.BackgroundColor = "Black"
         $host.UI.RawUI.ForegroundColor = "White"
-        Write-Output "`r`n"
-        Write-Output "closing preview container..."
-        Write-Output "`r`n"
-        Write-Output "========================================================================"
-    }
-    else {
-        Write-Output "docker run -dit --cidfile $docker_container_id_path $WSL_DOCKER_IMG_ID"
-        docker run -dit --cidfile $docker_container_id_path $WSL_DOCKER_IMG_ID
+
     }
 
-    # get first line of docker_container_id_path
-    $WSL_DOCKER_CONTAINER_ID = Get-Content -Path $docker_container_id_path -Raw
+    Write-Output "`r`n"
+    Write-Output "closing test container..."
+    Write-Output "`r`n"
+    Write-Output "========================================================================"
+
+
 
     Write-Output "exporting image ($WSL_DOCKER_IMG_ID) as container ($WSL_DOCKER_CONTAINER_ID)..."
     Write-Output "docker export $WSL_DOCKER_CONTAINER_ID > $image_save_path"
