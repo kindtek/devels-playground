@@ -12,7 +12,7 @@ ECHO  [s]soft docker restart (admin req)
 ECHO  [u]nregister docker desktop containers
 ECHO  [h]ard docker service start (admin req)
 ECHO  [r]eset wsl default distro
-ECHO  [reboot] windows (^^!^^!)
+ECHO   [reboot] windows (^^!^^!)
 ECHO   [q]uit
 
 SET /p "prompt=$ "
@@ -22,18 +22,52 @@ goto !prompt!
 net stop docker
 net stop com.docker.service
 taskkill /IM "dockerd.exe" /F
-taskkill /IM "Docker for Windows.exe" /F
+taskkill /IM "Docker Desktop.exe" /F
 net start docker
 net start com.docker.service
-"C:\Program Files\Docker\Docker\Docker for Windows.exe"
+"C:\Program Files\Docker\Docker\resources\dockerd.exe"
+"C:\Program Files\Docker\Docker\Docker Desktop.exe"
 goto prompt
 
 :u
 @REM force restart for docker containers
-wsl --unregister docker-desktop
-wsl --unregister docker-desktop-data
+@REM wsl --unregister docker-desktop
+@REM wsl --unregister docker-desktop-data
+docker update --restart=always docker-desktop
+docker update --restart=always docker-desktop-data
 "C:\Program Files\Docker\Docker\DockerCli.exe" -SwitchDaemon
-goto prompt
+
+@REM dockerd --containerd /var/run/dev/docker-containerd.sockgoto prompt
+@REM file::
+@REM {
+@REM   "default-runtime": "runc",
+@REM   "runtimes": {
+@REM     "custom": {
+@REM       "path": "/usr/local/bin/my-runc-replacement",
+@REM       "runtimeArgs": [
+@REM         "--debug"
+@REM       ]
+@REM     },
+@REM     "runc": {
+@REM       "path": "runc"
+@REM     }
+@REM   }
+@REM }
+@REM 
+@REM {
+@REM   "builder": {
+@REM     "gc": {
+@REM       "defaultKeepStorage": "20GB",
+@REM       "enabled": true
+@REM     }
+@REM   },
+@REM   "experimental": false,
+@REM   "features": {
+@REM     "buildkit": true
+@REM   }
+@REM }
+
+@REM  dockerd --add-runtime runc=runc --add-runtime custom=/usr/local/bin/my-runc-replacement
 
 :h
 "C:\Windows\System32\net.exe" start "com.docker.service"

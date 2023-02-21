@@ -85,6 +85,7 @@ if %default%==config (
     IF "!image_repo!"=="_" (
         SET "image_repo_image_name=!image_name!"
     ) ELSE (
+        SET "image_repo_mask=!image_repo!"
         SET "image_repo_image_name=!image_repo_mask!/!image_name!"
     )
 
