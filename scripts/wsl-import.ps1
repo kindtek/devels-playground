@@ -19,9 +19,9 @@ function dev_boilerplate {
     # mask = human readable - ie 'official' not '_'
     $image_repo_mask = "official"
     $image_name = "ubuntu:latest"
-    $mount_drive_letter="c"
+    $mount_drive_letter = "c"
     $unix_mount_drive = "/mnt/$mount_drive_letter"
-    $windows_mount_drive = "${mount_drive_letter}:/"
+    $windows_mount_drive = "${mount_drive_letter}:"
     $mount_drive = $unix_mount_drive
 
     
@@ -61,9 +61,9 @@ function dev_boilerplate {
 
     # $save_location = "${mount_drive}:/$save_directory"
     $save_location = "${mount_drive}/$save_directory"
-    # write-output "save location: $save_location"
+    # Write-Host "save location: $save_location"
     $install_location = "$save_location/$install_directory"
-    # write-output "install location: $install_location"
+    # Write-Host "install location: $install_location"
 
     # @REM distro - meaning local distro
     $distro = $install_directory
@@ -87,14 +87,14 @@ function dev_boilerplate {
         $host.UI.RawUI.BackgroundColor = "Black"
         $host.UI.RawUI.ForegroundColor = "Green"
         # @REM @TODO: filter/safeguard user input
-        Write-Output `r`n
+        Write-Host `r`n
         $image_repo_prompt = Read-Host -Prompt "image repository ($image_repo_mask) $ "
         if ($image_repo_prompt -ne "") {
             $image_repo = $image_repo_prompt
             $image_repo_mask = $image_repo_prompt
         }
         else {
-            $image_repo=$image_repo_mask
+            $image_repo = $image_repo_mask
         }
 
         $image_name_prompt = Read-Host -Prompt "image name in ${image_repo_mask} ($image_name) $ "
@@ -112,8 +112,8 @@ function dev_boilerplate {
 
         # set default var before prompt
         $save_directory_prompt = Read-Host -Prompt "download folder ${mount_drive}/($save_directory) $ "
-        if ($save_directory_prompt -ne ""){
-            $save_directory=$save_directory_prompt
+        if ($save_directory_prompt -ne "") {
+            $save_directory = $save_directory_prompt
         }
         $save_directory = $save_directory.replace('/', '-')
         $save_directory = $save_directory.replace(':', '-')
@@ -162,20 +162,34 @@ function dev_boilerplate {
         $host.UI.RawUI.ForegroundColor = "White"
     }
 
-    $docker_image_id_path = "$install_location/.image_id"
-    $docker_container_id_path = "$install_location/.container_id"
+    $null = New-Item -Path $save_location -ItemType Directory 
+    Write-Host "install location:$install_location"
+    $null = New-Item -Path $install_location -ItemType Directory 
 
-    Write-Output "$save_location`r`n"
-    build_dir_structure $install_location $save_location
+  
+    Write-Host "$save_location`r`n"
+    Write-Host "$install_location`r`n"
+
     docker_image_pull $image_repo_image_name
-    docker_container_start $config $image_repo_image_name $docker_image_id_path $docker_container_id_path
-    import_docker_tar $distro $install_location $image_save_path $wsl_version
+    $WSL_DOCKER_CONTAINER_ID = docker_container_start $config $distro $image_repo_image_name $install_location
+    $WSL_DOCKER_CONTAINER_ID = $WSL_DOCKER_CONTAINER_ID[0]
+
+    # now that we have container id, append it to install location and distro
+    $install_location = "$install_location-$WSL_DOCKER_CONTAINER_ID"
+
+    # update image id and container id path for later ref
+    $distro = "$distro-$WSL_DOCKER_CONTAINER_ID"
+    # Write-Host "`r`n!>>>>>>>containerid:$WSL_DOCKER_CONTAINER_ID<<<<<<<<<!`r`n"
+    # Write-Host "`r`n!>>>>>>>containerid:$distro<<<<<<<<<!`r`n"
+
+    export_image $install_location $save_location $distro $WSL_DOCKER_CONTAINER_ID
+    import_docker_tar $distro $install_location $save_location $wsl_version
     wsl_or_exit $distro
     
 }
 
 function greeting_prompt {
-    param ($image_repo_mask,$image_name,$image_save_path,$distro) 
+    param ($image_repo_mask, $image_name, $image_save_path, $distro) 
 
     $dev_boilerplate_output = @"
     
@@ -195,7 +209,7 @@ function greeting_prompt {
       .............      $image_save_path 
       .............                                         .............
       .............    WSL alias:                           .............
-      .............      $distro           
+      .............      $distro-dockerID           
       -------------------------------------------------------------------
       
     
@@ -216,104 +230,119 @@ Press ENTER to use settings above and import $distro as default WSL distro
     return $config
 }
 
-function build_dir_structure {
-    param( $install_location, $save_location)
-    # @REM directory structure: 
-    # @REM %mount_drive%:\%install_directory%\%save_directory%
-    # @REM ie: C:\wsl-distros\docker
-    $null = New-Item -Path $save_location -ItemType Directory 
-    $null = New-Item -Path $install_location -ItemType Directory 
-
-}
    
 function docker_image_pull {
 
     param($image_repo_image_name)
 
-    Write-Output "========================================================================"
-    Write-Output "`r`r`n"
-    Write-Output "pulling image ($image_repo_image_name)..."
-    Write-Output "docker pull --platform linux $image_repo_image_name"
+    Write-Host "========================================================================"
+    Write-Host "`r`n"
+    Write-Host "pulling image ($image_repo_image_name)..."
+    Write-Host "docker pull --platform linux $image_repo_image_name"
     # @REM pull the image
     docker pull --platform linux $image_repo_image_name
-    Write-Output "`r`n"
+    Write-Host "`r`n"
 }
 function docker_container_start {
-    param(
-        [string]$config, 
-        [string]$image_repo_image_name, 
-        [string]$docker_image_id_path, 
-        [string]$docker_container_id_path
-    )
-    Write-Output "initializing the image container..."
-    # @REM @TODO: handle WSL_DOCKER_IMG_ID case of multiple ids returned from docker images query
-    Write-Output "docker images -aq $image_repo_image_name"
-    $WSL_DOCKER_IMG_ID = docker images -aq $image_repo_image_name
-    # @REM @TODO: handle WSL_DOCKER_IMG_ID case of multiple ids returned from docker images query
-    Write-Output $WSL_DOCKER_IMG_ID | Out-File -FilePath $docker_image_id_path
+    param( [string]$config, [string]$distro, [string]$image_repo_image_name, [string]$install_path, [string]$docker_container_id_path  )
+    Write-Host "initializing the image container..."
+    Write-Host "docker images -aq $image_repo_image_name"
+    # get single id returned from docker images command
+    $WSL_DOCKER_IMG_ID = @(<docker images -aq $image_repo_image_name>)
+    $WSL_DOCKER_IMG_ID = $WSL_DOCKER_IMG_ID[0]
+    $docker_image_id_path = "$install_path/.image_id"
+    $docker_container_id_path = "$install_path/.container_id"
+    Write-Host $WSL_DOCKER_IMG_ID | Out-File -FilePath $docker_image_id_path
     # $null = Remove-Item $docker_container_id_path
 
-    
-    Write-Output "`r`n "
-    Write-Output "========================================================================"
-    Write-Output "`r`n"
-    Write-Output "testing container..."
-    Write-Output "`r`n"
-    Write-Output "this container is running as a local copy of the image $image_repo_image_name"
-    Write-Output "`r`n"
-
+    Write-Host "`r`n "
+    Write-Host "========================================================================"
+    Write-Host "`r`n"
+    Write-Host "testing container..."
+    Write-Host "`r`n"
+    Write-Host "this container is running as a local copy of the image $image_repo_image_name"
+    Write-Host "`r`n"
        
-    Write-Output "docker run -itd --cidfile $docker_container_id_path $WSL_DOCKER_IMG_ID --sig-proxy=false"
-    docker run -itd --cidfile $docker_container_id_path $WSL_DOCKER_IMG_ID --sig-proxy=false
+    Write-Host "docker run -itd --cidfile=$docker_container_id_path --name=$distro-$WSL_DOCKER_IMG_ID --sig-proxy=false $WSL_DOCKER_IMG_ID"
+    docker run -itd --cidfile=$docker_container_id_path --name=$distro-$WSL_DOCKER_IMG_ID --sig-proxy=false $WSL_DOCKER_IMG_ID    
     
     # get first line of docker_container_id_path
-    $WSL_DOCKER_CONTAINER_ID = Get-Content -Path $docker_container_id_path -Raw
+    $WSL_DOCKER_CONTAINER_ID = Get-Content -Path $docker_container_id_path -TotalCount 1
+    # Write-Host "containerid: $WSL_DOCKER_CONTAINER_ID"
+    # Write-Host "docker stop $WSL_DOCKER_CONTAINER_ID"
+    # docker stop $WSL_DOCKER_CONTAINER_ID
+    # Write-Host "docker start $WSL_DOCKER_CONTAINER_ID"
+    # docker start $WSL_DOCKER_CONTAINER_ID
+
+    $install_path = "$install_path-$WSL_DOCKER_CONTAINER_ID"
+
+    $null = New-Item -Path $install_path -ItemType Directory
+    # Write-Host "Move-Item -Path $docker_image_id_path -Destination $install_path/.image_id"
+    # Write-Host "Move-Item -Path $docker_container_id_path -Destination $install_path/.container_id"
+    
+    Move-Item -Path $docker_image_id_path -Destination "$install_path/.image_id"
+    Move-Item -Path $docker_container_id_path -Destination "$install_path/.container_id"
+    # Write-Host "Rename-Item -Path $docker_image_id_path -NewName $install_path/.image_id"
+    # Write-Host "Rename-Item -Path $docker_container_id_path -NewName $install_path/.container_id"
+    
+    # Rename-Item -Path $docker_image_id_path -NewName "$install_path/.image_id"
+    # Rename-Item -Path $docker_container_id_path -NewName "$install_path/.container_id"
+    $docker_image_id_path = "$install_path/.image_id"
+    $docker_container_id_path = "$install_path/.container_id"
+
     if ($config -eq "config") {
         
-        Write-Output "docker attach $WSL_DOCKER_CONTAINER_ID"
         $host.UI.RawUI.BackgroundColor = "Black"
         $host.UI.RawUI.ForegroundColor = "Red"     
-        Write-Output "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        Write-Output "!!!!!! IMPORTANT: type 'exit' then ENTER to exit container preview !!!!!!"
-        Write-Output "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        Write-Output "`r`n"
-        Write-Output "`r`n"
+        Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        Write-Host "!!!!!! IMPORTANT: use CTRL-P then CTRL-Q to exit container preview !!!!!!"
+        Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+        Write-Host "`r`n"
         $host.UI.RawUI.BackgroundColor = "Black"
-        $host.UI.RawUI.ForegroundColor = "Cyan"    
+        $host.UI.RawUI.ForegroundColor = "Cyan"  
+        Write-Host "`r`ndocker attach $WSL_DOCKER_CONTAINER_ID`r`n"  
+        Write-Host "`r`n"
         docker attach $WSL_DOCKER_CONTAINER_ID
         $host.UI.RawUI.BackgroundColor = "Black"
         $host.UI.RawUI.ForegroundColor = "White"
 
     }
+    Write-Host "docker rename $distro-$WSL_DOCKER_IMG_ID $distro-$WSL_DOCKER_CONTAINER_ID"
+    docker rename $distro-$WSL_DOCKER_IMG_ID $distro-$WSL_DOCKER_CONTAINER_ID
 
-    Write-Output "`r`n"
-    Write-Output "closing test container..."
-    Write-Output "`r`n"
-    Write-Output "========================================================================"
+    Write-Host "`r`nclosing test container...`r`n========================================================================"
 
+    return $WSL_DOCKER_CONTAINER_ID
+}
 
-
-    Write-Output "exporting image ($WSL_DOCKER_IMG_ID) as container ($WSL_DOCKER_CONTAINER_ID)..."
-    Write-Output "docker export $WSL_DOCKER_CONTAINER_ID > $image_save_path"
+function export_image {
+    param( $install_location, $save_location, $distro, $WSL_DOCKER_CONTAINER_ID)
+    # @REM directory structure: 
+    # @REM %mount_drive%:\%install_directory%\%save_directory%
+    # @REM ie: C:\wsl-distros\docker
+    $image_save_path = "$save_location/$distro.tar"
+    Write-Host "exporting image as container ($WSL_DOCKER_CONTAINER_ID) into .tar file..."
+    Write-Host "docker export $WSL_DOCKER_CONTAINER_ID > $image_save_path"
+    Write-Host "this may take a while..."
     docker export $WSL_DOCKER_CONTAINER_ID > $image_save_path
-    Write-Output "DONE"
+    Write-Host "DONE"
 }
 
 # @REM EASTER EGG1: typing yes at first prompt bypasses cofirm and restart the default distro
 # @REM EASTER EGG2: typing yes at second prompt (instead of 'y' ) makes distro default
 function install_prompt {
-    Write-Output "---------------------------------------------------------------------"
-    Write-Output "Windows Subsystem for Linux Distributions:"
+    Write-Host "---------------------------------------------------------------------"
+    Write-Host "Windows Subsystem for Linux Distributions:"
     wsl.exe -l -v
-    Write-Output "---------------------------------------------------------------------"
-    Write-Output "Check the list of current WSL distros installed on your system above. "
-    Write-Output "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    Write-Output "!!!!!!!!!!!!                   WARNING:                !!!!!!!!!!!!!!"
-    Write-Output "If $distro is already listed above it will be REPLACED.  "
-    Write-Output "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    Write-Output "_____________________________________________________________________"
-    Write-Output "`r`n"
-    Write-Output "Would you still like to continue ([y]es/[n]o/[redo])?"
+    Write-Host "---------------------------------------------------------------------"
+    Write-Host "Check the list of current WSL distros installed on your system above. "
+    Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    Write-Host "!!!!!!!!!!!!                   WARNING:                !!!!!!!!!!!!!!"
+    Write-Host "If $distro.substring(0, 20) is already listed above it will be REPLACED.  "
+    Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    Write-Host "_____________________________________________________________________"
+    Write-Host "`r`n"
+    Write-Host "Would you still like to continue ([y]es/[n]o/[redo])?"
     $continue = Read-Host " $ "
 
     # @REM if blank -> y -> yes-install
@@ -340,93 +369,88 @@ function install_prompt {
 
 
 function import_docker_tar {
-    param(
-        [string]$distro,
-        [string]$install_location,
-        [string]$image_save_path,
-        [string]$wsl_version
-    )
+    param([string]$distro, [string]$install_location, [string]$save_location, [string]$wsl_version)
+    
     $setdefault = "no"
 
-    Write-Output "`r`n"
-    Write-Output "killing the $distro WSL process if it is running..."
-    Write-Output "wsl.exe --terminate $distro"
+    Write-Host "`r`n"
+    Write-Host "killing the $distro WSL process if it is running..."
+    Write-Host "wsl.exe --terminate $distro"
     wsl.exe --terminate $distro
-    Write-Output "DONE"
-    # @REM Write-Output `r`n
-    # @REM Write-Output killing all WSL processes...
+    Write-Host "DONE"
+    # @REM Write-Host `r`n
+    # @REM Write-Host killing all WSL processes...
     # @REM wsl.exe --shutdown
-    # @REM Write-Output DONE
+    # @REM Write-Host DONE
     $install = install_prompt
 
     if ($install -eq "yes-install" -Or $install -eq "default-install") {
-        Write-Output "`r`n"
-        Write-Output "deleting WSL distro $distro if it exists..."
-        Write-Output "wsl.exe --unregister $distro"
+        Write-Host "`r`ndeleting WSL distro $distro if it exists..."
+        Write-Host "wsl.exe --unregister $distro"
         wsl.exe --unregister $distro
-        Write-Output "DONE"
+        Write-Host "DONE"
     }
     else {
-        return 0 
+        return $false 
     }
-
-    Write-Output "`r`n"
-    Write-Output "importing $distro.tar to $install_location as $distro..."
-    Write-Output "wsl.exe --import $distro $install_location $image_save_path --version $wsl_version"
+    $image_save_path="$save_location/$distro.tar"
+    Write-Host "`r`nimporting $distro.tar to $install_location as $distro..."
+    Write-Host "wsl.exe --import $distro $install_location $image_save_path --version $wsl_version"
     wsl.exe --import $distro $install_location $image_save_path --version $wsl_version
-    Write-Output "DONE"
+    Write-Host "DONE"
 
     if ($install -eq "yes-install") {
         $setdefault = ""
     }
     else {
-        Write-Output "`r`n"
-        Write-Output "press ENTER to set $distro as default WSL distro"
-        Write-Output " ..or enter any character to skip"
+        Write-Host "`r`n"
+        Write-Host "press ENTER to set $distro as default WSL distro"
+        Write-Host " ..or enter any character to skip"
         $setdefault = Read-Host -Prompt " $ "
 
     }
     if ($setdefault -eq "") {
-        Write-Output "`r`n"
-        Write-Output "setting default WSL distro as $distro..."
-        Write-Output  "wsl.exe --set-default $distro "
+        Write-Host "`r`n"
+        Write-Host "setting default WSL distro as $distro..."
+        Write-Host  "wsl.exe --set-default $distro "
         wsl.exe --set-default $distro 
-        Write-Output "DONE!"
-        Write-Output "`r`n"
-        Write-Output " ..if starting WSL results in an error, try converting the distro version to WSL1 by running:"
-        Write-Output "wsl.exe --set-version $distro 1"
-        Write-Output "`r`n"
+        Write-Host "DONE!"
+        Write-Host "`r`n"
+        Write-Host " ..if starting WSL results in an error, try converting the distro version to WSL1 by running:"
+        Write-Host "wsl.exe --set-version $distro 1"
+        Write-Host "`r`n"
     }
+    return $True
 }
 
 function wsl_or_exit {
     param($distro)
-    Write-Output "Windows Subsystem for Linux Distributions:"
+    Write-Host "Windows Subsystem for Linux Distributions:"
     wsl.exe -l -v
-    Write-Output "`r`n"
+    Write-Host "`r`n"
     wsl.exe --status
-    Write-Output "`r`n"
-    Write-Output "press ENTER to open $distro in WSL"
-    Write-Output " ..or enter any character to skip "
+    Write-Host "`r`n"
+    Write-Host "press ENTER to open $distro in WSL"
+    Write-Host " ..or enter any character to exit "
     $prompt_in = Read-Host " $ "
     if ($prompt_in -eq "") {
-        Write-Output "`r`n"
-        Write-Output "launching WSL with $distro distro..."
-        Write-Output "wsl.exe -d $distro"
-        Write-Output "`r`n"
+        Write-Host "`r`n"
+        Write-Host "launching WSL with $distro distro..."
+        Write-Host "wsl.exe -d $distro"
+        Write-Host "`r`n"
         wsl.exe -d $distro
             
-        Write-Output "if WSL fails to start try converting the distro version to WSL1:"
-        Write-Output "wsl.exe --set-version $distro 1"
+        Write-Host "if WSL fails to start try converting the distro version to WSL1:"
+        Write-Host "wsl.exe --set-version $distro 1"
     }
 
-    Write-Output "`r`n"
-    Write-Output "goodbye"
-    Write-Output "`r`n"
+    Write-Host "`r`n"
+    Write-Host "goodbye"
+    Write-Host "`r`n"
 }
 
 
 $host.UI.RawUI.BackgroundColor = "Black"
-$host.UI.RawUI.ForegroundColor="White"
+$host.UI.RawUI.ForegroundColor = "White"
 
 main
