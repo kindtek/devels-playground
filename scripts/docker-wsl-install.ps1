@@ -1,4 +1,4 @@
-if (Split-Path ){
+if (Split-Path -Parent){
     $PSCommandPath | Split-Path -Parent
 }
 
