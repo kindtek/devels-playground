@@ -158,6 +158,9 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
             Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev"
         } 
 
+        # launch docker desktop
+        C:\"Program Files"\Docker\Docker\"Docker Desktop".exe
+
         # get a head start on building custom docker images using machine settings
         $pwd_path = Split-Path -Path $PSCommandPath
         $full_path = Join-Path -Path $pwd_path -ChildPath "/docker-to-wsl/scripts/images-build.bat" 
