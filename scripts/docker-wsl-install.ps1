@@ -151,9 +151,11 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
 
     # Docker Desktop happens to work for both id and name
     $software_id = $software_name = "Docker Desktop"
+    $install_command = "winget install --id=Docker.DockerDesktop  -e"
     $verify_installed = $true
     $force_install = $true
-    $install_command = "winget install --id=Docker.DockerDesktop  -e"
+    install_software $software_id $software_name $install_command $verify_installed $force_install
+
 
     Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta
     $confirmation = Read-Host "`r`nRestart now (y/[n])?" 
