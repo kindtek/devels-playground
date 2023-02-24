@@ -172,7 +172,7 @@ function dev_boilerplate {
 
     docker_image_pull $image_repo_image_name
     $WSL_DOCKER_CONTAINER_ID = docker_container_start $config $distro $image_repo_image_name $install_location
-    $WSL_DOCKER_CONTAINER_ID = $WSL_DOCKER_CONTAINER_ID[0]
+    $WSL_DOCKER_CONTAINER_ID = $WSL_DOCKER_CONTAINER_ID[0].substring(0,4)
 
     # now that we have container id, append it to install location and distro
     $install_location = "$install_location-$WSL_DOCKER_CONTAINER_ID"
