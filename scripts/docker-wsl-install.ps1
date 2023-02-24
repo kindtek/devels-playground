@@ -106,7 +106,7 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
     # install_software $software_id $software_name $install_command $verify_installed $force_install
 
     $software_id = $software_name = "WinGet"
-    $install_command = powershell.exe -ExecutionPolicy Unrestricted -command "& $pwd_path/get-latest-winget.ps1"
+    $install_command = "powershell.exe -ExecutionPolicy Unrestricted -command & '$pwd_path/get-latest-winget.ps1'"
     # write-host "install command: $install_command"
     $verify_installed = $false
     $force_install = $true
