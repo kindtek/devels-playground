@@ -1,9 +1,8 @@
 # Set-PSDebug -Trace 2
 Set-PSDebug -Off
 
-
 function main {
-    # Clear-Host
+    Clear-Host
     $host.UI.RawUI.BackgroundColor = "Black"
     $host.UI.RawUI.ForegroundColor = "White"
     dev_boilerplate
