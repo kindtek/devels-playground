@@ -162,7 +162,7 @@ function dev_boilerplate {
 
     $null = New-Item -Path $save_location -ItemType Directory -Force -ErrorAction SilentlyContinue 
     Write-Host "install location:$install_location"
-    $null = New-Item -Path $install_location -ItemType Directory 
+    $null = New-Item -Path $install_location -ItemType Directory -Force -ErrorAction SilentlyContinue 
 
   
     Write-Host "$save_location`r`n"
@@ -273,7 +273,7 @@ function docker_container_start {
 
     $install_path = "$install_path-$WSL_DOCKER_CONTAINER_ID"
 
-    $null = New-Item -Path $install_path -ItemType Directory
+    $null = New-Item -Path $install_path -ItemType Directory -Force -ErrorAction SilentlyContinue 
     # Write-Host "Move-Item -Path $docker_image_id_path -Destination $install_path/.image_id"
     # Write-Host "Move-Item -Path $docker_container_id_path -Destination $install_path/.container_id"
     
