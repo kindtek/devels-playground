@@ -130,7 +130,7 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
     # clone docker-to-wsl repo
     # $user_name = kindtek
     # $repo_name = docker-to-wsl
-    git clone https://github.com/kindtek/docker-to-wsl\.git
+    git clone "https://github.com/kindtek/docker-to-wsl.git"
     git submodule update --init
     Set-Location $pwd_path/scripts/powershell-remote
     Start-Process -FilePath start-here.ps1
