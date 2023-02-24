@@ -327,46 +327,6 @@ function export_image {
     Write-Host "DONE"
 }
 
-# @REM EASTER EGG1: typing yes at first prompt bypasses cofirm and restart the default distro
-# @REM EASTER EGG2: typing yes at second prompt (instead of 'y' ) makes distro default
-function install_prompt {
-    Write-Host "---------------------------------------------------------------------"
-    Write-Host "Windows Subsystem for Linux Distributions:"
-    wsl.exe -l -v
-    Write-Host "---------------------------------------------------------------------"
-    Write-Host "Check the list of current WSL distros installed on your system above. "
-    Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    Write-Host "!!!!!!!!!!!!                   WARNING:                !!!!!!!!!!!!!!"
-    Write-Host "If ${distro.substring(0, 5)} is already listed above it will be REPLACED.  "
-    Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-    Write-Host "_____________________________________________________________________"
-    Write-Host "`r`n"
-    Write-Host "Would you still like to continue ([y]es/[n]o/[redo])?"
-    $continue = Read-Host " $ "
-
-    # @REM if blank -> y -> yes-install
-    if ($continue -eq "") {
-        $continue = "y"
-    }
-    # @REM if yes -> default-install 
-    if ($continue -eq "yes") {
-        $continue = "default-install"
-    }
-    # @REM if y -> yes-install 
-    if ($continue -eq "y") {
-        $continue = "yes-install"
-    }
-
-    # @REM if n -> no-install
-    if ($continue -eq "n") { 
-        $continue = "no-install"
-    }
-
-    return $continue
-}
-
-
-
 function import_docker_tar {
     param([string]$distro, [string]$install_location, [string]$save_location, [string]$wsl_version)
     
@@ -381,18 +341,13 @@ function import_docker_tar {
     # @REM Write-Host killing all WSL processes...
     # @REM wsl.exe --shutdown
     # @REM Write-Host DONE
-    $install = install_prompt
 
-    if ($install -eq "yes-install" -Or $install -eq "default-install") {
-        Write-Host "`r`ndeleting WSL distro $distro if it exists..."
-        Write-Host "wsl.exe --unregister $distro"
-        wsl.exe --unregister $distro
-        Write-Host "DONE"
-    }
-    else {
-        return $false 
-    }
-    $image_save_path="$save_location/$distro.tar"
+    Write-Host "`r`ndeleting WSL distro $distro if it exists..."
+    Write-Host "wsl.exe --unregister $distro"
+    wsl.exe --unregister $distro
+    Write-Host "DONE"
+
+    $image_save_path = "$save_location/$distro.tar"
     Write-Host "`r`nimporting $distro.tar to $install_location as $distro..."
     Write-Host "wsl.exe --import $distro $install_location $image_save_path --version $wsl_version"
     wsl.exe --import $distro $install_location $image_save_path --version $wsl_version
