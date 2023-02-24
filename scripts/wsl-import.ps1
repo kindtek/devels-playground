@@ -161,7 +161,6 @@ function dev_boilerplate {
     }
 
     $null = New-Item -Path $save_location -ItemType Directory -Force -ErrorAction SilentlyContinue 
-    Write-Host "install location:$install_location"
     $null = New-Item -Path $install_location -ItemType Directory -Force -ErrorAction SilentlyContinue 
 
   
