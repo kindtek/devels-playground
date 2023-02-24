@@ -82,8 +82,9 @@ function restart_prompt {
 
 # open terminal with admin priveleges
 $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+$install = Read-Host "`r`n$software_name recommended but not found. Install now? (y/[n])".ToLower()
+
 if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    $install = Read-Host "`r`n$software_name recommended but not found. Install now? (y/[n])".ToLower()
     # # software_id and software_name equal since installation $verify_installed set to false
     # $software_id = $software_name = "Windows Subsystem for Linux (WSL)"
     # $install_command = "Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -NoRestart"
