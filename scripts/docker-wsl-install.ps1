@@ -151,9 +151,21 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
         Restart-Computer -Force
     }
     else {
-        Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev"
-        # ./images-build-push.ps1
-        ./wsl-import.ps1        
+
+        if ((Read-Host "open docker dev enviornment? ") -ieq 'y'  ) {
+            Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev"
+        } 
+
+        # get a head start on building custom docker images using machine settings
+        $pwd_path = Split-Path -Path $PSCommandPath
+        $full_path = Join-Path -Path $pwd_path -ChildPath "images-build.ps1" 
+        Start-Process -FilePath "$full_path"
+
+        # start WSL docker import tool
+        $pwd_path = Split-Path -Path $PSCommandPath
+        $full_path = Join-Path -Path $pwd_path -ChildPath "wsl-import.ps1" 
+        powershell "$full_path"
+  
         Write-Output "DONE!"
     }
 }
