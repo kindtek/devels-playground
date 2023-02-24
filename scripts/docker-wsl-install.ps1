@@ -130,10 +130,11 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
     # clone docker-to-wsl repo
     # $user_name = kindtek
     # $repo_name = docker-to-wsl
+    Write-Host git clone "https://github.com/kindtek/docker-to-wsl.git"
     git clone "https://github.com/kindtek/docker-to-wsl.git"
     git submodule update --init
     Set-Location $pwd_path/scripts/powershell-remote
-    Start-Process -FilePath start-here.ps1
+    Start-Process -FilePath $pwd_path/start-here.ps1
 
     # use windows-features-wsl-add to handle windows features install
     $pwd_path = Split-Path -Path $PSCommandPath
