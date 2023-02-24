@@ -1,3 +1,14 @@
 [submodule "scripts/windows-features-add-wsl"]
+	active = true
+	shallow = false
 	path = scripts/windows-features-wsl-add
-	url = https://github.com/kindtek/windows-features-wsl-add
+	url = https://github.com/kindtek/windows-features-wsl-add.git
+	recurse = true
+[submodule "scripts/Run-PowerShell-Directly-From-GitHub"]
+	path = scripts/Run-PowerShell-Directly-From-GitHub
+	url = https://github.com/kindtek/Run-PowerShell-Directly-From-GitHub
+	branch = docker-to-wsl
+[submodule "scripts/powershell-remote"]
+	path = scripts/powershell-remote
+	url = https://github.com/kindtek/powershell-remote
+	branch = docker-to-wsl
