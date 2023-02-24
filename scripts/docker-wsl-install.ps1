@@ -147,6 +147,9 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
     $force_install = $true
     install_software $software_id $software_name $install_command $verify_installed $force_install
 
+    # launch docker desktop
+    C:\"Program Files"\Docker\Docker\"Docker Desktop".exe
+
     Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta
     $confirmation = Read-Host "`r`nRestart now (y/[n])?" 
     if ($confirmation -ieq 'y') {
@@ -157,9 +160,6 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
         if ((Read-Host "`r`nopen Docker Dev enviornment? [y]/n") -ine 'n'  ) {
             Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev"
         } 
-
-        # launch docker desktop
-        C:\"Program Files"\Docker\Docker\"Docker Desktop".exe
 
         # get a head start on building custom docker images using machine settings
         $pwd_path = Split-Path -Path $PSCommandPath
