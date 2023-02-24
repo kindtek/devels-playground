@@ -14,7 +14,7 @@ function install_software {
     # function built using https://keestalkstech.com/2017/10/powershell-snippet-check-if-software-is-installed/
 
     if ($verify_installed -eq $true) {
-    $installed = $null -ne (Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where-Object { $_.DisplayName -eq $software_id })
+        $installed = $null -ne (Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where-Object { $_.DisplayName -eq $software_id })
         if ($installed -eq $false) {
             if ($force_install -eq $false) {
                 # give user the option to install
@@ -86,6 +86,11 @@ function restart_prompt {
 $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 
 $pwd_path = Split-Path -Path $PSCommandPath
+# get a head start on building custom docker images using machine settings and without admin priveleges
+$pwd_path = Split-Path -Path $PSCommandPath
+$full_path = "& $pwd_path/docker-to-wsl/scripts/images-build.bat" 
+$cmd_args = 'cmd.exe' + ' ' + $full_path
+Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList $cmd_args
 
 if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
 
@@ -144,11 +149,6 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
             Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev"
         } 
 
-        # get a head start on building custom docker images using machine settings
-        $pwd_path = Split-Path -Path $PSCommandPath
-        $full_path = "& $pwd_path/docker-to-wsl/scripts/images-build.bat" 
-        $cmd_args = 'cmd.exe' + ' ' + $full_path
-        Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList $cmd_args
 
         # start WSL docker import tool
         $pwd_path = Split-Path -Path $PSCommandPath
@@ -165,6 +165,7 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
     }
 }
 else {
+    # launch admin console
     Start-Process -FilePath "powershell" -ArgumentList "$('-File ""')$(Get-Location)$('\')$($MyInvocation.MyCommand.Name)$('""')" -Verb runAs -Wait -WindowStyle "Maximized"
 }    
 
