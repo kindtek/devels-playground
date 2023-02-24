@@ -1,6 +1,7 @@
 # if (Split-Path -Parent){
 $PSCommandPath | Split-Path -Parent
-Set-PSReadlineOption -TokenKind Command -BackgroundColor Black
+Set-ConsoleColor -foreground White -background Black -clear
+$host.ui.rawui.BackgroundColor = "Black"
 function install_software {
     param (
         $software_id,
