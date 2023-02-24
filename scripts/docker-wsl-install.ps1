@@ -1,8 +1,10 @@
 # if (Split-Path -Parent){
 $PSCommandPath | Split-Path -Parent
-Set-ConsoleColor -foreground White -background Black -clear
+$host.PrivateData.BackgroundColor = "Black"
+$host.PrivateData.ForegroundColor = "White"
+$host.PrivateData.ConsolePaneBackgroundColor = "Black"
+
 Set-ConsoleTitle "DEV BOILERPLATE"
-get-host
 function install_software {
     param (
         $software_id,
