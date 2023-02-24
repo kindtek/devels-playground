@@ -160,7 +160,6 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
         runas /trustlevel:0x20000 "powershell.exe -command $full_path"
 
         Write-Output "DONE!"
-
     }
 }
 else {
