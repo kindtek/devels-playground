@@ -11,7 +11,7 @@ $tag = "v1.4.10173" # default is latest known release
 $releases = "https://api.github.com/repos/$repo/releases"
 
 Write-Host Determining latest release
-
+# don't use preview releases
 foreach ( $this_tag in (Invoke-WebRequest $releases | ConvertFrom-Json)) {
     if ($this_tag["tag_name"] -NotLike "preview" ) {
         $tag = $this_tag["url"]
@@ -25,7 +25,7 @@ $name = $file.Split(".")[0]
 $zip = "$name-$tag.zip"
 $dir = "$name-$tag"
 
-Write-Host Dowloading latest release
+Write-Host Downloading latest release
 Invoke-WebRequest $download -Out $zip
 
 Write-Host Extracting release files
@@ -35,11 +35,12 @@ Expand-Archive $zip -Force
 Remove-Item $zip -Recurse -Force -ErrorAction SilentlyContinue 
 
 Import-Module ./$dir/Microsoft.WinGet.Client.psm1
+Install-PackageProvider WinGet -Force
 
-# Install-WinGetPackage
+Remove-Item $dir -Recurse -Force -ErrorAction SilentlyContinue 
+
 # Moving from temp dir to target dir
-# Move-Item $dir\$name -Destination $name -Force
-
-# Removing temp files
-# Remove-Item $zip -Force
-# Remove-Item $dir -Recurse -Force
+# $pwd_path = Split-Path -Path $PSCommandPath
+# $old_path = Join-Path -Path $pwd_path -ChildPath $dir
+# $new_path = Join-Path -Path (Get-Location) -ChildPath $name\Winget
+# Move-Item $old_path -Destination $new_path -Force

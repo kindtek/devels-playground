@@ -11,32 +11,40 @@ function install_software {
     # function built using https://keestalkstech.com/2017/10/powershell-snippet-check-if-software-is-installed/
 
     if ($verify_installed -eq $true) {
-        $installed = (Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where { $_.DisplayName -eq $software_id }) -ne $null
-        if (-Not $installed) {
-            if ($force_install -ne $true) {
+    $installed = (Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where { $_.DisplayName -eq $software_id }) -ne $null
+        if ($installed -eq $false) {
+            if ($force_install -eq $false) {
                 # give user the option to install
+                $install = Read-Host "`r`n$software_name recommended but not found. Install now? (y/[n])".ToLower()
                 if ($install -eq 'y' -Or $install -eq 'yes') { 
-                    $install = Read-Host "$software_name required but not found. Install now? (y/[n])".ToLower()
+                    Write-Host "`r`n"
                     Write-Host "Installing $software_name..."
                     Invoke-Expression $install_command
                 }
                 else {
                     Write-Host "skipping $software_name install"
                 }
-                
+            }
+            $install = Read-Host "`r`n$software_name required. Install now or quit? (y/[q])"
+            $install = $install.ToLower()
+            # @TODO: investigate code refactoring for duplicate code
+            if ($install -eq 'y' -Or $install -eq 'yes') { 
+                Write-Host "Installing $software..."
+                Invoke-Expression $install_command
             }
             else {
-                Write-Host "Installing $software_name..."
-                Invoke-Expression $install_command
+                Write-Host "skipping $software_name install and exiting..."
+                exit
             }
         }
         else {
             Write-Host "$software_name already installed."
         }
     }
-    else {
-        $install = Read-Host "$software_name required. Install now? (y/[n])"
+    elseif ($force_install -eq $false) { 
+        $install = Read-Host "`r`n$software_name recommended. Install now? (y/[n])"
         $install = $install.ToLower()
+        # @TODO: investigate code refactoring for duplicate code
         if ($install -eq 'y' -Or $install -eq 'yes') { 
             Write-Host "Installing $software..."
             Invoke-Expression $install_command
@@ -45,12 +53,31 @@ function install_software {
             Write-Host "skipping $software_name install"
         }
     }
-    
+    else {
+        # force_install: true, verify_install: false
+        $install = Read-Host "`r`n$software_name required. Install now or quit? (y/[q])"
+        $install = $install.ToLower()
+        if ($install -eq 'y' -Or $install -eq 'yes') { 
+            Write-Host "Installing $software..."
+            Invoke-Expression $install_command
+
+        }
+        else {
+            Write-Host "skipping $software_name install and exiting..."
+            exit
+        }
+    }
 }
 
+function restart_prompt {
+    Write-Host "`r`nA restart is required for the changes to take effect. " -ForegroundColor Magenta
+    $confirmation = Read-Host "`r`nRestart now (y/[n])?" 
+    if ($confirmation -ieq 'y') {
+        Restart-Computer -Force
+    }
+}
 
-# prompt to install winget
-
+# open terminal with admin priveleges
 $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
 
@@ -59,9 +86,7 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
 
     # $goto_path = Join-Path -Path (Get-Location) -Childpath "windows-features-wsl-add/configure-windows-features.ps1"
     $pwd_path = Split-Path -Path $PSCommandPath
-    write-host "-pwd_path: " + $pwd_path
     $full_path = Join-Path -Path $pwd_path -ChildPath "/windows-features-wsl-add/configure-windows-features.ps1"
-    write-host "full path: $full_path"
     powershell "$full_path"
 
     # # software_id and software_name equal since installation $verify_installed set to false
@@ -84,7 +109,9 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
     # install_software $software_id $software_name $install_command $verify_installed $force_install
 
     $software_id = $software_name = "winget"
+    $pwd_path = Split-Path -Path $PSCommandPath
     $install_command = "powershell.exe -ExecutionPolicy Unrestricted -command $pwd_path/get-latest-winget.ps1"
+    # write-host "install command: $install_command"
     $verify_installed = $false
     $force_install = $true
     
@@ -116,23 +143,23 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
     $software_id = $software_name = "Docker Desktop"
     $verify_installed = $true
     $force_install = $true
-    install_command = "winget install --id=Docker.DockerDesktop  -e"
+    $install_command = "winget install --id=Docker.DockerDesktop  -e"
 
-    $confirmation = Read-Host "A restart is required for the changes to take effect. Restart now (y/n)?"
+    Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta
+    $confirmation = Read-Host "`r`nRestart now (y/[n])?" 
     if ($confirmation -ieq 'y') {
         Restart-Computer -Force
     }
     else {
-        Write-Host "At a time convenient to you, restart the machine for the changes to take effect."
+        Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev"
+        # ./images-build-push.ps1
+        ./wsl-import.ps1        
+        Write-Output "DONE!"
     }
-
 }
 else {
-    Start-Process -FilePath "powershell" -ArgumentList "$('-File ""')$(Get-Location)$('\')$($MyInvocation.MyCommand.Name)$('""')" -Verb runAs
+    Start-Process -FilePath "powershell" -ArgumentList "$('-File ""')$(Get-Location)$('\')$($MyInvocation.MyCommand.Name)$('""')" -Verb runAs -Wait -WindowStyle Maximized
 }    
 
 
-Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev"
-# ./images-build-push.ps1
-./wsl-import.ps1
-Write-Output "DONE!"
+
