@@ -152,7 +152,7 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
 
         # start WSL docker import tool
         $pwd_path = Split-Path -Path $PSCommandPath
-        $full_path = Join-Path -Path "& $pwd_path -ChildPath /docker-to-wsl/scripts/wsl-import.ps1" 
+        $full_path = "& $pwd_path/docker-to-wsl/scripts/wsl-import.ps1" 
         Start-Process "powershell" "/c $full_path"
         
         Write-Output "DONE!"
