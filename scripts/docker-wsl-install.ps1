@@ -72,7 +72,6 @@ function install_software {
     }
 
     $host.UI.RawUI.BackgroundColor = "Black"
-    Clear-Host
 }
 
 function restart_prompt {
@@ -158,7 +157,8 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
         Write-Output "DONE!"
 
         if ((Read-Host "`r`nopen Docker Dev enviornment? [y]/n")  ) {
-            Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev" -WindowStyle Minimized
+            Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev"
+            Get-Window "& Docker Desktop" | Set-WindowState -Minimize
         }  
     }
 }
