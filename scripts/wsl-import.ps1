@@ -2,9 +2,9 @@
 Set-PSDebug -Off
 
 function main {
-    Clear-Host
-    $host.UI.RawUI.BackgroundColor = "Black"
     $host.UI.RawUI.ForegroundColor = "White"
+    $host.UI.RawUI.BackgroundColor = "Black"
+    Clear-Host
     dev_boilerplate
 }
 # from https://stackoverflow.com/questions/44703646/determine-the-os-version-linux-and-windows-from-powershell

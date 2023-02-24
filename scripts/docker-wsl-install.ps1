@@ -163,7 +163,7 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
     }
 }
 else {
-    Start-Process -FilePath "powershell" -ArgumentList "$('-File ""')$(Get-Location)$('\')$($MyInvocation.MyCommand.Name)$('""')" -Verb runAs -Wait -WindowStyle Maximized
+    Start-Process -FilePath "powershell" -ArgumentList "$('-File ""')$(Get-Location)$('\')$($MyInvocation.MyCommand.Name)$('""')" -Verb runAs -Wait -WindowStyle "hidden"
 }    
 
 
