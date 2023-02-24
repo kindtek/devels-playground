@@ -157,13 +157,12 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
         Write-Output "DONE!"
 
         if ((Read-Host "`r`nopen Docker Dev enviornment? [y]/n")  ) {
-            Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev"
-            Get-Window "& Docker Desktop" | Set-WindowState -Minimize
+            Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev" -Wait -WindowStyle "Hidden"
         }  
     }
 }
 else {
-    Start-Process -FilePath "powershell" -ArgumentList "$('-File ""')$(Get-Location)$('\')$($MyInvocation.MyCommand.Name)$('""')" -Verb runAs -Wait -WindowStyle "hidden"
+    Start-Process -FilePath "powershell" -ArgumentList "$('-File ""')$(Get-Location)$('\')$($MyInvocation.MyCommand.Name)$('""')" -Verb runAs -Wait -WindowStyle "Maximized"
 }    
 
 
