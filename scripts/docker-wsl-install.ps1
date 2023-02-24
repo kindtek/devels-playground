@@ -147,13 +147,13 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
         # get a head start on building custom docker images using machine settings
         $pwd_path = Split-Path -Path $PSCommandPath
         $full_path = "& $pwd_path/docker-to-wsl/scripts/images-build.bat" 
-        Start-Process "cmd.exe" "/c $full_path"
+        Start-Process "cmd.exe" "/c $full_path" runAs -Wait -WindowStyle "Minimized"
 
         # start WSL docker import tool
         $pwd_path = Split-Path -Path $PSCommandPath
         $full_path = "& $pwd_path/docker-to-wsl/scripts/wsl-import.ps1" 
         # Start-Process "powershell" "/c $full_path"
-        runas /trustlevel:0x20000 "powershell.exe -command '/c $full_path'"
+        Start-Process powershell.exe -command $full_path -Verb runAs -Wait -WindowStyle "Maximized"
 
         $user_input = (Read-Host "`r`nopen Docker Dev enviornment? [y]/n")
         if ( $user_input -ne 'n' ) {
