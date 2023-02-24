@@ -162,7 +162,7 @@ function dev_boilerplate {
         $host.UI.RawUI.ForegroundColor = "White"
     }
 
-    $null = New-Item -Path $save_location -ItemType Directory -ErrorAction SilentlyContinue 
+    $null = New-Item -Path $save_location -ItemType Directory -Force -ErrorAction SilentlyContinue 
     Write-Host "install location:$install_location"
     $null = New-Item -Path $install_location -ItemType Directory 
 
@@ -180,8 +180,6 @@ function dev_boilerplate {
 
     # update image id and container id path for later ref
     $distro = "$distro-$WSL_DOCKER_CONTAINER_ID"
-    # Write-Host "`r`n!>>>>>>>containerid:$WSL_DOCKER_CONTAINER_ID<<<<<<<<<!`r`n"
-    # Write-Host "`r`n!>>>>>>>containerid:$distro<<<<<<<<<!`r`n"
 
     export_image $install_location $save_location $distro $WSL_DOCKER_CONTAINER_ID
     import_docker_tar $distro $install_location $save_location $wsl_version
