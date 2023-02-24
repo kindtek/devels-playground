@@ -1,0 +1,1 @@
+Powershell.exe -executionpolicy remotesigned -File scripts/powershell-remote/start-here.ps1
