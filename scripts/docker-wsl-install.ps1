@@ -70,6 +70,9 @@ function install_software {
             exit
         }
     }
+
+    $host.UI.RawUI.BackgroundColor = "Black"
+    Clear-Host
 }
 
 function restart_prompt {
