@@ -1,1 +1,3 @@
 .history
+# for when unpacking winget in get-latest-winget.ps1
+scripts/Microsoft-*
