@@ -108,7 +108,7 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
     # $force_install = $false
     # install_software $software_id $software_name $install_command $verify_installed $force_install
 
-    $software_id = $software_name = "winget"
+    $software_id = $software_name = "WinGet"
     $pwd_path = Split-Path -Path $PSCommandPath
     $install_command = "powershell.exe -ExecutionPolicy Unrestricted -command $pwd_path/get-latest-winget.ps1"
     # write-host "install command: $install_command"
@@ -152,7 +152,7 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
     }
     else {
 
-        if ((Read-Host "`r`nopen docker dev enviornment? [y]/n") -ine 'n'  ) {
+        if ((Read-Host "`r`nopen Docker Dev enviornment? [y]/n") -ine 'n'  ) {
             Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev"
         } 
 
