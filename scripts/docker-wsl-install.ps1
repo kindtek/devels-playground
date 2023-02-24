@@ -1,6 +1,7 @@
-if (Split-Path -Parent){
+# if (Split-Path -Parent){
+try {
     $PSCommandPath | Split-Path -Parent
-}
+} catch{}
 
 function install_software {
     param (
