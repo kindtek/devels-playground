@@ -72,7 +72,7 @@ SET /p "default=$ "
 @REM prompt user to type input or hit enter for default shown in parentheses
 if %default%==config (
 
-    color B
+    color B 0
 
     @REM @TODO: filter/safeguard user input
     ECHO:
@@ -117,7 +117,7 @@ if %default%==config (
         SET "wsl_version=2" 
     )
 
-    color F
+    color F 0
 )
 
 
@@ -163,10 +163,10 @@ IF %default%==config (
     ECHO ^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!
     ECHO:
     ECHO:
-    color 2
+    color 2 0
     ECHO docker run -it --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID!
     docker run -it --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID!
-    color F
+    color F 0
     ECHO:
     ECHO closing preview container...
     ECHO:
