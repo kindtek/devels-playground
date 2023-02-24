@@ -1,4 +1,6 @@
-$PSCommandPath | Split-Path -Parent
+if (Split-Path ){
+    $PSCommandPath | Split-Path -Parent
+}
 
 function install_software {
     param (
