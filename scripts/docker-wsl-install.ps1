@@ -106,7 +106,7 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
     # install_software $software_id $software_name $install_command $verify_installed $force_install
 
     $software_id = $software_name = "WinGet"
-    $install_command = "powershell.exe -ExecutionPolicy Unrestricted -command $pwd_path/get-latest-winget.ps1"
+    $install_command = "powershell.exe -ExecutionPolicy Unrestricted -command  '& $pwd_path/get-latest-winget.ps1'"
     # write-host "install command: $install_command"
     $verify_installed = $false
     $force_install = $true
@@ -129,7 +129,7 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
 
     # use windows-features-wsl-add to handle windows features install
     $pwd_path = Split-Path -Path $PSCommandPath
-    $full_path = Join-Path -Path $pwd_path -ChildPath "/docker-to-wsl/scripts/windows-features-wsl-add/configure-windows-features.ps1"
+    $full_path = Join-Path -Path "& $pwd_path" -ChildPath "/docker-to-wsl/scripts/windows-features-wsl-add/configure-windows-features.ps1"
     powershell "$full_path"
 
     # @TODO: find a way to check if VSCode is installed
@@ -163,12 +163,12 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
 
         # get a head start on building custom docker images using machine settings
         $pwd_path = Split-Path -Path $PSCommandPath
-        $full_path = Join-Path -Path $pwd_path -ChildPath "/docker-to-wsl/scripts/images-build.bat" 
+        $full_path = Join-Path -Path "& $pwd_path -ChildPath /docker-to-wsl/scripts/images-build.bat" 
         Start-Process "cmd.exe" "/c $full_path"
 
         # start WSL docker import tool
         $pwd_path = Split-Path -Path $PSCommandPath
-        $full_path = Join-Path -Path $pwd_path -ChildPath "/docker-to-wsl/scripts/wsl-import.ps1" 
+        $full_path = Join-Path -Path "& $pwd_path -ChildPath /docker-to-wsl/scripts/wsl-import.ps1" 
         powershell "$full_path"
         
         Write-Output "DONE!"
