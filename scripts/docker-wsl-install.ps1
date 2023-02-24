@@ -29,7 +29,7 @@ function install_software {
             $install = $install.ToLower()
             # @TODO: investigate code refactoring for duplicate code
             if ($install -eq 'y' -Or $install -eq 'yes') { 
-                Write-Host "Installing $software..."
+                Write-Host "Installing $software_name..."
                 Invoke-Expression $install_command
             }
             else {
@@ -152,14 +152,14 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
     }
     else {
 
-        if ((Read-Host "open docker dev enviornment? ") -ieq 'y'  ) {
+        if ((Read-Host "`r`nopen docker dev enviornment? [y]/n") -ine 'n'  ) {
             Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev"
         } 
 
         # get a head start on building custom docker images using machine settings
         $pwd_path = Split-Path -Path $PSCommandPath
-        $full_path = Join-Path -Path $pwd_path -ChildPath "images-build.ps1" 
-        Start-Process -FilePath "$full_path"
+        $full_path = Join-Path -Path $pwd_path -ChildPath "images-build.bat" 
+        Start-Process -FilePath $full_path
 
         # start WSL docker import tool
         $pwd_path = Split-Path -Path $PSCommandPath
