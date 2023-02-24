@@ -162,7 +162,7 @@ function dev_boilerplate {
         $host.UI.RawUI.ForegroundColor = "White"
     }
 
-    $null = New-Item -Path $save_location -ItemType Directory 
+    $null = New-Item -Path $save_location -ItemType Directory -ErrorAction SilentlyContinue 
     Write-Host "install location:$install_location"
     $null = New-Item -Path $install_location -ItemType Directory 
 
@@ -172,7 +172,8 @@ function dev_boilerplate {
 
     docker_image_pull $image_repo_image_name
     $WSL_DOCKER_CONTAINER_ID = docker_container_start $config $distro $image_repo_image_name $install_location
-    $WSL_DOCKER_CONTAINER_ID = $WSL_DOCKER_CONTAINER_ID[0].substring(0,4)
+    $WSL_DOCKER_CONTAINER_ID = $WSL_DOCKER_CONTAINER_ID[0]
+    $WSL_DOCKER_CONTAINER_ID = $WSL_DOCKER_CONTAINER_ID.substring(0, 5)
 
     # now that we have container id, append it to install location and distro
     $install_location = "$install_location-$WSL_DOCKER_CONTAINER_ID"
@@ -213,7 +214,7 @@ function greeting_prompt {
       -------------------------------------------------------------------
       
     
-Press ENTER to use settings above and import $distro as default WSL distro 
+Press ENTER to use settings above and import $distro into WSL 
  ..or type 'config' for custom install.
 "@
 
@@ -248,7 +249,7 @@ function docker_container_start {
     Write-Host "initializing the image container..."
     Write-Host "docker images -aq $image_repo_image_name"
     # get single id returned from docker images command
-    $WSL_DOCKER_IMG_ID = @(<docker images -aq $image_repo_image_name>)
+    $WSL_DOCKER_IMG_ID = @(docker images -aq $image_repo_image_name)
     $WSL_DOCKER_IMG_ID = $WSL_DOCKER_IMG_ID[0]
     $docker_image_id_path = "$install_path/.image_id"
     $docker_container_id_path = "$install_path/.container_id"
@@ -338,7 +339,7 @@ function install_prompt {
     Write-Host "Check the list of current WSL distros installed on your system above. "
     Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
     Write-Host "!!!!!!!!!!!!                   WARNING:                !!!!!!!!!!!!!!"
-    Write-Host "If $distro.substring(0, 20) is already listed above it will be REPLACED.  "
+    Write-Host "If ${distro.substring(0, 5)} is already listed above it will be REPLACED.  "
     Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
     Write-Host "_____________________________________________________________________"
     Write-Host "`r`n"
