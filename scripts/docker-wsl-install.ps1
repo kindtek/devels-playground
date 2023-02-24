@@ -3,8 +3,6 @@ $PSCommandPath | Split-Path -Parent
 $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
 Clear-Host
-
-Set-ConsoleTitle "DEV BOILERPLATE"
 function install_software {
     param (
         $software_id,
