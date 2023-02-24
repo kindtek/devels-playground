@@ -81,14 +81,6 @@ function restart_prompt {
 $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
 
-
-    # use windows-features-wsl-add to handle windows features install
-
-    # $goto_path = Join-Path -Path (Get-Location) -Childpath "windows-features-wsl-add/configure-windows-features.ps1"
-    $pwd_path = Split-Path -Path $PSCommandPath
-    $full_path = Join-Path -Path $pwd_path -ChildPath "/windows-features-wsl-add/configure-windows-features.ps1"
-    powershell "$full_path"
-
     # # software_id and software_name equal since installation $verify_installed set to false
     # $software_id = $software_name = "Windows Subsystem for Linux (WSL)"
     # $install_command = "Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -NoRestart"
@@ -131,6 +123,19 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
     $force_install = $true
     install_software $software_id $software_name $install_command $verify_installed $force_install
 
+    # clone docker-to-wsl repo
+    $user_name = kindtek
+    $repo_name = docker-to-wsl
+    git clone https://github.com/${user_name}/${repo_name}\.git
+    git submodule update --init
+    Set-Location scripts/powershell-remote
+    Start-Process -FilePath start-here.ps1
+
+    # use windows-features-wsl-add to handle windows features install
+    $pwd_path = Split-Path -Path $PSCommandPath
+    $full_path = Join-Path -Path $pwd_path -ChildPath "/windows-features-wsl-add/configure-windows-features.ps1"
+    powershell "$full_path"
+
     # @TODO: find a way to check if VSCode is installed
     $software_id = $software_name = "Visual Studio Code (VSCode)"
     $install_command = "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'"
@@ -159,7 +164,7 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
         # get a head start on building custom docker images using machine settings
         $pwd_path = Split-Path -Path $PSCommandPath
         $full_path = Join-Path -Path $pwd_path -ChildPath "images-build.bat" 
-        Start-Process -FilePath $full_path
+        Start-Process "cmd.exe" "/c $full_path"
 
         # start WSL docker import tool
         $pwd_path = Split-Path -Path $PSCommandPath
