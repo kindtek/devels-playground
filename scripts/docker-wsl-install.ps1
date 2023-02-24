@@ -157,12 +157,8 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
         $pwd_path = Split-Path -Path $PSCommandPath
         $full_path = "& $pwd_path/docker-to-wsl/scripts/wsl-import.ps1" 
         # Start-Process "powershell" "/c $full_path"
-<<<<<<< HEAD
         runas /trustlevel:0x20000 "powershell.exe -command $full_path"
-=======
-        runas /trustlevel:0x20000 "powershell.exe -command $full_path
->>>>>>> 5d0514570c8e7a0832d9c0bb9c3f014ecca95dd2
-        
+
         Write-Output "DONE!"
 
     }
