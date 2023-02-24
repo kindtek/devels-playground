@@ -147,7 +147,7 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
         # get a head start on building custom docker images using machine settings
         $pwd_path = Split-Path -Path $PSCommandPath
         $full_path = "& $pwd_path/docker-to-wsl/scripts/images-build.bat" 
-        Invoke-WmiMethod -Class Win32_Process -Name D2WImportTool -ArgumentList "cmd.exe $full_path"
+        Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList "cmd.exe $full_path"
 
         # start WSL docker import tool
         $pwd_path = Split-Path -Path $PSCommandPath
