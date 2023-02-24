@@ -160,12 +160,12 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
 
         # get a head start on building custom docker images using machine settings
         $pwd_path = Split-Path -Path $PSCommandPath
-        $full_path = Join-Path -Path $pwd_path -ChildPath "images-build.bat" 
+        $full_path = Join-Path -Path $pwd_path -ChildPath "/docker-to-wsl/scripts/images-build.bat" 
         Start-Process "cmd.exe" "/c $full_path"
 
         # start WSL docker import tool
         $pwd_path = Split-Path -Path $PSCommandPath
-        $full_path = Join-Path -Path $pwd_path -ChildPath "wsl-import.ps1" 
+        $full_path = Join-Path -Path $pwd_path -ChildPath "/docker-to-wsl/scripts/wsl-import.ps1" 
         powershell "$full_path"
         
         Write-Output "DONE!"
