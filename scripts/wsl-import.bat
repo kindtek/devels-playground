@@ -1,5 +1,5 @@
 @echo off
-color F
+color F 0
 SETLOCAL EnableDelayedExpansion
 :redo
 @REM set default variables. set default literally to default
