@@ -149,16 +149,18 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
         $full_path = "& $pwd_path/docker-to-wsl/scripts/images-build.bat" 
         Start-Process "cmd.exe" "/c $full_path"
 
-        # start WSL docker import tool
-        $pwd_path = Split-Path -Path $PSCommandPath
-        $full_path = "& $pwd_path/docker-to-wsl/scripts/wsl-import.ps1" 
-        Start-Process "powershell" "/c $full_path"
-        
-        Write-Output "DONE!"
-
         if ((Read-Host "`r`nopen Docker Dev enviornment? [y]/n")  ) {
             Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev" -Wait -WindowStyle "Hidden"
         }  
+
+        # start WSL docker import tool
+        $pwd_path = Split-Path -Path $PSCommandPath
+        $full_path = "& $pwd_path/docker-to-wsl/scripts/wsl-import.ps1" 
+        # Start-Process "powershell" "/c $full_path"
+        runas /trustlevel:0x20000 "powershell.exe -command $full_path"
+        
+        Write-Output "DONE!"
+
     }
 }
 else {
