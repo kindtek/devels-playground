@@ -149,7 +149,8 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
         $full_path = "& $pwd_path/docker-to-wsl/scripts/images-build.bat" 
         Start-Process "cmd.exe" "/c $full_path"
 
-        if ((Read-Host "`r`nopen Docker Dev enviornment? [y]/n")  ) {
+        $user_input = (Read-Host "`r`nopen Docker Dev enviornment? [y]/n")
+        if ( $user_input ) {
             Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev" -Wait -WindowStyle "Hidden"
         }  
 
