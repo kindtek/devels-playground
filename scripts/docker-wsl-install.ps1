@@ -1,8 +1,6 @@
 # if (Split-Path -Parent){
-try {
-    $PSCommandPath | Split-Path -Parent
-} catch{}
-
+$PSCommandPath | Split-Path -Parent
+Set-PSReadlineOption -TokenKind Command -BackgroundColor Black
 function install_software {
     param (
         $software_id,
@@ -41,7 +39,7 @@ function install_software {
             }
         }
         else {
-            Write-Host "`r`n$software_name already installed."
+            Write-Host "`r`n$software_name already installed." -ForegroundColor Yellow
         }
     }
     elseif ($force_install -eq $false) { 
@@ -86,24 +84,6 @@ $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.
 $pwd_path = Split-Path -Path $PSCommandPath
 
 if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-    # # software_id and software_name equal since installation $verify_installed set to false
-    # $software_id = $software_name = "Windows Subsystem for Linux (WSL)"
-    # $install_command = "Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Windows-Subsystem-Linux -NoRestart"
-    # $verify_installed = $false
-    # $force_install = $true
-    # install_software $software_id $software_name $install_command $verify_installed $force_install
-
-    # $software_id = $software_name = "Hyper-V"
-    # $install_command = "Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V -All -NoRestart"
-    # $verify_installed = $false
-    # $force_install = $true
-    # install_software $software_id $software_name $install_command $verify_installed $force_install
-
-    # $software_id = $software_name = "Powershell 2.0"
-    # $install_command = "Enable-WindowsOptionalFeature -Online -FeatureName MicrosoftWindowsPowerShellV2 -All -NoRestart"
-    # $verify_installed = $false
-    # $force_install = $false
-    # install_software $software_id $software_name $install_command $verify_installed $force_install
 
     $software_id = $software_name = "WinGet"
     $install_command = "powershell.exe -ExecutionPolicy Unrestricted -command '& $pwd_path/get-latest-winget.ps1'"
@@ -168,7 +148,7 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
         # start WSL docker import tool
         $pwd_path = Split-Path -Path $PSCommandPath
         $full_path = Join-Path -Path "& $pwd_path -ChildPath /docker-to-wsl/scripts/wsl-import.ps1" 
-        powershell "$full_path"
+        Start-Process "powershell" "/c $full_path"
         
         Write-Output "DONE!"
 
