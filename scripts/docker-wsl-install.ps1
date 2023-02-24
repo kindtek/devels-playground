@@ -82,16 +82,18 @@ function restart_prompt {
     }
 }
 
-# open terminal with admin priveleges
-$principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+
 
 $pwd_path = Split-Path -Path $PSCommandPath
 # get a head start on building custom docker images using machine settings and without admin priveleges
 $pwd_path = Split-Path -Path $PSCommandPath
 $full_path = "& $pwd_path/docker-to-wsl/scripts/images-build.bat" 
 $cmd_args = 'cmd.exe' + ' ' + $full_path
+Write-Host  "cmd args: $cmd_args"
 Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList $cmd_args
 
+# open terminal with admin priveleges
+$principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
 
     $software_id = $software_name = "WinGet"
