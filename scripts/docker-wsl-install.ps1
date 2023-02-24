@@ -158,7 +158,7 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
         Write-Output "DONE!"
 
         if ((Read-Host "`r`nopen Docker Dev enviornment? [y]/n")  ) {
-            Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev"
+            Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev" -WindowStyle Minimized
         }  
     }
 }
