@@ -127,15 +127,6 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
     $force_install = $true
     install_software $software_id $software_name $install_command $verify_installed $force_install
 
-    # clone docker-to-wsl repo
-    # $user_name = kindtek
-    # $repo_name = docker-to-wsl
-    Write-Host git clone "https://github.com/kindtek/docker-to-wsl.git"
-    git clone "https://github.com/kindtek/docker-to-wsl.git"
-    git submodule update --init
-    $remote_pwsh_path = Set-Location Join-Path -Path $pwd_path -ChildPath /scripts/powershell-remote/start-here.ps1
-    Start-Process -FilePath $remote_pwsh_path.ToString()
-
     # use windows-features-wsl-add to handle windows features install
     $pwd_path = Split-Path -Path $PSCommandPath
     $full_path = Join-Path -Path $pwd_path -ChildPath "/windows-features-wsl-add/configure-windows-features.ps1"
@@ -155,7 +146,6 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
     $verify_installed = $true
     $force_install = $true
     install_software $software_id $software_name $install_command $verify_installed $force_install
-
 
     Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta
     $confirmation = Read-Host "`r`nRestart now (y/[n])?" 
