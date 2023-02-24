@@ -46,7 +46,7 @@ function install_software {
         $install = $install.ToLower()
         # @TODO: investigate code refactoring for duplicate code
         if ($install -eq 'y' -Or $install -eq 'yes') { 
-            Write-Host "Installing $software..."
+            Write-Host "Installing $software_name..."
             Invoke-Expression $install_command
         }
         else {
@@ -58,7 +58,7 @@ function install_software {
         $install = Read-Host "`r`n$software_name required. Install now or quit? (y/[q])"
         $install = $install.ToLower()
         if ($install -eq 'y' -Or $install -eq 'yes') { 
-            Write-Host "Installing $software..."
+            Write-Host "Installing $software_name..."
             Invoke-Expression $install_command
 
         }
