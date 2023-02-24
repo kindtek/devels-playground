@@ -83,6 +83,8 @@ function restart_prompt {
 # open terminal with admin priveleges
 $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 
+$pwd_path = Split-Path -Path $PSCommandPath
+
 if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
     # # software_id and software_name equal since installation $verify_installed set to false
     # $software_id = $software_name = "Windows Subsystem for Linux (WSL)"
@@ -104,7 +106,6 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
     # install_software $software_id $software_name $install_command $verify_installed $force_install
 
     $software_id = $software_name = "WinGet"
-    $pwd_path = Split-Path -Path $PSCommandPath
     $install_command = "powershell.exe -ExecutionPolicy Unrestricted -command $pwd_path/get-latest-winget.ps1"
     # write-host "install command: $install_command"
     $verify_installed = $false
@@ -127,11 +128,11 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
     install_software $software_id $software_name $install_command $verify_installed $force_install
 
     # clone docker-to-wsl repo
-    $user_name = kindtek
-    $repo_name = docker-to-wsl
+    # $user_name = kindtek
+    # $repo_name = docker-to-wsl
     git clone https://github.com/kindtek/docker-to-wsl\.git
     git submodule update --init
-    Set-Location scripts/powershell-remote
+    Set-Location $pwd_path/scripts/powershell-remote
     Start-Process -FilePath start-here.ps1
 
     # use windows-features-wsl-add to handle windows features install
