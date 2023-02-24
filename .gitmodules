@@ -1,0 +1,3 @@
+[submodule "scripts/windows-features-add-wsl"]
+	path = scripts/windows-features-add-wsl
+	url = https://github.com/kindtek/windows-features-add-wsl
