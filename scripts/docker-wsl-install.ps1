@@ -128,9 +128,7 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
     install_software $software_id $software_name $install_command $verify_installed $force_install
 
     # use windows-features-wsl-add to handle windows features install
-    $pwd_path = Split-Path -Path $PSCommandPath
-    $full_path = Join-Path -Path "& $pwd_path" -ChildPath "/docker-to-wsl/scripts/windows-features-wsl-add/configure-windows-features.ps1"
-    powershell "$full_path"
+    $powershell = "& $pwd_path/docker-to-wsl/scripts/windows-features-wsl-add/configure-windows-features.ps1"
 
     # @TODO: find a way to check if VSCode is installed
     $software_id = $software_name = "Visual Studio Code (VSCode)"
