@@ -41,7 +41,7 @@ function install_software {
             }
         }
         else {
-            Write-Host "$software_name already installed."
+            Write-Host "`r`n$software_name already installed."
         }
     }
     elseif ($force_install -eq $false) { 
@@ -167,8 +167,12 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
         $pwd_path = Split-Path -Path $PSCommandPath
         $full_path = Join-Path -Path $pwd_path -ChildPath "wsl-import.ps1" 
         powershell "$full_path"
-  
+        
         Write-Output "DONE!"
+
+        if ((Read-Host "`r`nopen Docker Dev enviornment? [y]/n")  ) {
+            Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev"
+        }  
     }
 }
 else {
