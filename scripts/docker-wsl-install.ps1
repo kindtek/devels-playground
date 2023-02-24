@@ -2,6 +2,7 @@
 $PSCommandPath | Split-Path -Parent
 Set-ConsoleColor -foreground White -background Black -clear
 Set-ConsoleTitle "DEV BOILERPLATE"
+get-host
 function install_software {
     param (
         $software_id,
