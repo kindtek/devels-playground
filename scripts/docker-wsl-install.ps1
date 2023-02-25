@@ -91,7 +91,7 @@ $full_path = "$pwd_path\docker-to-wsl\scripts\images-build.bat"
 $cmd_args = "cmd \'$full_path\'"
 # $cmd_args = "cmd.exe `"$full_path`""
 Write-Host  "cmd ardgs: $cmd_args"
-Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList cmd "\"$pwd_path\docker-to-wsl\scripts\images-build.bat\"" 
+Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList cmd "`"$pwd_path\docker-to-wsl\scripts\images-build.bat`"" 
 
 # open terminal with admin priveleges
 $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
