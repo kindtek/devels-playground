@@ -87,8 +87,9 @@ function restart_prompt {
 $pwd_path = Split-Path -Path $PSCommandPath
 # get a head start on building custom docker images using machine settings and without admin priveleges
 $pwd_path = Split-Path -Path $PSCommandPath
-$cmd_args = "$pwd_path\docker-to-wsl\scripts\images-build.bat"
-&$cmd_args = Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList cmd "$pwd_path\docker-to-wsl\scripts\images-build.bat"
+# holy moly this was tough - great reference here: https://slai.github.io/posts/powershell-and-external-commands-done-right/
+$cmd_args = "$pwd_path/docker-to-wsl/scripts/images-build.bat" 
+&$cmd_args = Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList cmd "$pwd_path/docker-to-wsl/scripts/images-build.bat"
 # $cmd_args = "cmd.exe `"$full_path`""
 Write-Host  "cmd ardgs: $cmd_args"
 
