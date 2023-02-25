@@ -2,7 +2,9 @@
 # 1) open windows explorer and navigate to the directory you would like the docker-to-wsl repo to be cloned to
 # 2) right click, select open in terminal and then copy/pasta the contents of this file$PSCommandPath | Split-Path -Parent
 # get working path
+$PSCommandPath | Split-Path -Parent
 $pwd_path = Split-Path -Path $PSCommandPath
+
 $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
 Clear-Host
@@ -92,7 +94,7 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
 
     $software_id = $software_name = "WinGet"
     $install_command = "$pwd_path/docker-to-wsl/scripts/get-latest-winget.ps1"
-    &$install_command = powershell.exe -ExecutionPolicy Unrestricted -command "$pwd_path/docker-to-wsl/scripts/get-latest-winget.ps1"
+    &$install_command = powershell.exe -ExecutionPolicy Unrestricted "-command $pwd_path/docker-to-wsl/scripts/get-latest-winget.ps1"
     # write-host "install command: $install_command"
     $verify_installed = $false
     $force_install = $true
