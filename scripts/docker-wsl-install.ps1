@@ -89,7 +89,6 @@ $pwd_path = Split-Path -Path $PSCommandPath
 $pwd_path = Split-Path -Path $PSCommandPath
 $full_path = "$pwd_path\docker-to-wsl\scripts\images-build.bat" 
 $cmd_args = "cmd `"$full_path`""
-$cmd_args=$cmd_args
 # $cmd_args = "cmd.exe `"$full_path`""
 Write-Host  "cmd args: $cmd_args"
 Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList cmd $cmd_args
