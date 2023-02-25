@@ -9,7 +9,7 @@ docker compose -f ../docker-compose.ubuntu.yaml up -d
 docker compose -f ../docker-compose.alpine.yaml up -d
 
 @REM ubuntu
-docker compose -f ../docker-compose.ubuntu.yaml push
+docker compose -f /docker-compose.ubuntu.yaml push
 @REM alpine
 docker compose -f ../docker-compose.alpine.yaml push
 
