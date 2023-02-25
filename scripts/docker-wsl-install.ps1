@@ -112,8 +112,8 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
     install_software $software_id $software_name $install_command $verify_installed $force_install
 
     # use windows-features-wsl-add to handle windows features install
-    $powershell = "$pwd_path/docker-to-wsl/scripts/windows-features-wsl-add/configure-windows-features.ps1"
-    &$powershell = powershell "$pwd_path/docker-to-wsl/scripts/windows-features-wsl-add/configure-windows-features.ps1"
+    $winconfig = "$pwd_path/docker-to-wsl/scripts/windows-features-wsl-add/configure-windows-features.ps1"
+    &$winconfig = powershell.exe "$pwd_path/docker-to-wsl/scripts/windows-features-wsl-add/configure-windows-features.ps1"
 
     # @TODO: find a way to check if VSCode is installed
     $software_id = $software_name = "Visual Studio Code (VSCode)"
@@ -158,5 +158,5 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
 }
 else {
     # launch admin console running this same file
-    Start-Process -FilePath "powershell" -ArgumentList "$('-File ""')$(Get-Location)$('\')$($MyInvocation.MyCommand.Name)$('""')" -Verb runAs -Wait -WindowStyle "Maximized"
+    Start-Process -FilePath powershell.exe -ArgumentList "$('-File ""')$(Get-Location)$('\')$($MyInvocation.MyCommand.Name)$('""')" -Verb runAs -Wait -WindowStyle "Maximized"
 }    
