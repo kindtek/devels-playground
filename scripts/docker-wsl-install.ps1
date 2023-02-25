@@ -1,7 +1,8 @@
 # to set up your dev environment:
 # 1) open windows explorer and navigate to the directory you would like the docker-to-wsl repo to be cloned to
 # 2) right click, select open in terminal and then copy/pasta the contents of this file$PSCommandPath | Split-Path -Parent
-
+# get working path
+$pwd_path = Split-Path -Path $PSCommandPath
 $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
 Clear-Host
