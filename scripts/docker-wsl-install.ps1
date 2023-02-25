@@ -83,18 +83,17 @@ function restart_prompt {
 }
 
 
-
-# get a head start on building custom docker images using machine settings and without admin priveleges
-$pwd_path = Split-Path -Path $PSCommandPath
-Push-Location 'docker-to-wsl/scripts'
-# holy moly getting this invoke-wmimethod was tough - great reference here: https://slai.github.io/posts/powershell-and-external-commands-done-right/
-$cmd_args = "$pwd_path/docker-to-wsl/scripts/images-build.bat" 
-&$cmd_args = Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList cmd "$pwd_path/docker-to-wsl/scripts/images-build.bat"
-Pop-Location
-
 # open terminal with admin priveleges
 $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+    
+    # get a head start on building custom docker images using machine settings and without admin priveleges
+    $pwd_path = Split-Path -Path $PSCommandPath
+    Push-Location 'docker-to-wsl/scripts'
+    # holy moly getting this invoke-wmimethod was tough - great reference here: https://slai.github.io/posts/powershell-and-external-commands-done-right/
+    $cmd_args = "$pwd_path/docker-to-wsl/scripts/images-build.bat" 
+    &$cmd_args = Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList cmd "$pwd_path/docker-to-wsl/scripts/images-build.bat"
+    Pop-Location
 
     $software_id = $software_name = "WinGet"
     $install_command = "powershell.exe -ExecutionPolicy Unrestricted -command '& $pwd_path/docker-to-wsl/scripts/get-latest-winget.ps1'"
