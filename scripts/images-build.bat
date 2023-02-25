@@ -4,15 +4,15 @@
 @REM docker image push kindtek/d2w
 
 @REM ubuntu
-docker compose -f ../docker-compose.ubuntu.yaml build
+docker compose -f /docker-compose.ubuntu.yaml build
 @REM alpine
-docker compose -f ../docker-compose.alpine.yaml build
+docker compose -f /docker-compose.alpine.yaml build
 
 @REM ubuntu
-docker compose -f ../docker-compose.ubuntu.yaml up -d
+docker compose -f /docker-compose.ubuntu.yaml up -d
 @REM alpine
-docker compose -f ../docker-compose.alpine.yaml up -d
+docker compose -f /docker-compose.alpine.yaml up -d
 
 @REM both
-@REM docker compose -f ../docker-compose.ubuntu.yaml -f ../docker-compose.alpine.yaml up -d
+@REM docker compose -f /docker-compose.ubuntu.yaml -f ../docker-compose.alpine.yaml up -d
 
