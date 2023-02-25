@@ -113,7 +113,7 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
 
     # use windows-features-wsl-add to handle windows features install
     powershell = "$pwd_path/docker-to-wsl/scripts/windows-features-wsl-add/configure-windows-features.ps1"
-    &powershell "$pwd_path/docker-to-wsl/scripts/windows-features-wsl-add/configure-windows-features.ps1"
+    &powershell = "$pwd_path/docker-to-wsl/scripts/windows-features-wsl-add/configure-windows-features.ps1"
 
     # @TODO: find a way to check if VSCode is installed
     $software_id = $software_name = "Visual Studio Code (VSCode)"
@@ -147,7 +147,7 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
         $pwd_path = Split-Path -Path $PSCommandPath
         $full_path = "$pwd_path/docker-to-wsl/scripts/wsl-import.ps1"
         # Start-Process "powershell" "/c $full_path"
-        &$full_path Start-Process powershell.exe "$pwd_path/docker-to-wsl/scripts/wsl-import.ps1" -Verb runAs -WindowStyle "Maximized"
+        &$full_path = Start-Process powershell.exe "$pwd_path/docker-to-wsl/scripts/wsl-import.ps1" -Verb runAs -WindowStyle "Maximized"
 
         $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
         if ( $user_input -ne 'n' ) {
