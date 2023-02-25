@@ -1,7 +1,6 @@
+#Requires -RunAsAdministrator
 # using https://gist.github.com/MarkTiedemann/c0adc1701f3f5c215fc2c2d5b1d5efd3#file-download-latest-release-ps1 as template for this file
 # Download latest winget release from github
-
-#Requires -RunAsAdministrator
 
 $repo = "microsoft/winget-cli"
 $file = "Microsoft.WinGet.Client-PSModule.zip"
