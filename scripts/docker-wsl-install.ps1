@@ -174,7 +174,7 @@ $cmd_args = "$pwd_path/docker-to-wsl/scripts/images-build.bat"
 &$cmd_args = Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList start cmd "$pwd_path/docker-to-wsl/scripts/images-build.bat"
 
 # start WSL docker import tool
-$winconfig = "$git_dir/scripts/wsl-import.ps1"
+$winconfig = "$git_dir/scripts/wsl-import.bat"
 &$winconfig = Invoke-Expression -command "$git_dir/scripts/wsl-import.bat" -WindowStyle "Maximized"
 
 $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
