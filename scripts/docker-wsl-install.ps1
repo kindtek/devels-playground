@@ -138,6 +138,7 @@ Set-Location "$git_dir-temp"
 git submodule update --force --recursive --init --remote
 Set-Location ../../
 
+Move-Item -Path "$git_dir" "$git_dir-delete" -Force
 Move-Item -Path "$git_dir-temp" $git_dir -Force
 $git_dir = $git_dir.Replace("-temp", "") 
 
