@@ -201,11 +201,8 @@ else {
     } 
 
     # start WSL docker import tool
-    $file = "wsl-import.ps1"
-    &$file = Start-Process powershell "wsl-import.ps1" -WindowStyle "Maximized"
-
-    $winconfig = "$pwd_path/scripts/wsl-import.ps1"
-    &$winconfig = Invoke-Expression -command "$pwd_path/scripts/wsl-import.ps1"
+    $winconfig = "$pwd_path/wsl-import.ps1"
+    &$winconfig = Invoke-Expression -command "$pwd_path/wsl-import.ps1"
 
     $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
     if ( $user_input -ine "n" ) {
