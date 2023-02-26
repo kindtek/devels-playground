@@ -98,7 +98,6 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 $repo_src_owner = 'kindtek'
 $repo_src_name = 'docker-to-wsl'
 $repo_src_branch = 'dev'
-$dir_local = "$repo_src_name/scripts"
 
 # use windows-features-wsl-add to handle windows features install 
 # installing first to make sure environment has powershell 2
@@ -124,10 +123,12 @@ $verify_installed = $true
 $force_install = $true
 install_software $software_id $software_name $install_command $verify_installed $force_install
 
-$git_check = git rev-parse --is-inside-work-tree
-$git_dir = $pwd_path.Replace("$repo_src_name/scripts", "") 
-$git_dir = $pwd_path.Replace("$repo_src_name\scripts", "") 
+write-host "`git_dir before: $git_dir"
+$git_dir = $pwd_path.Replace("$repo_src_name-temp/scripts", "") 
+$git_dir = $pwd_path.Replace("$repo_src_name-temp\scripts", "") 
 $git_dir += "/$repo_src_name"
+write-host "`git_dir after: $git_dir"
+
 # navigate to original folder script was executed from, create temp folder for git and then replace the temp with newly cloned repo
 # if ($git_check -eq 'true') {
 #     write-host 'repo found using git rev-parse'
@@ -145,21 +146,23 @@ $git_dir += "/$repo_src_name"
 # }
 # else {
 
-    Push-Location ../../
-        if (Test-Path -Path "$git_dir-temp") {
-        # only using remove-item to delete hidden file which can't be done without admin priveleges
-        Remove-Item "$git_dir-temp/.git"
-        # renaming the rest and preparing for deletion
-        Rename-Item -Path "$git_dir-temp" "$repo_src_name-delete"
-    }
-    write-host "cloning to $git_dir-temp"
-    git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_dir-temp"
-    Pop-Location
-    git submodule update --force --recursive --init --remote
-    Push-Location ../../
+Push-Location ../../
+if (Test-Path -Path "$git_dir-temp") {
+    # only using remove-item to delete hidden file which can't be done without admin priveleges
+    Remove-Item "$git_dir-temp/.git"
+    # renaming the rest and preparing for deletion
+    Rename-Item -Path "$git_dir-temp" "$repo_src_name-delete"
+}
+write-host "`git_dir after 2: $git_dir"
 
-    Move-Item -Path "$git_dir-temp" $git_dir -Force
-    Pop-Location
+write-host "cloning to $git_dir-temp"
+git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_dir-temp"
+Pop-Location
+git submodule update --force --recursive --init --remote
+Push-Location ../../
+
+Move-Item -Path "$git_dir-temp" $git_dir -Force
+Pop-Location
 # }
 
 # @TODO: find a way to check if VSCode is installed
