@@ -131,17 +131,22 @@ $git_check = git rev-parse --is-inside-work-tree
 if ($git_check -eq $true) {
     write-host 'found using git rev-parse'
     git fetch "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
+    git submodule update --force --recursive --init --remote
+
 }
 elseif (Test-Path -Path "$PSScriptRoot/$repo_src_name") {
     # Remove-Item "$PSScriptRoot/$repo_src_name" -Recurse
     # check 
     write-host 'found using test-path'
     git fetch "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
+    git submodule update --force --recursive --init --remote
+
 }
 else {
     git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
+    git submodule update --force --recursive --init --remote
+
 }
-git submodule update --force --recursive --init --remote
 Pop-Location
 
 # @TODO: find a way to check if VSCode is installed
