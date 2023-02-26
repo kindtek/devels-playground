@@ -126,8 +126,8 @@ install_software $software_id $software_name $install_command $verify_installed 
 
 $git_check = git rev-parse --is-inside-work-tree
 # navigate to original folder script was executed from, create temp folder for git and then replace the temp with newly cloned repo
-if ($git_check -eq $true) {
-    write-host 'found using git rev-parse'
+if ($git_check -eq 'true') {
+    write-host 'repo found using git rev-parse'
     git fetch "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
     git submodule update --force --recursive --init --remote
 }
@@ -135,12 +135,14 @@ if ($git_check -eq $true) {
 elseif (Test-Path -Path "$PSScriptRoot/$repo_src_name") {
     # Remove-Item "$PSScriptRoot/$repo_src_name" -Recurse
     # check 
-    write-host 'found using test-path'
+    write-host 'repo found using test-path'
     git fetch "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
     git submodule update --force --recursive --init --remote
 
 }
 else {
+    write-host 'repo not found '
+
     Push-Location ..
     git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$repo_src_name-temp"
     Pop-Location
