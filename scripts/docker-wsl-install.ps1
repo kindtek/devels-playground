@@ -124,9 +124,23 @@ $verify_installed = $true
 $force_install = $true
 install_software $software_id $software_name $install_command $verify_installed $force_install
 
-$this_dir = Get-Location
+# navigate to .git folder and do git stuff
 Push-Location ..
-git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
+$git_check = git rev-parse --is-inside-work-tree
+# this is probably playing with fire since admin priveleges are enabled at this point
+if ($git_check -eq $true) {
+    write-host 'found using git rev-parse'
+    git fetch "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
+}
+elseif (Test-Path -Path "$PSScriptRoot/$repo_src_name") {
+    # Remove-Item "$PSScriptRoot/$repo_src_name" -Recurse
+    # check 
+    write-host 'found using test-path'
+    git fetch "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
+}
+else {
+    git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
+}
 git submodule update --force --recursive --init --remote
 Pop-Location
 
