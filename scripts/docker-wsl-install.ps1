@@ -86,7 +86,7 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
 
     # install winget and use winget to install everything else
     $software_id = $software_name = "WinGet"
-    $install_command = "powershell.exe -ExecutionPolicy Unrestricted -command `"get-latest-winget.ps1`""
+    $install_command = "powershell -ExecutionPolicy Unrestricted -command `"get-latest-winget.ps1`""
     # write-host "install command: $install_command"
     $verify_installed = $false
     $force_install = $true
@@ -108,7 +108,7 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
 
     # use windows-features-wsl-add to handle windows features install
     $winconfig = "windows-features-wsl-add/configure-windows-features.ps1"
-    &$winconfig = powershell.exe "windows-features-wsl-add/configure-windows-features.ps1"
+    &$winconfig = powershell "windows-features-wsl-add/configure-windows-features.ps1"
 
     # @TODO: find a way to check if VSCode is installed
     $software_id = $software_name = "Visual Studio Code (VSCode)"
@@ -141,7 +141,7 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
 
         # start WSL docker import tool
         $file = "wsl-import.ps1"
-        &$file = Start-Process powershell.exe "wsl-import.ps1" -Verb runAs -WindowStyle "Maximized"
+        &$file = Start-Process powershell "wsl-import.ps1" -WindowStyle "Maximized"
 
         $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
         if ( $user_input -ine "n" ) {
@@ -152,6 +152,6 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
     }
 } else {
     # launch admin console running this same file
-    Start-Process -FilePath powershell.exe -ArgumentList "$('-File ""')$(Get-Location)$('\')$($MyInvocation.MyCommand.Name)$('""')" -Verb runAs -Wait --NowNewWindow
+    Start-Process -FilePath powershell -ArgumentList "$('-File ""')$(Get-Location)$('\')$($MyInvocation.MyCommand.Name)$('""')" -Verb runAs -Wait --NoNewWindow
 }    
 
