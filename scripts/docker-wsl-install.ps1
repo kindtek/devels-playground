@@ -125,7 +125,7 @@ $force_install = $true
 install_software $software_id $software_name $install_command $verify_installed $force_install
 
 $git_check = git rev-parse --is-inside-work-tree
-$git_dir = "$pwd_path/$repo_src_name"
+$git_dir = $pwd_path.Replace($dir_local, "") + "/$repo_src_name"
 # navigate to original folder script was executed from, create temp folder for git and then replace the temp with newly cloned repo
 if ($git_check -eq 'true') {
     write-host 'repo found using git rev-parse'
