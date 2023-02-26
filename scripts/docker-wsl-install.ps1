@@ -127,22 +127,22 @@ Set-Location ../../
 # (git_dir-temp is current directory that contains fresh files)
 if (Test-Path -Path "$git_dir") {
     # cleanup any old files from previous run
-    Remove-Item "$git_dir"
+    Remove-Item "$git_dir" -Force
+}
+if (Test-Path -Path "$git_dir-temp") {
+    # cleanup any old files from previous run
+    Remove-Item "$git_dir-temp" -Force
 }
 if (Test-Path -Path "$git_dir-delete") {
     # cleanup any old files from previous run
-    Remove-Item "$git_dir-delete"
+    Remove-Item "$git_dir-delete" -Force
 }
 
-write-host "cloning to $git_dir-temp"
-git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_dir-temp"
-Set-Location "$git_dir-temp"
+write-host "cloning to $git_dir"
+git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_dir"
+Set-Location "$git_dir"
 git submodule update --force --recursive --init --remote
 Set-Location ../../
-
-Move-Item -Path "$git_dir" "$git_dir-delete" -Force
-Move-Item -Path "$git_dir-temp" $git_dir -Force
-$git_dir = $git_dir.Replace("-temp", "") 
 
 Set-Location $git_dir
 
