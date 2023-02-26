@@ -129,11 +129,11 @@ $git_dir = $pwd_path.Replace("$repo_src_name/scripts", "")
 $git_dir = $pwd_path.Replace("$repo_src_name\scripts", "") 
 $git_dir += "/$repo_src_name"
 # navigate to original folder script was executed from, create temp folder for git and then replace the temp with newly cloned repo
-if ($git_check -eq 'true') {
-    write-host 'repo found using git rev-parse'
-    git fetch "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
-    git submodule update --force --recursive --init --remote
-}
+# if ($git_check -eq 'true') {
+#     write-host 'repo found using git rev-parse'
+#     git fetch "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
+#     git submodule update --force --recursive --init --remote
+# }
 # this is probably playing with fire since admin priveleges are enabled at this point
 # elseif (Test-Path -Path "$git_dir-temp") {
 #     # Remove-Item "$PSScriptRoot/$repo_src_name" -Recurse
@@ -143,16 +143,16 @@ if ($git_check -eq 'true') {
 #     git submodule update --force --recursive --init --remote
 
 # }
-else {
+# else {
     write-host  "repo not found - cloning into $git_dir-temp"
     Push-Location ../..
     git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_dir-temp"
     Pop-Location
     git submodule update --force --recursive --init --remote
     Push-Location ..
-    Move-Item -Path "$git_dir-temp" $git_dir
+    Move-Item -Path "$git_dir-temp" $git_dir -Force
     Pop-Location
-}
+# }
 
 # @TODO: find a way to check if VSCode is installed
 $software_id = $software_name = "Visual Studio Code (VSCode)"
