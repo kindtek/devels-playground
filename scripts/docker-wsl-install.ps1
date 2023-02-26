@@ -108,13 +108,6 @@ $winconfig = "$pwd_path/add-wsl-windows-features/add-features.ps1"
 $winget = "$pwd_path/get-latest-winget.ps1"
 Write-Host "`n`r`n`rInstalling WinGet ..."
 &$winget = Invoke-Expression -command "$pwd_path/get-latest-winget.ps1"
-        
-# @TODO: find a way to check if windows terminal is installed
-$software_id = $software_name = "Windows Terminal"
-$install_command = "winget install Microsoft.WindowsTerminal"
-$verify_installed = $false
-$force_install = $false
-install_software $software_id $software_name $install_command $verify_installed $force_install
 
 $software_name = "Github CLI"
 $software_id = "Git_is1"
@@ -183,6 +176,13 @@ $software_id = $software_name = "Docker Desktop"
 $install_command = "winget install --id=Docker.DockerDesktop -e"
 $verify_installed = $true
 $force_install = $true
+install_software $software_id $software_name $install_command $verify_installed $force_install
+
+# @TODO: find a way to check if windows terminal is installed
+$software_id = $software_name = "Windows Terminal"
+$install_command = "winget install Microsoft.WindowsTerminal"
+$verify_installed = $false
+$force_install = $false
 install_software $software_id $software_name $install_command $verify_installed $force_install
 
 # launch docker desktop
