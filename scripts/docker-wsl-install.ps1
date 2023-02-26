@@ -116,8 +116,9 @@ $verify_installed = $true
 $force_install = $true
 install_software $software_id $software_name $install_command $verify_installed $force_install
 
+# remove temp/scripts from working directory pathname
 $git_dir = $pwd_path.Replace("$repo_src_name-temp/scripts", "") 
-$git_dir = $pwd_path.Replace("\$repo_src_name-temp\scripts", "") 
+$git_dir = $git_dir.Replace("\$repo_src_name-temp\scripts", "") 
 $git_dir += "/$repo_src_name"
 
 Push-Location ../../
@@ -130,7 +131,6 @@ if (Test-Path -Path "$git_dir-delete") {
     # cleanup any old files from previous run
     Remove-Item "$git_dir-delete"
 }
-write-host "`git_dir after 3: $git_dir"
 
 write-host "cloning to $git_dir-temp"
 git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_dir-temp"
@@ -180,8 +180,8 @@ else {
     } 
 
     # start WSL docker import tool
-    $winconfig = "$pwd_path/wsl-import.ps1"
-    &$winconfig = Invoke-Expression -command "$pwd_path/wsl-import.ps1"
+    $winconfig = "$git_dir/wsl-import.ps1"
+    &$winconfig = Invoke-Expression -command "$git_dir/wsl-import.ps1"
 
     $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
     if ( $user_input -ine "n" ) {
