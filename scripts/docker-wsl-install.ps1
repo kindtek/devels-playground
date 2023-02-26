@@ -133,17 +133,16 @@ if ($git_check -eq 'true') {
     git submodule update --force --recursive --init --remote
 }
 # this is probably playing with fire since admin priveleges are enabled at this point
-elseif (Test-Path -Path "$git_dir-temp") {
-    # Remove-Item "$PSScriptRoot/$repo_src_name" -Recurse
-    # check 
-    write-host 'repo found using test-path'
-    git fetch "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_dir-temp"
-    git submodule update --force --recursive --init --remote
+# elseif (Test-Path -Path "$git_dir-temp") {
+#     # Remove-Item "$PSScriptRoot/$repo_src_name" -Recurse
+#     # check 
+#     write-host 'repo found using test-path'
+#     git fetch "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_dir-temp"
+#     git submodule update --force --recursive --init --remote
 
-}
+# }
 else {
     write-host  "repo not found - cloning into $git_dir-temp"
-
     Push-Location ..
     git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_dir-temp"
     Pop-Location
