@@ -84,11 +84,8 @@ function restart_prompt {
     }
 }
 
-# open terminal with admin priveleges
-# $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
-# if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+# source of the below self-elevating script: https://blog.expta.com/2017/03/how-to-self-elevate-powershell-script.html#:~:text=If%20User%20Account%20Control%20(UAC,select%20%22Run%20with%20PowerShell%22.
 # Self-elevate the script if required
-# source of this conditional statement: https://blog.expta.com/2017/03/how-to-self-elevate-powershell-script.html#:~:text=If%20User%20Account%20Control%20(UAC,select%20%22Run%20with%20PowerShell%22.
 if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator')) {
     if ([int](Get-CimInstance -Class Win32_OperatingSystem | Select-Object -ExpandProperty BuildNumber) -ge 6000) {
         $CommandLine = "-File `"" + $MyInvocation.MyCommand.Path + "`" " + $MyInvocation.UnboundArguments
@@ -96,77 +93,78 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
         Exit
     }
 }
-    # use windows-features-wsl-add to handle windows features install
-    $winconfig = "$pwd_path/windows-features-wsl-add/configure-windows-features.ps1"
-    &$winconfig = Invoke-Expression -command "$pwd_path/windows-features-wsl-add/configure-windows-features.ps1"
+# source of the above self-elevating script: https://blog.expta.com/2017/03/how-to-self-elevate-powershell-script.html#:~:text=If%20User%20Account%20Control%20(UAC,select%20%22Run%20with%20PowerShell%22.
 
-    # install winget and use winget to install everything else
-    $winget = "$pwd_path/get-latest-winget.ps1"
-    Write-Host "`n`r`n`rInstalling WinGet ..."
-    &$winget = Invoke-Expression -command "$pwd_path/windows-features-wsl-add/configure-windows-features.ps1"
+# use windows-features-wsl-add to handle windows features install
+$winconfig = "$pwd_path/windows-features-wsl-add/configure-windows-features.ps1"
+&$winconfig = Invoke-Expression -command "$pwd_path/windows-features-wsl-add/configure-windows-features.ps1"
+
+# install winget and use winget to install everything else
+$winget = "$pwd_path/get-latest-winget.ps1"
+Write-Host "`n`r`n`rInstalling WinGet ..."
+&$winget = Invoke-Expression -command "$pwd_path/windows-features-wsl-add/configure-windows-features.ps1"
         
-    # @TODO: find a way to check if windows terminal is installed
-    $software_id = $software_name = "Windows Terminal"
-    $install_command = "winget install Microsoft.WindowsTerminal"
-    $verify_installed = $false
-    $force_install = $false
-    install_software $software_id $software_name $install_command $verify_installed $force_install
+# @TODO: find a way to check if windows terminal is installed
+$software_id = $software_name = "Windows Terminal"
+$install_command = "winget install Microsoft.WindowsTerminal"
+$verify_installed = $false
+$force_install = $false
+install_software $software_id $software_name $install_command $verify_installed $force_install
 
-    $software_name = "Github CLI"
-    $software_id = "Git_is1"
-    $install_command = "winget install -e --id GitHub.cli"
-    $verify_installed = $true
-    $force_install = $true
-    install_software $software_id $software_name $install_command $verify_installed $force_install
+$software_name = "Github CLI"
+$software_id = "Git_is1"
+$install_command = "winget install -e --id GitHub.cli"
+$verify_installed = $true
+$force_install = $true
+install_software $software_id $software_name $install_command $verify_installed $force_install
 
-    # @TODO: find a way to check if VSCode is installed
-    $software_id = $software_name = "Visual Studio Code (VSCode)"
-    $install_command = "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'"
-    $verify_installed = $false
-    $force_install = $true
-    install_software $software_id $software_name $install_command $verify_installed $force_install
+git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
+git submodule update --force --recursive --init --remote
 
-    # Docker Desktop happens to work for both id and name
-    $software_id = $software_name = "Docker Desktop"
-    $install_command = "winget install --id=Docker.DockerDesktop -e"
-    $verify_installed = $true
-    $force_install = $true
-    install_software $software_id $software_name $install_command $verify_installed $force_install
+# @TODO: find a way to check if VSCode is installed
+$software_id = $software_name = "Visual Studio Code (VSCode)"
+$install_command = "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'"
+$verify_installed = $false
+$force_install = $true
+install_software $software_id $software_name $install_command $verify_installed $force_install
 
-    # launch docker desktop
-    $docker = "C:\Program Files\Docker\Docker\Docker Desktop.exe"
-    &$docker = "C:\Program Files\Docker\Docker\Docker Desktop.exe"
+# Docker Desktop happens to work for both id and name
+$software_id = $software_name = "Docker Desktop"
+$install_command = "winget install --id=Docker.DockerDesktop -e"
+$verify_installed = $true
+$force_install = $true
+install_software $software_id $software_name $install_command $verify_installed $force_install
 
-    Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta
-    $confirmation = Read-Host "`r`nRestart now (y/[n])?" 
-    if ($confirmation -ieq 'y') {
-        Restart-Computer -Force
-    }
-    else {
+# launch docker desktop
+$docker = "C:\Program Files\Docker\Docker\Docker Desktop.exe"
+&$docker = "C:\Program Files\Docker\Docker\Docker Desktop.exe"
 
-        if ((Read-Host "`r`nopen Docker Dev environment? [y]/n") -ine 'n'  ) {
-            Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev"
-        } 
+Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta
+$confirmation = Read-Host "`r`nRestart now (y/[n])?" 
+if ($confirmation -ieq 'y') {
+    Restart-Computer -Force
+}
+else {
 
-        # start WSL docker import tool
-        $file = "wsl-import.ps1"
-        &$file = Start-Process powershell "wsl-import.ps1" -WindowStyle "Maximized"
+    if ((Read-Host "`r`nopen Docker Dev environment? [y]/n") -ine 'n'  ) {
+        Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev"
+    } 
 
-        $winconfig = "$pwd_path/wsl-import.ps1"
-        &$winconfig = Invoke-Expression -command "$pwd_path/wsl-import.ps1"
+    # start WSL docker import tool
+    $file = "wsl-import.ps1"
+    &$file = Start-Process powershell "wsl-import.ps1" -WindowStyle "Maximized"
 
-        $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
-        if ( $user_input -ine "n" ) {
-            Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev" -WindowStyle "Hidden"
-        }  
+    $winconfig = "$pwd_path/wsl-import.ps1"
+    &$winconfig = Invoke-Expression -command "$pwd_path/wsl-import.ps1"
 
-        Write-Output "DONE! You can close this window"
-    }
-# } else {
-#     # launch admin console running this same file
-#     Start-Process -FilePath powershell -ArgumentList "$('-File ""')$(Get-Location)$('\')$($MyInvocation.MyCommand.Name)$('""')" -Verb runAs -Wait -WindowStyle "Maximized"
-# }    
+    $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
+    if ( $user_input -ine "n" ) {
+        Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev" -WindowStyle "Hidden"
+    }  
 
-# save for later
+    Write-Output "DONE! You can close this window"
+}
+
+# could be useful for later
 # $cmd_args = "$pwd_path/docker-to-wsl/scripts/images-build.bat" 
 # &$cmd_args = Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList cmd "$pwd_path/docker-to-wsl/scripts/images-build.bat"
