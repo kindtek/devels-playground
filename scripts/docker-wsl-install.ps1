@@ -146,7 +146,7 @@ $git_dir += "/$repo_src_name"
 # else {
     if (Test-Path -Path "$git_dir-temp") {
         # only using remove-item to delete hidden file which can't be done without admin priveleges
-        # Remove-Item "$git_dir-temp/.git"  -Recurse
+        Remove-Item "$git_dir-temp/.git"
         # renaming the rest and preparing for deletion
         Rename-Item -Path "$git_dir-temp" "$repo_src_name-delete" -Recurse
     }
