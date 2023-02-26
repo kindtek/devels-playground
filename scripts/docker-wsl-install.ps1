@@ -169,13 +169,14 @@ $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now"
 if ($confirmation -ieq 'reboot now') {
     Restart-Computer -Force
 }
+
+# launch the below process concurrently
+Start-Process "$git_dir/scripts/build-in-background.ps1" -WindowStyle "Minimized"
+
 # start WSL docker import tool
 $winconfig = "$git_dir/scripts/wsl-import.bat"
 &$winconfig = Invoke-Expression -command "$git_dir/scripts/wsl-import.bat" -WindowStyle "Maximized"
 
-# @TODO: launch the below process concurrently
-$cmd_args = "$pwd_path/docker-to-wsl/scripts/images-build.bat" 
-&$cmd_args = Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList cmd "$pwd_path/docker-to-wsl/scripts/images-build.bat"
 
 # @TODO: find a way to check if windows terminal is installed
 $software_id = $software_name = "Windows Terminal"
