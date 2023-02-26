@@ -81,9 +81,16 @@ function restart_prompt {
 }
 
 # open terminal with admin priveleges
-$principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
-if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
-
+# $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+# if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+# Self-elevate the script if required
+if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator')) {
+    if ([int](Get-CimInstance -Class Win32_OperatingSystem | Select-Object -ExpandProperty BuildNumber) -ge 6000) {
+        $CommandLine = "-File `"" + $MyInvocation.MyCommand.Path + "`" " + $MyInvocation.UnboundArguments
+        Start-Process -FilePath PowerShell.exe -Verb Runas -ArgumentList $CommandLine
+        Exit
+    }
+}
     # install winget and use winget to install everything else
     $software_id = $software_name = "WinGet"
     $install_command = "powershell -ExecutionPolicy Unrestricted -command `"get-latest-winget.ps1`""
@@ -150,8 +157,8 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
 
         Write-Output "DONE! You can close this window"
     }
-} else {
-    # launch admin console running this same file
-    Start-Process -FilePath powershell -ArgumentList "$('-File ""')$(Get-Location)$('\')$($MyInvocation.MyCommand.Name)$('""')" -Verb runAs -Wait -WindowStyle "Maximized"
-}    
+# } else {
+#     # launch admin console running this same file
+#     Start-Process -FilePath powershell -ArgumentList "$('-File ""')$(Get-Location)$('\')$($MyInvocation.MyCommand.Name)$('""')" -Verb runAs -Wait -WindowStyle "Maximized"
+# }    
 
