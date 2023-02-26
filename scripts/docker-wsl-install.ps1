@@ -167,9 +167,20 @@ $verify_installed = $false
 $force_install = $false
 install_software $software_id $software_name $install_command $verify_installed $force_install
 
-# launch docker desktop
-$docker = "C:\Program Files\Docker\Docker\Docker Desktop.exe"
-&$docker = "C:\Program Files\Docker\Docker\Docker Desktop.exe"
+# launch docker desktop and keep it open so that 
+Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -Wait -WindowStyle "Hidden"
+# could be useful for later
+$cmd_args = "$pwd_path/docker-to-wsl/scripts/images-build.bat" 
+&$cmd_args = Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList start cmd "$pwd_path/docker-to-wsl/scripts/images-build.bat"
+
+# start WSL docker import tool
+$winconfig = "$git_dir/scripts/wsl-import.ps1"
+&$winconfig = Invoke-Expression -command "$git_dir/scripts/wsl-import.ps1"
+
+$user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
+if ( $user_input -ine "n" ) {
+    Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev" -WindowStyle "Hidden"
+} 
 
 Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta
 $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now" 
@@ -178,25 +189,10 @@ if ($confirmation -ieq 'reboot now') {
 }
 else {
 
-    if ((Read-Host "`r`nopen Docker Dev environment? [y]/n") -ine 'n'  ) {
-        Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev"
-    } 
+     
 
-    # start WSL docker import tool
-    $winconfig = "$git_dir/scripts/wsl-import.ps1"
-    &$winconfig = Invoke-Expression -command "$git_dir/scripts/wsl-import.ps1"
-
-    $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
-    if ( $user_input -ine "n" ) {
-        Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev" -WindowStyle "Hidden"
-    }  
-
-    Write-Output "DONE! You can close this window"
 }
 
-# cleanup remove script
+# cleanup - remove install script
 Remove-Item "$git_dir".replace($repo_src_name, "install-$repo_src_owner-$repo_src_name.ps1") -Force
 
-# could be useful for later
-# $cmd_args = "$pwd_path/docker-to-wsl/scripts/images-build.bat" 
-# &$cmd_args = Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList cmd "$pwd_path/docker-to-wsl/scripts/images-build.bat"
