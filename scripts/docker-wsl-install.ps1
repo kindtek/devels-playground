@@ -7,7 +7,7 @@ $pwd_path = Split-Path -Path $PSCommandPath
 
 $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
-Clear-Host
+# Clear-Host
 function install_software {
     # function built using https://keestalkstech.com/2017/10/powershell-snippet-check-if-software-is-installed/ as aguide
     param (
@@ -28,21 +28,25 @@ function install_software {
                     Write-Host "`r`n"
                     Write-Host "Installing $software_name..."
                     Invoke-Expression $install_command
+                    $host.UI.RawUI.BackgroundColor = "Black"
                 }
                 else {
                     Write-Host "skipping $software_name install"
                 }
             }
-            $install = Read-Host "`r`n$software_name required. Install now or quit? (y/[q])"
-            $install = $install.ToLower()
-            # @TODO: investigate code refactoring for duplicate code
-            if ($install -eq 'y' -Or $install -eq 'yes') { 
-                Write-Host "Installing $software_name..."
-                Invoke-Expression $install_command
-            }
             else {
-                Write-Host "skipping $software_name install and exiting..."
-                exit
+                $install = Read-Host "`r`n$software_name required. Install now or quit? (y/[q])"
+                $install = $install.ToLower()
+                # @TODO: investigate code refactoring for duplicate code
+                if ($install -eq 'y' -Or $install -eq 'yes') { 
+                    Write-Host "Installing $software_name..."
+                    Invoke-Expression $install_command
+                    $host.UI.RawUI.BackgroundColor = "Black"
+                }
+                else {
+                    Write-Host "skipping $software_name install and exiting..."
+                    exit
+                }
             }
         }
         else {
@@ -56,6 +60,7 @@ function install_software {
         if ($install -eq 'y' -Or $install -eq 'yes') { 
             Write-Host "Installing $software_name..."
             Invoke-Expression $install_command
+            $host.UI.RawUI.BackgroundColor = "Black"
         }
         else {
             Write-Host "skipping $software_name install"
@@ -64,11 +69,10 @@ function install_software {
     else {
         # force_install: true, verify_install: false
         $install = Read-Host "`r`n$software_name required. Install now or quit? (y/[q])"
-        $install = $install.ToLower()
-        if ($install -eq 'y' -Or $install -eq 'yes') { 
+        if ($install -ieq 'y' -Or $install -ieq 'yes') { 
             Write-Host "Installing $software_name..."
             Invoke-Expression $install_command
-
+            $host.UI.RawUI.BackgroundColor = "Black"
         }
         else {
             Write-Host "skipping $software_name install and exiting..."
@@ -76,7 +80,6 @@ function install_software {
         }
     }
 
-    $host.UI.RawUI.BackgroundColor = "Black"
 }
 
 function restart_prompt {
@@ -87,11 +90,11 @@ function restart_prompt {
     }
 }
 
-
 # open terminal with admin priveleges
 $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
 
+    # install winget and use winget to install everything else
     $software_id = $software_name = "WinGet"
     $install_command = "powershell.exe -ExecutionPolicy Unrestricted -command `"$pwd_path/docker-to-wsl/scripts/get-latest-winget.ps1`""
     # write-host "install command: $install_command"
@@ -106,8 +109,8 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
     $force_install = $false
     install_software $software_id $software_name $install_command $verify_installed $force_install
 
-    $software_id = "Git_is1"
     $software_name = "Github CLI"
+    $software_id = "Git_is1"
     $install_command = "winget install -e --id GitHub.cli"
     $verify_installed = $true
     $force_install = $true
@@ -132,7 +135,8 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
     install_software $software_id $software_name $install_command $verify_installed $force_install
 
     # launch docker desktop
-    C:\"Program Files"\Docker\Docker\"Docker Desktop".exe
+    $docker = "C:\Program Files\Docker\Docker\Docker Desktop.exe"
+    &$docker = "C:\Program Files\Docker\Docker\Docker Desktop.exe"
 
     Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta
     $confirmation = Read-Host "`r`nRestart now (y/[n])?" 
@@ -151,7 +155,7 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
         &$full_path = Start-Process powershell.exe "$pwd_path/docker-to-wsl/scripts/wsl-import.ps1" -Verb runAs -WindowStyle "Maximized"
 
         $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
-        if ( $user_input -ne 'n' ) {
+        if ( $user_input -ine "n" ) {
             Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev" -WindowStyle "Hidden"
         }  
 
