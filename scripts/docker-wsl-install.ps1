@@ -102,8 +102,8 @@ $dir_local = "$repo_src_name/scripts"
 
 # use windows-features-wsl-add to handle windows features install 
 # installing first to make sure environment has powershell 2
-$winconfig = "$pwd_path/windows-features-wsl-add/configure-windows-features.ps1"
-&$winconfig = Invoke-Expression -command "$pwd_path/windows-features-wsl-add/configure-windows-features.ps1"
+$winconfig = "$pwd_path/add-wsl-windows-features/add-features.ps1"
+&$winconfig = Invoke-Expression -command "$pwd_path/add-wsl-windows-features/add-features.ps1"
 
 # install winget and use winget to install everything else
 $winget = "$pwd_path/get-latest-winget.ps1"
