@@ -124,16 +124,14 @@ $verify_installed = $true
 $force_install = $true
 install_software $software_id $software_name $install_command $verify_installed $force_install
 
-# navigate to .git folder and do git stuff
-Push-Location ..
 $git_check = git rev-parse --is-inside-work-tree
-# this is probably playing with fire since admin priveleges are enabled at this point
+# navigate to original folder script was executed from, create temp folder for git and then replace the temp with newly cloned repo
 if ($git_check -eq $true) {
     write-host 'found using git rev-parse'
     git fetch "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
     git submodule update --force --recursive --init --remote
-
 }
+# this is probably playing with fire since admin priveleges are enabled at this point
 elseif (Test-Path -Path "$PSScriptRoot/$repo_src_name") {
     # Remove-Item "$PSScriptRoot/$repo_src_name" -Recurse
     # check 
@@ -143,11 +141,15 @@ elseif (Test-Path -Path "$PSScriptRoot/$repo_src_name") {
 
 }
 else {
-    git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
+    Push-Location ..
+    git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$repo_src_name-temp"
+    Pop-Location
     git submodule update --force --recursive --init --remote
+    Push-Location ..
+    Move-Item -Path "$repo_src_name-temp" $repo_src_name
+    Pop-Location
 
 }
-Pop-Location
 
 # @TODO: find a way to check if VSCode is installed
 $software_id = $software_name = "Visual Studio Code (VSCode)"
