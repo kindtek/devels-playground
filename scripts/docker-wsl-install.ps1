@@ -101,7 +101,7 @@ $repo_src_branch = 'dev'
 $dir_local = "$repo_src_name/scripts"
 
 # use windows-features-wsl-add to handle windows features install 
-$winconfig = "$pwd_path/$dir_local/windows-features-wsl-add/configure-windows-features.ps1"
+$winconfig = "$pwd_path/windows-features-wsl-add/configure-windows-features.ps1"
 &$winconfig = Invoke-Expression -command "$pwd_path/windows-features-wsl-add/configure-windows-features.ps1"
 
 # install winget and use winget to install everything else
