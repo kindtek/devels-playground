@@ -126,7 +126,6 @@ install_software $software_id $software_name $install_command $verify_installed 
 
 $this_dir = Get-Location
 Push-Location ..
-Remove-Item $repo_src_name -Recurse -WhatIf -Confirm
 git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
 git submodule update --force --recursive --init --remote
 Pop-Location
