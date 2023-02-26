@@ -145,7 +145,7 @@ if ($git_check -eq 'true') {
 # }
 else {
     write-host  "repo not found - cloning into $git_dir-temp"
-    Push-Location ..
+    Push-Location ../..
     git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_dir-temp"
     Pop-Location
     git submodule update --force --recursive --init --remote
