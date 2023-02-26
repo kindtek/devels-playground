@@ -1,7 +1,3 @@
-Set-PSDebug -Trace 1
-$PSCommandPath | Split-Path -Parent
-$pwd_path = Split-Path -Path $PSCommandPath
-
 $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
 # Clear-Host
@@ -85,12 +81,12 @@ function restart_prompt {
 }
 
 # open terminal with admin priveleges
-# $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
-# if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+$principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
 
     # install winget and use winget to install everything else
     $software_id = $software_name = "WinGet"
-    $install_command = "powershell.exe -ExecutionPolicy Unrestricted -command `"$pwd_path/docker-to-wsl/scripts/get-latest-winget.ps1`""
+    $install_command = "powershell.exe -ExecutionPolicy Unrestricted -command `"get-latest-winget.ps1`""
     # write-host "install command: $install_command"
     $verify_installed = $false
     $force_install = $true
@@ -111,8 +107,8 @@ function restart_prompt {
     install_software $software_id $software_name $install_command $verify_installed $force_install
 
     # use windows-features-wsl-add to handle windows features install
-    $winconfig = "$pwd_path/docker-to-wsl/scripts/windows-features-wsl-add/configure-windows-features.ps1"
-    &$winconfig = powershell.exe "$pwd_path/docker-to-wsl/scripts/windows-features-wsl-add/configure-windows-features.ps1"
+    $winconfig = "windows-features-wsl-add/configure-windows-features.ps1"
+    &$winconfig = powershell.exe "windows-features-wsl-add/configure-windows-features.ps1"
 
     # @TODO: find a way to check if VSCode is installed
     $software_id = $software_name = "Visual Studio Code (VSCode)"
@@ -144,9 +140,8 @@ function restart_prompt {
         } 
 
         # start WSL docker import tool
-        $pwd_path = Split-Path -Path $PSCommandPath
-        $full_path = "$pwd_path/docker-to-wsl/scripts/wsl-import.ps1"
-        &$full_path = Start-Process powershell.exe "$pwd_path/docker-to-wsl/scripts/wsl-import.ps1" -Verb runAs -WindowStyle "Maximized"
+        $file = "wsl-import.ps1"
+        &$file = Start-Process powershell.exe "wsl-import.ps1" -Verb runAs -WindowStyle "Maximized"
 
         $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
         if ( $user_input -ine "n" ) {
@@ -155,8 +150,8 @@ function restart_prompt {
 
         Write-Output "DONE! You can close this window"
     }
-# }
-# else {
-#     # launch admin console running this same file
-#     #Start-Process -FilePath powershell.exe -ArgumentList "$('-File ""')$(Get-Location)$('\')$($MyInvocation.MyCommand.Name)$('""')" -Verb runAs -Wait -WindowStyle "Maximized"
-# }    
+} else {
+    # launch admin console running this same file
+    Start-Process -FilePath powershell.exe -ArgumentList "$('-File ""')$(Get-Location)$('\')$($MyInvocation.MyCommand.Name)$('""')" -Verb runAs -Wait -WindowStyle "Maximized"
+}    
+
