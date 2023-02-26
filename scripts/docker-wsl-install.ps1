@@ -127,15 +127,15 @@ Set-Location ../../
 # (git_dir-temp is current directory that contains fresh files)
 if (Test-Path -Path "$git_dir") {
     # cleanup any old files from previous run
-    Remove-Item "$git_dir" -Force
+    Remove-Item "$git_dir" -Force -Recurse
 }
 if (Test-Path -Path "$git_dir-temp") {
     # cleanup any old files from previous run
-    Remove-Item "$git_dir-temp" -Force
+    Remove-Item "$git_dir-temp" -Force -Recurse
 }
 if (Test-Path -Path "$git_dir-delete") {
     # cleanup any old files from previous run
-    Remove-Item "$git_dir-delete" -Force
+    Remove-Item "$git_dir-delete" -Force -Recurse
 }
 
 write-host "cloning to $git_dir"
