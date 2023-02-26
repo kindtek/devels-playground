@@ -145,7 +145,10 @@ $git_dir += "/$repo_src_name"
 # }
 # else {
     if (Test-Path -Path "$git_dir-temp") {
-        Rename-Item -Path "$git_dir-temp" "$git_dir-delete" 
+        # only using remove-item to delete hidden file which can't be done without admin priveleges
+        # Remove-Item "$git_dir-temp/.git"  -Recurse
+        # renaming the rest and preparing for deletion
+        Rename-Item -Path "$git_dir-temp" "$repo_src_name-delete" 
     }
     Push-Location ../..
     git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_dir-temp"
