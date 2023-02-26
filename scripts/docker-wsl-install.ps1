@@ -145,7 +145,7 @@ $git_dir += "/$repo_src_name"
 # }
 # else {
     if (Test-Path -Path "$git_dir-temp") {
-        Rename-Item -Path "$git_dir" "delete-$git_dir-delete" 
+        Rename-Item -Path "$git_dir-temp" "$git_dir-delete" 
     }
     Push-Location ../..
     git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_dir-temp"
