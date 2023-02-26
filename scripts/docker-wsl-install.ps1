@@ -161,13 +161,6 @@ $software_id = $software_name = "Docker Desktop"
 # $force_install = $true
 # install_software $software_id $software_name $install_command $verify_installed $force_install
 
-# @TODO: find a way to check if windows terminal is installed
-$software_id = $software_name = "Windows Terminal"
-$install_command = "winget install Microsoft.WindowsTerminal"
-$verify_installed = $false
-$force_install = $false
-install_software $software_id $software_name $install_command $verify_installed $force_install
-
 # launch docker desktop and keep it open so that 
 Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -Wait -WindowStyle "Hidden"
 
@@ -184,6 +177,12 @@ $winconfig = "$git_dir/scripts/wsl-import.bat"
 $cmd_args = "$pwd_path/docker-to-wsl/scripts/images-build.bat" 
 &$cmd_args = Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList cmd "$pwd_path/docker-to-wsl/scripts/images-build.bat"
 
+# @TODO: find a way to check if windows terminal is installed
+$software_id = $software_name = "Windows Terminal"
+$install_command = "winget install Microsoft.WindowsTerminal"
+$verify_installed = $false
+$force_install = $false
+install_software $software_id $software_name $install_command $verify_installed $force_install
 
 $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
 if ( $user_input -ine "n" ) {
