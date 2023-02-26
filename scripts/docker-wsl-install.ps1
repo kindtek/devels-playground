@@ -175,7 +175,7 @@ $cmd_args = "$pwd_path/docker-to-wsl/scripts/images-build.bat"
 
 # start WSL docker import tool
 $winconfig = "$git_dir/scripts/wsl-import.ps1"
-&$winconfig = Invoke-Expression -command "$git_dir/scripts/wsl-import.ps1"
+&$winconfig = Invoke-Expression -command "$git_dir/scripts/wsl-import.bat" -WindowStyle "Maximized"
 
 $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
 if ( $user_input -ine "n" ) {
