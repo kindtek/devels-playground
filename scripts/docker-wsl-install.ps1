@@ -101,13 +101,13 @@ $repo_src_branch = 'dev'
 $dir_local = "$repo_src_name/scripts"
 
 # use windows-features-wsl-add to handle windows features install 
-$winconfig = "$dir_local/windows-features-wsl-add/configure-windows-features.ps1"
-&$winconfig = Invoke-Expression -command "$dir_local/windows-features-wsl-add/configure-windows-features.ps1"
+$winconfig = "$pwd_path/$dir_local/windows-features-wsl-add/configure-windows-features.ps1"
+&$winconfig = Invoke-Expression -command "$pwd_path/windows-features-wsl-add/configure-windows-features.ps1"
 
 # install winget and use winget to install everything else
 $winget = "$pwd_path/get-latest-winget.ps1"
 Write-Host "`n`r`n`rInstalling WinGet ..."
-&$winget = Invoke-Expression -command "$pwd_path/windows-features-wsl-add/configure-windows-features.ps1"
+&$winget = Invoke-Expression -command "$pwd_path/get-latest-winget.ps1"
         
 # @TODO: find a way to check if windows terminal is installed
 $software_id = $software_name = "Windows Terminal"
