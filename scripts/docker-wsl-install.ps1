@@ -1,4 +1,4 @@
-Set-PSDebug -Step
+Set-PSDebug -Trace 1
 $PSCommandPath | Split-Path -Parent
 $pwd_path = Split-Path -Path $PSCommandPath
 
