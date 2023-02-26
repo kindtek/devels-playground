@@ -121,7 +121,7 @@ $git_dir = $pwd_path.Replace("$repo_src_name-temp/scripts", "")
 $git_dir = $git_dir.Replace("\$repo_src_name-temp\scripts", "") 
 $git_dir += "/$repo_src_name"
 
-Push-Location ../../
+Set-Location ../../
 # (git_dir-temp is current directory that contains fresh files)
 if (Test-Path -Path "$git_dir") {
     # cleanup any old files from previous run
@@ -134,7 +134,7 @@ if (Test-Path -Path "$git_dir-delete") {
 
 write-host "cloning to $git_dir-temp"
 git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_dir-temp"
-Pop-Location
+Set-Location "$git_dir-temp"
 git submodule update --force --recursive --init --remote
 Set-Location ../../
 
