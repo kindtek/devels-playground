@@ -139,7 +139,6 @@ if (Test-Path -Path "$git_dir-delete") {
     Remove-Item "$git_dir-delete" -Force -Recurse
 }
 
-write-host "cloning to $git_dir"
 git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_dir"
 Set-Location "$git_dir"
 git submodule update --force --recursive --init --remote
@@ -147,22 +146,15 @@ Set-Location ../../
 
 Set-Location $git_dir
 
-# @TODO: find a way to check if VSCode is installed
-$software_id = $software_name = "Visual Studio Code (VSCode)"
+$software_name = "Visual Studio Code (VSCode)"
+Write-Host "`r`nInstalling $software_name`r`n"
 Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
-# $verify_installed = $false
-# $force_install = $true
-# install_software $software_id $software_name $install_command $verify_installed $force_install
 
-# Docker Desktop happens to work for both id and name
+
 $software_id = $software_name = "Docker Desktop"
+Write-Host "`r`nInstalling $software_name`r`n"
 Invoke-Expression -Command "winget install --id=Docker.DockerDesktop -e" 
-# $verify_installed = $true
-# $force_install = $true
-# install_software $software_id $software_name $install_command $verify_installed $force_install
 
-# launch docker desktop and keep it open so that 
-Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -Wait -WindowStyle "Hidden"
 
 Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta
 $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now" 
@@ -170,13 +162,17 @@ if ($confirmation -ieq 'reboot now') {
     Restart-Computer -Force
 }
 
+Write-Host "`r`nLaunching Docker Desktop.`r`n`r`n$software_name is required to run the Docker import tool for WSL. `r`nYou can minimize $software_name by pressing ENTER`r`n"
+
+# launch docker desktop and keep it open 
+Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -Wait -WindowStyle "Minimized"
+
 # launch the below process concurrently
 Start-Process "& $git_dir/scripts/build-in-background.ps1" -WindowStyle "Minimized"
 
 # start WSL docker import tool
-$winconfig = "$git_dir/scripts/wsl-import.bat"
-&$winconfig = Invoke-Expression -command "$git_dir/scripts/wsl-import.bat" -WindowStyle "Maximized"
-
+$wsl_import = "$git_dir/scripts/wsl-import.bat"
+&$wsl_import = Invoke-Expression -command "$git_dir/scripts/wsl-import.bat" -WindowStyle "Maximized"
 
 # @TODO: find a way to check if windows terminal is installed
 $software_id = $software_name = "Windows Terminal"
@@ -192,4 +188,10 @@ if ( $user_input -ine "n" ) {
 
 # cleanup - remove install script
 Remove-Item "$git_dir".replace($repo_src_name, "install-$repo_src_owner-$repo_src_name.ps1") -Force
+
+Write-Host "`r`nSetup complete!`r`n`r`nCleaning up.. (optional) `r`n" -ForegroundColor Green
+# make extra sure this is not a folder that is not important (ie: system32 - which is default location)
+if ($git_dir.Contains($repo_src_name)){
+    Remove-Item $git_dir -Recurse -Confirm
+}
 
