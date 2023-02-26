@@ -152,6 +152,6 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
     }
 } else {
     # launch admin console running this same file
-    Start-Process -FilePath powershell.exe -ArgumentList "$('-File ""')$(Get-Location)$('\')$($MyInvocation.MyCommand.Name)$('""')" -Verb runAs -Wait -WindowStyle "Maximized"
+    Start-Process -FilePath powershell.exe -ArgumentList "$('-File ""')$(Get-Location)$('\')$($MyInvocation.MyCommand.Name)$('""')" -Verb runAs -Wait --NowNewWindow
 }    
 
