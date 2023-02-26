@@ -118,7 +118,9 @@ install_software $software_id $software_name $install_command $verify_installed 
 
 # remove temp/scripts from working directory pathname
 $git_dir = $pwd_path.Replace("$repo_src_name/scripts", "") 
+$git_dir = $git_dir.Replace("/$repo_src_name/scripts", "") 
 $git_dir = $git_dir.Replace("\$repo_src_name\scripts", "") 
+$git_dir = $git_dir.Replace("$repo_src_name\scripts", "") 
 $git_dir += "/$repo_src_name"
 
 Set-Location ../../
