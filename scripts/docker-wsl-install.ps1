@@ -125,9 +125,13 @@ install_software $software_id $software_name $install_command $verify_installed 
 
 write-host "`git_dir before: $git_dir"
 $git_dir = $pwd_path.Replace("$repo_src_name-temp/scripts", "") 
+write-host "`git_dir before 2: $git_dir"
+
 $git_dir = $pwd_path.Replace("$repo_src_name-temp\scripts", "") 
+write-host "`git_dir after 1: $git_dir"
+
 $git_dir += "/$repo_src_name"
-write-host "`git_dir after: $git_dir"
+write-host "`git_dir after 2: $git_dir"
 
 # navigate to original folder script was executed from, create temp folder for git and then replace the temp with newly cloned repo
 # if ($git_check -eq 'true') {
@@ -153,16 +157,18 @@ if (Test-Path -Path "$git_dir-temp") {
     # renaming the rest and preparing for deletion
     Rename-Item -Path "$git_dir-temp" "$repo_src_name-delete"
 }
-write-host "`git_dir after 2: $git_dir"
+write-host "`git_dir after 3: $git_dir"
 
 write-host "cloning to $git_dir-temp"
 git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_dir-temp"
 Pop-Location
 git submodule update --force --recursive --init --remote
-Push-Location ../../
+Set-Location ../../
 
 Move-Item -Path "$git_dir-temp" $git_dir -Force
-Pop-Location
+$git_dir = $pwd_path.Replace("-temp", "") 
+
+Set-Location $git_dir
 # }
 
 # @TODO: find a way to check if VSCode is installed
