@@ -111,7 +111,7 @@ Write-Host "`n`r`n`rInstalling WinGet ..."
 
 $software_name = "Github CLI"
 $software_id = "Git_is1"
-Start-Process -Command "winget install -e --id GitHub.cli" -NoNewWindow
+Start-Process -FilePath "winget install -e --id GitHub.cli" -NoNewWindow
 
 # $verify_installed = $true
 # $force_install = $true
@@ -149,14 +149,14 @@ Set-Location $git_dir
 
 # @TODO: find a way to check if VSCode is installed
 $software_id = $software_name = "Visual Studio Code (VSCode)"
-Start-Process -Command "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" -NoNewWindow
+Start-Process -FilePath "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" -NoNewWindow
 # $verify_installed = $false
 # $force_install = $true
 # install_software $software_id $software_name $install_command $verify_installed $force_install
 
 # Docker Desktop happens to work for both id and name
 $software_id = $software_name = "Docker Desktop"
-Start-Process -Command "winget install --id=Docker.DockerDesktop -e" -NoNewWindow
+Start-Process -FilePath "winget install --id=Docker.DockerDesktop -e" -NoNewWindow
 # $verify_installed = $true
 # $force_install = $true
 # install_software $software_id $software_name $install_command $verify_installed $force_install
