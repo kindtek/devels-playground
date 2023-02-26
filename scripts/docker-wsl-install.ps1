@@ -126,23 +126,6 @@ write-host "`git_dir after 1: $git_dir"
 $git_dir += "/$repo_src_name"
 write-host "`git_dir after 2: $git_dir"
 
-# navigate to original folder script was executed from, create temp folder for git and then replace the temp with newly cloned repo
-# if ($git_check -eq 'true') {
-#     write-host 'repo found using git rev-parse'
-#     git fetch "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
-#     git submodule update --force --recursive --init --remote
-# }
-# this is probably playing with fire since admin priveleges are enabled at this point
-# elseif (Test-Path -Path "$git_dir-temp") {
-#     # Remove-Item "$PSScriptRoot/$repo_src_name" -Recurse
-#     # check 
-#     write-host 'repo found using test-path'
-#     git fetch "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_dir-temp"
-#     git submodule update --force --recursive --init --remote
-
-# }
-# else {
-
 Push-Location ../../
 if (Test-Path -Path "$git_dir-temp") {
     # only using remove-item to delete hidden file which can't be done without admin priveleges
