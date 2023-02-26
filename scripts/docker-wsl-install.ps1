@@ -1,6 +1,10 @@
 $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
-# Clear-Host
+if (!$PSScriptRoot) { $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent }
+# store file path in $pwd_path and ensure PSScriptRoot worsk the same in both powershell 2 and 3
+$pwd_path = $PSScriptRoot
+# jump to first line without clearing scrollback
+Write-Output "$([char]27)[2J"
 function install_software {
     # function built using https://keestalkstech.com/2017/10/powershell-snippet-check-if-software-is-installed/ as aguide
     param (
@@ -92,14 +96,14 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
         Exit
     }
 }
-    Write-Host Get-Location 
+    # use windows-features-wsl-add to handle windows features install
+    $winconfig = "$pwd_path/windows-features-wsl-add/configure-windows-features.ps1"
+    &$winconfig = Invoke-Expression -command "$pwd_path/windows-features-wsl-add/configure-windows-features.ps1"
+
     # install winget and use winget to install everything else
-    $software_id = $software_name = "WinGet"
-    $install_command = "powershell -ExecutionPolicy Unrestricted -command get-latest-winget.ps1"
-    # write-host "install command: $install_command"
-    $verify_installed = $false
-    $force_install = $true
-    install_software $software_id $software_name $install_command $verify_installed $force_install
+    $winget = "$pwd_path/get-latest-winget.ps1"
+    Write-Host "`n`r`n`rInstalling WinGet ..."
+    &$winget = Invoke-Expression -command "$pwd_path/windows-features-wsl-add/configure-windows-features.ps1"
         
     # @TODO: find a way to check if windows terminal is installed
     $software_id = $software_name = "Windows Terminal"
@@ -114,10 +118,6 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
     $verify_installed = $true
     $force_install = $true
     install_software $software_id $software_name $install_command $verify_installed $force_install
-
-    # use windows-features-wsl-add to handle windows features install
-    $winconfig = "windows-features-wsl-add/configure-windows-features.ps1"
-    &$winconfig = powershell "windows-features-wsl-add/configure-windows-features.ps1"
 
     # @TODO: find a way to check if VSCode is installed
     $software_id = $software_name = "Visual Studio Code (VSCode)"
@@ -152,6 +152,9 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
         $file = "wsl-import.ps1"
         &$file = Start-Process powershell "wsl-import.ps1" -WindowStyle "Maximized"
 
+        $winconfig = "$pwd_path/wsl-import.ps1"
+        &$winconfig = Invoke-Expression -command "$pwd_path/wsl-import.ps1"
+
         $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
         if ( $user_input -ine "n" ) {
             Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev" -WindowStyle "Hidden"
@@ -164,3 +167,6 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 #     Start-Process -FilePath powershell -ArgumentList "$('-File ""')$(Get-Location)$('\')$($MyInvocation.MyCommand.Name)$('""')" -Verb runAs -Wait -WindowStyle "Maximized"
 # }    
 
+# save for later
+# $cmd_args = "$pwd_path/docker-to-wsl/scripts/images-build.bat" 
+# &$cmd_args = Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList cmd "$pwd_path/docker-to-wsl/scripts/images-build.bat"
