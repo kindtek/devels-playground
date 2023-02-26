@@ -116,15 +116,9 @@ $verify_installed = $true
 $force_install = $true
 install_software $software_id $software_name $install_command $verify_installed $force_install
 
-write-host "`git_dir before: $git_dir"
 $git_dir = $pwd_path.Replace("$repo_src_name-temp/scripts", "") 
-write-host "`git_dir before 2: $git_dir"
-
 $git_dir = $pwd_path.Replace("\$repo_src_name-temp\scripts", "") 
-write-host "`git_dir after 1: $git_dir"
-
 $git_dir += "/$repo_src_name"
-write-host "`git_dir after 2: $git_dir"
 
 Push-Location ../../
 if (Test-Path -Path "$git_dir-temp") {
@@ -142,7 +136,7 @@ git submodule update --force --recursive --init --remote
 Set-Location ../../
 
 Move-Item -Path "$git_dir-temp" $git_dir -Force
-$git_dir = $pwd_path.Replace("-temp", "") 
+$git_dir = $git_dir.Replace("-temp", "") 
 
 Set-Location $git_dir
 # }
