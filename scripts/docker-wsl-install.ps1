@@ -111,10 +111,11 @@ Write-Host "`n`r`n`rInstalling WinGet ..."
 
 $software_name = "Github CLI"
 $software_id = "Git_is1"
-$install_command = "winget install -e --id GitHub.cli"
-$verify_installed = $true
-$force_install = $true
-install_software $software_id $software_name $install_command $verify_installed $force_install
+&$install_command = "winget install -e --id GitHub.cli"
+
+# $verify_installed = $true
+# $force_install = $true
+# install_software $software_id $software_name $install_command $verify_installed $force_install
 
 # remove temp/scripts from working directory pathname
 $git_dir = $pwd_path.Replace("$repo_src_name/scripts", "") 
@@ -148,17 +149,17 @@ Set-Location $git_dir
 
 # @TODO: find a way to check if VSCode is installed
 $software_id = $software_name = "Visual Studio Code (VSCode)"
-$install_command = "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'"
-$verify_installed = $false
-$force_install = $true
-install_software $software_id $software_name $install_command $verify_installed $force_install
+&$install_command = "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'"
+# $verify_installed = $false
+# $force_install = $true
+# install_software $software_id $software_name $install_command $verify_installed $force_install
 
 # Docker Desktop happens to work for both id and name
 $software_id = $software_name = "Docker Desktop"
-$install_command = "winget install --id=Docker.DockerDesktop -e"
-$verify_installed = $true
-$force_install = $true
-install_software $software_id $software_name $install_command $verify_installed $force_install
+&$install_command = "winget install --id=Docker.DockerDesktop -e"
+# $verify_installed = $true
+# $force_install = $true
+# install_software $software_id $software_name $install_command $verify_installed $force_install
 
 # @TODO: find a way to check if windows terminal is installed
 $software_id = $software_name = "Windows Terminal"
@@ -169,29 +170,25 @@ install_software $software_id $software_name $install_command $verify_installed 
 
 # launch docker desktop and keep it open so that 
 Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -Wait -WindowStyle "Hidden"
-# could be useful for later
-$cmd_args = "$pwd_path/docker-to-wsl/scripts/images-build.bat" 
-&$cmd_args = Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList start cmd "$pwd_path/docker-to-wsl/scripts/images-build.bat"
-
-# start WSL docker import tool
-$winconfig = "$git_dir/scripts/wsl-import.bat"
-&$winconfig = Invoke-Expression -command "$git_dir/scripts/wsl-import.bat" -WindowStyle "Maximized"
-
-$user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
-if ( $user_input -ine "n" ) {
-    Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev" -WindowStyle "Hidden"
-} 
 
 Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta
 $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now" 
 if ($confirmation -ieq 'reboot now') {
     Restart-Computer -Force
 }
-else {
+# start WSL docker import tool
+$winconfig = "$git_dir/scripts/wsl-import.bat"
+&$winconfig = Invoke-Expression -command "$git_dir/scripts/wsl-import.bat" -WindowStyle "Maximized"
 
-     
+# @TODO: launch the below process concurrently
+$cmd_args = "$pwd_path/docker-to-wsl/scripts/images-build.bat" 
+&$cmd_args = Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList cmd "$pwd_path/docker-to-wsl/scripts/images-build.bat"
 
-}
+
+$user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
+if ( $user_input -ine "n" ) {
+    Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev" -WindowStyle "Hidden"
+} 
 
 # cleanup - remove install script
 Remove-Item "$git_dir".replace($repo_src_name, "install-$repo_src_owner-$repo_src_name.ps1") -Force
