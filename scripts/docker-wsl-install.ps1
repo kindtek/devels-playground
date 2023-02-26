@@ -141,10 +141,10 @@ elseif (Test-Path -Path "$PSScriptRoot/$repo_src_name") {
 
 }
 else {
-    write-host 'repo not found '
+    write-host  "repo not found - cloning into $pwd_path/$repo_src_name-temp"
 
     Push-Location ..
-    git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$repo_src_name-temp"
+    git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$pwd_path/$repo_src_name-temp"
     Pop-Location
     git submodule update --force --recursive --init --remote
     Push-Location ..
