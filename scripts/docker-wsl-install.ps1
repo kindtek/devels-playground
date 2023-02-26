@@ -121,9 +121,10 @@ $git_dir = $pwd_path.Replace("\$repo_src_name-temp\scripts", "")
 $git_dir += "/$repo_src_name"
 
 Push-Location ../../
-if (Test-Path -Path "$git_dir-temp") {
+# (git_dir-temp is current directory that contains fresh files)
+if (Test-Path -Path "$git_dir") {
     # cleanup any old files from previous run
-    Remove-Item "$git_dir-temp"
+    Remove-Item "$git_dir"
 }
 if (Test-Path -Path "$git_dir-delete") {
     # cleanup any old files from previous run
