@@ -2,7 +2,9 @@
 Set-PSDebug -Off
 $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
-Clear-Host
+# jump to first line without clearing scrollback
+Write-Output "$([char]27)[2J"
+
 function main {
     dev_boilerplate
 }
