@@ -84,6 +84,7 @@ function restart_prompt {
 # $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
 # if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
 # Self-elevate the script if required
+# source of this conditional statement: https://blog.expta.com/2017/03/how-to-self-elevate-powershell-script.html#:~:text=If%20User%20Account%20Control%20(UAC,select%20%22Run%20with%20PowerShell%22.
 if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator')) {
     if ([int](Get-CimInstance -Class Win32_OperatingSystem | Select-Object -ExpandProperty BuildNumber) -ge 6000) {
         $CommandLine = "-File `"" + $MyInvocation.MyCommand.Path + "`" " + $MyInvocation.UnboundArguments
@@ -93,7 +94,7 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 }
     # install winget and use winget to install everything else
     $software_id = $software_name = "WinGet"
-    $install_command = "powershell -ExecutionPolicy Unrestricted -command `"get-latest-winget.ps1`""
+    $install_command = "powershell -ExecutionPolicy Unrestricted -command get-latest-winget.ps1"
     # write-host "install command: $install_command"
     $verify_installed = $false
     $force_install = $true
