@@ -95,8 +95,13 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 }
 # source of the above self-elevating script: https://blog.expta.com/2017/03/how-to-self-elevate-powershell-script.html#:~:text=If%20User%20Account%20Control%20(UAC,select%20%22Run%20with%20PowerShell%22.
 
-# use windows-features-wsl-add to handle windows features install
-$winconfig = "$pwd_path/windows-features-wsl-add/configure-windows-features.ps1"
+$repo_src_owner = 'kindtek'
+$repo_src_name = 'docker-to-wsl'
+$repo_src_branch = 'dev'
+$dir_local = "$repo_src_name/scripts"
+
+# use windows-features-wsl-add to handle windows features install 
+$winconfig = "$pwd_path/$dir_local/windows-features-wsl-add/configure-windows-features.ps1"
 &$winconfig = Invoke-Expression -command "$pwd_path/windows-features-wsl-add/configure-windows-features.ps1"
 
 # install winget and use winget to install everything else
@@ -118,8 +123,12 @@ $verify_installed = $true
 $force_install = $true
 install_software $software_id $software_name $install_command $verify_installed $force_install
 
+$this_dir = Get-Location
+Push-Location ..
+Remove-Item $this_dir -Recurse -Force
 git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
 git submodule update --force --recursive --init --remote
+Pop-Location
 
 # @TODO: find a way to check if VSCode is installed
 $software_id = $software_name = "Visual Studio Code (VSCode)"
