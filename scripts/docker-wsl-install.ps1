@@ -127,7 +127,7 @@ write-host "`git_dir before: $git_dir"
 $git_dir = $pwd_path.Replace("$repo_src_name-temp/scripts", "") 
 write-host "`git_dir before 2: $git_dir"
 
-$git_dir = $pwd_path.Replace("$repo_src_name-temp\scripts", "") 
+$git_dir = $pwd_path.Replace("\$repo_src_name-temp\scripts", "") 
 write-host "`git_dir after 1: $git_dir"
 
 $git_dir += "/$repo_src_name"
