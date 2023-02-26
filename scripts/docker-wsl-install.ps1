@@ -125,6 +125,7 @@ $force_install = $true
 install_software $software_id $software_name $install_command $verify_installed $force_install
 
 $git_check = git rev-parse --is-inside-work-tree
+$git_dir = "$pwd_path/$repo_src_name"
 # navigate to original folder script was executed from, create temp folder for git and then replace the temp with newly cloned repo
 if ($git_check -eq 'true') {
     write-host 'repo found using git rev-parse'
@@ -132,19 +133,19 @@ if ($git_check -eq 'true') {
     git submodule update --force --recursive --init --remote
 }
 # this is probably playing with fire since admin priveleges are enabled at this point
-elseif (Test-Path -Path "$PSScriptRoot/$repo_src_name") {
+elseif (Test-Path -Path "$git_dir-temp") {
     # Remove-Item "$PSScriptRoot/$repo_src_name" -Recurse
     # check 
     write-host 'repo found using test-path'
-    git fetch "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
+    git fetch "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_dir-temp"
     git submodule update --force --recursive --init --remote
 
 }
 else {
-    write-host  "repo not found - cloning into $pwd_path/$repo_src_name-temp"
+    write-host  "repo not found - cloning into $git_dir-temp"
 
     Push-Location ..
-    git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$pwd_path/$repo_src_name-temp"
+    git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_dir-temp"
     Pop-Location
     git submodule update --force --recursive --init --remote
     Push-Location ..
