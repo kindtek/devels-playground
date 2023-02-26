@@ -122,10 +122,12 @@ $git_dir += "/$repo_src_name"
 
 Push-Location ../../
 if (Test-Path -Path "$git_dir-temp") {
-    # only using remove-item to delete hidden file which can't be done without admin priveleges
-    # Remove-Item "$git_dir-temp/.git"
-    # renaming the rest and preparing for deletion
-    Rename-Item -Path "$git_dir-temp" "$repo_src_name-delete"
+    # cleanup any old files from previous run
+    Remove-Item "$git_dir-temp"
+}
+if (Test-Path -Path "$git_dir-delete") {
+    # cleanup any old files from previous run
+    Remove-Item "$git_dir-delete"
 }
 write-host "`git_dir after 3: $git_dir"
 
@@ -139,7 +141,6 @@ Move-Item -Path "$git_dir-temp" $git_dir -Force
 $git_dir = $git_dir.Replace("-temp", "") 
 
 Set-Location $git_dir
-# }
 
 # @TODO: find a way to check if VSCode is installed
 $software_id = $software_name = "Visual Studio Code (VSCode)"
@@ -188,6 +189,9 @@ else {
 
     Write-Output "DONE! You can close this window"
 }
+
+# cleanup
+Remove-Item "$git_dir-temp"
 
 # could be useful for later
 # $cmd_args = "$pwd_path/docker-to-wsl/scripts/images-build.bat" 
