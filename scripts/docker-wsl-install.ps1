@@ -23,11 +23,11 @@ function install_software {
         if ($installed -eq $false) {
             if ($force_install -eq $false) {
                 # give user the option to install
-                $install = Read-Host "`r`n$software_name recommended but not found. Install now? (y/[n])".ToLower()
-                if ($install -eq 'y' -Or $install -eq 'yes') { 
+                $install = Read-Host "`r`n$software_name recommended but not found. Install now? (y/[n])"
+                if ($install -ieq 'y' -Or $install -ieq 'yes') { 
                     Write-Host "`r`n"
                     Write-Host "Installing $software_name..."
-                    Invoke-Expression $install_command
+                    &$install_command
                     $host.UI.RawUI.BackgroundColor = "Black"
                 }
                 else {
@@ -36,9 +36,8 @@ function install_software {
             }
             else {
                 $install = Read-Host "`r`n$software_name required. Install now or quit? (y/[q])"
-                $install = $install.ToLower()
                 # @TODO: investigate code refactoring for duplicate code
-                if ($install -eq 'y' -Or $install -eq 'yes') { 
+                if ($install -ieq 'y' -Or $install -ieq 'yes') { 
                     Write-Host "Installing $software_name..."
                     Invoke-Expression $install_command
                     $host.UI.RawUI.BackgroundColor = "Black"
@@ -55,9 +54,8 @@ function install_software {
     }
     elseif ($force_install -eq $false) { 
         $install = Read-Host "`r`n$software_name recommended. Install now? (y/[n])"
-        $install = $install.ToLower()
         # @TODO: investigate code refactoring for duplicate code
-        if ($install -eq 'y' -Or $install -eq 'yes') { 
+        if ($install -ieq 'y' -Or $install -ieq 'yes') { 
             Write-Host "Installing $software_name..."
             Invoke-Expression $install_command
             $host.UI.RawUI.BackgroundColor = "Black"
@@ -79,7 +77,6 @@ function install_software {
             exit
         }
     }
-
 }
 
 function restart_prompt {
