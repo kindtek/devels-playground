@@ -150,6 +150,9 @@ $git_dir += "/$repo_src_name"
     Pop-Location
     git submodule update --force --recursive --init --remote
     Push-Location ../..
+    if (Test-Path -Path "$git_dir-temp") {
+        Rename-Item -Path "$git_dir" "delete-$git_dir-delete" 
+    }
     Move-Item -Path "$git_dir-temp" $git_dir -Force
     Pop-Location
 # }
