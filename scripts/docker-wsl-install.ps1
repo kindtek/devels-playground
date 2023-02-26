@@ -162,7 +162,7 @@ Invoke-Expression -Command "winget install --id=Docker.DockerDesktop -e"
 # install_software $software_id $software_name $install_command $verify_installed $force_install
 
 # launch docker desktop and keep it open so that 
-Invoke-Expression -command "C:\Program Files\Docker\Docker\Docker Desktop.exe"
+Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -Wait -WindowStyle "Hidden"
 
 Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta
 $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now" 
@@ -171,7 +171,7 @@ if ($confirmation -ieq 'reboot now') {
 }
 
 # launch the below process concurrently
-Start-Process "$git_dir/scripts/build-in-background.ps1" -WindowStyle "Minimized"
+Start-Process "& $git_dir/scripts/build-in-background.ps1" -WindowStyle "Minimized"
 
 # start WSL docker import tool
 $winconfig = "$git_dir/scripts/wsl-import.bat"
