@@ -85,8 +85,8 @@ function restart_prompt {
 }
 
 # open terminal with admin priveleges
-$principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
-if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
+# $principal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
+# if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)) {
 
     # install winget and use winget to install everything else
     $software_id = $software_name = "WinGet"
@@ -155,8 +155,8 @@ if ($principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
 
         Write-Output "DONE! You can close this window"
     }
-}
-else {
-    # launch admin console running this same file
-    #Start-Process -FilePath powershell.exe -ArgumentList "$('-File ""')$(Get-Location)$('\')$($MyInvocation.MyCommand.Name)$('""')" -Verb runAs -Wait -WindowStyle "Maximized"
-}    
+# }
+# else {
+#     # launch admin console running this same file
+#     #Start-Process -FilePath powershell.exe -ArgumentList "$('-File ""')$(Get-Location)$('\')$($MyInvocation.MyCommand.Name)$('""')" -Verb runAs -Wait -WindowStyle "Maximized"
+# }    
