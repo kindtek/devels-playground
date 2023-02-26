@@ -92,7 +92,7 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
         Exit
     }
 }
-    Write-Host `r`n + Get-Location + `r`n
+    Write-Host `Get-Location 
     # install winget and use winget to install everything else
     $software_id = $software_name = "WinGet"
     $install_command = "powershell -ExecutionPolicy Unrestricted -command get-latest-winget.ps1"
