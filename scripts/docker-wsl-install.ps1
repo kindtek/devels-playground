@@ -150,12 +150,12 @@ $git_dir += "/$repo_src_name"
         # renaming the rest and preparing for deletion
         Rename-Item -Path "$git_dir-temp" "$repo_src_name-delete"
     }
-    Push-Location ../..
+    Push-Location ../../
     write-host "cloning to $git_dir-temp"
     git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_dir-temp"
     Pop-Location
     git submodule update --force --recursive --init --remote
-    Push-Location ../..
+    Push-Location ../../
 
     Move-Item -Path "$git_dir-temp" $git_dir -Force
     Pop-Location
