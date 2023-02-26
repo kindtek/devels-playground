@@ -150,8 +150,8 @@ $docker = "C:\Program Files\Docker\Docker\Docker Desktop.exe"
 &$docker = "C:\Program Files\Docker\Docker\Docker Desktop.exe"
 
 Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta
-$confirmation = Read-Host "`r`nRestart now (y/[n])?" 
-if ($confirmation -ieq 'y') {
+$confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now" 
+if ($confirmation -ieq 'reboot now') {
     Restart-Computer -Force
 }
 else {
