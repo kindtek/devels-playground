@@ -105,14 +105,16 @@ $winconfig = "$pwd_path/add-wsl-windows-features/add-features.ps1"
 &$winconfig = Invoke-Expression -command "$pwd_path/add-wsl-windows-features/add-features.ps1"
 
 # install winget and use winget to install everything else
+$software_name = "Github CLI"
 $winget = "$pwd_path/get-latest-winget.ps1"
-Write-Host "`n`r`n`rInstalling WinGet ..."
+Write-Host "`n`r`n`rInstalling $software_name ..."
 &$winget = Invoke-Expression -command "$pwd_path/get-latest-winget.ps1" 
 
 $software_name = "Github CLI"
+Write-Host "`n`rInstalling $software_name ..."
 $software_id = "Git_is1"
 Invoke-Expression -Command "winget install -e --id GitHub.cli"
-
+Write-Host "`n`r"
 # $verify_installed = $true
 # $force_install = $true
 # install_software $software_id $software_name $install_command $verify_installed $force_install
@@ -139,9 +141,12 @@ if (Test-Path -Path "$git_dir-delete") {
     Remove-Item "$git_dir-delete" -Force -Recurse
 }
 
+$host.UI.RawUI.BackgroundColor = "Black"
 git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_dir"
 Set-Location "$git_dir"
+$host.UI.RawUI.BackgroundColor = "Black"
 git submodule update --force --recursive --init --remote
+$host.UI.RawUI.BackgroundColor = "Black"
 Set-Location ../../
 
 Set-Location $git_dir
