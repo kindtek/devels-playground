@@ -175,12 +175,14 @@ Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "
 Write-Host "`r`nWaiting for $software_name to come online ..." -BackgroundColor "Black"
 do {
     $docker_status_now = (docker version)
-    Start-Sleep -seconds 3
-    write-host "$docker_status_now`r`n"
-    $check_again = Read-Host "keep checking? (y[n])"
+    Start-Sleep -seconds 5
+    # debug
+    # write-host "$docker_status_now`r`n"
+    # $check_again = Read-Host "keep checking? (y[n])"
 }
-# while ( $docker_status_orig -ne $docker_status_now)
-while ($docker_status_now.Contains("error") -Or $check_again -ieq 'y')
+while ($docker_status_now.Contains("error"))
+# debug
+# while ($docker_status_now.Contains("error") -Or $check_again -ieq 'y')
 
 # launch the below process concurrently
 $cmd_command = "$git_dir/scripts/build-in-background.ps1"
