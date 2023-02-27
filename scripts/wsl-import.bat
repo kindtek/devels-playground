@@ -120,9 +120,11 @@ if %default%==config (
     )
 
     color 0F
-) else if (%default%==x){
-    goto quit
-}
+) ELSE (
+    IF %default%==x (
+        goto quit
+    )
+)
 
 
 SET docker_image_id_path=%install_location%\.image_id
