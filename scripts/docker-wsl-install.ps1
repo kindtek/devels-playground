@@ -187,18 +187,6 @@ while ($docker_status_now.Contains("error"))
 # debug
 # while ($docker_status_now.Contains("error") -Or $check_again -ieq 'y')
 
-# launch the below process concurrently
-# // commenting out background building process because this is NOT quite ready.
-# // would like to run in separate window and then use these new images in import tool 
-# // if they are more up to date than the hub - which could be a difficult process
-# $cmd_command = "$git_dir/scripts/build-in-background.ps1"
-# &$cmd_command = cmd /c start powershell -Command "$git_dir/scripts/build-in-background.ps1" -WindowStyle "Maximized"
-# Write-Host "`r`n" -BackgroundColor "Black"
-
-# start WSL docker import tool
-$wsl_import = "$git_dir/scripts/wsl-import.bat"
-&$wsl_import = cmd /c start powershell -Command "$git_dir/scripts/wsl-import.bat" -WindowStyle "Maximized"
-
 # @TODO: find a way to check if windows terminal is installed
 $software_id = $software_name = "Windows Terminal"
 $install_command = "winget install Microsoft.WindowsTerminal"
@@ -211,6 +199,17 @@ if ( $user_input -ine "n" ) {
     Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev" -WindowStyle "Hidden"
 } 
 
+# launch the below process concurrently
+# // commenting out background building process because this is NOT quite ready.
+# // would like to run in separate window and then use these new images in import tool 
+# // if they are more up to date than the hub - which could be a difficult process
+# $cmd_command = "$git_dir/scripts/build-in-background.ps1"
+# &$cmd_command = cmd /c start powershell -Command "$git_dir/scripts/build-in-background.ps1" -WindowStyle "Maximized"
+# Write-Host "`r`n" -BackgroundColor "Black"
+
+# start WSL docker import tool
+$wsl_import = "$git_dir/scripts/wsl-import.bat"
+&$wsl_import = cmd /c start powershell -Command "$git_dir/scripts/wsl-import.bat" -WindowStyle "Maximized"
 # cleanup - remove install script
 
 
