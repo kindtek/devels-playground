@@ -167,12 +167,12 @@ if ($confirmation -ieq 'reboot now') {
     Restart-Computer -Force
 }
 
-Write-Host "`r`nLaunching Docker Desktop.`r`n`r`n$software_name is required to run the Docker import tool for WSL. `r`nYou can minimize $software_name by pressing ENTER`r`n" -BackgroundColor "Black"
 
-# $docker_status_orig = $docker_status_now = (docker version)
 # launch docker desktop and keep it open 
 Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Minimized"
-Write-Host "`r`nWaiting for $software_name to come online ..." -BackgroundColor "Black"
+Write-Host "`r`n`r`nWaiting for $software_name to come online ..." -BackgroundColor "Black"
+Write-Host "`r`n$software_name is required to run the Docker import tool for WSL and will be launched soon. `r`nYou can minimize $software_name by pressing ENTER" -BackgroundColor "Black"
+
 do {
     $docker_status_now = (docker version)
     Start-Sleep -seconds 5
@@ -193,11 +193,8 @@ while ($docker_status_now.Contains("error"))
 # Write-Host "`r`n" -BackgroundColor "Black"
 
 # start WSL docker import tool
-$cmd_command = "$git_dir/scripts/wsl-import.bat"
-&$cmd_command = cmd /c start powershell -Command "$git_dir/scripts/wsl-import.bat" -WindowStyle "Maximized"
-
-# $wsl_import = "$git_dir/scripts/wsl-import.bat"
-# &$wsl_import = Invoke-Expression -command "$git_dir/scripts/wsl-import.bat" -WindowStyle "Maximized"
+$wsl_import = "$git_dir/scripts/wsl-import.bat"
+&$wsl_import = cmd /c start powershell -Command "$git_dir/scripts/wsl-import.bat" -WindowStyle "Maximized"
 
 # @TODO: find a way to check if windows terminal is installed
 $software_id = $software_name = "Windows Terminal"
