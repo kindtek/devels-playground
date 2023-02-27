@@ -105,7 +105,7 @@ $winconfig = "$pwd_path/add-wsl-windows-features/add-features.ps1"
 &$winconfig = Invoke-Expression -command "$pwd_path/add-wsl-windows-features/add-features.ps1"
 
 # install winget and use winget to install everything else
-$software_name = "Github CLI"
+$software_name = "WinGet"
 $winget = "$pwd_path/get-latest-winget.ps1"
 Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
 &$winget = Invoke-Expression -command "$pwd_path/get-latest-winget.ps1" 
