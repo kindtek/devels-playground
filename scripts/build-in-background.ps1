@@ -5,5 +5,5 @@ if (!$PSScriptRoot) { $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -P
 $pwd_path = $PSScriptRoot
 Push-Location $pwd_path
 $cmd_args = "$pwd_path/images-build.bat" 
-&$cmd_args = Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList cmd "$pwd_path/images-build.bat"
+&$cmd_args = Invoke-WmiMethod -Class Win32_Process -Name Create -ArgumentList cmd "$pwd_path/images-build.bat" -WindowStyle "Maximized"
 Pop-Location
