@@ -4,6 +4,7 @@ if (!$PSScriptRoot) { $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -P
 # store file path in $pwd_path and ensure PSScriptRoot worsk the same in both powershell 2 and 3
 $pwd_path = $PSScriptRoot
 # jump to first line without clearing scrollback
+Write-Output "$([char]27)[2J"
 function install_software {
     # function built using https://keestalkstech.com/2017/10/powershell-snippet-check-if-software-is-installed/ as aguide
     param (
