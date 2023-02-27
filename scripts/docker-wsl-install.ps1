@@ -179,7 +179,7 @@ do {
     write-host "$docker_status_now`r`n"
 }
 # while ( $docker_status_orig -ne $docker_status_now)
-while ( -not $docker_status_now.Contains("Server"))
+while ($docker_status_now.Contains("error"))
 # launch the below process concurrently
 Start-Process "& $git_dir/scripts/build-in-background.ps1" -WindowStyle "Minimized"
 Write-Host "`r`n"
