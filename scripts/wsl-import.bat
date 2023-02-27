@@ -1,5 +1,5 @@
 @echo off
-color F 0
+color F0
 SETLOCAL EnableDelayedExpansion
 :redo
 @REM set default variables. set default literally to default
@@ -30,7 +30,7 @@ IF %image_repo%==_ (
 SET "docker_image_id_path=%install_location%\.image_id"
 SET "docker_container_id_path=%install_location%\.container_id"
 
-CLS
+@REM CLS
 
 ECHO:
 ECHO  _____________________________________________________________________ 
@@ -72,7 +72,7 @@ SET /p "default=$ "
 @REM prompt user to type input or hit enter for default shown in parentheses
 if %default%==config (
 
-    color B 0
+    color B0
 
     @REM @TODO: filter/safeguard user input
     ECHO:
@@ -117,7 +117,7 @@ if %default%==config (
         SET "wsl_version=2" 
     )
 
-    color F 0
+    color F0
 )
 
 
@@ -163,10 +163,10 @@ IF %default%==config (
     ECHO ^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!
     ECHO:
     ECHO:
-    color 2 0
+    color 20
     ECHO docker run -it --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID!
     docker run -it --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID!
-    color F 0
+    color F0
     ECHO:
     ECHO closing preview container...
     ECHO:
