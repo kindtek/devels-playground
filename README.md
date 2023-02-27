@@ -4,7 +4,7 @@
 &nbsp;
 &nbsp;
 ### Easy as 1, 2, 4
-1. Run the command listed below command in a terminal (CMD or Powershell )
+1. Run the command listed below in a terminal (CMD or Powershell )
 2. Confirm installations actions by hitting the ENTER key a few times
 3. ??
 4. Profit
