@@ -223,7 +223,7 @@ try {
     }
 }
 catch {
-    Write-Host "To delete files: "
+    Write-Host "To delete installation files`r`n(will also delete Dev Boilerplate)`r`n"
     Write-Host "Run the following command:`r`n Remove-Item $git_dir -Recurse -Confirm -Force -ErrorAction SilentlyContinue"
 }
 
