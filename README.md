@@ -2,9 +2,12 @@
 
 ## Take a clean (or dirty) Windows 10+ environment and install a suite of dev tools (including WSL!!) with only a few keystrokes. Effortlessly set up your environment with Github, VSCode, Docker Desktop, Windows Terminal (with upgraded Powershell), WinGet, and more.  More updates coming soon including macOS support.
 &nbsp;
-
-### Run the following command in any terminal
-##### *(CMD or Powershell - preferably with admin privileges)*
+&nbsp;
+### Easy as 1, 2, 4
+1. Run the command listed below command in a terminal (CMD or Powershell )
+2. Confirm installations actions by hitting the ENTER key a few times
+3. ??
+4. Profit
 
 ```
 powershell -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powershell-remote/docker-to-wsl/install.ps1 -OutFile install-kindtek-docker-to-wsl.ps1; powershell -executionpolicy remotesigned -File install-kindtek-docker-to-wsl.ps1"
