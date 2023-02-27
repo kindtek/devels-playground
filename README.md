@@ -1,6 +1,6 @@
 # Easy WSL Dev Setup
 
-## Set up your Windows 10+ dev environment with WSL, Github, VSCode, Docker Desktop, Windows Terminal (with upgraded Powershell) all with one of line code. macOS will be supported soon
+## Set up your Windows 10+ dev environment with Github, VSCode, Docker Desktop, Windows Terminal (with upgraded Powershell), etc. Take a fresh (or not) Windows environment and a suite of dev tools will be installed with only a few keystrokes. More updates coming soon including macOS support.
 &nbsp;
 
 ## More info and screenshots to come. For now, run the following command in any terminal
