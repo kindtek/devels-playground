@@ -97,7 +97,7 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 
 $repo_src_owner = 'kindtek'
 $repo_src_name = 'docker-to-wsl'
-$repo_src_branch = 'dev'
+$repo_src_branch = 'main'
 
 # use windows-features-wsl-add to handle windows features install 
 # installing first to make sure environment has powershell 2
