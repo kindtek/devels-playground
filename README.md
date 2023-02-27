@@ -5,7 +5,7 @@
 &nbsp;
 ### Easy as 1, 2, 4
 1. Run the command listed below in a terminal (CMD or Powershell )
-2. Confirm installations actions by hitting the ENTER key a few times
+2. Confirm installation actions by hitting the ENTER key a few times
 3. ??
 4. Profit
 
