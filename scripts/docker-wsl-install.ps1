@@ -177,8 +177,11 @@ while ( $docker_status_orig -ne $docker_status_now)
 Start-Process "& $git_dir/scripts/build-in-background.ps1" -WindowStyle "Minimized"
 Write-Host "`r`n"
 # start WSL docker import tool
-$wsl_import = "$git_dir/scripts/wsl-import.bat"
-&$wsl_import = Invoke-Expression -command "$git_dir/scripts/wsl-import.bat" -WindowStyle "Maximized"
+cmd "\"$git_dir/scripts/wsl-import\""
+
+# $wsl_import = "$git_dir/scripts/wsl-import.bat"
+# &$wsl_import = Invoke-Expression -command "$git_dir/scripts/wsl-import.bat" -WindowStyle "Maximized"
+exit
 
 # @TODO: find a way to check if windows terminal is installed
 $software_id = $software_name = "Windows Terminal"
