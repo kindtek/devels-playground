@@ -57,6 +57,7 @@ ECHO:
 ECHO Press ENTER to use settings above and import %distro% as default WSL distro 
 ECHO:
 ECHO   ..or type 'config' for custom install.
+ECHO   ..or type 'x' to exit
 @REM @TODO: add options ie: 
 @REM ECHO   ..or type:
 @REM ECHO           - 'registry' to specify distro from a registry on the Docker Hub
@@ -119,6 +120,9 @@ if %default%==config (
 
     color 0F
 )
+else if (if %default%==x){
+
+}
 
 
 SET docker_image_id_path=%install_location%\.image_id
@@ -296,5 +300,5 @@ IF "%exit%"=="" (
 :no
 :exit
 ECHO:
-ECHO goodbye
+ECHO "exiting Dev Boilerplate ..."
 ECHO:
