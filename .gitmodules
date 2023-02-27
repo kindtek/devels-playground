@@ -1,8 +1,8 @@
-[submodule "scripts/windows-features-add-wsl"]
+[submodule "scripts/add-wsl-windows-features"]
 	active = true
 	shallow = false
-	path = scripts/windows-features-wsl-add
-	url = https://github.com/kindtek/windows-features-wsl-add.git
+	path = scripts/add-wsl-windows-features
+	url = https://github.com/kindtek/add-wsl-windows-features.git
 	recurse = true
 
 [submodule "scripts/powershell-remote"]
