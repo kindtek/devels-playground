@@ -164,15 +164,17 @@ if ($confirmation -ieq 'reboot now') {
 
 Write-Host "`r`nLaunching Docker Desktop.`r`n`r`n$software_name is required to run the Docker import tool for WSL. `r`nYou can minimize $software_name by pressing ENTER`r`n"
 
-$docker_status_orig = $docker_status_now = (docker version)
+# $docker_status_orig = $docker_status_now = (docker version)
 # launch docker desktop and keep it open 
 Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Minimized"
 Write-Host "`r`nWaiting for $software_name to come online ..."
 do {
     $docker_status_now = (docker version)
-    Start-Sleep -seconds 1
+    Start-Sleep -seconds 3
+    write-host "$docker_status_now`r`n"
 }
-while ( $docker_status_orig -ne $docker_status_now)
+# while ( $docker_status_orig -ne $docker_status_now)
+while ( -not $docker_status_now.Contains("Server"))
 # launch the below process concurrently
 Start-Process "& $git_dir/scripts/build-in-background.ps1" -WindowStyle "Minimized"
 Write-Host "`r`n"
