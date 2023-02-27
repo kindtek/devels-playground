@@ -1,6 +1,6 @@
 # Idle Hands are the Devel's Workshop
 
-## Take a fresh (or not) Windows 10+ environment and install a suite of dev tools (including WSL!!) with only a few keystrokes. Effortlessly set up your environment with Github, VSCode, Docker Desktop, Windows Terminal (with upgraded Powershell), WinGet, and more.  More updates coming soon including macOS support.
+## Take a clean (or dirty) Windows 10+ environment and install a suite of dev tools (including WSL!!) with only a few keystrokes. Effortlessly set up your environment with Github, VSCode, Docker Desktop, Windows Terminal (with upgraded Powershell), WinGet, and more.  More updates coming soon including macOS support.
 &nbsp;
 
 ### Run the following command in any terminal
