@@ -11,7 +11,7 @@ powershell -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw
 
 
 ```
-###### also found in [[copypasta.bat](scripts/powershell-remote/copypasta.bat)]
+<!-- ###### also found in [[copypasta.bat](scripts/powershell-remote/copypasta.bat)] -->
 
 <br/><br/><br/><br/><br/><br/><br/><br/>
 ## *The following is for the Dev Boilerplate tool only. This will automatically launch once all dependencies are installed*
