@@ -185,9 +185,12 @@ while ($docker_status_now.Contains("error"))
 # while ($docker_status_now.Contains("error") -Or $check_again -ieq 'y')
 
 # launch the below process concurrently
-$cmd_command = "$git_dir/scripts/build-in-background.ps1"
-&$cmd_command = cmd /c start powershell -Command "$git_dir/scripts/build-in-background.ps1" -WindowStyle "Maximized"
-Write-Host "`r`n" -BackgroundColor "Black"
+# // commenting out background building process because this is NOT quite ready.
+# // would like to run in separate window and then use these new images in import tool 
+# // if they are more up to date than the hub - which could be a difficult process
+# $cmd_command = "$git_dir/scripts/build-in-background.ps1"
+# &$cmd_command = cmd /c start powershell -Command "$git_dir/scripts/build-in-background.ps1" -WindowStyle "Maximized"
+# Write-Host "`r`n" -BackgroundColor "Black"
 
 # start WSL docker import tool
 $cmd_command = "$git_dir/scripts/wsl-import.bat"
