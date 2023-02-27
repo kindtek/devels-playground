@@ -180,7 +180,7 @@ do {
     $check_again = Read-Host "keep checking? (y[n])"
 }
 # while ( $docker_status_orig -ne $docker_status_now)
-while ($docker_status_now.Contains("error") -And $check_again -ine 'y')
+while ($docker_status_now.Contains("error") -Or $check_again -ine 'y')
 # launch the below process concurrently
 powershell -Command "& $git_dir/scripts/build-in-background.ps1" -WindowStyle "Maximized"
 Write-Host "`r`n" -BackgroundColor "Black"
