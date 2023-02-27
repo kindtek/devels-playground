@@ -9,9 +9,9 @@ docker compose -f ../docker-compose.ubuntu.yaml build
 docker compose -f ../docker-compose.alpine.yaml build
 
 @REM ubuntu
-docker compose -f ../docker-compose.ubuntu.yaml up -d
+docker compose -f ../docker-compose.ubuntu.yaml up  -p "docker-to-wsl-ubuntu" -d
 @REM alpine
-docker compose -f ../docker-compose.alpine.yaml up -d
+docker compose -f ../docker-compose.alpine.yaml up  -p "docker-to-wsl-alpine" -d
 
 @REM both
 @REM docker compose -f ../docker-compose.ubuntu.yaml -f ../docker-compose.alpine.yaml up -d
