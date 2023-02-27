@@ -177,11 +177,12 @@ do {
     $docker_status_now = (docker version)
     Start-Sleep -seconds 3
     write-host "$docker_status_now`r`n"
+    $check_again = Read-Host "keep checking? (y[n])"
 }
 # while ( $docker_status_orig -ne $docker_status_now)
-while ($docker_status_now.Contains("error"))
+while ($docker_status_now.Contains("error") -And $check_again -ieq 'y')
 # launch the below process concurrently
-powershell -Command "& $git_dir/scripts/build-in-background.ps1" -WindowStyle "Minimized"
+powershell -Command "& $git_dir/scripts/build-in-background.ps1" -WindowStyle "Maximized"
 Write-Host "`r`n"
 # start WSL docker import tool
 cmd "\"$git_dir/scripts/wsl-import.bat\""
