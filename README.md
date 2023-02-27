@@ -4,7 +4,7 @@
 &nbsp;
 
 ### Run the following command in any terminal
-#### (CMD or Powershell - preferably with admin privileges)
+##### *(CMD or Powershell - preferably with admin privileges)*
 
 `powershell -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powershell-remote/docker-to-wsl/install.ps1 -OutFile install-kindtek-docker-to-wsl.ps1; powershell -executionpolicy remotesigned -File install-kindtek-docker-to-wsl.ps1"`
 
