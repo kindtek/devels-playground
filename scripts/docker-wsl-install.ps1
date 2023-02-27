@@ -223,6 +223,9 @@ try {
         Remove-Item $git_dir -Recurse -Confirm -Force -ErrorAction SilentlyContinue
     }
 }
-catch {}
+catch {
+    Write-Host "To delete files: "
+    Write-Host "Run the following command:`r`n Remove-Item $git_dir -Recurse -Confirm -Force -ErrorAction SilentlyContinue"
+}
 
 
