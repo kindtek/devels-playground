@@ -120,7 +120,7 @@ if %default%==config (
     )
 
     color 0F
-) else if (if %default%==x){
+) else if (%default%==x){
     goto quit
 }
 
