@@ -1,7 +1,7 @@
 $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
 if (!$PSScriptRoot) { $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent }
-# store file path in $pwd_path and ensure PSScriptRoot worsk the same in both powershell 2 and 3
+# store file path in $pwd_path and ensure PSScriptRoot works the same in both powershell 2 and 3
 $pwd_path = $PSScriptRoot
 # jump to first line without clearing scrollback
 Write-Output "$([char]27)[2J"
@@ -174,7 +174,7 @@ if ($confirmation -ieq 'reboot now') {
 # launch docker desktop and keep it open 
 Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Minimized"
 Write-Host "`r`n`r`nWaiting for $software_name to come online ..." -BackgroundColor "Black" -ForegroundColor "Yellow"
-Write-Host "`r`n$software_name is required to run the Docker import tool for WSL and will be launched soon. `r`nYou can minimize $software_name by pressing ENTER" -BackgroundColor "Black"
+Write-Host "`r`n$software_name is required to run the Docker import tool for WSL and will be launched soon. `r`nYou can minimize $software_name by pressing WIN + Down arrow" -BackgroundColor "Black"
 
 do {
     $docker_status_now = (docker version)

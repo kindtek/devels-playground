@@ -302,5 +302,5 @@ IF "%exit%"=="" (
 :no
 :exit
 ECHO:
-ECHO "exiting Dev Boilerplate ..."
+ECHO exiting Dev Boilerplate ...
 ECHO:
