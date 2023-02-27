@@ -9,7 +9,7 @@
 `powershell -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powershell-remote/docker-to-wsl/install.ps1 -OutFile install-kindtek-docker-to-wsl.ps1; powershell -executionpolicy remotesigned -File install-kindtek-docker-to-wsl.ps1"`
 
 <br/><br/><br/><br/><br/><br/><br/><br/>
-## *The following is for the Dev Boilerplate tool only which will automatically launch once all dependencies are installed*
+## *The following is for the Dev Boilerplate tool only. This will automatically launch once all dependencies are installed*
 <br/><br/>
 # Import Docker images to WSL
 
