@@ -23,9 +23,9 @@ function install_software {
                 $install = Read-Host "`r`n$software_name recommended but not found. Install now? (y/[n])"
                 if ($install -ieq 'y' -Or $install -ieq 'yes') { 
                     Write-Host "`r`n"
-                    Write-Host "Installing $software_name..." -BackgroundColor Black
+                    Write-Host "Installing $software_name..." -BackgroundColor  "Black"
                     &$install_command
-                    $host.UI.RawUI.BackgroundColor = Black
+                    $host.UI.RawUI.BackgroundColor = "Black"
                 }
                 else {
                     Write-Host "skipping $software_name install"
@@ -37,7 +37,7 @@ function install_software {
                 if ($install -ieq 'y' -Or $install -ieq 'yes') { 
                     Write-Host "Installing $software_name..."
                     Invoke-Expression $install_command
-                    $host.UI.RawUI.BackgroundColor = Black
+                    $host.UI.RawUI.BackgroundColor = "Black"
                 }
                 else {
                     Write-Host "skipping $software_name install and exiting..."
@@ -55,7 +55,7 @@ function install_software {
         if ($install -ieq 'y' -Or $install -ieq 'yes') { 
             Write-Host "Installing $software_name..."
             Invoke-Expression $install_command
-            $host.UI.RawUI.BackgroundColor = Black
+            $host.UI.RawUI.BackgroundColor = "Black"
         }
         else {
             Write-Host "skipping $software_name install"
@@ -65,19 +65,19 @@ function install_software {
         # force_install: true, verify_install: false
         $install = Read-Host "`r`n$software_name required. Install now or quit? (y/[q])"
         if ($install -ieq 'y' -Or $install -ieq 'yes') { 
-            Write-Host "Installing $software_name..." -BackgroundColor Black
+            Write-Host "Installing $software_name..." -BackgroundColor  "Black"
             Invoke-Expression $install_command
-            $host.UI.RawUI.BackgroundColor = Black
+            $host.UI.RawUI.BackgroundColor = "Black"
         }
         else {
-            Write-Host "skipping $software_name install and exiting..." -BackgroundColor Black
+            Write-Host "skipping $software_name install and exiting..." -BackgroundColor  "Black"
             exit
         }
     }
 }
 
 function restart_prompt {
-    Write-Host "`r`nA restart is required for the changes to take effect. " -ForegroundColor Magenta -BackgroundColor Black
+    Write-Host "`r`nA restart is required for the changes to take effect. " -ForegroundColor Magenta -BackgroundColor  "Black"
     $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now" 
     if ($confirmation -ieq 'reboot now') {
         Restart-Computer -Force
@@ -107,14 +107,14 @@ $winconfig = "$pwd_path/add-wsl-windows-features/add-features.ps1"
 # install winget and use winget to install everything else
 $software_name = "Github CLI"
 $winget = "$pwd_path/get-latest-winget.ps1"
-Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor Black
+Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor  "Black"
 &$winget = Invoke-Expression -command "$pwd_path/get-latest-winget.ps1" 
 
 $software_name = "Github CLI"
-Write-Host "`n`rInstalling $software_name ..." -BackgroundColor Black
+Write-Host "`n`rInstalling $software_name ..." -BackgroundColor  "Black"
 $software_id = "Git_is1"
 Invoke-Expression -Command "winget install -e --id GitHub.cli"
-Write-Host "`n`r" -BackgroundColor Black
+Write-Host "`n`r" -BackgroundColor  "Black"
 # $verify_installed = $true
 # $force_install = $true
 # install_software $software_id $software_name $install_command $verify_installed $force_install
@@ -141,38 +141,38 @@ if (Test-Path -Path "$git_dir-delete") {
     Remove-Item "$git_dir-delete" -Force -Recurse
 }
 
-$host.UI.RawUI.BackgroundColor = Black
+$host.UI.RawUI.BackgroundColor = "Black"
 git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_dir"
 Set-Location "$git_dir"
-$host.UI.RawUI.BackgroundColor = Black
+$host.UI.RawUI.BackgroundColor = "Black"
 git submodule update --force --recursive --init --remote
-$host.UI.RawUI.BackgroundColor = Black
+$host.UI.RawUI.BackgroundColor = "Black"
 Set-Location ../../
 
 Set-Location $git_dir
 
 $software_name = "Visual Studio Code (VSCode)"
-Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor Black
+Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor  "Black"
 Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
 
 
 $software_id = $software_name = "Docker Desktop"
-Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor Black
+Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor  "Black"
 Invoke-Expression -Command "winget install --id=Docker.DockerDesktop -e" 
 
 
-Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta -BackgroundColor Black
+Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta -BackgroundColor  "Black"
 $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now" 
 if ($confirmation -ieq 'reboot now') {
     Restart-Computer -Force
 }
 
-Write-Host "`r`nLaunching Docker Desktop.`r`n`r`n$software_name is required to run the Docker import tool for WSL. `r`nYou can minimize $software_name by pressing ENTER`r`n" -BackgroundColor Black
+Write-Host "`r`nLaunching Docker Desktop.`r`n`r`n$software_name is required to run the Docker import tool for WSL. `r`nYou can minimize $software_name by pressing ENTER`r`n" -BackgroundColor  "Black"
 
 # $docker_status_orig = $docker_status_now = (docker version)
 # launch docker desktop and keep it open 
 Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Minimized"
-Write-Host "`r`nWaiting for $software_name to come online ..." -BackgroundColor Black
+Write-Host "`r`nWaiting for $software_name to come online ..." -BackgroundColor  "Black"
 do {
     $docker_status_now = (docker version)
     Start-Sleep -seconds 3
@@ -183,7 +183,7 @@ do {
 while ($docker_status_now.Contains("error") -And $check_again -ine 'y')
 # launch the below process concurrently
 powershell -Command "& $git_dir/scripts/build-in-background.ps1" -WindowStyle "Maximized"
-Write-Host "`r`n" -BackgroundColor Black
+Write-Host "`r`n" -BackgroundColor  "Black"
 
 # start WSL docker import tool
 $cmd_command = "$git_dir/scripts/wsl-import.bat"
@@ -207,7 +207,7 @@ if ( $user_input -ine "n" ) {
 # cleanup - remove install script
 Remove-Item "$git_dir".replace($repo_src_name, "install-$repo_src_owner-$repo_src_name.ps1") -Force
 
-Write-Host "`r`nSetup complete!`r`n`r`nCleaning up.. (optional) `r`n" -ForegroundColor Green -BackgroundColor Black
+Write-Host "`r`nSetup complete!`r`n`r`nCleaning up.. (optional) `r`n" -ForegroundColor Green -BackgroundColor  "Black"
 # make extra sure this is not a folder that is not important (ie: system32 - which is default location)
 if ($git_dir.Contains($repo_src_name)){
     Remove-Item $git_dir -Recurse -Confirm
