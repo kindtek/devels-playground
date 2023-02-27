@@ -1,4 +1,4 @@
-# Easy WSL Dev Setup
+# Idle Hands are the Devel's Workshop
 
 ## Take a fresh (or not) Windows 10+ environment and install a suite of dev tools (including WSL!!) with only a few keystrokes. Effortlessly set up your environment with Github, VSCode, Docker Desktop, Windows Terminal (with upgraded Powershell), WinGet, and more.  More updates coming soon including macOS support.
 &nbsp;
@@ -32,3 +32,7 @@ scripts\wsl-import
 ### Requirements: github, WSL2, Docker Desktop (running), Visual Studio Code (optional)
 
 ### fwiw: fork this repo and build your own dev environment by using template Docker files ([[ubuntu](docker-compose.ubuntu.yaml)], [[alpine](docker-compose.alpine.yaml)]), ([[ubuntu](dockerfile.ubuntu.yaml)], [[alpine](dockerfile.alpine.yaml)])
+
+&nbsp;
+&nbsp;
+### Note: This is for development use only. Use at your own risk
