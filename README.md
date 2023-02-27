@@ -26,9 +26,11 @@ git clone https://github.com/kindtek/docker-to-wsl`
 scripts\wsl-import
 ```
 
-## 0) [Example] Continually hit ENTER to import latest ubuntu docker image stored on the hub with default settings
+## 0) [Example] hit ENTER a few times to import latest ubuntu docker image stored on the hub with default settings
 
-## 1) instead of pressing ENTER, type "config" then hit ENTER to specify any linux distro on [hub.docker.com](https://hub.docker.com/) you would like to use with WSL and customize the save location, distro name, and WSL version
+## 1) instead of pressing ENTER, type "config" then hit ENTER to specify any linux distro on [hub.docker.com](https://hub.docker.com/) you would like to use with WSL and customize the save location, distro name, and WSL version. for example, if you want to install the [kindtek](https://hub.docker.com/u/kindtek) [ubuntu-skinny](https://hub.docker.com/layers/kindtek/d2w/ubuntu-phat/images/sha256-9ddd651c73363e0b2dcd23d49b26ad3008bde4cbcb718a1d38da7f380d8ac438?context=repo) image use the format:
+    - source: kindtek
+    - name: d2w:ubuntu-skinny
 
 ## 2) fork this repo and modify the Docker (-compose) files to build your own custom Docker image, push the image to a repo on Docker Hub, and import the image onto any Windows machine that is running Docker Desktop (see #1 above) for a ready-to-go dev environment in WSL
 
