@@ -169,7 +169,7 @@ $docker_status_orig = $docker_status_now = (docker version)
 Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Minimized"
 Write-Host "`r`nWaiting for $software_name to come online ..."
 do {
-    $docker_status_now = (docker_version)
+    $docker_status_now = (docker version)
     Start-Sleep -seconds 1
 }
 while ( $docker_status_orig -ne $docker_status_now)
