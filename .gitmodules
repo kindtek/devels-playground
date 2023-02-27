@@ -3,6 +3,7 @@
 	shallow = false
 	path = scripts/add-wsl-windows-features
 	url = https://github.com/kindtek/add-wsl-windows-features.git
+	branch = docker-to-wsl
 	recurse = true
 
 [submodule "scripts/powershell-remote"]
