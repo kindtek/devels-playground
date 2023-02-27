@@ -128,18 +128,21 @@ $git_dir += "/$repo_src_name"
 
 Set-Location ../../
 # (git_dir-temp is current directory that contains fresh files)
-if (Test-Path -Path "$git_dir") {
-    # cleanup any old files from previous run
-    Remove-Item "$git_dir" -Force -Recurse
+try {
+    if (Test-Path -Path "$git_dir") {
+        # cleanup any old files from previous run
+        Remove-Item "$git_dir" -Force -Recurse -ErrorAction SilentlyContinue
+    }
+    if (Test-Path -Path "$git_dir-temp") {
+        # cleanup any old files from previous run
+        Remove-Item "$git_dir-temp" -Force -Recurse -ErrorAction SilentlyContinue
+    }
+    if (Test-Path -Path "$git_dir-delete") {
+        # cleanup any old files from previous run
+        Remove-Item "$git_dir-delete" -Force -Recurse -ErrorAction SilentlyContinue
+    }
 }
-if (Test-Path -Path "$git_dir-temp") {
-    # cleanup any old files from previous run
-    Remove-Item "$git_dir-temp" -Force -Recurse
-}
-if (Test-Path -Path "$git_dir-delete") {
-    # cleanup any old files from previous run
-    Remove-Item "$git_dir-delete" -Force -Recurse
-}
+catch {}
 
 $host.UI.RawUI.BackgroundColor = "Black"
 git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_dir"
@@ -209,11 +212,17 @@ if ( $user_input -ine "n" ) {
 } 
 
 # cleanup - remove install script
-Remove-Item "$git_dir".replace($repo_src_name, "install-$repo_src_owner-$repo_src_name.ps1") -Force
 
-Write-Host "`r`nSetup complete!`r`n`r`nCleaning up.. (optional) `r`n" -ForegroundColor Green -BackgroundColor "Black"
-# make extra sure this is not a folder that is not important (ie: system32 - which is default location)
-if ($git_dir.Contains($repo_src_name)){
-    Remove-Item $git_dir -Recurse -Confirm -Force
+
+Write-Host "`r`nSetup complete!`r`n" -ForegroundColor Green -BackgroundColor "Black"
+try {
+    Remove-Item "$git_dir".replace($repo_src_name, "install-$repo_src_owner-$repo_src_name.ps1") -Force -ErrorAction SilentlyContinue
+    Write-Host "`r`nCleaning up.. (optional) `r`n"
+    # make extra sure this is not a folder that is not important (ie: system32 - which is a default location)
+    if ($git_dir.Contains($repo_src_name) -And $git_dir.NotContains("System32") ) {
+        Remove-Item $git_dir -Recurse -Confirm -Force -ErrorAction SilentlyContinue
+    }
 }
+catch {}
+
 
