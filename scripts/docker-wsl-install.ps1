@@ -180,12 +180,14 @@ do {
     $check_again = Read-Host "keep checking? (y[n])"
 }
 # while ( $docker_status_orig -ne $docker_status_now)
-while ($docker_status_now.Contains("error") -And $check_again -ieq 'y')
+while ($docker_status_now.Contains("error") -And $check_again -ine 'y')
 # launch the below process concurrently
 powershell -Command "& $git_dir/scripts/build-in-background.ps1" -WindowStyle "Maximized"
 Write-Host "`r`n"
+
 # start WSL docker import tool
-cmd "\"$git_dir/scripts/wsl-import.bat\""
+$cmd_command = "$git_dir/scripts/wsl-import.bat"
+&$cmd_command = cmd "$git_dir/scripts/wsl-import.bat"
 
 # $wsl_import = "$git_dir/scripts/wsl-import.bat"
 # &$wsl_import = Invoke-Expression -command "$git_dir/scripts/wsl-import.bat" -WindowStyle "Maximized"
