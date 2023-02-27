@@ -23,9 +23,9 @@ function install_software {
                 $install = Read-Host "`r`n$software_name recommended but not found. Install now? (y/[n])"
                 if ($install -ieq 'y' -Or $install -ieq 'yes') { 
                     Write-Host "`r`n"
-                    Write-Host "Installing $software_name..."
+                    Write-Host "Installing $software_name..." -BackgroundColor Black
                     &$install_command
-                    $host.UI.RawUI.BackgroundColor = "Black"
+                    $host.UI.RawUI.BackgroundColor = Black
                 }
                 else {
                     Write-Host "skipping $software_name install"
@@ -37,7 +37,7 @@ function install_software {
                 if ($install -ieq 'y' -Or $install -ieq 'yes') { 
                     Write-Host "Installing $software_name..."
                     Invoke-Expression $install_command
-                    $host.UI.RawUI.BackgroundColor = "Black"
+                    $host.UI.RawUI.BackgroundColor = Black
                 }
                 else {
                     Write-Host "skipping $software_name install and exiting..."
@@ -55,7 +55,7 @@ function install_software {
         if ($install -ieq 'y' -Or $install -ieq 'yes') { 
             Write-Host "Installing $software_name..."
             Invoke-Expression $install_command
-            $host.UI.RawUI.BackgroundColor = "Black"
+            $host.UI.RawUI.BackgroundColor = Black
         }
         else {
             Write-Host "skipping $software_name install"
@@ -65,19 +65,19 @@ function install_software {
         # force_install: true, verify_install: false
         $install = Read-Host "`r`n$software_name required. Install now or quit? (y/[q])"
         if ($install -ieq 'y' -Or $install -ieq 'yes') { 
-            Write-Host "Installing $software_name..."
+            Write-Host "Installing $software_name..." -BackgroundColor Black
             Invoke-Expression $install_command
-            $host.UI.RawUI.BackgroundColor = "Black"
+            $host.UI.RawUI.BackgroundColor = Black
         }
         else {
-            Write-Host "skipping $software_name install and exiting..."
+            Write-Host "skipping $software_name install and exiting..." -BackgroundColor Black
             exit
         }
     }
 }
 
 function restart_prompt {
-    Write-Host "`r`nA restart is required for the changes to take effect. " -ForegroundColor Magenta
+    Write-Host "`r`nA restart is required for the changes to take effect. " -ForegroundColor Magenta -BackgroundColor Black
     $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now" 
     if ($confirmation -ieq 'reboot now') {
         Restart-Computer -Force
@@ -114,7 +114,7 @@ $software_name = "Github CLI"
 Write-Host "`n`rInstalling $software_name ..." -BackgroundColor Black
 $software_id = "Git_is1"
 Invoke-Expression -Command "winget install -e --id GitHub.cli"
-Write-Host "`n`r"
+Write-Host "`n`r" -BackgroundColor Black
 # $verify_installed = $true
 # $force_install = $true
 # install_software $software_id $software_name $install_command $verify_installed $force_install
