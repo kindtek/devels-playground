@@ -214,6 +214,6 @@ Remove-Item "$git_dir".replace($repo_src_name, "install-$repo_src_owner-$repo_sr
 Write-Host "`r`nSetup complete!`r`n`r`nCleaning up.. (optional) `r`n" -ForegroundColor Green -BackgroundColor "Black"
 # make extra sure this is not a folder that is not important (ie: system32 - which is default location)
 if ($git_dir.Contains($repo_src_name)){
-    Remove-Item $git_dir -Recurse -Confirm
+    Remove-Item $git_dir -Recurse -Confirm -Force
 }
 
