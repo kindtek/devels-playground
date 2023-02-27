@@ -1,5 +1,5 @@
 @echo off
-color F0
+color 0F
 SETLOCAL EnableDelayedExpansion
 :redo
 @REM set default variables. set default literally to default
@@ -72,7 +72,7 @@ SET /p "default=$ "
 @REM prompt user to type input or hit enter for default shown in parentheses
 if %default%==config (
 
-    color B0
+    color 0B
 
     @REM @TODO: filter/safeguard user input
     ECHO:
@@ -117,7 +117,7 @@ if %default%==config (
         SET "wsl_version=2" 
     )
 
-    color F0
+    color 0F
 )
 
 
@@ -163,10 +163,10 @@ IF %default%==config (
     ECHO ^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!
     ECHO:
     ECHO:
-    color 20
+    color 02
     ECHO docker run -it --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID!
     docker run -it --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID!
-    color F0
+    color 0F
     ECHO:
     ECHO closing preview container...
     ECHO:
