@@ -1,12 +1,14 @@
 # Easy WSL Dev Setup
 
-## Set up any Windows 10+ environment with Github, VSCode, Docker Desktop, Windows Terminal (with upgraded Powershell), WinGet, and more. Take a fresh (or not) Windows environment and install a suite of dev tools (including WSL!!) with only a few keystrokes. More updates coming soon including macOS support.
+## Take a fresh (or not) Windows 10+ environment and install a suite of dev tools (including WSL!!) with only a few keystrokes. Effortlessly set up your environment with Github, VSCode, Docker Desktop, Windows Terminal (with upgraded Powershell), WinGet, and more.  More updates coming soon including macOS support.
 &nbsp;
 
 ### Run the following command in any terminal
 ##### *(CMD or Powershell - preferably with admin privileges)*
 
-`powershell -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powershell-remote/docker-to-wsl/install.ps1 -OutFile install-kindtek-docker-to-wsl.ps1; powershell -executionpolicy remotesigned -File install-kindtek-docker-to-wsl.ps1"`
+```
+powershell -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powershell-remote/docker-to-wsl/install.ps1 -OutFile install-kindtek-docker-to-wsl.ps1; powershell -executionpolicy remotesigned -File install-kindtek-docker-to-wsl.ps1"
+```
 
 <br/><br/><br/><br/><br/><br/><br/><br/>
 ## *The following is for the Dev Boilerplate tool only. This will automatically launch once all dependencies are installed*
@@ -15,9 +17,10 @@
 
 ## In Windows, clone this repo with git and run [WSL import tool script](scripts/wsl-import.bat)
 
-`git clone https://github.com/kindtek/docker-to-wsl`
-
-`scripts\wsl-import`
+```
+git clone https://github.com/kindtek/docker-to-wsl`
+scripts\wsl-import
+```
 
 ## 0) [Example] Continually hit ENTER to import latest ubuntu docker image stored on the hub with default settings
 
