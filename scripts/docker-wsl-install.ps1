@@ -1,7 +1,7 @@
 $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
 if (!$PSScriptRoot) { $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent }
-# store file path in $pwd_path and ensure PSScriptRoot worsk the same in both powershell 2 and 3
+# store file path in $pwd_path and ensure PSScriptRoot works the same in both powershell 2 and 3
 $pwd_path = $PSScriptRoot
 # jump to first line without clearing scrollback
 Write-Output "$([char]27)[2J"
