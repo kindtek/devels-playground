@@ -8,7 +8,7 @@ ARG groupname=${groupname:-dev}
 RUN apt-get update -yq && \
     apt-get upgrade -y && \
     # install github, build-essentials, libssl, etc
-    apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip
+    apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip vim
 
 # # set up group/user 
 # RUN addgroup --system --gid 1000 ${groupname} && \
@@ -35,13 +35,15 @@ RUN cp -r ./home/${username} /etc/skel
 
 # add host user
 RUN adduser --system --home /home/host --shell /bin/bash --disabled-password host
-RUN usermod -aG sudo host
-RUN usermod -aG sudo ${username}
+
 # RUN adduser --system --home /home/host --shell /bin/bash --disabled-password host
 # RUN sed -e 's;^# \(%sudo.*NOPASSWD.*\);\1;g' -i /etc/sudoers
-
-# RUN usermod -aG sudo host
-# RUN usermod -aG sudo ${username}
+# add host and dev to sudo
+RUN usermod -aG sudo host
+RUN usermod -aG sudo ${username}
+# add host and dev to devbp
+RUN usermod -aG devbp host
+RUN usermod -aG devbp ${username}
 
 # all non-root users will need to use sudo from now on
 RUN apt-get -y install sudo && \
@@ -51,6 +53,10 @@ RUN apt-get -y install sudo && \
 
 # ensure no password and sudo runs as root
 RUN passwd -d ${username} && passwd -d host && passwd -d root && passwd -l root
+
+# mount w drive - set up drive w in windows using https://allthings.how/how-to-partition-a-hard-drive-on-windows-11/
+RUN sudo mkdir /mnt/w && sudo mount -t drvfs w: /mnt/w
+
 USER ${username}
 WORKDIR /home/${username}
 
@@ -59,6 +65,12 @@ USER root
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
 RUN curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
 RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main"| tee /etc/apt/sources.list.d/brave-browser-release.list
+
+# for powershell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
+## Download the Microsoft repository GPG keys
+RUN wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
+## Register the Microsoft repository GPG keys
+RUN dpkg -i packages-microsoft-prod.deb
 # for docker install - https://docs.docker.com/engine/install/ubuntu/
 RUN mkdir -p /etc/apt/keyrings && \
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
@@ -67,7 +79,7 @@ RUN echo \
     $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 # brave browser/gui/media/docker support
 RUN apt-get update -yq && \
-    apt-get install -y gedit gimp nautilus vlc x11-apps apt-transport-https brave-browser
+    apt-get install -y gedit gimp nautilus vlc x11-apps apt-transport-https software-properties-common powershell brave-browser
 USER ${username}
 
 # TODO: https://github.com/mbacchi/brave-docker
@@ -81,7 +93,7 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3
 # CUDA
 RUN apt-get -y install nvidia-cuda-toolkit
 # VSCODE
-RUN apt-get -y install software-properties-common apt-transport-https wget -y
+RUN apt-get -y install apt-transport-https wget -y
 RUN wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | apt-key add -
 RUN add-apt-repository -y "deb [arch=$(dpkg --print-architecture)] https://packages.microsoft.com/repos/vscode stable main"
 RUN apt-get -y install code
