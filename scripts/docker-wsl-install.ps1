@@ -184,12 +184,12 @@ while ($docker_status_now.Contains("error") -Or $check_again -ieq 'y')
 
 # launch the below process concurrently
 $cmd_command = "$git_dir/scripts/build-in-background.ps1"
-&$cmd_command = cmd /c start powershell -Command "& $git_dir/scripts/build-in-background.ps1" -WindowStyle "Maximized"
+&$cmd_command = cmd /c start powershell -Command "$git_dir/scripts/build-in-background.ps1" -WindowStyle "Maximized"
 Write-Host "`r`n" -BackgroundColor "Black"
 
 # start WSL docker import tool
 $cmd_command = "$git_dir/scripts/wsl-import.bat"
-&$cmd_command = cmd start powershell -Command "$git_dir/scripts/wsl-import.bat"
+&$cmd_command = cmd /c start powershell -Command "$git_dir/scripts/wsl-import.bat" -WindowStyle "Maximized"
 
 # $wsl_import = "$git_dir/scripts/wsl-import.bat"
 # &$wsl_import = Invoke-Expression -command "$git_dir/scripts/wsl-import.bat" -WindowStyle "Maximized"
