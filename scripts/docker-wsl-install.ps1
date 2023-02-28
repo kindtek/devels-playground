@@ -48,6 +48,7 @@ Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
 $software_name = "Github CLI"
 Write-Host "`n`rInstalling $software_name ..." -BackgroundColor "Black"
 Invoke-Expression -Command "winget install -e --id GitHub.cli"
+Invoke-Expression -Command "winget install --id Git.Git -e --source winget"
 Write-Host "`n`r" -BackgroundColor "Black"
 
 # remove repo_src_name/scripts from working directory pathname
