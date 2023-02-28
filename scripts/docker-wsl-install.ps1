@@ -109,7 +109,7 @@ while ($docker_status_now.Contains("error"))
 
 # @TODO: find a way to check if windows terminal is installed
 $windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
-if ($windows_terminal_install -ine 'n' -Or $windows_terminal_install -ine 'no') { 
+if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no') { 
     $host.UI.RawUI.BackgroundColor = "Black"
     $software_name = "Windows Terminal"
     Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
@@ -134,7 +134,7 @@ Write-Host "`r`nSetup complete!`r`n" -ForegroundColor Green -BackgroundColor "Bl
 
 # @TODO: maybe start in new window
 $start_devs_playground = Read-Host "`r`nStart Devel's Playground ([y]/n)"
-if ($start_devs_playground -ine 'n' -Or $start_devs_playground -ine 'no') { 
+if ($start_devs_playground -ine 'n' -And $start_devs_playground -ine 'no') { 
     $host.UI.RawUI.BackgroundColor = "Black"
     $devs_playground = "$git_dir/scripts/wsl-import.bat"
     &$devs_playground = cmd /c start powershell -Command "$git_dir/scripts/wsl-import.bat" -WindowStyle "Maximized"
