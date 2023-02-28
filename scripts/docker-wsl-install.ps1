@@ -37,7 +37,7 @@ $winconfig = "$pwd_path/add-wsl-windows-features/add-features.ps1"
 
 Write-Host "`r`nThe following programs will now be installed:" -ForegroundColor Magenta
 Write-Host "`t- WinGet`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktop" -ForegroundColor Magenta
-Write-Host "`r`nUse Ctrl + C to quit at any time"
+Write-Host "`r`nClose window to quit at any time"
 
 # install winget and use winget to install everything else
 $software_name = "WinGet"
