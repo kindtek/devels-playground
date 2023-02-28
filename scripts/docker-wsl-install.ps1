@@ -154,7 +154,7 @@ Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
 Invoke-Expression -Command "winget install --id=Docker.DockerDesktop -e" 
 
 Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta -BackgroundColor "Black"
-$confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now" 
+$confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now`r`n ..or hit ENTER to skip" 
 if ($confirmation -ieq 'reboot now') {
     Restart-Computer -Force
 }
@@ -176,11 +176,13 @@ while ($docker_status_now.Contains("error"))
 # while ($docker_status_now.Contains("error") -Or $check_again -ieq 'y')
 
 # @TODO: find a way to check if windows terminal is installed
-$software_id = $software_name = "Windows Terminal"
-$install_command = "winget install Microsoft.WindowsTerminal"
-$verify_installed = $false
-$force_install = $false
-install_software $software_id $software_name $install_command $verify_installed $force_install
+$windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
+if ($windows_terminal_install -ine 'n' -Or $windows_terminal_install -ine 'no') { 
+    $host.UI.RawUI.BackgroundColor = "Black"
+    $software_name = "Windows Terminal"
+    Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
+    Invoke-Expression -Command "winget install Microsoft.WindowsTerminal" 
+}
 
 $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
 if ( $user_input -ine "n" ) {
