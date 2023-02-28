@@ -80,7 +80,7 @@ function install_software {
 
 function restart_prompt {
     Write-Host "`r`nA restart is required for the changes to take effect. " -ForegroundColor Magenta -BackgroundColor "Black"
-    $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now" 
+    $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now`r`n ..or hit ENTER to skip" 
     if ($confirmation -ieq 'reboot now') {
         Restart-Computer -Force
     }
@@ -200,7 +200,7 @@ Write-Host "`r`nSetup complete!`r`n" -ForegroundColor Green -BackgroundColor "Bl
 
 # @TODO: maybe start in new window
 $start_devs_playground = Read-Host "`r`nStart Devel's Playground ([y]/n)"
-if ($start_devs_playground -ieq 'n' -Or $start_devs_playground -ieq 'no') { 
+if ($start_devs_playground -ine 'n' -Or $start_devs_playground -ine 'no') { 
     $host.UI.RawUI.BackgroundColor = "Black"
     $devs_playground = "$git_dir/scripts/wsl-import.bat"
     &$devs_playground = cmd /c start powershell -Command "$git_dir/scripts/wsl-import.bat" -WindowStyle "Maximized"
