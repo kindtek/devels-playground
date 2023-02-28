@@ -26,7 +26,7 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 # source of the above self-elevating script: https://blog.expta.com/2017/03/how-to-self-elevate-powershell-script.html#:~:text=If%20User%20Account%20Control%20(UAC,select%20%22Run%20with%20PowerShell%22.
 
 $repo_src_owner = 'kindtek'
-$repo_src_name = 'docker-to-wsl'
+$repo_src_name = 'devels-workshop'
 $repo_src_branch = 'main'
 
 # use windows-features-wsl-add to handle windows features install 
@@ -103,7 +103,7 @@ if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no')
 
 $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
 if ( $user_input -ine "n" ) {
-    Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev" -WindowStyle "Hidden"
+    Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/devels-workshop@dev" -WindowStyle "Hidden"
 } 
 
 
@@ -128,7 +128,7 @@ if ($start_devs_playground -ine 'n' -And $start_devs_playground -ine 'no') {
     while ($docker_status_now.Contains("error"))
     # debug
     # while ($docker_status_now.Contains("error") -Or $check_again -ieq 'y')
-    
+
     # // commenting out background building process because this is NOT quite ready.
     # // would like to run in separate window and then use these new images in devel's playground 
     # // if they are more up to date than the hub - which could be a difficult process

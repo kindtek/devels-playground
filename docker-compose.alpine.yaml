@@ -1,5 +1,5 @@
 version: '3.8'
-name: docker-to-wsl-alpine
+name: devels-workshop-alpine
 services:
   skinny:
     entrypoint:
