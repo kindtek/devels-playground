@@ -21,7 +21,7 @@ powershell -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw
 
 ## 0) [Example] hit ENTER a few times to import latest Ubuntu Docker image stored on the hub with default settings
 
-## 1) instead of pressing ENTER, type "config" then hit ENTER to specify any Linux distro on [hub.docker.com](https://hub.docker.com/) you would like to use with WSL and customize the save location, distro name, and WSL version. for example, if you want to install the [kindtek](https://hub.docker.com/u/kindtek) [ubuntu-skinny](https://hub.docker.com/layers/kindtek/d2w/ubuntu-phat/images/sha256-9ddd651c73363e0b2dcd23d49b26ad3008bde4cbcb718a1d38da7f380d8ac438?context=repo) image use the format:
+## 1) instead of pressing ENTER, type "config" then hit ENTER to specify any Linux distro on [hub.docker.com](https://hub.docker.com/) you would like to use with WSL and customize the save location, distro name, and WSL version. for example, if you want to install the [kindtek](https://hub.docker.com/u/kindtek) [ubuntu-skinny](https://hub.docker.com/layers/kindtek/d2w/ubuntu-skinny/images/sha256-8bd7bb3e551617bc25fbed830ecc70bb877d99b8013302336a6aea903b0cf753?context=repo) image use the format:
 
     - source: kindtek
     - name: d2w:ubuntu-skinny
