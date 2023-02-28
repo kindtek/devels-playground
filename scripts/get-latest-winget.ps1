@@ -4,9 +4,7 @@
 
 $repo = "microsoft/winget-cli"
 $file = "Microsoft.WinGet.Client-PSModule.zip"
-
 $tag = "v1.4.10173" # default is latest known release
-
 $releases = "https://api.github.com/repos/$repo/releases"
 
 Write-Host "Determining latest release"

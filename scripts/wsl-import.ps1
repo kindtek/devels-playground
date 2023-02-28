@@ -65,28 +65,27 @@ function dev_boilerplate {
     $install_location = "$save_location/$install_directory"
     # Write-Host "install location: $install_location"
 
-    # @REM distro - meaning local distro
+    # distro - meaning local distro
     $distro = $install_directory
-    # @REM :header
     $image_save_path = "$save_location/$distro.tar"
     $install_location = "$save_location/$install_directory"
     $image_repo_image_name = "$image_repo/$image_name"
-    # @REM special rule for official distros on docker hub
-    # @REM replaces '_' with 'official' for printing
+    # special rule for official distros on docker hub
+    # replaces '_' with 'official' for printing
     if ( $image_repo -eq "_") {
-        # @REM official repo has no repo name in address/url
+        # official repo has no repo name in address/url
         $image_repo_image_name = $image_name
     }
     
 
     $config = greeting_prompt $image_repo_mask $image_name $image_save_path $distro
 
-    # @REM prompt user to type input or hit enter for default shown in parentheses
+    # prompt user to type input or hit enter for default shown in parentheses
     if ($config -eq "config") {
 
         $host.UI.RawUI.BackgroundColor = "Black"
         $host.UI.RawUI.ForegroundColor = "Green"
-        # @REM @TODO: filter/safeguard user input
+        # @TODO: filter/safeguard user input
         Write-Host `r`n
         $image_repo_prompt = Read-Host -Prompt "image repository ($image_repo_mask) $ "
         if ($image_repo_prompt -ne "") {
@@ -101,8 +100,8 @@ function dev_boilerplate {
         if ($image_name_prompt -ne "") {
             $image_name = $image_name_prompt
         }
-        # @REM special rule for official distros on docker hub
-        # @REM replaces '_' with 'official' for printing
+        # special rule for official distros on docker hub
+        # replaces '_' with 'official' for printing
         if ($image_repo -eq "_") {
             $image_repo_image_name = $image_name
         }
@@ -133,7 +132,7 @@ function dev_boilerplate {
 
         $save_location = "${mount_drive}/$save_directory"
         $install_location = "$save_location/$install_directory"
-        # @REM special rule for official distro
+        # special rule for official distro
         if ($image_repo -eq "_") {
             $distro = "official-$install_directory"
         }
@@ -182,7 +181,7 @@ function dev_boilerplate {
 
     export_image $install_location $save_location $distro $WSL_DOCKER_CONTAINER_ID
     import_docker_tar $distro $install_location $save_location $wsl_version
-    wsl_or_exit $distro
+    wsl_or_bust $distro
     
 }
 
@@ -217,12 +216,12 @@ Press ENTER to use settings above and import $distro into WSL
 
 
 
-    # @REM @TODO: add options ie: 
-    # @REM Write-Host   ..or type:
-    # @REM Write-Host           - 'registry' to specify distro from a registry on the Docker Hub
-    # @REM Write-Host           - 'image' to import a local Docker image
-    # @REM Write-Host           - 'container' to import a running Docker container
-    # @REM @TODO: (and eventually add numbered menu)
+    # @TODO: add options ie: 
+    # Write-Host   ..or type:
+    # Write-Host           - 'registry' to specify distro from a registry on the Docker Hub
+    # Write-Host           - 'image' to import a local Docker image
+    # Write-Host           - 'container' to import a running Docker container
+    # @TODO: (and eventually add numbered menu)
     Write-Host $dev_boilerplate_output  
     $config = Read-Host -Prompt ' $'
     return $config
@@ -237,7 +236,7 @@ function docker_image_pull {
     Write-Host "`r`n"
     Write-Host "pulling image ($image_repo_image_name)..."
     Write-Host "docker pull --platform linux $image_repo_image_name"
-    # @REM pull the image
+    # pull the image
     docker pull --platform linux $image_repo_image_name
     Write-Host "`r`n"
 }
@@ -294,19 +293,15 @@ function docker_container_start {
         $host.UI.RawUI.ForegroundColor = "Red"     
         Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
         Write-Host "!!!!!! IMPORTANT: use CTRL-P then CTRL-Q to exit container preview !!!!!!"
-        Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        Write-Host "`r`n"
+        Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!`r`n"
         $host.UI.RawUI.BackgroundColor = "Black"
         $host.UI.RawUI.ForegroundColor = "Cyan"  
-        Write-Host "`r`ndocker attach $WSL_DOCKER_CONTAINER_ID`r`n"  
-        Write-Host "`r`n"
+        Write-Host "`r`ndocker attach $WSL_DOCKER_CONTAINER_ID`r`n`r`n"  
         docker attach $WSL_DOCKER_CONTAINER_ID
-        $host.UI.RawUI.BackgroundColor = "Black"
-        $host.UI.RawUI.ForegroundColor = "White"
 
     }
     Write-Host "docker rename $distro-$WSL_DOCKER_IMG_ID $distro-$WSL_DOCKER_CONTAINER_ID"
-    docker rename $distro-$WSL_DOCKER_IMG_ID $distro-$WSL_DOCKER_CONTAINER_ID
+    docker rename "$distro-$WSL_DOCKER_IMG_ID $distro-$WSL_DOCKER_CONTAINER_ID"
 
     Write-Host "`r`nclosing test container...`r`n========================================================================"
 
@@ -315,9 +310,9 @@ function docker_container_start {
 
 function export_image {
     param( $install_location, $save_location, $distro, $WSL_DOCKER_CONTAINER_ID)
-    # @REM directory structure: 
-    # @REM %mount_drive%:\%install_directory%\%save_directory%
-    # @REM ie: C:\wsl-distros\docker
+    # directory structure: 
+    # %mount_drive%:\%install_directory%\%save_directory%
+    # ie: C:\wsl-distros\docker
     $image_save_path = "$save_location/$distro.tar"
     Write-Host "exporting image as container ($WSL_DOCKER_CONTAINER_ID) into .tar file..."
     Write-Host "docker export $WSL_DOCKER_CONTAINER_ID > $image_save_path"
@@ -336,11 +331,6 @@ function import_docker_tar {
     Write-Host "wsl.exe --terminate $distro"
     wsl.exe --terminate $distro
     Write-Host "DONE"
-    # @REM Write-Host `r`n
-    # @REM Write-Host killing all WSL processes...
-    # @REM wsl.exe --shutdown
-    # @REM Write-Host DONE
-
     Write-Host "`r`ndeleting WSL distro $distro if it exists..."
     Write-Host "wsl.exe --unregister $distro"
     wsl.exe --unregister $distro
@@ -360,7 +350,6 @@ function import_docker_tar {
         Write-Host "press ENTER to set $distro as default WSL distro"
         Write-Host " ..or enter any character to skip"
         $setdefault = Read-Host -Prompt " $ "
-
     }
     if ($setdefault -eq "") {
         Write-Host "`r`n"
@@ -376,7 +365,7 @@ function import_docker_tar {
     return $True
 }
 
-function wsl_or_exit {
+function wsl_or_bust {
     param($distro)
     Write-Host "Windows Subsystem for Linux Distributions:"
     wsl.exe -l -v
@@ -402,8 +391,8 @@ function wsl_or_exit {
     Write-Host "`r`n"
 }
 
-
 $host.UI.RawUI.BackgroundColor = "Black"
 $host.UI.RawUI.ForegroundColor = "White"
 
+# run the main function
 main

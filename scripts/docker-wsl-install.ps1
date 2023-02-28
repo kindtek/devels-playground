@@ -1,12 +1,14 @@
 $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
+# powershell version compatibility for PSScriptRoot
 if (!$PSScriptRoot) { $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent }
-# store file path in $pwd_path and ensure PSScriptRoot works the same in both powershell 2 and 3
 $pwd_path = $PSScriptRoot
-# jump to first line without clearing scrollback
+# jump to bottom line without clearing scrollback
 Write-Output "$([char]27)[2J"
+
+# originally used this fucntion for every install bc it seemed like too many key presses but will leave it here
 function install_software {
-    # function built using https://keestalkstech.com/2017/10/powershell-snippet-check-if-software-is-installed/ as aguide
+
     param (
         $software_id,
         $software_name,
@@ -115,11 +117,8 @@ Write-Host "`n`rInstalling $software_name ..." -BackgroundColor "Black"
 $software_id = "Git_is1"
 Invoke-Expression -Command "winget install -e --id GitHub.cli"
 Write-Host "`n`r" -BackgroundColor "Black"
-# $verify_installed = $true
-# $force_install = $true
-# install_software $software_id $software_name $install_command $verify_installed $force_install
 
-# remove temp/scripts from working directory pathname
+# remove repo_src_name/scripts from working directory pathname
 $git_dir = $pwd_path.Replace("$repo_src_name/scripts", "") 
 $git_dir = $git_dir.Replace("/$repo_src_name/scripts", "") 
 $git_dir = $git_dir.Replace("\$repo_src_name\scripts", "") 
@@ -127,19 +126,11 @@ $git_dir = $git_dir.Replace("$repo_src_name\scripts", "")
 $git_dir += "/$repo_src_name"
 
 Set-Location ../../
-# (git_dir-temp is current directory that contains fresh files)
+
+# cleanup any old files from previous run
 try {
     if (Test-Path -Path "$git_dir") {
-        # cleanup any old files from previous run
         Remove-Item "$git_dir" -Force -Recurse -ErrorAction SilentlyContinue
-    }
-    if (Test-Path -Path "$git_dir-temp") {
-        # cleanup any old files from previous run
-        Remove-Item "$git_dir-temp" -Force -Recurse -ErrorAction SilentlyContinue
-    }
-    if (Test-Path -Path "$git_dir-delete") {
-        # cleanup any old files from previous run
-        Remove-Item "$git_dir-delete" -Force -Recurse -ErrorAction SilentlyContinue
     }
 }
 catch {}
@@ -158,18 +149,15 @@ $software_name = "Visual Studio Code (VSCode)"
 Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
 Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
 
-
 $software_id = $software_name = "Docker Desktop"
 Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
 Invoke-Expression -Command "winget install --id=Docker.DockerDesktop -e" 
-
 
 Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta -BackgroundColor "Black"
 $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now" 
 if ($confirmation -ieq 'reboot now') {
     Restart-Computer -Force
 }
-
 
 # launch docker desktop and keep it open 
 Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Minimized"
@@ -201,19 +189,23 @@ if ( $user_input -ine "n" ) {
 
 # launch the below process concurrently
 # // commenting out background building process because this is NOT quite ready.
-# // would like to run in separate window and then use these new images in import tool 
+# // would like to run in separate window and then use these new images in devel's playground 
 # // if they are more up to date than the hub - which could be a difficult process
 # $cmd_command = "$git_dir/scripts/build-in-background.ps1"
 # &$cmd_command = cmd /c start powershell -Command "$git_dir/scripts/build-in-background.ps1" -WindowStyle "Maximized"
 # Write-Host "`r`n" -BackgroundColor "Black"
 
-# start WSL docker import tool
-$wsl_import = "$git_dir/scripts/wsl-import.bat"
-&$wsl_import = cmd /c start powershell -Command "$git_dir/scripts/wsl-import.bat" -WindowStyle "Maximized"
-# cleanup - remove install script
-
-
 Write-Host "`r`nSetup complete!`r`n" -ForegroundColor Green -BackgroundColor "Black"
+
+
+# @TODO: maybe start in new window
+$start_devs_playground = Read-Host "`r`nStart Devel's Playground ([y]/n)"
+if ($start_devs_playground -ieq 'n' -Or $start_devs_playground -ieq 'no') { 
+    $host.UI.RawUI.BackgroundColor = "Black"
+    $devs_playground = "$git_dir/scripts/wsl-import.bat"
+    &$devs_playground = cmd /c start powershell -Command "$git_dir/scripts/wsl-import.bat" -WindowStyle "Maximized"
+}
+
 try {
     Remove-Item "$git_dir".replace($repo_src_name, "install-$repo_src_owner-$repo_src_name.ps1") -Force -ErrorAction SilentlyContinue
     Write-Host "`r`nCleaning up.. (optional) `r`n"
