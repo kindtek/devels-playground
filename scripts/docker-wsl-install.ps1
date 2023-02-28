@@ -91,22 +91,6 @@ if ($confirmation -ieq 'reboot now') {
     Restart-Computer -Force
 }
 
-# launch docker desktop and keep it open 
-Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Minimized"
-Write-Host "`r`n`r`nWaiting for $software_name to come online ..." -BackgroundColor "Black" -ForegroundColor "Yellow"
-Write-Host "`r`n$software_name is required to run the Docker import tool for WSL and will be launched soon. `r`nYou can minimize $software_name by pressing WIN + Down arrow" -BackgroundColor "Black"
-
-do {
-    $docker_status_now = (docker version)
-    Start-Sleep -seconds 5
-    # debug
-    # write-host "$docker_status_now`r`n"
-    # $check_again = Read-Host "keep checking? (y[n])"
-}
-while ($docker_status_now.Contains("error"))
-# debug
-# while ($docker_status_now.Contains("error") -Or $check_again -ieq 'y')
-
 # @TODO: find a way to check if windows terminal is installed
 $windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
 if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no') { 
@@ -121,20 +105,35 @@ if ( $user_input -ine "n" ) {
     Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/docker-to-wsl@dev" -WindowStyle "Hidden"
 } 
 
-# launch the below process concurrently
-# // commenting out background building process because this is NOT quite ready.
-# // would like to run in separate window and then use these new images in devel's playground 
-# // if they are more up to date than the hub - which could be a difficult process
-# $cmd_command = "$git_dir/scripts/build-in-background.ps1"
-# &$cmd_command = cmd /c start powershell -Command "$git_dir/scripts/build-in-background.ps1" -WindowStyle "Maximized"
-# Write-Host "`r`n" -BackgroundColor "Black"
 
 Write-Host "`r`nSetup complete!`r`n" -ForegroundColor Green -BackgroundColor "Black"
 
-
 # @TODO: maybe start in new window
 $start_devs_playground = Read-Host "`r`nStart Devel's Playground ([y]/n)"
+$software_name = "Docker Desktop"
 if ($start_devs_playground -ine 'n' -And $start_devs_playground -ine 'no') { 
+    # launch docker desktop and keep it open 
+    Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Minimized"
+    Write-Host "`r`n`r`nWaiting for $software_name to come online ..." -BackgroundColor "Black" -ForegroundColor "Yellow"
+    Write-Host "`r`nNOTE: $software_name is required to be running for the Devel's Playground to work. Do NOT quit $software_name until you are done running it.`r`nYou can minimize $software_name by pressing WIN + Down arrow" -BackgroundColor "Black" -ForegroundColor "Yellow"
+
+    do {
+        $docker_status_now = (docker version)
+        Start-Sleep -seconds 5
+        # debug
+        # write-host "$docker_status_now`r`n"
+        # $check_again = Read-Host "keep checking? (y[n])"
+    }
+    while ($docker_status_now.Contains("error"))
+    # debug
+    # while ($docker_status_now.Contains("error") -Or $check_again -ieq 'y')
+    
+    # // commenting out background building process because this is NOT quite ready.
+    # // would like to run in separate window and then use these new images in devel's playground 
+    # // if they are more up to date than the hub - which could be a difficult process
+    # $cmd_command = "$git_dir/scripts/build-in-background.ps1"
+    # &$cmd_command = cmd /c start powershell -Command "$git_dir/scripts/build-in-background.ps1" -WindowStyle "Maximized"
+    # Write-Host "`r`n" -BackgroundColor "Black"
     $host.UI.RawUI.BackgroundColor = "Black"
     $devs_playground = "$git_dir/scripts/wsl-import.bat"
     &$devs_playground = cmd /c start powershell -Command "$git_dir/scripts/wsl-import.bat" -WindowStyle "Maximized"
