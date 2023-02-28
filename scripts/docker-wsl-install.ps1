@@ -60,26 +60,21 @@ $git_dir += "/$repo_src_name"
 
 Set-Location ../../
 
-    # refresh environment variables
+try {
     # refresh environment variables
     RefreshEnv
     # test git
     $git_version = git --version 
     
     # if it works remove the directory and the manually downloaded files..
-    RefreshEnv
-    # test git
-    $git_version = git --version 
+    if (Test-Path -Path "$git_dir") {
+        Remove-Item "$git_dir" -Force -Recurse -ErrorAction SilentlyContinue
+    }
     $host.UI.RawUI.BackgroundColor = "Black"
     # .. and then clone the repo
     git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_dir"
     Set-Location "$git_dir"
     $host.UI.RawUI.BackgroundColor = "Black"
-    git submodule update --force --recursive --init --remote
-    $host.UI.RawUI.BackgroundColor = "Black"
-}
-# otherwise try to keep going with the manually downloaded files
-catch {}
     git submodule update --force --recursive --init --remote
     $host.UI.RawUI.BackgroundColor = "Black"
 }
