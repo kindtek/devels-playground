@@ -6,78 +6,6 @@ $pwd_path = $PSScriptRoot
 # jump to bottom line without clearing scrollback
 Write-Output "$([char]27)[2J"
 
-# originally used this fucntion for every install bc it seemed like too many key presses but will leave it here
-function install_software {
-
-    param (
-        $software_id,
-        $software_name,
-        $install_command,
-        $verify_installed,
-        $force_install
-    )
-
-    if ($verify_installed -eq $true) {
-        $installed = $null -ne (Get-ItemProperty HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\* | Where-Object { $_.DisplayName -eq $software_id })
-        if ($installed -eq $false) {
-            if ($force_install -eq $false) {
-                # give user the option to install
-                $install = Read-Host "`r`n$software_name recommended but not found. Install now? (y/[n])"
-                if ($install -ieq 'y' -Or $install -ieq 'yes') { 
-                    Write-Host "`r`n"
-                    Write-Host "Installing $software_name..." -BackgroundColor "Black"
-                    &$install_command
-                    $host.UI.RawUI.BackgroundColor = "Black"
-                }
-                else {
-                    Write-Host "skipping $software_name install"
-                }
-            }
-            else {
-                $install = Read-Host "`r`n$software_name required. Install now or quit? (y/[q])"
-                # @TODO: investigate code refactoring for duplicate code
-                if ($install -ieq 'y' -Or $install -ieq 'yes') { 
-                    Write-Host "Installing $software_name..."
-                    Invoke-Expression $install_command
-                    $host.UI.RawUI.BackgroundColor = "Black"
-                }
-                else {
-                    Write-Host "skipping $software_name install and exiting..."
-                    exit
-                }
-            }
-        }
-        else {
-            Write-Host "`r`n$software_name already installed." -ForegroundColor Yellow
-        }
-    }
-    elseif ($force_install -eq $false) { 
-        $install = Read-Host "`r`n$software_name recommended. Install now? (y/[n])"
-        # @TODO: investigate code refactoring for duplicate code
-        if ($install -ieq 'y' -Or $install -ieq 'yes') { 
-            Write-Host "Installing $software_name..."
-            Invoke-Expression $install_command
-            $host.UI.RawUI.BackgroundColor = "Black"
-        }
-        else {
-            Write-Host "skipping $software_name install"
-        }
-    }
-    else {
-        # force_install: true, verify_install: false
-        $install = Read-Host "`r`n$software_name required. Install now or quit? (y/[q])"
-        if ($install -ieq 'y' -Or $install -ieq 'yes') { 
-            Write-Host "Installing $software_name..." -BackgroundColor "Black"
-            Invoke-Expression $install_command
-            $host.UI.RawUI.BackgroundColor = "Black"
-        }
-        else {
-            Write-Host "skipping $software_name install and exiting..." -BackgroundColor "Black"
-            exit
-        }
-    }
-}
-
 function restart_prompt {
     Write-Host "`r`nA restart is required for the changes to take effect. " -ForegroundColor Magenta -BackgroundColor "Black"
     $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now`r`n ..or hit ENTER to skip" 
@@ -106,6 +34,11 @@ $repo_src_branch = 'main'
 $winconfig = "$pwd_path/add-wsl-windows-features/add-features.ps1"
 &$winconfig = Invoke-Expression -command "$pwd_path/add-wsl-windows-features/add-features.ps1"
 
+
+Write-Host "`r`nThe following programs will now be installed:" -ForegroundColor Magenta
+Write-Host "`t- WinGet`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktop`r`n`t- Powershell 2.0" -ForegroundColor Magenta
+Write-Host "`r`nUse Ctrl + C to quit at any time"
+
 # install winget and use winget to install everything else
 $software_name = "WinGet"
 $winget = "$pwd_path/get-latest-winget.ps1"
@@ -114,7 +47,6 @@ Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
 
 $software_name = "Github CLI"
 Write-Host "`n`rInstalling $software_name ..." -BackgroundColor "Black"
-$software_id = "Git_is1"
 Invoke-Expression -Command "winget install -e --id GitHub.cli"
 Write-Host "`n`r" -BackgroundColor "Black"
 
@@ -149,7 +81,7 @@ $software_name = "Visual Studio Code (VSCode)"
 Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
 Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
 
-$software_id = $software_name = "Docker Desktop"
+$software_name = "Docker Desktop"
 Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
 Invoke-Expression -Command "winget install --id=Docker.DockerDesktop -e" 
 

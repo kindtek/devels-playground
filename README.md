@@ -5,7 +5,7 @@
 &nbsp;
 ### Easy as 1, 2, 4
 1. Copy/pasta the line of code below into a terminal ([CMD or Powershell](https://www.wikihow.com/Open-Terminal-in-Windows))
-2. Confirm installation actions by hitting the y, n, and ENTER keys a few times
+2. Confirm installation actions by hitting the ENTER key a few times
 3. ??
 4. Profit
 
