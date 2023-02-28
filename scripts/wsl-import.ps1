@@ -192,8 +192,8 @@ function greeting_prompt {
     $dev_boilerplate_output = @"
     
      _____________________________________________________________________
-    /                          DEV BOILERPLATE                            \
-    \______________  WSL import tool for Docker Hub images  ______________/
+    /                          DEVEL'S PLAYGROUND                         \
+    \_______________  WSL import tool for Docker Hub images  _____________/
       -------------------------------------------------------------------
       .............    Image settings                       .............
       .............-----------------------------------------.............

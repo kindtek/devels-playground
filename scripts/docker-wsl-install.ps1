@@ -224,7 +224,7 @@ try {
 }
 catch {
     Write-Host "To delete installation files`r`n"
-    Write-Host "Run the following command:`r`nRemove-Item $git_dir -Recurse -Confirm -Force`r`n(will also delete Dev Boilerplate)"
+    Write-Host "Run the following command:`r`nRemove-Item $git_dir -Recurse -Confirm -Force`r`n(will also delete Devel's Playground)"
 }
 
 

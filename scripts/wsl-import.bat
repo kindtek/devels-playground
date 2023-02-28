@@ -35,7 +35,7 @@ SET "docker_container_id_path=%install_location%\.container_id"
 
 ECHO:
 ECHO  _____________________________________________________________________ 
-ECHO /                          DEV BOILERPLATE                            \
+ECHO /                          DEVEL'S PLAYGROUND                         \
 ECHO \______________  WSL import tool for Docker Hub images  ______________/
 ECHO   -------------------------------------------------------------------
 ECHO   .............    Image settings                       .............
@@ -302,5 +302,5 @@ IF "%exit%"=="" (
 :no
 :exit
 ECHO:
-ECHO exiting Dev Boilerplate ...
+ECHO exiting Devel's Playground ...
 ECHO:
