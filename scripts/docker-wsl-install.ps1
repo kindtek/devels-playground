@@ -142,15 +142,14 @@ if ($start_devs_playground -ine 'n' -Or $start_devs_playground -ine 'no') {
 
 try {
     Remove-Item "$git_dir".replace($repo_src_name, "install-$repo_src_owner-$repo_src_name.ps1") -Force -ErrorAction SilentlyContinue
-    Write-Host "`r`nCleaning up.. (optional) `r`n"
+    Write-Host "`r`nCleaning up..  `r`n"
     # make extra sure this is not a folder that is not important (ie: system32 - which is a default location)
     if ($git_dir.Contains($repo_src_name) -And $git_dir.NotContains("System32") ) {
         Remove-Item $git_dir -Recurse -Confirm -Force -ErrorAction SilentlyContinue
     }
 }
 catch {
-    Write-Host "To delete installation files`r`n"
-    Write-Host "Run the following command:`r`nRemove-Item $git_dir -Recurse -Confirm -Force`r`n(will also delete Devel's Playground)"
+    Write-Host "Run the following command to delete installation files:`r`nRemove-Item $git_dir -Recurse -Confirm -Force`r`n(will also delete Devel's Playground)"
 }
 
 
