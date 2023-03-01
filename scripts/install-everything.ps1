@@ -21,6 +21,9 @@ function restart_prompt {
 
 function install_all {
     param ($pwd_path, $git_dir)
+
+    Set-Location $git_dir
+
     # use windows-features-wsl-add to handle windows features install 
     # installing first to make sure environment has powershell 2
     $winconfig = "$pwd_path/devels-advocate/add-windows-features.ps1"
@@ -31,41 +34,66 @@ function install_all {
     Write-Host "`t- WinGet`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktopr`n`t- Windows Terminal" -ForegroundColor Magenta
     Write-Host "`r`nClose window to quit at any time"
 
-    # install winget and use winget to install everything else
-    $software_name = "WinGet"
-    $winget = "$pwd_path/devels-advocate/get-latest-winget.ps1"
-    Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
-    &$winget = Invoke-Expression -command "$pwd_path/devels-advocate/get-latest-winget.ps1" 
+    if (Test-Path -Path "$git_dir/.winget_installed" ) {
+        $winget_installed = Get-Content -Path "$git_dir/.winget_installed" -TotalCount 1
+    }
+    if ($winget_installed -ne "true") {
+        # install winget and use winget to install everything else
+        $software_name = "WinGet"
+        $winget = "$pwd_path/devels-advocate/get-latest-winget.ps1"
+        Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
+        &$winget = Invoke-Expression -command "$pwd_path/devels-advocate/get-latest-winget.ps1" 
+        Write-Host "true" | Out-File -FilePath "$git_dir/.winget-installed"
+    }
 
-    $software_name = "Github CLI"
-    Write-Host "`n`rInstalling $software_name ..." -BackgroundColor "Black"
-    Invoke-Expression -Command "winget install -e --id GitHub.cli"
-    Invoke-Expression -Command "winget install --id Git.Git -e --source winget"
-    Write-Host "`n`r" -BackgroundColor "Black"
+    if (Test-Path -Path "$git_dir/.github-installed" ) {
+        $github_installed = Get-Content -Path "$git_dir/.github-installed" -TotalCount 1
+    }
+    if ($github_installed -ne "true") {
+        $software_name = "Github CLI"
+        Write-Host "`n`rInstalling $software_name ..." -BackgroundColor "Black"
+        Invoke-Expression -Command "winget install -e --id GitHub.cli"
+        Invoke-Expression -Command "winget install --id Git.Git -e --source winget"
+        Write-Host "`n`r" -BackgroundColor "Black"
+        &$winget = Invoke-Expression -command "$pwd_path/devels-advocate/get-latest-winget.ps1" 
+        Write-Host "true" | Out-File -FilePath "$git_dir/.github-installed"
+    }
 
-    # refresh environment variables
-    cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd"
+    if (Test-Path -Path "$git_dir/.vscode-installed" ) {
+        $vscode_installed = Get-Content -Path "$git_dir/.vscode-installed" -TotalCount 1
+    }
+    if ($vscode_installed -ne "true") {
+        $software_name = "Visual Studio Code (VSCode)"
+        Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
+        $host.UI.RawUI.BackgroundColor = "Black"
+        Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
+        Write-Host "true" | Out-File -FilePath "$git_dir/.vscode_installed"
+    }
 
-    Set-Location $git_dir
+    if (Test-Path -Path "$git_dir/.docker-installed" ) {
+        $docker_installed = Get-Content -Path "$git_dir/.docker-installed" -TotalCount 1
+    }
+    if ($docker_installed -ne "true") {
+        $software_name = "Docker Desktop"
+        Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
+        Invoke-Expression -Command "winget install --id=Docker.DockerDesktop -e" 
+        $host.UI.RawUI.BackgroundColor = "Black"
+        Write-Host "true" | Out-File -FilePath "$git_dir/.docker-installed"
+    }
 
-    $software_name = "Visual Studio Code (VSCode)"
-    Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
-    $host.UI.RawUI.BackgroundColor = "Black"
-    Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
-
-    $software_name = "Docker Desktop"
-    Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
-    Invoke-Expression -Command "winget install --id=Docker.DockerDesktop -e" 
-    $host.UI.RawUI.BackgroundColor = "Black"
-
-    # @TODO: find a way to check if windows terminal is installed
-    # $windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
-    # if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no') { 
-    $host.UI.RawUI.BackgroundColor = "Black"
-    $software_name = "Windows Terminal"
-    Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
-    Invoke-Expression -Command "winget install Microsoft.WindowsTerminal" 
-    # }
+    if (Test-Path -Path "$git_dir/.wterminal-installed" ) {
+        $wterminal_installed = Get-Content -Path "$git_dir/.wterminal-installed" -TotalCount 1
+    }
+    if ($wterminal_installed -ne "true") {
+        # $windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
+        # if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no') { 
+        $host.UI.RawUI.BackgroundColor = "Black"
+        $software_name = "Windows Terminal"
+        Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
+        Invoke-Expression -Command "winget install Microsoft.WindowsTerminal" 
+        # }
+        Write-Host "true" | Out-File -FilePath "$git_dir/.wterminal-installed"
+    }
 
     Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta -BackgroundColor "Black"
     $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now`r`n ..or hit ENTER to skip" 
