@@ -29,7 +29,7 @@ function restart_prompt {
 function install_all {
     param ($temp_repo_scripts_path, $git_path)
 
-    Set-Location $parent_path
+    Set-Location $git_path
 
     # use windows-features-wsl-add to handle windows features install 
     # installing first to make sure environment has powershell 2
