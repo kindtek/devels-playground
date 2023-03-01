@@ -47,7 +47,7 @@ function install_all {
         $winget = "devels-advocate/get-latest-winget.ps1"
         Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
         &$winget = Invoke-Expression -command "devels-advocate/get-latest-winget.ps1" 
-        Write-Host "true" | Out-File -FilePath "$git_path/.winget-installed"
+        Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.winget-installed"
         Pop-Location
     }
     else {
@@ -62,7 +62,7 @@ function install_all {
         $host.UI.RawUI.BackgroundColor = "Black"
         Invoke-Expression -Command "winget install --id Git.Git -e --source winget"
         Write-Host "`n`r" -BackgroundColor "Black"
-        Write-Host "true" | Out-File -FilePath "$git_path/.github-installed"
+        Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.github-installed"
     }
     else {
         Write-Host "$software_name already installed"  -ForegroundColor "Blue"
@@ -73,7 +73,7 @@ function install_all {
         $host.UI.RawUI.BackgroundColor = "Black"
         Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
         Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
-        Write-Host "true" | Out-File -FilePath "$git_path/.vscode-installed"
+        Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.vscode-installed"
     }
     else {
         Write-Host "$software_name already installed"  -ForegroundColor "Blue"
@@ -84,7 +84,7 @@ function install_all {
         $host.UI.RawUI.BackgroundColor = "Black"
         Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
         Invoke-Expression -Command "winget install --id=Docker.DockerDesktop -e" 
-        Write-Host "true" | Out-File -FilePath "$git_path/.docker-installed"
+        Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.docker-installed"
     }
     else {
         Write-Host "$software_name already installed"  -ForegroundColor "Blue"
@@ -98,7 +98,7 @@ function install_all {
         Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
         Invoke-Expression -Command "winget install Microsoft.WindowsTerminal" 
         # }
-        Write-Host "true" | Out-File -FilePath "$git_path/.wterminal-installed"
+        Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.wterminal-installed"
     }
     else {
         Write-Host "$software_name already installed"  -ForegroundColor "Blue"
