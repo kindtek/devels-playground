@@ -51,7 +51,7 @@ function install_all {
         Write-Host "true" | Out-File -FilePath "$git_path/.winget-installed"
     }
     else {
-        Write-Host "`n`r$software_name already installed"  -ForegroundColor "Blue"
+        Write-Host "$software_name already installed"  -ForegroundColor "Blue"
     }
 
     $software_name = "Github CLI"
@@ -66,7 +66,7 @@ function install_all {
         Write-Host "true" | Out-File -FilePath "$git_path/.github-installed"
     }
     else {
-        Write-Host "`n`r$software_name already installed"  -ForegroundColor "Blue"
+        Write-Host "$software_name already installed"  -ForegroundColor "Blue"
     }
 
     $software_name = "Visual Studio Code (VSCode)"
@@ -77,7 +77,7 @@ function install_all {
         Write-Host "true" | Out-File -FilePath "$git_path/.vscode-installed"
     }
     else {
-        Write-Host "`n`r$software_name already installed"  -ForegroundColor "Blue"
+        Write-Host "$software_name already installed"  -ForegroundColor "Blue"
     }
 
     $software_name = "Docker Desktop"
@@ -88,7 +88,7 @@ function install_all {
         Write-Host "true" | Out-File -FilePath "$git_path/.docker-installed"
     }
     else {
-        Write-Host "`n`r$software_name already installed"  -ForegroundColor "Blue"
+        Write-Host "$software_name already installed"  -ForegroundColor "Blue"
     }
 
     $software_name = "Windows Terminal"
@@ -102,7 +102,7 @@ function install_all {
         Write-Host "true" | Out-File -FilePath "$git_path/.wterminal-installed"
     }
     else {
-        Write-Host "`n`r$software_name already installed"  -ForegroundColor "Blue"
+        Write-Host "$software_name already installed"  -ForegroundColor "Blue"
     }
 
     Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta -BackgroundColor "Black"
@@ -127,8 +127,7 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 try {
     # refresh environment variables
     # cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
-    Write-Host ("temp_repo_scripts_path: $temp_repo_scripts_path`r`ngit_path: $git_path")
-    # Set-Location $git_path
+    Set-Location $git_path
     # if git status works and finds devels-workshop repo, assume the install has been successfull and this script was ran once before
     $git_status = git remote show origin 
     # determine if git status works by checking output for LICENSE - see typical output of git status here: https://amitd.co/code/shell/git-status-porcelain
@@ -149,11 +148,6 @@ Set-Location $parent_path
 # test git
 $git_version = git --version 
 
-Write-Host "attempting to clone repo... " -ForegroundColor "DarkBlue"
-# if it works remove the directory and the manually downloaded files..
-# if (Test-Path -Path "$git_path") {
-
-# }
 $host.UI.RawUI.BackgroundColor = "Black"
 # .. and then clone the repo
 git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_path"
