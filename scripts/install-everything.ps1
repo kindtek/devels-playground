@@ -51,7 +51,7 @@ function install_all {
         Write-Host "true" | Out-File -FilePath "$git_path/.winget-installed"
     }
     else {
-        Write-Host "`n`r`n`r$software_name already installed"  -ForegroundColor "Blue"
+        Write-Host "`n`r$software_name already installed"  -ForegroundColor "Blue"
     }
 
     $software_name = "Github CLI"
@@ -66,7 +66,7 @@ function install_all {
         Write-Host "true" | Out-File -FilePath "$git_path/.github-installed"
     }
     else {
-        Write-Host "`n`r`n`r$software_name already installed"  -ForegroundColor "Blue"
+        Write-Host "`n`r$software_name already installed"  -ForegroundColor "Blue"
     }
 
     $software_name = "Visual Studio Code (VSCode)"
@@ -77,7 +77,7 @@ function install_all {
         Write-Host "true" | Out-File -FilePath "$git_path/.vscode-installed"
     }
     else {
-        Write-Host "`n`r`n`r$software_name already installed"  -ForegroundColor "Blue"
+        Write-Host "`n`r$software_name already installed"  -ForegroundColor "Blue"
     }
 
     $software_name = "Docker Desktop"
@@ -88,7 +88,7 @@ function install_all {
         Write-Host "true" | Out-File -FilePath "$git_path/.docker-installed"
     }
     else {
-        Write-Host "`n`r`n`r$software_name already installed"  -ForegroundColor "Blue"
+        Write-Host "`n`r`$software_name already installed"  -ForegroundColor "Blue"
     }
 
     $software_name = "Windows Terminal"
@@ -102,7 +102,7 @@ function install_all {
         Write-Host "true" | Out-File -FilePath "$git_path/.wterminal-installed"
     }
     else {
-        Write-Host "`n`r`n`r$software_name already installed"  -ForegroundColor "Blue"
+        Write-Host "`n`r`$software_name already installed"  -ForegroundColor "Blue"
     }
 
     Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta -BackgroundColor "Black"
