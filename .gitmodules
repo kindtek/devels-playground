@@ -1,4 +1,4 @@
-[submodule "scripts/devels-advocate"]
+[submodule "scripts/add-wsl-windows-features"]
 	active = true
 	shallow = false
 	path = scripts/devels-advocate
@@ -6,7 +6,7 @@
 	branch = devels-workshop
 	recurse = true
 
-[submodule "scripts/powerhell-remote"]
+[submodule "scripts/powershell-remote"]
 	active = true
 	shallow = false
 	path = scripts/powerhell-remote
