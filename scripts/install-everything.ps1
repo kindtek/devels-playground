@@ -127,30 +127,29 @@ try {
     # refresh environment variables
     # cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
     if (Test-Path -Path "$parent_path/$repo_src_name") {
-        Write-Host 'test path: ' + "$parent_path/$repo_src_name"
         Set-Location "$parent_path/$repo_src_name"
         # if git status works and finds devels-workshop repo, assume the install has been successfull and this script was ran once before
         $git_status = git remote show origin 
         # determine if git status works by checking output for LICENSE - see typical output of git status here: https://amitd.co/code/shell/git-status-porcelain
         if ($git_status.NotContains("github.com/kindtek/devels-workshop")) {
-            Write-Host "Git status not showing repository"
+            # Write-Host "Git status not showing repository"
             install_all $temp_repo_scripts_path $git_path
         }
     }
     else {
-        Write-Host "Git directory not found"
+        # Write-Host "Git directory not found"
         install_all $temp_repo_scripts_path $git_path
     }
 }
 catch {
-    Write-Host "Git error caught"
+    # Write-Host "Git error caught"
     install_all $temp_repo_scripts_path $git_path
 }
 
 try {
     # refresh environment variables
     cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
-    Write-Host "parent path: $parent_path"
+    # Write-Host "parent path: $parent_path"
     Set-Location $parent_path
 
     # test git
