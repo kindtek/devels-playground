@@ -131,7 +131,10 @@ try {
 
     # if it works remove the directory and the manually downloaded files..
     if (Test-Path -Path "$git_dir") {
-        Remove-Item "$git_dir" -Force -Recurse -ErrorAction SilentlyContinue
+        Set-Location $git_dir
+        Set-Location ../
+        Rename-Item -Path "$git_dir" -NewName "$git_dir-temp"-Force -Recurse -ErrorAction SilentlyContinue
+        Remove-Item "$git_dir-temp" -Force -Recurse -ErrorAction SilentlyContinue
     }
     $host.UI.RawUI.BackgroundColor = "Black"
     # .. and then clone the repo
