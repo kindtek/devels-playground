@@ -134,7 +134,7 @@ catch {
     if (Test-Path -Path "$git_dir") {
         Set-Location $git_dir
         Set-Location ../
-        Rename-Item -Path "$git_dir" -NewName "$git_dir-temp"-Force -Recurse -ErrorAction SilentlyContinue
+        Rename-Item -Path "$git_dir" -NewName "$git_dir-temp"-Force -ErrorAction SilentlyContinue
         Remove-Item "$git_dir-temp" -Force -Recurse -ErrorAction SilentlyContinue
     }
     $host.UI.RawUI.BackgroundColor = "Black"
