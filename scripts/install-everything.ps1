@@ -6,8 +6,8 @@ $pwd_path = $PSScriptRoot
 $repo_src_owner = 'kindtek'
 $repo_src_name = 'devels-workshop'
 $repo_src_branch = 'windows'
-$git_path = $pwd_path.Remove("\scripts")
-$git_path = $git_path.Remove("/scripts")
+$git_path = $pwd_path.Replace("\scripts", "")
+$git_path = $git_path.Replace("/scripts", "")
 $parent_path = $git_path.Remove("\$repo_src_name")
 $parent_path = $parent_path.Remove("/$repo_src_name")
 Write-Host "parent path: $parent_path"
