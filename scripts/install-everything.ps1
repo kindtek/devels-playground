@@ -158,8 +158,8 @@ try {
 
     $host.UI.RawUI.BackgroundColor = "Black"
     # .. and then clone the repo
-    git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_path"
-    Set-Location "$git_path"
+    git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
+    Set-Location "$repo_src_name"
     $host.UI.RawUI.BackgroundColor = "Black"
     git submodule update --force --recursive --init --remote
     $host.UI.RawUI.BackgroundColor = "Black"
