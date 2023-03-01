@@ -141,37 +141,38 @@ catch {
 }
 
 # try {
-    # refresh environment variables
-    # cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
+# refresh environment variables
+# cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
 
-    Set-Location ../../
+Set-Location $parent_path
 
-    # test git
-    $git_version = git --version 
+# test git
+$git_version = git --version 
 
-    Write-Host "attempting to clone repo... " -ForegroundColor "DarkBlue"
-    # if it works remove the directory and the manually downloaded files..
-    # if (Test-Path -Path "$git_path") {
-        Write-Host "attempting to move directory $git_path to $git_path-temp ... " -ForegroundColor "DarkBlue"
-        Set-Location $git_path
-        Set-Location ../
-        Write-Host "Move-Item -Path `"$git_path`" Destination `"$git_path-temp`" -Force "
-        Move-Item -Path "$git_path" -Destination "$git_path-temp" -Force 
-        Remove-Item "$git_path-temp" -Force -Recurse 
-    # }
-    $host.UI.RawUI.BackgroundColor = "Black"
-    # .. and then clone the repo
-    git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_path"
-    Set-Location "$git_path"
-    $host.UI.RawUI.BackgroundColor = "Black"
-    git submodule update --force --recursive --init --remote
-    $host.UI.RawUI.BackgroundColor = "Black"
+Write-Host "attempting to clone repo... " -ForegroundColor "DarkBlue"
+# if it works remove the directory and the manually downloaded files..
+# if (Test-Path -Path "$git_path") {
+Write-Host "attempting to move directory $git_path to $git_path-temp ... " -ForegroundColor "DarkBlue"
+
+Write-Host "Move-Item -Path `"$git_path`" Destination `"$git_path-temp`" -Force "
+Move-Item -Path "$git_path" -Destination "$git_path-temp" -Force 
+Write-Host "attempting to remove directory $git_path-temp ... " -ForegroundColor "DarkBlue"
+
+Remove-Item "$git_path-temp" -Force -Recurse 
+# }
+$host.UI.RawUI.BackgroundColor = "Black"
+# .. and then clone the repo
+git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_path"
+Set-Location "$git_path"
+$host.UI.RawUI.BackgroundColor = "Black"
+git submodule update --force --recursive --init --remote
+$host.UI.RawUI.BackgroundColor = "Black"
 # }
 # if git is not recognized try to limp along with the manually downloaded files
 # catch {}
 
 # refresh env again
-    # cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
+# cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
 
 $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
 if ( $user_input -ine "n" ) {
@@ -200,8 +201,8 @@ try {
             # debug
             write-host "$docker_status_now`r`n"
             # $check_again = Read-Host "keep checking? (y[n])"
-            if (!($docker_status_now.Contains("error"))){
-                if ($docker_success1 -eq $true){
+            if (!($docker_status_now.Contains("error"))) {
+                if ($docker_success1 -eq $true) {
                     $docker_success2 = $true
                 }
                 else {
@@ -213,7 +214,7 @@ try {
         # debug
         # while ((!($docker_success2)) -Or $check_again -ieq 'y')
 
-        if ($docker_succes2){
+        if ($docker_succes2) {
             # // commenting out background building process because this is NOT quite ready.
             # // would like to run in separate window and then use these new images in devel's playground 
             # // if they are more up to date than the hub - which could be a difficult process
