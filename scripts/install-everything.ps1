@@ -39,7 +39,7 @@ function install_all {
     Write-Host "`n`r" -BackgroundColor "Black"
 
     # refresh environment variables
-    ./$git_dir/scripts/choco/refresh-env.cmd
+    cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" -WindowStyle "Maximized"
 
     Set-Location $git_dir
 
@@ -83,7 +83,7 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 
 try {
     # refresh environment variables
-    ./$git_dir/scripts/choco/refresh-env.cmd
+    cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" -WindowStyle "Maximized"
 
     Set-Location $git_dir
     # if git status works and finds a repo, assume the install has been successfull and this script was ran once before
