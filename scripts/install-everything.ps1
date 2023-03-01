@@ -43,12 +43,14 @@ function install_all {
 
     $software_name = "WinGet"
     if (!(Test-Path -Path "$git_path/.winget-installed" -PathType Leaf)) {
+        Push-Location $temp_repo_scripts_path
         # install winget and use winget to install everything else
         $host.UI.RawUI.BackgroundColor = "Black"
-        $winget = "$temp_repo_scripts_path/devels-advocate/get-latest-winget.ps1"
+        $winget = "devels-advocate/get-latest-winget.ps1"
         Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
-        &$winget = Invoke-Expression -command "$temp_repo_scripts_path/devels-advocate/get-latest-winget.ps1" 
+        &$winget = Invoke-Expression -command "devels-advocate/get-latest-winget.ps1" 
         Write-Host "true" | Out-File -FilePath "$git_path/.winget-installed"
+        Pop-Location
     }
     else {
         Write-Host "$software_name already installed"  -ForegroundColor "Blue"
