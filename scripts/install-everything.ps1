@@ -41,10 +41,10 @@ function install_all {
     Write-Host "`t- WinGet`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktopr`n`t- Windows Terminal" -ForegroundColor Magenta
     Write-Host "`r`nClose window to quit at any time"
 
+    $software_name = "WinGet"
     if (!(Test-Path -Path "$git_path/.winget-installed" -PathType Leaf)) {
         # install winget and use winget to install everything else
         $host.UI.RawUI.BackgroundColor = "Black"
-        $software_name = "WinGet"
         $winget = "$repo_scripts_path/devels-advocate/get-latest-winget.ps1"
         Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
         &$winget = Invoke-Expression -command "$repo_scripts_path/devels-advocate/get-latest-winget.ps1" 
@@ -54,9 +54,9 @@ function install_all {
         Write-Host "`n`r`n`r$software_name already installed"  -ForegroundColor "Blue"
     }
 
+    $software_name = "Github CLI"
     if (!(Test-Path -Path "$git_path/.github-installed" -PathType Leaf)) {
         $host.UI.RawUI.BackgroundColor = "Black"
-        $software_name = "Github CLI"
         Write-Host "`n`rInstalling $software_name ..." -BackgroundColor "Black"
         Invoke-Expression -Command "winget install -e --id GitHub.cli"
         $host.UI.RawUI.BackgroundColor = "Black"
@@ -69,9 +69,9 @@ function install_all {
         Write-Host "`n`r`n`r$software_name already installed"  -ForegroundColor "Blue"
     }
 
+    $software_name = "Visual Studio Code (VSCode)"
     if (!(Test-Path -Path "$git_path/.vscode-installed" -PathType Leaf)) {
         $host.UI.RawUI.BackgroundColor = "Black"
-        $software_name = "Visual Studio Code (VSCode)"
         Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
         Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
         Write-Host "true" | Out-File -FilePath "$git_path/.vscode-installed"
@@ -80,9 +80,9 @@ function install_all {
         Write-Host "`n`r`n`r$software_name already installed"  -ForegroundColor "Blue"
     }
 
+    $software_name = "Docker Desktop"
     if (!(Test-Path -Path "$git_path/.docker-installed" -PathType Leaf)) {
         $host.UI.RawUI.BackgroundColor = "Black"
-        $software_name = "Docker Desktop"
         Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
         Invoke-Expression -Command "winget install --id=Docker.DockerDesktop -e" 
         Write-Host "true" | Out-File -FilePath "$git_path/.docker-installed"
@@ -91,11 +91,11 @@ function install_all {
         Write-Host "`n`r`n`r$software_name already installed"  -ForegroundColor "Blue"
     }
 
+    $software_name = "Windows Terminal"
     if (!(Test-Path -Path "$git_path/.wterminal-installed" -PathType Leaf)) {
         # $windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
         # if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no') { 
         $host.UI.RawUI.BackgroundColor = "Black"
-        $software_name = "Windows Terminal"
         Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
         Invoke-Expression -Command "winget install Microsoft.WindowsTerminal" 
         # }
