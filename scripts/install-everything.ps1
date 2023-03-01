@@ -124,11 +124,12 @@ try {
 
     $repo_src_owner = 'kindtek'
     $repo_src_name = 'devels-workshop'
-    $repo_src_branch = 'main'
+    $repo_src_branch = 'windows'
 
     # test git
     $git_version = git --version 
 
+    Write-Host "attempting to clone repo... " -ForegroundColor "DarkBlue"
     # if it works remove the directory and the manually downloaded files..
     if (Test-Path -Path "$git_dir") {
         Set-Location $git_dir
