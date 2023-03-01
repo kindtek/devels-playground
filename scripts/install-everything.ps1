@@ -126,9 +126,9 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 try {
     # refresh environment variables
     # cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
-    if (Test-Path -Path $git_path.replace("scripts", "")) {
-        Write-Host 'test path: ' + $git_path.replace("scripts", "")
-        Set-Location $git_path.replace("scripts", "")
+    if (Test-Path -Path "$parent_path/$repo_src_name") {
+        Write-Host 'test path: ' + "$parent_path/$repo_src_name"
+        Set-Location "$parent_path/$repo_src_name"
         # if git status works and finds devels-workshop repo, assume the install has been successfull and this script was ran once before
         $git_status = git remote show origin 
         # determine if git status works by checking output for LICENSE - see typical output of git status here: https://amitd.co/code/shell/git-status-porcelain
