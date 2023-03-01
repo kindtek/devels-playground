@@ -4,12 +4,14 @@
 
 &nbsp;
 
-### For Windows Github users with WSL2 setup and Docker Desktop running, run this in a terminal to clone the repo and start the Docker import tool
+### For **Windows Github** users with **WSL2** setup and **Docker Desktop** *running*, run this in a terminal to clone the repo and start the Docker import tool
 
 ``` bat
 git clone https://github.com/kindtek/devels-playground
 scripts\wsl-import
 ```
+
+&nbsp; 
 
 ### All other Windows users follow [these short instructions](https://github.com/kindtek/devels-workshop#idle-hands-are-the-devels-workshop)  
 
@@ -17,30 +19,22 @@ scripts\wsl-import
 
 ----------------------------------------------------------------------------------
 
-&nbsp;
-&nbsp;
-
 ## Instructions for importing any image from [hub.docker.com](https://hub.docker.com/) into WSL
 
 &nbsp;
 
-### 0. [Example] When the program loads, at the main menu hit ENTER a few times to import latest Ubuntu Docker image stored on the hub with default settings
-
-&nbsp;
+### *0. [Example default Ubuntu WSL setup] When the program loads, at the main menu hit ENTER when prompted a few times to import latest Ubuntu Docker image stored on the hub with default settings*
 
 ### 1. At the main menu, type "config" then hit ENTER to specify any Linux distro on [hub.docker.com](https://hub.docker.com/) you would like to use with WSL. The format is
 
 - source: [kindtek](https://hub.docker.com/u/kindtek)
 - name: [d2w](https://hub.docker.com/r/kindtek/d2w/tags):[ubuntu-skinny](https://hub.docker.com/layers/kindtek/d2w/ubuntu-skinny/images/)
 
-&nbsp;
-&nbsp;
-
 ----------------------------------------------------------------------------------
 
-#### Note: This is for development use only. Use at your own risk
+#### **Note: This is for development use only. Use at your own risk**
 
-#### FWIW: fork this repo and build your own dev environment by using template Docker files ([[ubuntu](docker-compose.ubuntu.yaml)], [[alpine](docker-compose.alpine.yaml)]), ([[ubuntu](dockerfile.ubuntu.yaml)], [[alpine](dockerfile.alpine.yaml)])
+#### *FWIW: fork this repo and build your own dev environment by using template Docker files ([[ubuntu](docker-compose.ubuntu.yaml)], [[alpine](docker-compose.alpine.yaml)]), ([[ubuntu](dockerfile.ubuntu.yaml)], [[alpine](dockerfile.alpine.yaml)])*
 
 &nbsp;
 &nbsp;&nbsp;
