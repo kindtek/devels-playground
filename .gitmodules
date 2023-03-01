@@ -1,15 +1,15 @@
 [submodule "scripts/add-wsl-windows-features"]
 	active = true
 	shallow = false
-	path = scripts/devels-advocate
-	url = https://github.com/kindtek/devels-advocate.git
+	path = scripts/add-wsl-windows-features
+	url = https://github.com/add-wsl-windows-features.git
 	branch = devels-workshop
 	recurse = true
 
 [submodule "scripts/powershell-remote"]
 	active = true
 	shallow = false
-	path = scripts/powerhell-remote
-	url = https://github.com/kindtek/powerhell-remote
+	path = scripts/powershell-remote
+	url = https://github.com/kindtek/powershell-remote
 	branch = devels-workshop
 	recurse = true
