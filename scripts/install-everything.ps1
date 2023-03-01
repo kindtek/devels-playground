@@ -10,9 +10,9 @@ $git_path = $temp_repo_scripts_path.Replace("-temp\scripts", "")
 $git_path = $git_path.Replace("-temp/scripts", "")
 $parent_path = $git_path.Replace("\$repo_src_name", "")
 $parent_path = $parent_path.Replace("/$repo_src_name", "")
-Write-Host "parent path: $parent_path"
-Write-Host "git dir: $git_path"
-Write-Host "scripts dir: $temp_repo_scripts_path"
+# Write-Host "parent path: $parent_path"
+# Write-Host "git dir: $git_path"
+# Write-Host "scripts dir: $temp_repo_scripts_path"
 
 
 # jump to bottom line without clearing scrollback
