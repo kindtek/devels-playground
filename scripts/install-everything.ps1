@@ -152,11 +152,11 @@ catch {
     Write-Host "attempting to clone repo... " -ForegroundColor "DarkBlue"
     # if it works remove the directory and the manually downloaded files..
     # if (Test-Path -Path "$git_path") {
-        Write-Host "attempting to rename directory $git_path to $git_path-temp ... " -ForegroundColor "DarkBlue"
+        Write-Host "attempting to move directory $git_path to $git_path-temp ... " -ForegroundColor "DarkBlue"
         Set-Location $git_path
         Set-Location ../
-        Write-Host "Rename-Item -Path `"$git_path`" -NewName `"$git_path-temp`" -Force "
-        Rename-Item -Path "$git_path" -NewName "$git_path-temp" -Force 
+        Write-Host "Move-Item -Path `"$git_path`" Destination `"$git_path-temp`" -Force "
+        Move-Item -Path "$git_path" -Destination "$git_path-temp" -Force 
         Remove-Item "$git_path-temp" -Force -Recurse 
     # }
     $host.UI.RawUI.BackgroundColor = "Black"
