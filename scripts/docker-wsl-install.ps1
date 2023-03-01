@@ -91,6 +91,7 @@ $software_name = "Docker Desktop"
 Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
 Invoke-Expression -Command "winget install --id=Docker.DockerDesktop -e" 
 
+
 Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta -BackgroundColor "Black"
 $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now`r`n ..or hit ENTER to skip" 
 if ($confirmation -ieq 'reboot now') {
@@ -105,6 +106,8 @@ if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no')
     Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
     Invoke-Expression -Command "winget install Microsoft.WindowsTerminal" 
 }
+
+RefreshEnv
 
 $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
 if ( $user_input -ine "n" ) {

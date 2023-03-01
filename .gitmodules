@@ -5,7 +5,6 @@
 	url = https://github.com/kindtek/devels-advocate.git
 	branch = devels-workshop
 	recurse = true
-
 [submodule "scripts/powerhell-remote"]
 	active = true
 	shallow = false
@@ -13,3 +12,18 @@
 	url = https://github.com/kindtek/powerhell-remote
 	branch = devels-workshop
 	recurse = true
+[submodule "scripts/choco"]
+	active = true
+	path = scripts/choco
+	shallow = false
+	url = https://github.com/kindtek/choco
+	branch = refresh-env
+	recurse = true
+[submodule "devels-playground"]
+	active = true
+	path = devels-playground
+	shallow = false
+	url = https://github.com/kindtek/devels-playground.git
+	branch = main
+	recurse = true
+
