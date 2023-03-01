@@ -6,13 +6,22 @@ $pwd_path = $PSScriptRoot
 $repo_src_owner = 'kindtek'
 $repo_src_name = 'devels-workshop'
 $repo_src_branch = 'windows'
+Write-Host "pwd path: $pwd_path"
 $git_dir = $pwd_path.Replace("$repo_src_name/", "") 
+Write-Host "git dir: $git_dir"
 $git_dir = $git_dir.Replace("/$repo_src_name/", "") 
+Write-Host "git dir: $git_dir"
 $git_dir = $git_dir.Replace("\$repo_src_name\", "") 
+Write-Host "git dir: $git_dir"
 $git_dir = $git_dir.Replace("\$repo_src_name/", "") 
+Write-Host "git dir: $git_dir"
 $git_dir = $git_dir.Replace("/$repo_src_name\", "") 
+Write-Host "git dir: $git_dir"
 $git_dir = $git_dir.Replace("$repo_src_name\", "") 
+Write-Host "git dir: $git_dir"
 $git_dir += "/$repo_src_name"
+Write-Host "git dir: $git_dir"
+
 # jump to bottom line without clearing scrollback
 Write-Output "$([char]27)[2J"
 
