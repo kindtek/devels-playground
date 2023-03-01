@@ -95,14 +95,14 @@ try {
 }
 catch {
     # refresh environment variables
-    ./$git_dir/scripts/choco/refresh-env.cmd
+    cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" -WindowStyle "Maximized"
 
     install_all $pwd_path
 }
 
 try {
     # refresh environment variables
-    ./$git_dir/scripts/choco/refresh-env.cmd
+    cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" -WindowStyle "Maximized"
 
     $repo_src_owner = 'kindtek'
     $repo_src_name = 'devels-workshop'
@@ -127,7 +127,7 @@ try {
 catch {}
 
 # refresh env again
-./$git_dir/scripts/choco/refresh-env.cmd
+cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" -WindowStyle "Maximized"
 
 $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
 if ( $user_input -ine "n" ) {
