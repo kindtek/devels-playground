@@ -2,7 +2,7 @@
 	active = true
 	shallow = false
 	path = scripts/add-wsl-windows-features
-	url = https://github.com/add-wsl-windows-features.git
+	url = https://github.com/devels-advocate.git
 	branch = devels-workshop
 	recurse = true
 
@@ -10,6 +10,6 @@
 	active = true
 	shallow = false
 	path = scripts/powershell-remote
-	url = https://github.com/kindtek/powershell-remote
+	url = https://github.com/kindtek/powerhell-remote
 	branch = devels-workshop
 	recurse = true
