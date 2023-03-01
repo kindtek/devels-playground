@@ -99,7 +99,6 @@ try {
     }
 }
 catch {
-    # refresh environment variables
     install_all $pwd_path $git_dir
 }
 
