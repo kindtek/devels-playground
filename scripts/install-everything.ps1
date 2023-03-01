@@ -127,6 +127,7 @@ try {
     # refresh environment variables
     # cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
     if (Test-Path -Path $git_path.replace("scripts", "")) {
+        Write-Host 'test path: ' + $git_path.replace("scripts", "")
         Set-Location $git_path.replace("scripts", "")
         # if git status works and finds devels-workshop repo, assume the install has been successfull and this script was ran once before
         $git_status = git remote show origin 
