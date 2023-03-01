@@ -62,7 +62,7 @@ Set-Location ../../
 
 try {
     # refresh environment variables
-    choco/refresh-env/refresh-env.cmd
+    "$git_dir/scripts/choco/refresh-env/refresh-env.cmd"
     # test git
     $git_version = git --version 
     
@@ -107,7 +107,7 @@ if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no')
     Invoke-Expression -Command "winget install Microsoft.WindowsTerminal" 
 }
 
-choco/refresh-env.cmd
+"$git_dir/scripts/choco/refresh-env/refresh-env.cmd"
 
 $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
 if ( $user_input -ine "n" ) {
