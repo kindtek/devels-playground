@@ -24,8 +24,6 @@ powershell -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw
 
 ## Devel's Playground  
 
-&nbsp;
-
 ### **Instructions for importing any image from [hub.docker.com](https://hub.docker.com/) into WSL**
 
 #### *0. [Example] When the program loads, at the main menu hit ENTER a few times to import latest Ubuntu Docker image stored on the hub with default settings*
@@ -42,7 +40,6 @@ powershell -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw
 #### FWIW: fork this repo and build your own dev environment by using template Docker files ([[ubuntu](docker-compose.ubuntu.yaml)], [[alpine](docker-compose.alpine.yaml)]), ([[ubuntu](dockerfile.ubuntu.yaml)], [[alpine](dockerfile.alpine.yaml)])
 
 &nbsp;
-
 
 #### MIT License
 
