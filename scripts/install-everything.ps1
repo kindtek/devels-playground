@@ -131,7 +131,7 @@ cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" -Windo
 
 $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
 if ( $user_input -ine "n" ) {
-    Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/devels-workshop@dev" -WindowStyle "Hidden"
+    Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/devels-workshop@main" -WindowStyle "Hidden"
 } 
 
 Write-Host "`r`nSetup complete!`r`n" -ForegroundColor Green -BackgroundColor "Black"
