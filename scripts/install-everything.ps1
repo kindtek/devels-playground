@@ -3,6 +3,11 @@ $host.UI.RawUI.BackgroundColor = "Black"
 # powershell version compatibility for PSScriptRoot
 if (!$PSScriptRoot) { $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent }
 $pwd_path = $PSScriptRoot
+$git_dir = $pwd_path.Replace("$repo_src_name/scripts", "") 
+$git_dir = $git_dir.Replace("/$repo_src_name/scripts", "") 
+$git_dir = $git_dir.Replace("\$repo_src_name\scripts", "") 
+$git_dir = $git_dir.Replace("$repo_src_name\scripts", "") 
+$git_dir += "/$repo_src_name"
 # jump to bottom line without clearing scrollback
 Write-Output "$([char]27)[2J"
 
@@ -15,7 +20,7 @@ function restart_prompt {
 }
 
 function install_all {
-    param ($pwd_path)
+    param ($pwd_path, $git_dir)
     # use windows-features-wsl-add to handle windows features install 
     # installing first to make sure environment has powershell 2
     $winconfig = "$pwd_path/devels-advocate/add-windows-features.ps1"
@@ -90,14 +95,14 @@ try {
     $git_status = git remote show origin 
     # determine if git status works by checking output for LICENSE - see typical output of git status here: https://amitd.co/code/shell/git-status-porcelain
     if ($git_status.NotContains("github.com/kindtek/devels-workshop")) {
-        install_all $pwd_path
+        install_all $pwd_path $git_dir
     }
 }
 catch {
     # refresh environment variables
     cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" -WindowStyle "Maximized"
 
-    install_all $pwd_path
+    install_all $pwd_path $git_dir
 }
 
 try {
@@ -110,7 +115,7 @@ try {
 
     # test git
     $git_version = git --version 
-    
+
     # if it works remove the directory and the manually downloaded files..
     if (Test-Path -Path "$git_dir") {
         Remove-Item "$git_dir" -Force -Recurse -ErrorAction SilentlyContinue
