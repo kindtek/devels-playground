@@ -132,13 +132,17 @@ try {
         $git_status = git remote show origin 
         # determine if git status works by checking output for LICENSE - see typical output of git status here: https://amitd.co/code/shell/git-status-porcelain
         if ($git_status.NotContains("github.com/kindtek/devels-workshop")) {
+            Write-Host "Git status not showing repository"
             install_all $temp_repo_scripts_path $git_path
         }
     }
-    else { install_all $temp_repo_scripts_path $git_path }
-
+    else {
+        Write-Host "Git directory not found"
+        install_all $temp_repo_scripts_path $git_path
+    }
 }
 catch {
+    Write-Host "Git error caught"
     install_all $temp_repo_scripts_path $git_path
 }
 
