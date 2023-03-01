@@ -6,8 +6,8 @@ $temp_repo_scripts_path = $PSScriptRoot
 $repo_src_owner = 'kindtek'
 $repo_src_name = 'devels-workshop'
 $repo_src_branch = 'windows'
-$git_path = $temp_repo_scripts_path.Replace("-temp\scripts", "")
-$git_path = $git_path.Replace("-temp/scripts", "")
+$git_path = $temp_repo_scripts_path.Replace("\scripts", "")
+$git_path = $git_path.Replace("/scripts", "")
 $parent_path = $git_path.Replace("\$repo_src_name", "")
 $parent_path = $parent_path.Replace("/$repo_src_name", "")
 # Write-Host "parent path: $parent_path"
@@ -28,8 +28,6 @@ function restart_prompt {
 
 function install_all {
     param ($temp_repo_scripts_path, $git_path)
-
-    Set-Location $git_path
 
     # use windows-features-wsl-add to handle windows features install 
     # installing first to make sure environment has powershell 2
