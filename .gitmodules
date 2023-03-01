@@ -2,7 +2,7 @@
 	active = true
 	shallow = false
 	path = scripts/add-wsl-windows-features
-	url = https://github.com/devels-advocate.git
+	url = https://github.com/kindtek/devels-advocate.git
 	branch = devels-workshop
 	recurse = true
 
