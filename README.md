@@ -8,11 +8,12 @@
 ### Easy as 1, 2, 4
 
 1. Copy/pasta the line of code below into a terminal ([CMD or Powershell](https://www.wikihow.com/Open-Terminal-in-Windows))
-2. Confirm installation actions by hitting the ENTER key a few times
+2. Confirm installation actions by hitting the ENTER and 'y' keys a few times
 3. ??
 4. Profit
 
 ``` bash
+# run this script again if reboot needed
 powershell -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powershell-remote/devels-workshop/install.ps1 -OutFile install-kindtek-devels-workshop.ps1; powershell -executionpolicy remotesigned -File install-kindtek-devels-workshop.ps1"
 ```
 
