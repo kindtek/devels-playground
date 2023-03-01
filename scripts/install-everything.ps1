@@ -135,6 +135,7 @@ catch {
         Write-Host "attempting to rename directory $git_dir to $git_dir-temp ... " -ForegroundColor "DarkBlue"
         Set-Location $git_dir
         Set-Location ../
+        Write-Host "Rename-Item -Path `"$git_dir`" -NewName `"$git_dir-temp`" -Force "
         Rename-Item -Path "$git_dir" -NewName "$git_dir-temp" -Force 
         Remove-Item "$git_dir-temp" -Force -Recurse 
     }
