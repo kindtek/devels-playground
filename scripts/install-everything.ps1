@@ -132,6 +132,7 @@ catch {
     Write-Host "attempting to clone repo... " -ForegroundColor "DarkBlue"
     # if it works remove the directory and the manually downloaded files..
     if (Test-Path -Path "$git_dir") {
+        Write-Host "attempting to rename directory $git_dir to $git_dir-temp ... " -ForegroundColor "DarkBlue"
         Set-Location $git_dir
         Set-Location ../
         Rename-Item -Path "$git_dir" -NewName "$git_dir-temp" -Force 
