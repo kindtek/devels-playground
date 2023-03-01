@@ -44,7 +44,7 @@ function install_all {
         Write-Host "true" | Out-File -FilePath "$git_dir/.winget-installed"
     }
     else {
-        Write-Host "`n`r`n`$software_name already installed"  -ForegroundColor "Blue"
+        Write-Host "`n`r`n`r$software_name already installed"  -ForegroundColor "Blue"
     }
 
     if (!(Test-Path -Path "$git_dir/.github-installed" -PathType Leaf)) {
@@ -59,7 +59,7 @@ function install_all {
         Write-Host "true" | Out-File -FilePath "$git_dir/.github-installed"
     }
     else {
-        Write-Host "`n`r`n`$software_name already installed"  -ForegroundColor "Blue"
+        Write-Host "`n`r`n`r$software_name already installed"  -ForegroundColor "Blue"
     }
 
     if (!(Test-Path -Path "$git_dir/.vscode-installed" -PathType Leaf)) {
@@ -70,7 +70,7 @@ function install_all {
         Write-Host "true" | Out-File -FilePath "$git_dir/.vscode-installed"
     }
     else {
-        Write-Host "`n`r`n`$software_name already installed"  -ForegroundColor "Blue"
+        Write-Host "`n`r`n`r$software_name already installed"  -ForegroundColor "Blue"
     }
 
     if (!(Test-Path -Path "$git_dir/.docker-installed" -PathType Leaf)) {
@@ -81,7 +81,7 @@ function install_all {
         Write-Host "true" | Out-File -FilePath "$git_dir/.docker-installed"
     }
     else {
-        Write-Host "`n`r`n`$software_name already installed"  -ForegroundColor "Blue"
+        Write-Host "`n`r`n`r$software_name already installed"  -ForegroundColor "Blue"
     }
 
     if (!(Test-Path -Path "$git_dir/.wterminal-installed" -PathType Leaf)) {
@@ -95,7 +95,7 @@ function install_all {
         Write-Host "true" | Out-File -FilePath "$git_dir/.wterminal-installed"
     }
     else {
-        Write-Host "`n`r`n`$software_name already installed"  -ForegroundColor "Blue"
+        Write-Host "`n`r`n`r$software_name already installed"  -ForegroundColor "Blue"
     }
 
     Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta -BackgroundColor "Black"
