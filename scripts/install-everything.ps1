@@ -126,8 +126,8 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 try {
     # refresh environment variables
     # cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
-    if (Test-Path -Path $git_path) {
-        Set-Location $git_path
+    if (Test-Path -Path $git_path.replace("scripts", "")) {
+        Set-Location $git_path.replace("scripts", "")
         # if git status works and finds devels-workshop repo, assume the install has been successfull and this script was ran once before
         $git_status = git remote show origin 
         # determine if git status works by checking output for LICENSE - see typical output of git status here: https://amitd.co/code/shell/git-status-porcelain
@@ -142,26 +142,26 @@ catch {
     install_all $temp_repo_scripts_path $git_path
 }
 
-# try {
-# refresh environment variables
-# cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
+try {
+    # refresh environment variables
+    cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
 
-Set-Location $parent_path
+    Set-Location $parent_path
 
-# test git
-$git_version = git --version 
+    # test git
+    $git_version = git --version 
 
-$host.UI.RawUI.BackgroundColor = "Black"
-# .. and then clone the repo
-git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_path"
-Set-Location "$git_path"
-$host.UI.RawUI.BackgroundColor = "Black"
-git submodule update --force --recursive --init --remote
-$host.UI.RawUI.BackgroundColor = "Black"
+    $host.UI.RawUI.BackgroundColor = "Black"
+    # .. and then clone the repo
+    git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_path"
+    Set-Location "$git_path"
+    $host.UI.RawUI.BackgroundColor = "Black"
+    git submodule update --force --recursive --init --remote
+    $host.UI.RawUI.BackgroundColor = "Black"
 
-# }
+}
 # if git is not recognized try to limp along with the manually downloaded files
-# catch {}
+catch {}
 
 # refresh env again
 # cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
