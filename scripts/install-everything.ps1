@@ -2,17 +2,17 @@ $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
 # powershell version compatibility for PSScriptRoot
 if (!$PSScriptRoot) { $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent }
-$repo_scripts_path = $PSScriptRoot
+$temp_repo_scripts_path = $PSScriptRoot
 $repo_src_owner = 'kindtek'
 $repo_src_name = 'devels-workshop'
 $repo_src_branch = 'windows'
-$git_path = $repo_scripts_path.Replace("\scripts", "")
-$git_path = $git_path.Replace("/scripts", "")
+$git_path = $temp_repo_scripts_path.Replace("-temp\scripts", "")
+$git_path = $git_path.Replace("-temp/scripts", "")
 $parent_path = $git_path.Replace("\$repo_src_name", "")
 $parent_path = $parent_path.Replace("/$repo_src_name", "")
 Write-Host "parent path: $parent_path"
 Write-Host "git dir: $git_path"
-Write-Host "scripts dir: $repo_scripts_path"
+Write-Host "scripts dir: $temp_repo_scripts_path"
 
 
 # jump to bottom line without clearing scrollback
@@ -27,14 +27,14 @@ function restart_prompt {
 }
 
 function install_all {
-    param ($repo_scripts_path, $git_path)
+    param ($temp_repo_scripts_path, $git_path)
 
     Set-Location $parent_path
 
     # use windows-features-wsl-add to handle windows features install 
     # installing first to make sure environment has powershell 2
-    $winconfig = "$repo_scripts_path/devels-advocate/add-windows-features.ps1"
-    &$winconfig = Invoke-Expression -command "$repo_scripts_path/devels-advocate/add-windows-features.ps1"
+    $winconfig = "$temp_repo_scripts_path/devels-advocate/add-windows-features.ps1"
+    &$winconfig = Invoke-Expression -command "$temp_repo_scripts_path/devels-advocate/add-windows-features.ps1"
 
 
     Write-Host "`r`nThe following programs will now be installed:" -ForegroundColor Magenta
@@ -45,9 +45,9 @@ function install_all {
     if (!(Test-Path -Path "$git_path/.winget-installed" -PathType Leaf)) {
         # install winget and use winget to install everything else
         $host.UI.RawUI.BackgroundColor = "Black"
-        $winget = "$repo_scripts_path/devels-advocate/get-latest-winget.ps1"
+        $winget = "$temp_repo_scripts_path/devels-advocate/get-latest-winget.ps1"
         Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
-        &$winget = Invoke-Expression -command "$repo_scripts_path/devels-advocate/get-latest-winget.ps1" 
+        &$winget = Invoke-Expression -command "$temp_repo_scripts_path/devels-advocate/get-latest-winget.ps1" 
         Write-Host "true" | Out-File -FilePath "$git_path/.winget-installed"
     }
     else {
@@ -62,7 +62,7 @@ function install_all {
         $host.UI.RawUI.BackgroundColor = "Black"
         Invoke-Expression -Command "winget install --id Git.Git -e --source winget"
         Write-Host "`n`r" -BackgroundColor "Black"
-        &$winget = Invoke-Expression -command "$repo_scripts_path/devels-advocate/get-latest-winget.ps1" 
+        &$winget = Invoke-Expression -command "$temp_repo_scripts_path/devels-advocate/get-latest-winget.ps1" 
         Write-Host "true" | Out-File -FilePath "$git_path/.github-installed"
     }
     else {
@@ -127,17 +127,17 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 try {
     # refresh environment variables
     # cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
-    Write-Host ("repo_scripts_path: $repo_scripts_path`r`ngit_path: $git_path")
+    Write-Host ("temp_repo_scripts_path: $temp_repo_scripts_path`r`ngit_path: $git_path")
     Set-Location $git_path
     # if git status works and finds devels-workshop repo, assume the install has been successfull and this script was ran once before
     $git_status = git remote show origin 
     # determine if git status works by checking output for LICENSE - see typical output of git status here: https://amitd.co/code/shell/git-status-porcelain
     if ($git_status.NotContains("github.com/kindtek/devels-workshop")) {
-        install_all $repo_scripts_path $git_path
+        install_all $temp_repo_scripts_path $git_path
     }
 }
 catch {
-    install_all $repo_scripts_path $git_path
+    install_all $temp_repo_scripts_path $git_path
 }
 
 # try {
