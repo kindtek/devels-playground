@@ -100,8 +100,6 @@ try {
 }
 catch {
     # refresh environment variables
-    cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" -WindowStyle "Hidden"
-
     install_all $pwd_path $git_dir
 }
 
