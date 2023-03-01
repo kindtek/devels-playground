@@ -34,7 +34,7 @@ function install_all {
     Write-Host "`t- WinGet`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktopr`n`t- Windows Terminal" -ForegroundColor Magenta
     Write-Host "`r`nClose window to quit at any time"
 
-    if (!(Test-Path -Path "$git_dir/.winget_installed" )) {
+    if (!(Test-Path -Path "$git_dir/.winget_installed"  -PathType Leaf)) {
         # install winget and use winget to install everything else
         $host.UI.RawUI.BackgroundColor = "Black"
         $software_name = "WinGet"
@@ -44,7 +44,7 @@ function install_all {
         Write-Host "true" | Out-File -FilePath "$git_dir/.winget-installed"
     }
 
-    if (!(Test-Path -Path "$git_dir/.github-installed") ) {
+    if (!(Test-Path -Path "$git_dir/.github-installed" -PathType Leaf)) {
         $host.UI.RawUI.BackgroundColor = "Black"
         $software_name = "Github CLI"
         Write-Host "`n`rInstalling $software_name ..." -BackgroundColor "Black"
@@ -56,7 +56,7 @@ function install_all {
         Write-Host "true" | Out-File -FilePath "$git_dir/.github-installed"
     }
 
-    if (!(Test-Path -Path "$git_dir/.vscode-installed" )) {
+    if (!(Test-Path -Path "$git_dir/.vscode-installed"  -PathType Leaf)) {
         $host.UI.RawUI.BackgroundColor = "Black"
         $software_name = "Visual Studio Code (VSCode)"
         Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
@@ -64,7 +64,7 @@ function install_all {
         Write-Host "true" | Out-File -FilePath "$git_dir/.vscode_installed"
     }
 
-    if (!(Test-Path -Path "$git_dir/.docker-installed")) {
+    if (!(Test-Path -Path "$git_dir/.docker-installed"  -PathType Leaf)) {
         $host.UI.RawUI.BackgroundColor = "Black"
         $software_name = "Docker Desktop"
         Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
@@ -72,7 +72,7 @@ function install_all {
         Write-Host "true" | Out-File -FilePath "$git_dir/.docker-installed"
     }
 
-    if (!(Test-Path -Path "$git_dir/.wterminal-installed" )) {
+    if (!(Test-Path -Path "$git_dir/.wterminal-installed" -PathType Leaf)) {
         # $windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
         # if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no') { 
         $host.UI.RawUI.BackgroundColor = "Black"
