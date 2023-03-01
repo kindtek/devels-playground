@@ -168,12 +168,12 @@ try {
             $docker_status_now = (docker version)
             Start-Sleep -seconds 5
             # debug
-            # write-host "$docker_status_now`r`n"
-            # $check_again = Read-Host "keep checking? (y[n])"
+            write-host "$docker_status_now`r`n"
+            $check_again = Read-Host "keep checking? (y[n])"
         }
-        while ($docker_status_now.Contains("error"))
+        # while ($docker_status_now.Contains("error"))
         # debug
-        # while ($docker_status_now.Contains("error") -Or $check_again -ieq 'y')
+        while ($docker_status_now.Contains("error") -Or $check_again -ieq 'y')
 
         # // commenting out background building process because this is NOT quite ready.
         # // would like to run in separate window and then use these new images in devel's playground 
