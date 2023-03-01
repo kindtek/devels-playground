@@ -62,7 +62,7 @@ Set-Location ../../
 
 try {
     # refresh environment variables
-    "$git_dir/scripts/choco/refresh-env/refresh-env.cmd"
+    ./$git_dir/scripts/choco/refresh-env.cmd
     # test git
     $git_version = git --version 
     
@@ -107,7 +107,7 @@ if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no')
     Invoke-Expression -Command "winget install Microsoft.WindowsTerminal" 
 }
 
-"$git_dir/scripts/choco/refresh-env/refresh-env.cmd"
+./$git_dir/scripts/choco/refresh-env.cmd
 
 $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
 if ( $user_input -ine "n" ) {
@@ -144,8 +144,8 @@ if ($start_devs_playground -ine 'n' -And $start_devs_playground -ine 'no') {
     # &$cmd_command = cmd /c start powershell -Command "$git_dir/devels_playground/scripts/docker-images-build-in-background.ps1" -WindowStyle "Maximized"
     # Write-Host "`r`n" -BackgroundColor "Black"
     $host.UI.RawUI.BackgroundColor = "Black"
-    $devs_playground = "$git_dir/devels_playground/scripts/wsl-import-docker-image.cmd"
-    &$devs_playground = cmd /c start powershell -Command "$git_dir/devels_playground/scripts/wsl-import-docker-image.cmd" -WindowStyle "Maximized"
+    $devs_playground = "$git_dir/devels-playground/scripts/wsl-import-docker-image.cmd"
+    &$devs_playground = cmd /c start powershell -Command "$git_dir/devels-playground/scripts/wsl-import-docker-image.cmd" -WindowStyle "Maximized"
 }
 
 try {
