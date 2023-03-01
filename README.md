@@ -1,30 +1,60 @@
-# Idle Minds are the Devel's Playground
+# Idle Minds are the **Devel's Playground**
 
-## Import Docker images into WSL
+## Setup Instructions  
 
-####    Setup Instructions for Windows Users 
+&nbsp;
 
-check out https://github.com/kindtek/devels-workshop/tree/github-install
+### For Windows Github users with WSL2 setup and Docker Desktop running, run this in a terminal to clone the repo and start the Docker import tool
 
-#### Setup Instructions for Windows Github users
-#####   In Windows, clone this repo with git and run [WSL import tool script](scripts/wsl-import.bat)
-
-```
-git clone https://github.com/kindtek/devels-playground`
+``` bat
+git clone https://github.com/kindtek/devels-playground
 scripts\wsl-import
 ```
 
-#### Devel's Playground instructions
+### All other Windows users follow [these short instructions](https://github.com/kindtek/devels-workshop#idle-hands-are-the-devels-workshop)  
 
-See repo: (https://github.com/kindtek/devels-playground/README.md)
+&nbsp;
+
+----------------------------------------------------------------------------------
+
 &nbsp;
 &nbsp;
 
-### Note: This is for development use only. Use at your own risk
+## Instructions for importing any image from [hub.docker.com](https://hub.docker.com/) into WSL
 
-### MIT License
+&nbsp;
 
-#### Copyright (c) 2023 KINDTEK, LLC
+### 0. [Example] When the program loads, at the main menu hit ENTER a few times to import latest Ubuntu Docker image stored on the hub with default settings
+
+&nbsp;
+
+### 1. At the main menu, type "config" then hit ENTER to specify any Linux distro on [hub.docker.com](https://hub.docker.com/) you would like to use with WSL. The format is
+
+- source: [kindtek](https://hub.docker.com/u/kindtek)
+- name: [d2w](https://hub.docker.com/r/kindtek/d2w/tags): [ubuntu-skinny](https://hub.docker.com/layers/kindtek/d2w/ubuntu-skinny/images/)
+
+### 2. fork this repo and modify the Docker (-compose) files to build your own custom Docker image, push the image to a repo on Docker Hub, and import the image onto any Windows machine that is running Docker Desktop (see #1 above) for a ready-to-go dev environment in WSL
+
+&nbsp;
+&nbsp;
+
+----------------------------------------------------------------------------------
+
+#### Note: This is for development use only. Use at your own risk
+
+#### FWIW: fork this repo and build your own dev environment by using template Docker files ([[ubuntu](docker-compose.ubuntu.yaml)], [[alpine](docker-compose.alpine.yaml)]), ([[ubuntu](dockerfile.ubuntu.yaml)], [[alpine](dockerfile.alpine.yaml)])
+
+&nbsp;
+&nbsp;&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+
+MIT License
+
+Copyright (c) 2023 KINDTEK, LLC
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -43,4 +73,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
