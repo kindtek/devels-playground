@@ -104,7 +104,7 @@ function install_all {
         Restart-Computer -Force
     }
     else {
-        Write-Host "`n`r`n`$software_name already installed"  -BackgroundColor "Blue"
+        Write-Host "`n`r`n`$software_name already installed"  -ForegroundColor "Blue"
     }
 }
 
