@@ -126,7 +126,7 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 
 try {
     # refresh environment variables
-    cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -WindowStyle Hidden
+    cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
     Write-Host ("repo_scripts_path: $repo_scripts_path`r`ngit_path: $git_path")
     Set-Location $git_path
     # if git status works and finds devels-workshop repo, assume the install has been successfull and this script was ran once before
@@ -142,7 +142,7 @@ catch {
 
 # try {
     # refresh environment variables
-    cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -WindowStyle Hidden
+    cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
 
     Set-Location ../../
 
@@ -171,7 +171,7 @@ catch {
 # catch {}
 
 # refresh env again
-    cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -WindowStyle Hidden
+    cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
 
 $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
 if ( $user_input -ine "n" ) {
