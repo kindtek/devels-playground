@@ -3,6 +3,9 @@ $host.UI.RawUI.BackgroundColor = "Black"
 # powershell version compatibility for PSScriptRoot
 if (!$PSScriptRoot) { $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent }
 $pwd_path = $PSScriptRoot
+$repo_src_owner = 'kindtek'
+$repo_src_name = 'devels-workshop'
+$repo_src_branch = 'windows'
 $git_dir = $pwd_path.Replace("$repo_src_name/", "") 
 $git_dir = $git_dir.Replace("/$repo_src_name/", "") 
 $git_dir = $git_dir.Replace("\$repo_src_name\", "") 
@@ -140,10 +143,6 @@ catch {
     cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd"
 
     Set-Location ../../
-
-    $repo_src_owner = 'kindtek'
-    $repo_src_name = 'devels-workshop'
-    $repo_src_branch = 'windows'
 
     # test git
     $git_version = git --version 
