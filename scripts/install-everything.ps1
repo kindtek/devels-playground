@@ -44,7 +44,7 @@ function install_all {
     Write-Host "`n`r" -BackgroundColor "Black"
 
     # refresh environment variables
-    cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" -WindowStyle "Maximized"
+    cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" -WindowStyle "Hidden"
 
     Set-Location $git_dir
 
@@ -88,7 +88,7 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 
 try {
     # refresh environment variables
-    cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" -WindowStyle "Maximized"
+    cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" -WindowStyle "Hidden"
 
     Set-Location $git_dir
     # if git status works and finds a repo, assume the install has been successfull and this script was ran once before
@@ -100,14 +100,14 @@ try {
 }
 catch {
     # refresh environment variables
-    cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" -WindowStyle "Maximized"
+    cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" -WindowStyle "Hidden"
 
     install_all $pwd_path $git_dir
 }
 
 try {
     # refresh environment variables
-    cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" -WindowStyle "Maximized"
+    cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" -WindowStyle "Hidden"
 
     $repo_src_owner = 'kindtek'
     $repo_src_name = 'devels-workshop'
@@ -132,7 +132,7 @@ try {
 catch {}
 
 # refresh env again
-cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" -WindowStyle "Maximized"
+cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" -WindowStyle "Hidden"
 
 $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
 if ( $user_input -ine "n" ) {
@@ -147,7 +147,7 @@ try {
     $software_name = "Docker Desktop"
     if ($start_devs_playground -ine 'n' -And $start_devs_playground -ine 'no') { 
         # launch docker desktop and keep it open 
-        Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Minimized"
+        Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
         Write-Host "`r`n`r`nWaiting for $software_name to come online ..." -BackgroundColor "Black" -ForegroundColor "Yellow"
         Write-Host "`r`nNOTE: $software_name is required to be running for the Devel's Playground to work. Do NOT quit $software_name until you are done running it.`r`nYou can minimize $software_name by pressing WIN + Down arrow" -BackgroundColor "Black" -ForegroundColor "Yellow"
 
@@ -170,7 +170,7 @@ try {
         # Write-Host "`r`n" -BackgroundColor "Black"
         $host.UI.RawUI.BackgroundColor = "Black"
         $devs_playground = "$git_dir/devels-playground/scripts/wsl-import-docker-image.cmd"
-        &$devs_playground = cmd /c start powershell -Command "$git_dir/devels-playground/scripts/wsl-import-docker-image.cmd" -WindowStyle "Maximized"
+        &$devs_playground = cmd /c start powershell -Command "$git_dir/devels-playground/scripts/wsl-import-docker-image.cmd" -NoNewWindow
     }
 }
 catch {}
