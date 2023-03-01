@@ -149,7 +149,7 @@ catch {
 try {
     # refresh environment variables
     cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
-
+    Write-Host "parent path: $parent_path"
     Set-Location $parent_path
 
     # test git
