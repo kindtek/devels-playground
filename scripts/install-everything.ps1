@@ -3,10 +3,12 @@ $host.UI.RawUI.BackgroundColor = "Black"
 # powershell version compatibility for PSScriptRoot
 if (!$PSScriptRoot) { $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent }
 $pwd_path = $PSScriptRoot
-$git_dir = $pwd_path.Replace("$repo_src_name/scripts", "") 
-$git_dir = $git_dir.Replace("/$repo_src_name/scripts", "") 
-$git_dir = $git_dir.Replace("\$repo_src_name\scripts", "") 
-$git_dir = $git_dir.Replace("$repo_src_name\scripts", "") 
+$git_dir = $pwd_path.Replace("$repo_src_name/", "") 
+$git_dir = $git_dir.Replace("/$repo_src_name/", "") 
+$git_dir = $git_dir.Replace("\$repo_src_name\", "") 
+$git_dir = $git_dir.Replace("\$repo_src_name/", "") 
+$git_dir = $git_dir.Replace("/$repo_src_name\", "") 
+$git_dir = $git_dir.Replace("$repo_src_name\", "") 
 $git_dir += "/$repo_src_name"
 # jump to bottom line without clearing scrollback
 Write-Output "$([char]27)[2J"
