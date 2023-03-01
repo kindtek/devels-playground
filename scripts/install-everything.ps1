@@ -128,7 +128,7 @@ try {
     # refresh environment variables
     # cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
     Write-Host ("temp_repo_scripts_path: $temp_repo_scripts_path`r`ngit_path: $git_path")
-    Set-Location $git_path
+    # Set-Location $git_path
     # if git status works and finds devels-workshop repo, assume the install has been successfull and this script was ran once before
     $git_status = git remote show origin 
     # determine if git status works by checking output for LICENSE - see typical output of git status here: https://amitd.co/code/shell/git-status-porcelain
@@ -152,13 +152,7 @@ $git_version = git --version
 Write-Host "attempting to clone repo... " -ForegroundColor "DarkBlue"
 # if it works remove the directory and the manually downloaded files..
 # if (Test-Path -Path "$git_path") {
-Write-Host "attempting to move directory $git_path to $git_path-temp ... " -ForegroundColor "DarkBlue"
 
-Write-Host "Move-Item -Path `"$git_path`" Destination `"$git_path-temp`" -Force "
-Move-Item -Path "$git_path" -Destination "$git_path-temp" -Force 
-Write-Host "attempting to remove directory $git_path-temp ... " -ForegroundColor "DarkBlue"
-
-Remove-Item "$git_path-temp" -Force -Recurse 
 # }
 $host.UI.RawUI.BackgroundColor = "Black"
 # .. and then clone the repo
@@ -167,6 +161,7 @@ Set-Location "$git_path"
 $host.UI.RawUI.BackgroundColor = "Black"
 git submodule update --force --recursive --init --remote
 $host.UI.RawUI.BackgroundColor = "Black"
+
 # }
 # if git is not recognized try to limp along with the manually downloaded files
 # catch {}
@@ -199,7 +194,7 @@ try {
             $docker_status_now = (docker version)
             Start-Sleep -seconds 5
             # debug
-            write-host "$docker_status_now`r`n"
+            # write-host "$docker_status_now`r`n"
             # $check_again = Read-Host "keep checking? (y[n])"
             if (!($docker_status_now.Contains("error"))) {
                 if ($docker_success1 -eq $true) {
@@ -226,7 +221,7 @@ try {
             &$devs_playground = cmd /c start powershell -Command "$git_path/devels-playground/scripts/wsl-import-docker-image.cmd"
         }
         else {
-            Write-Host "Failed to launch docker. Not able to start Devel's Playground. Please restart and run the script again:" -ForegroundColor "Yellow"
+            Write-Host "Failed to launch docker. Not able to start Devel's Playground. Please restart and run the script again:" -ForegroundColor "Red"
             Write-Host "powershell -executionpolicy remotesigned -Command `"Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell-remote/devels-workshop/install.ps1 -OutFile install-kindtek-devels-workshop.ps1`"; powershell -executionpolicy remotesigned -File install-kindtek-devels-workshop.ps1"
         }
     }
