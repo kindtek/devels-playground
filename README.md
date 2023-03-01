@@ -1,4 +1,4 @@
-# Idle Hands are the Devel's Workshop
+# Idle Hands are the **Devel's Workshop**
 
 ## Take a clean (or dirty) Windows 10+ environment and install a suite of development tools (including WSL!!) with only a few keystrokes. Effortlessly set up your environment with Github, VSCode, Docker Desktop, Windows Terminal (with upgraded Powershell), WinGet, and more. More updates coming soon including macOS support.
 
