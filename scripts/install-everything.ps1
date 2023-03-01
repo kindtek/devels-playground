@@ -64,7 +64,6 @@ function install_all {
         $host.UI.RawUI.BackgroundColor = "Black"
         Invoke-Expression -Command "winget install --id Git.Git -e --source winget"
         Write-Host "`n`r" -BackgroundColor "Black"
-        &$winget = Invoke-Expression -command "$temp_repo_scripts_path/devels-advocate/get-latest-winget.ps1" 
         Write-Host "true" | Out-File -FilePath "$git_path/.github-installed"
     }
     else {
