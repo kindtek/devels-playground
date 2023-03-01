@@ -34,11 +34,9 @@ function install_all {
     Write-Host "`t- WinGet`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktopr`n`t- Windows Terminal" -ForegroundColor Magenta
     Write-Host "`r`nClose window to quit at any time"
 
-    if (Test-Path -Path "$git_dir/.winget_installed" ) {
-        $winget_installed = Get-Content -Path "$git_dir/.winget_installed" -TotalCount 1
-    }
-    if ($winget_installed -ne "true") {
+    if (!(Test-Path -Path "$git_dir/.winget_installed" )) {
         # install winget and use winget to install everything else
+        $host.UI.RawUI.BackgroundColor = "Black"
         $software_name = "WinGet"
         $winget = "$pwd_path/devels-advocate/get-latest-winget.ps1"
         Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
@@ -46,45 +44,35 @@ function install_all {
         Write-Host "true" | Out-File -FilePath "$git_dir/.winget-installed"
     }
 
-    if (Test-Path -Path "$git_dir/.github-installed" ) {
-        $github_installed = Get-Content -Path "$git_dir/.github-installed" -TotalCount 1
-    }
-    if ($github_installed -ne "true") {
+    if (!(Test-Path -Path "$git_dir/.github-installed") ) {
+        $host.UI.RawUI.BackgroundColor = "Black"
         $software_name = "Github CLI"
         Write-Host "`n`rInstalling $software_name ..." -BackgroundColor "Black"
         Invoke-Expression -Command "winget install -e --id GitHub.cli"
+        $host.UI.RawUI.BackgroundColor = "Black"
         Invoke-Expression -Command "winget install --id Git.Git -e --source winget"
         Write-Host "`n`r" -BackgroundColor "Black"
         &$winget = Invoke-Expression -command "$pwd_path/devels-advocate/get-latest-winget.ps1" 
         Write-Host "true" | Out-File -FilePath "$git_dir/.github-installed"
     }
 
-    if (Test-Path -Path "$git_dir/.vscode-installed" ) {
-        $vscode_installed = Get-Content -Path "$git_dir/.vscode-installed" -TotalCount 1
-    }
-    if ($vscode_installed -ne "true") {
+    if (!(Test-Path -Path "$git_dir/.vscode-installed" )) {
+        $host.UI.RawUI.BackgroundColor = "Black"
         $software_name = "Visual Studio Code (VSCode)"
         Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
-        $host.UI.RawUI.BackgroundColor = "Black"
         Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
         Write-Host "true" | Out-File -FilePath "$git_dir/.vscode_installed"
     }
 
-    if (Test-Path -Path "$git_dir/.docker-installed" ) {
-        $docker_installed = Get-Content -Path "$git_dir/.docker-installed" -TotalCount 1
-    }
-    if ($docker_installed -ne "true") {
+    if (!(Test-Path -Path "$git_dir/.docker-installed")) {
+        $host.UI.RawUI.BackgroundColor = "Black"
         $software_name = "Docker Desktop"
         Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
         Invoke-Expression -Command "winget install --id=Docker.DockerDesktop -e" 
-        $host.UI.RawUI.BackgroundColor = "Black"
         Write-Host "true" | Out-File -FilePath "$git_dir/.docker-installed"
     }
 
-    if (Test-Path -Path "$git_dir/.wterminal-installed" ) {
-        $wterminal_installed = Get-Content -Path "$git_dir/.wterminal-installed" -TotalCount 1
-    }
-    if ($wterminal_installed -ne "true") {
+    if (!(Test-Path -Path "$git_dir/.wterminal-installed" )) {
         # $windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
         # if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no') { 
         $host.UI.RawUI.BackgroundColor = "Black"
@@ -119,7 +107,7 @@ try {
     cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd"
 
     Set-Location $git_dir
-    # if git status works and finds a repo, assume the install has been successfull and this script was ran once before
+    # if git status works and finds devels-workshop repo, assume the install has been successfull and this script was ran once before
     $git_status = git remote show origin 
     # determine if git status works by checking output for LICENSE - see typical output of git status here: https://amitd.co/code/shell/git-status-porcelain
     if ($git_status.NotContains("github.com/kindtek/devels-workshop")) {
