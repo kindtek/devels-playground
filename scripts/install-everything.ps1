@@ -118,7 +118,7 @@ catch {
     install_all $pwd_path $git_dir
 }
 
-try {
+# try {
     # refresh environment variables
     cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd"
 
@@ -144,9 +144,9 @@ try {
     $host.UI.RawUI.BackgroundColor = "Black"
     git submodule update --force --recursive --init --remote
     $host.UI.RawUI.BackgroundColor = "Black"
-}
+# }
 # if git is not recognized try to limp along with the manually downloaded files
-catch {}
+# catch {}
 
 # refresh env again
 cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" 
