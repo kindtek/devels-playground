@@ -33,8 +33,6 @@ scripts\wsl-import
 - source: [kindtek](https://hub.docker.com/u/kindtek)
 - name: [d2w](https://hub.docker.com/r/kindtek/d2w/tags):[ubuntu-skinny](https://hub.docker.com/layers/kindtek/d2w/ubuntu-skinny/images/)
 
-### 2. fork this repo and modify the Docker (-compose) files to build your own custom Docker image, push the image to a repo on Docker Hub, and import the image onto any Windows machine that is running Docker Desktop (see #1 above) for a ready-to-go dev environment in WSL
-
 &nbsp;
 &nbsp;
 
