@@ -41,9 +41,9 @@ Write-Host "`r`nClose window to quit at any time"
 
 # install winget and use winget to install everything else
 $software_name = "WinGet"
-$winget = "$pwd_path/devels-advocate/get-latest-winget.ps1"
+$winget = "$pwd_path/get-latest-winget.ps1"
 Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
-&$winget = Invoke-Expression -command "$pwd_path/devels-advocate/get-latest-winget.ps1" 
+&$winget = Invoke-Expression -command "$pwd_path/get-latest-winget.ps1" 
 
 $software_name = "Github CLI"
 Write-Host "`n`rInstalling $software_name ..." -BackgroundColor "Black"

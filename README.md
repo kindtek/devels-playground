@@ -12,33 +12,33 @@
 3. ??
 4. Profit
 
-``` bash
+```bash
 # run this script again if reboot needed
 powershell -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powershell-remote/devels-workshop/install.ps1 -OutFile install-kindtek-devels-workshop.ps1; powershell -executionpolicy remotesigned -File install-kindtek-devels-workshop.ps1"
 ```
 
-<!-- ###### also found in [[copypasta.bat](scripts/powershell-remote/copypasta.bat)] -->
+<!-- ###### also found in [[copypasta.cmd](scripts/powershell-remote/copypasta.cmd)] -->
 
 &nbsp;
 
--------
+---
 
-## Devel's Playground  
+## Devel's Playground
 
 ### **Instructions for importing any image from [hub.docker.com](https://hub.docker.com/) into WSL**
 
-#### *0. [Example] When the program loads, at the main menu hit ENTER a few times to import latest Ubuntu Docker image stored on the hub with default settings*
+#### _0. [Example] When the program loads, at the main menu hit ENTER a few times to import latest Ubuntu Docker image stored on the hub with default settings_
 
 #### 1. At the main menu, type "config" then hit ENTER to specify any Linux distro on [hub.docker.com](https://hub.docker.com/) you would like to use with WSL. The format is
 
 - source: [kindtek](https://hub.docker.com/u/kindtek)
 - name: [d2w](https://hub.docker.com/r/kindtek/d2w/tags):[ubuntu-skinny](https://hub.docker.com/layers/kindtek/d2w/ubuntu-skinny/images/)
 
--------
+---
 
 #### **Note: This is for development use only. Use at your own risk**
 
-#### *FWIW: fork this repo and build your own dev environment by using template Docker files ([[ubuntu](docker-compose.ubuntu.yaml)], [[alpine](docker-compose.alpine.yaml)]), ([[ubuntu](dockerfile.ubuntu.yaml)], [[alpine](dockerfile.alpine.yaml)])*
+#### _FWIW: fork this repo and build your own dev environment by using template Docker files ([[ubuntu](docker-compose.ubuntu.yaml)], [[alpine](docker-compose.alpine.yaml)]), ([[ubuntu](dockerfile.ubuntu.yaml)], [[alpine](dockerfile.alpine.yaml)])_
 
 &nbsp;
 
