@@ -140,8 +140,8 @@ if ($start_devs_playground -ine 'n' -And $start_devs_playground -ine 'no') {
     # // commenting out background building process because this is NOT quite ready.
     # // would like to run in separate window and then use these new images in devel's playground 
     # // if they are more up to date than the hub - which could be a difficult process
-    # $cmd_command = "$git_dir/scripts/build-in-background.ps1"
-    # &$cmd_command = cmd /c start powershell -Command "$git_dir/scripts/build-in-background.ps1" -WindowStyle "Maximized"
+    # $cmd_command = "$git_dir/devels_playground/scripts/docker-images-build-in-background.ps1"
+    # &$cmd_command = cmd /c start powershell -Command "$git_dir/devels_playground/scripts/docker-images-build-in-background.ps1" -WindowStyle "Maximized"
     # Write-Host "`r`n" -BackgroundColor "Black"
     $host.UI.RawUI.BackgroundColor = "Black"
     $devs_playground = "$git_dir/devels_playground/scripts/wsl-import-docker-image.cmd"
