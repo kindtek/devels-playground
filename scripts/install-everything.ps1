@@ -164,26 +164,46 @@ try {
         Write-Host "`r`n`r`nWaiting for $software_name to come online ..." -BackgroundColor "Black" -ForegroundColor "Yellow"
         Write-Host "`r`nNOTE: $software_name is required to be running for the Devel's Playground to work. Do NOT quit $software_name until you are done running it.`r`nYou can minimize $software_name by pressing WIN + Down arrow" -BackgroundColor "Black" -ForegroundColor "Yellow"
 
+        $docker_success1 = $false
+        $docker_success2 = $false
+        $docker_tries = 0
         do {
+            $docker_tries++
             $docker_status_now = (docker version)
             Start-Sleep -seconds 5
             # debug
             write-host "$docker_status_now`r`n"
-            $check_again = Read-Host "keep checking? (y[n])"
+            # $check_again = Read-Host "keep checking? (y[n])"
+            if (!($docker_status_now.Contains("error"))){
+                if ($docker_success1 -eq $true){
+                    $docker_success2 = $true
+                }
+                else {
+                    $docker_success1 = $true
+                }
+            }
         }
-        # while ($docker_status_now.Contains("error"))
+        while ((!($docker_success2)) -Or $docker_tries -lt 6)
         # debug
-        while ($docker_status_now.Contains("error") -Or $check_again -ieq 'y')
+        # while ((!($docker_success2)) -Or $check_again -ieq 'y')
 
-        # // commenting out background building process because this is NOT quite ready.
-        # // would like to run in separate window and then use these new images in devel's playground 
-        # // if they are more up to date than the hub - which could be a difficult process
-        # $cmd_command = "$git_dir/devels_playground/scripts/docker-images-build-in-background.ps1"
-        # &$cmd_command = cmd /c start powershell -Command "$git_dir/devels_playground/scripts/docker-images-build-in-background.ps1" -WindowStyle "Maximized"
-        # Write-Host "`r`n" -BackgroundColor "Black"
-        $host.UI.RawUI.BackgroundColor = "Black"
-        $devs_playground = "$git_dir/devels-playground/scripts/wsl-import-docker-image.cmd"
-        &$devs_playground = cmd /c start powershell -Command "$git_dir/devels-playground/scripts/wsl-import-docker-image.cmd"
+        if ($docker_succes2){
+            # // commenting out background building process because this is NOT quite ready.
+            # // would like to run in separate window and then use these new images in devel's playground 
+            # // if they are more up to date than the hub - which could be a difficult process
+            # $cmd_command = "$git_dir/devels_playground/scripts/docker-images-build-in-background.ps1"
+            # &$cmd_command = cmd /c start powershell -Command "$git_dir/devels_playground/scripts/docker-images-build-in-background.ps1" -WindowStyle "Maximized"
+            # Write-Host "`r`n" -BackgroundColor "Black"
+            $host.UI.RawUI.BackgroundColor = "Black"
+            $devs_playground = "$git_dir/devels-playground/scripts/wsl-import-docker-image.cmd"
+            &$devs_playground = cmd /c start powershell -Command "$git_dir/devels-playground/scripts/wsl-import-docker-image.cmd"
+        }
+        else {
+            Write-Host "Failed to launch docker. Not able to start Devel's Playground. Please restart and run the script again:" -ForegroundColor "Yellow"
+            Write-Host "powershell -executionpolicy remotesigned -Command `"Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell-remote/devels-workshop/install.ps1 -OutFile install-kindtek-devels-workshop.ps1; powershell -executionpolicy remotesigned -File install-kindtek-devels-workshop.ps1`"
+        }
+
+
     }
 }
 catch {}
