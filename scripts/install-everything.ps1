@@ -34,7 +34,7 @@ function install_all {
     Write-Host "`t- WinGet`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktopr`n`t- Windows Terminal" -ForegroundColor Magenta
     Write-Host "`r`nClose window to quit at any time"
 
-    if (!(Test-Path -Path "$git_dir/.winget_installed" -PathType Leaf)) {
+    if (!(Test-Path -Path "$git_dir/.winget-installed" -PathType Leaf)) {
         # install winget and use winget to install everything else
         $host.UI.RawUI.BackgroundColor = "Black"
         $software_name = "WinGet"
@@ -61,7 +61,7 @@ function install_all {
         $software_name = "Visual Studio Code (VSCode)"
         Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
         Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
-        Write-Host "true" | Out-File -FilePath "$git_dir/.vscode_installed"
+        Write-Host "true" | Out-File -FilePath "$git_dir/.vscode-installed"
     }
 
     if (!(Test-Path -Path "$git_dir/.docker-installed" -PathType Leaf)) {
