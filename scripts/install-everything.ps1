@@ -44,7 +44,7 @@ function install_all {
     Write-Host "`n`r" -BackgroundColor "Black"
 
     # refresh environment variables
-    cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" -WindowStyle "Hidden"
+    cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd"
 
     Set-Location $git_dir
 
@@ -88,7 +88,7 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 
 try {
     # refresh environment variables
-    cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" -WindowStyle "Hidden"
+    cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd"
 
     Set-Location $git_dir
     # if git status works and finds a repo, assume the install has been successfull and this script was ran once before
@@ -104,7 +104,7 @@ catch {
 
 try {
     # refresh environment variables
-    cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" -WindowStyle "Hidden"
+    cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd"
 
     $repo_src_owner = 'kindtek'
     $repo_src_name = 'devels-workshop'
@@ -129,7 +129,7 @@ try {
 catch {}
 
 # refresh env again
-cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" -WindowStyle "Hidden"
+cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" 
 
 $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
 if ( $user_input -ine "n" ) {
@@ -167,7 +167,7 @@ try {
         # Write-Host "`r`n" -BackgroundColor "Black"
         $host.UI.RawUI.BackgroundColor = "Black"
         $devs_playground = "$git_dir/devels-playground/scripts/wsl-import-docker-image.cmd"
-        &$devs_playground = cmd /c start powershell -Command "$git_dir/devels-playground/scripts/wsl-import-docker-image.cmd" -NoNewWindow
+        &$devs_playground = cmd /c start powershell -Command "$git_dir/devels-playground/scripts/wsl-import-docker-image.cmd"
     }
 }
 catch {}
