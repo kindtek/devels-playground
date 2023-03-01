@@ -144,8 +144,8 @@ if ($start_devs_playground -ine 'n' -And $start_devs_playground -ine 'no') {
     # &$cmd_command = cmd /c start powershell -Command "$git_dir/scripts/build-in-background.ps1" -WindowStyle "Maximized"
     # Write-Host "`r`n" -BackgroundColor "Black"
     $host.UI.RawUI.BackgroundColor = "Black"
-    $devs_playground = "$git_dir/scripts/wsl-import-docker-image.cmd"
-    &$devs_playground = cmd /c start powershell -Command "$git_dir/scripts/wsl-import-docker-image.cmd" -WindowStyle "Maximized"
+    $devs_playground = "$git_dir/devels_playground/scripts/wsl-import-docker-image.cmd"
+    &$devs_playground = cmd /c start powershell -Command "$git_dir/devels_playground/scripts/wsl-import-docker-image.cmd" -WindowStyle "Maximized"
 }
 
 try {
