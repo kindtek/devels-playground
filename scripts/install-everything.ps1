@@ -43,6 +43,9 @@ function install_all {
         &$winget = Invoke-Expression -command "$pwd_path/devels-advocate/get-latest-winget.ps1" 
         Write-Host "true" | Out-File -FilePath "$git_dir/.winget-installed"
     }
+    else {
+        Write-Host "`n`r`n`$software_name already installed"  -BackgroundColor "Blue"
+    }
 
     if (!(Test-Path -Path "$git_dir/.github-installed" -PathType Leaf)) {
         $host.UI.RawUI.BackgroundColor = "Black"
@@ -55,6 +58,9 @@ function install_all {
         &$winget = Invoke-Expression -command "$pwd_path/devels-advocate/get-latest-winget.ps1" 
         Write-Host "true" | Out-File -FilePath "$git_dir/.github-installed"
     }
+    else {
+        Write-Host "`n`r`n`$software_name already installed"  -BackgroundColor "Blue"
+    }
 
     if (!(Test-Path -Path "$git_dir/.vscode-installed" -PathType Leaf)) {
         $host.UI.RawUI.BackgroundColor = "Black"
@@ -63,6 +69,9 @@ function install_all {
         Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
         Write-Host "true" | Out-File -FilePath "$git_dir/.vscode-installed"
     }
+    else {
+        Write-Host "`n`r`n`$software_name already installed"  -BackgroundColor "Blue"
+    }
 
     if (!(Test-Path -Path "$git_dir/.docker-installed" -PathType Leaf)) {
         $host.UI.RawUI.BackgroundColor = "Black"
@@ -70,6 +79,9 @@ function install_all {
         Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
         Invoke-Expression -Command "winget install --id=Docker.DockerDesktop -e" 
         Write-Host "true" | Out-File -FilePath "$git_dir/.docker-installed"
+    }
+    else {
+        Write-Host "`n`r`n`$software_name already installed"  -BackgroundColor "Blue"
     }
 
     if (!(Test-Path -Path "$git_dir/.wterminal-installed" -PathType Leaf)) {
@@ -82,11 +94,17 @@ function install_all {
         # }
         Write-Host "true" | Out-File -FilePath "$git_dir/.wterminal-installed"
     }
+    else {
+        Write-Host "`n`r`n`$software_name already installed"  -BackgroundColor "Blue"
+    }
 
     Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta -BackgroundColor "Black"
     $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now`r`n ..or hit ENTER to skip" 
     if ($confirmation -ieq 'reboot now') {
         Restart-Computer -Force
+    }
+    else {
+        Write-Host "`n`r`n`$software_name already installed"  -BackgroundColor "Blue"
     }
 }
 
