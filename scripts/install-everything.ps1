@@ -140,6 +140,8 @@ catch {
     # refresh environment variables
     cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd"
 
+    Set-Location ../../
+
     $repo_src_owner = 'kindtek'
     $repo_src_name = 'devels-workshop'
     $repo_src_branch = 'windows'
