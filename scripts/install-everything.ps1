@@ -9,7 +9,7 @@ $repo_src_branch = 'windows'
 $git_path = $pwd_path.Replace("\scripts", "")
 $git_path = $git_path.Replace("/scripts", "")
 $parent_path = $git_path.Replace("\$repo_src_name", "")
-$parent_path = $parent_path.ReReplacemove("/$repo_src_name", "")
+$parent_path = $parent_path.Remove("/$repo_src_name", "")
 Write-Host "parent path: $parent_path"
 Write-Host "git dir: $git_path"
 Write-Host "scripts dir: $pwd_path"
