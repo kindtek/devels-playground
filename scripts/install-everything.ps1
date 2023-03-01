@@ -6,21 +6,14 @@ $pwd_path = $PSScriptRoot
 $repo_src_owner = 'kindtek'
 $repo_src_name = 'devels-workshop'
 $repo_src_branch = 'windows'
-Write-Host "pwd path: $pwd_path"
-$git_dir = $pwd_path.Replace("$repo_src_name/", "") 
-Write-Host "git dir: $git_dir"
-$git_dir = $git_dir.Replace("/$repo_src_name/", "") 
-Write-Host "git dir: $git_dir"
-$git_dir = $git_dir.Replace("\$repo_src_name\", "") 
-Write-Host "git dir: $git_dir"
-$git_dir = $git_dir.Replace("\$repo_src_name/", "") 
-Write-Host "git dir: $git_dir"
-$git_dir = $git_dir.Replace("/$repo_src_name\", "") 
-Write-Host "git dir: $git_dir"
-$git_dir = $git_dir.Replace("$repo_src_name\", "") 
-Write-Host "git dir: $git_dir"
-$git_dir += "/$repo_src_name"
-Write-Host "git dir: $git_dir"
+$git_path = $pwd_path.Remove("\scripts")
+$git_path = $git_path.Remove("/scripts")
+$parent_path = $git_path.Remove("\$repo_src_name")
+$parent_path = $parent_path.Remove("/$repo_src_name")
+Write-Host "parent path: $parent_path"
+Write-Host "git dir: $git_path"
+Write-Host "scripts dir: $pwd_path"
+
 
 # jump to bottom line without clearing scrollback
 Write-Output "$([char]27)[2J"
@@ -34,9 +27,9 @@ function restart_prompt {
 }
 
 function install_all {
-    param ($pwd_path, $git_dir)
+    param ($pwd_path, $git_path)
 
-    Set-Location $git_dir
+    Set-Location $git_path
 
     # use windows-features-wsl-add to handle windows features install 
     # installing first to make sure environment has powershell 2
@@ -48,20 +41,20 @@ function install_all {
     Write-Host "`t- WinGet`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktopr`n`t- Windows Terminal" -ForegroundColor Magenta
     Write-Host "`r`nClose window to quit at any time"
 
-    if (!(Test-Path -Path "$git_dir/.winget-installed" -PathType Leaf)) {
+    if (!(Test-Path -Path "$git_path/.winget-installed" -PathType Leaf)) {
         # install winget and use winget to install everything else
         $host.UI.RawUI.BackgroundColor = "Black"
         $software_name = "WinGet"
         $winget = "$pwd_path/devels-advocate/get-latest-winget.ps1"
         Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
         &$winget = Invoke-Expression -command "$pwd_path/devels-advocate/get-latest-winget.ps1" 
-        Write-Host "true" | Out-File -FilePath "$git_dir/.winget-installed"
+        Write-Host "true" | Out-File -FilePath "$git_path/.winget-installed"
     }
     else {
         Write-Host "`n`r`n`r$software_name already installed"  -ForegroundColor "Blue"
     }
 
-    if (!(Test-Path -Path "$git_dir/.github-installed" -PathType Leaf)) {
+    if (!(Test-Path -Path "$git_path/.github-installed" -PathType Leaf)) {
         $host.UI.RawUI.BackgroundColor = "Black"
         $software_name = "Github CLI"
         Write-Host "`n`rInstalling $software_name ..." -BackgroundColor "Black"
@@ -70,35 +63,35 @@ function install_all {
         Invoke-Expression -Command "winget install --id Git.Git -e --source winget"
         Write-Host "`n`r" -BackgroundColor "Black"
         &$winget = Invoke-Expression -command "$pwd_path/devels-advocate/get-latest-winget.ps1" 
-        Write-Host "true" | Out-File -FilePath "$git_dir/.github-installed"
+        Write-Host "true" | Out-File -FilePath "$git_path/.github-installed"
     }
     else {
         Write-Host "`n`r`n`r$software_name already installed"  -ForegroundColor "Blue"
     }
 
-    if (!(Test-Path -Path "$git_dir/.vscode-installed" -PathType Leaf)) {
+    if (!(Test-Path -Path "$git_path/.vscode-installed" -PathType Leaf)) {
         $host.UI.RawUI.BackgroundColor = "Black"
         $software_name = "Visual Studio Code (VSCode)"
         Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
         Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
-        Write-Host "true" | Out-File -FilePath "$git_dir/.vscode-installed"
+        Write-Host "true" | Out-File -FilePath "$git_path/.vscode-installed"
     }
     else {
         Write-Host "`n`r`n`r$software_name already installed"  -ForegroundColor "Blue"
     }
 
-    if (!(Test-Path -Path "$git_dir/.docker-installed" -PathType Leaf)) {
+    if (!(Test-Path -Path "$git_path/.docker-installed" -PathType Leaf)) {
         $host.UI.RawUI.BackgroundColor = "Black"
         $software_name = "Docker Desktop"
         Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
         Invoke-Expression -Command "winget install --id=Docker.DockerDesktop -e" 
-        Write-Host "true" | Out-File -FilePath "$git_dir/.docker-installed"
+        Write-Host "true" | Out-File -FilePath "$git_path/.docker-installed"
     }
     else {
         Write-Host "`n`r`n`r$software_name already installed"  -ForegroundColor "Blue"
     }
 
-    if (!(Test-Path -Path "$git_dir/.wterminal-installed" -PathType Leaf)) {
+    if (!(Test-Path -Path "$git_path/.wterminal-installed" -PathType Leaf)) {
         # $windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
         # if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no') { 
         $host.UI.RawUI.BackgroundColor = "Black"
@@ -106,7 +99,7 @@ function install_all {
         Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
         Invoke-Expression -Command "winget install Microsoft.WindowsTerminal" 
         # }
-        Write-Host "true" | Out-File -FilePath "$git_dir/.wterminal-installed"
+        Write-Host "true" | Out-File -FilePath "$git_path/.wterminal-installed"
     }
     else {
         Write-Host "`n`r`n`r$software_name already installed"  -ForegroundColor "Blue"
@@ -133,23 +126,23 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 
 try {
     # refresh environment variables
-    cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd"
-    Write-Host ("pwd_path: $pwd_path`r`ngit_dir: $git_dir")
-    Set-Location $git_dir
+    cmd /c start powershell -Command "$git_path/scripts/choco/refresh-env.cmd"
+    Write-Host ("pwd_path: $pwd_path`r`ngit_path: $git_path")
+    Set-Location $git_path
     # if git status works and finds devels-workshop repo, assume the install has been successfull and this script was ran once before
     $git_status = git remote show origin 
     # determine if git status works by checking output for LICENSE - see typical output of git status here: https://amitd.co/code/shell/git-status-porcelain
     if ($git_status.NotContains("github.com/kindtek/devels-workshop")) {
-        install_all $pwd_path $git_dir
+        install_all $pwd_path $git_path
     }
 }
 catch {
-    install_all $pwd_path $git_dir
+    install_all $pwd_path $git_path
 }
 
 # try {
     # refresh environment variables
-    cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd"
+    cmd /c start powershell -Command "$git_path/scripts/choco/refresh-env.cmd"
 
     Set-Location ../../
 
@@ -158,18 +151,18 @@ catch {
 
     Write-Host "attempting to clone repo... " -ForegroundColor "DarkBlue"
     # if it works remove the directory and the manually downloaded files..
-    # if (Test-Path -Path "$git_dir") {
-        Write-Host "attempting to rename directory $git_dir to $git_dir-temp ... " -ForegroundColor "DarkBlue"
-        Set-Location $git_dir
+    # if (Test-Path -Path "$git_path") {
+        Write-Host "attempting to rename directory $git_path to $git_path-temp ... " -ForegroundColor "DarkBlue"
+        Set-Location $git_path
         Set-Location ../
-        Write-Host "Rename-Item -Path `"$git_dir`" -NewName `"$git_dir-temp`" -Force "
-        Rename-Item -Path "$git_dir" -NewName "$git_dir-temp" -Force 
-        Remove-Item "$git_dir-temp" -Force -Recurse 
+        Write-Host "Rename-Item -Path `"$git_path`" -NewName `"$git_path-temp`" -Force "
+        Rename-Item -Path "$git_path" -NewName "$git_path-temp" -Force 
+        Remove-Item "$git_path-temp" -Force -Recurse 
     # }
     $host.UI.RawUI.BackgroundColor = "Black"
     # .. and then clone the repo
-    git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_dir"
-    Set-Location "$git_dir"
+    git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch "$git_path"
+    Set-Location "$git_path"
     $host.UI.RawUI.BackgroundColor = "Black"
     git submodule update --force --recursive --init --remote
     $host.UI.RawUI.BackgroundColor = "Black"
@@ -178,7 +171,7 @@ catch {
 # catch {}
 
 # refresh env again
-cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd" 
+cmd /c start powershell -Command "$git_path/scripts/choco/refresh-env.cmd" 
 
 $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
 if ( $user_input -ine "n" ) {
@@ -224,12 +217,12 @@ try {
             # // commenting out background building process because this is NOT quite ready.
             # // would like to run in separate window and then use these new images in devel's playground 
             # // if they are more up to date than the hub - which could be a difficult process
-            # $cmd_command = "$git_dir/devels_playground/scripts/docker-images-build-in-background.ps1"
-            # &$cmd_command = cmd /c start powershell -Command "$git_dir/devels_playground/scripts/docker-images-build-in-background.ps1" -WindowStyle "Maximized"
+            # $cmd_command = "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1"
+            # &$cmd_command = cmd /c start powershell -Command "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1" -WindowStyle "Maximized"
             # Write-Host "`r`n" -BackgroundColor "Black"
             $host.UI.RawUI.BackgroundColor = "Black"
-            $devs_playground = "$git_dir/devels-playground/scripts/wsl-import-docker-image.cmd"
-            &$devs_playground = cmd /c start powershell -Command "$git_dir/devels-playground/scripts/wsl-import-docker-image.cmd"
+            $devs_playground = "$git_path/devels-playground/scripts/wsl-import-docker-image.cmd"
+            &$devs_playground = cmd /c start powershell -Command "$git_path/devels-playground/scripts/wsl-import-docker-image.cmd"
         }
         else {
             Write-Host "Failed to launch docker. Not able to start Devel's Playground. Please restart and run the script again:" -ForegroundColor "Yellow"
@@ -240,15 +233,15 @@ try {
 catch {}
 
 try {
-    Remove-Item "$git_dir".replace($repo_src_name, "install-$repo_src_owner-$repo_src_name.ps1") -Force -ErrorAction SilentlyContinue
+    Remove-Item "$git_path".replace($repo_src_name, "install-$repo_src_owner-$repo_src_name.ps1") -Force -ErrorAction SilentlyContinue
     Write-Host "`r`nCleaning up..  `r`n"
     # make extra sure this is not a folder that is not important (ie: system32 - which is a default location)
-    if ($git_dir.Contains($repo_src_name) -And $git_dir.NotContains("System32") ) {
-        Remove-Item $git_dir -Recurse -Confirm -Force -ErrorAction SilentlyContinue
+    if ($git_path.Contains($repo_src_name) -And $git_path.NotContains("System32") ) {
+        Remove-Item $git_path -Recurse -Confirm -Force -ErrorAction SilentlyContinue
     }
 }
 catch {
-    Write-Host "Run the following command to delete installation files:`r`n(will also remove Devel's Playground)`r`nRemove-Item $git_dir -Recurse -Confirm -Force`r`n"
+    Write-Host "Run the following command to delete installation files:`r`n(will also remove Devel's Playground)`r`nRemove-Item $git_path -Recurse -Confirm -Force`r`n"
 }
 
 
