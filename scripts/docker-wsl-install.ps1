@@ -31,8 +31,8 @@ $repo_src_branch = 'main'
 
 # use windows-features-wsl-add to handle windows features install 
 # installing first to make sure environment has powershell 2
-$winconfig = "$pwd_path/devels-advocate/add-features.ps1"
-&$winconfig = Invoke-Expression -command "$pwd_path/devels-advocate/add-features.ps1"
+$winconfig = "$pwd_path/devels-advocate/add-windows-features.ps1"
+&$winconfig = Invoke-Expression -command "$pwd_path/devels-advocate/add-windows-features.ps1"
 
 
 Write-Host "`r`nThe following programs will now be installed:" -ForegroundColor Magenta
