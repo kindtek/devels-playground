@@ -19,10 +19,13 @@ $parent_path = $parent_path.Replace("/$repo_src_name-temp", "")
 Write-Output "$([char]27)[2J"
 
 function restart_prompt {
-    Write-Host "`r`nA restart is required for the changes to take effect. " -ForegroundColor Magenta -BackgroundColor "Black"
+    Write-Host "`r`nA restart is required for the changes to fully take effect. " -ForegroundColor Magenta -BackgroundColor "Black"
     $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now`r`n ..or hit ENTER to skip" 
     if ($confirmation -ieq 'reboot now') {
         Restart-Computer -Force
+    }
+    else {
+        Write-Host "`r`n"
     }
 }
 
