@@ -103,9 +103,6 @@ function install_all {
     if ($confirmation -ieq 'reboot now') {
         Restart-Computer -Force
     }
-    else {
-        Write-Host "`n`r`n`$software_name already installed"  -ForegroundColor "Blue"
-    }
 }
 
 # source of the below self-elevating script: https://blog.expta.com/2017/03/how-to-self-elevate-powershell-script.html#:~:text=If%20User%20Account%20Control%20(UAC,select%20%22Run%20with%20PowerShell%22.
