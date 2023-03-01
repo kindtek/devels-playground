@@ -134,7 +134,7 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 try {
     # refresh environment variables
     cmd /c start powershell -Command "$git_dir/scripts/choco/refresh-env.cmd"
-
+    Write-Host ("pwd_path: $pwd_path`r`ngit_dir: $git_dir")
     Set-Location $git_dir
     # if git status works and finds devels-workshop repo, assume the install has been successfull and this script was ran once before
     $git_status = git remote show origin 
