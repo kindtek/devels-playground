@@ -64,9 +64,6 @@ USER root
 
 RUN unminimize
 
-# for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
-RUN curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
-RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main"| tee /etc/apt/sources.list.d/brave-browser-release.list
 
 # for powershell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
@@ -75,27 +72,32 @@ RUN wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/pac
 ## Register the Microsoft repository GPG keys
 RUN dpkg -i packages-microsoft-prod.deb
 
+RUN apt-get update -yq && \
+    apt-get install -y gedit powershell
+USER ${username}
+
+# brave browser/gui/media support
+FROM d2w_phat as d2w_phatt
+# for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
+RUN curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main"| tee /etc/apt/sources.list.d/brave-browser-release.list
+
+RUN apt-get update -yq && \
+    apt-get install -y gimp nautilus vlc x11-apps apt-transport-https software-properties-common brave-browser
+
+# for docker in docker
+FROM d2w_phatt as d2w_phatter
 # for docker install - https://docs.docker.com/engine/install/ubuntu/
 RUN mkdir -p /etc/apt/keyrings && \
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 RUN echo \
     "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu \
     $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-RUN apt-get update -yq && \
-    apt-get install -y gedit powershell
-USER ${username}
-
-FROM d2w_phat as d2w_phatt
-# brave browser/gui/media/docker support
-RUN apt-get update -yq && \
-    apt-get install -y gimp nautilus vlc x11-apps apt-transport-https software-properties-common brave-browser
-
-FROM d2w_phatt as d2w_phatter
 # DOCKER
 RUN apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
 USER ${username}
 
+# for heavy gui and cuda
 FROM d2w_phatter as d2w_phattest
 # GNOME
 RUN DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3
