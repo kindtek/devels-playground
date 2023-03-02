@@ -1,4 +1,4 @@
-# Idle Hands are the **Devel's Workshop**
+# Idle Hands are the **Developer's Workshop**
 
 ## Take a clean (or dirty) Windows 10+ environment and install a suite of development tools (including WSL!!) with only a few keystrokes. Effortlessly set up your environment with Github, VSCode, Docker Desktop, Windows Terminal (with upgraded Powershell), WinGet, and more. More updates coming soon including macOS support.
 
@@ -24,11 +24,11 @@ powershell -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw
 
 ## Devel's Playground
 
-### **Instructions for importing any image from [hub.docker.com](https://hub.docker.com/) into WSL**
+### **Instructions for importing images from [hub.docker.com](https://hub.docker.com/) into WSL**
 
 #### _0. [Example] When the program loads, at the main menu hit ENTER a few times to import latest Ubuntu Docker image stored on the hub with default settings_
 
-#### 1. At the main menu, type "config" then hit ENTER to specify any Linux distro on [hub.docker.com](https://hub.docker.com/) you would like to use with WSL. The format is
+#### 1. At the main menu, type "config" then hit ENTER to specify any compatible Linux distro on [hub.docker.com](https://hub.docker.com/) you would like to use with WSL. The format is
 
 - source: [kindtek](https://hub.docker.com/u/kindtek)
 - name: [d2w](https://hub.docker.com/r/kindtek/d2w/tags):[ubuntu-skinny](https://hub.docker.com/layers/kindtek/d2w/ubuntu-skinny/images/)
