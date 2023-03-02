@@ -26,7 +26,7 @@ USER ${username}:devbp
 RUN pip3 install cdir --user && \
     echo "alias cdir='source cdir.sh'" >> ~/.bashrc
 
-# copy cdir install and copy current contents in /home/${username} to new user
+# copy cdir install and username in /home/${username} to new user
 # update all the paths (with etc/skel)
 RUN export PATH=~/.local/bin:$PATH
 USER root
@@ -35,17 +35,13 @@ RUN cp -r ./home/${username} /etc/skel
 
 # add host user
 RUN adduser --system --home /home/host --shell /bin/bash --disabled-password host
-
-# RUN adduser --system --home /home/host --shell /bin/bash --disabled-password host
 # RUN sed -e 's;^# \(%sudo.*NOPASSWD.*\);\1;g' -i /etc/sudoers
-# add host and dev to sudo
-RUN usermod -aG sudo host
-RUN usermod -aG sudo ${username}
-# add host and dev to devbp
-RUN usermod -aG devbp host
-RUN usermod -aG devbp ${username}
 
-# all non-root users will need to use sudo from now on
+# add host and dev to sudo and devbp
+RUN usermod -aG sudo host && usermod -aG sudo ${username} && \
+    usermod -aG devbp host && usermod -aG devbp ${username}
+
+# need to use sudo from now on
 RUN apt-get -y install sudo && \
     # add host and ${username} to sudo group
     sudo adduser ${username} sudo && \
@@ -70,7 +66,7 @@ RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg a
 ## Download the Microsoft repository GPG keys
 RUN wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
 ## Register the Microsoft repository GPG keys
-RUN dpkg -i packages-microsoft-prod.deb
+RUN dpkg -i packages-microsoft-prod.deb  && alias powershell=pwsh >> ~/.bashrc
 # for docker install - https://docs.docker.com/engine/install/ubuntu/
 RUN mkdir -p /etc/apt/keyrings && \
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
