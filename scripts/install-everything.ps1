@@ -34,6 +34,7 @@ function install_all {
 
     # use windows-features-wsl-add to handle windows features install 
     # installing first to make sure environment has powershell 2
+    # @ TODO: add WORKING cancel button - for not CTRL + C and closing window will have to do if you cancel windows features install
     $winconfig = "$temp_repo_scripts_path/devels-advocate/add-windows-features.ps1"
     &$winconfig = Invoke-Expression -command "$temp_repo_scripts_path/devels-advocate/add-windows-features.ps1"
 
@@ -212,7 +213,9 @@ try {
                 }
             }
         }
-        while ((!($docker_success2)) -Or $docker_tries -lt 6)
+        # @TODO: ask user every x number of tries if they would like to keep pinging docker. ie:
+        # while ((!($docker_success2)) -Or $docker_tries -lt 100 -Or $check_again -ieq '')
+        while ((!($docker_success2)) -Or $docker_tries -lt 100 -Or $check_again -ieq '')
         # debug
         # while ((!($docker_success2)) -Or $check_again -ieq 'y')
 
