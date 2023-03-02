@@ -24,12 +24,12 @@ RUN adduser --home /home/${username} --shell /bin/bash --uid 1000 --disabled-pas
 USER ${username}:devbp
 # install cdir on nonroot user - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
 RUN pip3 install cdir --user && \
-    echo "alias cdir='source cdir.sh'"\nalias grep='grep --color=auto'\nalias powershell=pwsh\ndevw=devels-workshop\ndevp=devels-playground\nkindtek=~/repos/kindtek >> ~/.bashrc
+    echo "alias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\ndevw=devels-workshop\ndevp=devels-playground\nkindtek=~/repos/kindtek" >> ~/.bashrc
 RUN echo "[user]\ndefault=${username}" >> /etc/wsl.conf
 
 # finish cdir setup, add repos directory, copy custom user setup to skel
 # update all the paths (with etc/skel)
-RUN export PATH=~/.local/bin:$PATH && mkdir ~/${username}/repos ~/${username}/repos/kindtek 
+RUN export PATH=~/.local/bin:~/repos/kindtek/devels-workshop/scripts:$PATH && mkdir ~/${username}/repos ~/${username}/repos/kindtek 
 USER root
 RUN cp -r ./home/${username}/.local/bin /usr/local
 RUN cp -r /home/${username}/. /etc/skel/
