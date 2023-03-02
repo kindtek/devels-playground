@@ -1,6 +1,6 @@
 # Idle Hands are the **Developer's Workshop**
 
-## One line of code will free up your time and energy to do more productive things when you need to set up a developer environment. With little more than a few key strokes you will have a suite of development tools (including WSL!!) at your fingertips. Notable Windows features turned on in the process will be WSL2, Hyper-V, Windows Terminal (with upgraded powershell). Notable developer applications include Github CLI, VSCode, Docker Desktop, and WinGet. The Devel's Playground tool is an example of how you can build an easily portable containerized developer environment build entirely around one repo. More updates coming soon including macOS support
+## One line of code will free up your time and energy to do more productive things when you need to set up a developer environment. With little more than a few key strokes you will have a suite of development tools (including WSL!!) at your fingertips. Notable Windows features turned on in the process will be WSL2, Hyper-V, Windows Terminal (with upgraded powershell). Notable developer applications include Github CLI, VSCode, Docker Desktop, and WinGet. The Devel's Playground tool is an example of how easy it is to wrap a portable containerized developer environment around a repo. More updates coming soon including macOS support
 
 &nbsp;
 
