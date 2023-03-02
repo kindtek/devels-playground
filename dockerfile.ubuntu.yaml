@@ -56,7 +56,7 @@ RUN sudo mkdir /mnt/w && sudo mount -t drvfs w: /mnt/w
 USER ${username}
 WORKDIR /home/${username}
 
-FROM d2w_skinny AS d2w_phat-dockerless
+FROM d2w_skinny AS d2w_phat
 USER root
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
 RUN curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
@@ -80,25 +80,24 @@ USER ${username}
 
 # TODO: https://github.com/mbacchi/brave-docker
 
-FROM d2w_phat-dockerless as d2w_phat
+FROM d2w_phat-dockerless as d2w_phatter
 USER root
+RUN unminimize
 # DOCKER
 RUN apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+USER ${username}
+
+FROM d2w_phat-dockerless as d2w_phattest
 # GNOME
 RUN DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3
 # CUDA
 RUN apt-get -y install nvidia-cuda-toolkit
+
 # VSCODE
-RUN apt-get -y install apt-transport-https wget -y
-RUN wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | apt-key add -
-RUN add-apt-repository -y "deb [arch=$(dpkg --print-architecture)] https://packages.microsoft.com/repos/vscode stable main"
-RUN apt-get -y install code
-RUN apt-get -y update
+# RUN apt-get -y install apt-transport-https wget -y
+# RUN wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | apt-key add -
+# RUN add-apt-repository -y "deb [arch=$(dpkg --print-architecture)] https://packages.microsoft.com/repos/vscode stable main"
+# RUN apt-get -y install code
+# RUN apt-get -y update
 
-USER ${username}
-
-
-
-
-# username=dev08 groupname=whee docker compose -f docker-compose.ubuntu.yaml build
-# username=dev08 groupname=wheel docker compose -f docker-compose.alpine.yaml build
+# username=dev08 groupname=wheel docker compose -f docker-compose.ubuntu.yaml build
