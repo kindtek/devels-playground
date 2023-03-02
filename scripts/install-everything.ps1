@@ -247,7 +247,7 @@ try {
     }
 }
 catch {
-    Write-Host "Run the following command to delete installation files:`r`n(will also remove Devel's Playground)`r`nRemove-Item $git_path -Recurse -Confirm -Force`r`n"
+    Write-Host "Run the following command to delete the setup files:`r`nRemove-Item $git_path -Recurse -Confirm -Force`r`n"
 }
 
 
