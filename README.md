@@ -1,14 +1,13 @@
 # Idle Hands are the **Developer's Workshop**
 
-## Take a clean (or dirty) Windows 10+ environment and install a suite of development tools (including WSL!!) with only a few keystrokes. Effortlessly set up your environment with Github, VSCode, Docker Desktop, Windows Terminal (with upgraded Powershell), WinGet, and more. More updates coming soon including macOS support.
+## One line of code will free up your time and energy to do more productive things when you need to set up a developer environment. With little more than a few key strokes you will have a suite of development tools (including WSL!!) at your fingertips. Notable Windows features turned on in the process will be WSL2, Hyper-V, Windows Terminal (with upgraded powershell). Notable developer applications include Github CLI, VSCode, Docker Desktop, and WinGet. More updates coming soon including macOS support
 
-&nbsp;
 &nbsp;
 
 ### Easy as 1, 2, 4
 
 1. Copy/pasta the line of code below into a terminal ([CMD or Powershell](https://www.wikihow.com/Open-Terminal-in-Windows))
-2. Confirm installation actions by hitting the ENTER and 'y' keys a few times
+2. Confirm installation actions and restart program/device as needed
 3. ??
 4. Profit
 
