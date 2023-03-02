@@ -13,7 +13,7 @@ scripts\wsl-import-docker-image
 
 &nbsp;
 
-### All other Windows users follow [these short instructions](https://github.com/kindtek/devels-workshop#idle-hands-are-the-devels-workshop)
+### All other Windows users follow [these short instructions](https://github.com/kindtek/devels-workshop#idle-hands-are-the-developers-workshop)
 
 &nbsp;
 
