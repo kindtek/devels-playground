@@ -21,22 +21,20 @@ RUN adduser --home /home/${username} --shell /bin/bash --uid 1000 --disabled-pas
 
 # custom user setup
 # make default user 
-RUN echo "[user]\ndefault=${username}" >> /etc/wsl.conf && \
-    alias powershell=pwsh >> ~/.bashrc
-
 USER ${username}:devbp
 # install cdir on nonroot user - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
 RUN pip3 install cdir --user && \
-    echo "alias cdir='source cdir.sh'" >> ~/.bashrc
+    echo "alias cdir='source cdir.sh'"\nalias grep='grep --color=auto'\nalias powershell=pwsh >> ~/.bashrc
+RUN echo "[user]\ndefault=${username}" >> /etc/wsl.conf
 
-# copy cdir install, add repos directory and custom user setup for any new users
+# finish cdir setup, add repos directory, copy custom user setup to skel
 # update all the paths (with etc/skel)
 RUN export PATH=~/.local/bin:$PATH && mkdir ~/${username}/repos
 USER root
 RUN cp -r ./home/${username}/.local/bin /usr/local
 RUN cp -r /home/${username}/. /etc/skel/
 
-# add host user
+# add host user using custom user setup
 RUN adduser --system --home /home/host --shell /bin/bash --disabled-password host
 # RUN sed -e 's;^# \(%sudo.*NOPASSWD.*\);\1;g' -i /etc/sudoers
 
