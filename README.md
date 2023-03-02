@@ -1,4 +1,4 @@
-# Idle Minds are the **Devel's Playground**
+# Idle Minds are the **Developer's Playground**
 
 ## Setup Instructions
 
@@ -25,7 +25,7 @@ scripts\wsl-import-docker-image
 
 ### _0. [Example default Ubuntu WSL setup] When the program loads, at the main menu hit ENTER when prompted a few times to import latest Ubuntu Docker image stored on the hub with default settings_
 
-### 1. At the main menu, type "config" then hit ENTER to specify any Linux distro on [hub.docker.com](https://hub.docker.com/) you would like to use with WSL. The format is
+#### 1. At the main menu, type "config" then hit ENTER to specify any compatible Linux distro on [hub.docker.com](https://hub.docker.com/) you would like to use with WSL. The format is
 
 - source: [kindtek](https://hub.docker.com/u/kindtek)
 - name: [d2w](https://hub.docker.com/r/kindtek/d2w/tags):[ubuntu-skinny](https://hub.docker.com/layers/kindtek/d2w/ubuntu-skinny/images/)
