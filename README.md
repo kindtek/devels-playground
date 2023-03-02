@@ -1,10 +1,12 @@
 # Idle Hands are the **Developer's Workshop**
 
-## One line of code will free up your time and energy to do more productive things when you need to set up a Windows 10+ (macOS support coming soon) machine with must-have development software. With little more than a few key strokes you will have a suite of software such as Github, VSCode, Docker Desktop installed as well as all the necessary optimizations required make them operate smoothly with WSL
+&nbsp;
+
+## One line of code pasted into a terminal will set up a ready to go developer environment on a Windows 10+ (macOS support coming soon) machine. With little more than a few key strokes, a suite of developer productivity software such as Github, VSCode, Docker Desktop will be installed on top of setting up your machine with Hyper-V, WSL, and other Virtual Machine optimization features
 
 &nbsp;
 
-## When set up is complete, there will be an option to launch the Devel's Playground WSL Docker import tool. It demonstrates how easy it is to wrap this portable containerized developer environment around a separate standalone repo
+## When set up is complete, there will be an option to launch the Devel's Playground WSL Docker import tool. Not only does it make it easy for you to import your own custom Docker images onto WSL, it demonstrates how easy it is to wrap this portable containerized developer environment around a separate standalone repo
 
 &nbsp;
 
