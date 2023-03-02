@@ -129,7 +129,7 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 
 try {
     # refresh environment variables
-    # cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
+    # cmd /c start powershell.exe "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
     if (Test-Path -Path "$parent_path/$repo_src_name") {
         Set-Location "$parent_path/$repo_src_name"
         # if git status works and finds devels-workshop repo, assume the install has been successfull and this script was ran once before
@@ -152,7 +152,7 @@ catch {
 
 try {
     # refresh environment variables
-    cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
+    cmd /c start powershell.exe "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
     # Write-Host "parent path: $parent_path"
     Set-Location $parent_path
 
@@ -175,7 +175,7 @@ try {
 catch {}
 
 # refresh env again
-# cmd /c start powershell "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
+# cmd /c start powershell.exe "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
 
 $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
 if ( $user_input -ine "n" ) {
@@ -224,15 +224,17 @@ try {
             # // would like to run in separate window and then use these new images in devel's playground 
             # // if they are more up to date than the hub - which could be a difficult process
             # $cmd_command = "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1"
-            # &$cmd_command = cmd /c start powershell -Command "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1" -WindowStyle "Maximized"
+            # &$cmd_command = cmd /c start powershell.exe -Command "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1" -WindowStyle "Maximized"
             # Write-Host "`r`n" -BackgroundColor "Black"
             $host.UI.RawUI.BackgroundColor = "Black"
             $devs_playground = "$git_path/devels-playground/scripts/wsl-import-docker-image.cmd"
-            &$devs_playground = cmd /c start powershell -Command "$git_path/devels-playground/scripts/wsl-import-docker-image.cmd"
+            &$devs_playground = cmd /c start powershell.exe -Command "$git_path/devels-playground/scripts/wsl-import-docker-image.cmd"
         }
         else {
             Write-Host "Failed to launch docker. Not able to start Devel's Playground. Please restart and run the script again:" -ForegroundColor "Red"
-            Write-Host "powershell -executionpolicy remotesigned -Command `"Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell-remote/devels-workshop/install.ps1 -OutFile install-kindtek-devels-workshop.ps1`"; powershell -executionpolicy remotesigned -File install-kindtek-devels-workshop.ps1"
+            Write-Host "cmd kindtek/devels-workshop/devels-playground/scripts/wsl-import-docker-image"
+            Write-Host "powershell.exe ./kindtek/devels-workshop/devels-playground/scripts/wsl-import-docker-image.ps1"
+
         }
     }
 }
