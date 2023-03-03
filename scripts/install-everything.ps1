@@ -223,7 +223,7 @@ try {
             Start-Sleep -seconds 1
            
             # if ($docker_attempt1 -eq $true -And $docker_attempt2 -eq $true){
-            if (($docker_tries % 10) -eq 0) {
+            if ($docker_offline -eq $true -And ($docker_tries % 10) -eq 0) {
                 # start count over
                 # $docker_attempt1 = $docker_attempt2 = $false
                 # prompt to continue
