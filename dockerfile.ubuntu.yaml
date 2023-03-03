@@ -28,9 +28,6 @@ RUN echo "[user]\ndefault=${username}" >> /etc/wsl.conf
 RUN mkdir -p repos/kindtek
 RUN chown -R ${username} repos
 
-RUN mkdir -p /devel
-RUN chown -R devel /devel
-
 # custom user setup
 USER ${username}
 # install cdir on nonroot user - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
@@ -52,6 +49,10 @@ RUN cp -r ./home/${username}/.local/bin /usr/local && \
 RUN adduser --system --home /home/devel --shell /bin/bash --disabled-password devel
 RUN adduser --system --home /home/host --shell /bin/bash --disabled-password host
 
+# add /devel owned by devel
+RUN mkdir -p /devel
+RUN chown -R devel /devel
+
 # RUN sed -e 's;^# \(%sudo.*NOPASSWD.*\);\1;g' -i /etc/sudoers
 RUN chown -R ${username} /home/host
 RUN chown -R ${username} /home/devel
@@ -66,6 +67,7 @@ RUN usermod -aG sudo devel && usermod -aG sudo ${username} && \
 RUN apt-get -y install sudo && \
     # add devel and ${username} to sudo group
     sudo adduser ${username} sudo 
+    # uncomment to add sudo priveleges for host and devel
     # && \
     # sudo adduser devel sudo && \
     # sudo adduser host sudo
