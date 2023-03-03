@@ -1,6 +1,6 @@
 # to build, for exemple, run: 
 # `username=mine groupname=ours docker run -d -i`
-FROM ubuntu:latest AS d2w_skinny
+FROM ubuntu:latest AS devp_skinny
 ARG username=${username:-gabriel}
 ARG groupname=${groupname:-archangels}
 
@@ -84,7 +84,7 @@ RUN touch /hell/o.world
 
 USER ${username}
 
-FROM d2w_skinny AS d2w_git
+FROM devp_skinny AS devp_git
 
 WORKDIR /hell
 USER devel
@@ -98,7 +98,7 @@ RUN cd devels-playground && git submodule update --force --recursive --init --re
 USER ${username}
 
 # brave browser/gui/media support
-FROM d2w_git as d2w_phat
+FROM devp_git as devp_phat
 # make man available
 # RUN yes | unminimize
 # for powershell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
@@ -112,7 +112,7 @@ RUN sudo rm packages-microsoft-prod.deb
 RUN sudo apt-get update -yq && \
     sudo apt-get install -y gedit powershell
 
-FROM d2w_phat as d2w_phatt
+FROM devp_phat as devp_phatt
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
 RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
 RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main"| sudo tee /etc/apt/sources.list.d/brave-browser-release.list
@@ -122,7 +122,7 @@ RUN sudo apt-get update -yq && \
 USER ${username}
 
 # for docker in docker
-FROM d2w_phatt as d2w_phatter
+FROM devp_phatt as devp_phatter
 USER root
 
 
@@ -136,7 +136,7 @@ USER ${username}
 RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> ~/.bashrc && . ~/.bashrc
 
 # for heavy gui and cuda
-FROM d2w_phatter as d2w_phattest
+FROM devp_phatter as devp_phattest
 # GNOME
 RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3
 # CUDA
