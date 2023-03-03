@@ -118,22 +118,22 @@ services:
       - type: bind
         source: ~/
         target: /home/host
-  # phatso:
-  #   entrypoint:
-  #     - sleep
-  #     - infinity
-  #   image: kindtek/devp:ubuntu-phatso
-  #   build:
-  #     context: .
-  #     target: devp_phatso
-  #     args:
-  #       - username=${username:-gabriel}
-  #     dockerfile: dockerfile.ubuntu.yaml
-  #   init: true
-  #   volumes:
-  #     - type: bind
-  #       source: /var/run/docker.sock
-  #       target: /var/run/docker.sock
-  #     - type: bind
-  #       source: ~/
-  #       target: /home/host
+  phatso:
+    entrypoint:
+      - sleep
+      - infinity
+    image: kindtek/devp:ubuntu-phatso
+    build:
+      context: .
+      target: devp_phatso
+      args:
+        - username=${username:-gabriel}
+      dockerfile: dockerfile.ubuntu.yaml
+    init: true
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: ~/
+        target: /home/host
