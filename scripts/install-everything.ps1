@@ -219,6 +219,7 @@ try {
             $check_again = 'x'
             $docker_tries++
             $docker_status_now = (docker version)
+            $docker_offline = $docker_status_now.Contains("error")
             Start-Sleep -seconds 1
            
             # if ($docker_attempt1 -eq $true -And $docker_attempt2 -eq $true){
@@ -240,11 +241,11 @@ try {
         }
         # @TODO: ask user every x number of tries if they would like to keep pinging docker. ie:
         # while ((!($docker_attempt2)) -Or $docker_tries -lt 100 -Or $check_again -ieq '')
-        while (!($docker_status_now.Contains("error")) -Or $check_again -ieq 'n')
+        while (-Not $docker_offline -Or $check_again -ieq 'n')
         # debug
         # while ((!($docker_attempt2)) -Or $check_again -ieq 'y')
 
-        if ($docker_succes2) {
+        if ($docker_offline -eq $false) {
             # // commenting out background building process because this is NOT quite ready.
             # // would like to run in separate window and then use these new images in devel's playground 
             # // if they are more up to date than the hub - which could be a difficult process
