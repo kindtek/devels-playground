@@ -28,7 +28,7 @@ scripts\wsl-docker-import
 #### 1. At the main menu, type "config" then hit ENTER to specify any compatible Linux distro on [hub.docker.com](https://hub.docker.com/) you would like to use with WSL. The format is
 
 - source: [kindtek](https://hub.docker.com/u/kindtek)
-- name: [devp](https://hub.docker.com/r/kindtek/devp/tags):[ubuntu-skinny](https://hub.docker.com/layers/kindtek/devp/ubuntu-skinny/images/)
+- name: [devp](https://hub.docker.com/r/kindtek/devp/tags):[ubuntu-git](https://hub.docker.com/layers/kindtek/devp/ubuntu-git/images/sha256-f0469de765c03873f8c5df55cf2d2ea3dda4a3eb98b575f00d29696193d6ca08?context=repo)
 
 ---
 
