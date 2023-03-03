@@ -245,7 +245,8 @@ function docker_container_start {
     $WSL_DOCKER_IMG_ID = $WSL_DOCKER_IMG_ID[0]
     $docker_image_id_path = "$install_path/.image_id"
     $docker_container_id_path = "$install_path/.container_id"
-    Write-Host $WSL_DOCKER_IMG_ID | Out-File -FilePath $docker_image_id_path
+    New-Item -ItemType File -Name ".image_id" -Value $WSL_DOCKER_IMG_ID -Path $install_path
+    # Write-Host $WSL_DOCKER_IMG_ID | Out-File -FilePath $docker_image_id_path
     # ^^^^^^^ image_id saved here ^^^^^^
     Read-Host " debug 1 ".ForegroundColor magenta
 
