@@ -260,7 +260,6 @@ function docker_container_start {
     
     Write-Host "docker run -id --cidfile=$docker_container_id_path --name=$distro-$WSL_DOCKER_IMG_ID --sig-proxy=false $WSL_DOCKER_IMG_ID"
     docker run -id --cidfile=$docker_container_id_path --name=$distro-$WSL_DOCKER_IMG_ID --sig-proxy=false $WSL_DOCKER_IMG_ID    
-    # ^^^^^^^ container_id saved here ^^^^^^
     Read-Host " debug 2".ForegroundColor magenta
 
     # get first line of docker_container_id_path
