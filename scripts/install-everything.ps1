@@ -218,7 +218,7 @@ try {
         do {
             $check_again = 'x'
             $docker_tries++
-            $docker_status_now = (docker version)
+            $docker_status_now = docker version
             $docker_offline = $docker_status_now -like "*error*"
             Start-Sleep -seconds 1
            
