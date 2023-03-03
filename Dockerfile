@@ -4,6 +4,12 @@ FROM ubuntu:latest AS d2w_skinny
 ARG username=${username:-dev0}
 ARG groupname=${groupname:-dev}
 
+# # uncomment to set glob exp pattern matching default
+# RUN echo "shopt -s histappend" >> /etc/profile
+
+# mount w drive - set up drive w in windows using https://allthings.how/how-to-partition-a-hard-drive-on-windows-11/
+# RUN mkdir /mnt/w && mount -t drvfs w: /mnt/w
+
 # set up basic utils
 RUN apt-get update -yq && \
     apt-get upgrade -y && \
@@ -15,64 +21,63 @@ RUN apt-get update -yq && \
 #     adduser --system --home /home/${username} --shell /bin/bash --uid 1000 --gid 1000 --disabled-password ${username}  
 # set up groups
 RUN addgroup --gid 1001 ${groupname} && \
-    addgroup --gid 1008 devbp
+    addgroup --gid 1008 devel
 
 RUN adduser --home /home/${username} --shell /bin/bash --uid 1000 --disabled-password ${username}
 
-# make default user 
+# make default user in wsl
 RUN echo "[user]\ndefault=${username}" >> /etc/wsl.conf
-RUN mkdir -p repos/kindtek
-RUN chown -R ${username} repos
+
 # custom user setup
 USER ${username}
 # install cdir on nonroot user - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
 RUN pip3 install cdir --user && \
-    echo "alias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\ndevw=devels-workshop\ndevp=devels-playground\nkindtek=~/repos/kindtek" >> ~/.bashrc
+    echo "\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\ndevw=devels-workshop\ndevp=devels-playground\nkindtek=~/repos/kindtek" >> ~/.bashrc
 
 # finish cdir setup, add repos directory, copy custom user setup to skel
-# update all the paths (with etc/skel)
 RUN export PATH=~/.local/bin:~/repos/kindtek/devels-workshop/scripts:$PATH
+# enable regexp matching
+# RUN shopt -s extglob
 
+# switch back to root to setup
 USER root
-RUN cp -r ./home/${username}/.local/bin /usr/local
-RUN cp -r /home/${username}/. /etc/skel/
+# RUN shopt -s extglob && \
+RUN cp -r ./home/${username}/.local/bin /usr/local && \
+    cp -r /home/${username}/. /etc/skel/
 
-# add devel user using custom user setup
+# add devel and host users using custom user setup
 RUN adduser --system --home /home/devel --shell /bin/bash --disabled-password devel
+RUN adduser --system --home /home/host --shell /bin/bash --disabled-password host
+
 # RUN sed -e 's;^# \(%sudo.*NOPASSWD.*\);\1;g' -i /etc/sudoers
+RUN chown -R ${username} /home/host
+# RUN chown -R ${username} /home/devel
 
-RUN chown -R ${username} /home/devel
-WORKDIR /home/devel/repos/kindtek
-RUN git clone https://github.com/kindtek/devels-playground
-
-# add devel and dev to sudo and devbp
+# add devel and host to sudo and devel groups
 RUN usermod -aG sudo devel && usermod -aG sudo ${username} && \
-    usermod -aG devbp devel && usermod -aG devbp ${username}
+    usermod -aG devel devel && usermod -aG devel ${username}
 
 # need to use sudo from now on
 RUN apt-get -y install sudo && \
-    # add devel and ${username} to sudo group
-    sudo adduser ${username} sudo && \
-    sudo adduser devel sudo
+    # add ${username} to sudo group
+    sudo adduser ${username} sudo 
+# uncomment to add sudo priveleges for host and devel
+# RUN sudo adduser devel sudo && \
+#     sudo adduser host sudo
 
 # ensure no password and sudo runs as root
 RUN passwd -d ${username} && passwd -d devel && passwd -d root && passwd -l root
+RUN passwd -d ${username} && passwd -d host && passwd -d root && passwd -l root
 
-# mount w drive - set up drive w in windows using https://allthings.how/how-to-partition-a-hard-drive-on-windows-11/
-# RUN sudo mkdir /mnt/w && sudo mount -t drvfs w: /mnt/w
+RUN ln -s /devel /home/devel
+RUN chown -R devel:devel /home/devel
 
 USER ${username}
-WORKDIR /home/${username}
 
 FROM d2w_skinny AS d2w_phat
 USER root
-
+# make man available
 RUN yes | unminimize
-USER ${username}
-WORKDIR /home/${username}
-
-
-
 # for powershell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
 RUN wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
@@ -80,10 +85,14 @@ RUN wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/pac
 ## Register the Microsoft repository GPG keys
 RUN dpkg -i packages-microsoft-prod.deb
 
-RUN apt-get update -yq && \
-    apt-get install -y gedit powershell
+RUN sudo apt-get update -yq && \
+    sudo apt-get install -y gedit powershell
+
+# set up /devel folder as symbolic link to /home/devel and clone repository(ies)
+WORKDIR /devel
+RUN git clone https://github.com/kindtek/devels-playground
+RUN cd devels-playground && git submodule update --force --recursive --init --remote
 USER ${username}
-WORKDIR /home/${username}
 
 # brave browser/gui/media support
 FROM d2w_phat as d2w_phatt
@@ -106,8 +115,7 @@ RUN mkdir -p /etc/apt/keyrings && \
 # DOCKER
 RUN apt-get update && apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io 
 USER ${username}
-WORKDIR /home
-
+RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> ~/.bashrc && . ~/.bashrc
 
 # for heavy gui and cuda
 FROM d2w_phatter as d2w_phattest
@@ -116,7 +124,6 @@ RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3
 # CUDA
 RUN sudo apt-get -y install nvidia-cuda-toolkit
 USER ${username}
-WORKDIR /home
 
 # VSCODE
 # RUN apt-get -y install apt-transport-https wget -y

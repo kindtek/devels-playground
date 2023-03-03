@@ -6,4 +6,4 @@
 @REM ubuntu
 docker compose -f ../docker-compose.ubuntu.yaml up
 @REM alpine
-docker compose -f ../docker-compose.alpine.yaml up
+@REM docker compose -f ../docker-compose.alpine.yaml up

@@ -19,7 +19,7 @@ services:
         target: /var/run/docker.sock
       - type: bind
         source: ~/
-        target: /home/devel
+        target: /home/host
 
   phat:
     entrypoint:
@@ -39,7 +39,7 @@ services:
         target: /var/run/docker.sock
       - type: bind
         source: ~/
-        target: /home/devel
+        target: /home/host
 
   phatt:
     entrypoint:
@@ -59,7 +59,7 @@ services:
         target: /var/run/docker.sock
       - type: bind
         source: ~/
-        target: /home/devel
+        target: /home/host
 
   phatter:
     entrypoint:
@@ -79,7 +79,7 @@ services:
         target: /var/run/docker.sock
       - type: bind
         source: ~/
-        target: /home/devel
+        target: /home/host
 
   phattest:
     entrypoint:
@@ -99,4 +99,4 @@ services:
         target: /var/run/docker.sock
       - type: bind
         source: ~/
-        target: /home/devel
+        target: /home/host

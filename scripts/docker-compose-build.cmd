@@ -6,7 +6,7 @@
 @REM ubuntu
 docker compose -f ../docker-compose.ubuntu.yaml build
 @REM alpine
-docker compose -f ../docker-compose.alpine.yaml build
+@REM docker compose -f ../docker-compose.alpine.yaml build
 
 @REM both
 @REM docker compose -f ../docker-compose.ubuntu.yaml -f ../docker-compose.alpine.yaml up -d

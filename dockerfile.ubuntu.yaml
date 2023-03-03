@@ -4,8 +4,11 @@ FROM ubuntu:latest AS d2w_skinny
 ARG username=${username:-dev0}
 ARG groupname=${groupname:-dev}
 
-# # set glob exp pattern matching default
+# # uncomment to set glob exp pattern matching default
 # RUN echo "shopt -s histappend" >> /etc/profile
+
+# mount w drive - set up drive w in windows using https://allthings.how/how-to-partition-a-hard-drive-on-windows-11/
+# RUN mkdir /mnt/w && mount -t drvfs w: /mnt/w
 
 # set up basic utils
 RUN apt-get update -yq && \
@@ -22,17 +25,14 @@ RUN addgroup --gid 1001 ${groupname} && \
 
 RUN adduser --home /home/${username} --shell /bin/bash --uid 1000 --disabled-password ${username}
 
-# make default user 
+# make default user in wsl
 RUN echo "[user]\ndefault=${username}" >> /etc/wsl.conf
-    
-RUN mkdir -p repos/kindtek
-RUN chown -R ${username} repos
 
 # custom user setup
 USER ${username}
 # install cdir on nonroot user - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
 RUN pip3 install cdir --user && \
-    echo "alias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\ndevw=devels-workshop\ndevp=devels-playground\nkindtek=~/repos/kindtek" >> ~/.bashrc
+    echo "\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\ndevw=devels-workshop\ndevp=devels-playground\nkindtek=~/repos/kindtek" >> ~/.bashrc
 
 # finish cdir setup, add repos directory, copy custom user setup to skel
 RUN export PATH=~/.local/bin:~/repos/kindtek/devels-workshop/scripts:$PATH
@@ -51,7 +51,7 @@ RUN adduser --system --home /home/host --shell /bin/bash --disabled-password hos
 
 # RUN sed -e 's;^# \(%sudo.*NOPASSWD.*\);\1;g' -i /etc/sudoers
 RUN chown -R ${username} /home/host
-RUN chown -R ${username} /home/devel
+# RUN chown -R ${username} /home/devel
 
 # add devel and host to sudo and devel groups
 RUN usermod -aG sudo devel && usermod -aG sudo ${username} && \
@@ -59,21 +59,18 @@ RUN usermod -aG sudo devel && usermod -aG sudo ${username} && \
 
 # need to use sudo from now on
 RUN apt-get -y install sudo && \
-    # add devel and ${username} to sudo group
+    # add ${username} to sudo group
     sudo adduser ${username} sudo 
-    # uncomment to add sudo priveleges for host and devel
-    # && \
-    # sudo adduser devel sudo && \
-    # sudo adduser host sudo
+# uncomment to add sudo priveleges for host and devel
+# RUN sudo adduser devel sudo && \
+#     sudo adduser host sudo
 
 # ensure no password and sudo runs as root
 RUN passwd -d ${username} && passwd -d devel && passwd -d root && passwd -l root
 RUN passwd -d ${username} && passwd -d host && passwd -d root && passwd -l root
 
-RUN chown :devel /home/devel
-
-# mount w drive - set up drive w in windows using https://allthings.how/how-to-partition-a-hard-drive-on-windows-11/
-# RUN sudo mkdir /mnt/w && sudo mount -t drvfs w: /mnt/w
+RUN ln -s /devel /home/devel
+RUN chown -R devel:devel /home/devel
 
 USER ${username}
 
@@ -92,7 +89,7 @@ RUN sudo apt-get update -yq && \
     sudo apt-get install -y gedit powershell
 
 # set up /devel folder as symbolic link to /home/devel and clone repository(ies)
-RUN ln -s /home/devel /devel
+WORKDIR /devel
 RUN git clone https://github.com/kindtek/devels-playground
 RUN cd devels-playground && git submodule update --force --recursive --init --remote
 USER ${username}
