@@ -40,7 +40,7 @@ function install_all {
 
 
     Write-Host "`r`nThe following programs will now be installed:" -ForegroundColor Magenta
-    Write-Host "`t- WinGet`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktopr`n`t- Windows Terminal" -ForegroundColor Magenta
+    Write-Host "`t- WinGet`r`n`t- Chocolatey`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktopr`n`t- Windows Terminal" -ForegroundColor Magenta
     Write-Host "`r`nClose window to quit at any time"
 
     $software_name = "WinGet"
@@ -52,6 +52,23 @@ function install_all {
         Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
         &$winget = Invoke-Expression -command "devels-advocate/get-latest-winget.ps1" 
         Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.winget-installed"
+        Pop-Location
+    }
+    else {
+        Write-Host "$software_name already installed"  -ForegroundColor "Blue"
+    }
+
+    $software_name = "Chocolatey"
+    if (!(Test-Path -Path "$git_path/.choco-installed" -PathType Leaf)) {
+        Push-Location $temp_repo_scripts_path
+        # install choco 
+        $host.UI.RawUI.BackgroundColor = "Black"
+        $choco = "devels-advocate/get-latest-choco.ps1"
+        Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
+        &$choco = Invoke-Expression -command "devels-advocate/get-latest-choco.ps1"         
+        $env:path += ";C:\ProgramData\chocoportable"
+        cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
+        Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.choco-installed"
         Pop-Location
     }
     else {
@@ -129,7 +146,7 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 
 try {
     # refresh environment variables
-    # cmd /c start powershell.exe "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
+    # cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
     if (Test-Path -Path "$parent_path/$repo_src_name") {
         Set-Location "$parent_path/$repo_src_name"
         # if git status works and finds devels-workshop repo, assume the install has been successfull and this script was ran once before
@@ -152,7 +169,8 @@ catch {
 
 try {
     # refresh environment variables
-    cmd /c start powershell.exe "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
+    # cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
+    RefreshEnv
     # Write-Host "parent path: $parent_path"
     Set-Location $parent_path
 
@@ -175,7 +193,7 @@ try {
 catch {}
 
 # refresh env again
-# cmd /c start powershell.exe "$git_path/scripts/choco/refresh-env.cmd" -Wait -WindowStyle Hidden
+# cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
 
 $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
 if ( $user_input -ine "n" ) {
