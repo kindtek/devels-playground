@@ -66,9 +66,8 @@ WORKDIR /home/${username}
 
 FROM d2w_skinny AS d2w_phat
 USER root
-
+# make man available
 RUN yes | unminimize
-
 
 # for powershell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
@@ -80,6 +79,7 @@ RUN dpkg -i packages-microsoft-prod.deb
 RUN apt-get update -yq && \
     apt-get install -y gedit powershell
 USER ${username}
+WORKDIR /home/${username}
 
 # brave browser/gui/media support
 FROM d2w_phat as d2w_phatt
@@ -89,6 +89,8 @@ RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg a
 
 RUN sudo apt-get update -yq && \
     sudo apt-get install -y gimp nautilus vlc x11-apps apt-transport-https software-properties-common brave-browser
+USER ${username}
+WORKDIR /home
 
 # for docker in docker
 FROM d2w_phatt as d2w_phatter
@@ -101,6 +103,7 @@ RUN mkdir -p /etc/apt/keyrings && \
 # DOCKER
 RUN apt-get update && apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io 
 USER ${username}
+WORKDIR /home
 
 
 # for heavy gui and cuda
@@ -109,6 +112,9 @@ FROM d2w_phatter as d2w_phattest
 RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3
 # CUDA
 RUN sudo apt-get -y install nvidia-cuda-toolkit
+USER ${username}
+WORKDIR /home
+
 # VSCODE
 # RUN apt-get -y install apt-transport-https wget -y
 # RUN wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | apt-key add -
