@@ -8,7 +8,7 @@
 
 ```bat
 git clone https://github.com/kindtek/devels-playground
-scripts\wsl-import-docker-image
+scripts\wsl-docker-import
 ```
 
 &nbsp;
