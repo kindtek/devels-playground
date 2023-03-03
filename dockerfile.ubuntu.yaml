@@ -17,8 +17,8 @@ RUN apt-get update -yq && \
 # RUN addgroup --system --gid 1001 ${groupname} && \
 #     adduser --system --home /home/${username} --shell /bin/bash --uid 1001 --gid 1001 --disabled-password ${username}  
 # set up groups
-RUN addgroup --gid 1001 ${groupname} 
-RUN addgroup --gid 888 angels
+RUN addgroup --gid 888 ${groupname} 
+RUN addgroup --gid 777 angels
 RUN addgroup --gid 666 devels
 
 RUN adduser --home /home/${username} --shell /bin/bash --uid 1000 --gID 1001 --disabled-password ${username}
@@ -40,7 +40,7 @@ RUN export PATH=~/.local/bin:~/repos/kindtek/devels-workshop/scripts:$PATH
 USER root
 
 # add devel and host users using custom user setup
-RUN adduser --system --home /home/host --shell /bin/bash --uid 888 --gid 888 --disabled-password host
+RUN adduser --system --home /home/host --shell /bin/bash --uid 777 --gid 777 --disabled-password host
 RUN usermod -aG angels host && usermod -aG angels ${username} 
 RUN adduser --system --home /home/devel --shell /bin/bash --uid 666 --gid 666 --disabled-password devel
 RUN usermod -aG devels devel && usermod -aG devels ${username} 
