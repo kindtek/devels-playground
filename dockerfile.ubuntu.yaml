@@ -5,7 +5,7 @@ ARG username=${username:-dev0}
 ARG groupname=${groupname:-dev}
 
 # # uncomment to set glob exp pattern matching default
-# RUN echo "shopt -s histappend" >> /etc/profile
+# RUN echo "\nshopt -s histappend\n" >> /etc/profile
 
 # set up basic utils
 RUN apt-get update -yq && \
@@ -23,14 +23,14 @@ RUN addgroup --gid 1001 ${groupname} && \
 RUN adduser --home /home/${username} --shell /bin/bash --uid 1000 --disabled-password ${username}
 
 # make default user in wsl
-RUN echo "[user]\ndefault=${username}" >> /etc/wsl.conf
+RUN echo "\n[user]\ndefault=${username}\n" >> /etc/wsl.conf
 
 # custom user setup
 USER ${username}
 
 # install cdir on nonroot user - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
 RUN pip3 install cdir --user && \
-    echo "\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\ndevw=devels-workshop\ndevp=devels-playground\nkindtek=~/repos/kindtek" >> ~/.bashrc
+    echo "\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\ndevw=devels-workshop\ndevp=devels-playground\nkindtek=~/repos/kindtek\n" >> ~/.bashrc
 
 # finish cdir setup, add repos directory, copy custom user setup to skel
 RUN export PATH=~/.local/bin:~/repos/kindtek/devels-workshop/scripts:$PATH
@@ -116,7 +116,7 @@ RUN mkdir -p /etc/apt/keyrings && \
 # DOCKER
 RUN apt-get update && apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io 
 USER ${username}
-RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> ~/.bashrc && . ~/.bashrc
+RUN echo "export DOCKER_HOST=tcp://localhost:2375\n" >> ~/.bashrc && . ~/.bashrc
 
 # for heavy gui and cuda
 FROM d2w_phatter as d2w_phattest
