@@ -17,7 +17,7 @@
 	path = scripts/choco
 	shallow = false
 	url = https://github.com/kindtek/choco
-	branch = refresh-env
+	branch = devels-workshop
 	recurse = true
 [submodule "devels-playground"]
 	active = true
