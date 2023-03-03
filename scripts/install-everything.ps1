@@ -245,13 +245,13 @@ try {
             # &$cmd_command = cmd /c start powershell.exe -Command "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1" -WindowStyle "Maximized"
             # Write-Host "`r`n" -BackgroundColor "Black"
             $host.UI.RawUI.BackgroundColor = "Black"
-            $devs_playground = "$git_path/devels-playground/scripts/wsl-import-docker-image.cmd"
-            &$devs_playground = cmd /c start powershell.exe -Command "$git_path/devels-playground/scripts/wsl-import-docker-image.cmd"
+            $devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
+            &$devs_playground = cmd /c start powershell.exe -Command "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
         }
         else {
             Write-Host "Failed to launch docker. Not able to start Devel's Playground. Please restart and run the script again:" -ForegroundColor "Red"
-            Write-Host "cmd kindtek/devels-workshop/devels-playground/scripts/wsl-import-docker-image"
-            Write-Host "powershell.exe ./kindtek/devels-workshop/devels-playground/scripts/wsl-import-docker-image.ps1"
+            Write-Host "cmd kindtek/devels-workshop/devels-playground/scripts/wsl-docker-import"
+            Write-Host "powershell.exe ./kindtek/devels-workshop/devels-playground/scripts/wsl-docker-import.ps1"
 
         }
     }
