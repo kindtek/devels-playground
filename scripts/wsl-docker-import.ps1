@@ -301,8 +301,11 @@ function docker_container_start {
         docker attach $WSL_DOCKER_CONTAINER_ID
 
     }
-    Write-Host "docker rename $distro-$WSL_DOCKER_IMG_ID $distro-$WSL_DOCKER_CONTAINER_ID"
-    docker rename "$distro-$WSL_DOCKER_IMG_ID $distro-$WSL_DOCKER_CONTAINER_ID"
+
+    $docker_img_cont_old_name = "$distro-$WSL_DOCKER_IMG_ID"
+    $docker_img_cont_new_name = "$distro-$WSL_DOCKER_CONTAINER_ID"
+    Write-Host "docker rename $docker_img_cont_old_name $docker_img_cont_new_name
+    docker rename docker rename $docker_img_cont_old_name $docker_img_cont_new_name
 
     Write-Host "`r`nclosing test container...`r`n========================================================================"
 
