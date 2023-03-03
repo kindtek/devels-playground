@@ -65,7 +65,9 @@ function install_all {
         $host.UI.RawUI.BackgroundColor = "Black"
         $choco = "devels-advocate/get-latest-choco.ps1"
         Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
-        &$choco = Invoke-Expression -command "devels-advocate/get-latest-choco.ps1"         
+        Push-Location ..
+        &$choco = Invoke-Expression -command "devels-advocate/get-latest-choco.ps1" 
+        Pop-Location        
         $env:path += ";C:\ProgramData\chocoportable"
         cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
         Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.choco-installed"
