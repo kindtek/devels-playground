@@ -250,7 +250,7 @@ try {
         # debug
         # while ((!($docker_attempt2)) -Or $check_again -ieq 'y')
 
-        if ($docker_online -eq $false) {
+        if ($docker_online -eq $true) {
             # // commenting out background building process because this is NOT quite ready.
             # // would like to run in separate window and then use these new images in devel's playground 
             # // if they are more up to date than the hub - which could be a difficult process
