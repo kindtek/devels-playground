@@ -215,15 +215,12 @@ try {
         # $docker_attempt1 = $false
         # $docker_attempt2 = $false
         $docker_tries = 0
+        $docker_online = $false
         do {
             $check_again = 'x'
             $docker_tries++
-            $docker_status_now = docker version
-            $docker_offline = $docker_status_now -like "*error*"
             Start-Sleep -seconds 1
-           
-            # if ($docker_attempt1 -eq $true -And $docker_attempt2 -eq $true){
-            if ($docker_offline -eq $true -And ($docker_tries % 10) -eq 0) {
+            if ($docker_online -eq $false -And ($docker_tries % 10) -eq 0) {
                 # start count over
                 # $docker_attempt1 = $docker_attempt2 = $false
                 # prompt to continue
@@ -231,6 +228,13 @@ try {
                 $check_again = Read-Host "Waited for $docker_tries seconds. keep waiting for docker to come online? ([y]n)"
                 $docker_tries = 0      
             }
+            try {
+                Get-Process 'com.docker.proxy'
+                $docker_online = $true
+            }
+            catch {}
+            # if ($docker_attempt1 -eq $true -And $docker_attempt2 -eq $true){
+
             # if (!($docker_status_now.Contains("error"))) {
             #     if ($docker_attempt1 -eq $true) {
             #         $docker_attempt2 = $true
@@ -242,7 +246,7 @@ try {
         }
         # @TODO: ask user every x number of tries if they would like to keep pinging docker. ie:
         # while ((!($docker_attempt2)) -Or $docker_tries -lt 100 -Or $check_again -ieq '')
-        while (-Not $docker_offline -Or $check_again -ieq 'n')
+        while (-Not $docker_online -Or $check_again -ieq 'n')
         # debug
         # while ((!($docker_attempt2)) -Or $check_again -ieq 'y')
 
