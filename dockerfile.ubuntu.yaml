@@ -139,6 +139,8 @@ RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> ~/.bashrc && . ~/.bashrc
 FROM devp_phatter as devp_phattest
 # GNOME
 RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3
+
+FROM devp_phattest as devp_phatso
 # CUDA
 RUN sudo apt-get -y install nvidia-cuda-toolkit
 USER ${username}
