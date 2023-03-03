@@ -58,6 +58,7 @@ function install_all {
         Write-Host "$software_name already installed"  -ForegroundColor "Blue"
     }
 
+    # @TODO: since this gave so many errors, use git to install from source - the current way does like it may be better to stay up to date (rather than using a fork or origin choco repo)
     $software_name = "Chocolatey"
     if (!(Test-Path -Path "$git_path/.choco-installed" -PathType Leaf)) {
         # getting error-0x80010135 path too long error when unzipping.. unzip operation at the shortest path
