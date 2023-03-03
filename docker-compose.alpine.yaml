@@ -21,14 +21,14 @@ services:
         source: ~/
         target: /home/devel
 
-  phat-dockerless:
+  phat:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/d2w:alpine-phat-dockerless
+    image: kindtek/d2w:alpine-phat
     build:
       context: .
-      target: d2w_phat-dockerless
+      target: d2w_phat
       args:
         - username=${username:-dev0}
       dockerfile: dockerfile.alpine.yaml
@@ -41,14 +41,14 @@ services:
       - type: bind
         source: ~/
         target: /home/devel
-  phat:
+  phatt:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/d2w:alpine-phat
+    image: kindtek/d2w:alpine-phatt
     build:
       context: .
-      target: d2w_phat
+      target: d2w_phatt
       args:
         - username=${username:-dev0}
       dockerfile: dockerfile.alpine.yaml

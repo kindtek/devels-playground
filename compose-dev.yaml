@@ -20,14 +20,14 @@ services:
       source: ~/
       target: /home/devel
 
-  phat-dockerless:
+  phat:
     entrypoint:
     - sleep
     - infinity
-    image: kindtek/d2w:ubuntu-phat-dockerless
+    image: kindtek/d2w:ubuntu-phat
     build:
       context: .
-      target: d2w_phat-dockerless
+      target: d2w_phat
       args: 
       - username=${username:-dev0}
       dockerfile: dockerfile.ubuntu.yaml
@@ -40,14 +40,14 @@ services:
       source: ~/
       target: /home/devel
   
-  phat:
+  phatt:
     entrypoint:
     - sleep
     - infinity
-    image: kindtek/d2w:ubuntu-phat
+    image: kindtek/d2w:ubuntu-phatt
     build:
       context: .
-      target: d2w_phat
+      target: d2w_phatt
       args: 
       - username=${username:-dev0}
       dockerfile: dockerfile.ubuntu.yaml

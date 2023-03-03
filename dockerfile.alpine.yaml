@@ -60,7 +60,7 @@ RUN sudo passwd -d root && \
 USER ${username}:devbp
 WORKDIR /home/${username}
 
-FROM d2w_skinny AS d2w_phat-dockerless
+FROM d2w_skinny AS d2w_phat
 USER root:devbp
 # TODO: add audio support with - alsa-base pulseaudio (ubuntu packages need to be verified/updated for alpine)
 RUN apk update && \
@@ -88,7 +88,7 @@ USER ${username}:devbp
 
 # TODO: https://github.com/mbacchi/brave-docker
 
-FROM d2w_phat-dockerless as d2w_phat
+FROM d2w_phat as d2w_phatt
 USER root:devbp
 ARG ALPINE_VERSION=${ALPINE_VERSION:-v3.17}
 # VSCODE

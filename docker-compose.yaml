@@ -1,4 +1,5 @@
 version: '3.8'
+name: devels-workshop-ubuntu
 services:
   skinny:
     entrypoint:
@@ -20,26 +21,6 @@ services:
         source: ~/
         target: /home/devel
 
-  phat-dockerless:
-    entrypoint:
-      - sleep
-      - infinity
-    image: kindtek/d2w:ubuntu-phat-dockerless
-    build:
-      context: .
-      target: d2w_phat-dockerless
-      args:
-        - username=${username:-dev0}
-      dockerfile: dockerfile.ubuntu.yaml
-    init: true
-    volumes:
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-      - type: bind
-        source: ~/
-        target: /homdevelst
-
   phat:
     entrypoint:
       - sleep
@@ -58,4 +39,64 @@ services:
         target: /var/run/docker.sock
       - type: bind
         source: ~/
-        target: /homdevelst
+        target: /home/devel
+
+  phatt:
+    entrypoint:
+      - sleep
+      - infinity
+    image: kindtek/d2w:ubuntu-phatt
+    build:
+      context: .
+      target: d2w_phatt
+      args:
+        - username=${username:-dev0}
+      dockerfile: dockerfile.ubuntu.yaml
+    init: true
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: ~/
+        target: /home/devel
+
+  phatter:
+    entrypoint:
+      - sleep
+      - infinity
+    image: kindtek/d2w:ubuntu-phatter
+    build:
+      context: .
+      target: d2w_phatter
+      args:
+        - username=${username:-dev0}
+      dockerfile: dockerfile.ubuntu.yaml
+    init: true
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: ~/
+        target: /home/devel
+
+  phattest:
+    entrypoint:
+      - sleep
+      - infinity
+    image: kindtek/d2w:ubuntu-phattest
+    build:
+      context: .
+      target: d2w_phattest
+      args:
+        - username=${username:-dev0}
+      dockerfile: dockerfile.ubuntu.yaml
+    init: true
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: ~/
+        target: /home/devel
