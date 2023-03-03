@@ -247,7 +247,6 @@ function docker_container_start {
     New-Item -ItemType File -Name ".image_id" -Value $WSL_DOCKER_IMG_ID -Path $install_path
     # Write-Host $WSL_DOCKER_IMG_ID | Out-File -FilePath $docker_image_id_path
     # ^^^^^^^ image_id saved here ^^^^^^
-    Read-Host " debug 1 ".ForegroundColor magenta
 
     Write-Host "`r`n "
     Write-Host "========================================================================"
@@ -259,7 +258,6 @@ function docker_container_start {
     
     Write-Host "docker run -id --cidfile=$docker_container_id_path --name=$distro-$WSL_DOCKER_IMG_ID --sig-proxy=false $WSL_DOCKER_IMG_ID"
     docker run -id --cidfile=$docker_container_id_path --name=$distro-$WSL_DOCKER_IMG_ID --sig-proxy=false $WSL_DOCKER_IMG_ID    
-    Read-Host " debug 2".ForegroundColor magenta
 
     # get first line of docker_container_id_path
     $WSL_DOCKER_CONTAINER_ID_RAW = @(Get-Content -Path $docker_container_id_path -First 1)
