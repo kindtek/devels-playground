@@ -5,10 +5,10 @@ services:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/d2w:ubuntu-skinny
+    image: kindtek/devp:ubuntu-skinny
     build:
       context: .
-      target: d2w_skinny
+      target: devp_skinny
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
@@ -24,10 +24,10 @@ services:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/d2w:ubuntu-git
+    image: kindtek/devp:ubuntu-git
     build:
       context: .
-      target: d2w_git
+      target: devp_git
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
@@ -43,10 +43,10 @@ services:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/d2w:ubuntu-phat
+    image: kindtek/devp:ubuntu-phat
     build:
       context: .
-      target: d2w_phat
+      target: devp_phat
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
@@ -63,10 +63,10 @@ services:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/d2w:ubuntu-phatt
+    image: kindtek/devp:ubuntu-phatt
     build:
       context: .
-      target: d2w_phatt
+      target: devp_phatt
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
@@ -83,10 +83,10 @@ services:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/d2w:ubuntu-phatter
+    image: kindtek/devp:ubuntu-phatter
     build:
       context: .
-      target: d2w_phatter
+      target: devp_phatter
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
@@ -99,14 +99,33 @@ services:
         source: ~/
         target: /home/host
 
-  # phattest:
+  phattest:
+    entrypoint:
+      - sleep
+      - infinity
+    image: kindtek/devp:ubuntu-phattest
+    build:
+      context: .
+      target: devp_phattest
+      args:
+        - username=${username:-gabriel}
+      dockerfile: dockerfile.ubuntu.yaml
+    init: true
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: ~/
+        target: /home/host
+  # phatso:
   #   entrypoint:
   #     - sleep
   #     - infinity
-  #   image: kindtek/d2w:ubuntu-phattest
+  #   image: kindtek/devp:ubuntu-phatso
   #   build:
   #     context: .
-  #     target: d2w_phattest
+  #     target: devp_phatso
   #     args:
   #       - username=${username:-gabriel}
   #     dockerfile: dockerfile.ubuntu.yaml

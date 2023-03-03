@@ -1,6 +1,6 @@
 # to build, for exemple, run: 
 # `username=mine groupname=ours docker run -d -i`
-FROM alpine:latest AS d2w_skinny
+FROM alpine:latest AS devp_skinny
 ARG username=${username:-gabriel}
 ARG groupname=${groupname:-archangels}
 
@@ -60,7 +60,7 @@ RUN sudo passwd -d root && \
 USER ${username}:devbp
 WORKDIR /home/${username}
 
-FROM d2w_skinny AS d2w_phat
+FROM devp_skinny AS devp_phat
 USER root:devbp
 # TODO: add audio support with - alsa-base pulseaudio (ubuntu packages need to be verified/updated for alpine)
 RUN apk update && \
@@ -88,7 +88,7 @@ USER ${username}:devbp
 
 # TODO: https://github.com/mbacchi/brave-docker
 
-FROM d2w_phat as d2w_phatt
+FROM devp_phat as devp_phatt
 USER root:devbp
 ARG ALPINE_VERSION=${ALPINE_VERSION:-v3.17}
 # VSCODE

@@ -5,10 +5,10 @@ services:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/d2w:ubuntu-skinny
+    image: kindtek/devp:ubuntu-skinny
     build:
       context: .
-      target: d2w_skinny
+      target: devp_skinny
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
@@ -25,10 +25,10 @@ services:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/d2w:ubuntu-phat
+    image: kindtek/devp:ubuntu-phat
     build:
       context: .
-      target: d2w_phat
+      target: devp_phat
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
@@ -45,10 +45,10 @@ services:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/d2w:ubuntu-phatt
+    image: kindtek/devp:ubuntu-phatt
     build:
       context: .
-      target: d2w_phatt
+      target: devp_phatt
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
@@ -65,10 +65,10 @@ services:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/d2w:ubuntu-phatter
+    image: kindtek/devp:ubuntu-phatter
     build:
       context: .
-      target: d2w_phatter
+      target: devp_phatter
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
@@ -85,10 +85,10 @@ services:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/d2w:ubuntu-phattest
+    image: kindtek/devp:ubuntu-phattest
     build:
       context: .
-      target: d2w_phattest
+      target: devp_phattest
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
