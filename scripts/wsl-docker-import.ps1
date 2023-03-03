@@ -316,6 +316,13 @@ function export_image {
     # directory structure: 
     # %mount_drive%:\%install_directory%\%save_directory%
     # ie: C:\wsl-distros\docker
+    Write-Host "install_loc: $install_location"
+    Write-Host "save_loc: $save_location"
+    Write-Host "distro: $distro"
+    Write-Host "WSL_DOCKER_CONTAINER_ID: $WSL_DOCKER_CONTAINER_ID"
+
+
+
     $image_save_path = "$save_location/$distro.tar"
     Write-Host "exporting image as container ($WSL_DOCKER_CONTAINER_ID) into .tar file..."
     Write-Host "docker export $WSL_DOCKER_CONTAINER_ID > $image_save_path"
