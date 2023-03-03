@@ -258,14 +258,14 @@ function docker_container_start {
     Write-Host "this container is running as a local copy of the image $image_repo_image_name"
     Write-Host "`r`n"
     
-    Write-Host "docker run -itd --cidfile=$docker_container_id_path --name=$distro-$WSL_DOCKER_IMG_ID --sig-proxy=false $WSL_DOCKER_IMG_ID"
+    Write-Host "docker run -id --cidfile=$docker_container_id_path --name=$distro-$WSL_DOCKER_IMG_ID --sig-proxy=false $WSL_DOCKER_IMG_ID"
     docker run -itd --cidfile=$docker_container_id_path --name=$distro-$WSL_DOCKER_IMG_ID --sig-proxy=false $WSL_DOCKER_IMG_ID    
     # ^^^^^^^ container_id saved here ^^^^^^
     Read-Host " debug 2".ForegroundColor magenta
 
     # get first line of docker_container_id_path
     $WSL_DOCKER_CONTAINER_ID = Get-Content -Path $docker_container_id_path -TotalCount 1
-    $WSL_DOCKER_CONTAINER_ID = $WSL_DOCKER_CONTAINER_ID.Substring(0,5)
+    $WSL_DOCKER_CONTAINER_ID = $WSL_DOCKER_CONTAINER_ID.Substring(0, 5)
     # Write-Host "containerid: $WSL_DOCKER_CONTAINER_ID"
     # Write-Host "docker stop $WSL_DOCKER_CONTAINER_ID"
     # docker stop $WSL_DOCKER_CONTAINER_ID
