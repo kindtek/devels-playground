@@ -7,9 +7,6 @@ ARG groupname=${groupname:-dev}
 # # uncomment to set glob exp pattern matching default
 # RUN echo "shopt -s histappend" >> /etc/profile
 
-# mount w drive - set up drive w in windows using https://allthings.how/how-to-partition-a-hard-drive-on-windows-11/
-# RUN mkdir /mnt/w && mount -t drvfs w: /mnt/w
-
 # set up basic utils
 RUN apt-get update -yq && \
     apt-get upgrade -y && \
@@ -30,6 +27,7 @@ RUN echo "[user]\ndefault=${username}" >> /etc/wsl.conf
 
 # custom user setup
 USER ${username}
+
 # install cdir on nonroot user - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
 RUN pip3 install cdir --user && \
     echo "\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\ndevw=devels-workshop\ndevp=devels-playground\nkindtek=~/repos/kindtek" >> ~/.bashrc
@@ -59,7 +57,7 @@ RUN usermod -aG sudo devel && usermod -aG sudo ${username} && \
 
 # need to use sudo from now on
 RUN apt-get -y install sudo && \
-    # add ${username} to sudo group
+    # add devel and ${username} to sudo group
     sudo adduser ${username} sudo 
 # uncomment to add sudo priveleges for host and devel
 # RUN sudo adduser devel sudo && \
@@ -69,7 +67,10 @@ RUN apt-get -y install sudo && \
 RUN passwd -d ${username} && passwd -d devel && passwd -d root && passwd -l root
 RUN passwd -d ${username} && passwd -d host && passwd -d root && passwd -l root
 
+# set up /devel folder as symbolic link to /home/devel
 RUN ln -s /devel /home/devel
+WORKDIR /home/devel
+RUN mkdir repos repos/kindtek
 RUN chown -R devel:devel /home/devel
 
 USER ${username}
@@ -88,8 +89,8 @@ RUN dpkg -i packages-microsoft-prod.deb
 RUN sudo apt-get update -yq && \
     sudo apt-get install -y gedit powershell
 
-# set up /devel folder as symbolic link to /home/devel and clone repository(ies)
-WORKDIR /devel
+# clone repository(ies) to /devel
+WORKDIR /home/devel/repos/kindtek
 RUN git clone https://github.com/kindtek/devels-playground
 RUN cd devels-playground && git submodule update --force --recursive --init --remote
 USER ${username}
