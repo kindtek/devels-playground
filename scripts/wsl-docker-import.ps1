@@ -258,36 +258,36 @@ function docker_container_start {
     Write-Host "this container is running as a local copy of the image $image_repo_image_name"
     Write-Host "`r`n"
     
-    Write-Host "docker run -itd --cidfile=$docker_container_id_path --name=$distro-$WSL_DOCKER_IMG_ID --sig-proxy=false $WSL_DOCKER_IMG_ID"
-    docker run -itd --cidfile=$docker_container_id_path --name=$distro-$WSL_DOCKER_IMG_ID --sig-proxy=false $WSL_DOCKER_IMG_ID    
+    Write-Host "docker run -id --cidfile=$docker_container_id_path --name=$distro-$WSL_DOCKER_IMG_ID --sig-proxy=false $WSL_DOCKER_IMG_ID"
+    docker run -id --cidfile=$docker_container_id_path --name=$distro-$WSL_DOCKER_IMG_ID --sig-proxy=false $WSL_DOCKER_IMG_ID    
     # ^^^^^^^ container_id saved here ^^^^^^
     Read-Host " debug 2".ForegroundColor magenta
 
     # get first line of docker_container_id_path
     $WSL_DOCKER_CONTAINER_ID = Get-Content -Path $docker_container_id_path -TotalCount 1
-    $WSL_DOCKER_CONTAINER_ID = $WSL_DOCKER_CONTAINER_ID.Substring(0,5)
+    $WSL_DOCKER_CONTAINER_ID = $WSL_DOCKER_CONTAINER_ID.Substring(0, 5)
     # Write-Host "containerid: $WSL_DOCKER_CONTAINER_ID"
     # Write-Host "docker stop $WSL_DOCKER_CONTAINER_ID"
     # docker stop $WSL_DOCKER_CONTAINER_ID
     # Write-Host "docker start $WSL_DOCKER_CONTAINER_ID"
     # docker start $WSL_DOCKER_CONTAINER_ID
 
-    $install_path = "$install_path-$WSL_DOCKER_CONTAINER_ID"
+    $new_install_path = "$install_path-$WSL_DOCKER_CONTAINER_ID"
+    $old_install_path = $install_path
 
-    $null = New-Item -Path $install_path -ItemType Directory -Force -ErrorAction SilentlyContinue 
+    # $null = New-Item -Path $new_install_path -ItemType Directory -Force -ErrorAction SilentlyContinue 
     # Write-Host "Move-Item -Path $docker_image_id_path -Destination $install_path/.image_id"
     # Write-Host "Move-Item -Path $docker_container_id_path -Destination $install_path/.container_id"
     
-    Move-Item -Path $docker_image_id_path -Destination "$install_path/.image_id"
-    Move-Item -Path $docker_container_id_path -Destination "$install_path/.container_id"
+    Move-Item -LiteralPath $old_install_path -Destination $new_install_path
     # Write-Host "Rename-Item -Path $docker_image_id_path -NewName $install_path/.image_id"
     # Write-Host "Rename-Item -Path $docker_container_id_path -NewName $install_path/.container_id"
     
 
     # Rename-Item -Path $docker_image_id_path -NewName "$install_path/.image_id"
     # Rename-Item -Path $docker_container_id_path -NewName "$install_path/.container_id"
-    $docker_image_id_path = "$install_path/.image_id"
-    $docker_container_id_path = "$install_path/.container_id"
+    $docker_image_id_path = "$new_install_path/.image_id"
+    $docker_container_id_path = "$new_install_path/.container_id"
 
     if ($config -eq "config") {
         
