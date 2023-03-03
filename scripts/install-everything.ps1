@@ -60,15 +60,20 @@ function install_all {
 
     $software_name = "Chocolatey"
     if (!(Test-Path -Path "$git_path/.choco-installed" -PathType Leaf)) {
+        # getting error-0x80010135 path too long error when unzipping.. unzip operation at the shortest path
         Push-Location $temp_repo_scripts_path
+        Push-Location ..
+        Push-Location ..
         # install choco 
         $host.UI.RawUI.BackgroundColor = "Black"
         $choco = "devels-advocate/get-latest-choco.ps1"
         Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
-        &$choco = Invoke-Expression -command "devels-advocate/get-latest-choco.ps1" 
         $env:path += ";C:\ProgramData\chocoportable"
+        &$choco = Invoke-Expression -command "devels-advocate/get-latest-choco.ps1" 
         # cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
         Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.choco-installed"
+        Pop-Location
+        Pop-Location
         Pop-Location
     }
     else {
