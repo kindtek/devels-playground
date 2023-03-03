@@ -219,7 +219,7 @@ try {
             $check_again = 'x'
             $docker_tries++
             $docker_status_now = (docker version)
-            $docker_offline = $docker_status_now.Contains("error")
+            $docker_offline = $docker_status_now -like "*error*"
             Start-Sleep -seconds 1
            
             # if ($docker_attempt1 -eq $true -And $docker_attempt2 -eq $true){
