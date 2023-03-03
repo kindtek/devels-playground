@@ -4,8 +4,8 @@ FROM ubuntu:latest AS d2w_skinny
 ARG username=${username:-dev0}
 ARG groupname=${groupname:-dev}
 
-# set glob exp pattern matching default
-RUN echo "shopt -s histappend" >> /etc/profile
+# # set glob exp pattern matching default
+# RUN echo "shopt -s histappend" >> /etc/profile
 
 # set up basic utils
 RUN apt-get update -yq && \
@@ -36,12 +36,12 @@ RUN pip3 install cdir --user && \
 # finish cdir setup, add repos directory, copy custom user setup to skel
 RUN export PATH=~/.local/bin:~/repos/kindtek/devels-workshop/scripts:$PATH
 # enable regexp matching
-RUN shopt -s extglob
+# RUN shopt -s extglob
 
 # switch back to root to setup
 USER root
-RUN shopt -s extglob && \
-    cp -r ./home/${username}/.local/bin /usr/local && \
+# RUN shopt -s extglob && \
+RUN cp -r ./home/${username}/.local/bin /usr/local && \
     cp -r /home/${username}/. /etc/skel/
 
 # add devel user using custom user setup
@@ -75,7 +75,6 @@ FROM d2w_skinny AS d2w_phat
 USER root
 # make man available
 RUN yes | unminimize
-
 # for powershell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
 RUN wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
@@ -83,8 +82,8 @@ RUN wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/pac
 ## Register the Microsoft repository GPG keys
 RUN dpkg -i packages-microsoft-prod.deb
 
-RUN apt-get update -yq && \
-    apt-get install -y gedit powershell
+RUN sudo apt-get update -yq && \
+    sudo apt-get install -y gedit powershell
 USER ${username}
 WORKDIR /home/${username}
 
@@ -110,6 +109,7 @@ RUN mkdir -p /etc/apt/keyrings && \
 # DOCKER
 RUN apt-get update && apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io 
 USER ${username}
+RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> ~/.bashrc && . ~/.bashrc
 WORKDIR /home
 
 
