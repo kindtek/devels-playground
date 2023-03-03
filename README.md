@@ -36,7 +36,7 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 #### 1. At the main menu, type "config" then hit ENTER to specify any compatible Linux distro on [hub.docker.com](https://hub.docker.com/) you would like to use with WSL. The format is
 
 - source: [kindtek](https://hub.docker.com/u/kindtek)
-- name: [d2w](https://hub.docker.com/r/kindtek/d2w/tags):[ubuntu-skinny](https://hub.docker.com/layers/kindtek/d2w/ubuntu-skinny/images/)
+- name: [devp](https://hub.docker.com/r/kindtek/devp/tags):[ubuntu-skinny](https://hub.docker.com/layers/kindtek/devp/ubuntu-skinny/images/)
 
 ---
 
