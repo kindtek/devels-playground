@@ -229,6 +229,7 @@ try {
                 # prompt to continue
                 write-host "$docker_status_now`r`n"
                 $check_again = Read-Host "Waited for $docker_tries seconds. keep waiting for docker to come online? ([y]n)"
+                $docker_tries = 0      
             }
             # if (!($docker_status_now.Contains("error"))) {
             #     if ($docker_attempt1 -eq $true) {
