@@ -168,11 +168,17 @@ function dev_boilerplate {
     $WSL_DOCKER_CONTAINER_ID_RAW = @(docker_container_start $config $distro $image_repo_image_name $install_location)
     $WSL_DOCKER_CONTAINER_ID = $WSL_DOCKER_CONTAINER_ID_RAW[0]
 
+    Write-Host "WSL_DOCKER_CONTAINER_ID=$WSL_DOCKER_CONTAINER_ID"
+    Write-Host "before-install_location=$install_location"
+
     # now that we have container id, append it to install location and distro
     $install_location = "$install_location-$WSL_DOCKER_CONTAINER_ID"
+    Write-Host "after-install_location=$install_location"
 
+    Write-Host "distro=$distro"
     # update image id and container id path for later ref
     $distro = "$distro-$WSL_DOCKER_CONTAINER_ID"
+    Write-Host "distro=$distro"
 
     export_image $install_location $save_location $distro $WSL_DOCKER_CONTAINER_ID
     import_docker_tar $distro $install_location $save_location $wsl_version
