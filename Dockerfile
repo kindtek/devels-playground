@@ -1,8 +1,8 @@
 # to build, for exemple, run: 
 # `username=mine groupname=ours docker run -d -i`
 FROM ubuntu:latest AS d2w_skinny
-ARG username=${username:-dev0}
-ARG groupname=${groupname:-dev}
+ARG username=${username:-gabriel}
+ARG groupname=${groupname:-archangels}
 
 # # uncomment to set glob exp pattern matching default
 # RUN echo "shopt -s histappend" >> /etc/profile

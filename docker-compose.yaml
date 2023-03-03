@@ -10,7 +10,7 @@ services:
       context: .
       target: d2w_skinny
       args:
-        - username=${username:-dev0}
+        - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
@@ -30,7 +30,7 @@ services:
       context: .
       target: d2w_phat
       args:
-        - username=${username:-dev0}
+        - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
@@ -50,7 +50,7 @@ services:
       context: .
       target: d2w_phatt
       args:
-        - username=${username:-dev0}
+        - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
@@ -70,7 +70,7 @@ services:
       context: .
       target: d2w_phatter
       args:
-        - username=${username:-dev0}
+        - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
@@ -90,7 +90,7 @@ services:
       context: .
       target: d2w_phattest
       args:
-        - username=${username:-dev0}
+        - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:

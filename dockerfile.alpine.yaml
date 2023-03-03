@@ -1,8 +1,8 @@
 # to build, for exemple, run: 
 # `username=mine groupname=ours docker run -d -i`
 FROM alpine:latest AS d2w_skinny
-ARG username=${username:-dev0}
-ARG groupname=${groupname:-dev}
+ARG username=${username:-gabriel}
+ARG groupname=${groupname:-archangels}
 
 # set up basic utils
 RUN apk update && \

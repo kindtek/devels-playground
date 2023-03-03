@@ -10,7 +10,7 @@ services:
       context: .
       target: d2w_skinny
       args:
-        - username=${username:-dev0}
+        - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
@@ -20,17 +20,16 @@ services:
       - type: bind
         source: ~/
         target: /home/host
-
-  phat:
+  git:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/d2w:ubuntu-phat
+    image: kindtek/d2w:ubuntu-git
     build:
       context: .
-      target: d2w_phat
+      target: d2w_git
       args:
-        - username=${username:-dev0}
+        - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
@@ -40,6 +39,25 @@ services:
       - type: bind
         source: ~/
         target: /home/host
+  # phat:
+  #   entrypoint:
+  #     - sleep
+  #     - infinity
+  #   image: kindtek/d2w:ubuntu-phat
+  #   build:
+  #     context: .
+  #     target: d2w_phat
+  #     args:
+  #       - username=${username:-gabriel}
+  #     dockerfile: dockerfile.ubuntu.yaml
+  #   init: true
+  #   volumes:
+  #     - type: bind
+  #       source: /var/run/docker.sock
+  #       target: /var/run/docker.sock
+  #     - type: bind
+  #       source: ~/
+  #       target: /home/host
 
   # phatt:
   #   entrypoint:
@@ -50,7 +68,7 @@ services:
   #     context: .
   #     target: d2w_phatt
   #     args:
-  #       - username=${username:-dev0}
+  #       - username=${username:-gabriel}
   #     dockerfile: dockerfile.ubuntu.yaml
   #   init: true
   #   volumes:
@@ -70,7 +88,7 @@ services:
   #     context: .
   #     target: d2w_phatter
   #     args:
-  #       - username=${username:-dev0}
+  #       - username=${username:-gabriel}
   #     dockerfile: dockerfile.ubuntu.yaml
   #   init: true
   #   volumes:
@@ -90,7 +108,7 @@ services:
   # #     context: .
   # #     target: d2w_phattest
   # #     args:
-  # #       - username=${username:-dev0}
+  # #       - username=${username:-gabriel}
   # #     dockerfile: dockerfile.ubuntu.yaml
   # #   init: true
   # #   volumes:
