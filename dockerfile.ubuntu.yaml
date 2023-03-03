@@ -106,7 +106,7 @@ USER ${username}
 # for heavy gui and cuda
 FROM d2w_phatter as d2w_phattest
 # GNOME
-RUN DEBIAN_FRONTEND=noninteractive sudo apt-get -yq install gnome-session gdm3
+RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3
 # CUDA
 RUN sudo apt-get -y install nvidia-cuda-toolkit
 # VSCODE
