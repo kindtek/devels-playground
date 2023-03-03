@@ -301,7 +301,7 @@ function docker_container_start {
         Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!`r`n"
         $host.UI.RawUI.BackgroundColor = "Black"
         $host.UI.RawUI.ForegroundColor = "Cyan"  
-        Write-Host "`r`ndocker attach $WSL_DOCKER_CONTAINER_ID`r`n`r`n"  
+        Write-Host "`r`ndocker attach `"$WSL_DOCKER_CONTAINER_ID`"`r`n`r`n"  
         docker attach $WSL_DOCKER_CONTAINER_ID
 
     }
