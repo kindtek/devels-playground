@@ -18,7 +18,7 @@ RUN apt-get update -yq && \
 #     adduser --system --home /home/${username} --shell /bin/bash --uid 1000 --gid 1000 --disabled-password ${username}  
 # set up groups
 RUN addgroup --gid 1001 ${groupname} && \
-    addgroup --gid 1008 devbp
+    addgroup --gid 1008 devel
 
 RUN adduser --home /home/${username} --shell /bin/bash --uid 1000 --disabled-password ${username}
 
@@ -53,9 +53,9 @@ RUN adduser --system --home /home/host --shell /bin/bash --disabled-password hos
 RUN chown -R ${username} /home/host
 RUN chown -R ${username} /home/devel
 
-# add devel and host to sudo and devbp
+# add devel and host to sudo and devel groups
 RUN usermod -aG sudo devel && usermod -aG sudo ${username} && \
-    usermod -aG devbp devel && usermod -aG devbp ${username}
+    usermod -aG devel devel && usermod -aG devel ${username}
 
 # need to use sudo from now on
 RUN apt-get -y install sudo && \
@@ -69,6 +69,8 @@ RUN apt-get -y install sudo && \
 # ensure no password and sudo runs as root
 RUN passwd -d ${username} && passwd -d devel && passwd -d root && passwd -l root
 RUN passwd -d ${username} && passwd -d host && passwd -d root && passwd -l root
+
+RUN chown :devel /home/devel
 
 # mount w drive - set up drive w in windows using https://allthings.how/how-to-partition-a-hard-drive-on-windows-11/
 # RUN sudo mkdir /mnt/w && sudo mount -t drvfs w: /mnt/w
