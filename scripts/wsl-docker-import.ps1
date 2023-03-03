@@ -165,8 +165,8 @@ function dev_boilerplate {
     Write-Host "$install_location`r`n"
 
     docker_image_pull $image_repo_image_name
-    $WSL_DOCKER_CONTAINER_ID_RAW = @(docker_container_start $config $distro $image_repo_image_name $install_location)
-    $WSL_DOCKER_CONTAINER_ID = $WSL_DOCKER_CONTAINER_ID_RAW[0]
+    $WSL_DOCKER_CONTAINER_ID = (docker_container_start $config $distro $image_repo_image_name $install_location)[-1]
+    # $WSL_DOCKER_CONTAINER_ID = $WSL_DOCKER_CONTAINER_ID_RAW[0]
 
     Write-Host "WSL_DOCKER_CONTAINER_ID=$WSL_DOCKER_CONTAINER_ID"
     Write-Host "before-install_location=$install_location"
