@@ -60,7 +60,7 @@ function install_all {
 
     $software_name = "Chocolatey"
     if (!(Test-Path -Path "$git_path/.choco-installed" -PathType Leaf)) {
-        Push-Location $temp_repo_scripts_path
+        # Push-Location $temp_repo_scripts_path
         # install choco 
         $host.UI.RawUI.BackgroundColor = "Black"
         $choco = "devels-advocate/get-latest-choco.ps1"
@@ -69,7 +69,7 @@ function install_all {
         $env:path += ";C:\ProgramData\chocoportable"
         cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
         Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.choco-installed"
-        Pop-Location
+        # Pop-Location
     }
     else {
         Write-Host "$software_name already installed"  -ForegroundColor "Blue"
