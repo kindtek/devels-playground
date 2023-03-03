@@ -1,6 +1,6 @@
 # to build, for exemple, run: 
 # `username=mine groupname=ours docker run -d -i`
-FROM ubuntu:latest AS devp_skinny
+FROM ubuntu:latest AS d2w_skinny
 ARG username=${username:-gabriel}
 ARG groupname=${groupname:-archangels}
 
@@ -17,12 +17,11 @@ RUN apt-get update -yq && \
 # RUN addgroup --system --gid 1001 ${groupname} && \
 #     adduser --system --home /home/${username} --shell /bin/bash --uid 1001 --gid 1001 --disabled-password ${username}  
 # set up groups
-RUN addgroup --gid 888 ${groupname} 
-RUN addgroup --gid 777 angels
-RUN addgroup --gid 666 devels
+RUN addgroup --gid 111 ${groupname} && \
+    addgroup --gid 888 angels && \
+    addgroup --gid 666 devels
 
-RUN adduser --home /home/${username} --shell /bin/bash --uid 1000 --gID 1001 --disabled-password ${username}
-RUN usermod -aG sudo ${username}
+RUN adduser --home /home/${username} --shell /bin/bash --uid 1011 --disabled-password ${username}
 
 # make default user 
 RUN echo "[user]\ndefault=${username}" >> /etc/wsl.conf
@@ -31,7 +30,7 @@ RUN echo "[user]\ndefault=${username}" >> /etc/wsl.conf
 USER ${username}
 # install cdir on nonroot user - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
 RUN pip3 install cdir --user && \
-    echo "alias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\ndevw=devels-workshop\ndevp=devels-playground\nkdev=~/repos/kindtek" >> ~/.bashrc
+    echo "alias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\ndevw=devels-workshop\ndevp=devels-playground\nkindtek=~/repos/kindtek" >> ~/.bashrc
 
 # finish cdir setup, add repos directory, copy custom user setup to skel
 RUN export PATH=~/.local/bin:~/repos/kindtek/devels-workshop/scripts:$PATH
@@ -40,16 +39,19 @@ RUN export PATH=~/.local/bin:~/repos/kindtek/devels-workshop/scripts:$PATH
 USER root
 
 # add devel and host users using custom user setup
-RUN adduser --system --home /home/host --shell /bin/bash --uid 777 --gid 777 --disabled-password host
-RUN usermod -aG angels host && usermod -aG angels ${username} 
-RUN adduser --system --home /home/devel --shell /bin/bash --uid 666 --gid 666 --disabled-password devel
-RUN usermod -aG devels devel && usermod -aG devels ${username} 
+RUN adduser --system --home /home/host --shell /bin/bash --uid 888 --disabled-password host
+RUN adduser --system --home /home/devel --shell /bin/bash --uid 666 --disabled-password devel
 
 # enable regexp matching
 # RUN shopt -s extglob && \
 RUN cp -r ./home/${username}/.local/bin /usr/local && \
     cp -r /home/${username}/. /etc/skel/ && \
     cp -rp /etc/skel/. /home/devel/
+
+# add username only to sudo
+RUN usermod -aG angels host && usermod -aG angels ${username} 
+RUN usermod -aG devels devel && usermod -aG devels ${username} 
+RUN usermod -aG sudo ${username}
 
 # RUN sed -e 's;^# \(%sudo.*NOPASSWD.*\);\1;g' -i /etc/sudoers
 # RUN chown -R ${username}:angels /home/host
@@ -73,25 +75,32 @@ RUN passwd -d ${username} && passwd -d host && passwd -d root && passwd -l root
 # mount w drive - set up drive w in windows using https://allthings.how/how-to-partition-a-hard-drive-on-windows-11/
 # RUN sudo mkdir /mnt/w && sudo mount -t drvfs w: /mnt/w
 
+
 # set up /devel folder as symbolic link to /home/devel for cloning repository(ies)
 RUN ln -s /home/devel /hell && chown -R devel:devels /hell
-
-USER devel
 RUN touch /hell/o.world
+
+
 
 USER ${username}
 
-FROM devp_skinny AS devp_git
+FROM d2w_skinny AS d2w_git
 
 WORKDIR /hell
 USER devel
+
+# add safe directories
+RUN git config --global --add safe.directory /home/devel
+RUN git config --global --add safe.directory /hell
+
 RUN git clone https://github.com/kindtek/devels-playground
 RUN cd devels-playground && git submodule update --force --recursive --init --remote
 USER ${username}
 
 # brave browser/gui/media support
-FROM devp_git as devp_phat
-
+FROM d2w_git as d2w_phat
+# make man available
+# RUN yes | unminimize
 # for powershell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
 USER ${username}
@@ -101,22 +110,21 @@ RUN sudo wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs
 RUN sudo dpkg -i packages-microsoft-prod.deb
 RUN sudo rm packages-microsoft-prod.deb
 RUN sudo apt-get update -yq && \
-    sudo apt-get install -y powershell
+    sudo apt-get install -y gedit powershell
 
-FROM devp_phat as devp_phatt
-# make man available
-RUN yes | sudo unminimize
+FROM d2w_phat as d2w_phatt
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
 RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
 RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main"| sudo tee /etc/apt/sources.list.d/brave-browser-release.list
 
 RUN sudo apt-get update -yq && \
-    sudo apt-get install -y gedit gimp nautilus vlc x11-apps apt-transport-https software-properties-common brave-browser
+    sudo apt-get install -y gimp nautilus vlc x11-apps apt-transport-https software-properties-common brave-browser
 USER ${username}
 
 # for docker in docker
-FROM devp_phatt as devp_phatter
+FROM d2w_phatt as d2w_phatter
 USER root
+
 
 # for docker install - https://docs.docker.com/engine/install/ubuntu/
 RUN mkdir -p /etc/apt/keyrings && \
@@ -128,16 +136,13 @@ USER ${username}
 RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> ~/.bashrc && . ~/.bashrc
 
 # for heavy gui and cuda
-FROM devp_phatter as devp_phattest
+FROM d2w_phatter as d2w_phattest
 # GNOME
 RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3
-USER ${username}
-
-FROM devp_phattest as devp_phatso
-
 # CUDA
 RUN sudo apt-get -y install nvidia-cuda-toolkit
 USER ${username}
+
 # VSCODE
 # RUN apt-get -y install apt-transport-https wget -y
 # RUN wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | apt-key add -
