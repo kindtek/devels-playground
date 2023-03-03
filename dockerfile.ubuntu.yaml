@@ -27,6 +27,10 @@ RUN echo "[user]\ndefault=${username}" >> /etc/wsl.conf
     
 RUN mkdir -p repos/kindtek
 RUN chown -R ${username} repos
+
+RUN mkdir -p /devel
+RUN chown -R devel /devel
+
 # custom user setup
 USER ${username}
 # install cdir on nonroot user - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
@@ -61,9 +65,10 @@ RUN usermod -aG sudo devel && usermod -aG sudo ${username} && \
 # need to use sudo from now on
 RUN apt-get -y install sudo && \
     # add devel and ${username} to sudo group
-    sudo adduser ${username} sudo && \
-    sudo adduser devel sudo && \
-    sudo adduser host sudo
+    sudo adduser ${username} sudo 
+    # && \
+    # sudo adduser devel sudo && \
+    # sudo adduser host sudo
 
 # ensure no password and sudo runs as root
 RUN passwd -d ${username} && passwd -d devel && passwd -d root && passwd -l root
