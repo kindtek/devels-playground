@@ -212,30 +212,37 @@ try {
         Write-Host "`r`n`r`nWaiting for $software_name to come online ..." -BackgroundColor "Black" -ForegroundColor "Yellow"
         Write-Host "`r`nNOTE: $software_name is required to be running for the Devel's Playground to work. Do NOT quit $software_name until you are done running it.`r`nYou can minimize $software_name by pressing WIN + Down arrow" -BackgroundColor "Black" -ForegroundColor "Yellow"
 
-        $docker_success1 = $false
-        $docker_success2 = $false
+        # $docker_attempt1 = $false
+        # $docker_attempt2 = $false
         $docker_tries = 0
         do {
+            $check_again = 'x'
             $docker_tries++
             $docker_status_now = (docker version)
-            Start-Sleep -seconds 5
-            # debug
-            # write-host "$docker_status_now`r`n"
-            # $check_again = Read-Host "keep checking? (y[n])"
-            if (!($docker_status_now.Contains("error"))) {
-                if ($docker_success1 -eq $true) {
-                    $docker_success2 = $true
-                }
-                else {
-                    $docker_success1 = $true
-                }
+            Start-Sleep -seconds 1
+           
+            # if ($docker_attempt1 -eq $true -And $docker_attempt2 -eq $true){
+            if (($docker_tries % 10) -eq 0) {
+                # start count over
+                # $docker_attempt1 = $docker_attempt2 = $false
+                # prompt to continue
+                write-host "$docker_status_now`r`n"
+                $check_again = Read-Host "Waited for $docker_tries seconds. keep waiting for docker to come online? ([y]n)"
             }
+            # if (!($docker_status_now.Contains("error"))) {
+            #     if ($docker_attempt1 -eq $true) {
+            #         $docker_attempt2 = $true
+            #     }
+            #     else {
+            #         $docker_attempt1 = $true
+            #     }
+            # }
         }
         # @TODO: ask user every x number of tries if they would like to keep pinging docker. ie:
-        # while ((!($docker_success2)) -Or $docker_tries -lt 100 -Or $check_again -ieq '')
-        while ((!($docker_success2)) -Or $docker_tries -lt 100 -Or $check_again -ieq '')
+        # while ((!($docker_attempt2)) -Or $docker_tries -lt 100 -Or $check_again -ieq '')
+        while (!($docker_status_now.Contains("error")) -Or $check_again -ieq 'n')
         # debug
-        # while ((!($docker_success2)) -Or $check_again -ieq 'y')
+        # while ((!($docker_attempt2)) -Or $check_again -ieq 'y')
 
         if ($docker_succes2) {
             # // commenting out background building process because this is NOT quite ready.
