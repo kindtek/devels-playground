@@ -252,7 +252,7 @@ function docker_container_start {
     Write-Host "`r`n "
     Write-Host "========================================================================"
     Write-Host "`r`n"
-    Write-Host "testing container with image id: $WSL_DOCKER_IMG_ID..."
+    Write-Host "testing container  with image id: $WSL_DOCKER_IMG_ID..."
     Write-Host "`r`n"
     Write-Host "this container is running as a local copy of the image $image_repo_image_name"
     Write-Host "`r`n"
@@ -262,7 +262,7 @@ function docker_container_start {
     Read-Host " debug 2".ForegroundColor magenta
 
     # get first line of docker_container_id_path
-    $WSL_DOCKER_CONTAINER_ID = Get-Content -Path $docker_container_id_path -TotalCount 1
+    $WSL_DOCKER_CONTAINER_ID = Get-Content -Path $docker_container_id_path -First 1
     $WSL_DOCKER_CONTAINER_ID = ($WSL_DOCKER_CONTAINER_ID)[0]
     $WSL_DOCKER_CONTAINER_ID = $WSL_DOCKER_CONTAINER_ID.ToString().Substring(0, 5)
     # Write-Host "containerid: $WSL_DOCKER_CONTAINER_ID"
