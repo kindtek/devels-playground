@@ -60,16 +60,16 @@ function install_all {
 
     $software_name = "Chocolatey"
     if (!(Test-Path -Path "$git_path/.choco-installed" -PathType Leaf)) {
-        # Push-Location $temp_repo_scripts_path
+        Push-Location $temp_repo_scripts_path
         # install choco 
         $host.UI.RawUI.BackgroundColor = "Black"
         $choco = "devels-advocate/get-latest-choco.ps1"
         Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
-        &$choco = Invoke-Expression -command "$git_path/scripts/devels-advocate/get-latest-choco.ps1" 
+        &$choco = Invoke-Expression -command "devels-advocate/get-latest-choco.ps1" 
         $env:path += ";C:\ProgramData\chocoportable"
-        cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
+        # cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
         Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.choco-installed"
-        # Pop-Location
+        Pop-Location
     }
     else {
         Write-Host "$software_name already installed"  -ForegroundColor "Blue"
@@ -124,6 +124,9 @@ function install_all {
     else {
         Write-Host "$software_name already installed"  -ForegroundColor "Blue"
     }
+
+    # this is used for x11 / gui stuff .. @TODO: add the option one day maybe
+    # choco install vcxsrv microsoft-windows-terminal wsl -y
 
     Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta -BackgroundColor "Black"
     $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now`r`n ..or hit ENTER to skip" 
@@ -195,10 +198,10 @@ catch {}
 # refresh env again
 # cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
 
-$user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
-if ( $user_input -ine "n" ) {
-    Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/devels-workshop@main" -WindowStyle "Hidden"
-} 
+# $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
+# if ( $user_input -ine "n" ) {
+#     Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/devels-workshop@main" -WindowStyle "Hidden"
+# } 
 
 Write-Host "`r`nSetup complete!`r`n" -ForegroundColor Green -BackgroundColor "Black"
 
