@@ -1,14 +1,11 @@
 # to build, for exemple, run: 
 # `username=mine groupname=ours docker run -d -i`
-FROM ubuntu:latest AS devp_skinny
+FROM ubuntu:latest AS d2w_skinny
 ARG username=${username:-gabriel}
 ARG groupname=${groupname:-archangels}
 
-# # uncomment to set glob exp pattern matching default
+# # set glob exp pattern matching default
 # RUN echo "shopt -s histappend" >> /etc/profile
-
-# mount w drive - set up drive w in windows using https://allthings.how/how-to-partition-a-hard-drive-on-windows-11/
-# RUN mkdir /mnt/w && mount -t drvfs w: /mnt/w
 
 # set up basic utils
 RUN apt-get update -yq && \
@@ -17,85 +14,105 @@ RUN apt-get update -yq && \
     apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip vim
 
 # # set up group/user 
-# RUN addgroup --system --gid 1000 ${groupname} && \
-#     adduser --system --home /home/${username} --shell /bin/bash --uid 1000 --gid 1000 --disabled-password ${username}  
+# RUN addgroup --system --gid 1001 ${groupname} && \
+#     adduser --system --home /home/${username} --shell /bin/bash --uid 1001 --gid 1001 --disabled-password ${username}  
 # set up groups
-RUN addgroup --gid 1001 ${groupname} && \
-    addgroup --gid 1008 devel
+RUN addgroup --gid 111 ${groupname} && \
+    addgroup --gid 888 angels && \
+    addgroup --gid 666 devels
 
-RUN adduser --home /home/${username} --shell /bin/bash --uid 1000 --disabled-password ${username}
+RUN adduser --home /home/${username} --shell /bin/bash --uid 1011 --disabled-password ${username}
 
-# make default user in wsl
+# make default user 
 RUN echo "[user]\ndefault=${username}" >> /etc/wsl.conf
 
 # custom user setup
 USER ${username}
 # install cdir on nonroot user - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
 RUN pip3 install cdir --user && \
-    echo "\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\ndevw=devels-workshop\ndevp=devels-playground\nkindtek=~/repos/kindtek" >> ~/.bashrc
+    echo "alias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\ndevw=devels-workshop\ndevp=devels-playground\nkindtek=~/repos/kindtek" >> ~/.bashrc
 
 # finish cdir setup, add repos directory, copy custom user setup to skel
 RUN export PATH=~/.local/bin:~/repos/kindtek/devels-workshop/scripts:$PATH
-# enable regexp matching
-# RUN shopt -s extglob
 
 # switch back to root to setup
 USER root
-# RUN shopt -s extglob && \
-RUN cp -r ./home/${username}/.local/bin /usr/local && \
-    cp -r /home/${username}/. /etc/skel/
 
 # add devel and host users using custom user setup
-RUN adduser --system --home /home/devel --shell /bin/bash --disabled-password devel
-RUN adduser --system --home /home/host --shell /bin/bash --disabled-password host
+RUN adduser --system --home /home/host --shell /bin/bash --uid 888 --disabled-password host
+RUN adduser --system --home /home/devel --shell /bin/bash --uid 666 --disabled-password devel
+
+# enable regexp matching
+# RUN shopt -s extglob && \
+RUN cp -r ./home/${username}/.local/bin /usr/local && \
+    cp -r /home/${username}/. /etc/skel/ && \
+    cp -rp /etc/skel/. /home/devel/
+
+# add username only to sudo
+RUN usermod -aG angels host && usermod -aG angels ${username} 
+RUN usermod -aG devels devel && usermod -aG devels ${username} 
+RUN usermod -aG sudo ${username}
 
 # RUN sed -e 's;^# \(%sudo.*NOPASSWD.*\);\1;g' -i /etc/sudoers
-RUN chown -R ${username} /home/host
-# RUN chown -R ${username} /home/devel
+# RUN chown -R ${username}:angels /home/host
+RUN chown -R host:angels /home/host
+RUN chown -R devel:devels /home/devel
 
-# add devel and host to sudo and devel groups
-RUN usermod -aG sudo devel && usermod -aG sudo ${username} && \
-    usermod -aG devel devel && usermod -aG devel ${username}
 
 # need to use sudo from now on
 RUN apt-get -y install sudo && \
-    # add ${username} to sudo group
+    # add devel and ${username} to sudo group
     sudo adduser ${username} sudo 
-# uncomment to add sudo priveleges for host and devel
-# RUN sudo adduser devel sudo && \
-#     sudo adduser host sudo
+    # uncomment to add sudo priveleges for host and devel
+    # && \
+    # sudo adduser devel sudo && \
+    # sudo adduser host sudo
 
 # ensure no password and sudo runs as root
 RUN passwd -d ${username} && passwd -d devel && passwd -d root && passwd -l root
 RUN passwd -d ${username} && passwd -d host && passwd -d root && passwd -l root
 
-RUN ln -s /devel /home/devel
-RUN chown -R devel:devel /home/devel
+# mount w drive - set up drive w in windows using https://allthings.how/how-to-partition-a-hard-drive-on-windows-11/
+# RUN sudo mkdir /mnt/w && sudo mount -t drvfs w: /mnt/w
+
+
+# set up /devel folder as symbolic link to /home/devel for cloning repository(ies)
+RUN ln -s /home/devel /hell && chown -R devel:devels /hell
+RUN touch /hell/o.world
+
+
 
 USER ${username}
 
-FROM devp_skinny AS devp_phat
-USER root
-# make man available
-RUN yes | unminimize
-# for powershell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
-## Download the Microsoft repository GPG keys
-RUN wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
+FROM d2w_skinny AS d2w_git
 
-## Register the Microsoft repository GPG keys
-RUN dpkg -i packages-microsoft-prod.deb
+WORKDIR /hell
+USER devel
 
-RUN sudo apt-get update -yq && \
-    sudo apt-get install -y gedit powershell
+# add safe directories
+RUN git config --global --add safe.directory /home/devel
+RUN git config --global --add safe.directory /hell
 
-# set up /devel folder as symbolic link to /home/devel and clone repository(ies)
-WORKDIR /devel
 RUN git clone https://github.com/kindtek/devels-playground
 RUN cd devels-playground && git submodule update --force --recursive --init --remote
 USER ${username}
 
 # brave browser/gui/media support
-FROM devp_phat as devp_phatt
+FROM d2w_git as d2w_phat
+# make man available
+# RUN yes | unminimize
+# for powershell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
+## Download the Microsoft repository GPG keys
+USER ${username}
+RUN sudo wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
+
+## Register the Microsoft repository GPG keys
+RUN sudo dpkg -i packages-microsoft-prod.deb
+RUN sudo rm packages-microsoft-prod.deb
+RUN sudo apt-get update -yq && \
+    sudo apt-get install -y gedit powershell
+
+FROM d2w_phat as d2w_phatt
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
 RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
 RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main"| sudo tee /etc/apt/sources.list.d/brave-browser-release.list
@@ -105,8 +122,9 @@ RUN sudo apt-get update -yq && \
 USER ${username}
 
 # for docker in docker
-FROM devp_phatt as devp_phatter
+FROM d2w_phatt as d2w_phatter
 USER root
+
 
 # for docker install - https://docs.docker.com/engine/install/ubuntu/
 RUN mkdir -p /etc/apt/keyrings && \
@@ -118,7 +136,7 @@ USER ${username}
 RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> ~/.bashrc && . ~/.bashrc
 
 # for heavy gui and cuda
-FROM devp_phatter as devp_phattest
+FROM d2w_phatter as d2w_phattest
 # GNOME
 RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3
 # CUDA
