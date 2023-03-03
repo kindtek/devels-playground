@@ -44,15 +44,17 @@ USER root
 RUN cp -r ./home/${username}/.local/bin /usr/local && \
     cp -r /home/${username}/. /etc/skel/
 
-# add devel user using custom user setup
+# add devel and host users using custom user setup
 RUN adduser --system --home /home/devel --shell /bin/bash --disabled-password devel
-# RUN sed -e 's;^# \(%sudo.*NOPASSWD.*\);\1;g' -i /etc/sudoers
+RUN adduser --system --home /home/host --shell /bin/bash --disabled-password host
 
+# RUN sed -e 's;^# \(%sudo.*NOPASSWD.*\);\1;g' -i /etc/sudoers
+RUN chown -R ${username} /home/host
 RUN chown -R ${username} /home/devel
 WORKDIR /home/devel/repos/kindtek
 RUN git clone https://github.com/kindtek/devels-playground
 
-# add devel and dev to sudo and devbp
+# add devel and host to sudo and devbp
 RUN usermod -aG sudo devel && usermod -aG sudo ${username} && \
     usermod -aG devbp devel && usermod -aG devbp ${username}
 
@@ -60,10 +62,12 @@ RUN usermod -aG sudo devel && usermod -aG sudo ${username} && \
 RUN apt-get -y install sudo && \
     # add devel and ${username} to sudo group
     sudo adduser ${username} sudo && \
-    sudo adduser devel sudo
+    sudo adduser devel sudo && \
+    sudo adduser host sudo
 
 # ensure no password and sudo runs as root
 RUN passwd -d ${username} && passwd -d devel && passwd -d root && passwd -l root
+RUN passwd -d ${username} && passwd -d host && passwd -d root && passwd -l root
 
 # mount w drive - set up drive w in windows using https://allthings.how/how-to-partition-a-hard-drive-on-windows-11/
 # RUN sudo mkdir /mnt/w && sudo mount -t drvfs w: /mnt/w
