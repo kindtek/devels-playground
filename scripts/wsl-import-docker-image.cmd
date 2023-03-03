@@ -10,7 +10,7 @@ SET image_repo=_
 SET image_repo_mask=official
 SET image_name=ubuntu:latest
 SET mount_drive=C
-SET save_directory=docker
+SET save_directory=docker2wsl
 SET wsl_version=2
 
 SET "install_directory=%image_repo_mask%-%image_name::=-%"

@@ -3,8 +3,6 @@ Set-PSDebug -Off
 $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
 # jump to first line without clearing scrollback
-Write-Output "$([char]27)[2J"
-
 function main {
     dev_boilerplate
 }
@@ -14,18 +12,8 @@ function Get-PSPlatform {
 }
 function dev_boilerplate {
 
-    # set default vars
-    $image_repo = "_"
-    # mask = human readable - ie 'official' not '_'
-    $image_repo_mask = "official"
-    $image_name = "ubuntu:latest"
-    $mount_drive_letter = "c"
-    $unix_mount_drive = "/mnt/$mount_drive_letter"
-    $windows_mount_drive = "${mount_drive_letter}:"
-    $mount_drive = $unix_mount_drive
-
-    
-    # check OS to get relevant C drive path
+   
+    # first check OS to get relevant C drive path
     # from https://stackoverflow.com/questions/44703646/determine-the-os-version-linux-and-windows-from-powershell
     switch (Get-PSPlatform) {
         'Win32NT' { 
@@ -50,10 +38,18 @@ function dev_boilerplate {
         $mount_drive = $windows_mount_drive
     }
 
-
-    $save_directory = "docker"
+    # set default vars
+    $image_repo = "_"
+    # mask = human readable - ie 'official' not '_'
+    $image_repo_mask = "official"
+    $image_name = "ubuntu:latest"
+    $mount_drive_letter = "c"
+    $unix_mount_drive = "/mnt/$mount_drive_letter"
+    $windows_mount_drive = "${mount_drive_letter}:"
+    $mount_drive = $unix_mount_drive
+    $save_directory = "docker2wsl"
     $wsl_version = "2"
-
+    Write-Output "$([char]27)[2J"
 
     $install_directory = "$image_repo_mask-$image_name"
     $install_directory = $install_directory.replace(':', '-')
