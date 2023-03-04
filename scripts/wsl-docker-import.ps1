@@ -297,13 +297,14 @@ function docker_container_start {
         $host.UI.RawUI.BackgroundColor = "Black"
         $host.UI.RawUI.ForegroundColor = "Red"     
         Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        Write-Host "!!!!!! IMPORTANT: use CTRL-P then CTRL-Q to exit container preview !!!!!!"
+        Write-Host "!!!!!!       IMPORTANT: type 'exit' to exit this preview           !!!!!!" -ForegroundColor Yellow -BackgroundColor Magenta
         Write-Host "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!`r`n"
         $host.UI.RawUI.BackgroundColor = "Black"
         $host.UI.RawUI.ForegroundColor = "Cyan"  
-        Write-Host "`r`ndocker attach `"$WSL_DOCKER_CONTAINER_ID`"`r`n`r`n"  
-        docker attach $WSL_DOCKER_CONTAINER_ID
-
+        # Write-Host "`r`ndocker attach `"$WSL_DOCKER_CONTAINER_ID`"`r`n`r`n"  
+        # docker attach $WSL_DOCKER_CONTAINER_ID
+        Write-Host "`r`ndocker exec -it <$WSL_DOCKER_CONTAINER_ID> \bin\bash"
+        docker exec -it <$WSL_DOCKER_CONTAINER_ID> \bin\bash
     }
 
     $docker_img_cont_old_name = "$distro-$WSL_DOCKER_IMG_ID"
