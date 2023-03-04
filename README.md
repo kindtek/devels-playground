@@ -62,8 +62,12 @@ _________
 #### **ubuntu-git**
 
 #### All of the above functionality is standard in the lightweight **ubuntu-git**  Ubuntu 22.04 image. It is free to use and the customization possibilities for a developer are endless. You can build your own with the Dockerfiles found at the root of the repository or use the images I made that are freely available on the [Kindtek Docker Hub repository](https://hub.docker.com/r/kindtek/devp). Instructions for building and running the images are in the scripts directory in the docker-compose-_____ files. And of course you are free to load any other image you want
+#### `apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip vim` 
+#### The cherry on top of this image is the preinstalled [cdir](https://github.com/kindtek/cdir) package. It is a must-have and the inspiration for the automation of this entire process to begin with
 
-#### Also available on **ubuntu-git**, `apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip vim` ties up all the essentials with a bow and has the added bonus of the cdir package which is the inspiration for me automating this entire process to begin with. Also included is powershell which is referred to as powerhell in some places. The next few images are easier described in code that is run to automatically have your favorite handy programs installed when you set it up.
+#### **ubuntu-phat**
+
+####  This edition includes powershell which highly recommended for bridging the gap between Windows and the rest of the world. Be advised it is also referred to as powerhell often in the code of this repo and for good reason
 
 #### **ubuntu-phatt**
 `apt-get install -y gimp nautilus vlc x11-apps apt-transport-https software-properties-common`
