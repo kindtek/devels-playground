@@ -40,7 +40,7 @@ function install_all {
 
 
     Write-Host "`r`nThese programs will be installed or updated:" -ForegroundColor Magenta
-    Write-Host "`t- WinGet`r`n`t- Chocolatey`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktopr`r`n`t- Windows Terminal`r`n`tPython`r`n`tcdir" -ForegroundColor Magenta
+    Write-Host "`t- WinGet`r`n`t- Chocolatey`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktopr`r`n`t- Windows Terminal`r`n`t- Python" -ForegroundColor Magenta
     Write-Host "`r`nClose window to quit at any time"
 
     $software_name = "WinGet"
@@ -112,7 +112,7 @@ function install_all {
     # choco install vcxsrv microsoft-windows-terminal wsl -y
 
     Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta -BackgroundColor "Black"
-    $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now`r`n ..or hit ENTER to skip" 
+    $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now`r`n ..or hit ENTER to try to continue without restarting" 
     if ($confirmation -ieq 'reboot now') {
         Restart-Computer -Force
     }
@@ -199,19 +199,26 @@ try {
         Pop-Location
         Push-Location cdir
         Push-Location bin
-
-        # @TODO: add cdir and python to install lists
-        # not eloquent at all but good for now
-        winget install --id=Python.Python.3.10  -e
-
-        $cmd_command = pip install cdir.ps1
-        Start-Process -FilePath PowerShell.exe -NoNewWindow -ArgumentList $cmd_command
-        Pop-Location
-        Pop-Location
     }
     else {
         Write-Host "$software_name already installed"  -ForegroundColor "Blue"
     }
+    
+    if (!(Test-Path -Path "$git_path/.python-installed" -PathType Leaf)) {
+        # @TODO: add cdir and python to install with same behavior as other installs above
+        # not eloquent at all but good for now
+        winget install --id=Python.Python.3.10  -e
+
+        # ... even tho cdir does not appear to be working on windows
+        # $cmd_command = pip install cdir
+        Start-Process -FilePath PowerShell.exe -NoNewWindow -ArgumentList $cmd_command
+        Pop-Location
+        Pop-Location
+   
+        Write-Host "$software_name already installed"  -ForegroundColor "Blue"
+        Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.python-installed"
+    }
+
 }
 # if git is not recognized try to limp along with the manually downloaded files
 catch {}
