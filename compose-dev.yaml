@@ -1,62 +1,79 @@
 version: '3.8'
+name: devels-workshop-ubuntu
 services:
-  skinny:
+  git:
     entrypoint:
-    - sleep
-    - infinity
-    image: kindtek/devp:ubuntu-skinny
+      - sleep
+      - infinity
+    image: kindtek/devp:ubuntu-git
     build:
       context: .
-      target: devp_skinny
-      args: 
-      - username=${username:-gabriel}
+      target: devp_git
+      args:
+        - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
-    - type: bind
-      source: /var/run/docker.sock
-      target: /var/run/docker.sock
-    - type: bind
-      source: ~/
-      target: /home/devel
-
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: ~/
+        target: /home/host
   phat:
     entrypoint:
-    - sleep
-    - infinity
+      - sleep
+      - infinity
     image: kindtek/devp:ubuntu-phat
     build:
       context: .
       target: devp_phat
-      args: 
-      - username=${username:-gabriel}
+      args:
+        - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
-    - type: bind
-      source: /var/run/docker.sock
-      target: /var/run/docker.sock
-    - type: bind
-      source: ~/
-      target: /home/devel
-  
-  phatt:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: ~/
+        target: /home/host
+  phattest:
     entrypoint:
-    - sleep
-    - infinity
-    image: kindtek/devp:ubuntu-phatt
+      - sleep
+      - infinity
+    image: kindtek/devp:ubuntu-phattest
     build:
       context: .
-      target: devp_phatt
-      args: 
-      - username=${username:-gabriel}
+      target: devp_phattest
+      args:
+        - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
-    - type: bind
-      source: /var/run/docker.sock
-      target: /var/run/docker.sock
-    - type: bind
-      source: ~/
-      target: /home/devel
-
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: ~/
+        target: /home/host
+  phatso:
+    entrypoint:
+      - sleep
+      - infinity
+    image: kindtek/devp:ubuntu-phatso
+    build:
+      context: .
+      target: devp_phatso
+      args:
+        - username=${username:-gabriel}
+      dockerfile: dockerfile.ubuntu.yaml
+    init: true
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: ~/
+        target: /home/host

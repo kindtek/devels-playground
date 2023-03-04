@@ -2,7 +2,7 @@
 # `username=mine groupname=ours docker run -d -i`
 FROM ubuntu:latest AS devp_skinny
 ARG username=${username:-gabriel}
-ARG groupname=${groupname:-archan}
+ARG groupname=${groupname:-arcans}
 
 # # set glob exp pattern matching default
 # RUN echo "shopt -s histappend" >> /etc/profile
@@ -78,7 +78,7 @@ RUN passwd -d ${username} && passwd -d host && passwd -d root && passwd -l root
 
 # set up /devel folder as symbolic link to /home/devel for cloning repository(ies)
 RUN ln -s /home/devel /hel && chown -R devel:devels /hel
-RUN touch /hel/o.world
+RUN touch /hel/lo.hiworld
 
 
 
