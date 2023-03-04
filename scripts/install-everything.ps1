@@ -272,6 +272,11 @@ try {
             Write-Host "powershell.exe ./kindtek/devels-workshop/devels-playground/scripts/wsl-docker-import.ps1"
 
         }
+
+        # last but not least
+        pip install cdir
+
+        RefreshEnv.cmd
     }
 }
 catch {}
