@@ -44,9 +44,9 @@ scripts/wsl-docker-import
 
 ______________________________
 
-&nbsp;
+## Summary of the Ubuntu images built with the Dockerfiles in this repo
 
-#### `/hell` is symbolically linked to `/home/devel` (using `ln -s /home/devel /hell`). The devel user and those in the devels group are the owners of /hell. A copy of the current devel's playground GitHub repo is cloned to `/hell/repos/kindtek`. Gabriel is the default user and you can do anything you desire with that account. No password is required. You are logged in by default and you have elevated near-root permissions anywhere except in `/hell`  ..where you will have to use sudo a lot. When it comes time to doing works of the developer, change to the devel user (`su devel`) and you are now an isolated user without sudo powers. The devel is not able to access anything in /home/gabriel. If you absolutely must use sudo when you are logged into the devel account or devels group, use `su gabriel` and use your sudo powers from there. In theory the gates of /hell should hold in the powers of sudo and the devel. Since the devel is operating within the /hell or /home/devel directories, the rest of the environment is probably pretty safe. You never know what the devil developers can get into, though.
+#### `/hell` is symbolically linked to `/home/devel` (using `ln -s /home/devel /hell`). The devel user and those in the devels group are the owners of /hell. A copy of the current devel's playground GitHub repo is cloned to `/hell/repos/kindtek`. Gabriel is the default user and you can do anything you desire with that account. No password is required. You are logged in by default and you have elevated near-root permissions anywhere except in `/hell` ..where you will have to use sudo a lot. When it comes time to doing works of the developer, change to the devel user (`su devel`) and you are now an isolated user without sudo powers. The devel is not able to access anything in /home/gabriel. If you absolutely must use sudo when you are logged into a devels group account, use `su gabriel` and use your sudo powers from there. In theory the gates of /hell should hold in the powers of sudo and the devel. Since the devel is operating within the /hell or /home/devel directories, the rest of the environment is probably pretty safe. You never know what the devil developers can get into, though.
 
 &nbsp;
 
@@ -55,8 +55,12 @@ ______________________________
 #### **ubuntu-git**
 
 #### All of the above functionality is standard in the lightweight **ubuntu-git**  Ubuntu 22.04 image. It is free to use and the customization possibilities for a developer are endless. You can build your own with the Dockerfiles found at the root of the repository or use the images I made that are freely available on the [Kindtek Docker Hub repository](https://hub.docker.com/r/kindtek/devp). Instructions for building and running the images are in the scripts directory in the docker-compose-_____ files. And of course you are free to load any other image you want
+#### `apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip vim` 
+#### All of the above features are included with all of the below listed images. All the essentials are included with ubuntu-git and even has the added bonus of the [cdir](https://github.com/kindtek/cdir) package which is a must-have for me and the inspiration for the automation of this entire process to begin with.
 
-#### Also available on **ubuntu-git**, `apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip vim` ties up all the essentials with a bow and has the added bonus of the cdir package which is the inspiration for me automating this entire process to begin with. Also included is powershell which is referred to as powerhell in some places. The next few images are easier described in code that is run to automatically have your favorite handy programs installed when you set it up.
+#### **ubuntu-phat**
+
+####  This edition includes powershell which highly recommended for bridging the gap between Windows and the rest of the world. Be advised it is also referred to as powerhell often in the code of this repo and for good reason
 
 #### **ubuntu-phatt**
 `apt-get install -y gimp nautilus vlc x11-apps apt-transport-https software-properties-common`
