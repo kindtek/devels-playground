@@ -3,17 +3,18 @@
 color 0F
 SETLOCAL EnableDelayedExpansion
 :redo
-@REM set default variables. set default literally to default
-SET "default=default"
-SET "image_repo_mask=kindtek"
-@REM SET image_repo=_
-@REM _mask = human readable - ie 'official' not '_'
-@REM SET image_repo_mask=official
-SET "image_repo_mask=kindtek"
-SET "image_name=devp:ubuntu-phat"
-SET "mount_drive=C"
-SET "save_directory=docker2wsl"
+
+SET default=default
 SET wsl_version=2
+SET save_directory=docker2wsl
+SET mount_drive=C
+
+@REM SET image_repo=_
+@REM SET image_repo_mask=official
+@REM SET image_name=ubuntu:latest
+SET image_repo=kindtek
+SET image_repo_mask=kidntek
+SET image_name=devp:ubuntu-phat
 
 SET "install_directory=%image_repo_mask%-%image_name::=-%"
 SET "save_location=%mount_drive%:\%save_directory%"
