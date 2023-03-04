@@ -16,10 +16,12 @@ function dev_boilerplate {
     
 
     # set default vars
-    $image_repo = "_"
+    # $image_repo = "_"
     # mask = human readable - ie 'official' not '_'
-    $image_repo_mask = "official"
-    $image_name = "ubuntu:latest"
+    # $image_repo_mask = "official"
+    # $image_name = "ubuntu:latest"
+    $image_repo = $image_repo_mask = "kindtek"
+    $image_name = "devp:ubuntu-phat"
     $mount_drive_letter = "c"
     $unix_mount_drive = "/mnt/$mount_drive_letter"
     $windows_mount_drive = "${mount_drive_letter}:"
