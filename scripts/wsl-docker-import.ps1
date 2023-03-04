@@ -313,9 +313,9 @@ function docker_container_start {
         $host.UI.RawUI.ForegroundColor = "Cyan"  
         # Write-Host "`r`ndocker attach `"$WSL_DOCKER_CONTAINER_ID`"`r`n`r`n"  
         # docker attach $WSL_DOCKER_CONTAINER_ID
-        Write-Host "`r`n        docker exec -di $WSL_DOCKER_CONTAINER_ID_LONG bash
+        Write-Host "`r`n        docker exec -it $WSL_DOCKER_CONTAINER_ID_LONG bash
 "
-        docker exec -di $WSL_DOCKER_CONTAINER_ID_LONG bash
+        docker exec -it $WSL_DOCKER_CONTAINER_ID_LONG bash
     }
 
     $docker_img_cont_old_name = "$distro-$WSL_DOCKER_IMG_ID"
