@@ -201,6 +201,7 @@ try {
         Pop-Location
         Push-Location cdir
         Push-Location bin
+        # choco install vcxsrv microsoft-windows-terminal wsl -y
     }
     else {
         Write-Host "$software_name already installed"  -ForegroundColor "Blue"
@@ -243,7 +244,7 @@ try {
         # launch docker desktop and keep it open 
         Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
         Write-Host "`r`n`r`nWaiting for $software_name to come online ..." -BackgroundColor "Black" -ForegroundColor "Yellow"
-        Write-Host "`r`nNOTE: $software_name is required to be running for the Devel's Playground to work. Do NOT quit $software_name until you are done running it.`r`nYou can minimize $software_name by pressing WIN + Down arrow" -BackgroundColor "Black" -ForegroundColor "Yellow"
+        Write-Host "`r`nNOTE: $software_name is required to be running for the Devel's Playground to work. Do NOT quit $software_name until you are done running it. -BackgroundColor "Black" -ForegroundColor "Yellow"
 
         # $docker_attempt1 = $false
         # $docker_attempt2 = $false
