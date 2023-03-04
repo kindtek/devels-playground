@@ -199,7 +199,7 @@ try {
         Pop-Location
         Push-Location cdir
         Push-Location bin
-        
+
         # @TODO: add cdir and python to install lists
         # not eloquent at all but good for now
         winget install --id=Python.Python.3.10  -e
@@ -207,7 +207,7 @@ try {
         $cmd_command = pip install cdir.ps1
         Start-Process -FilePath PowerShell.exe -NoNewWindow -ArgumentList $cmd_command
         Pop-Location
-        Pop-Locatoin
+        Pop-Location
     }
     else {
         Write-Host "$software_name already installed"  -ForegroundColor "Blue"
