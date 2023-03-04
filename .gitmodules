@@ -12,13 +12,6 @@
 	url = https://github.com/kindtek/powerhell-remote
 	branch = devels-workshop
 	recurse = true
-[submodule "scripts/choco"]
-	active = true
-	path = scripts/choco
-	shallow = false
-	url = https://github.com/kindtek/choco
-	branch = devels-workshop
-	recurse = true
 [submodule "devels-playground"]
 	active = true
 	path = devels-playground
@@ -26,3 +19,6 @@
 	url = https://github.com/kindtek/devels-playground.git
 	branch = devels-workshop
 	recurse = true
+[submodule "scripts/cdir"]
+	path = scripts/cdir
+	url = https://github.com/kindtek/cdir
