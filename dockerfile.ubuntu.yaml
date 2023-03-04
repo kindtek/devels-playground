@@ -115,7 +115,8 @@ RUN sudo apt-get update -yq && \
 FROM devp_phat as devp_phatt
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
 RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
-RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main"| sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+RUN echo "sudo deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(sudo dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main"| sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+
 
 RUN sudo apt-get update -yq && \
     sudo apt-get install -y gimp nautilus vlc x11-apps apt-transport-https software-properties-common brave-browser
@@ -124,8 +125,6 @@ USER ${username}
 # for docker in docker
 FROM devp_phatt as devp_phatter
 USER root
-
-
 # for docker install - https://docs.docker.com/engine/install/ubuntu/
 RUN mkdir -p /etc/apt/keyrings && \
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
