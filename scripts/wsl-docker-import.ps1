@@ -95,7 +95,7 @@ function dev_boilerplate {
     if ( $image_repo -eq "_") {
         # official repo has no repo name in address/url
         $image_repo_image_name = $image_name
-    } catch {}
+    } 
     
 
     $config = greeting_prompt $image_repo_mask $image_name $image_save_path $distro
