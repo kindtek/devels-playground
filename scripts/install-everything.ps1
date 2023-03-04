@@ -193,6 +193,11 @@ try {
     git submodule update --force --recursive --init --remote
     $host.UI.RawUI.BackgroundColor = "Black"
 
+    # last but not least
+    powershell.exe pip install cdir
+
+    RefreshEnv.cmd
+
 }
 # if git is not recognized try to limp along with the manually downloaded files
 catch {}
@@ -273,10 +278,6 @@ try {
 
         }
 
-        # last but not least
-        pip install cdir
-
-        RefreshEnv.cmd
     }
 }
 catch {}
