@@ -77,8 +77,8 @@ RUN passwd -d ${username} && passwd -d host && passwd -d root && passwd -l root
 
 
 # set up /devel folder as symbolic link to /home/devel for cloning repository(ies)
-RUN ln -s /home/devel /hell && chown -R devel:devels /hell
-RUN touch /hell/o.world
+RUN ln -s /home/devel /hel && chown -R devel:devels /hel
+RUN touch /hel/lo.hiworld
 
 
 
@@ -86,12 +86,12 @@ USER ${username}
 
 FROM devp_skinny AS devp_git
 
-WORKDIR /hell
+WORKDIR /hel
 USER devel
 
 # add safe directories
 RUN git config --global --add safe.directory /home/devel
-RUN git config --global --add safe.directory /hell
+RUN git config --global --add safe.directory /hel
 
 RUN git clone https://github.com/kindtek/devels-playground
 RUN cd devels-playground && git submodule update --force --recursive --init --remote
