@@ -4,13 +4,9 @@ FROM ubuntu:latest AS devp_skinny
 ARG username=${username:-gabriel}
 ARG groupname=${groupname:-arcans}
 
-# # set glob exp pattern matching default
-# RUN echo "shopt -s histappend" >> /etc/profile
-
 # set up basic utils
 RUN apt-get update -yq && \
     apt-get upgrade -y && \
-    # install github, build-essentials, libssl, etc
     apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip vim
 
 # # set up group/user 
@@ -78,7 +74,7 @@ RUN passwd -d ${username} && passwd -d host && passwd -d root && passwd -l root
 
 # set up /devel folder as symbolic link to /home/devel for cloning repository(ies)
 RUN ln -s /home/devel /hel && chown -R devel:devels /hel
-RUN touch /hel/lo.hiworld
+# RUN yes | unminimize > /hel/lo-world
 
 
 
@@ -100,7 +96,7 @@ USER ${username}
 # brave browser/gui/media support
 FROM devp_git as devp_phat
 # make man available
-# RUN yes | unminimize
+
 # for powershell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
 USER ${username}
