@@ -46,7 +46,7 @@ function dev_boilerplate {
                 write-host "checking if wsl.exe is recognized"
                 $wsl = @(wsl.exe -l -v)
                 Write-Host "WSL detected"
-                $mount_drive = "${mount_drive_letter}:${unix_mount_drive}"
+                $mount_drive = "${unix_mount_drive}/${unix_mount_drive}"
             }
             catch { 
                 Write-Host "WSL NOT detected"
@@ -291,7 +291,7 @@ function docker_container_start {
     # get first line of docker_container_id_path
     $WSL_DOCKER_CONTAINER_ID_RAW = @(Get-Content -Path $docker_container_id_path -First 1)
     [String]$WSL_DOCKER_CONTAINER_ID = $WSL_DOCKER_CONTAINER_ID_RAW[0]
-    $WSL_DOCKER_CONTAINER_ID_FULL = WSL_DOCKER_CONTAINER_ID
+    $WSL_DOCKER_CONTAINER_ID_LONG = $WSL_DOCKER_CONTAINER_ID
     $WSL_DOCKER_CONTAINER_ID = $WSL_DOCKER_CONTAINER_ID.Substring(0, 8)
     Write-Host "containerid: `"$WSL_DOCKER_CONTAINER_ID`""
 
@@ -313,9 +313,9 @@ function docker_container_start {
         $host.UI.RawUI.ForegroundColor = "Cyan"  
         # Write-Host "`r`ndocker attach `"$WSL_DOCKER_CONTAINER_ID`"`r`n`r`n"  
         # docker attach $WSL_DOCKER_CONTAINER_ID
-        Write-Host "`r`n        docker exec -di $WSL_DOCKER_CONTAINER_ID_FULL bash
+        Write-Host "`r`n        docker exec -di $WSL_DOCKER_CONTAINER_ID_LONG bash
 "
-        docker exec -di $WSL_DOCKER_CONTAINER_ID_FULL bash
+        docker exec -di $WSL_DOCKER_CONTAINER_ID_LONG bash
     }
 
     $docker_img_cont_old_name = "$distro-$WSL_DOCKER_IMG_ID"
