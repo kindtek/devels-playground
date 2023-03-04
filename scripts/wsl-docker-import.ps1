@@ -43,6 +43,7 @@ function dev_boilerplate {
             Write-Host "Linux OS detected"
             try {
                 # test for being in an wsl environment
+                write-host "checking if wsl.exe is recognized"
                 $wsl = @(wsl.exe -l -v)
                 Write-Host "WSL detected"
                 $mount_drive = "${mount_drive_letter}:${unix_mount_drive}"
@@ -63,6 +64,7 @@ function dev_boilerplate {
             Write-Host "Windows OS detected"
             try {
                 # test for being in an wsl environment
+                write-host "checking if wsl.exe is recognized"
                 $wsl = @(wsl.exe -l -v)
                 Write-Host "WSL detected"
                 $mount_drive = "${mount_drive_letter}:${unix_mount_drive}"
@@ -79,7 +81,6 @@ function dev_boilerplate {
     $install_directory = $install_directory.replace(':', '-')
     $install_directory = $install_directory.replace('/', '-')
 
-    # $save_location = "${mount_drive}:/$save_directory"
     $save_location = "${mount_drive}/$save_directory"
     # Write-Host "save location: $save_location"
     $install_location = "$save_location/$install_directory"
@@ -190,7 +191,6 @@ function dev_boilerplate {
 
     docker_image_pull $image_repo_image_name
     $WSL_DOCKER_CONTAINER_ID = (docker_container_start $config $distro $image_repo_image_name $install_location)[-1]
-    # $WSL_DOCKER_CONTAINER_ID = $WSL_DOCKER_CONTAINER_ID_RAW[0]
 
     Write-Host "WSL_DOCKER_CONTAINER_ID=$WSL_DOCKER_CONTAINER_ID"
     Write-Host "before-install_location=$install_location"
@@ -207,7 +207,6 @@ function dev_boilerplate {
     export_image $install_location $save_location $distro $WSL_DOCKER_CONTAINER_ID
     import_docker_tar $distro $install_location $save_location $wsl_version
     wsl_or_bust $distro
-    
 }
 
 function greeting_prompt {
@@ -294,25 +293,11 @@ function docker_container_start {
     [String]$WSL_DOCKER_CONTAINER_ID = $WSL_DOCKER_CONTAINER_ID_RAW[0]
     $WSL_DOCKER_CONTAINER_ID = $WSL_DOCKER_CONTAINER_ID.Substring(0, 5)
     Write-Host "containerid: `"$WSL_DOCKER_CONTAINER_ID`""
-    # Write-Host "docker stop $WSL_DOCKER_CONTAINER_ID"
-    # docker stop $WSL_DOCKER_CONTAINER_ID
-    # Write-Host "docker start $WSL_DOCKER_CONTAINER_ID"
-    # docker start $WSL_DOCKER_CONTAINER_ID
 
     $new_install_path = "$install_path-$WSL_DOCKER_CONTAINER_ID"
     $old_install_path = $install_path
 
-    # $null = New-Item -Path $new_install_path -ItemType Directory -Force -ErrorAction SilentlyContinue 
-    # Write-Host "Move-Item -Path $docker_image_id_path -Destination $install_path/.image_id"
-    # Write-Host "Move-Item -Path $docker_container_id_path -Destination $install_path/.container_id"
-    
     Move-Item -LiteralPath $old_install_path -Destination $new_install_path
-    # Write-Host "Rename-Item -Path $docker_image_id_path -NewName $install_path/.image_id"
-    # Write-Host "Rename-Item -Path $docker_container_id_path -NewName $install_path/.container_id"
-    
-
-    # Rename-Item -Path $docker_image_id_path -NewName "$install_path/.image_id"
-    # Rename-Item -Path $docker_container_id_path -NewName "$install_path/.container_id"
     $docker_image_id_path = "$new_install_path/.image_id"
     $docker_container_id_path = "$new_install_path/.container_id"
 
