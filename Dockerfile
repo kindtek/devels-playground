@@ -18,7 +18,7 @@ RUN apt-get update -yq && \
 #     adduser --system --home /home/${username} --shell /bin/bash --uid 1001 --gid 1001 --disabled-password ${username}  
 # set up groups
 RUN addgroup --gid 111 ${groupname} && \
-    addgroup --gid 888 angels && \
+    addgroup --gid 888 archans && \
     addgroup --gid 666 devels
 
 RUN adduser --home /home/${username} --shell /bin/bash --uid 1011 --disabled-password ${username}
@@ -49,13 +49,13 @@ RUN cp -r ./home/${username}/.local/bin /usr/local && \
     cp -rp /etc/skel/. /home/devel/
 
 # add username only to sudo
-RUN usermod -aG angels host && usermod -aG angels ${username} 
+RUN usermod -aG archans host && usermod -aG archans ${username} 
 RUN usermod -aG devels devel && usermod -aG devels ${username} 
 RUN usermod -aG sudo ${username}
 
 # RUN sed -e 's;^# \(%sudo.*NOPASSWD.*\);\1;g' -i /etc/sudoers
-# RUN chown -R ${username}:angels /home/host
-RUN chown -R host:angels /home/host
+# RUN chown -R ${username}:archans /home/host
+RUN chown -R host:archans /home/host
 RUN chown -R devel:devels /home/devel
 
 
