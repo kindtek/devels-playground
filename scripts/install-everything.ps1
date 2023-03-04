@@ -39,8 +39,8 @@ function install_all {
     &$winconfig = Invoke-Expression -command "$temp_repo_scripts_path/devels-advocate/add-windows-features.ps1"
 
 
-    Write-Host "`r`nThe following programs will now be installed:" -ForegroundColor Magenta
-    Write-Host "`t- WinGet`r`n`t- Chocolatey`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktopr`n`t- Windows Terminal" -ForegroundColor Magenta
+    Write-Host "`r`nThese programs will be installed or updated:" -ForegroundColor Magenta
+    Write-Host "`t- WinGet`r`n`t- Chocolatey`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktopr`r`n`t- Windows Terminal`r`n`tPython`r`n`tcdir" -ForegroundColor Magenta
     Write-Host "`r`nClose window to quit at any time"
 
     $software_name = "WinGet"
@@ -195,7 +195,10 @@ try {
 
     # @TODO: add cdir and python to install lists
     # last but not least
-    powershell.exe pip install cdir
+    winget install --id=Python.Python.3.10  -e
+
+    $cmd_command = pip install cdir
+    Start-Process -FilePath PowerShell.exe -NoNewWindow -ArgumentList $cmd_command
 
     RefreshEnv
 
