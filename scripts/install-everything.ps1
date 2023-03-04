@@ -174,8 +174,10 @@ try {
     git submodule update --force --recursive --init --remote
     $host.UI.RawUI.BackgroundColor = "Black"
 
-
+    Write-Host"`r`n"
     RefreshEnv
+    Write-Host"`r`n"
+
     # @TODO: since this gave so many errors, use git to install from source - the current way does like it may be better to stay up to date (rather than using a fork or origin choco repo)
     $software_name = "Chocolatey"
     if (!(Test-Path -Path "$git_path/.choco-installed" -PathType Leaf)) {
@@ -203,7 +205,7 @@ try {
     else {
         Write-Host "$software_name already installed"  -ForegroundColor "Blue"
     }
-    
+
     if (!(Test-Path -Path "$git_path/.python-installed" -PathType Leaf)) {
         # @TODO: add cdir and python to install with same behavior as other installs above
         # not eloquent at all but good for now
