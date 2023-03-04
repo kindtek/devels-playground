@@ -27,49 +27,53 @@ function dev_boilerplate {
     $save_directory = "docker2wsl"
     $wsl_version = "2"
     Write-Output "$([char]27)[2J"
-    # first check OS to get relevant C drive path
-    # from https://stackoverflow.com/questions/44703646/determine-the-os-version-linux-and-windows-from-powershell
-    switch (Get-PSPlatform) {
-        'Win32NT' { 
-            New-Variable -Option Constant -Name IsWindows -Value $True -ErrorAction SilentlyContinue
-            New-Variable -Option Constant -Name IsLinux  -Value $false -ErrorAction SilentlyContinue
-            New-Variable -Option Constant -Name IsMacOs  -Value $false -ErrorAction SilentlyContinue
-        }
-    }
 
-    if ($IsLinux) {
-        Write-Host "Linux OS detected"
-        try {
-            # test for being in an wsl environment
-            $wsl = @(wsl.exe -l -v)
-            Write-Host "WSL detected"
-            $mount_drive = "${mount_drive_letter}:${unix_mount_drive}"
-        }
-        catch { 
-            Write-Host "WSL NOT detected"
-            # probably nested so deep into linux that wsl wont work anymore
-            $mount_drive = $windows_mount_drive 
+    try {
+        # first check OS to get relevant C drive path
+        # from https://stackoverflow.com/questions/44703646/determine-the-os-version-linux-and-windows-from-powershell
+        switch (Get-PSPlatform) {
+            'Win32NT' { 
+                New-Variable -Option Constant -Name IsWindows -Value $True -ErrorAction SilentlyContinue
+                New-Variable -Option Constant -Name IsLinux  -Value $false -ErrorAction SilentlyContinue
+                New-Variable -Option Constant -Name IsMacOs  -Value $false -ErrorAction SilentlyContinue
+            }
         }
 
-    }
-    # while we're here might as well
-    elseif ($IsMacOS) {
-        Write-Host "macOS OS detected"
-        $mount_drive = $unix_mount_drive
-    }
-    elseif ($IsWindows) {
-        Write-Host "Windows OS detected"
-        try {
-            # test for being in an wsl environment
-            $wsl = @(wsl.exe -l -v)
-            Write-Host "WSL detected"
-            $mount_drive = "${mount_drive_letter}:${unix_mount_drive}"
+        if ($IsLinux) {
+            Write-Host "Linux OS detected"
+            try {
+                # test for being in an wsl environment
+                $wsl = @(wsl.exe -l -v)
+                Write-Host "WSL detected"
+                $mount_drive = "${mount_drive_letter}:${unix_mount_drive}"
+            }
+            catch { 
+                Write-Host "WSL NOT detected"
+                # probably nested so deep into linux that wsl wont work anymore
+                $mount_drive = $windows_mount_drive 
+            }
+
         }
-        catch { 
-            Write-Host "WSL NOT detected"
-            $mount_drive = $windows_mount_drive 
+        # while we're here might as well
+        elseif ($IsMacOS) {
+            Write-Host "macOS OS detected"
+            $mount_drive = $unix_mount_drive
         }
-    }
+        elseif ($IsWindows) {
+            Write-Host "Windows OS detected"
+            try {
+                # test for being in an wsl environment
+                $wsl = @(wsl.exe -l -v)
+                Write-Host "WSL detected"
+                $mount_drive = "${mount_drive_letter}:${unix_mount_drive}"
+            }
+            catch { 
+                Write-Host "WSL NOT detected"
+                $mount_drive = $windows_mount_drive 
+            }
+        }
+    } catch {}
+
     $install_directory = "$image_repo_mask-$image_name"
     $install_directory = $install_directory.replace(':', '-')
     $install_directory = $install_directory.replace('/', '-')
@@ -90,7 +94,7 @@ function dev_boilerplate {
     if ( $image_repo -eq "_") {
         # official repo has no repo name in address/url
         $image_repo_image_name = $image_name
-    }
+    } catch {}
     
 
     $config = greeting_prompt $image_repo_mask $image_name $image_save_path $distro
