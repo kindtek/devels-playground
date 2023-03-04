@@ -72,7 +72,8 @@ function dev_boilerplate {
                 $mount_drive = $windows_mount_drive 
             }
         }
-    } catch {}
+    }
+    catch {}
 
     $install_directory = "$image_repo_mask-$image_name"
     $install_directory = $install_directory.replace(':', '-')
@@ -94,7 +95,8 @@ function dev_boilerplate {
     if ( $image_repo -eq "_") {
         # official repo has no repo name in address/url
         $image_repo_image_name = $image_name
-    } catch {}
+    }
+    catch {}
     
 
     $config = greeting_prompt $image_repo_mask $image_name $image_save_path $distro
