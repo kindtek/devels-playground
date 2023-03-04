@@ -253,7 +253,7 @@ try {
                 $docker_tries = 0      
             }
             try {
-                Get-Process 'com.docker.proxy'
+                { Get-Process 'com.docker.proxy' } *>$null
                 $docker_online = $true
             }
             catch {}
@@ -282,6 +282,7 @@ try {
             # &$cmd_command = cmd /c start powershell.exe -Command "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1" -WindowStyle "Maximized"
             # Write-Host "`r`n" -BackgroundColor "Black"
             $host.UI.RawUI.BackgroundColor = "Black"
+            Write-Output "$([char]27)[2J"
             $devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
             &$devs_playground = cmd /c start powershell.exe -Command "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
         }
