@@ -58,25 +58,6 @@ function install_all {
         Write-Host "$software_name already installed"  -ForegroundColor "Blue"
     }
 
-    # @TODO: since this gave so many errors, use git to install from source - the current way does like it may be better to stay up to date (rather than using a fork or origin choco repo)
-    $software_name = "Chocolatey"
-    if (!(Test-Path -Path "$git_path/.choco-installed" -PathType Leaf)) {
-        # getting error-0x80010135 path too long error when unzipping.. unzip operation at the shortest path
-        Push-Location $temp_repo_scripts_path
-        # install choco 
-        $host.UI.RawUI.BackgroundColor = "Black"
-        $choco = "devels-advocate/get-latest-choco.ps1"
-        Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
-        $env:path += ";C:\ProgramData\chocoportable"
-        &$choco = Invoke-Expression -command "devels-advocate/get-latest-choco.ps1" 
-        # cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
-        Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.choco-installed"
-        Pop-Location
-    }
-    else {
-        Write-Host "$software_name already installed"  -ForegroundColor "Blue"
-    }
-
     $software_name = "Github CLI"
     if (!(Test-Path -Path "$git_path/.github-installed" -PathType Leaf)) {
         $host.UI.RawUI.BackgroundColor = "Black"
@@ -193,15 +174,44 @@ try {
     git submodule update --force --recursive --init --remote
     $host.UI.RawUI.BackgroundColor = "Black"
 
-    # @TODO: add cdir and python to install lists
-    # last but not least
-    winget install --id=Python.Python.3.10  -e
-
-    $cmd_command = pip install cdir
-    Start-Process -FilePath PowerShell.exe -NoNewWindow -ArgumentList $cmd_command
 
     RefreshEnv
+    # @TODO: since this gave so many errors, use git to install from source - the current way does like it may be better to stay up to date (rather than using a fork or origin choco repo)
+    $software_name = "Chocolatey"
+    if (!(Test-Path -Path "$git_path/.choco-installed" -PathType Leaf)) {
+        # getting error-0x80010135 path too long error when unzipping.. unzip operation at the shortest path
+        # Push-Location $temp_repo_scripts_path
+        Puch-Location choco
+        $host.UI.RawUI.BackgroundColor = "Black"
+        # $choco = "devels-advocate/get-latest-choco.ps1"
+        # Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
+        # $env:path += ";C:\ProgramData\chocoportable"
+        # &$choco = Invoke-Expression -command "devels-advocate/get-latest-choco.ps1" 
+        # $choco = "cmd.exe /c scripts/choco/build.bat"
+        Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
+        $env:path += ";C:\ProgramData\chocoportable"
+        $choco = "choco/build.bat"
+        &$choco = cmd /c start powershell.exe -Command "choco/build.bat"
+        $refresh_env = "choco/src/chocolatey.resources/redirects/RefreshEnv"
+        &$refresh_env = cmd /c start powershell.exe -Command "choco/src/chocolatey.resources/redirects/RefreshEnv.cmd"
+        # cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
+        Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.choco-installed"
+        Pop-Location
+        Push-Location cdir
+        Push-Location bin
+        
+        # @TODO: add cdir and python to install lists
+        # not eloquent at all but good for now
+        winget install --id=Python.Python.3.10  -e
 
+        $cmd_command = pip install cdir.ps1
+        Start-Process -FilePath PowerShell.exe -NoNewWindow -ArgumentList $cmd_command
+        Pop-Location
+        Pop-Locatoin
+    }
+    else {
+        Write-Host "$software_name already installed"  -ForegroundColor "Blue"
+    }
 }
 # if git is not recognized try to limp along with the manually downloaded files
 catch {}
