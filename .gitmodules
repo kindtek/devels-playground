@@ -21,11 +21,16 @@
 	recurse = true
 [submodule "scripts/cdir"]
 	active = true
-
 	path = scripts/cdir
-		shallow = false
-
+	shallow = false
 	url = https://github.com/kindtek/cdir
 	branch = master
+	recurse = true
+[submodule "scripts/choco"]
+	active = true
+	path = scripts/choco
+	shallow = false
+	url = https://github.com/kindtek/choco
+	branch = stable
 	recurse = true
 
