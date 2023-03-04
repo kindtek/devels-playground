@@ -14,7 +14,8 @@ SET mount_drive=C
 @REM SET image_name=ubuntu:latest
 SET image_repo=kindtek
 SET image_repo_mask=kidntek
-SET image_name=devp:ubuntu-phat
+SET image_tag="ubuntu-phat"
+SET image_name=devp:%image_tag%
 
 SET "install_directory=%image_repo_mask%-%image_name::=-%"
 SET "save_location=%mount_drive%:\%save_directory%"
