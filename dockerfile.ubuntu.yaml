@@ -2,7 +2,7 @@
 # `username=mine groupname=ours docker run -d -i`
 FROM ubuntu:latest AS devp_skinny
 ARG username=${username:-gabriel}
-ARG groupname=${groupname:-archangels}
+ARG groupname=${groupname:-archan}
 
 # # set glob exp pattern matching default
 # RUN echo "shopt -s histappend" >> /etc/profile
