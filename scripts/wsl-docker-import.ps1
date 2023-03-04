@@ -291,7 +291,7 @@ function docker_container_start {
     # get first line of docker_container_id_path
     $WSL_DOCKER_CONTAINER_ID_RAW = @(Get-Content -Path $docker_container_id_path -First 1)
     [String]$WSL_DOCKER_CONTAINER_ID = $WSL_DOCKER_CONTAINER_ID_RAW[0]
-    $WSL_DOCKER_CONTAINER_ID = $WSL_DOCKER_CONTAINER_ID.Substring(0, 5)
+    $WSL_DOCKER_CONTAINER_ID = $WSL_DOCKER_CONTAINER_ID.Substring(0, 8)
     Write-Host "containerid: `"$WSL_DOCKER_CONTAINER_ID`""
 
     $new_install_path = "$install_path-$WSL_DOCKER_CONTAINER_ID"
