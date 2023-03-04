@@ -1,4 +1,4 @@
-@echo on
+@echo off
 @REM this file is solid but will be deprecated once wsl-import.ps1 is fixed
 color 0F
 SETLOCAL EnableDelayedExpansion
@@ -13,8 +13,8 @@ SET mount_drive=C
 @REM SET image_repo_mask=official
 @REM SET image_name=ubuntu:latest
 SET image_repo=kindtek
-SET image_repo_mask=kidntek
-SET image_tag="ubuntu-phat"
+SET image_repo_mask=kindtek
+SET "image_tag=ubuntu-phat"
 SET image_name=devp:%image_tag%
 
 SET "install_directory=%image_repo_mask%-%image_name::=-%"
