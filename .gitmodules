@@ -20,5 +20,12 @@
 	branch = devels-workshop
 	recurse = true
 [submodule "scripts/cdir"]
+	active = true
+
 	path = scripts/cdir
+		shallow = false
+
 	url = https://github.com/kindtek/cdir
+	branch = master
+	recurse = true
+
