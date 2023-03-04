@@ -288,6 +288,10 @@ function docker_container_start {
     Write-Host "docker run -id --cidfile=$docker_container_id_path --name=$distro-$WSL_DOCKER_IMG_ID --sig-proxy=false $WSL_DOCKER_IMG_ID"
     docker run -id --cidfile=$docker_container_id_path --name=$distro-$WSL_DOCKER_IMG_ID --sig-proxy=false $WSL_DOCKER_IMG_ID    
 
+    # ECHO exporting image (!WSL_DOCKER_IMG_ID!) as container (!WSL_DOCKER_CONTAINER_ID!)...
+    # ECHO docker export !WSL_DOCKER_CONTAINER_ID! ^> !image_save_path!
+    # docker export !WSL_DOCKER_CONTAINER_ID! > !image_save_path!
+
     # get first line of docker_container_id_path
     $WSL_DOCKER_CONTAINER_ID_RAW = @(Get-Content -Path $docker_container_id_path -First 1)
     [String]$WSL_DOCKER_CONTAINER_ID = $WSL_DOCKER_CONTAINER_ID_RAW[0]
@@ -320,8 +324,8 @@ function docker_container_start {
 
     $docker_img_cont_old_name = "$distro-$WSL_DOCKER_IMG_ID"
     $docker_img_cont_new_name = "$distro-$WSL_DOCKER_CONTAINER_ID"
-    Write-Host docker rename $docker_img_cont_old_name $docker_img_cont_new_name
-    docker rename $docker_img_cont_old_name $docker_img_cont_new_name
+    # Write-Host docker rename $docker_img_cont_old_name $docker_img_cont_new_name
+    # docker rename $docker_img_cont_old_name $docker_img_cont_new_name
 
     Write-Host "`r`nclosing test container...`r`n========================================================================"
 
@@ -333,13 +337,13 @@ function export_image {
     # directory structure: 
     # %mount_drive%:\%install_directory%\%save_directory%
     # ie: C:\wsl-distros\docker
-    Write-Host "install_loc: $install_location"
-    Write-Host "save_loc: $save_location"
-    Write-Host "distro: $distro"
-    Write-Host "WSL_DOCKER_CONTAINER_ID: $WSL_DOCKER_CONTAINER_ID"
-
-
-
+    # Write-Host "install_loc: $install_location"
+    # Write-Host "save_loc: $save_location"
+    # Write-Host "distro: $distro"
+    # Write-Host "WSL_DOCKER_CONTAINER_ID: $WSL_DOCKER_CONTAINER_ID"
+    # ECHO exporting image (!WSL_DOCKER_IMG_ID!) as container (!WSL_DOCKER_CONTAINER_ID!)...
+    # ECHO docker export !WSL_DOCKER_CONTAINER_ID! ^> !image_save_path!
+    # docker export !WSL_DOCKER_CONTAINER_ID! > !image_save_path!
     $image_save_path = "$save_location/$distro.tar"
     Write-Host "exporting image as container ($WSL_DOCKER_CONTAINER_ID) into .tar file..."
     Write-Host "docker export $WSL_DOCKER_CONTAINER_ID > $image_save_path"
