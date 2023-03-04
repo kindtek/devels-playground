@@ -39,7 +39,17 @@ function dev_boilerplate {
 
     if ($IsLinux) {
         Write-Host "Linux OS detected"
-        $mount_drive = $unix_mount_drive
+        try {
+            # test for being in an wsl environment
+            $wsl = @(wsl.exe -l -v)
+            Write-Host "WSL detected"
+            $mount_drive = "${mount_drive_letter}:${unix_mount_drive}"
+        }
+        catch { 
+            Write-Host "WSL NOT detected"
+            # probably nested so deep into linux that wsl wont work anymore
+            $mount_drive = $windows_mount_drive 
+        }
 
     }
     # while we're here might as well
@@ -52,10 +62,13 @@ function dev_boilerplate {
         try {
             # test for being in an wsl environment
             $wsl = @(wsl.exe -l -v)
+            Write-Host "WSL detected"
             $mount_drive = "${mount_drive_letter}:${unix_mount_drive}"
         }
-        catch { $mount_drive = $windows_mount_drive }
-      
+        catch { 
+            Write-Host "WSL NOT detected"
+            $mount_drive = $windows_mount_drive 
+        }
     }
     $install_directory = "$image_repo_mask-$image_name"
     $install_directory = $install_directory.replace(':', '-')
