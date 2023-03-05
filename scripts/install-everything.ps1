@@ -15,8 +15,6 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 }
 # source of the above self-elevating script: https://blog.expta.com/2017/03/how-to-self-elevate-powershell-script.html#:~:text=If%20User%20Account%20Control%20(UAC,select%20%22Run%20with%20PowerShell%22.
 
-setup_devw $temp_repo_scripts_path
-
 
 function reboot_prompt {
     # Write-Host "`r`nA restart is required for the changes to fully take effect. " -ForegroundColor Magenta -BackgroundColor "Black"
@@ -354,3 +352,4 @@ workflow setup_devw {
 }
 
     
+setup_devw $temp_repo_scripts_path
