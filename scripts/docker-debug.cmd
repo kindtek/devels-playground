@@ -36,6 +36,25 @@ goto prompt
 docker update --restart=always docker-desktop
 docker update --restart=always docker-desktop-data
 "C:\Program Files\Docker\Docker\DockerCli.exe" -SwitchDaemon
+@REM -SwitchLinuxEngine
+@REM -SwitchWindowsEngine
+@REM -Start
+@REM -Stop
+@REM -SendDiagnostic
+@REM -ResetToDefault
+@REM -ResetCredential
+@REM -DownloadMobyLogs
+@REM -DownloadVpnKitLogs
+@REM -MoveVhd
+@REM -Mount=
+@REM -Unmount=
+@REM -Wait=
+@REM -SetMemory=
+@REM -SetCpus=
+@REM -SetDNS=
+@REM -SetIP=
+@REM -SetDaemonJson=
+@REM -SetWindowsDaemonJson=
 
 @REM dockerd --containerd /var/run/dev/docker-containerd.sockgoto prompt
 @REM file::
