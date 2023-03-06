@@ -356,7 +356,7 @@ workflow setup_devw {
     }
     catch {
         InlineScript { Write-Host "Something went wrong. Restarting your computer will probably fix the problem." -ForegroundColor "Red" }
-        Write-host "Error: $err"
+        InlineScript { Write-host "Error: $err" }
         # Restart-Computer -Wait 
         # setup_devw $temp_repo_scripts_path     
     }
