@@ -41,10 +41,8 @@ function install_dependencies {
     param ($temp_repo_scripts_path, $git_path)
 
     Write-Host "`r`nThese programs will be installed or updated:" 
-    Write-Host "`r`n`t- Ubuntu`r`n`t- WinGet`r`n`t- Chocolatey`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktopr`r`n`t- Windows Terminal`r`n`t- Python" 
+    Write-Host "`r`n`t- WinGet`r`n`t- Chocolatey`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktopr`r`n`t- Windows Terminal`r`n`t- Python" 
     Write-Host "`r`nClose window to quit at any time"
-    $cmd_command = "--install -d Ubuntu"
-    Start-Process -FilePath wsl.exe -NoNewWindow -ArgumentList $cmd_command
 
     $software_name = "WinGet"
     if (!(Test-Path -Path "$git_path/.winget-installed" -PathType Leaf)) {
