@@ -253,8 +253,6 @@ function require_docker_online {
             if (Get-Process 'com.docker.proxy'){
                 $docker_online = $true
                 Write-Host "Docker Desktop is now online"
-
-
             }
             # }
              # *>$null
