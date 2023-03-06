@@ -99,7 +99,7 @@ function install_dependencies {
         Write-Host "`r`nInstalling $software_name`r`n" 
         Invoke-Expression -Command "winget install Microsoft.WindowsTerminal" 
         # }
-        Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.wterminal-installed"
+        Write-Host "$software_name installed`r`n"  | Out-File -FilePath "$git_path/.wterminal-installed"
     }
     else {
         Write-Host "$software_name already installed`r`n"  
