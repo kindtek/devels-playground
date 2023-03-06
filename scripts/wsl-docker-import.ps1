@@ -28,7 +28,7 @@ function dev_boilerplate {
     $mount_drive = $unix_mount_drive # default
     $save_directory = "docker2wsl"
     $wsl_version = "2"
-    Write-Output "$([char]27)[2J"
+    Write-Host "$([char]27)[2J"
 
     try {
         # first check OS to get relevant C drive path
