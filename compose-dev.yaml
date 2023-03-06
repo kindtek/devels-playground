@@ -1,7 +1,29 @@
 version: '3.8'
-name: devels-workshop-ubuntu
+# name: devels-workshop-ubuntu
 services:
-  
+  # skinny:
+  #   entrypoint:
+  #     - sleep
+  #     - infinity
+  #   image: kindtek/devp:ubuntu-skinny
+  #   build:
+  #     context: .
+  #     target: devp_skinny
+  #     args:
+  #       - username=${username:-gabriel}
+  #     dockerfile: dockerfile.ubuntu.yaml
+  #   init: true
+  #   volumes:
+  #     - hel-data:/mnt/w
+  #     # - type: volume
+  #     #   source: hel-data
+  #     #   target: /home/devel
+  #     - type: bind
+  #       source: /var/run/docker.sock
+  #       target: /var/run/docker.sock
+  #     - type: bind
+  #       source: ~/
+  #       target: /home/host
   git:
     entrypoint:
       - sleep
@@ -15,9 +37,7 @@ services:
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
-      - type: volume
-        source: hel-data
-        target: /home/devel
+      - hel-data:/mnt/w
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
@@ -37,15 +57,56 @@ services:
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
-      - type: volume
-        source: hel-data
-        target: /home/devel
+      - hel-data:/mnt/w
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
       - type: bind
         source: ~/
         target: /home/host
+
+  phatt:
+    entrypoint:
+      - sleep
+      - infinity
+    image: kindtek/devp:ubuntu-phatt
+    build:
+      context: .
+      target: devp_phatt
+      args:
+        - username=${username:-gabriel}
+      dockerfile: dockerfile.ubuntu.yaml
+    init: true
+    volumes:
+      - hel-data:/mnt/w
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: ~/
+        target: /home/host
+
+  phatter:
+    entrypoint:
+      - sleep
+      - infinity
+    image: kindtek/devp:ubuntu-phatter
+    build:
+      context: .
+      target: devp_phatter
+      args:
+        - username=${username:-gabriel}
+      dockerfile: dockerfile.ubuntu.yaml
+    init: true
+    volumes:
+      - hel-data:/mnt/w
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+      - type: bind
+        source: ~/
+        target: /home/host
+
   phattest:
     entrypoint:
       - sleep
@@ -59,32 +120,7 @@ services:
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
-      - type: volume
-        source: hel-data
-        target: /home/devel
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-      - type: bind
-        source: ~/
-        target: /home/host
-      
-  phatso:
-    entrypoint:
-      - sleep
-      - infinity
-    image: kindtek/devp:ubuntu-phatso
-    build:
-      context: .
-      target: devp_phatso
-      args:
-        - username=${username:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
-    init: true
-    volumes:
-      - type: volume
-        source: hel-data
-        target: /home/devel
+      - hel-data:/mnt/w
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
@@ -92,5 +128,27 @@ services:
         source: ~/
         target: /home/host
 
+  # phatso:
+  #   entrypoint:
+  #     - sleep
+  #     - infinity
+  #   image: kindtek/devp:ubuntu-phatso
+  #   build:
+  #     context: .
+  #     target: devp_phatso
+  #     args:
+  #       - username=${username:-gabriel}
+  #     dockerfile: dockerfile.ubuntu.yaml
+  #   init: true
+  #   volumes:
+  #     - hel-data:/mnt/w
+  #     - type: bind
+  #       source: /var/run/docker.sock
+  #       target: /var/run/docker.sock
+  #     - type: bind
+  #       source: ~/
+  #       target: /home/host
+
 volumes:
   hel-data:
+    external: false
