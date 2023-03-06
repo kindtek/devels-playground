@@ -4,9 +4,13 @@ FROM ubuntu:latest AS devp_skinny
 ARG username=${username:-gabriel}
 ARG groupname=${groupname:-arcans}
 
+# # set glob exp pattern matching default
+# RUN echo "shopt -s histappend" >> /etc/profile
+
 # set up basic utils
 RUN apt-get update -yq && \
     apt-get upgrade -y && \
+    # install github, build-essentials, libssl, etc
     apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip vim
 
 # # set up group/user 
@@ -74,7 +78,7 @@ RUN passwd -d ${username} && passwd -d host && passwd -d root && passwd -l root
 
 # set up /devel folder as symbolic link to /home/devel for cloning repository(ies)
 RUN ln -s /home/devel /hel && chown -R devel:devels /hel
-RUN yes | unminimize > /hel/lo-world
+RUN touch /hel/lo.hiworld
 
 
 
@@ -96,7 +100,7 @@ USER ${username}
 # brave browser/gui/media support
 FROM devp_git as devp_phat
 # make man available
-
+# RUN yes | unminimize
 # for powershell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
 USER ${username}
@@ -113,18 +117,17 @@ FROM devp_phat as devp_phatt
 RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
 RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main"| sudo tee /etc/apt/sources.list.d/brave-browser-release.list
 
+
 RUN sudo apt-get update -yq && \
-    sudo apt-get install -y gimp nautilus vlc x11-apps apt-transport-https software-properties-common brave-browser
+    sudo apt-get install -y brave-browser gimp nautilus vlc x11-apps apt-transport-https software-properties-common 
 USER ${username}
 
 # for docker in docker
 FROM devp_phatt as devp_phatter
 USER root
-
-
 # for docker install - https://docs.docker.com/engine/install/ubuntu/
 RUN mkdir -p /etc/apt/keyrings && \
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
+    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 # DOCKER
 RUN apt-get update && apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io 
