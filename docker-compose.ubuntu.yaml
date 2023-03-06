@@ -148,6 +148,3 @@ services:
       - type: bind
         source: ~/
         target: /home/host
-
-volumes:
-  hel-data:
