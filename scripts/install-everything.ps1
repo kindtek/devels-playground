@@ -287,7 +287,7 @@ function run_devels_playground {
         $software_name = "Docker Desktop"
         if ($start_devs_playground -ine 'n' -And $start_devs_playground -ine 'no') { 
             Write-Host "`r`nNOTE: $software_name is required to be running for the Devel's Playground to work. Do NOT quit $software_name until you are done running it.`r`n" -BackgroundColor "Black" -ForegroundColor "Yellow"
-            $docker_online = require_docker_online
+            # $docker_online = require_docker_online
             if ($docker_online -eq $true) {
                 # // commenting out background building process because this is NOT quite ready.
                 # // would like to run in separate window and then use these new images in devel's playground 
@@ -366,6 +366,7 @@ workflow start_installer_daemon {
     InlineScript { Write-Host "$([char]27)[2J" }
     InlineScript { Write-Host "`r`nSetup complete!`r`n" -ForegroundColor Green -BackgroundColor "Black" }
 
+    require_docker_online
     run_devels_playground
 
     # }
