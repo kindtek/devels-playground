@@ -145,10 +145,9 @@ function install_repo {
 
     # refresh environment variables using script in choco temp download location
     powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle "Hidden"
-    # Write-Host "parent path: $parent_path"
+    Write-Host "parent path: $parent_path"
     Set-Location $parent_path
     $new_install = $false
-    
     # .. and then clone/update the repo
     Write-Host "Testing path $parent_path/$repo_src_name ..."
     if (!(Test-Path -Path $repo_src_name)) {
