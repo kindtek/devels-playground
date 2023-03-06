@@ -18,7 +18,9 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 
 function reboot_prompt {
     # Write-Host "`r`nA restart is required for the changes to fully take effect. " -ForegroundColor Magenta -BackgroundColor "Black"
-    $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now`r`n ..or hit ENTER to skip" 
+    # $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now`r`n ..or hit ENTER to skip" 
+    $confirmation = 'reboot now' 
+
     if ($confirmation -ieq 'reboot now') {
         Restart-Computer -Wait
     }
@@ -239,7 +241,7 @@ function require_docker_online {
             # $docker_attempt1 = $docker_attempt2 = $false
             # prompt to continue
             write-host "$docker_status_now`r`n"
-            $check_again = Read-Host "Keep trying to connect to Docker? ([y]n)"
+            # $check_again = Read-Host "Keep trying to connect to Docker? ([y]n)"
         }
         elseif ($docker_online -eq $false -And (($docker_tries % 20) -eq 0)) {
             # docker update --restart=always docker-desktop
@@ -270,7 +272,7 @@ function run_devels_playground {
     
     try {
         # @TODO: maybe start in new window
-        $start_devs_playground = Read-Host "`r`nStart Devel's Playground ([y]/n)"
+        # $start_devs_playground = Read-Host "`r`nStart Devel's Playground ([y]/n)"
         $software_name = "Docker Desktop"
         if ($start_devs_playground -ine 'n' -And $start_devs_playground -ine 'no') { 
             Write-Host "`r`nNOTE: $software_name is required to be running for the Devel's Playground to work. Do NOT quit $software_name until you are done running it.`r`n" -BackgroundColor "Black" -ForegroundColor "Yellow"
