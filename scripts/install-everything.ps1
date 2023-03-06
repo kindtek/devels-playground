@@ -264,16 +264,16 @@ function require_docker_online {
                 # $check_again = Read-Host "Keep trying to connect to Docker? ([y]n)"
             }
             elseif ($docker_online -eq $false -And (($docker_tries % 20) -eq 0)) {
-                # docker update --restart=always docker-desktop
-                # docker update --restart=always docker-desktop-data
+                docker update --restart=always docker-desktop
+                docker update --restart=always docker-desktop-data
                 Write-Host "Waited $docker_tries seconds .. "
-                # Write-Host "Restarting Docker Engine..."
-                # Write-Host "Switching Docker Engine ...."
-                # ./DockerCli.exe -SwitchDaemon
-                # Start-Sleep 5
-                # Write-Host "Setting Docker Engine to Linux ....."
-                # ./DockerCli.exe -SwitchLinuxEngine
-                # Write-Host "Switch complete."
+                Write-Host "Restarting Docker Engine..."
+                Write-Host "Switching Docker Engine ...."
+                ./DockerCli.exe -SwitchDaemon
+                Start-Sleep 5
+                Write-Host "Setting Docker Engine to Linux ....."
+                ./DockerCli.exe -SwitchLinuxEngine
+                Write-Host "Switch complete."
                 Write-Host "Retrying connection in 10 seconds ......"
                 Start-Sleep -seconds 10
             }
