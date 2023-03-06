@@ -172,7 +172,7 @@ function install_repo {
             $new_install = $true
             # getting error-0x80010135 path too long error when unzipping.. unzip operation at the shortest path
             # Push-Location $temp_repo_scripts_path
-            Puch-Location choco
+            Push-Location choco
             # $choco = "devels-advocate/get-latest-choco.ps1"
             # Write-Host "`n`r`n`rInstalling $software_name ..." 
             # $env:path += ";C:\ProgramData\chocoportable"
