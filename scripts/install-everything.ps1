@@ -40,6 +40,7 @@ function install_windows_features {
 function install_dependencies {
     param ($temp_repo_scripts_path, $git_path)
 
+    $new_install=$false
     Write-Host "`r`nThese programs will be installed or updated:" 
     Write-Host "`r`n`t- WinGet`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktop`r`n`t- Windows Terminal`r`n" 
 
@@ -52,6 +53,7 @@ function install_dependencies {
         &$winget = Invoke-Expression -command "devels-advocate/get-latest-winget.ps1" 
         Write-Host "`t$software_name installed"  | Out-File -FilePath "$git_path/.winget-installed"
         Pop-Location
+        $new_install = $true
     }
     else {
         Write-Host "`t$software_name already installed"  
@@ -63,6 +65,7 @@ function install_dependencies {
         Invoke-Expression -Command "winget install -e --id GitHub.cli"
         Invoke-Expression -Command "winget install --id Git.Git -e --source winget"
         Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.github-installed"
+        $new_install = $true
     }
     else {
         Write-Host "`t$software_name already installed" 
@@ -73,6 +76,7 @@ function install_dependencies {
         Write-Host "`r`n`tInstalling $software_name`r`n"
         Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
         Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.vscode-installed"
+        $new_install = $true
     }
     else {
         Write-Host "`t$software_name already installed"  
@@ -83,6 +87,7 @@ function install_dependencies {
         Write-Host "`r`n`tInstalling $software_name`r`n" 
         Invoke-Expression -Command "winget install --id=Docker.DockerDesktop -e" 
         Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.docker-installed"
+        $new_install = $true
     }
     else {
         Write-Host "`t$software_name already installed"  
@@ -96,11 +101,13 @@ function install_dependencies {
         Invoke-Expression -Command "winget install Microsoft.WindowsTerminal" 
         # }
         Write-Host "$software_name installed`r`n"  | Out-File -FilePath "$git_path/.wterminal-installed"
+        $new_install = $true
     }
     else {
         Write-Host "`t$software_name already installed`r`n"  
     }
 
+    return $new_install
     # this is used for x11 / gui stuff .. @TODO: add the option one day maybe
     # choco install vcxsrv microsoft-windows-terminal wsl -y
     
