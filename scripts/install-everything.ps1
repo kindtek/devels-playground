@@ -370,6 +370,7 @@ workflow start_installer_daemon {
     if ($new_install -eq $true) {
         InlineScript { Write-Host "`r`nRestart needed. Restarting computer in five seconds ... r`n" }
         Start-Sleep 5
+        Restart-Computer -Wait
     }
 
     install_repo $parent_path $git_path $repo_src_owner $repo_src_name $repo_src_branch
