@@ -132,7 +132,7 @@ function test_repo_path {
     }
     catch {
         Write-Host "Git error message caught"
-        RefreshEnv
+        powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle "Hidden"
         return $false
     }
 
@@ -144,9 +144,8 @@ function install_repo {
         $parent_path, $git_path, $repo_src_owner, $repo_src_name, $repo_src_branch 
     )
     try {
-        # refresh environment variables
-        # cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
-        RefreshEnv
+        # refresh environment variables using script in choco temp download location
+        powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle "Hidden"
         # Write-Host "parent path: $parent_path"
         Set-Location $parent_path
         $new_install = $false
@@ -161,10 +160,6 @@ function install_repo {
         
         Set-Location "$repo_src_name"
         git submodule update --force --recursive --init --remote
-    
-        Write-Host"`r`n"
-        RefreshEnv
-        Write-Host"`r`n"
     
         # @TODO: since this gave so many errors, use git to install from source - the current way does like it may be better to stay up to date (rather than using a fork or origin choco repo)
         $software_name = "Chocolatey"
@@ -193,6 +188,10 @@ function install_repo {
         else {
             Write-Host "$software_name already installed"  
         }
+
+        Write-Host"`r`n"
+        RefreshEnv
+        Write-Host"`r`n"
     
         if (!(Test-Path -Path "$git_path/.python-installed" -PathType Leaf)) {
             $new_install = $true
@@ -209,6 +208,10 @@ function install_repo {
             Write-Host "$software_name already installed"
             Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.python-installed"
         }
+
+        Write-Host"`r`n"
+        RefreshEnv
+        Write-Host"`r`n"
 
         return $new_install
     
