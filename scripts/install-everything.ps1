@@ -336,15 +336,17 @@ workflow setup_devw {
     try {
         test_repo_path $parent_path $git_path $repo_src_owner $repo_src_name
         # jump to bottom line without clearing scrollback
-        Write-Output "$([char]27)[2J"
+        InlineScript { Write-Host "$([char]27)[2J" }
         install_dependencies $temp_repo_scripts_path $git_path
         install_repo $parent_path $git_path $repo_src_owner $repo_src_name $repo_src_branch
-        Write-Output "$([char]27)[2J"
+        InlineScript { Write-Host "$([char]27)[2J" }
+        InlineScript { Write-Host "`r`nSetup complete!`r`n" -ForegroundColor Green -BackgroundColor "Black" }
+
         run_devels_playground
 
     }
     catch {
-        Write-Host "Something went wrong. Restarting your computer will probably fix the problem." -ForegroundColor "Red"
+        InlineScript { Write-Host "Something went wrong. Restarting your computer will probably fix the problem." -ForegroundColor "Red" }
         reboot_prompt    
         # setup_devw $temp_repo_scripts_path     
     }
