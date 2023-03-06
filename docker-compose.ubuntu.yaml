@@ -14,9 +14,10 @@ services:
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
-      - type: volume
-        source: hel-data
-        target: /home/devel
+      - /mnt/w:/home/devel
+      # - type: volume
+      #   source: hel-data
+      #   target: /home/devel
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
@@ -36,9 +37,7 @@ services:
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
-      - type: volume
-        source: hel-data
-        target: /home/devel
+      - /mnt/w:/home/devel
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
@@ -58,9 +57,7 @@ services:
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
-      - type: volume
-        source: hel-data
-        target: /home/devel
+      - /mnt/w:/home/devel
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
@@ -81,9 +78,7 @@ services:
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
-      - type: volume
-        source: hel-data
-        target: /home/devel
+      - /mnt/w:/home/devel
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
@@ -104,9 +99,7 @@ services:
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
-      - type: volume
-        source: hel-data
-        target: /home/devel
+      - /mnt/w:/home/devel
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
@@ -127,16 +120,14 @@ services:
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
-      - type: volume
-        source: hel-data
-        target: /home/devel
+      - /mnt/w:/home/devel
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
       - type: bind
         source: ~/
         target: /home/host
-      
+
   phatso:
     entrypoint:
       - sleep
@@ -150,7 +141,7 @@ services:
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
-      - hel-data:/home/devel
+      - /mnt/w:/home/devel
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
