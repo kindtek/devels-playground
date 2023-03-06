@@ -150,9 +150,7 @@ services:
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
-      - type: volume
-        source: hel-data
-        target: /home/devel
+      - hel-data:/home/devel
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
@@ -162,3 +160,4 @@ services:
 
 volumes:
   hel-data:
+    external: true
