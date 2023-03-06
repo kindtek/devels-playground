@@ -21,11 +21,18 @@ function reboot_prompt {
     $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now`r`n ..or hit ENTER to skip" 
 
     if ($confirmation -ieq 'reboot now') {
-        Restart-Computer -Wait
+        InlineScript { Write-Host "`r`nRestarting computer ... r`n" -ForegroundColor Green -BackgroundColor "Black" }
+        # Restart-Computer -Wait
     }
     else {
         Write-Host "`r`n"
     }
+}
+
+function install_windows_features {
+    param ( $temp_repo_scripts_path )
+    $winconfig = "$temp_repo_scripts_path/devels-advocate/add-windows-features.ps1"
+    &$winconfig = Invoke-Expression -command "$temp_repo_scripts_path/devels-advocate/add-windows-features.ps1"
 }
 
 function install_dependencies {
@@ -336,8 +343,10 @@ workflow setup_devw {
         test_repo_path $parent_path $git_path $repo_src_owner $repo_src_name
         # jump to bottom line without clearing scrollback
         InlineScript { Write-Host "$([char]27)[2J" }
+        install_windows_features $temp_repo_scripts_path $git_path
         install_dependencies $temp_repo_scripts_path $git_path
-        Restart-Computer -Wait
+        InlineScript { Write-Host "`r`nRestarting computer ... r`n" -ForegroundColor Green -BackgroundColor "Black" }
+        # Restart-Computer -Wait
         install_repo $parent_path $git_path $repo_src_owner $repo_src_name $repo_src_branch
         InlineScript { Write-Host "$([char]27)[2J" }
         InlineScript { Write-Host "`r`nSetup complete!`r`n" -ForegroundColor Green -BackgroundColor "Black" }
@@ -347,7 +356,8 @@ workflow setup_devw {
     }
     catch {
         InlineScript { Write-Host "Something went wrong. Restarting your computer will probably fix the problem." -ForegroundColor "Red" }
-        Restart-Computer -Wait 
+        Get-Error
+        # Restart-Computer -Wait 
         # setup_devw $temp_repo_scripts_path     
     }
 }
