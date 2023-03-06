@@ -242,11 +242,12 @@ function require_docker_online {
 
     $docker_tries = 0
     $docker_online = $false
-    # launch docker desktop and keep it open 
-    Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
-    Write-Host "`r`n`r`nWaiting for Docker to come online ..."     
+   
     do {       
         try {
+            # launch docker desktop and keep it open 
+            Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
+            Write-Host "`r`n`r`nWaiting for Docker to come online ..."  
             $docker_tries++
             Start-Sleep -seconds 1
             # { 
@@ -360,14 +361,15 @@ workflow start_installer_daemon {
     InlineScript { Write-Host "$([char]27)[2J" }
     $new_install = install_windows_features $temp_repo_scripts_path 
     if ($new_install -eq $true) {
-        InlineScript { Write-Host "`r`nWindows features installed. Restarting computer ... r`n" }
-        # Restart-Computer -Wait
+        InlineScript { Write-Host "`r`nWindows features installed. Restarting computer in five seconds ... r`n" }
+        Start-Sleep 5
+        Restart-Computer -Wait
     }
     
     $new_install = install_dependencies $temp_repo_scripts_path $git_path
     if ($new_install -eq $true) {
-        InlineScript { Write-Host "`r`nRestarting computer ... r`n" - }
-        # Restart-Computer -Wait
+        InlineScript { Write-Host "`r`nRestart needed. Restarting computer in five seconds ... r`n" }
+        Start-Sleep 5
     }
 
     install_repo $parent_path $git_path $repo_src_owner $repo_src_name $repo_src_branch
