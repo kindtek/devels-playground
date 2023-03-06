@@ -17,11 +17,11 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 
 
 function reboot_prompt {
-    Write-Host "`r`nA restart is required for the changes to fully take effect. " -ForegroundColor Magenta -BackgroundColor "Black"
+    Write-Host "`r`nA restart is required for the changes to fully take effect. "
     $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now`r`n ..or hit ENTER to skip" 
 
     if ($confirmation -ieq 'reboot now') {
-        InlineScript { Write-Host "`r`nRestarting computer ... r`n" -ForegroundColor Green -BackgroundColor "Black" }
+        InlineScript { Write-Host "`r`nRestarting computer ... r`n" }
         # Restart-Computer -Wait
     }
     else {
@@ -40,8 +40,8 @@ function install_windows_features {
 function install_dependencies {
     param ($temp_repo_scripts_path, $git_path)
 
-    Write-Host "`r`nThese programs will be installed or updated:" -ForegroundColor Magenta
-    Write-Host "`r`n`t- Ubuntu`r`n`t- WinGet`r`n`t- Chocolatey`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktopr`r`n`t- Windows Terminal`r`n`t- Python" -ForegroundColor Magenta
+    Write-Host "`r`nThese programs will be installed or updated:" 
+    Write-Host "`r`n`t- Ubuntu`r`n`t- WinGet`r`n`t- Chocolatey`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktopr`r`n`t- Windows Terminal`r`n`t- Python" 
     Write-Host "`r`nClose window to quit at any time"
     $cmd_command = "--install -d Ubuntu"
     Start-Process -FilePath wsl.exe -NoNewWindow -ArgumentList $cmd_command
@@ -50,65 +50,59 @@ function install_dependencies {
     if (!(Test-Path -Path "$git_path/.winget-installed" -PathType Leaf)) {
         Push-Location $temp_repo_scripts_path
         # install winget and use winget to install everything else
-        # $host.UI.RawUI.BackgroundColor = "Black"
         $winget = "devels-advocate/get-latest-winget.ps1"
-        Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
+        Write-Host "`n`r`n`rInstalling $software_name ..." 
         &$winget = Invoke-Expression -command "devels-advocate/get-latest-winget.ps1" 
         Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.winget-installed"
         Pop-Location
     }
     else {
-        Write-Host "$software_name already installed"  -ForegroundColor "Blue"
+        Write-Host "$software_name already installed"  
     }
 
     $software_name = "Github CLI"
     if (!(Test-Path -Path "$git_path/.github-installed" -PathType Leaf)) {
-        # $host.UI.RawUI.BackgroundColor = "Black"
-        Write-Host "`n`rInstalling $software_name ..." -BackgroundColor "Black"
+        Write-Host "`n`rInstalling $software_name ..."
         Invoke-Expression -Command "winget install -e --id GitHub.cli"
-        # $host.UI.RawUI.BackgroundColor = "Black"
         Invoke-Expression -Command "winget install --id Git.Git -e --source winget"
-        Write-Host "`n`r" -BackgroundColor "Black"
+        Write-Host "`n`r" 
         Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.github-installed"
     }
     else {
-        Write-Host "$software_name already installed"  -ForegroundColor "Blue"
+        Write-Host "$software_name already installed" 
     }
 
     $software_name = "Visual Studio Code (VSCode)"
     if (!(Test-Path -Path "$git_path/.vscode-installed" -PathType Leaf)) {
-        # $host.UI.RawUI.BackgroundColor = "Black"
-        Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
+        Write-Host "`r`nInstalling $software_name`r`n"
         Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
         Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.vscode-installed"
     }
     else {
-        Write-Host "$software_name already installed"  -ForegroundColor "Blue"
+        Write-Host "$software_name already installed"  
     }
 
     $software_name = "Docker Desktop"
     if (!(Test-Path -Path "$git_path/.docker-installed" -PathType Leaf)) {
-        # $host.UI.RawUI.BackgroundColor = "Black"
-        Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
+        Write-Host "`r`nInstalling $software_name`r`n" 
         Invoke-Expression -Command "winget install --id=Docker.DockerDesktop -e" 
         Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.docker-installed"
     }
     else {
-        Write-Host "$software_name already installed"  -ForegroundColor "Blue"
+        Write-Host "$software_name already installed"  
     }
 
     $software_name = "Windows Terminal"
     if (!(Test-Path -Path "$git_path/.wterminal-installed" -PathType Leaf)) {
         # $windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
         # if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no') { 
-        # $host.UI.RawUI.BackgroundColor = "Black"
-        Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
+        Write-Host "`r`nInstalling $software_name`r`n" 
         Invoke-Expression -Command "winget install Microsoft.WindowsTerminal" 
         # }
         Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.wterminal-installed"
     }
     else {
-        Write-Host "$software_name already installed`r`n"  -ForegroundColor "Blue"
+        Write-Host "$software_name already installed`r`n"  
     }
 
     # this is used for x11 / gui stuff .. @TODO: add the option one day maybe
@@ -160,16 +154,13 @@ function install_repo {
         # test git
         $git_version = git --version 
     
-        # $host.UI.RawUI.BackgroundColor = "Black"
         # .. and then clone the repo
         if (!(Test-Path -Path "$parent_path/$repo_src_name")) {
             git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
         }
         
         Set-Location "$repo_src_name"
-        # $host.UI.RawUI.BackgroundColor = "Black"
         git submodule update --force --recursive --init --remote
-        # $host.UI.RawUI.BackgroundColor = "Black"
     
         Write-Host"`r`n"
         RefreshEnv
@@ -182,13 +173,12 @@ function install_repo {
             # getting error-0x80010135 path too long error when unzipping.. unzip operation at the shortest path
             # Push-Location $temp_repo_scripts_path
             Puch-Location choco
-            # $host.UI.RawUI.BackgroundColor = "Black"
             # $choco = "devels-advocate/get-latest-choco.ps1"
-            # Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
+            # Write-Host "`n`r`n`rInstalling $software_name ..." 
             # $env:path += ";C:\ProgramData\chocoportable"
             # &$choco = Invoke-Expression -command "devels-advocate/get-latest-choco.ps1" 
             # $choco = "cmd.exe /c scripts/choco/build.bat"
-            Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
+            Write-Host "`n`r`n`rInstalling $software_name ..." 
             $env:path += ";C:\ProgramData\chocoportable"
             $choco = "choco/build.bat"
             &$choco = cmd /c start powershell.exe -Command "choco/build.bat"
@@ -201,7 +191,7 @@ function install_repo {
             Push-Location bin
         }
         else {
-            Write-Host "$software_name already installed"  -ForegroundColor "Blue"
+            Write-Host "$software_name already installed"  
         }
     
         if (!(Test-Path -Path "$git_path/.python-installed" -PathType Leaf)) {
@@ -216,7 +206,7 @@ function install_repo {
             Pop-Location
             Pop-Location
        
-            Write-Host "$software_name already installed"  -ForegroundColor "Blue"
+            Write-Host "$software_name already installed"
             Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.python-installed"
         }
 
@@ -241,7 +231,7 @@ function require_docker_online {
     $docker_online = $false
     # launch docker desktop and keep it open 
     Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
-    Write-Host "`r`n`r`nWaiting for Docker to come online ..." -BackgroundColor "Black" -ForegroundColor "Yellow"    
+    Write-Host "`r`n`r`nWaiting for Docker to come online ..."     
     do {
         $check_again = 'x'
         $docker_tries++
@@ -286,7 +276,7 @@ function run_devels_playground {
         # $start_devs_playground = Read-Host "`r`nStart Devel's Playground ([y]/n)"
         $software_name = "Docker Desktop"
         if ($start_devs_playground -ine 'n' -And $start_devs_playground -ine 'no') { 
-            Write-Host "`r`nNOTE: $software_name is required to be running for the Devel's Playground to work. Do NOT quit $software_name until you are done running it.`r`n" -BackgroundColor "Black" -ForegroundColor "Yellow"
+            Write-Host "`r`nNOTE: $software_name is required to be running for the Devel's Playground to work. Do NOT quit $software_name until you are done running it.`r`n" 
             # $docker_online = require_docker_online
             if ($docker_online -eq $true) {
                 # // commenting out background building process because this is NOT quite ready.
@@ -294,14 +284,13 @@ function run_devels_playground {
                 # // if they are more up to date than the hub - which could be a difficult process
                 # $cmd_command = "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1"
                 # &$cmd_command = cmd /c start powershell.exe -Command "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1" -WindowStyle "Maximized"
-                # Write-Host "`r`n" -BackgroundColor "Black"
-                # $host.UI.RawUI.BackgroundColor = "Black"
+                # Write-Host "`r`n" 
                 Write-Output "$([char]27)[2J"
                 $devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
                 &$devs_playground = cmd /c start powershell.exe -Command "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
             }
             else {
-                Write-Host "Failed to launch docker. Not able to start Devel's Playground. Please restart and run the script again:" -ForegroundColor "Red"
+                Write-Host "Failed to launch docker. Not able to start Devel's Playground. Please restart and run the script again:"
                 Write-Host "cmd `"$git_path/kindtek/devels-workshop/devels-playground/scripts/wsl-docker-import`""
                 Write-Host "powershell.exe ./kindtek/devels-workshop/devels-playground/scripts/wsl-docker-import.ps1"
             }
@@ -352,26 +341,26 @@ workflow start_installer_daemon {
     InlineScript { Write-Host "$([char]27)[2J" }
     $new_install = install_windows_features $temp_repo_scripts_path 
     if ($new_install -eq $true) {
-        InlineScript { Write-Host "`r`nWindows features installed. Restarting computer ... r`n" -ForegroundColor Green -BackgroundColor "Black" }
+        InlineScript { Write-Host "`r`nWindows features installed. Restarting computer ... r`n"  }
         # Restart-Computer -Wait
     }
     
     $new_install = install_dependencies $temp_repo_scripts_path $git_path
     if ($new_install -eq $true) {
-        InlineScript { Write-Host "`r`nRestarting computer ... r`n" -ForegroundColor Green -BackgroundColor "Black" }
+        InlineScript { Write-Host "`r`nRestarting computer ... r`n" -}
         # Restart-Computer -Wait
     }
 
     install_repo $parent_path $git_path $repo_src_owner $repo_src_name $repo_src_branch
     InlineScript { Write-Host "$([char]27)[2J" }
-    InlineScript { Write-Host "`r`nSetup complete!`r`n" -ForegroundColor Green -BackgroundColor "Black" }
+    InlineScript { Write-Host "`r`nSetup complete!`r`n" }
 
     require_docker_online
     run_devels_playground
 
     # }
     # catch {
-    #     InlineScript { Write-Host "Something went wrong. Restarting your computer will probably fix the problem." -ForegroundColor "Red" }
+    #     InlineScript { Write-Host "Something went wrong. Restarting your computer will probably fix the problem." }
     #     InlineScript { Write-host "Error: $err" }
     #     # Restart-Computer -Wait 
     #     # start_installer_daemon $temp_repo_scripts_path     
