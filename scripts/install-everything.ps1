@@ -202,9 +202,7 @@ function install_repo {
     
             # ... even tho cdir does not appear to be working on windows
             # $cmd_command = pip install cdir
-            Start-Process -FilePath PowerShell.exe -NoNewWindow -ArgumentList $cmd_command
-            Pop-Location
-            Pop-Location
+            # Start-Process -FilePath PowerShell.exe -NoNewWindow -ArgumentList $cmd_command
        
             Write-Host "$software_name already installed"
             Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.python-installed"
