@@ -140,7 +140,7 @@ function install_repo {
     param (
         $parent_path, $git_path, $repo_src_owner, $repo_src_name, $repo_src_branch 
     )
-    # try {
+    try {
     Write-Host "Now installing:`r`n`t- Chocolatey`r`n`t- Python`r`n" 
 
     # refresh environment variables using script in choco temp download location
@@ -222,11 +222,10 @@ function install_repo {
     }
 
     return $new_install
-    
+    # if git is not recognized try to limp along with the manually downloaded files
+    } catch {}
 }
-# if git is not recognized try to limp along with the manually downloaded files
-# catch {}
-# }
+
 
 # refresh env again
 # cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
@@ -287,7 +286,7 @@ function run_devels_playground {
     param (
         $git_path
     )
-    # try {
+    try {
     # @TODO: maybe start in new window
     # $start_devs_playground = Read-Host "`r`nStart Devel's Playground ([y]/n)"
     $software_name = "Docker Desktop"
@@ -305,10 +304,11 @@ function run_devels_playground {
     Write-Host "&$devs_playground"
     # Write-Output "$([char]27)[2J"
     &$devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
+    } catch {}
 }
     
 # }
-# catch {}
+
 # }
 
 function cleanup_installation {
