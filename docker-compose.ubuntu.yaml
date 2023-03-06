@@ -151,4 +151,3 @@ services:
 
 volumes:
   hel-data:
-    external: true
