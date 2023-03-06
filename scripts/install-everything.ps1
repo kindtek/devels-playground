@@ -191,7 +191,7 @@ function install_repo {
         }
 
         Write-Host"`r`n"
-        RefreshEnv
+        powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle "Hidden"
         Write-Host"`r`n"
     
         if (!(Test-Path -Path "$git_path/.python-installed" -PathType Leaf)) {
