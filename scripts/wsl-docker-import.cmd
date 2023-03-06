@@ -155,6 +155,7 @@ ECHO initializing the image container...
 ECHO docker images -aq !image_repo_image_name! > !docker_image_id_path!
 docker images -aq !image_repo_image_name! > !docker_image_id_path!
 SET /P WSL_DOCKER_IMG_ID_RAW=< !docker_image_id_path!
+ECHO WSL_DOCKER_IMG_ID: %WSL_DOCKER_IMG_ID% : %WSL_DOCKER_IMG_ID_RAW[0]%
 SET WSL_DOCKER_IMG_ID=%WSL_DOCKER_IMG_ID_RAW[0]%
 del !docker_container_id_path! > nul 2> nul
 
