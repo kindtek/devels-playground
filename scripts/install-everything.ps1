@@ -147,7 +147,7 @@ function install_repo {
     param (
         $parent_path, $git_path, $repo_src_owner, $repo_src_name, $repo_src_branch 
     )
-    try {
+    # try {
         Write-Host "Now installing:`r`n`t- Chocolatey`r`n`t- Python`r`n" 
 
         # refresh environment variables using script in choco temp download location
@@ -232,8 +232,8 @@ function install_repo {
 
         return $new_install
         # if git is not recognized try to limp along with the manually downloaded files
-    }
-    catch {}
+    # }
+    # catch {}
 }
 
 
