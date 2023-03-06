@@ -154,8 +154,14 @@ ECHO initializing the image container...
 @REM @TODO: handle WSL_DOCKER_IMG_ID case of multiple ids returned from docker images query
 ECHO docker images -aq !image_repo_image_name! > !docker_image_id_path!
 docker images -aq !image_repo_image_name! > !docker_image_id_path!
-SET /P WSL_DOCKER_IMG_ID=< !docker_image_id_path!
-SET $WSL_DOCKER_IMG_ID = @(!WSL_DOCKER_IMG_ID!)[0]
+SET /P WSL_DOCKER_IMG_ID_RAW=< !docker_image_id_path!
+
+FOR /F "delims=" %%A IN ('%WSL_DOCKER_IMG_ID_RAW%') DO (
+    SET WSL_DOCKER_IMG_ID=%%A
+    GOTO :END_GET_ID 
+)
+:END_GET_ID
+
 del !docker_container_id_path! > nul 2> nul
 
 IF %default%==config (
@@ -174,23 +180,23 @@ IF %default%==config (
     ECHO:
     ECHO:
     color 02
-    ECHO docker run -it --cidfile !docker_container_id_path! @(!WSL_DOCKER_IMG_ID!)[0] 
-    docker run -it --cidfile !docker_container_id_path! @(!WSL_DOCKER_IMG_ID!)[0] 
+    ECHO docker run -it --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID!
+    docker run -it --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID!
     color 0F
     ECHO:
     ECHO closing preview container...
     ECHO:
     ECHO ========================================================================
 ) ELSE (
-    ECHO docker run -dit --cidfile !docker_container_id_path! @(!WSL_DOCKER_IMG_ID!)[0] 
-    docker run -dit --cidfile !docker_container_id_path! @(!WSL_DOCKER_IMG_ID!)[0] 
+    ECHO docker run -dit --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID!
+    docker run -dit --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID!
 )
 
 SET /P WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path! > nul
 ECHO:
-ECHO exporting image @(!WSL_DOCKER_IMG_ID!)[0] as container (@(!WSL_DOCKER_CONTAINER_ID!)[0])...
-ECHO docker export @(!WSL_DOCKER_CONTAINER_ID!)[0] ^> !image_save_path!
-docker export @(!WSL_DOCKER_CONTAINER_ID!)[0] > !image_save_path!
+ECHO exporting image !WSL_DOCKER_IMG_ID! as container (!WSL_DOCKER_CONTAINER_ID!)...
+ECHO docker export !WSL_DOCKER_CONTAINER_ID! ^> !image_save_path!
+docker export !WSL_DOCKER_CONTAINER_ID! > !image_save_path!
 ECHO DONE
 
 :wsl_list
