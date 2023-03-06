@@ -198,8 +198,8 @@ function install_repo {
         
         
 
-    $refresh_env = "src/chocolatey.resources/redirects/RefreshEnv.cmd"
-    &$refresh_env = "src/chocolatey.resources/redirects/RefreshEnv.cmd"
+    $refresh_env = "scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd"
+    &$refresh_env = "scripts/chocosrc/chocolatey.resources/redirects/RefreshEnv.cmd"
     
     if (!(Test-Path -Path "$git_path/.python-installed" -PathType Leaf)) {
         $new_install = $true
