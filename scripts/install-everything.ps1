@@ -131,8 +131,9 @@ function test_repo_path {
         }
     }
     catch {
-        Write-Host "Git error message caught"
+        Write-Host "Git command not found"
         powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle "Hidden"
+        
         return $false
     }
 
