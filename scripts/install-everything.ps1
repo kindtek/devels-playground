@@ -209,10 +209,6 @@ function install_repo {
             Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.python-installed"
         }
 
-        Write-Host"`r`n"
-        RefreshEnv
-        Write-Host"`r`n"
-
         return $new_install
     
     }
