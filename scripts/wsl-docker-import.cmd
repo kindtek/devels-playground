@@ -244,13 +244,17 @@ goto install_prompt
 ECHO:
 ECHO killing the !distro! WSL process if it is running...
 ECHO wsl --terminate !distro!
-wsl --terminate !distro!
+if wsl --terminate !distro! (
+    @REM try to skip install process if there is a known instance of the same name
+    wsl -d !distro!
+    goto exit
+)
 ECHO DONE
 @REM ECHO:
 @REM ECHO killing all WSL processes...
 @REM wsl --shutdown
 @REM ECHO DONE
-if NOT default==yes (
+if default==yes (
     ECHO:
     ECHO deleting WSL distro !distro! if it exists...
     ECHO wsl --unregister !distro!
