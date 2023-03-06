@@ -85,7 +85,7 @@ function install_dependencies {
     $software_name = "Docker Desktop"
     if (!(Test-Path -Path "$git_path/.docker-installed" -PathType Leaf)) {
         Write-Host "`r`n`tInstalling $software_name`r`n" 
-        Invoke-Expression -Command "winget install --id=Docker.DockerDesktop -e" 
+        'y' | Invoke-Expression -Command "winget install --id=Docker.DockerDesktop -e" 
         Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.docker-installed"
         $new_install = $true
     }
@@ -197,7 +197,7 @@ function install_repo {
             $choco = "build.bat"
             Write-Host "`tExecuting $choco ..."
             $choco = "$parent_path/$repo_src_name/scripts/choco/build.bat"
-            Write-Host "`t& $choco"
+            Write-Host "`t&$choco"
             # Push-Location ../../..
             &$choco = "$parent_path/$repo_src_name/scripts/choco/build.bat"
             # Pop-Location
