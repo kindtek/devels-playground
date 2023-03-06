@@ -194,6 +194,10 @@ IF %default%==config (
 
 SET /P WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path! > nul
 ECHO:
+IF !WSL_DOCKER_CONTAINER_ID!=="" (
+    ECHO There was an error opening the container ...
+    GOTO exit
+)
 ECHO exporting image !WSL_DOCKER_IMG_ID! as container (!WSL_DOCKER_CONTAINER_ID!)...
 ECHO docker export !WSL_DOCKER_CONTAINER_ID! ^> !image_save_path!
 docker export !WSL_DOCKER_CONTAINER_ID! > !image_save_path!
