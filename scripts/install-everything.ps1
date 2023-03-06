@@ -250,13 +250,15 @@ function require_docker_online {
             $docker_tries++
             Start-Sleep -seconds 1
             # { 
-                Get-Process 'com.docker.proxy'
+            if (Get-Process 'com.docker.proxy'){
+                $docker_online = $true
+                Write-Host "Docker Desktop is now online"
+
+
+            }
             # }
              # *>$null
-            $docker_online = $true
-            Write-Host "Docker Desktop is now online"
-        }
-        catch {
+        
             if ($docker_online -eq $false -And (($docker_tries % 80) -eq 0)) {
                 write-host "$docker_status_now`r`n"
             }
@@ -282,6 +284,7 @@ function require_docker_online {
                 Start-Sleep -seconds 10
             }
         }
+        catch {}
     } while (-Not $docker_online )
     # } while (-Not $docker_online -Or $check_again -ine 'n')
 
