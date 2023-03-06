@@ -42,7 +42,6 @@ function install_dependencies {
 
     Write-Host "`r`nThese programs will be installed or updated:" 
     Write-Host "`r`n`t- WinGet`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktop`r`n`t- Windows Terminal" 
-    Write-Host "`r`nClose window to quit at any time"
 
     $software_name = "WinGet"
     if (!(Test-Path -Path "$git_path/.winget-installed" -PathType Leaf)) {
@@ -178,10 +177,10 @@ function install_repo {
             Write-Host "`n`r`n`r`tInstalling $software_name ..." 
             $env:path += ";C:\ProgramData\chocoportable"
             $choco = "build.bat"
-            Write-Host "Executing $choco ..."
-            &$choco = cmd /c start powershell.exe -Command "build.bat"
-            $refresh_env = "src/chocolatey.resources/redirects/RefreshEnv"
-            &$refresh_env = cmd /c start powershell.exe -Command "src/chocolatey.resources/redirects/RefreshEnv.cmd"
+            Write-Host "`tExecuting $choco ..."
+            &$choco = "build.bat"
+            $refresh_env = "src/chocolatey.resources/redirects/RefreshEnv.cmd"
+            &$refresh_env = "src/chocolatey.resources/redirects/RefreshEnv.cmd"
             # cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
             Pop-Location
             Pop-Location
