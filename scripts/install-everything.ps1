@@ -31,8 +31,10 @@ function reboot_prompt {
 
 function install_windows_features {
     param ( $temp_repo_scripts_path )
+    $new_install = $false
     $winconfig = "$temp_repo_scripts_path/devels-advocate/add-windows-features.ps1"
     &$winconfig = Invoke-Expression -command "$temp_repo_scripts_path/devels-advocate/add-windows-features.ps1"
+    return $new_install
 }
 
 function install_dependencies {
@@ -153,6 +155,7 @@ function install_repo {
         RefreshEnv
         # Write-Host "parent path: $parent_path"
         Set-Location $parent_path
+        $new_install = $false
     
         # test git
         $git_version = git --version 
@@ -175,6 +178,7 @@ function install_repo {
         # @TODO: since this gave so many errors, use git to install from source - the current way does like it may be better to stay up to date (rather than using a fork or origin choco repo)
         $software_name = "Chocolatey"
         if (!(Test-Path -Path "$git_path/.choco-installed" -PathType Leaf)) {
+            $new_install = $true
             # getting error-0x80010135 path too long error when unzipping.. unzip operation at the shortest path
             # Push-Location $temp_repo_scripts_path
             Puch-Location choco
@@ -201,6 +205,7 @@ function install_repo {
         }
     
         if (!(Test-Path -Path "$git_path/.python-installed" -PathType Leaf)) {
+            $new_install = $true
             # @TODO: add cdir and python to install with same behavior as other installs above
             # not eloquent at all but good for now
             winget install --id=Python.Python.3.10  -e
@@ -214,6 +219,8 @@ function install_repo {
             Write-Host "$software_name already installed"  -ForegroundColor "Blue"
             Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.python-installed"
         }
+
+        return $new_install
     
     }
     # if git is not recognized try to limp along with the manually downloaded files
@@ -340,18 +347,26 @@ workflow setup_devw {
     # Write-Host "scripts dir: $temp_repo_scripts_path"
 
     # try {
-        test_repo_path $parent_path $git_path $repo_src_owner $repo_src_name
-        # jump to bottom line without clearing scrollback
-        InlineScript { Write-Host "$([char]27)[2J" }
-        install_windows_features $temp_repo_scripts_path $git_path
-        install_dependencies $temp_repo_scripts_path $git_path
+    test_repo_path $parent_path $git_path $repo_src_owner $repo_src_name
+    # jump to bottom line without clearing scrollback
+    InlineScript { Write-Host "$([char]27)[2J" }
+    $new_install = @(install_windows_features $temp_repo_scripts_path $git_path)[-1]
+    if ($new_install -eq $true) {
+        InlineScript { Write-Host "`r`nWindows features installed. Restarting computer ... r`n" -ForegroundColor Green -BackgroundColor "Black" }
+        # Restart-Computer -Wait
+    }
+    
+    $new_install = @(install_dependencies $temp_repo_scripts_path $git_path)[-1]
+    if ($new_install -eq $true) {
         InlineScript { Write-Host "`r`nRestarting computer ... r`n" -ForegroundColor Green -BackgroundColor "Black" }
         # Restart-Computer -Wait
-        install_repo $parent_path $git_path $repo_src_owner $repo_src_name $repo_src_branch
-        InlineScript { Write-Host "$([char]27)[2J" }
-        InlineScript { Write-Host "`r`nSetup complete!`r`n" -ForegroundColor Green -BackgroundColor "Black" }
+    }
+    
+    install_repo $parent_path $git_path $repo_src_owner $repo_src_name $repo_src_branch
+    InlineScript { Write-Host "$([char]27)[2J" }
+    InlineScript { Write-Host "`r`nSetup complete!`r`n" -ForegroundColor Green -BackgroundColor "Black" }
 
-        run_devels_playground
+    run_devels_playground
 
     # }
     # catch {
