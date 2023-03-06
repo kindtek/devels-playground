@@ -123,15 +123,15 @@ function test_repo_path {
             $git_status = git remote show origin 
             # determine if git status works by checking output for LICENSE - see typical output of git status here: https://amitd.co/code/shell/git-status-porcelain
             if ($git_status.NotContains("github.com/$repo_src_owner/$repo_src_name")) {
-                Write-Host "Not a git repository"
+                Write-Debug "Not a git repository"
             }
         }
         else {
-            Write-Host "No git directory found"
+            Write-Debug "No git directory found"
         }
     }
     catch {
-        Write-Host "Git command not found"
+        Write-Debug "Git command not found"
         powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle "Hidden"
         
         return $false
