@@ -17,9 +17,8 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 
 
 function reboot_prompt {
-    # Write-Host "`r`nA restart is required for the changes to fully take effect. " -ForegroundColor Magenta -BackgroundColor "Black"
-    # $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now`r`n ..or hit ENTER to skip" 
-    $confirmation = 'reboot now' 
+    Write-Host "`r`nA restart is required for the changes to fully take effect. " -ForegroundColor Magenta -BackgroundColor "Black"
+    $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now`r`n ..or hit ENTER to skip" 
 
     if ($confirmation -ieq 'reboot now') {
         Restart-Computer -Wait
@@ -105,9 +104,7 @@ function install_dependencies {
 
     # this is used for x11 / gui stuff .. @TODO: add the option one day maybe
     # choco install vcxsrv microsoft-windows-terminal wsl -y
-
-    Write-Host "`r`nA restart may be required for the changes to take effect. " -ForegroundColor Magenta -BackgroundColor "Black"
-    reboot_prompt
+    
 }
 
 function test_repo_path {
@@ -340,6 +337,7 @@ workflow setup_devw {
         # jump to bottom line without clearing scrollback
         InlineScript { Write-Host "$([char]27)[2J" }
         install_dependencies $temp_repo_scripts_path $git_path
+        Restart-Computer -Wait
         install_repo $parent_path $git_path $repo_src_owner $repo_src_name $repo_src_branch
         InlineScript { Write-Host "$([char]27)[2J" }
         InlineScript { Write-Host "`r`nSetup complete!`r`n" -ForegroundColor Green -BackgroundColor "Black" }
@@ -349,7 +347,7 @@ workflow setup_devw {
     }
     catch {
         InlineScript { Write-Host "Something went wrong. Restarting your computer will probably fix the problem." -ForegroundColor "Red" }
-        reboot_prompt    
+        Restart-Computer -Wait 
         # setup_devw $temp_repo_scripts_path     
     }
 }
