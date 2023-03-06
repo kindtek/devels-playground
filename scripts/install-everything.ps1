@@ -158,7 +158,7 @@ function install_repo {
         # .. and then clone/update the repo
         # Write-Host "Testing path $parent_path/$repo_src_name ..."
         if (!(Test-Path -Path $repo_src_name)) {
-            # Write-Host "Testing path $parent_path/$repo_src_name ..."
+            Write-Host "Testing path $parent_path/$repo_src_name ..."
             # {
                 git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch #} *>$null
             Push-Location "$repo_src_name"
@@ -169,8 +169,12 @@ function install_repo {
         }
 
         Set-Location $repo_src_name
-        { git pull }  *>$null
-        { git submodule update --force --recursive --init --remote }  *>$null
+        # { 
+            git pull
+        #  }  *>$null
+        # { 
+            git submodule update --force --recursive --init --remote
+        #  }  *>$null
 
     
         # @TODO: since this gave so many errors, use git to install from source - the current way does like it may be better to stay up to date (rather than using a fork or origin choco repo)
