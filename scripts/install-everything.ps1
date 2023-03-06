@@ -175,7 +175,7 @@ function install_repo {
             # $env:path += ";C:\ProgramData\chocoportable"
             # &$choco = Invoke-Expression -command "devels-advocate/get-latest-choco.ps1" 
             # $choco = "cmd.exe /c scripts/choco/build.bat"
-            Write-Host "`n`r`n`rI`tnstalling $software_name ..." 
+            Write-Host "`n`r`n`r`tInstalling $software_name ..." 
             $env:path += ";C:\ProgramData\chocoportable"
             $choco = "build.bat"
             Write-Host "Executing $choco ..."
