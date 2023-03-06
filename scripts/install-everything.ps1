@@ -153,7 +153,7 @@ function install_repo {
         if (!(Test-Path -Path $repo_src_name)) {
             # Write-Host "Testing path $parent_path/$repo_src_name ..."
             # {
-                git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch } # *>$null
+                git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch #} *>$null
             Push-Location "$repo_src_name"
             { git submodule update --force --recursive --init --remote } *>$null
             Pop-Location
