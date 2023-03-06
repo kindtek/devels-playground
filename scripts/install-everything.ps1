@@ -339,7 +339,7 @@ workflow setup_devw {
     # Write-Host "git dir: $git_path"
     # Write-Host "scripts dir: $temp_repo_scripts_path"
 
-    try {
+    # try {
         test_repo_path $parent_path $git_path $repo_src_owner $repo_src_name
         # jump to bottom line without clearing scrollback
         InlineScript { Write-Host "$([char]27)[2J" }
@@ -353,13 +353,13 @@ workflow setup_devw {
 
         run_devels_playground
 
-    }
-    catch {
-        InlineScript { Write-Host "Something went wrong. Restarting your computer will probably fix the problem." -ForegroundColor "Red" }
-        InlineScript { Write-host "Error: $err" }
-        # Restart-Computer -Wait 
-        # setup_devw $temp_repo_scripts_path     
-    }
+    # }
+    # catch {
+    #     InlineScript { Write-Host "Something went wrong. Restarting your computer will probably fix the problem." -ForegroundColor "Red" }
+    #     InlineScript { Write-host "Error: $err" }
+    #     # Restart-Computer -Wait 
+    #     # setup_devw $temp_repo_scripts_path     
+    # }
 }
 
     
