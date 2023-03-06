@@ -62,8 +62,8 @@ function install_dependencies {
     $software_name = "Github CLI"
     if (!(Test-Path -Path "$git_path/.github-installed" -PathType Leaf)) {
         Write-Host "`n`r`tInstalling $software_name ..."
-        Invoke-Expression -Command "winget install -e --id GitHub.cli"
-        Invoke-Expression -Command "winget install --id Git.Git -e --source winget"
+        Invoke-Expression -Command "winget install -h -e --id GitHub.cli"
+        Invoke-Expression -Command "winget install --id Git.Git -h --source winget"
         Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.github-installed"
         $new_install = $true
     }
@@ -74,7 +74,7 @@ function install_dependencies {
     $software_name = "Visual Studio Code (VSCode)"
     if (!(Test-Path -Path "$git_path/.vscode-installed" -PathType Leaf)) {
         Write-Host "`r`n`tInstalling $software_name`r`n"
-        Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
+        Invoke-Expression -Command "winget install Microsoft.VisualStudioCode -h --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
         Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.vscode-installed"
         $new_install = $true
     }
@@ -85,7 +85,7 @@ function install_dependencies {
     $software_name = "Docker Desktop"
     if (!(Test-Path -Path "$git_path/.docker-installed" -PathType Leaf)) {
         Write-Host "`r`n`tInstalling $software_name`r`n" 
-        'y' | Invoke-Expression -Command "winget install --id=Docker.DockerDesktop -e" 
+        Invoke-Expression -Command "winget install --id=Docker.DockerDesktop -h" 
         Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.docker-installed"
         $new_install = $true
     }
@@ -225,7 +225,7 @@ function install_repo {
             $new_install = $true
             # @TODO: add cdir and python to install with same behavior as other installs above
             # not eloquent at all but good for now
-            'y' | winget install --id=Python.Python.3.10  -e
+            winget install --id=Python.Python.3.10  -h
     
             # ... even tho cdir does not appear to be working on windows
             # $cmd_command = pip install cdir
