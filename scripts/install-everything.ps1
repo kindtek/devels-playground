@@ -156,7 +156,9 @@ function install_repo {
     if (!(Test-Path -Path "$parent_path/$repo_src_name")) {
         git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
     }
-        
+    else {
+        git pull
+    } 
     Set-Location "$repo_src_name"
     git submodule update --force --recursive --init --remote
     
