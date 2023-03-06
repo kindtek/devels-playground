@@ -41,7 +41,7 @@ function install_dependencies {
     param ($temp_repo_scripts_path, $git_path)
 
     Write-Host "`r`nThese programs will be installed or updated:" 
-    Write-Host "`r`n`t- WinGet`r`n`t- Chocolatey`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktopr`r`n`t- Windows Terminal`r`n`t- Python" 
+    Write-Host "`r`n`t- WinGet`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktopr`r`n`t- Windows Terminal" 
     Write-Host "`r`nClose window to quit at any time"
 
     $software_name = "WinGet"
@@ -143,6 +143,8 @@ function install_repo {
         $parent_path, $git_path, $repo_src_owner, $repo_src_name, $repo_src_branch 
     )
     try {
+        Write-Host "Now installing:`r`n`t- Python`r`n`t- Chocolatey" 
+
         # refresh environment variables using script in choco temp download location
         powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle "Hidden"
         # Write-Host "parent path: $parent_path"
