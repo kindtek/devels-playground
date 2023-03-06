@@ -244,7 +244,6 @@ function require_docker_online {
             { Get-Process 'com.docker.proxy' } *>$null
             $docker_online = $true
             Write-Host "Docker Desktop is now online"
-            return $docker_online
         }
         catch {
             if ($docker_online -eq $false -And (($docker_tries % 80) -eq 0)) {
