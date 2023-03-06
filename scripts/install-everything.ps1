@@ -290,7 +290,7 @@ function run_devels_playground {
         # $start_devs_playground = Read-Host "`r`nStart Devel's Playground ([y]/n)"
         $software_name = "Docker Desktop"
         # if ($start_devs_playground -ine 'n' -And $start_devs_playground -ine 'no') { 
-        Write-Host "`r`nNOTE: $software_name is required to be running for the Devel's Playground to work.`r`n`r`n`tDo NOT quit $software_name until you are done running it.`r`n" 
+        Write-Host "`r`nNOTE:`t$software_name is required to be running for the Devel's Playground to work.`r`n`r`n`tDo NOT quit $software_name until you are done running it.`r`n" 
         Write-Host "`r`n`r`nAttempting to start wsl import tool ..."
         # if (
         require_docker_online
