@@ -41,7 +41,7 @@ function install_dependencies {
     param ($temp_repo_scripts_path, $git_path)
 
     Write-Host "`r`nThese programs will be installed or updated:" 
-    Write-Host "`r`n`t- WinGet`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktopr`r`n`t- Windows Terminal" 
+    Write-Host "`r`n`t- WinGet`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktop`r`n`t- Windows Terminal" 
     Write-Host "`r`nClose window to quit at any time"
 
     $software_name = "WinGet"
@@ -299,7 +299,7 @@ function run_devels_playground {
                
         Write-Output "$([char]27)[2J"
         $devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
-        Write-Host "Launching Devel's Playground`r`n$devs_playground`r`n" 
+        Write-Host "Launching Devel's Playground`r`n$devs_playground ...`r`n" 
         Write-Host `"cmd /c start powershell.exe -Command "$git_path/devels-playground/scripts/wsl-docker-import.cmd"`"
         &$devs_playground = cmd /c start powershell.exe -Command "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
         # }
