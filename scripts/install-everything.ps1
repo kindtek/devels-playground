@@ -304,7 +304,7 @@ function run_devels_playground {
         $devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
         Write-Host "Launching Devel's Playground`r`n$devs_playground ...`r`n" 
         Write-Host "&$devs_playground"
-        # Write-Output "$([char]27)[2J"
+        # Write-Host "$([char]27)[2J"
         &$devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
     }
     catch {}
