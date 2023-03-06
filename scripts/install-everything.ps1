@@ -149,11 +149,8 @@ function install_repo {
     Set-Location $parent_path
     $new_install = $false
     
-    # test git
-    $git_version = git --version 
-    
     # .. and then clone the repo
-    if (!(Test-Path -Path "$parent_path/$repo_src_name")) {
+    if (!(Test-Path -Path "$repo_src_name")) {
         git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
     }
     else {
