@@ -301,8 +301,8 @@ function run_devels_playground {
         Write-Output "$([char]27)[2J"
         $devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
         Write-Host "Launching Devel's Playground`r`n$devs_playground ...`r`n" 
-        Write-Host `"cmd /c start powershell.exe -Command "$git_path/devels-playground/scripts/wsl-docker-import.cmd"`"
-        &$devs_playground = cmd /c start powershell.exe -Command "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
+        Write-Host "& $devs_playground"
+        &$devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
         # }
         # else {
         #     Write-Host "Failed to launch docker. Not able to start Devel's Playground. Please restart and run the script again:"
