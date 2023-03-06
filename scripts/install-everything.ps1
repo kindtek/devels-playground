@@ -347,7 +347,7 @@ workflow setup_devw {
     catch {
         Write-Host "Something went wrong. Restarting your computer will probably fix the problem." -ForegroundColor "Red"
         reboot_prompt    
-        setup_devw $temp_repo_scripts_path     
+        # setup_devw $temp_repo_scripts_path     
     }
 }
 
