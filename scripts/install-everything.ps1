@@ -51,56 +51,55 @@ function install_dependencies {
         $winget = "devels-advocate/get-latest-winget.ps1"
         Write-Host "`n`r`n`rInstalling $software_name ..." 
         &$winget = Invoke-Expression -command "devels-advocate/get-latest-winget.ps1" 
-        Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.winget-installed"
+        Write-Host "`t$software_name installed"  | Out-File -FilePath "$git_path/.winget-installed"
         Pop-Location
     }
     else {
-        Write-Host "$software_name already installed"  
+        Write-Host "`t$software_name already installed"  
     }
 
     $software_name = "Github CLI"
     if (!(Test-Path -Path "$git_path/.github-installed" -PathType Leaf)) {
-        Write-Host "`n`rInstalling $software_name ..."
+        Write-Host "`n`r`tInstalling $software_name ..."
         Invoke-Expression -Command "winget install -e --id GitHub.cli"
         Invoke-Expression -Command "winget install --id Git.Git -e --source winget"
-        Write-Host "`n`r" 
         Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.github-installed"
     }
     else {
-        Write-Host "$software_name already installed" 
+        Write-Host "`t$software_name already installed" 
     }
 
     $software_name = "Visual Studio Code (VSCode)"
     if (!(Test-Path -Path "$git_path/.vscode-installed" -PathType Leaf)) {
-        Write-Host "`r`nInstalling $software_name`r`n"
+        Write-Host "`r`n`tInstalling $software_name`r`n"
         Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
         Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.vscode-installed"
     }
     else {
-        Write-Host "$software_name already installed"  
+        Write-Host "`t$software_name already installed"  
     }
 
     $software_name = "Docker Desktop"
     if (!(Test-Path -Path "$git_path/.docker-installed" -PathType Leaf)) {
-        Write-Host "`r`nInstalling $software_name`r`n" 
+        Write-Host "`r`n`tInstalling $software_name`r`n" 
         Invoke-Expression -Command "winget install --id=Docker.DockerDesktop -e" 
         Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.docker-installed"
     }
     else {
-        Write-Host "$software_name already installed"  
+        Write-Host "`t$software_name already installed"  
     }
 
     $software_name = "Windows Terminal"
     if (!(Test-Path -Path "$git_path/.wterminal-installed" -PathType Leaf)) {
         # $windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
         # if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no') { 
-        Write-Host "`r`nInstalling $software_name`r`n" 
+        Write-Host "`r`n`tInstalling $software_name`r`n" 
         Invoke-Expression -Command "winget install Microsoft.WindowsTerminal" 
         # }
         Write-Host "$software_name installed`r`n"  | Out-File -FilePath "$git_path/.wterminal-installed"
     }
     else {
-        Write-Host "$software_name already installed`r`n"  
+        Write-Host "`t$software_name already installed`r`n"  
     }
 
     # this is used for x11 / gui stuff .. @TODO: add the option one day maybe
@@ -121,15 +120,15 @@ function test_repo_path {
             $git_status = git remote show origin 
             # determine if git status works by checking output for LICENSE - see typical output of git status here: https://amitd.co/code/shell/git-status-porcelain
             if ($git_status.NotContains("github.com/$repo_src_owner/$repo_src_name")) {
-                Write-Debug "Not a git repository"
+                Write-Debug "`tNot a git repository"
             }
         }
         else {
-            Write-Debug "No git directory found"
+            Write-Debug "`tNo git directory found"
         }
     }
     catch {
-        Write-Debug "Git command not found"
+        Write-Debug "`tGit command not found"
         powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle "Hidden"
         
         return $false
@@ -161,7 +160,6 @@ function install_repo {
         
         Set-Location "$repo_src_name"
         git submodule update --force --recursive --init --remote
-        Push-Location scripts
     
         # @TODO: since this gave so many errors, use git to install from source - the current way does like it may be better to stay up to date (rather than using a fork or origin choco repo)
         $software_name = "Chocolatey"
@@ -169,13 +167,15 @@ function install_repo {
             $new_install = $true
             # getting error-0x80010135 path too long error when unzipping.. unzip operation at the shortest path
             # Push-Location $temp_repo_scripts_path
+            Push-Location scripts
+
             Push-Location choco
             # $choco = "devels-advocate/get-latest-choco.ps1"
             # Write-Host "`n`r`n`rInstalling $software_name ..." 
             # $env:path += ";C:\ProgramData\chocoportable"
             # &$choco = Invoke-Expression -command "devels-advocate/get-latest-choco.ps1" 
             # $choco = "cmd.exe /c scripts/choco/build.bat"
-            Write-Host "`n`r`n`rInstalling $software_name ..." 
+            Write-Host "`n`r`n`rI`tnstalling $software_name ..." 
             $env:path += ";C:\ProgramData\chocoportable"
             $choco = "build.bat"
             Write-Host "Executing $choco ..."
@@ -183,16 +183,18 @@ function install_repo {
             $refresh_env = "src/chocolatey.resources/redirects/RefreshEnv"
             &$refresh_env = cmd /c start powershell.exe -Command "src/chocolatey.resources/redirects/RefreshEnv.cmd"
             # cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
-            Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.choco-installed"
             Pop-Location
+            Pop-Location
+            Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.choco-installed"
+
             # Push-Location cdir
             # Push-Location bin
         }
         else {
-            Write-Host "$software_name already installed"  
+            Write-Host "`t$software_name already installed"  
         }
         
-        Pop-Location
+        
 
         Write-Host"`r`n"
         powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle "Hidden"
@@ -208,8 +210,10 @@ function install_repo {
             # $cmd_command = pip install cdir
             # Start-Process -FilePath PowerShell.exe -NoNewWindow -ArgumentList $cmd_command
        
-            Write-Host "$software_name already installed"
             Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.python-installed"
+        }
+        else {
+            Write-Host "`t$software_name already installed"
         }
 
         return $new_install
