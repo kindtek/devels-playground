@@ -162,7 +162,9 @@ function install_repo {
             # {
                 git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch #} *>$null
             Push-Location "$repo_src_name"
-            { git submodule update --force --recursive --init --remote } *>$null
+            # { 
+                git submodule update --force --recursive --init --remote 
+            # } *>$null
             Pop-Location
         }
 
