@@ -187,7 +187,7 @@ IF %default%==config (
 )
 
 SET /P WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path! > nul
-if "!WSL_DOCKER_CONTAINER_ID!"="" (
+if "!WSL_DOCKER_CONTAINER_ID!"=="" (
     ECHO An error occurred. Missing container ID. Please restart and try again
     goto exit
 )
