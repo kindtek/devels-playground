@@ -238,9 +238,7 @@ function require_docker_online {
     # launch docker desktop and keep it open 
     Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
     Write-Host "`r`n`r`nWaiting for Docker to come online ..."     
-    do {
-        $check_again = 'x'
-        
+    do {       
         try {
             $docker_tries++
             Start-Sleep -seconds 1
@@ -251,7 +249,7 @@ function require_docker_online {
         }
         catch {
             if ($docker_online -eq $false -And (($docker_tries % 80) -eq 0)) {
-                return $false
+                write-host "$docker_status_now`r`n"
             }
             elseif ($docker_online -eq $false -And (($docker_tries % 30) -eq 0)) {
                 # start count over
