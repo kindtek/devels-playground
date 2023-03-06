@@ -177,10 +177,10 @@ function install_repo {
             # $choco = "cmd.exe /c scripts/choco/build.bat"
             Write-Host "`n`r`n`rInstalling $software_name ..." 
             $env:path += ";C:\ProgramData\chocoportable"
-            $choco = "choco/build.bat"
-            &$choco = cmd /c start powershell.exe -Command "choco/build.bat"
-            $refresh_env = "choco/src/chocolatey.resources/redirects/RefreshEnv"
-            &$refresh_env = cmd /c start powershell.exe -Command "choco/src/chocolatey.resources/redirects/RefreshEnv.cmd"
+            $choco = "build.bat"
+            &$choco = cmd /c start powershell.exe -Command "build.bat"
+            $refresh_env = "src/chocolatey.resources/redirects/RefreshEnv"
+            &$refresh_env = cmd /c start powershell.exe -Command "src/chocolatey.resources/redirects/RefreshEnv.cmd"
             # cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
             Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.choco-installed"
             Pop-Location
