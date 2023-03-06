@@ -241,13 +241,20 @@ function require_docker_online {
     $docker_online = $false
     # launch docker desktop and keep it open 
     Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
-    Write-Host "`r`n`r`nWaiting for $software_name to come online ..." -BackgroundColor "Black" -ForegroundColor "Yellow"    
+    Write-Host "`r`n`r`nWaiting for Docker to come online ..." -BackgroundColor "Black" -ForegroundColor "Yellow"    
     do {
         $check_again = 'x'
         $docker_tries++
         Start-Sleep -seconds 1
-  
-        if ($docker_online -eq $false -And (($docker_tries % 30) -eq 0)) {
+        if ($docker_online -eq $false) {
+            try {
+                { Get-Process 'com.docker.proxy' } *>$null
+                $docker_online = $true
+                return $true
+            }
+            catch {}
+        }
+        elseif ($docker_online -eq $false -And (($docker_tries % 30) -eq 0)) {
             # start count over
             # $docker_attempt1 = $docker_attempt2 = $false
             # prompt to continue
@@ -266,14 +273,7 @@ function require_docker_online {
             Write-Host "Switch complete. Retrying connection in 10 seconds ......"
             Start-Sleep 10
         }
-        elseif ($docker_online -eq $false) {
-            try {
-                { Get-Process 'com.docker.proxy' } *>$null
-                $docker_online = $true
-                return $true
-            }
-            catch {}
-        }
+
     } while (-Not $docker_online -Or $check_again -ine 'n')
 
     return $true
