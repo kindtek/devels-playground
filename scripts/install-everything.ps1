@@ -225,7 +225,7 @@ function install_repo {
             $new_install = $true
             # @TODO: add cdir and python to install with same behavior as other installs above
             # not eloquent at all but good for now
-            winget install --id=Python.Python.3.10  -e
+            'y' | winget install --id=Python.Python.3.10  -e
     
             # ... even tho cdir does not appear to be working on windows
             # $cmd_command = pip install cdir
