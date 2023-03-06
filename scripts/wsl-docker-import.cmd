@@ -187,6 +187,10 @@ IF %default%==config (
 )
 
 SET /P WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path! > nul
+if "!WSL_DOCKER_CONTAINER_ID!"="" (
+    ECHO An error occurred. Missing container ID. Please restart and try again
+    goto exit
+)
 ECHO:
 ECHO exporting image (!WSL_DOCKER_IMG_ID!) as container (!WSL_DOCKER_CONTAINER_ID!)...
 ECHO docker export !WSL_DOCKER_CONTAINER_ID! ^> !image_save_path!
