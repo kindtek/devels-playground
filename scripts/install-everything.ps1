@@ -290,7 +290,6 @@ function run_devels_playground {
     # if ($start_devs_playground -ine 'n' -And $start_devs_playground -ine 'no') { 
     Write-Host "`r`nNOTE:`t$software_name is required to be running for the Devel's Playground to work.`r`n`r`n`tDo NOT quit $software_name until you are done running it.`r`n" 
     Write-Host "`r`n`r`nAttempting to start wsl import tool ..."
-    if ( require_docker_online ) {
         # // commenting out background building process because this is NOT quite ready.
         # // would like to run in separate window and then use these new images in devel's playground 
         # // if they are more up to date than the hub - which could be a difficult process
@@ -303,12 +302,6 @@ function run_devels_playground {
         Write-Host "& $devs_playground"
         &$devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
     }
-    else {
-        Write-Host "Failed to launch docker. Not able to start Devel's Playground. Please restart and run the script again:"
-        Write-Host "cmd `"$git_path/kindtek/devels-workshop/devels-playground/scripts/wsl-docker-import`""
-        Write-Host "powershell.exe ./kindtek/devels-workshop/devels-playground/scripts/wsl-docker-import.ps1"
-    }
-}
     
 # }
 # catch {}
@@ -369,8 +362,15 @@ workflow start_installer_daemon {
     InlineScript { Write-Host "$([char]27)[2J" }
     InlineScript { Write-Host "`r`nSetup complete!`r`n" }
 
-    require_docker_online
-    run_devels_playground $git_path
+    
+    if (require_docker_online){
+        run_devels_playground $git_path
+    }
+    else {
+        InlineScript { Write-Host "Failed to launch docker. Not able to start Devel's Playground. Please restart and run the script again:" }
+        InlineScript { Write-Host "cmd `"$git_path/kindtek/devels-workshop/devels-playground/scripts/wsl-docker-import`"" }
+        InlineScript { Write-Host "powershell.exe ./kindtek/devels-workshop/devels-playground/scripts/wsl-docker-import.ps1" }
+    }
 
     # }
     # catch {
