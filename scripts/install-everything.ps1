@@ -285,6 +285,7 @@ function run_devels_playground {
         $software_name = "Docker Desktop"
         # if ($start_devs_playground -ine 'n' -And $start_devs_playground -ine 'no') { 
         Write-Host "`r`nNOTE: $software_name is required to be running for the Devel's Playground to work.`r`n`r`n`tDo NOT quit $software_name until you are done running it.`r`n" 
+        Write-Host "Attempting to start wsl import tool ..."
         if (require_docker_online) {
             # // commenting out background building process because this is NOT quite ready.
             # // would like to run in separate window and then use these new images in devel's playground 
