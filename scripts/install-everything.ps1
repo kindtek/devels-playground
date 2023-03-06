@@ -340,7 +340,6 @@ workflow setup_devw {
         install_dependencies $temp_repo_scripts_path $git_path
         install_repo $parent_path $git_path $repo_src_owner $repo_src_name $repo_src_branch
         Write-Output "$([char]27)[2J"
-        Write-Host "`r`nSetup complete!`r`n" -ForegroundColor Green -BackgroundColor "Black"
         run_devels_playground
 
     }
