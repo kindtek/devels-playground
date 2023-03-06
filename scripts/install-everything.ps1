@@ -196,14 +196,13 @@ function install_repo {
         # Push-Location bin
     }
     else {
-        Write-Host "`t$software_name already installed"  
+        Write-Host "`t$software_name already installed`r`n"  
     }
         
         
 
-    Write-Host"`r`n"
-    powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle "Hidden"
-    Write-Host"`r`n"
+    $refresh_env = "src/chocolatey.resources/redirects/RefreshEnv.cmd"
+    &$refresh_env = "src/chocolatey.resources/redirects/RefreshEnv.cmd"
     
     if (!(Test-Path -Path "$git_path/.python-installed" -PathType Leaf)) {
         $new_install = $true
