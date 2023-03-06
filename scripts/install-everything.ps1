@@ -108,7 +108,7 @@ function install_dependencies {
         Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.wterminal-installed"
     }
     else {
-        Write-Host "$software_name already installed"  -ForegroundColor "Blue"
+        Write-Host "$software_name already installed`r`n"  -ForegroundColor "Blue"
     }
 
     # this is used for x11 / gui stuff .. @TODO: add the option one day maybe
@@ -287,7 +287,7 @@ function run_devels_playground {
         $software_name = "Docker Desktop"
         if ($start_devs_playground -ine 'n' -And $start_devs_playground -ine 'no') { 
             Write-Host "`r`nNOTE: $software_name is required to be running for the Devel's Playground to work. Do NOT quit $software_name until you are done running it.`r`n" -BackgroundColor "Black" -ForegroundColor "Yellow"
-            $docker_online = @(require_docker_online)[-1]
+            $docker_online = require_docker_online
             if ($docker_online -eq $true) {
                 # // commenting out background building process because this is NOT quite ready.
                 # // would like to run in separate window and then use these new images in devel's playground 
@@ -332,7 +332,7 @@ function cleanup_installation {
 }
 
 
-workflow setup_devw {
+workflow start_installer_daemon {
     param ([string]$temp_repo_scripts_path)
 
     $repo_src_owner = 'kindtek'
@@ -373,9 +373,9 @@ workflow setup_devw {
     #     InlineScript { Write-Host "Something went wrong. Restarting your computer will probably fix the problem." -ForegroundColor "Red" }
     #     InlineScript { Write-host "Error: $err" }
     #     # Restart-Computer -Wait 
-    #     # setup_devw $temp_repo_scripts_path     
+    #     # start_installer_daemon $temp_repo_scripts_path     
     # }
 }
 
     
-setup_devw $temp_repo_scripts_path
+start_installer_daemon $temp_repo_scripts_path
