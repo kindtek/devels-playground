@@ -121,13 +121,14 @@ function test_repo_path {
         # refresh environment variables
         # cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
         if (Test-Path -Path "$parent_path/$repo_src_name") {
-            Set-Location "$parent_path/$repo_src_name"
+            Push-Location "$parent_path/$repo_src_name"
             # if git status works and finds devels-workshop repo, assume the install has been successfull and this script was ran once before
             $git_status = git remote show origin 
             # determine if git status works by checking output for LICENSE - see typical output of git status here: https://amitd.co/code/shell/git-status-porcelain
             if ($git_status.NotContains("github.com/$repo_src_owner/$repo_src_name")) {
                 Write-Debug "`tNot a git repository"
             }
+            Pop-Location
         }
         else {
             Write-Debug "`tNo git directory found"
