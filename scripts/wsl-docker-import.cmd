@@ -5,7 +5,7 @@ SETLOCAL EnableDelayedExpansion
 :redo
 
 SET default=default
-SET wsl_version=2
+SET wsl_version=1
 SET save_directory=docker2wsl
 SET mount_drive=C
 
