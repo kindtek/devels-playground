@@ -141,85 +141,85 @@ function install_repo {
         $parent_path, $git_path, $repo_src_owner, $repo_src_name, $repo_src_branch 
     )
     # try {
-        Write-Host "Now installing:`r`n`t- Chocolatey`r`n`t- Python`r`n" 
+    Write-Host "Now installing:`r`n`t- Chocolatey`r`n`t- Python`r`n" 
 
-        # refresh environment variables using script in choco temp download location
-        powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle "Hidden"
-        # Write-Host "parent path: $parent_path"
-        Set-Location $parent_path
-        $new_install = $false
+    # refresh environment variables using script in choco temp download location
+    powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle "Hidden"
+    # Write-Host "parent path: $parent_path"
+    Set-Location $parent_path
+    $new_install = $false
     
-        # test git
-        $git_version = git --version 
+    # test git
+    $git_version = git --version 
     
-        # .. and then clone the repo
-        if (!(Test-Path -Path "$parent_path/$repo_src_name")) {
-            git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
-        }
-        
-        Set-Location "$repo_src_name"
-        git submodule update --force --recursive --init --remote
-    
-        # @TODO: since this gave so many errors, use git to install from source - the current way does like it may be better to stay up to date (rather than using a fork or origin choco repo)
-        $software_name = "Chocolatey"
-        if (!(Test-Path -Path "$git_path/.choco-installed" -PathType Leaf)) {
-            $new_install = $true
-            # getting error-0x80010135 path too long error when unzipping.. unzip operation at the shortest path
-            # Push-Location $temp_repo_scripts_path
-            Push-Location scripts
-
-            Push-Location choco
-            # $choco = "devels-advocate/get-latest-choco.ps1"
-            # Write-Host "`n`r`n`rInstalling $software_name ..." 
-            # $env:path += ";C:\ProgramData\chocoportable"
-            # &$choco = Invoke-Expression -command "devels-advocate/get-latest-choco.ps1" 
-            # $choco = "cmd.exe /c scripts/choco/build.bat"
-            Write-Host "`n`r`n`r`tInstalling $software_name ..." 
-            $env:path += ";C:\ProgramData\chocoportable"
-            $choco = "build.bat"
-            Write-Host "`tExecuting $choco ..."
-            &$choco = "build.bat"
-            $refresh_env = "src/chocolatey.resources/redirects/RefreshEnv.cmd"
-            &$refresh_env = "src/chocolatey.resources/redirects/RefreshEnv.cmd"
-            # cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
-            Pop-Location
-            Pop-Location
-            Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.choco-installed"
-
-            # Push-Location cdir
-            # Push-Location bin
-        }
-        else {
-            Write-Host "`t$software_name already installed"  
-        }
-        
-        
-
-        Write-Host"`r`n"
-        powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle "Hidden"
-        Write-Host"`r`n"
-    
-        if (!(Test-Path -Path "$git_path/.python-installed" -PathType Leaf)) {
-            $new_install = $true
-            # @TODO: add cdir and python to install with same behavior as other installs above
-            # not eloquent at all but good for now
-            winget install --id=Python.Python.3.10  -e
-    
-            # ... even tho cdir does not appear to be working on windows
-            # $cmd_command = pip install cdir
-            # Start-Process -FilePath PowerShell.exe -NoNewWindow -ArgumentList $cmd_command
-       
-            Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.python-installed"
-        }
-        else {
-            Write-Host "`t$software_name already installed"
-        }
-
-        return $new_install
-    
+    # .. and then clone the repo
+    if (!(Test-Path -Path "$parent_path/$repo_src_name")) {
+        git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
     }
-    # if git is not recognized try to limp along with the manually downloaded files
-    # catch {}
+        
+    Set-Location "$repo_src_name"
+    git submodule update --force --recursive --init --remote
+    
+    # @TODO: since this gave so many errors, use git to install from source - the current way does like it may be better to stay up to date (rather than using a fork or origin choco repo)
+    $software_name = "Chocolatey"
+    if (!(Test-Path -Path "$git_path/.choco-installed" -PathType Leaf)) {
+        $new_install = $true
+        # getting error-0x80010135 path too long error when unzipping.. unzip operation at the shortest path
+        # Push-Location $temp_repo_scripts_path
+        Push-Location scripts
+
+        Push-Location choco
+        # $choco = "devels-advocate/get-latest-choco.ps1"
+        # Write-Host "`n`r`n`rInstalling $software_name ..." 
+        # $env:path += ";C:\ProgramData\chocoportable"
+        # &$choco = Invoke-Expression -command "devels-advocate/get-latest-choco.ps1" 
+        # $choco = "cmd.exe /c scripts/choco/build.bat"
+        Write-Host "`n`r`n`r`tInstalling $software_name ..." 
+        $env:path += ";C:\ProgramData\chocoportable"
+        $choco = "build.bat"
+        Write-Host "`tExecuting $choco ..."
+        &$choco = "build.bat"
+        $refresh_env = "src/chocolatey.resources/redirects/RefreshEnv.cmd"
+        &$refresh_env = "src/chocolatey.resources/redirects/RefreshEnv.cmd"
+        # cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
+        Pop-Location
+        Pop-Location
+        Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.choco-installed"
+
+        # Push-Location cdir
+        # Push-Location bin
+    }
+    else {
+        Write-Host "`t$software_name already installed"  
+    }
+        
+        
+
+    Write-Host"`r`n"
+    powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle "Hidden"
+    Write-Host"`r`n"
+    
+    if (!(Test-Path -Path "$git_path/.python-installed" -PathType Leaf)) {
+        $new_install = $true
+        # @TODO: add cdir and python to install with same behavior as other installs above
+        # not eloquent at all but good for now
+        winget install --id=Python.Python.3.10  -e
+    
+        # ... even tho cdir does not appear to be working on windows
+        # $cmd_command = pip install cdir
+        # Start-Process -FilePath PowerShell.exe -NoNewWindow -ArgumentList $cmd_command
+       
+        Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.python-installed"
+    }
+    else {
+        Write-Host "`t$software_name already installed"
+    }
+
+    return $new_install
+    
+}
+# if git is not recognized try to limp along with the manually downloaded files
+# catch {}
 }
 
 # refresh env again
@@ -281,16 +281,14 @@ function run_devels_playground {
     param (
         $git_path
     )
-    try {
-        # @TODO: maybe start in new window
-        # $start_devs_playground = Read-Host "`r`nStart Devel's Playground ([y]/n)"
-        $software_name = "Docker Desktop"
-        # if ($start_devs_playground -ine 'n' -And $start_devs_playground -ine 'no') { 
-        Write-Host "`r`nNOTE:`t$software_name is required to be running for the Devel's Playground to work.`r`n`r`n`tDo NOT quit $software_name until you are done running it.`r`n" 
-        Write-Host "`r`n`r`nAttempting to start wsl import tool ..."
-        # if (
-        require_docker_online
-        # ) {
+    # try {
+    # @TODO: maybe start in new window
+    # $start_devs_playground = Read-Host "`r`nStart Devel's Playground ([y]/n)"
+    $software_name = "Docker Desktop"
+    # if ($start_devs_playground -ine 'n' -And $start_devs_playground -ine 'no') { 
+    Write-Host "`r`nNOTE:`t$software_name is required to be running for the Devel's Playground to work.`r`n`r`n`tDo NOT quit $software_name until you are done running it.`r`n" 
+    Write-Host "`r`n`r`nAttempting to start wsl import tool ..."
+    if ( require_docker_online ) {
         # // commenting out background building process because this is NOT quite ready.
         # // would like to run in separate window and then use these new images in devel's playground 
         # // if they are more up to date than the hub - which could be a difficult process
@@ -302,16 +300,16 @@ function run_devels_playground {
         Write-Host "Launching Devel's Playground`r`n$devs_playground ...`r`n" 
         Write-Host "& $devs_playground"
         &$devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
-        # }
-        # else {
-        #     Write-Host "Failed to launch docker. Not able to start Devel's Playground. Please restart and run the script again:"
-        #     Write-Host "cmd `"$git_path/kindtek/devels-workshop/devels-playground/scripts/wsl-docker-import`""
-        #     Write-Host "powershell.exe ./kindtek/devels-workshop/devels-playground/scripts/wsl-docker-import.ps1"
-        # }
-        # }
-    
     }
-    catch {}
+    else {
+        Write-Host "Failed to launch docker. Not able to start Devel's Playground. Please restart and run the script again:"
+        Write-Host "cmd `"$git_path/kindtek/devels-workshop/devels-playground/scripts/wsl-docker-import`""
+        Write-Host "powershell.exe ./kindtek/devels-workshop/devels-playground/scripts/wsl-docker-import.ps1"
+    }
+}
+    
+# }
+# catch {}
 }
 
 function cleanup_installation {
