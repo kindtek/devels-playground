@@ -350,13 +350,13 @@ workflow setup_devw {
     test_repo_path $parent_path $git_path $repo_src_owner $repo_src_name
     # jump to bottom line without clearing scrollback
     InlineScript { Write-Host "$([char]27)[2J" }
-    # $new_install = @(install_windows_features $temp_repo_scripts_path )[-1]
-    # if ($new_install -eq $true) {
-    #     InlineScript { Write-Host "`r`nWindows features installed. Restarting computer ... r`n" -ForegroundColor Green -BackgroundColor "Black" }
-    #     # Restart-Computer -Wait
-    # }
+    $new_install = install_windows_features $temp_repo_scripts_path 
+    if ($new_install -eq $true) {
+        InlineScript { Write-Host "`r`nWindows features installed. Restarting computer ... r`n" -ForegroundColor Green -BackgroundColor "Black" }
+        # Restart-Computer -Wait
+    }
     
-    $new_install = @(install_dependencies $temp_repo_scripts_path $git_path)[-1]
+    $new_install = install_dependencies $temp_repo_scripts_path $git_path
     if ($new_install -eq $true) {
         InlineScript { Write-Host "`r`nRestarting computer ... r`n" -ForegroundColor Green -BackgroundColor "Black" }
         # Restart-Computer -Wait
