@@ -1,28 +1,29 @@
 version: '3.8'
-name: devels-workshop-ubuntu
+# name: devels-workshop-ubuntu
 services:
-  skinny:
-    entrypoint:
-      - sleep
-      - infinity
-    image: kindtek/devp:ubuntu-skinny
-    build:
-      context: .
-      target: devp_skinny
-      args:
-        - username=${username:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
-    init: true
-    volumes:
-      - type: volume
-        source: hel-data
-        target: /home/devel
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-      - type: bind
-        source: ~/
-        target: /home/host
+  # skinny:
+  #   entrypoint:
+  #     - sleep
+  #     - infinity
+  #   image: kindtek/devp:ubuntu-skinny
+  #   build:
+  #     context: .
+  #     target: devp_skinny
+  #     args:
+  #       - username=${username:-gabriel}
+  #     dockerfile: dockerfile.ubuntu.yaml
+  #   init: true
+  #   volumes:
+  #     - hel-data:/mnt/w
+  #     # - type: volume
+  #     #   source: hel-data
+  #     #   target: /home/devel
+  #     - type: bind
+  #       source: /var/run/docker.sock
+  #       target: /var/run/docker.sock
+  #     - type: bind
+  #       source: ~/
+  #       target: /home/host
   git:
     entrypoint:
       - sleep
@@ -36,9 +37,7 @@ services:
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
-      - type: volume
-        source: hel-data
-        target: /home/devel
+      - hel-data:/mnt/w
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
@@ -58,9 +57,7 @@ services:
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
-      - type: volume
-        source: hel-data
-        target: /home/devel
+      - hel-data:/mnt/w
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
@@ -81,9 +78,7 @@ services:
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
-      - type: volume
-        source: hel-data
-        target: /home/devel
+      - hel-data:/mnt/w
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
@@ -104,9 +99,7 @@ services:
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
-      - type: volume
-        source: hel-data
-        target: /home/devel
+      - hel-data:/mnt/w
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
@@ -127,16 +120,14 @@ services:
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
-      - type: volume
-        source: hel-data
-        target: /home/devel
+      - hel-data:/mnt/w
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
       - type: bind
         source: ~/
         target: /home/host
-      
+
   # phatso:
   #   entrypoint:
   #     - sleep
@@ -150,9 +141,7 @@ services:
   #     dockerfile: dockerfile.ubuntu.yaml
   #   init: true
   #   volumes:
-  #     - type: volume
-  #       source: hel-data
-  #       target: /home/devel
+  #     - hel-data:/mnt/w
   #     - type: bind
   #       source: /var/run/docker.sock
   #       target: /var/run/docker.sock
@@ -162,3 +151,4 @@ services:
 
 volumes:
   hel-data:
+    external: false
