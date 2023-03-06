@@ -292,7 +292,7 @@ function run_devels_playground {
                 # // if they are more up to date than the hub - which could be a difficult process
                 # $cmd_command = "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1"
                 # &$cmd_command = cmd /c start powershell.exe -Command "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1" -WindowStyle "Maximized"
-                # Write-Host "`r`n" 
+                Write-Host "Launching Devel's Playground`r`n" 
                 Write-Output "$([char]27)[2J"
                 $devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
                 &$devs_playground = cmd /c start powershell.exe -Command "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
