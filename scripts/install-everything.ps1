@@ -367,16 +367,17 @@ workflow start_installer_daemon {
     test_repo_path $parent_path $git_path $repo_src_owner $repo_src_name
     # jump to bottom line without clearing scrollback
     InlineScript { Write-Host "$([char]27)[2J" }
+    # @TODO: fix $new_install variable - doesn't work for windows features in  
     $new_install = install_windows_features $temp_repo_scripts_path 
     if ($new_install -eq $true) {
-        InlineScript { Write-Host "`r`nWindows features installed. Restarting computer in five seconds ... r`n" }
+        InlineScript { Write-Host "`r`nWindows features installed. Restarting computer in five seconds ... `r`n" }
         Start-Sleep 5
         Restart-Computer -Wait
     }
     
     $new_install = install_dependencies $temp_repo_scripts_path $git_path
     if ($new_install -eq $true) {
-        InlineScript { Write-Host "`r`nRestart needed. Restarting computer in five seconds ... r`n" }
+        InlineScript { Write-Host "`r`nRestart needed. Restarting computer in five seconds ... `r`n" }
         Start-Sleep 5
         Restart-Computer -Wait
     }
