@@ -176,6 +176,7 @@ function install_repo {
             Write-Host "`n`r`n`rInstalling $software_name ..." 
             $env:path += ";C:\ProgramData\chocoportable"
             $choco = "build.bat"
+            Write-Host "Executing $choco ..."
             &$choco = cmd /c start powershell.exe -Command "build.bat"
             $refresh_env = "src/chocolatey.resources/redirects/RefreshEnv"
             &$refresh_env = cmd /c start powershell.exe -Command "src/chocolatey.resources/redirects/RefreshEnv.cmd"
