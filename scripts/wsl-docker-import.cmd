@@ -174,23 +174,23 @@ IF %default%==config (
     ECHO:
     ECHO:
     color 02
-    ECHO docker run -it --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID!
-    docker run -it --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID!
+    ECHO docker run -it --cidfile !docker_container_id_path! @(!WSL_DOCKER_IMG_ID!)[0] 
+    docker run -it --cidfile !docker_container_id_path! @(!WSL_DOCKER_IMG_ID!)[0] 
     color 0F
     ECHO:
     ECHO closing preview container...
     ECHO:
     ECHO ========================================================================
 ) ELSE (
-    ECHO docker run -dit --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID!
-    docker run -dit --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID! 
+    ECHO docker run -dit --cidfile !docker_container_id_path! @(!WSL_DOCKER_IMG_ID!)[0] 
+    docker run -dit --cidfile !docker_container_id_path! @(!WSL_DOCKER_IMG_ID!)[0] 
 )
 
 SET /P WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path! > nul
 ECHO:
-ECHO exporting image (!WSL_DOCKER_IMG_ID!) as container (!WSL_DOCKER_CONTAINER_ID!)...
-ECHO docker export !WSL_DOCKER_CONTAINER_ID! ^> !image_save_path!
-docker export !WSL_DOCKER_CONTAINER_ID! > !image_save_path!
+ECHO exporting image @(!WSL_DOCKER_IMG_ID!)[0] as container (@(!WSL_DOCKER_CONTAINER_ID!)[0])...
+ECHO docker export @(!WSL_DOCKER_CONTAINER_ID!)[0] ^> !image_save_path!
+docker export @(!WSL_DOCKER_CONTAINER_ID!)[0] > !image_save_path!
 ECHO DONE
 
 :wsl_list
