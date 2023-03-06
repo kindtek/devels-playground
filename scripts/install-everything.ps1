@@ -143,7 +143,7 @@ function install_repo {
         $parent_path, $git_path, $repo_src_owner, $repo_src_name, $repo_src_branch 
     )
     try {
-        Write-Host "Now installing:`r`n`t- Python`r`n`t- Chocolatey" 
+        Write-Host "Now installing:`r`n`t- Chocolatey`r`n`t- Python`r`n" 
 
         # refresh environment variables using script in choco temp download location
         powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle "Hidden"
