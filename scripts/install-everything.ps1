@@ -236,13 +236,8 @@ function require_docker_online {
         $check_again = 'x'
         $docker_tries++
         Start-Sleep -seconds 1
-        if ($docker_online -eq $false) {
-            try {
-                { Get-Process 'com.docker.proxy' } *>$null
-                $docker_online = $true
-                return $true
-            }
-            catch {}
+        if ($docker_online -eq $false -And (($docker_tries % 80) -eq 0)) {
+            return $false
         }
         elseif ($docker_online -eq $false -And (($docker_tries % 30) -eq 0)) {
             # start count over
@@ -254,15 +249,25 @@ function require_docker_online {
         elseif ($docker_online -eq $false -And (($docker_tries % 20) -eq 0)) {
             # docker update --restart=always docker-desktop
             # docker update --restart=always docker-desktop-data
-            Write-Host "Waited $docker_tries seconds .. `r`nRestarting Docker Engine..."
-            Write-Host "Switching Docker Engine ...."
-            ./DockerCli.exe -SwitchDaemon
-            Start-Sleep 5
-            Write-Host "Setting Docker Engine to Linux ....."
-            ./DockerCli.exe -SwitchLinuxEngine
-            Write-Host "Switch complete. Retrying connection in 10 seconds ......"
+            Write-Host "Waited $docker_tries seconds .. "
+            # Write-Host "Restarting Docker Engine..."
+            # Write-Host "Switching Docker Engine ...."
+            # ./DockerCli.exe -SwitchDaemon
+            # Start-Sleep 5
+            # Write-Host "Setting Docker Engine to Linux ....."
+            # ./DockerCli.exe -SwitchLinuxEngine
+            # Write-Host "Switch complete."
+            Write-Host "Retrying connection in 10 seconds ......"
             Start-Sleep 10
         }
+        else {        }
+        
+        try {
+            { Get-Process 'com.docker.proxy' } *>$null
+            $docker_online = $true
+            return $true
+        }
+        catch {}
 
     } while (-Not $docker_online -Or $check_again -ine 'n')
 
@@ -341,13 +346,13 @@ workflow start_installer_daemon {
     InlineScript { Write-Host "$([char]27)[2J" }
     $new_install = install_windows_features $temp_repo_scripts_path 
     if ($new_install -eq $true) {
-        InlineScript { Write-Host "`r`nWindows features installed. Restarting computer ... r`n"  }
+        InlineScript { Write-Host "`r`nWindows features installed. Restarting computer ... r`n" }
         # Restart-Computer -Wait
     }
     
     $new_install = install_dependencies $temp_repo_scripts_path $git_path
     if ($new_install -eq $true) {
-        InlineScript { Write-Host "`r`nRestarting computer ... r`n" -}
+        InlineScript { Write-Host "`r`nRestarting computer ... r`n" - }
         # Restart-Computer -Wait
     }
 
