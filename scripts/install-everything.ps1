@@ -161,6 +161,7 @@ function install_repo {
         
         Set-Location "$repo_src_name"
         git submodule update --force --recursive --init --remote
+        Push-Location scripts
     
         # @TODO: since this gave so many errors, use git to install from source - the current way does like it may be better to stay up to date (rather than using a fork or origin choco repo)
         $software_name = "Chocolatey"
@@ -183,12 +184,14 @@ function install_repo {
             # cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
             Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.choco-installed"
             Pop-Location
-            Push-Location cdir
-            Push-Location bin
+            # Push-Location cdir
+            # Push-Location bin
         }
         else {
             Write-Host "$software_name already installed"  
         }
+        
+        Pop-Location
 
         Write-Host"`r`n"
         powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle "Hidden"
