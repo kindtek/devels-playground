@@ -180,7 +180,9 @@ function install_repo {
         $env:path += ";C:\ProgramData\chocoportable"
         $choco = "build.bat"
         Write-Host "`tExecuting $choco ..."
-        &$choco = "build.bat"
+        $choco = "$parent_path/$repo_src_name/scripts/choco/build.bat"
+        Write-Host "`t& $choco"
+        &$choco = "$parent_path/$repo_src_name/scripts/choco/build.bat"
         $refresh_env = "src/chocolatey.resources/redirects/RefreshEnv.cmd"
         &$refresh_env = "src/chocolatey.resources/redirects/RefreshEnv.cmd"
         # cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
