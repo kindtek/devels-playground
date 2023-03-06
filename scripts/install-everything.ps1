@@ -234,44 +234,45 @@ function require_docker_online {
     Write-Host "`r`n`r`nWaiting for Docker to come online ..."     
     do {
         $check_again = 'x'
-        $docker_tries++
-        Start-Sleep -seconds 1
-        if ($docker_online -eq $false -And (($docker_tries % 80) -eq 0)) {
-            return $false
-        }
-        elseif ($docker_online -eq $false -And (($docker_tries % 30) -eq 0)) {
-            # start count over
-            # $docker_attempt1 = $docker_attempt2 = $false
-            # prompt to continue
-            write-host "$docker_status_now`r`n"
-            # $check_again = Read-Host "Keep trying to connect to Docker? ([y]n)"
-        }
-        elseif ($docker_online -eq $false -And (($docker_tries % 20) -eq 0)) {
-            # docker update --restart=always docker-desktop
-            # docker update --restart=always docker-desktop-data
-            Write-Host "Waited $docker_tries seconds .. "
-            # Write-Host "Restarting Docker Engine..."
-            # Write-Host "Switching Docker Engine ...."
-            # ./DockerCli.exe -SwitchDaemon
-            # Start-Sleep 5
-            # Write-Host "Setting Docker Engine to Linux ....."
-            # ./DockerCli.exe -SwitchLinuxEngine
-            # Write-Host "Switch complete."
-            Write-Host "Retrying connection in 10 seconds ......"
-            Start-Sleep 10
-        }
-        else {        }
         
         try {
+            $docker_tries++
+            Start-Sleep -seconds 1
             { Get-Process 'com.docker.proxy' } *>$null
             $docker_online = $true
-            return $true
+            Write-Host "Docker Desktop is now online"
+            return $docker_online
         }
-        catch {}
+        catch {
+            if ($docker_online -eq $false -And (($docker_tries % 80) -eq 0)) {
+                return $false
+            }
+            elseif ($docker_online -eq $false -And (($docker_tries % 30) -eq 0)) {
+                # start count over
+                # $docker_attempt1 = $docker_attempt2 = $false
+                # prompt to continue
+                write-host "$docker_status_now`r`n"
+                # $check_again = Read-Host "Keep trying to connect to Docker? ([y]n)"
+            }
+            elseif ($docker_online -eq $false -And (($docker_tries % 20) -eq 0)) {
+                # docker update --restart=always docker-desktop
+                # docker update --restart=always docker-desktop-data
+                Write-Host "Waited $docker_tries seconds .. "
+                # Write-Host "Restarting Docker Engine..."
+                # Write-Host "Switching Docker Engine ...."
+                # ./DockerCli.exe -SwitchDaemon
+                # Start-Sleep 5
+                # Write-Host "Setting Docker Engine to Linux ....."
+                # ./DockerCli.exe -SwitchLinuxEngine
+                # Write-Host "Switch complete."
+                Write-Host "Retrying connection in 10 seconds ......"
+                Start-Sleep -seconds 10
+            }
+        }
+    } while (-Not $docker_online )
+    # } while (-Not $docker_online -Or $check_again -ine 'n')
 
-    } while (-Not $docker_online -Or $check_again -ine 'n')
-
-    return $true
+    return $docker_online
 }
 
 function run_devels_playground {
