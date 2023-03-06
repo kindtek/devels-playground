@@ -153,17 +153,15 @@ function install_repo {
     Write-Host "Testing path $parent_path/$repo_src_name ..."
     if (!(Test-Path -Path $repo_src_name)) {
         Write-Host "Testing path $parent_path/$repo_src_name ..."
-        git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
+        { git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch } *>$null
         Set-Location "$repo_src_name"
-        git submodule update --force --recursive --init --remote
-
+        { git submodule update --force --recursive --init --remote } *>$null
     }
-    else {
-        Set-Location "$repo_src_name"
-        git pull
-        git submodule update --force --recursive --init --remote
 
-    } 
+    # step into repo
+    Set-Location "$repo_src_name"
+    git pull
+    git submodule update --force --recursive --init --remote
     
     # @TODO: since this gave so many errors, use git to install from source - the current way does like it may be better to stay up to date (rather than using a fork or origin choco repo)
     $software_name = "Chocolatey"
@@ -296,18 +294,18 @@ function run_devels_playground {
     # if ($start_devs_playground -ine 'n' -And $start_devs_playground -ine 'no') { 
     Write-Host "`r`nNOTE:`t$software_name is required to be running for the Devel's Playground to work.`r`n`r`n`tDo NOT quit $software_name until you are done running it.`r`n" 
     Write-Host "`r`n`r`nAttempting to start wsl import tool ..."
-        # // commenting out background building process because this is NOT quite ready.
-        # // would like to run in separate window and then use these new images in devel's playground 
-        # // if they are more up to date than the hub - which could be a difficult process
-        # $cmd_command = "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1"
-        # &$cmd_command = cmd /c start powershell.exe -Command "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1" -WindowStyle "Maximized"
+    # // commenting out background building process because this is NOT quite ready.
+    # // would like to run in separate window and then use these new images in devel's playground 
+    # // if they are more up to date than the hub - which could be a difficult process
+    # $cmd_command = "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1"
+    # &$cmd_command = cmd /c start powershell.exe -Command "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1" -WindowStyle "Maximized"
                
-        Write-Output "$([char]27)[2J"
-        $devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
-        Write-Host "Launching Devel's Playground`r`n$devs_playground ...`r`n" 
-        Write-Host "& $devs_playground"
-        &$devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
-    }
+    Write-Output "$([char]27)[2J"
+    $devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
+    Write-Host "Launching Devel's Playground`r`n$devs_playground ...`r`n" 
+    Write-Host "& $devs_playground"
+    &$devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
+}
     
 # }
 # catch {}
@@ -369,7 +367,7 @@ workflow start_installer_daemon {
     InlineScript { Write-Host "`r`nSetup complete!`r`n" }
 
     
-    if (require_docker_online){
+    if (require_docker_online) {
         run_devels_playground $git_path
     }
     else {
