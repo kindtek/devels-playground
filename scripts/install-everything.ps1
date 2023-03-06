@@ -249,9 +249,10 @@ function require_docker_online {
         try {
             $docker_tries++
             Start-Sleep -seconds 1
-            { 
+            # { 
                 Get-Process 'com.docker.proxy'
-            } # *>$null
+            # }
+             # *>$null
             $docker_online = $true
             Write-Host "Docker Desktop is now online"
         }
