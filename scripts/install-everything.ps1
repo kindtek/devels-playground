@@ -283,27 +283,27 @@ function run_devels_playground {
         # @TODO: maybe start in new window
         # $start_devs_playground = Read-Host "`r`nStart Devel's Playground ([y]/n)"
         $software_name = "Docker Desktop"
-        if ($start_devs_playground -ine 'n' -And $start_devs_playground -ine 'no') { 
-            Write-Host "`r`nNOTE: $software_name is required to be running for the Devel's Playground to work. Do NOT quit $software_name until you are done running it.`r`n" 
-            $docker_online = require_docker_online
-            if ($docker_online -eq $true) {
-                # // commenting out background building process because this is NOT quite ready.
-                # // would like to run in separate window and then use these new images in devel's playground 
-                # // if they are more up to date than the hub - which could be a difficult process
-                # $cmd_command = "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1"
-                # &$cmd_command = cmd /c start powershell.exe -Command "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1" -WindowStyle "Maximized"
+        # if ($start_devs_playground -ine 'n' -And $start_devs_playground -ine 'no') { 
+        Write-Host "`r`nNOTE: $software_name is required to be running for the Devel's Playground to work. Do NOT quit $software_name until you are done running it.`r`n" 
+        $docker_online = require_docker_online
+        if ($docker_online -eq $true) {
+            # // commenting out background building process because this is NOT quite ready.
+            # // would like to run in separate window and then use these new images in devel's playground 
+            # // if they are more up to date than the hub - which could be a difficult process
+            # $cmd_command = "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1"
+            # &$cmd_command = cmd /c start powershell.exe -Command "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1" -WindowStyle "Maximized"
                
-                Write-Output "$([char]27)[2J"
-                $devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
-                Write-Host "Launching Devel's Playground`r`n$devs_playground`r`n" 
-                &$devs_playground = cmd /c start powershell.exe -Command "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
-            }
-            else {
-                Write-Host "Failed to launch docker. Not able to start Devel's Playground. Please restart and run the script again:"
-                Write-Host "cmd `"$git_path/kindtek/devels-workshop/devels-playground/scripts/wsl-docker-import`""
-                Write-Host "powershell.exe ./kindtek/devels-workshop/devels-playground/scripts/wsl-docker-import.ps1"
-            }
+            Write-Output "$([char]27)[2J"
+            $devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
+            Write-Host "Launching Devel's Playground`r`n$devs_playground`r`n" 
+            &$devs_playground = cmd /c start powershell.exe -Command "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
         }
+        else {
+            Write-Host "Failed to launch docker. Not able to start Devel's Playground. Please restart and run the script again:"
+            Write-Host "cmd `"$git_path/kindtek/devels-workshop/devels-playground/scripts/wsl-docker-import`""
+            Write-Host "powershell.exe ./kindtek/devels-workshop/devels-playground/scripts/wsl-docker-import.ps1"
+        }
+        # }
     
     }
     catch {}
