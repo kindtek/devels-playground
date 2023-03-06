@@ -312,7 +312,7 @@ function run_devels_playground {
     
 # }
 # catch {}
-}
+# }
 
 function cleanup_installation {
     param (
