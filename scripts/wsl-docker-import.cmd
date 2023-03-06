@@ -152,14 +152,9 @@ docker pull !image_repo_image_name!
 ECHO:
 ECHO initializing the image container...
 @REM @TODO: handle WSL_DOCKER_IMG_ID case of multiple ids returned from docker images query
-SET "GET_DOCKER_IMG_ID=docker images -aq !image_repo_image_name! ^^^> !docker_image_id_path!"
-ECHO docker_img_id : %GET_DOCKER_IMG_ID%
-FOR /F "delims=" %%A IN ('%GET_DOCKER_IMG_ID%') DO (
-    SET WSL_DOCKER_IMG_ID=%%A
-    GOTO :END_GET_ID 
-)
-:END_GET_ID
-
+ECHO docker images -aq !image_repo_image_name! > !docker_image_id_path!
+docker images -aq !image_repo_image_name! > !docker_image_id_path!
+SET /P WSL_DOCKER_IMG_ID=< @(!docker_image_id_path!)[-1]
 del !docker_container_id_path! > nul 2> nul
 
 IF %default%==config (
@@ -187,16 +182,12 @@ IF %default%==config (
     ECHO ========================================================================
 ) ELSE (
     ECHO docker run -dit --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID!
-    docker run -dit --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID!
+    docker run -dit --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID! 
 )
 
 SET /P WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path! > nul
 ECHO:
-IF "!WSL_DOCKER_CONTAINER_ID!"=="" (
-    ECHO There was an error opening the container ...
-    GOTO exit
-)
-ECHO exporting image !WSL_DOCKER_IMG_ID! as container (!WSL_DOCKER_CONTAINER_ID!)...
+ECHO exporting image (!WSL_DOCKER_IMG_ID!) as container (!WSL_DOCKER_CONTAINER_ID!)...
 ECHO docker export !WSL_DOCKER_CONTAINER_ID! ^> !image_save_path!
 docker export !WSL_DOCKER_CONTAINER_ID! > !image_save_path!
 ECHO DONE
