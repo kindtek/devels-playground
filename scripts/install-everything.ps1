@@ -275,7 +275,9 @@ function require_docker_online {
 }
 
 function run_devels_playground {
-    
+    param (
+        $git_path
+    )
     try {
         # @TODO: maybe start in new window
         # $start_devs_playground = Read-Host "`r`nStart Devel's Playground ([y]/n)"
@@ -361,7 +363,7 @@ workflow start_installer_daemon {
     InlineScript { Write-Host "`r`nSetup complete!`r`n" }
 
     require_docker_online
-    run_devels_playground
+    run_devels_playground $git_path
 
     # }
     # catch {
