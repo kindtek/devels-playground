@@ -62,8 +62,8 @@ function install_dependencies {
     $software_name = "Github CLI"
     if (!(Test-Path -Path "$git_path/.github-installed" -PathType Leaf)) {
         Write-Host "`n`r`tInstalling $software_name ..."
-        Invoke-Expression -Command "winget install -h -e --id GitHub.cli"
-        Invoke-Expression -Command "winget install --id Git.Git -h --source winget"
+        Invoke-Expression -Command "winget install --exact --id GitHub.cli --silent --locale en-US --accept-package-agreements --accept-source-agreements"
+        Invoke-Expression -Command "winget install --id Git.Git --source winget --silent --locale en-US --accept-package-agreements --accept-source-agreements"
         Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.github-installed"
         $new_install = $true
     }
@@ -74,7 +74,7 @@ function install_dependencies {
     $software_name = "Visual Studio Code (VSCode)"
     if (!(Test-Path -Path "$git_path/.vscode-installed" -PathType Leaf)) {
         Write-Host "`r`n`tInstalling $software_name`r`n"
-        Invoke-Expression -Command "winget install Microsoft.VisualStudioCode -h --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
+        Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --silent --locale en-US --accept-package-agreements --accept-source-agreements --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
         Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.vscode-installed"
         $new_install = $true
     }
@@ -85,7 +85,7 @@ function install_dependencies {
     $software_name = "Docker Desktop"
     if (!(Test-Path -Path "$git_path/.docker-installed" -PathType Leaf)) {
         Write-Host "`r`n`tInstalling $software_name`r`n" 
-        Invoke-Expression -Command "winget install --id=Docker.DockerDesktop -h" 
+        Invoke-Expression -Command "winget install --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements"
         Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.docker-installed"
         $new_install = $true
     }
@@ -98,7 +98,7 @@ function install_dependencies {
         # $windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
         # if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no') { 
         Write-Host "`r`n`tInstalling $software_name`r`n" 
-        Invoke-Expression -Command "winget install Microsoft.WindowsTerminal" 
+        Invoke-Expression -Command "winget install Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements" 
         # }
         Write-Host "$software_name installed`r`n"  | Out-File -FilePath "$git_path/.wterminal-installed"
         $new_install = $true
@@ -225,7 +225,7 @@ function install_repo {
             $new_install = $true
             # @TODO: add cdir and python to install with same behavior as other installs above
             # not eloquent at all but good for now
-            winget install --id=Python.Python.3.10  -h
+            winget install --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements
     
             # ... even tho cdir does not appear to be working on windows
             # $cmd_command = pip install cdir
