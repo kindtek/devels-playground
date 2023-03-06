@@ -222,7 +222,7 @@ function install_repo {
 }
 # if git is not recognized try to limp along with the manually downloaded files
 # catch {}
-}
+# }
 
 # refresh env again
 # cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
