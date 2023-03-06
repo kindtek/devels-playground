@@ -43,14 +43,14 @@ function install_dependencies {
     Write-Host "`r`nThese programs will be installed or updated:" -ForegroundColor Magenta
     Write-Host "`r`n`t- Ubuntu`r`n`t- WinGet`r`n`t- Chocolatey`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktopr`r`n`t- Windows Terminal`r`n`t- Python" -ForegroundColor Magenta
     Write-Host "`r`nClose window to quit at any time"
-    # $cmd_command = "--install -d Ubuntu"
-    # Start-Process -FilePath wsl.exe -NoNewWindow -ArgumentList $cmd_command
+    $cmd_command = "--install -d Ubuntu"
+    Start-Process -FilePath wsl.exe -NoNewWindow -ArgumentList $cmd_command
 
     $software_name = "WinGet"
     if (!(Test-Path -Path "$git_path/.winget-installed" -PathType Leaf)) {
         Push-Location $temp_repo_scripts_path
         # install winget and use winget to install everything else
-        $host.UI.RawUI.BackgroundColor = "Black"
+        # $host.UI.RawUI.BackgroundColor = "Black"
         $winget = "devels-advocate/get-latest-winget.ps1"
         Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
         &$winget = Invoke-Expression -command "devels-advocate/get-latest-winget.ps1" 
@@ -63,10 +63,10 @@ function install_dependencies {
 
     $software_name = "Github CLI"
     if (!(Test-Path -Path "$git_path/.github-installed" -PathType Leaf)) {
-        $host.UI.RawUI.BackgroundColor = "Black"
+        # $host.UI.RawUI.BackgroundColor = "Black"
         Write-Host "`n`rInstalling $software_name ..." -BackgroundColor "Black"
         Invoke-Expression -Command "winget install -e --id GitHub.cli"
-        $host.UI.RawUI.BackgroundColor = "Black"
+        # $host.UI.RawUI.BackgroundColor = "Black"
         Invoke-Expression -Command "winget install --id Git.Git -e --source winget"
         Write-Host "`n`r" -BackgroundColor "Black"
         Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.github-installed"
@@ -77,7 +77,7 @@ function install_dependencies {
 
     $software_name = "Visual Studio Code (VSCode)"
     if (!(Test-Path -Path "$git_path/.vscode-installed" -PathType Leaf)) {
-        $host.UI.RawUI.BackgroundColor = "Black"
+        # $host.UI.RawUI.BackgroundColor = "Black"
         Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
         Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
         Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.vscode-installed"
@@ -88,7 +88,7 @@ function install_dependencies {
 
     $software_name = "Docker Desktop"
     if (!(Test-Path -Path "$git_path/.docker-installed" -PathType Leaf)) {
-        $host.UI.RawUI.BackgroundColor = "Black"
+        # $host.UI.RawUI.BackgroundColor = "Black"
         Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
         Invoke-Expression -Command "winget install --id=Docker.DockerDesktop -e" 
         Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.docker-installed"
@@ -101,7 +101,7 @@ function install_dependencies {
     if (!(Test-Path -Path "$git_path/.wterminal-installed" -PathType Leaf)) {
         # $windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
         # if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no') { 
-        $host.UI.RawUI.BackgroundColor = "Black"
+        # $host.UI.RawUI.BackgroundColor = "Black"
         Write-Host "`r`nInstalling $software_name`r`n" -BackgroundColor "Black"
         Invoke-Expression -Command "winget install Microsoft.WindowsTerminal" 
         # }
@@ -160,16 +160,16 @@ function install_repo {
         # test git
         $git_version = git --version 
     
-        $host.UI.RawUI.BackgroundColor = "Black"
+        # $host.UI.RawUI.BackgroundColor = "Black"
         # .. and then clone the repo
         if (!(Test-Path -Path "$parent_path/$repo_src_name")) {
             git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
         }
         
         Set-Location "$repo_src_name"
-        $host.UI.RawUI.BackgroundColor = "Black"
+        # $host.UI.RawUI.BackgroundColor = "Black"
         git submodule update --force --recursive --init --remote
-        $host.UI.RawUI.BackgroundColor = "Black"
+        # $host.UI.RawUI.BackgroundColor = "Black"
     
         Write-Host"`r`n"
         RefreshEnv
@@ -182,7 +182,7 @@ function install_repo {
             # getting error-0x80010135 path too long error when unzipping.. unzip operation at the shortest path
             # Push-Location $temp_repo_scripts_path
             Puch-Location choco
-            $host.UI.RawUI.BackgroundColor = "Black"
+            # $host.UI.RawUI.BackgroundColor = "Black"
             # $choco = "devels-advocate/get-latest-choco.ps1"
             # Write-Host "`n`r`n`rInstalling $software_name ..."  -BackgroundColor "Black"
             # $env:path += ";C:\ProgramData\chocoportable"
@@ -295,7 +295,7 @@ function run_devels_playground {
                 # $cmd_command = "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1"
                 # &$cmd_command = cmd /c start powershell.exe -Command "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1" -WindowStyle "Maximized"
                 # Write-Host "`r`n" -BackgroundColor "Black"
-                $host.UI.RawUI.BackgroundColor = "Black"
+                # $host.UI.RawUI.BackgroundColor = "Black"
                 Write-Output "$([char]27)[2J"
                 $devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
                 &$devs_playground = cmd /c start powershell.exe -Command "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
