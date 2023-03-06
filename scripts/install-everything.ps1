@@ -150,7 +150,7 @@ function install_repo {
     $new_install = $false
     
     # .. and then clone the repo
-    if (!(Test-Path -Path "$repo_src_name")) {
+    if (!(Test-Path -Path $repo_src_name)) {
         git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch
     }
     else {
