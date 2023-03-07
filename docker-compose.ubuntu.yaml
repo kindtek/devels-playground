@@ -49,8 +49,8 @@ services:
       skel:
         # Wait for the ownership to change
         condition: service_completed_successfully
-    # volumes:
-    #   - hel-data:/home/devel
+    volumes:
+      - hel-data:/home/devel
   phat:
     extends: git
     image: kindtek/devp:ubuntu-phat
@@ -60,7 +60,6 @@ services:
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
-
   phatt:
     extends: phat
     image: kindtek/devp:ubuntu-phatt
