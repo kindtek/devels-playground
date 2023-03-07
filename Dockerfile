@@ -30,10 +30,10 @@ RUN echo "[user]\ndefault=${username}" >> /etc/wsl.conf
 USER ${username}
 # install cdir on nonroot user - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
 RUN pip3 install cdir --user && \
-    echo "alias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\ndevw=devels-workshop\ndevp=devels-playground\nkindtek=~/repos/kindtek" >> ~/.bashrc
+    echo "alias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh" >> ~/.bashrc
 
 # finish cdir setup, add repos directory, copy custom user setup to skel
-RUN export PATH=~/.local/bin:~/repos/kindtek/devels-workshop/scripts:$PATH
+RUN export PATH=~/.local/bin:/hel/devels-workshop/scripts:$PATH
 
 # switch back to root to setup
 USER root
@@ -92,9 +92,10 @@ USER devel
 # add safe directories
 RUN git config --global --add safe.directory /home/devel
 RUN git config --global --add safe.directory /hel
-
+RUN git config --global --add safe.directory /home/devel/devels-playground
 RUN git clone https://github.com/kindtek/devels-playground
-RUN cd devels-playground && git submodule update --force --recursive --init --remote
+RUN cd devels-playground && git pull && git submodule update --force --recursive --init --remote
+RUN chown devel:devels -R /hel/devels-playground && chown devel:devels /hel/.gitconfig 
 USER ${username}
 
 # brave browser/gui/media support
