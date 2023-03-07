@@ -103,4 +103,5 @@ volumes:
 
 networks:
   default:
+    driver: overlay
     attachable: true
