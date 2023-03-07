@@ -13,7 +13,7 @@ services:
   #   command: chown -R devel:devels /tmp/change-ownership
   skel:
     # Need a user priviliged enough to chown
-    user: ${username:-gabriel}
+    user: root
     # Specify the group in question
     group_add:
       - devels
