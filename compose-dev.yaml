@@ -1,14 +1,14 @@
 version: '3.8'
 # name: devels-workshop-ubuntu
 services:
-  # skinny:
+  # skeleton:
   #   entrypoint:
   #     - sleep
   #     - infinity
-  #   image: kindtek/devp:ubuntu-skinny
+  #   image: kindtek/devp:ubuntu-skeleton
   #   build:
   #     context: .
-  #     target: devp_skinny
+  #     target: devp_skeleton
   #     args:
   #       - username=${username:-gabriel}
   #     dockerfile: dockerfile.ubuntu.yaml

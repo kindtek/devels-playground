@@ -1,14 +1,14 @@
 version: '3.8'
 name: devels-workshop-alpine
 services:
-  skinny:
+  skeleton:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/devp:alpine-skinny
+    image: kindtek/devp:alpine-skeleton
     build:
       context: .
-      target: devp_skinny
+      target: devp_skeleton
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.alpine.yaml

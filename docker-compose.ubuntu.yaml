@@ -1,47 +1,56 @@
 version: "3.8"
 name: devels-workshop-ubuntu
 services:
-  chown-hel:
+  # chown-hel:
+  #   # Need a user priviliged enough to chown
+  #   user: 'root'
+  #   # Specify the group in question
+  #   group_add:
+  #     - 'devels'
+  #   volumes:
+  #     # The volume to chown
+  #     - hel-data:/tmp/change-ownership
+  #   command: chown -R devel:devels /tmp/change-ownership
+  skel:
     # Need a user priviliged enough to chown
-    user: 'root'
+    user: root
     # Specify the group in question
     group_add:
-      - 'devels'
-    volumes:
-      # The volume to chown
-      - hel-data:/tmp/change-ownership
-    command: chown -R devel:devels /tmp/change-ownership
-  skinny:
-    extends:  chown-hel
+      - devels
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/devp:ubuntu-skinny
+    image: kindtek/devp:ubuntu-skel
     build:
       context: .
-      target: devp_skinny
+      target: devp_skel
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
-      - hel-data:/home/devel
+      # - hel-data:/home/devel
+      - hel-data:/tmp/change-ownership
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
-    depends_on:
-      chown-hel:
-        # Wait for the ownership to change
-        condition: service_completed_successfully
+    command: chown -R devel:devels /tmp/change-ownership
+
   git:
     image: kindtek/devp:ubuntu-git
-    extends: skinny
+    extends: skel
     build:
       context: .
       target: devp_git
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
+    depends_on:
+      skel:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
+    # volumes:
+    #   - hel-data:/home/devel
   phat:
     extends: git
     image: kindtek/devp:ubuntu-phat

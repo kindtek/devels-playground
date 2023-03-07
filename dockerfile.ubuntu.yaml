@@ -1,6 +1,6 @@
 # to build, for exemple, run: 
 # `username=mine groupname=ours docker run -d -i`
-FROM ubuntu:latest AS devp_skinny
+FROM ubuntu:latest AS devp_skeleton
 ARG username=${username:-gabriel}
 ARG groupname=${groupname:-arcans}
 
@@ -84,7 +84,7 @@ RUN touch /hel/lo.hiworld
 
 USER ${username}
 
-FROM devp_skinny AS devp_git
+FROM devp_skeleton AS devp_git
 
 WORKDIR /hel
 USER devel
