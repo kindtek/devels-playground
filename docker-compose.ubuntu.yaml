@@ -24,6 +24,7 @@ services:
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
+      network: ${COMPOSE_PROJECT_NAME}_default
     init: true
     volumes:
       - hel-data:/home/devel
