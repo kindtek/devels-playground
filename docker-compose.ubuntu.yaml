@@ -38,7 +38,7 @@ services:
       - sleep
       - infinity
     image: kindtek/devp:ubuntu-git
-    extends: skel
+    # extends: skel
     build:
       context: .
       target: devp_git
