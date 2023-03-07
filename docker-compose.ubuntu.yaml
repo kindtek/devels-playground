@@ -33,18 +33,6 @@ services:
       change-vol-ownership:
         # Wait for the ownership to change
         condition: service_completed_successfully
-
-  devel-chowns-hel:
-    extends: git
-    # Need a user priviliged enough to chown
-    user: 'root'
-    # Specify the group in question
-    group_add:
-      - 'devels'
-    volumes:
-      # The volume to chown
-      - hel-data:/tmp/change-ownership
-    command: chown -R devel:devels /tmp/change-ownership
   git:
     image: kindtek/devp:ubuntu-git
     extends: skinny
