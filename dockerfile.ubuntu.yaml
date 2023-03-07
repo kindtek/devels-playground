@@ -95,7 +95,7 @@ RUN git config --global --add safe.directory /hel
 RUN git config --global --add safe.directory /home/devel/devels-playground
 RUN git clone https://github.com/kindtek/devels-playground
 RUN cd devels-playground && git pull && git submodule update --force --recursive --init --remote
-RUN chown devel:devels -R /hel/devels-playground && chown devel:devels -R /hel/.docker && chown devel:devels /hel/.gitconfig 
+RUN chown devel:devels -R /hel/devels-playground && chown devel:devels /hel/.gitconfig 
 USER ${username}
 
 # brave browser/gui/media support
