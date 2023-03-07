@@ -101,3 +101,7 @@ services:
       dockerfile: dockerfile.ubuntu.yaml
 volumes:
   hel-data:
+
+networks:
+  default:
+    attachable: true
