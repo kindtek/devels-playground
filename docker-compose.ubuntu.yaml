@@ -17,9 +17,6 @@ services:
     # Specify the group in question
     group_add:
       - devels
-    entrypoint:
-      - sleep
-      - infinity
     image: kindtek/devp:ubuntu-skel
     build:
       context: .
@@ -37,6 +34,9 @@ services:
     command: chown -R devel:devels /tmp/change-ownership
 
   git:
+    entrypoint:
+      - sleep
+      - infinity
     image: kindtek/devp:ubuntu-git
     extends: skel
     build:
