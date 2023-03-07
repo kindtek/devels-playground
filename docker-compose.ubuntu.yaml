@@ -101,6 +101,6 @@ volumes:
   hel-data:
 
 networks:
-  default:
+  ${COMPOSE_PROJECT_NAME}_default:
     driver: overlay
     attachable: true
