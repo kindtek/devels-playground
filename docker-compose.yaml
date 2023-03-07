@@ -24,57 +24,33 @@ services:
     image: kindtek/devp:ubuntu-git
     extends: skinny
     build:
-      context: .
       target: devp_git
-      args:
-        - username=${username:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
   phat:
     extends: git
     image: kindtek/devp:ubuntu-phat
     build:
-      context: .
       target: devp_phat
-      args:
-        - username=${username:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
 
   phatt:
     extends: phat
     image: kindtek/devp:ubuntu-phatt
     build:
-      context: .
       target: devp_phatt
-      args:
-        - username=${username:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
 
   phatter:
     extends: phatt
     image: kindtek/devp:ubuntu-phatter
     build:
-      context: .
       target: devp_phatter
-      args:
-        - username=${username:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
 
   phattest:
     extends: phatter
     image: kindtek/devp:ubuntu-phattest
     build:
-      context: .
       target: devp_phattest
-      args:
-        - username=${username:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
   phatso:
     extends: phattest
     image: kindtek/devp:ubuntu-phatso
     build:
-      context: .
       target: devp_phatso
-      args:
-        - username=${username:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
     
