@@ -1,53 +1,36 @@
 version: '3.8'
-# name: devels-workshop-ubuntu
+name: devels-workshop-ubuntu
 services:
-  # skinny:
-  #   entrypoint:
-  #     - sleep
-  #     - infinity
-  #   image: kindtek/devp:ubuntu-skinny
-  #   build:
-  #     context: .
-  #     target: devp_skinny
-  #     args:
-  #       - username=${username:-gabriel}
-  #     dockerfile: dockerfile.ubuntu.yaml
-  #   init: true
-  #   volumes:
-  #     - hel-data:/mnt/w
-  #     # - type: volume
-  #     #   source: hel-data
-  #     #   target: /home/devel
-  #     - type: bind
-  #       source: /var/run/docker.sock
-  #       target: /var/run/docker.sock
-  #     - type: bind
-  #       source: ~/
-  #       target: /home/host
-  git:
+  skinny:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/devp:ubuntu-git
+    image: kindtek/devp:ubuntu-skinny
     build:
       context: .
-      target: devp_git
+      target: devp_skinny
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
-      - hel-data:/mnt/w
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
       - type: bind
         source: ~/
         target: /home/host
+  git:
+    image: kindtek/devp:ubuntu-git
+    extends: skinny
+    build:
+      context: .
+      target: devp_git
+      args:
+        - username=${username:-gabriel}
+      dockerfile: dockerfile.ubuntu.yaml
   phat:
-    entrypoint:
-      - sleep
-      - infinity
+    extends: git
     image: kindtek/devp:ubuntu-phat
     build:
       context: .
@@ -55,20 +38,9 @@ services:
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
-    init: true
-    volumes:
-      - hel-data:/mnt/w
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-      - type: bind
-        source: ~/
-        target: /home/host
 
   phatt:
-    entrypoint:
-      - sleep
-      - infinity
+    extends: phat
     image: kindtek/devp:ubuntu-phatt
     build:
       context: .
@@ -76,20 +48,9 @@ services:
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
-    init: true
-    volumes:
-      - hel-data:/mnt/w
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-      - type: bind
-        source: ~/
-        target: /home/host
 
   phatter:
-    entrypoint:
-      - sleep
-      - infinity
+    extends: phatt
     image: kindtek/devp:ubuntu-phatter
     build:
       context: .
@@ -97,20 +58,9 @@ services:
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
-    init: true
-    volumes:
-      - hel-data:/mnt/w
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-      - type: bind
-        source: ~/
-        target: /home/host
 
   phattest:
-    entrypoint:
-      - sleep
-      - infinity
+    extends: phatter
     image: kindtek/devp:ubuntu-phattest
     build:
       context: .
@@ -118,37 +68,13 @@ services:
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
-    init: true
-    volumes:
-      - hel-data:/mnt/w
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-      - type: bind
-        source: ~/
-        target: /home/host
-
-  # phatso:
-  #   entrypoint:
-  #     - sleep
-  #     - infinity
-  #   image: kindtek/devp:ubuntu-phatso
-  #   build:
-  #     context: .
-  #     target: devp_phatso
-  #     args:
-  #       - username=${username:-gabriel}
-  #     dockerfile: dockerfile.ubuntu.yaml
-  #   init: true
-  #   volumes:
-  #     - hel-data:/mnt/w
-  #     - type: bind
-  #       source: /var/run/docker.sock
-  #       target: /var/run/docker.sock
-  #     - type: bind
-  #       source: ~/
-  #       target: /home/host
-
-volumes:
-  hel-data:
-    external: false
+  phatso:
+    extends: phattest
+    image: kindtek/devp:ubuntu-phatso
+    build:
+      context: .
+      target: devp_phatso
+      args:
+        - username=${username:-gabriel}
+      dockerfile: dockerfile.ubuntu.yaml
+    

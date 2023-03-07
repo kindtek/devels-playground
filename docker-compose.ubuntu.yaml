@@ -21,28 +21,16 @@ services:
         source: ~/
         target: /home/host
   git:
-    entrypoint:
-      - sleep
-      - infinity
     image: kindtek/devp:ubuntu-git
+    extends: skinny
     build:
       context: .
       target: devp_git
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
-    init: true
-    volumes:
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-      - type: bind
-        source: ~/
-        target: /home/host
   phat:
-    entrypoint:
-      - sleep
-      - infinity
+    extends: git
     image: kindtek/devp:ubuntu-phat
     build:
       context: .
@@ -50,19 +38,9 @@ services:
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
-    init: true
-    volumes:
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-      - type: bind
-        source: ~/
-        target: /home/host
 
   phatt:
-    entrypoint:
-      - sleep
-      - infinity
+    extends: phat
     image: kindtek/devp:ubuntu-phatt
     build:
       context: .
@@ -70,19 +48,9 @@ services:
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
-    init: true
-    volumes:
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-      - type: bind
-        source: ~/
-        target: /home/host
 
   phatter:
-    entrypoint:
-      - sleep
-      - infinity
+    extends: phatt
     image: kindtek/devp:ubuntu-phatter
     build:
       context: .
@@ -90,19 +58,9 @@ services:
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
-    init: true
-    volumes:
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-      - type: bind
-        source: ~/
-        target: /home/host
 
   phattest:
-    entrypoint:
-      - sleep
-      - infinity
+    extends: phatter
     image: kindtek/devp:ubuntu-phattest
     build:
       context: .
@@ -110,18 +68,8 @@ services:
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
-    init: true
-    volumes:
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-      - type: bind
-        source: ~/
-        target: /home/host
   phatso:
-    entrypoint:
-      - sleep
-      - infinity
+    extends: phattest
     image: kindtek/devp:ubuntu-phatso
     build:
       context: .
@@ -129,11 +77,4 @@ services:
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
-    init: true
-    volumes:
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-      - type: bind
-        source: ~/
-        target: /home/host
+    
