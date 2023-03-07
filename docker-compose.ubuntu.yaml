@@ -24,14 +24,14 @@ services:
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
-      network: ${COMPOSE_PROJECT_NAME}_default
+      # network: ${COMPOSE_PROJECT_NAME}_default
     init: true
     volumes:
-      - hel-data:/home/devel
+      - hel-data:/tmp/devel
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
-    command: chown -R devel:devels /home/devel
+    command: chown -R devel:devels /tmp/devel
 
   git:
     entrypoint:
