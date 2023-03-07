@@ -1,11 +1,11 @@
 version: '3.8'
 # name: devels-workshop-ubuntu
 services:
-  # skeleton:
+  # skel:
   #   entrypoint:
   #     - sleep
   #     - infinity
-  #   image: kindtek/devp:ubuntu-skeleton
+  #   image: kindtek/devp:ubuntu-skel
   #   build:
   #     context: .
   #     target: devp_skeleton

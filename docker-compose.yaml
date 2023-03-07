@@ -1,11 +1,11 @@
 version: '3.8'
 name: devels-workshop-ubuntu
 services:
-  skeleton:
+  skel:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/devp:ubuntu-skeleton
+    image: kindtek/devp:ubuntu-skel
     build:
       context: .
       target: devp_skeleton
@@ -22,7 +22,7 @@ services:
         target: /home/host
   git:
     image: kindtek/devp:ubuntu-git
-    extends: skeleton
+    extends: skel
     build:
       target: devp_git
   phat:

@@ -1,11 +1,11 @@
 version: '3.8'
 name: devels-workshop-alpine
 services:
-  skeleton:
+  skel:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/devp:alpine-skeleton
+    image: kindtek/devp:alpine-skel
     build:
       context: .
       target: devp_skeleton
