@@ -14,12 +14,13 @@ services:
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
+      - hel-data:/home/devel/data
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
-      - type: bind
-        source: ~/
-        target: /home/host
+      # - type: bind
+      #   source: ~/
+      #   target: /home/host
   git:
     image: kindtek/devp:ubuntu-git
     extends: skinny
