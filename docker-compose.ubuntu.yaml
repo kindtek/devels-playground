@@ -27,11 +27,10 @@ services:
     init: true
     volumes:
       - hel-data:/home/devel
-      - hel-data:/tmp/change-ownership
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
-    command: chown -R devel:devels /tmp/change-ownership
+    command: chown -R devel:devels /home/devel
 
   git:
     entrypoint:
