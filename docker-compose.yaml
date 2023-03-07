@@ -8,7 +8,7 @@ services:
     image: kindtek/devp:ubuntu-skel
     build:
       context: .
-      target: devp_skeleton
+      target: devp_skel
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
