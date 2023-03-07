@@ -30,7 +30,7 @@ services:
         source: /var/run/docker.sock
         target: /var/run/docker.sock
     depends_on:
-      change-vol-ownership:
+      chown-hel:
         # Wait for the ownership to change
         condition: service_completed_successfully
   git:
