@@ -93,9 +93,10 @@ USER devel
 RUN git config --global --add safe.directory /home/devel
 RUN git config --global --add safe.directory /hel
 RUN git config --global --add safe.directory /home/devel/devels-playground
+RUN git config --global --add safe.directory *
 RUN git clone https://github.com/kindtek/devels-playground
 RUN cd devels-playground && git pull && git submodule update --force --recursive --init --remote
-RUN chown devel:devels -R /hel/devels-playground && chown devel:devels /hel/.gitconfig 
+RUN chown devel:devels -R /home/devel/devels-playground && chown devel:devels /home/devel/.gitconfig 
 USER ${username}
 
 # brave browser/gui/media support
