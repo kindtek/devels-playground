@@ -78,4 +78,5 @@ services:
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
-    
+volumes:
+  hel-data:
