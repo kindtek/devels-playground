@@ -1,7 +1,18 @@
 version: "3.8"
 name: devels-workshop-ubuntu
 services:
+  chown-hel:
+    # Need a user priviliged enough to chown
+    user: 'root'
+    # Specify the group in question
+    group_add:
+      - 'devels'
+    volumes:
+      # The volume to chown
+      - hel-data:/tmp/change-ownership
+    command: chown -R devel:devels /tmp/change-ownership
   skinny:
+    extends:  chown-hel
     entrypoint:
       - sleep
       - infinity
@@ -14,13 +25,26 @@ services:
       dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
-      - hel-data:/home/devel/data
+      - hel-data:/home/devel
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
-      # - type: bind
-      #   source: ~/
-      #   target: /home/host
+    depends_on:
+      change-vol-ownership:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
+
+  devel-chowns-hel:
+    extends: git
+    # Need a user priviliged enough to chown
+    user: 'root'
+    # Specify the group in question
+    group_add:
+      - 'devels'
+    volumes:
+      # The volume to chown
+      - hel-data:/tmp/change-ownership
+    command: chown -R devel:devels /tmp/change-ownership
   git:
     image: kindtek/devp:ubuntu-git
     extends: skinny
