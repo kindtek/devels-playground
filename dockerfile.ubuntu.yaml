@@ -113,7 +113,7 @@ RUN sudo wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs
 RUN sudo dpkg -i packages-microsoft-prod.deb
 RUN sudo rm packages-microsoft-prod.deb
 RUN sudo apt-get update -yq && \
-    sudo apt-get install -y gedit powershell
+    sudo apt-get install -y powershell
 
 FROM devp_phat as devp_phatt
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
@@ -122,7 +122,7 @@ RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg a
 
 
 RUN sudo apt-get update -yq && \
-    sudo apt-get install -y brave-browser gimp nautilus vlc x11-apps apt-transport-https software-properties-common 
+    sudo apt-get install -y brave-browser gimp gedit nautilus vlc x11-apps apt-transport-https software-properties-common 
 USER ${username}
 
 # for docker in docker
