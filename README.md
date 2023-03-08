@@ -45,7 +45,7 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 ## **Note: This is for development use only. Use at your own risk**
 
-## _Feel free to fork this repo and build your own dev environment by using template Docker files ([[ubuntu](devels-playground/docker-compose.ubuntu.yaml)], [[alpine](devels-playground/docker-compose.alpine.yaml)]) and Docker Compose files ([[ubuntu](devels-playground/dockerfile.ubuntu.yaml)], [[alpine](devels-playground/dockerfile.alpine.yaml)])_
+## _Feel free to fork this repo and build your own dev environment by using template Docker files ([[ubuntu](devels-playground/dockerfile.ubuntu.yaml)], [[alpine](devels-playground/dockerfile.alpine.yaml)]) and Docker Compose files ([[ubuntu](devels-playground/docker-compose.ubuntu.yaml)], [[alpine](devels-playground/docker-compose.alpine.yaml)])_
 
 &nbsp;
 
