@@ -23,7 +23,7 @@ scripts/wsl-docker-import
 
 &nbsp;
 
-## _0. [Example] When the program loads, at the main menu hit ENTER a few times to import and confirm the default ubuntu-phat image (more details below) being imported on your WSL environment_
+## _0. [Example] When the program loads, at the main menu hit ENTER a few times to import and confirm the default ubuntu-phatter image (more details below) being imported on your WSL environment_
 
 #### 1. At the main menu, type "config" then hit ENTER to specify any compatible Linux distro on [hub.docker.com](https://hub.docker.com/) you would like to use with WSL. The format is
 
