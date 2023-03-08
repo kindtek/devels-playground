@@ -37,7 +37,7 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 ## - source: [kindtek](https://hub.docker.com/u/kindtek)
 
-## - name: [devp](https://hub.docker.com/r/kindtek/devp/tags):[ubuntu-git](https://hub.docker.com/layers/kindtek/devp/ubuntu-git/images/sha256-f0469de765c03873f8c5df55cf2d2ea3dda4a3eb98b575f00d29696193d6ca08?context=repo)
+## - name: [dplay](https://hub.docker.com/r/kindtek/dplay/tags):[ubuntu-git](https://hub.docker.com/layers/kindtek/dplay/ubuntu-git/images/sha256-f0469de765c03873f8c5df55cf2d2ea3dda4a3eb98b575f00d29696193d6ca08?context=repo)
 
 ---
 
@@ -63,7 +63,7 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 #### **ubuntu-git**
 
-#### All of the above functionality is standard in the lightweight **ubuntu-git** Ubuntu 22.04 image. It is free to use and the customization possibilities for a developer are endless. You can build your own with the Dockerfiles found at the root of the repository or use the images I made that are freely available on the [Kindtek Docker Hub repository](https://hub.docker.com/r/kindtek/devp). Instructions for building and running the images are in the scripts directory in the docker-compose-**\_** files. And of course you are free to load any other image you want
+#### All of the above functionality is standard in the lightweight **ubuntu-git** Ubuntu 22.04 image. It is free to use and the customization possibilities for a developer are endless. You can build your own with the Dockerfiles found at the root of the repository or use the images I made that are freely available on the [Kindtek Docker Hub repository](https://hub.docker.com/r/kindtek/dplay). Instructions for building and running the images are in the scripts directory in the docker-compose-**\_** files. And of course you are free to load any other image you want
 
 #### `apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip vim`
 
