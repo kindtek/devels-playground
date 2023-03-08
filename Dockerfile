@@ -31,7 +31,6 @@ USER ${username}
 # install cdir on nonroot user - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
 RUN pip3 install cdir --user && \
     echo "alias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nexport PATH=~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts:$PATH" >> ~/.bashrc
-
 # switch back to root to setup
 USER root
 
