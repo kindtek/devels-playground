@@ -31,7 +31,7 @@ USER ${username}
 # install cdir on nonroot user - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
 RUN pip3 install cdir --user && \
     echo "alias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh \
-\nexport PATH=~/.local/bin:/hel/devels-workshop/scripts:$PATH" >> ~/.bashrc
+\nexport PATH=~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts\$PATH" >> ~/.bashrc
 
 # switch back to root to setup
 USER root
@@ -95,7 +95,8 @@ RUN git config --global --add safe.directory *
 RUN git clone https://github.com/kindtek/devels-workshop
 RUN cd devels-workshop && git pull && git submodule update --force --recursive --init --remote && cd ..
 RUN chown devel:devels -R /home/devel/devels-workshop /home/devel/devels-workshop/.git
-RUN ln -s dwork devels-workshop && ln -s dplay devels-workshop/devels-playground
+RUN ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay
+
 USER ${username}
 
 # brave browser/gui/media support
