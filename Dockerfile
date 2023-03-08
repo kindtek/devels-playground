@@ -47,9 +47,10 @@ RUN cp -r ./home/${username}/.local/bin /usr/local && \
     cp -r /home/${username}/. /etc/skel/ && \
     cp -rp /etc/skel/. /home/devel/
 
-# add username only to sudo
+# group config
 RUN usermod -aG archans host && usermod -aG archans ${username} 
 RUN usermod -aG devels devel && usermod -aG devels ${username} 
+# add only ${username} to sudo
 RUN usermod -aG sudo ${username}
 
 # RUN sed -e 's;^# \(%sudo.*NOPASSWD.*\);\1;g' -i /etc/sudoers
