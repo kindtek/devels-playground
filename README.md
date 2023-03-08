@@ -73,17 +73,13 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 #### This edition includes powershell which highly recommended for bridging the gap between Windows and the rest of the world. Be advised it is also referred to as powerhell often in the code of this repo and for good reason
 
-#### **ubuntu-phatt**
-
-`apt-get install -y gimp nautilus vlc x11-apps apt-transport-https software-properties-common`
-`sudo apt-get install -y gimp nautilus vlc x11-apps apt-transport-https software-properties-common brave-browser`
-
 #### **ubuntu-phatt*er***
 
 # Dock*er* in Dock*er* (DIND) - the holy grail. It is solid on my system and works on every test device so far.. Using powerhell and the devel's workshop, it just might work for you too.
 
 #### **ubuntu-phattest**
-
+`apt-get install -y gimp nautilus vlc x11-apps apt-transport-https software-properties-common`
+`sudo apt-get install -y gimp nautilus vlc x11-apps apt-transport-https software-properties-common brave-browser`
 `RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3`
 
 Basically, if you want to run a GUI you can.
