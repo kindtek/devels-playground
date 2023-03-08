@@ -11,7 +11,7 @@ ARG groupname=${groupname:-arcans}
 RUN apt-get update -yq && \
     apt-get upgrade -y && \
     # install github, build-essentials, libssl, etc
-    apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip vim
+    apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip vim apt-transport-https software-properties-common 
 
 # # set up group/user 
 # RUN addgroup --system --gid 1001 ${groupname} && \
@@ -122,7 +122,7 @@ RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg a
 
 
 RUN sudo apt-get update -yq && \
-    sudo apt-get install -y brave-browser gimp gedit nautilus vlc x11-apps apt-transport-https software-properties-common 
+    sudo apt-get install -y brave-browser gimp gedit nautilus vlc x11-apps
 USER ${username}
 
 # for docker in docker
