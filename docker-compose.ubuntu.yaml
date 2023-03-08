@@ -65,7 +65,7 @@ services:
     image: kindtek/dplay:ubuntu-phatt
     build:
       context: .
-      target: dplayyy_phatt
+      target: dplay_phatt
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
@@ -94,7 +94,7 @@ services:
     image: kindtek/dplay:ubuntu-phatso
     build:
       context: .
-      target: dplayyy_phatso
+      target: dplay_phatso
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
