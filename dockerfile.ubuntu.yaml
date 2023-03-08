@@ -95,7 +95,7 @@ RUN git config --global --add safe.directory *
 RUN git clone https://github.com/kindtek/devels-workshop
 RUN cd devels-workshop && git pull && git submodule update --force --recursive --init --remote && cd ..
 RUN chown devel:devels -R /home/devel/devels-workshop /home/devel/devels-workshop/.git
-RUN ln -s dwork devels-workshop && ln -s dplay devels-workshop/devels-playground
+RUN ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay
 USER ${username}
 
 # brave browser/gui/media support
