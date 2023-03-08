@@ -30,21 +30,8 @@ services:
     image: kindtek/dplay:ubuntu-phat
     build:
       target: dplay_phat
-
-  phatt:
-    extends: phat
-    image: kindtek/dplay:ubuntu-phatt
-    build:
-      target: dplay_phatt
-
-  phatter:
-    extends: phatt
-    image: kindtek/dplay:ubuntu-phatter
-    build:
-      target: dplay_phatter
-
   phattest:
-    extends: phatter
+    extends: phat
     image: kindtek/dplay:ubuntu-phattest
     build:
       target: dplay_phattest

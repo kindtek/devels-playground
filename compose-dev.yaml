@@ -64,28 +64,6 @@ services:
       - type: bind
         source: ~/
         target: /home/host
-
-  phatt:
-    entrypoint:
-      - sleep
-      - infinity
-    image: kindtek/dplay:ubuntu-phatt
-    build:
-      context: .
-      target: dplayy_phatt
-      args:
-        - username=${username:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
-    init: true
-    volumes:
-      - hel-data:/mnt/w
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-      - type: bind
-        source: ~/
-        target: /home/host
-
   phatter:
     entrypoint:
       - sleep

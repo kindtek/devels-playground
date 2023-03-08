@@ -60,26 +60,6 @@ services:
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
-  phatt:
-    extends: phat
-    image: kindtek/dplay:ubuntu-phatt
-    build:
-      context: .
-      target: dplay_phatt
-      args:
-        - username=${username:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
-
-  phatter:
-    extends: phatt
-    image: kindtek/dplay:ubuntu-phatter
-    build:
-      context: .
-      target: dplay_phatter
-      args:
-        - username=${username:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
-
   phattest:
     extends: phatter
     image: kindtek/dplay:ubuntu-phattest
