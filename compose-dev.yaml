@@ -5,10 +5,10 @@ services:
   #   entrypoint:
   #     - sleep
   #     - infinity
-  #   image: kindtek/devp:ubuntu-skel
+  #   image: kindtek/dplay:ubuntu-skel
   #   build:
   #     context: .
-  #     target: devp_skel
+  #     target: dplay_skel
   #     args:
   #       - username=${username:-gabriel}
   #     dockerfile: dockerfile.ubuntu.yaml
@@ -28,10 +28,10 @@ services:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/devp:ubuntu-git
+    image: kindtek/dplay:ubuntu-git
     build:
       context: .
-      target: devp_git
+      target: dplay_git
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
@@ -48,10 +48,10 @@ services:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/devp:ubuntu-phat
+    image: kindtek/dplay:ubuntu-phat
     build:
       context: .
-      target: devp_phat
+      target: dplay_phat
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
@@ -69,10 +69,10 @@ services:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/devp:ubuntu-phatt
+    image: kindtek/dplay:ubuntu-phatt
     build:
       context: .
-      target: devp_phatt
+      target: dplayy_phatt
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
@@ -90,10 +90,10 @@ services:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/devp:ubuntu-phatter
+    image: kindtek/dplay:ubuntu-phatter
     build:
       context: .
-      target: devp_phatter
+      target: dplay_phatter
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
@@ -111,10 +111,10 @@ services:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/devp:ubuntu-phattest
+    image: kindtek/dplay:ubuntu-phattest
     build:
       context: .
-      target: devp_phattest
+      target: dplay_phattest
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
@@ -132,10 +132,10 @@ services:
   #   entrypoint:
   #     - sleep
   #     - infinity
-  #   image: kindtek/devp:ubuntu-phatso
+  #   image: kindtek/dplay:ubuntu-phatso
   #   build:
   #     context: .
-  #     target: devp_phatso
+  #     target: dplay_phatso
   #     args:
   #       - username=${username:-gabriel}
   #     dockerfile: dockerfile.ubuntu.yaml

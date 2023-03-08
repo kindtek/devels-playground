@@ -5,10 +5,10 @@ services:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/devp:alpine-skel
+    image: kindtek/dplay:alpine-skel
     build:
       context: .
-      target: devp_skel
+      target: dplay_skel
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.alpine.yaml
@@ -25,10 +25,10 @@ services:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/devp:alpine-phat
+    image: kindtek/dplay:alpine-phat
     build:
       context: .
-      target: devp_phat
+      target: dplay_phat
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.alpine.yaml
@@ -45,10 +45,10 @@ services:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/devp:alpine-phatt
+    image: kindtek/dplay:alpine-phatt
     build:
       context: .
-      target: devp_phatt
+      target: dplay_phatt
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.alpine.yaml

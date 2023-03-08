@@ -15,7 +15,7 @@ SET mount_drive=C
 SET image_repo=kindtek
 SET image_repo_mask=kindtek
 SET "image_tag=ubuntu-phat"
-SET image_name=devp:%image_tag%
+SET image_name=dplay:%image_tag%
 
 SET "install_directory=%image_repo_mask%-%image_name::=-%"
 SET "save_location=%mount_drive%:\%save_directory%"

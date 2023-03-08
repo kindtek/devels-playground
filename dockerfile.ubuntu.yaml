@@ -1,6 +1,6 @@
 # to build, for exemple, run: 
 # `username=mine groupname=ours docker run -d -i`
-FROM ubuntu:latest AS devp_skel
+FROM ubuntu:latest AS dplay_skel
 ARG username=${username:-gabriel}
 ARG groupname=${groupname:-arcans}
 
@@ -82,7 +82,7 @@ RUN touch /hel/lo.hiworld
 
 USER ${username}
 
-FROM devp_skel AS devp_git
+FROM dplay_skel AS dplay_git
 
 WORKDIR /hel
 USER devel
@@ -92,13 +92,14 @@ RUN git config --global --add safe.directory /home/devel
 RUN git config --global --add safe.directory /hel
 RUN git config --global --add safe.directory /home/devel/devels-playground
 RUN git config --global --add safe.directory *
-RUN git clone https://github.com/kindtek/devels-playground
-RUN cd devels-playground && git pull && git submodule update --force --recursive --init --remote
-RUN chown devel:devels -R /home/devel/devels-playground && chown devel:devels /home/devel/.gitconfig 
+RUN git clone https://github.com/kindtek/devels-workshop
+RUN cd devels-workshop && git pull && git submodule update --force --recursive --init --remote && cd ..
+RUN chown devel:devels -R /home/devel
+RUN ln -s dwork devels-workshop && ln -s dplay devels-workshop/devels-playground
 USER ${username}
 
 # brave browser/gui/media support
-FROM devp_git as devp_phat
+FROM dplay_git as dplay_phat
 # make man available
 # RUN yes | unminimize
 # for powershell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
@@ -112,7 +113,7 @@ RUN sudo rm packages-microsoft-prod.deb
 RUN sudo apt-get update -yq && \
     sudo apt-get install -y powershell
 
-FROM devp_phat as devp_phatt
+FROM dplay_phat as dplay_phatt
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
 RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
 RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main"| sudo tee /etc/apt/sources.list.d/brave-browser-release.list
@@ -123,7 +124,7 @@ RUN sudo apt-get update -yq && \
 USER ${username}
 
 # for docker in docker
-FROM devp_phatt as devp_phatter
+FROM dplay_phatt as dplay_phatter
 USER root
 # for docker install - https://docs.docker.com/engine/install/ubuntu/
 RUN mkdir -p /etc/apt/keyrings && \
@@ -139,11 +140,11 @@ USER ${username}
 RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> ~/.bashrc && . ~/.bashrc
 
 # for heavy gui and cuda
-FROM devp_phatter as devp_phattest
+FROM dplay_phatter as dplay_phattest
 # GNOME
 RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3
 
-FROM devp_phattest as devp_phatso
+FROM dplay_phattest as dplay_phatso
 # CUDA
 RUN sudo apt-get -y install nvidia-cuda-toolkit
 USER ${username}
