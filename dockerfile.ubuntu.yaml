@@ -24,16 +24,17 @@ RUN addgroup --gid 111 ${groupname} && \
 RUN adduser --home /home/${username} --shell /bin/bash --uid 1011 --disabled-password ${username}
 
 # make default user 
-RUN echo "[user]\ndefault=${username}" >> /etc/wsl.conf
+RUN echo "[user]\ndefault=devel" >> /etc/wsl.conf
 
 # custom user setup
 USER ${username}
 # install cdir on nonroot user - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
 RUN pip3 install cdir --user && \
-    echo "alias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh" >> ~/.bashrc
+    echo "alias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh \
+\nexport PATH=~/.local/bin:/hel/devels-workshop/scripts:$PATH" >> ~/.bashrc
 
 # finish cdir setup, add repos directory, copy custom user setup to skel
-RUN export PATH=~/.local/bin:/hel/devels-workshop/scripts:$PATH
+RUN echo ""
 
 # switch back to root to setup
 USER root
@@ -133,6 +134,10 @@ RUN mkdir -p /etc/apt/keyrings && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 # DOCKER
 RUN apt-get update && apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io 
+
+USER devel
+RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> ~/.bashrc && . ~/.bashrc
+
 USER ${username}
 RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> ~/.bashrc && . ~/.bashrc
 
