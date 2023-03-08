@@ -28,10 +28,11 @@ RUN echo "[user]\ndefault=devel" >> /etc/wsl.conf
 
 # custom user setup
 USER ${username}
-# install cdir on nonroot user - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
+# enable cdir on nonroot shell - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
+# also add powershell alias
 RUN pip3 install cdir --user && \
     echo "alias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh" >> ~/.bashrc
-    # echo "export PATH=$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts" >> ~/.bashrc
+# add common paths
 ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
 # switch back to root to setup
 USER root
@@ -76,7 +77,7 @@ RUN passwd -d ${username} && passwd -d host && passwd -d root && passwd -l root
 
 # set up /devel folder as symbolic link to /home/devel for cloning repository(ies)
 RUN ln -s /home/devel /hel && chown -R devel:devels /hel
-RUN touch /hel/lo.hiworld
+RUN touch /hel/lo.world
 
 
 
