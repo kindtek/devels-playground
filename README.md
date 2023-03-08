@@ -23,19 +23,19 @@ scripts/wsl-docker-import
 
 &nbsp;
 
-## _0. [Example] When the program loads, at the main menu hit ENTER a few times to import and confirm the default ubuntu-phatter image (more details below) being imported on your WSL environment_
+### _0. [Example] When the program loads, at the main menu hit ENTER a few times to import and confirm the default [ubuntu-phatter image](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phatter/images/sha256-d4b592c32d92db53e8380a5556bdd771063d946e5614d0ebc953359941be5263?context=explore) ([see details below](https://github.com/kindtek/devels-workshop#ubuntu-phatter)) being imported on your WSL environment_
 
 ### 1. At the main menu, type "config" then hit ENTER to specify any compatible Linux distro on [hub.docker.com](https://hub.docker.com/) you would like to use with WSL. The format is
 
-## - source: [kindtek](https://hub.docker.com/u/kindtek)
+#### - source: [kindtek](https://hub.docker.com/u/kindtek)
 
-## - name: [dplay](https://hub.docker.com/r/kindtek/dplay/tags):[ubuntu-phat](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phat/images/sha256-638debdde2528366c7beb3c901fc709f1162273783d22a575d096753abd157ad?context=explore)
-
----
+#### - name: [dplay](https://hub.docker.com/r/kindtek/dplay/tags):[ubuntu-phat](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phat/images/sha256-638debdde2528366c7beb3c901fc709f1162273783d22a575d096753abd157ad?context=explore)
 
 ---
 
-## **Note: This is for development use only. Use at your own risk**
+---
+
+### **Note: This is for development use only. Use at your own risk**
 
 &nbsp;
 
@@ -44,6 +44,12 @@ scripts/wsl-docker-import
 &nbsp;
 
 ---
+
+&nbsp;
+
+## Designed for messy testing in a sandboxed environment
+
+&nbsp;
 
 ### Summary of custom docker images
 
