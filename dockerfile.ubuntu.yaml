@@ -78,7 +78,13 @@ RUN passwd -d ${username} && passwd -d host && passwd -d root && passwd -l root
 RUN ln -s /home/devel /hel && chown -R devel:devels /hel
 RUN touch /hel/lo.world
 
+# add common paths
+ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
+USER devel
+ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
 USER ${username}
+ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
+
 
 FROM dplay_skel AS dplay_git
 
