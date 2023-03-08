@@ -31,13 +31,13 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 ### **Instructions for importing images from [hub.docker.com](https://hub.docker.com/) into WSL**
 
-## _0. [Example] When the program loads, at the main menu hit ENTER a few times to import and confirm the default ubuntu-phatter image (more details below) being imported on your WSL environment_
+## _0. [Example] When the program loads, at the main menu hit ENTER a few times to import and confirm the default [ubuntu-phatter image](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phatter/images/sha256-d4b592c32d92db53e8380a5556bdd771063d946e5614d0ebc953359941be5263?context=explore) ([see details below](https://github.com/kindtek/devels-workshop#ubuntu-phatter)) being imported on your WSL environment_
 
 ## 1. At the main menu, type "config" then hit ENTER to specify any compatible Linux distro on [hub.docker.com](https://hub.docker.com/) you would like to use with WSL. The format is
 
 ## - source: [kindtek](https://hub.docker.com/u/kindtek)
 
-## - name: [dplay](https://hub.docker.com/r/kindtek/dplay/tags):[ubuntu-git](https://hub.docker.com/layers/kindtek/dplay/ubuntu-git/images/sha256-f0469de765c03873f8c5df55cf2d2ea3dda4a3eb98b575f00d29696193d6ca08?context=repo)
+## - name: [dplay](https://hub.docker.com/r/kindtek/dplay/tags):[ubuntu-phat](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phat/images/sha256-638debdde2528366c7beb3c901fc709f1162273783d22a575d096753abd157ad?context=explore)
 
 ---
 
@@ -45,7 +45,7 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 ## **Note: This is for development use only. Use at your own risk**
 
-## _Feel free to fork this repo and build your own dev environment by using template Docker files ([[ubuntu](devels-playground/docker-compose.ubuntu.yaml)], [[alpine](devels-playground/docker-compose.alpine.yaml)]), ([[ubuntu](devels-playground/dockerfile.ubuntu.yaml)], [[alpine](devels-playground/dockerfile.alpine.yaml)])_
+## _Feel free to fork this repo and build your own dev environment by using template Docker files ([[ubuntu](devels-playground/docker-compose.ubuntu.yaml)], [[alpine](devels-playground/docker-compose.alpine.yaml)]) and Docker Compose files ([[ubuntu](devels-playground/dockerfile.ubuntu.yaml)], [[alpine](devels-playground/dockerfile.alpine.yaml)])_
 
 &nbsp;
 
@@ -53,45 +53,65 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 &nbsp;
 
-## Summary of the Ubuntu images built with the Dockerfiles in this repo
-
-#### `/hel` is symbolically linked to `/home/devel` (using `ln -s /home/devel /hel`). The devel user and those in the devels group are the owners of `/hel` and a copy of the current devel's playground gh repo is cloned there as well. Gabriel is the default user and you can do anything you desire with that account. No password is required. You are logged in by default and you have elevated near-root permissions anywhere except in `/hel` ..where you will have to use sudo a lot. When it comes time to doing works of the developer, change to the devel user (`su devel`) and you are now an isolated user without sudo powers. The devel is not able to access anything in `/home/gabriel`. If you absolutely must use sudo when you are logged into a devels group account, use `su gabriel` and use your sudo powers from there. In theory the gates of `/hel` should hold in the powers of sudo and the devel. Since the devel is operating within the `/hel` or `/home/devel` directories, the rest of the environment is probably pretty safe. You never know what the devil developers can get into, though.
+## Designed for messy testing in a sandboxed environment
 
 &nbsp;
+
+### Summary of custom docker images
+
+#### All images contain a `/hel` directory that is symbolically linked to `/home/devel` (using `ln -s /home/devel /hel`). The devel user and those in the devels group are the owners of `/hel` and the current devel's workshop/playground gh repos are cloned there as well (`/hel/dwork` and `/hel/dplay`). Devel is the default user and as the devel you are not able to access anything in `/home/gabriel` or do anything outside of `/hel` that would require root permission. If you absolutely require root permissions, change user to gabriel at any time (`su gabriel`) and use your sudo powers (no password required) from there. Just don't forget to change back to the devel user once you're done. That shouldn't be too hard to remember since you'll need sudo make any changes in `/hel`
+
+#### In theory, the gates of sudo should restrict the devel to only making changes to `/hel` and any mounted drives - leaving only `gabriel` to make changes at the root level. Since the devel is operating within the `/hel` or `/home/devel` directories, the rest of the environment is probably pretty safe. You never know what the devil developers can get into, though
+
+##### More notes: All images are built with the Dockerfiles in the devels-playhouse repo [root](devels-playground).  `/hel` is mounted as a volume in Docker and the data stored in `/hel` will persist throughout all images when running in Docker. This feature does not work with WSL, however
+
+---
 
 ### Image Versions
 
-#### **ubuntu-git**
+&nbsp;
 
-#### All of the above functionality is standard in the lightweight **ubuntu-git** Ubuntu 22.04 image. It is free to use and the customization possibilities for a developer are endless. You can build your own with the Dockerfiles found at the root of the repository or use the images I made that are freely available on the [Kindtek Docker Hub repository](https://hub.docker.com/r/kindtek/dplay). Instructions for building and running the images are in the scripts directory in the docker-compose-**\_** files. And of course you are free to load any other image you want
+#### [**ubuntu-git**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-git/images/sha256-e4f654379613e580d57899a4027372de3fb4b593d4056a2aff1ea00577a5a7c1?context=explore)
 
 #### `apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip vim`
 
-#### The cherry on top of this image is the preinstalled [cdir](https://github.com/kindtek/cdir) package. It is a must-have and the inspiration for the automation of this entire process to begin with
-
-#### **ubuntu-phat**
-
-#### This edition includes powershell which highly recommended for bridging the gap between Windows and the rest of the world. Be advised it is also referred to as powerhell often in the code of this repo and for good reason
-
-#### **ubuntu-phatt*er***
-
-# Dock*er* in Dock*er* (DIND) - the holy grail. It is solid on my system and works on every test device so far.. Using powerhell and the devel's workshop, it just might work for you too.
-
-#### **ubuntu-phattest**
-
-`apt-get install -y gimp nautilus vlc x11-apps apt-transport-https software-properties-common`
-`sudo apt-get install -y gimp nautilus vlc x11-apps apt-transport-https software-properties-common brave-browser`
-`RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3`
-
-Basically, if you want to run a GUI you can.
+#### All of the above functionality is standard in the lightweight Ubuntu 22.04 image. All the basic lightweight essentials for Ubuntu are included with ubuntu-git and it even has the added bonus of the [cdir](https://github.com/kindtek/cdir) package which is a must-have for me and the inspiration for the automation of this entire process to begin with
 
 &nbsp;
 
-#### **ubuntu-phatso**
+#### [**ubuntu-phat**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phat/images/sha256-638debdde2528366c7beb3c901fc709f1162273783d22a575d096753abd157ad?context=explore)
 
-`RUN sudo apt-get -y install nvidia-cuda-toolkit`
+#### `apt-get install powershell dotnet-sdk-7.0`
+
+#### This edition includes everything from ubuntu-git and includes powershell which highly recommended for bridging the gap between Windows and the rest of the world. Be advised it is also referred to as powerhell often in the code of this repo and for good reason. Microsoft .NET 7 SDK is also installed
+
+&nbsp;
+
+#### [**ubuntu-phatt*er***](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phatter/images/sha256-d4b592c32d92db53e8380a5556bdd771063d946e5614d0ebc953359941be5263?context=explore)
+
+#### `apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io `
+
+# Dock*er* in Dock*er* (DIND) - the holy grail. It is solid on my system and works on every test device so far.. Using powerhell and the devel's workshop, it should work for you too. This image is recommended and is the default image downloaded and installed by the devel's playground
+
+&nbsp;
+
+#### [**ubuntu-phattest**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phattest/images/sha256-7b0b84ea76eb2ef418e4614d3bd843f3781b6014e1cbb4076127858f3e0a8f32?context=explore)
+
+#### `apt-get install gnome-session gdm3 gimp nautilus vlc x11-apps apt-transport-https software-properties-common brave-browser`
+
+Basically, if you want to run a GUI you can. This requires WSL 2
+
+&nbsp;
+
+#### [**ubuntu-phatso**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phatso/images/sha256-3a7fab2b8d29fb737ef85367e063f6e2d538b5703cab552c6d0e2ad13f4fd7fc?context=explore)
+
+#### `apt-get install nvidia-cuda-toolkit`
 
 If CUDA is a must have for your developer needs your life just became easier
+
+&nbsp;
+
+##### Note: Each version is built on top of the image documented above it. For instance, ubuntu-phatter will contain all of the features from the above ubuntu-git and ubuntu-phat versions
 
 &nbsp;
 
@@ -118,5 +138,3 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 &nbsp;
-
-## Anyways, welcome to /hel!
