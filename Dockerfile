@@ -32,7 +32,8 @@ USER ${username}
 # also add powershell alias
 RUN pip3 install cdir --user && \
     echo "alias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh" >> ~/.bashrc
-
+# add common paths
+ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
 # switch back to root to setup
 USER root
 
@@ -46,10 +47,9 @@ RUN cp -r ./home/${username}/.local/bin /usr/local && \
     cp -r /home/${username}/. /etc/skel/ && \
     cp -rp /etc/skel/. /home/devel/
 
-# group config
+# add username only to sudo
 RUN usermod -aG archans host && usermod -aG archans ${username} 
 RUN usermod -aG devels devel && usermod -aG devels ${username} 
-# add only ${username} to sudo
 RUN usermod -aG sudo ${username}
 
 # RUN sed -e 's;^# \(%sudo.*NOPASSWD.*\);\1;g' -i /etc/sudoers
@@ -74,20 +74,11 @@ RUN passwd -d ${username} && passwd -d host && passwd -d root && passwd -l root
 # mount w drive - set up drive w in windows using https://allthings.how/how-to-partition-a-hard-drive-on-windows-11/
 # RUN sudo mkdir /mnt/w && sudo mount -t drvfs w: /mnt/w
 
-
 # set up /devel folder as symbolic link to /home/devel for cloning repository(ies)
 RUN ln -s /home/devel /hel && chown -R devel:devels /hel
 RUN touch /hel/lo.world
 
-# add common paths
-ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
-USER devel
-# add common paths
-ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
 USER ${username}
-# add common paths
-ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
-
 
 FROM dplay_skel AS dplay_git
 
@@ -102,14 +93,13 @@ RUN git config --global --add safe.directory *
 RUN git clone https://github.com/kindtek/devels-workshop
 RUN cd devels-workshop && git pull && git submodule update --force --recursive --init --remote && cd ..
 RUN chown devel:devels -R /home/devel/devels-workshop /home/devel/devels-workshop/.git
-RUN ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay devels-workshop/dplay
+RUN ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay
 
 USER ${username}
 
-# brave browser/gui/media support
+# microsoft stuff
 FROM dplay_git as dplay_phat
-# make man available
-# RUN yes | unminimize
+
 # for powershell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
 USER ${username}
@@ -119,7 +109,7 @@ RUN sudo wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs
 RUN sudo dpkg -i packages-microsoft-prod.deb
 RUN sudo rm packages-microsoft-prod.deb
 RUN sudo apt-get update -yq && \
-    sudo apt-get install -y powershell
+    sudo apt-get install -y powershell dotnet-sdk-7.0
 
 # for docker in docker
 FROM dplay_phat as dplay_phatter
@@ -137,7 +127,7 @@ RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> ~/.bashrc && . ~/.bashrc
 USER ${username}
 RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> ~/.bashrc && . ~/.bashrc
 
-# for heavy gui and cuda
+# for heavy gui (wsl2 required)
 FROM dplay_phatter as dplay_phattest
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
 RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
@@ -153,12 +143,3 @@ FROM dplay_phattest as dplay_phatso
 # CUDA
 RUN sudo apt-get -y install nvidia-cuda-toolkit
 USER ${username}
-
-# VSCODE
-# RUN apt-get -y install apt-transport-https wget -y
-# RUN wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | apt-key add -
-# RUN add-apt-repository -y "deb [arch=$(dpkg --print-architecture)] https://packages.microsoft.com/repos/vscode stable main"
-# RUN apt-get -y install code
-# RUN apt-get -y update
-
-# username=dev08 groupname=wheel docker compose -f docker-compose.ubuntu.yaml build

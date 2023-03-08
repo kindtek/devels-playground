@@ -46,7 +46,7 @@ scripts/wsl-docker-import
 
 ## Summary of the Ubuntu images built with the Dockerfiles in this repo
 
-#### `/hel` is symbolically linked to `/home/devel` (using `ln -s /home/devel /hel`). The devel user and those in the devels group are the owners of `/hel` and a copy of the current devel's playground gh repo is cloned there as well. Gabriel is the default user and you can do anything you desire with that account. No password is required. You are logged in by default and you have elevated near-root permissions anywhere except in `/hel` ..where you will have to use sudo a lot. When it comes time to doing works of the developer, change to the devel user (`su devel`) and you are now an isolated user without sudo powers. The devel is not able to access anything in `/home/gabriel`. If you absolutely must use sudo when you are logged into a devels group account, use `su gabriel` and use your sudo powers from there. In theory the gates of `/hel` should hold in the powers of sudo and the devel. Since the devel is operating within the `/hel` or `/home/devel` directories, the rest of the environment is probably pretty safe. You never know what the devil developers can get into, though.
+#### `/hel` is symbolically linked to `/home/devel` (using `ln -s /home/devel /hel`). The devel user and those in the devels group are the owners of `/hel` and the current devel's workshop/playground gh repos are cloned there as well. Devel is the default user and you are not able to access anything in `/home/gabriel` or do anything outside of `/hel` that would require root permission. If you absolutely must use sudo use `su gabriel` and use your sudo powers from there. In theory the gates of `/hel` should hold in the powers of sudo and the devel. Since the devel is operating within the `/hel` or `/home/devel` directories, the rest of the environment is probably pretty safe. You never know what the devil developers can get into, though.
 
 ### Image Versions
 
@@ -65,7 +65,6 @@ scripts/wsl-docker-import
 #### **ubuntu-phatt**
 
 `apt-get install -y gimp nautilus vlc x11-apps apt-transport-https software-properties-common`
-`sudo apt-get install -y gimp nautilus vlc x11-apps apt-transport-https software-properties-common brave-browser`
 
 #### **ubuntu-phatt*er***
 
@@ -73,7 +72,7 @@ scripts/wsl-docker-import
 
 #### **ubuntu-phattest**
 
-`RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3`
+`apt-get install gnome-session gdm3 gimp nautilus vlc x11-apps apt-transport-https software-properties-common brave-browser`
 
 Basically, if you want to run a GUI you can.
 
@@ -81,7 +80,7 @@ Basically, if you want to run a GUI you can.
 
 #### **ubuntu-phatso**
 
-`RUN sudo apt-get -y install nvidia-cuda-toolkit`
+`apt-get install nvidia-cuda-toolkit`
 
 If CUDA is a must have for your developer needs your life just became easier
 
