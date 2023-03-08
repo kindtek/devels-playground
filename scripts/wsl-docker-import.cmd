@@ -14,7 +14,7 @@ SET mount_drive=C
 @REM SET image_name=ubuntu:latest
 SET image_repo=kindtek
 SET image_repo_mask=kindtek
-SET "image_tag=ubuntu-phat"
+SET "image_tag=ubuntu-phatter"
 SET image_name=dplay:%image_tag%
 
 SET "install_directory=%image_repo_mask%-%image_name::=-%"
