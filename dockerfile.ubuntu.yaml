@@ -113,7 +113,7 @@ RUN sudo wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs
 RUN sudo dpkg -i packages-microsoft-prod.deb
 RUN sudo rm packages-microsoft-prod.deb
 RUN sudo apt-get update -yq && \
-    sudo apt-get install -y powershell
+    sudo apt-get install -y powershell dotnet-sdk-7.0
 
 # for docker in docker
 FROM dplay_phat as dplay_phatter
