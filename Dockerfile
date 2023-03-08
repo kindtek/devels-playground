@@ -97,7 +97,7 @@ RUN git config --global --add safe.directory *
 RUN git clone https://github.com/kindtek/devels-workshop
 RUN cd devels-workshop && git pull && git submodule update --force --recursive --init --remote && cd ..
 RUN chown devel:devels -R /home/devel/devels-workshop /home/devel/devels-workshop/.git
-RUN ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay
+RUN ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay devels-workshop/dplay
 
 USER ${username}
 
