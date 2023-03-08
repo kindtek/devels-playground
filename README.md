@@ -31,7 +31,7 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 ### **Instructions for importing images from [hub.docker.com](https://hub.docker.com/) into WSL**
 
-## _0. [Example] When the program loads, at the main menu hit ENTER a few times to import and confirm the default ubuntu-phat image (more details below) being imported on your WSL environment_
+## _0. [Example] When the program loads, at the main menu hit ENTER a few times to import and confirm the default ubuntu-phatter image (more details below) being imported on your WSL environment_
 
 ## 1. At the main menu, type "config" then hit ENTER to specify any compatible Linux distro on [hub.docker.com](https://hub.docker.com/) you would like to use with WSL. The format is
 
@@ -78,6 +78,7 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 # Dock*er* in Dock*er* (DIND) - the holy grail. It is solid on my system and works on every test device so far.. Using powerhell and the devel's workshop, it just might work for you too.
 
 #### **ubuntu-phattest**
+
 `apt-get install -y gimp nautilus vlc x11-apps apt-transport-https software-properties-common`
 `sudo apt-get install -y gimp nautilus vlc x11-apps apt-transport-https software-properties-common brave-browser`
 `RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3`
