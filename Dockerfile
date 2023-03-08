@@ -11,7 +11,7 @@ ARG groupname=${groupname:-arcans}
 RUN apt-get update -yq && \
     apt-get upgrade -y && \
     # install github, build-essentials, libssl, etc
-    apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip vim
+    apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip vim apt-transport-https software-properties-common 
 
 # # set up group/user 
 # RUN addgroup --system --gid 1001 ${groupname} && \
@@ -24,16 +24,14 @@ RUN addgroup --gid 111 ${groupname} && \
 RUN adduser --home /home/${username} --shell /bin/bash --uid 1011 --disabled-password ${username}
 
 # make default user 
-RUN echo "[user]\ndefault=${username}" >> /etc/wsl.conf
+RUN echo "[user]\ndefault=devel" >> /etc/wsl.conf
 
 # custom user setup
 USER ${username}
 # install cdir on nonroot user - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
 RUN pip3 install cdir --user && \
-    echo "alias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh" >> ~/.bashrc
-
-# finish cdir setup, add repos directory, copy custom user setup to skel
-RUN export PATH=~/.local/bin:/hel/devels-workshop/scripts:$PATH
+    echo "alias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh \
+\nexport PATH=~/.local/bin:/hel/devels-workshop/scripts:$PATH" >> ~/.bashrc
 
 # switch back to root to setup
 USER root
@@ -94,9 +92,10 @@ RUN git config --global --add safe.directory /home/devel
 RUN git config --global --add safe.directory /hel
 RUN git config --global --add safe.directory /home/devel/devels-playground
 RUN git config --global --add safe.directory *
-RUN git clone https://github.com/kindtek/devels-playground
-RUN cd devels-playground && git pull && git submodule update --force --recursive --init --remote
-RUN chown devel:devels -R /home/devel/devels-playground && chown devel:devels /home/devel/.gitconfig 
+RUN git clone https://github.com/kindtek/devels-workshop
+RUN cd devels-workshop && git pull && git submodule update --force --recursive --init --remote && cd ..
+RUN chown devel:devels -R /home/devel/devels-workshop /home/devel/devels-workshop/.git
+RUN ln -s dwork devels-workshop && ln -s dplay devels-workshop/devels-playground
 USER ${username}
 
 # brave browser/gui/media support
@@ -112,20 +111,10 @@ RUN sudo wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs
 RUN sudo dpkg -i packages-microsoft-prod.deb
 RUN sudo rm packages-microsoft-prod.deb
 RUN sudo apt-get update -yq && \
-    sudo apt-get install -y gedit powershell
-
-FROM dplay_phat as dplay_phatt
-# for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
-RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
-RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main"| sudo tee /etc/apt/sources.list.d/brave-browser-release.list
-
-
-RUN sudo apt-get update -yq && \
-    sudo apt-get install -y brave-browser gimp nautilus vlc x11-apps apt-transport-https software-properties-common 
-USER ${username}
+    sudo apt-get install -y powershell
 
 # for docker in docker
-FROM dplay_phatt as dplay_phatter
+FROM dplay_phat as dplay_phatter
 USER root
 # for docker install - https://docs.docker.com/engine/install/ubuntu/
 RUN mkdir -p /etc/apt/keyrings && \
@@ -133,13 +122,24 @@ RUN mkdir -p /etc/apt/keyrings && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 # DOCKER
 RUN apt-get update && apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io 
+
+USER devel
+RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> ~/.bashrc && . ~/.bashrc
+
 USER ${username}
 RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> ~/.bashrc && . ~/.bashrc
 
 # for heavy gui and cuda
 FROM dplay_phatter as dplay_phattest
+# for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
+RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main"| sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+
+RUN sudo apt-get update -yq && \
+    sudo apt-get install -y brave-browser 
+
 # GNOME
-RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3
+RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3 gimp gedit nautilus vlc x11-apps
 
 FROM dplay_phattest as dplay_phatso
 # CUDA

@@ -1,53 +1,58 @@
-version: '3.8'
-# name: devels-workshop-ubuntu
+version: "3.8"
+name: devels-workshop-ubuntu
 services:
-  # skel:
-  #   entrypoint:
-  #     - sleep
-  #     - infinity
-  #   image: kindtek/dplay:ubuntu-skel
-  #   build:
-  #     context: .
-  #     target: dplay_skel
-  #     args:
-  #       - username=${username:-gabriel}
-  #     dockerfile: dockerfile.ubuntu.yaml
-  #   init: true
+  # chown-hel:
+  #   # Need a user priviliged enough to chown
+  #   user: 'root'
+  #   # Specify the group in question
+  #   group_add:
+  #     - 'devels'
   #   volumes:
-  #     - hel-data:/mnt/w
-  #     # - type: volume
-  #     #   source: hel-data
-  #     #   target: /home/devel
-  #     - type: bind
-  #       source: /var/run/docker.sock
-  #       target: /var/run/docker.sock
-  #     - type: bind
-  #       source: ~/
-  #       target: /home/host
+  #     # The volume to chown
+  #     - hel-data:/tmp/change-ownership
+  #   command: chown -R devel:devels /tmp/change-ownership
+  skel:
+    # Need a user priviliged enough to chown
+    user: root
+    # Specify the group in question
+    group_add:
+      - devels
+    image: kindtek/dplay:ubuntu-skel
+    build:
+      context: .
+      target: dplay_skel
+      args:
+        - username=${username:-gabriel}
+      dockerfile: dockerfile.ubuntu.yaml
+      # network: ${COMPOSE_PROJECT_NAME}_default
+    init: true
+    volumes:
+      - hel-data:/tmp/devel
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+    command: chown -R devel:devels /tmp/devel
+
   git:
     entrypoint:
       - sleep
       - infinity
     image: kindtek/dplay:ubuntu-git
+    # extends: skel
     build:
       context: .
       target: dplay_git
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
-    init: true
+    depends_on:
+      skel:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
     volumes:
-      - hel-data:/mnt/w
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-      - type: bind
-        source: ~/
-        target: /home/host
+      - hel-data:/home/devel
   phat:
-    entrypoint:
-      - sleep
-      - infinity
+    extends: git
     image: kindtek/dplay:ubuntu-phat
     build:
       context: .
@@ -55,19 +60,8 @@ services:
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
-    init: true
-    volumes:
-      - hel-data:/mnt/w
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-      - type: bind
-        source: ~/
-        target: /home/host
   phatter:
-    entrypoint:
-      - sleep
-      - infinity
+    extends: phat
     image: kindtek/dplay:ubuntu-phatter
     build:
       context: .
@@ -75,20 +69,9 @@ services:
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
-    init: true
-    volumes:
-      - hel-data:/mnt/w
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-      - type: bind
-        source: ~/
-        target: /home/host
 
   phattest:
-    entrypoint:
-      - sleep
-      - infinity
+    extends: phatter
     image: kindtek/dplay:ubuntu-phattest
     build:
       context: .
@@ -96,37 +79,19 @@ services:
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
-    init: true
-    volumes:
-      - hel-data:/mnt/w
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-      - type: bind
-        source: ~/
-        target: /home/host
-
-  # phatso:
-  #   entrypoint:
-  #     - sleep
-  #     - infinity
-  #   image: kindtek/dplay:ubuntu-phatso
-  #   build:
-  #     context: .
-  #     target: dplay_phatso
-  #     args:
-  #       - username=${username:-gabriel}
-  #     dockerfile: dockerfile.ubuntu.yaml
-  #   init: true
-  #   volumes:
-  #     - hel-data:/mnt/w
-  #     - type: bind
-  #       source: /var/run/docker.sock
-  #       target: /var/run/docker.sock
-  #     - type: bind
-  #       source: ~/
-  #       target: /home/host
-
+  phatso:
+    extends: phattest
+    image: kindtek/dplay:ubuntu-phatso
+    build:
+      context: .
+      target: dplay_phatso
+      args:
+        - username=${username:-gabriel}
+      dockerfile: dockerfile.ubuntu.yaml
 volumes:
   hel-data:
-    external: false
+
+networks:
+  "${COMPOSE_PROJECT_NAME}_default":
+    driver: overlay
+    attachable: true
