@@ -33,9 +33,6 @@ RUN pip3 install cdir --user && \
     echo "alias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh \
 \nexport PATH=~/.local/bin:/hel/devels-workshop/scripts:$PATH" >> ~/.bashrc
 
-# finish cdir setup, add repos directory, copy custom user setup to skel
-RUN echo ""
-
 # switch back to root to setup
 USER root
 
