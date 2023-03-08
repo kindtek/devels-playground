@@ -32,8 +32,7 @@ USER ${username}
 # also add powershell alias
 RUN pip3 install cdir --user && \
     echo "alias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh" >> ~/.bashrc
-# add common paths
-ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
+
 # switch back to root to setup
 USER root
 
@@ -80,9 +79,15 @@ RUN passwd -d ${username} && passwd -d host && passwd -d root && passwd -l root
 RUN ln -s /home/devel /hel && chown -R devel:devels /hel
 RUN touch /hel/lo.world
 
-
-
+# add common paths
+ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
+USER devel
+# add common paths
+ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
 USER ${username}
+# add common paths
+ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
+
 
 FROM dplay_skel AS dplay_git
 
