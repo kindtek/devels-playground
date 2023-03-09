@@ -19,7 +19,7 @@ scripts/wsl-docker-import
 
 ---
 
-## Instructions for importing any image from [hub.docker.com](https://hub.docker.com/) into WSL
+## **Instructions for importing images from [hub.docker.com](https://hub.docker.com/) into WSL**
 
 &nbsp;
 
