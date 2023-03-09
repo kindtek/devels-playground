@@ -39,7 +39,7 @@ scripts/wsl-docker-import
 
 &nbsp;
 
-## _Feel free to fork this repo and build your own dev environment by using template Docker files ([[ubuntu](devels-playground/dockerfile.ubuntu.yaml)], [[alpine](devels-playground/dockerfile.alpine.yaml)]) and Docker Compose files ([[ubuntu](devels-playground/docker-compose.ubuntu.yaml)], [[alpine](devels-playground/docker-compose.alpine.yaml)])_
+## _Feel free to fork this repo and build your own dev environment by using template Docker files ([ubuntu](devels-playground/dockerfile.ubuntu.yaml), [alpine](devels-playground/dockerfile.alpine.yaml)) and Docker Compose files ([ubuntu](devels-playground/docker-compose.ubuntu.yaml), [alpine](devels-playground/docker-compose.alpine.yaml))_
 
 &nbsp;
 
