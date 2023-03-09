@@ -77,7 +77,7 @@ RUN passwd -d ${username} && passwd -d host && passwd -d root && passwd -l root
 # set up /devel folder as symbolic link to /home/devel for cloning repository(ies)
 RUN ln -s /home/devel /hel && chown -R devel:devels /hel
 RUN touch /hel/lo.world
-
+RUN mkdir /hel/.ssh && chmod 700 /hel/.ssh && chown -R devel:devels /hel/.ssh
 # add common paths
 ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
 USER devel
