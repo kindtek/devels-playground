@@ -49,9 +49,9 @@ function install_dependencies {
         Push-Location $temp_repo_scripts_path
         # install winget and use winget to install everything else
         $winget = "devels-advocate/get-latest-winget.ps1"
-        Write-Host "`n`r`n`rInstalling $software_name ...`r`n" 
+        Write-Host "Installing $software_name ...`r`n" 
         &$winget = Invoke-Expression -command "devels-advocate/get-latest-winget.ps1" 
-        Write-Host "`t$software_name installed`r`n"   | Out-File -FilePath "$git_path/.winget-installed"
+        Write-Host "`r`n`t$software_name installed`r`n"   | Out-File -FilePath "$git_path/.winget-installed"
         Pop-Location
         $new_install = $true
     }
@@ -61,10 +61,10 @@ function install_dependencies {
 
     $software_name = "Github CLI"
     if (!(Test-Path -Path "$git_path/.github-installed" -PathType Leaf)) {
-        Write-Host "`n`r`tInstalling $software_name ...`r`n"
+        Write-Host "Installing $software_name ...`r`n"
         Invoke-Expression -Command "winget install --exact --id GitHub.cli --silent --locale en-US --accept-package-agreements --accept-source-agreements"
         Invoke-Expression -Command "winget install --id Git.Git --source winget --silent --locale en-US --accept-package-agreements --accept-source-agreements"
-        Write-Host "$software_name installed`r`n"  | Out-File -FilePath "$git_path/.github-installed"
+        Write-Host "`r`n`t$software_name installed`r`n"  | Out-File -FilePath "$git_path/.github-installed"
         $new_install = $true
     }
     else {
@@ -73,10 +73,10 @@ function install_dependencies {
 
     $software_name = "Visual Studio Code (VSCode)"
     if (!(Test-Path -Path "$git_path/.vscode-installed" -PathType Leaf)) {
-        Write-Host "`r`n`tInstalling $software_name ...`r`n"
+        Write-Host "Installing $software_name ...`r`n"
         # Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --silent --locale en-US --accept-package-agreements --accept-source-agreements --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
         Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
-        Write-Host "$software_name installed`r`n"  | Out-File -FilePath "$git_path/.vscode-installed"
+        Write-Host "`r`n`t$software_name installed`r`n"  | Out-File -FilePath "$git_path/.vscode-installed"
         $new_install = $true
     }
     else {
@@ -85,9 +85,9 @@ function install_dependencies {
 
     $software_name = "Docker Desktop"
     if (!(Test-Path -Path "$git_path/.docker-installed" -PathType Leaf)) {
-        Write-Host "`r`n`tInstalling $software_name ...`r`n" 
+        Write-Host "Installing $software_name ...`r`n" 
         Invoke-Expression -Command "winget install --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements"
-        Write-Host "$software_name installed`r`n"   | Out-File -FilePath "$git_path/.docker-installed"
+        Write-Host "`r`n`t$software_name installed`r`n"   | Out-File -FilePath "$git_path/.docker-installed"
         $new_install = $true
     }
     else {
@@ -98,10 +98,10 @@ function install_dependencies {
     if (!(Test-Path -Path "$git_path/.wterminal-installed" -PathType Leaf)) {
         # $windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
         # if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no') { 
-        Write-Host "`r`n`tInstalling $software_name ...`r`n" 
+        Write-Host "Installing $software_name ...`r`n" 
         Invoke-Expression -Command "winget install Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements" 
         # }
-        Write-Host "$software_name installed`r`n"  | Out-File -FilePath "$git_path/.wterminal-installed"
+        Write-Host "`r`n`t$software_name installed`r`n"  | Out-File -FilePath "$git_path/.wterminal-installed"
         $new_install = $true
     }
     else {
