@@ -40,7 +40,7 @@ function install_windows_features {
 function install_dependencies {
     param ($temp_repo_scripts_path, $git_path)
 
-    $new_install=$false
+    $new_install = $false
     Write-Host "`r`nThese programs will be installed or updated:" 
     Write-Host "`r`n`t- WinGet`r`n`t- Github CLI`r`n`t- Visual Studio Code`r`n`t- Docker Desktop`r`n`t- Windows Terminal`r`n`t- Python 3.x`r`n" 
 
@@ -168,80 +168,80 @@ function install_repo {
         $parent_path, $git_path, $repo_src_owner, $repo_src_name, $repo_src_branch 
     )
     # try {
-        Write-Host "Now installing:`r`n`t- GitHub repos`r`n`t- Chocolatey`r`n" 
+    Write-Host "Now installing:`r`n`t- GitHub repos`r`n`t- Chocolatey`r`n" 
 
-        # refresh environment variables using script in choco temp download location
-        powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle "Hidden"
-        # Write-Host "parent path: $parent_path"
-        Set-Location $parent_path
-        $new_install = $false
-        # .. and then clone/update the repo
-        # Write-Host "Testing path $parent_path/$repo_src_name ..."
-        if (!(Test-Path -Path $repo_src_name)) {
-            Write-Host "Testing path $parent_path/$repo_src_name ..."
-            # {
-                git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch #} *>$null
-            Push-Location $repo_src_name
-            # { 
-                git submodule update --force --recursive --init --remote 
-            # } *>$null
-            Pop-Location
-        }
+    # refresh environment variables using script in choco temp download location
+    powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle "Hidden"
+    # Write-Host "parent path: $parent_path"
+    Set-Location $parent_path
+    $new_install = $false
+    # .. and then clone/update the repo
+    # Write-Host "Testing path $parent_path/$repo_src_name ..."
+    if (!(Test-Path -Path $repo_src_name)) {
+        Write-Host "Testing path $parent_path/$repo_src_name ..."
+        # {
+        git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch #} *>$null
+        Push-Location $repo_src_name
+        # { 
+        git submodule update --force --recursive --init --remote 
+        # } *>$null
+        Pop-Location
+    }
 
-        Set-Location $repo_src_name
-        # { 
-            git pull
-        #  }  *>$null
-        # { 
-            git submodule update --force --recursive --init --remote
-        #  }  *>$null
+    Set-Location $repo_src_name
+    # { 
+    git pull
+    #  }  *>$null
+    # { 
+    git submodule update --force --recursive --init --remote
+    #  }  *>$null
 
     
-        # @TODO: since this gave so many errors, use git to install from source - the current way does like it may be better to stay up to date (rather than using a fork or origin choco repo)
-        $software_name = "Chocolatey"
-        if (!(Test-Path -Path "$git_path/.choco-installed" -PathType Leaf)) {
-            $new_install = $true
-            # getting error-0x80010135 path too long error when unzipping.. unzip operation at the shortest path
-            # Push-Location $temp_repo_scripts_path
-            Push-Location scripts
+    # @TODO: since this gave so many errors, use git to install from source - the current way does like it may be better to stay up to date (rather than using a fork or origin choco repo)
+    $software_name = "Chocolatey"
+    if (!(Test-Path -Path "$git_path/.choco-installed" -PathType Leaf)) {
+        $new_install = $true
+        # getting error-0x80010135 path too long error when unzipping.. unzip operation at the shortest path
+        # Push-Location $temp_repo_scripts_path
+        Push-Location scripts
 
-            Push-Location choco
-            # $choco = "devels-advocate/get-latest-choco.ps1"
-            # Write-Host "`n`r`n`rInstalling $software_name ..." 
-            # $env:path += ";C:\ProgramData\chocoportable"
-            # &$choco = Invoke-Expression -command "devels-advocate/get-latest-choco.ps1" 
-            # $choco = "cmd.exe /c scripts/choco/build.bat"
-            Write-Host "`n`r`n`rInstalling $software_name ..." 
-            $env:path += ";C:\ProgramData\chocoportable"
-            $choco = "build.bat"
-            Write-Host "Executing $choco ..."
-            $choco = "$parent_path/$repo_src_name/scripts/choco/build.bat"
-            Write-Host "&$choco"
-            # Push-Location ../../..
-            &$choco = "$parent_path/$repo_src_name/scripts/choco/build.bat"
-            # Pop-Location
-            $refresh_env = "src/chocolatey.resources/redirects/RefreshEnv.cmd"
-            &$refresh_env = "src/chocolatey.resources/redirects/RefreshEnv.cmd"
-            # cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
-            Pop-Location
-            Pop-Location
-            Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.choco-installed"
+        Push-Location choco
+        # $choco = "devels-advocate/get-latest-choco.ps1"
+        # Write-Host "`n`r`n`rInstalling $software_name ..." 
+        # $env:path += ";C:\ProgramData\chocoportable"
+        # &$choco = Invoke-Expression -command "devels-advocate/get-latest-choco.ps1" 
+        # $choco = "cmd.exe /c scripts/choco/build.bat"
+        Write-Host "`n`r`n`rInstalling $software_name ..." 
+        $env:path += ";C:\ProgramData\chocoportable"
+        $choco = "build.bat"
+        Write-Host "Executing $choco ..."
+        $choco = "$parent_path/$repo_src_name/scripts/choco/build.bat"
+        Write-Host "&$choco"
+        # Push-Location ../../..
+        &$choco = "$parent_path/$repo_src_name/scripts/choco/build.bat"
+        # Pop-Location
+        $refresh_env = "src/chocolatey.resources/redirects/RefreshEnv.cmd"
+        &$refresh_env = "src/chocolatey.resources/redirects/RefreshEnv.cmd"
+        # cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
+        Pop-Location
+        Pop-Location
+        Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.choco-installed"
 
-            # Push-Location cdir
-            # Push-Location bin
-        }
-        else {
-            Write-Host "$software_name already installed`r`n"  
-        }
+        # Push-Location cdir
+        # Push-Location bin
+    }
+    else {
+        Write-Host "$software_name already installed`r`n"  
+    }
         
         
 
-        $refresh_env = "scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd"
-        &$refresh_env = "scripts/chocosrc/chocolatey.resources/redirects/RefreshEnv.cmd"
+    $refresh_env = "scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd"
+    &$refresh_env = "scripts/chocosrc/chocolatey.resources/redirects/RefreshEnv.cmd"
     
 
-        return $new_install
-        # if git is not recognized try to limp along with the manually downloaded files
+    return $new_install
+    # if git is not recognized try to limp along with the manually downloaded files
     # }
     # catch {}
 }
@@ -269,12 +269,12 @@ function require_docker_online {
             $docker_tries++
             Start-Sleep -seconds 1
             # { 
-            if (Get-Process 'com.docker.proxy'){
+            if (Get-Process 'com.docker.proxy') {
                 $docker_online = $true
                 Write-Host "Docker Desktop is now online"
             }
             # }
-             # *>$null
+            # *>$null
         
             if ($docker_online -eq $false -And (($docker_tries % 80) -eq 0)) {
                 write-host "$docker_status_now`r`n"
@@ -313,23 +313,33 @@ function run_devels_playground {
         $git_path
     )
     try {
-        # @TODO: maybe start in new window
-        # $start_devs_playground = Read-Host "`r`nStart Devel's Playground ([y]/n)"
-        $software_name = "Docker Desktop"
-        # if ($start_devs_playground -ine 'n' -And $start_devs_playground -ine 'no') { 
-        Write-Host "`r`nNOTE:`t$software_name is required to be running for the Devel's Playground to work.`r`n`r`n`tDo NOT quit $software_name until you are done running it.`r`n" 
-        Write-Host "`r`n`r`nAttempting to start wsl import tool ..."
-        # // commenting out background building process because this is NOT quite ready.
-        # // would like to run in separate window and then use these new images in devel's playground 
-        # // if they are more up to date than the hub - which could be a difficult process
-        # $cmd_command = "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1"
-        # &$cmd_command = cmd /c start powershell.exe -Command "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1" -WindowStyle "Maximized"
+        $software_name = "Devel`'s Playground"
+        if (!(Test-Path -Path "$git_path/.dplay-installed" -PathType Leaf)) {
+            # @TODO: add cdir and python to install with same behavior as other installs above
+            # not eloquent at all but good for now
+
+            # ... even tho cdir does not appear to be working on windows
+            # $cmd_command = pip install cdir
+            # Start-Process -FilePath PowerShell.exe -NoNewWindow -ArgumentList $cmd_command
+    
+            # @TODO: maybe start in new window
+            # $start_devs_playground = Read-Host "`r`nStart Devel's Playground ([y]/n)"
+            # if ($start_devs_playground -ine 'n' -And $start_devs_playground -ine 'no') { 
+            Write-Host "`r`nNOTE:`tDocker Desktop is required to be running for the Devel's Playground to work.`r`n`r`n`tDo NOT quit Docker Desktop until you are done running it.`r`n" 
+            Write-Host "`r`n`r`nAttempting to start wsl import tool ..."
+            # // commenting out background building process because this is NOT quite ready.
+            # // would like to run in separate window and then use these new images in devel's playground 
+            # // if they are more up to date than the hub - which could be a difficult process
+            # $cmd_command = "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1"
+            # &$cmd_command = cmd /c start powershell.exe -Command "$git_path/devels_playground/scripts/docker-images-build-in-background.ps1" -WindowStyle "Maximized"
                
-        $devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
-        Write-Host "Launching Devel's Playground`r`n$devs_playground ...`r`n" 
-        Write-Host "&$devs_playground"
-        # Write-Host "$([char]27)[2J"
-        &$devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
+            $devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
+            Write-Host "Launching Devel's Playground`r`n$devs_playground ...`r`n" 
+            Write-Host "&$devs_playground"
+            # Write-Host "$([char]27)[2J"
+            &$devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
+            Write-Host "$software_name installed`r`n" | Out-File -FilePath "$git_path/.dplay-installed"
+        }
     }
     catch {}
 }
