@@ -139,11 +139,12 @@ FROM dplay_phatter as dplay_phattest
 RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
 RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main"| sudo tee /etc/apt/sources.list.d/brave-browser-release.list
 
+# in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
 RUN sudo apt-get update -yq && \
     sudo apt-get install -y brave-browser 
-
+    
 # GNOME
-RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3 gimp gedit nautilus vlc x11-apps
+RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3 gimp gedit nautilus vlc x11-apps xfce4
 
 FROM dplay_phattest as dplay_phatso
 # CUDA
