@@ -6,20 +6,20 @@
 
 &nbsp;
 
-## When set up is complete, there will be an option to launch the Devel's Playground WSL Docker import tool. Not only does it make it easy for you to import your own custom Docker images onto WSL, it demonstrates how easy it is to wrap this portable containerized developer environment around a separate standalone repo
-
-&nbsp;
-
 ### Easy as 1, 2, 4
 
 1. Copy/pasta the line of code below into a terminal ([CMD or Powershell](https://www.wikihow.com/Open-Terminal-in-Windows))
-2. Confirm installation actions and restart program/device as needed
+2. Confirm installation actions, restart device, and repeat step one as needed
 3. ??
 4. Profit
 
 ```bat
 powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell-remote/devels-workshop/download-everything-and-install.ps1 -OutFile install-kindtek-devels-workshop.ps1; powershell.exe -executionpolicy remotesigned -File install-kindtek-devels-workshop.ps1"
 ```
+
+&nbsp;
+
+## When set up is complete, there will be an option to launch the Devel's Playground WSL Docker import tool. Not only does it make it easy for you to import your own custom Docker images onto WSL, it demonstrates how easy it is to wrap this portable containerized developer environment around a separate standalone repo
 
 <!-- ###### also found in [[copypasta.cmd](scripts/powerhell-remote/copypasta.cmd)] -->
 
