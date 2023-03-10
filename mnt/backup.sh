@@ -22,10 +22,6 @@ export VERSION_CONTROL=numbered
 mkdir -p $HEL_DESTINATION
 cp -arf --backup=$VERSION_CONTROL --update /home/devel $HEL_DESTINATION
 
-echo "removing script $HEL_RESTORE_SCRIPT ..."
-
-rm $HEL_RESTORE_SCRIPT
-
 echo "creating restore script and saving as $HEL_RESTORE_SCRIPT ..."
 
 echo "#!/bin/bash
@@ -33,7 +29,7 @@ echo "#!/bin/bash
 source /home/devel/.bashrc
 
 echo 'restoring $_NIX_MNT_LOCATION/gabriel/devel-$WSL_DISTRO_NAME/devel to /home/devel ...'
-cp --backup=$VERSION_CONTROL --remove-destination -arf $_NIX_MNT_LOCATION/gabriel/devel-$WSL_DISTRO_NAME/devel /home/devel" >> $HEL_RESTORE_SCRIPT
+cp --backup=$VERSION_CONTROL --remove-destination -arf $_NIX_MNT_LOCATION/gabriel/devel-$WSL_DISTRO_NAME/devel /home/devel" > $HEL_RESTORE_SCRIPT
 
 chown ${username:-gabriel}:${groupname:-arcans} "/home/devel-$WSL_DISTRO_NAME.restored"
 chmod +x $HEL_RESTORE_SCRIPT
