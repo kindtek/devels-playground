@@ -27,7 +27,7 @@ echo "#!/bin/bash
 echo 'restoring $_NIX_MNT_LOCATION/gabriel/devel-$WSL_DISTRO_NAME/devel to /home ...'
 cp --backup=$VERSION_CONTROL --remove-destination -arf $_NIX_MNT_LOCATION/gabriel/devel-$WSL_DISTRO_NAME/devel /home" > $HEL_RESTORE_SCRIPT
 
-chown devel:devels $HEL_RESTORE_SCRIPT
+chown devel:horns $HEL_RESTORE_SCRIPT
 chmod +x $HEL_RESTORE_SCRIPT
 
 echo "Backup complete."
