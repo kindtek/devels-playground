@@ -5,9 +5,9 @@ source /home/devel/.bashrc
 if [ -z $_NIX_MNT_LOCATION ]
 then 
     export _NIX_MNT_LOCATION='/mnt/n'
-elif [ -z $WSL_DISTRO_NAME ] 
+if [ -z $WSL_DISTRO_NAME ] 
 then
-    export WSL_DISTRO_NAME="orig"
+    export WSL_DISTRO_NAME=orig
 fi
 
 HEL_DESTINATION="$_NIX_MNT_LOCATION/gabriel/devel-$WSL_DISTRO_NAME"
@@ -21,6 +21,7 @@ then
     export VERSION_CONTROL=numbered; mv $HEL_DESTINATION $HEL_DESTINATION.old
 fi
 
+mkdir -p $HEL_DESTINATION
 cp -arf /home/devel $HEL_DESTINATION
 
 echo "removing script $HEL_RESTORE_SCRIPT ..."
