@@ -19,8 +19,8 @@ RUN python3 -m pip install --upgrade pip cryptography oauthlib pyjwt setuptools 
 #     adduser --system --home /home/${username} --shell /bin/bash --uid 1001 --gid 1001 --disabled-password ${username}  
 # set up groups
 RUN addgroup --gid 111 ${groupname} && \
-    addgroup --gid 888 archans && \
-    addgroup --gid 666 devels
+    addgroup --gid 888 halos && \
+    addgroup --gid 666 horns
 
 RUN adduser --home /home/${username} --shell /bin/bash --uid 1011 --disabled-password ${username}
 
@@ -49,14 +49,14 @@ RUN cp -r ./home/${username}/.local/bin /usr/local && \
     cp -rp /etc/skel/. /home/devel/
 
 # add username only to sudo
-RUN usermod -aG archans host && usermod -aG archans ${username} 
-RUN usermod -aG devels devel && usermod -aG devels ${username} 
+RUN usermod -aG halos host && usermod -aG halos ${username} 
+RUN usermod -aG horns devel && usermod -aG horns ${username} 
 RUN usermod -aG sudo ${username}
 
 # RUN sed -e 's;^# \(%sudo.*NOPASSWD.*\);\1;g' -i /etc/sudoers
-# RUN chown -R ${username}:archans /home/host
-RUN chown -R host:archans /home/host
-RUN chown -R devel:devels /home/devel
+# RUN chown -R ${username}:halos home/host
+RUN chown -R host:halos /home/host
+RUN chown -R devel:horns /home/devel
 
 
 # need to use sudo from now on
@@ -73,9 +73,9 @@ RUN passwd -d ${username} && passwd -d devel && passwd -d root && passwd -l root
 RUN passwd -d ${username} && passwd -d host && passwd -d root && passwd -l root
 
 # set up /devel folder as symbolic link to /home/devel for cloning repository(ies)
-RUN ln -s /home/devel /hel && chown -R devel:devels /hel
+RUN ln -s /home/devel /hel && chown -R devel:horns /hel
 RUN touch /hel/lo.world
-RUN mkdir /hel/.ssh && chmod 700 /hel/.ssh && chown -R devel:devels /hel/.ssh
+RUN mkdir /hel/.ssh && chmod 700 /hel/.ssh && chown -R devel:horns /hel/.ssh
 # add common paths
 ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
 USER devel
@@ -96,7 +96,7 @@ RUN git config --global --add safe.directory /home/devel/devels-playground
 RUN git config --global --add safe.directory *
 RUN git clone https://github.com/kindtek/devels-workshop
 RUN cd devels-workshop && git pull && git submodule update --force --recursive --init --remote && cd ..
-RUN chown devel:devels -R /home/devel/devels-workshop /home/devel/devels-workshop/.git
+RUN chown devel:horns -R /home/devel/devels-workshop /home/devel/devels-workshop/.git
 RUN ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay
 # make backup script executable
 RUN chmod +x dwork/mnt/backup.sh

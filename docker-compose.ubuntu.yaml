@@ -6,11 +6,11 @@ services:
   #   user: 'root'
   #   # Specify the group in question
   #   group_add:
-  #     - 'devels'
+  #     - 'horns'
   #   volumes:
   #     # The volume to chown
   #     - hel-data:/tmp/change-ownership
-  #   command: chown -R devel:devels /tmp/change-ownership
+  #   command: chown -R devel:horns /tmp/change-ownership
   skel:
     # Need a user priviliged enough to chown
     user: gabriel
@@ -25,17 +25,16 @@ services:
     init: true
     volumes:
       - hel-data:/tmp/devel
-    command: sudo chown -R devel:devels /tmp/devel
+    command: sudo chown -R devel:horns /tmp/devel
     labels:
       com.dplay_skel.description: "n/a"
-
 
   git:
     # owner/group becomes owner of hel-data volume
     user: devel
     group_add:
       # - archans
-      - devels 
+      - horns
     privileged: true
     entrypoint:
       - sleep
@@ -67,4 +66,3 @@ networks:
   "${COMPOSE_PROJECT_NAME}_default":
     driver: overlay
     attachable: true
-

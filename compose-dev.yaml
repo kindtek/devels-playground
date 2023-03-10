@@ -6,17 +6,17 @@ services:
   #   user: 'root'
   #   # Specify the group in question
   #   group_add:
-  #     - 'devels'
+  #     - horns
   #   volumes:
   #     # The volume to chown
   #     - hel-data:/tmp/change-ownership
-  #   command: chown -R devel:devels /tmp/change-ownership
+  #   command: chown -R devel:horns /tmp/change-ownership
   skel:
     # Need a user priviliged enough to chown
     user: root
     # Specify the group in question
     group_add:
-      - devels
+      - horns
     image: kindtek/dplay:ubuntu-skel
     build:
       context: .
@@ -31,7 +31,7 @@ services:
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
-    command: chown -R devel:devels /tmp/devel
+    command: chown -R devel:horns /tmp/devel
 
   git:
     entrypoint:
