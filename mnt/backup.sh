@@ -1,7 +1,5 @@
 #!/bin/bash
 
-source ~/.bashrc
-
 if [ -z $_NIX_MNT_LOCATION ]
 then 
     export _NIX_MNT_LOCATION='/mnt/n'
@@ -20,7 +18,7 @@ echo "backing the /hel up to: $HEL_DESTINATION ..."
 export VERSION_CONTROL=numbered
 
 mkdir -p $HEL_DESTINATION
-cp -arf --backup=$VERSION_CONTROL --update /home/devel/* $HEL_DESTINATION
+cp -arf --backup=$VERSION_CONTROL --update /home/devel/.* $HEL_DESTINATION
 
 echo "creating restore script and saving as $HEL_RESTORE_SCRIPT ..."
 
