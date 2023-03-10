@@ -3,7 +3,7 @@
 FROM ubuntu:latest AS dplay_skel
 ARG username=${username:-gabriel}
 ARG groupname=${groupname:-arcans}
-ARG backup_mnt_location='/mnt/w'
+ARG backup_mnt_location='/mnt/n'
 
 # # set glob exp pattern matching default
 # RUN echo "shopt -s histappend" >> /etc/profile
@@ -74,7 +74,7 @@ RUN passwd -d ${username} && passwd -d devel && passwd -d root && passwd -l root
 RUN passwd -d ${username} && passwd -d host && passwd -d root && passwd -l root
 
 # mount w drive - set up drive w in windows using https://allthings.how/how-to-partition-a-hard-drive-on-windows-11/
-# RUN sudo mkdir /mnt/w && sudo mount -t drvfs w: /mnt/w
+# RUN sudo mkdir /mnt/n && sudo mount -t drvfs w: /mnt/n
 
 # set up /devel folder as symbolic link to /home/devel for cloning repository(ies)
 RUN ln -s /home/devel /hel && chown -R devel:devels /hel
@@ -103,7 +103,7 @@ RUN cd devels-workshop && git pull && git submodule update --force --recursive -
 RUN chown devel:devels -R /home/devel/devels-workshop /home/devel/devels-workshop/.git
 RUN ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay
 # make backup script executable
-RUN chmod +x devel:devels dwork/mnt/backup.sh
+RUN chmod +x dwork/mnt/backup.sh
 RUN cp -arf dwork/mnt/backup.sh $backup_mnt_location/devel-backup.sh
 # wait to do this until we have WSL_DISTRO_NAME
 # RUN sh $backup_mnt_location/devel-backup.sh
