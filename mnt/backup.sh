@@ -32,13 +32,8 @@ echo "#!/bin/bash
 # run as sudo
 source /home/devel/.bashrc
 
-echo 'copying $_NIX_MNT_LOCATION/gabriel/devel-$WSL_DISTRO_NAME to /home/devel-$WSL_DISTRO_NAME.restored ...'
-
-echo 'moving /home/devel to home/devel.old ...'
-mv --backup --version-control=$VERSION_CONTROL /home/devel /home/devel.old
-
 echo 'restoring $_NIX_MNT_LOCATION/gabriel/devel-$WSL_DISTRO_NAME/devel to /home/devel ...'
-cp --backup --version-control=$VERSION_CONTROL -arf $_NIX_MNT_LOCATION/gabriel/devel-$WSL_DISTRO_NAME/devel /home/devel" >> $HEL_RESTORE_SCRIPT
+cp --backup=$VERSION_CONTROL --remove-destination -arf $_NIX_MNT_LOCATION/gabriel/devel-$WSL_DISTRO_NAME/devel /home/devel" >> $HEL_RESTORE_SCRIPT
 
 chown ${username:-gabriel}:${groupname:-arcans} "/home/devel-$WSL_DISTRO_NAME.restored"
 chmod +x $HEL_RESTORE_SCRIPT
