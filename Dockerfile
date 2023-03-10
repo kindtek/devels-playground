@@ -12,6 +12,7 @@ RUN apt-get update -yq && \
     apt-get upgrade -y && \
     # install github, build-essentials, libssl, etc
     apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip nvi apt-transport-https software-properties-common 
+RUN python3 -m pip install --upgrade pip setuptools wheel
 
 # # set up group/user 
 # RUN addgroup --system --gid 1001 ${groupname} && \
