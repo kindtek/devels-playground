@@ -4,9 +4,8 @@ FROM ubuntu:latest AS dplay_skel
 ARG username=${username:-gabriel}
 ARG groupname=${groupname:-arcans}
 ARG backup_mnt_location='/mnt/n'
-
-# # set glob exp pattern matching default
-# RUN echo "shopt -s histappend" >> /etc/profile
+# mount w drive - set up drive w in windows using https://allthings.how/how-to-partition-a-hard-drive-on-windows-11/
+# RUN sudo mkdir /mnt/n && sudo mount -t drvfs w: /mnt/n
 
 # set up basic utils
 RUN apt-get update -yq && \
@@ -73,9 +72,6 @@ RUN apt-get -y install sudo && \
 RUN passwd -d ${username} && passwd -d devel && passwd -d root && passwd -l root
 RUN passwd -d ${username} && passwd -d host && passwd -d root && passwd -l root
 
-# mount w drive - set up drive w in windows using https://allthings.how/how-to-partition-a-hard-drive-on-windows-11/
-# RUN sudo mkdir /mnt/n && sudo mount -t drvfs w: /mnt/n
-
 # set up /devel folder as symbolic link to /home/devel for cloning repository(ies)
 RUN ln -s /home/devel /hel && chown -R devel:devels /hel
 RUN touch /hel/lo.world
@@ -104,11 +100,12 @@ RUN chown devel:devels -R /home/devel/devels-workshop /home/devel/devels-worksho
 RUN ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay
 # make backup script executable
 RUN chmod +x dwork/mnt/backup.sh
-RUN cp -arf dwork/mnt/backup.sh $backup_mnt_location/devel-backup.sh
+
+USER ${username}
+RUN sudo mkdir -p $backup_mnt_location && sudo cp -arf dwork/mnt/backup.sh $backup_mnt_location/devel-backup.sh
 # wait to do this until we have WSL_DISTRO_NAME
 # RUN sh $backup_mnt_location/devel-backup.sh
 
-USER ${username}
 
 # microsoft stuff
 FROM dplay_git as dplay_phat
@@ -149,6 +146,12 @@ RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg a
 # in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
 RUN sudo apt-get update -yq && \
     sudo apt-get install -y brave-browser 
+
+RUN sudo mv /etc/alternatives/brave-browser /etc/alternatives/brave-browser.old
+# change last line of this file - fix for brave-browser displaying empty windows
+RUN sudo head -n -1 /etc/alternatives/brave-browser.old > /etc/alternatives/brave-browser
+# orig: "$HERE/brave" "$@" " --disable-gpu " || true
+RUN sudo echo '"\$HERE/brave" "\$@" " --disable-gpu " || true' >> /etc/alternatives/brave-browser
     
 # GNOME
 RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3 gimp gedit nautilus vlc x11-apps xfce4
