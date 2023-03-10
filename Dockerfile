@@ -32,7 +32,7 @@ USER ${username}
 # enable cdir on nonroot shell - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
 # also add powershell alias
 RUN pip3 install cdir --user && \
-    echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${backup_mnt_location}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi=\"vi -c 'set verbose showmode'\"" >> ~/.bashrc
+    echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${backup_mnt_location}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c "set verbose showmode"'" >> ~/.bashrc
 # add common paths
 ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
 # switch back to root to setup
@@ -137,26 +137,28 @@ RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> ~/.bashrc && . ~/.bashrc
 USER ${username}
 RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> ~/.bashrc && . ~/.bashrc
 
+
 # for heavy gui (wsl2 required)
 FROM dplay_phatter as dplay_phattest
+USER root
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
-RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
-RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main"| sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+RUN curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main"| tee /etc/apt/sources.list.d/brave-browser-release.list
 
 # in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
-RUN sudo apt-get update -yq && \
-    sudo apt-get install -y brave-browser 
+RUN apt-get update -yq && \
+    apt-get install -y brave-browser 
 
-RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old
+RUN cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old
 # change last line of this file - fix for brave-browser displaying empty windows
-RUN sudo head -n -1 /opt/brave.com/brave/brave-browser.old > /opt/brave.com/brave/brave-browser
+RUN head -n -1 /opt/brave.com/brave/brave-browser.old > /opt/brave.com/brave/brave-browser
 # orig: "$HERE/brave" "$@" " --disable-gpu " || true
-RUN sudo echo '"\$HERE/brave" "\$@" " --disable-gpu " || true' >> /opt/brave.com/brave/brave-browser
+RUN echo '"$HERE/brave" "$@" " --disable-gpu " || true' >> /opt/brave.com/brave/brave-browser
     
 # GNOME
-RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3 gimp gedit nautilus vlc x11-apps xfce4
+RUN DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3 gimp gedit nautilus vlc x11-apps xfce4
+USER ${username}
 
 FROM dplay_phattest as dplay_phatso
 # CUDA
 RUN sudo apt-get -y install nvidia-cuda-toolkit
-USER ${username}

@@ -32,7 +32,7 @@ USER ${username}
 # enable cdir on nonroot shell - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
 # also add powershell alias
 RUN pip3 install cdir --user && \
-    echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${backup_mnt_location}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi=\"vi -c 'set verbose showmode'\"" >> ~/.bashrc
+    echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${backup_mnt_location}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c "set verbose showmode"'" >> ~/.bashrc
 # add common paths
 ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
 # switch back to root to setup
@@ -153,7 +153,7 @@ RUN cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old
 # change last line of this file - fix for brave-browser displaying empty windows
 RUN head -n -1 /opt/brave.com/brave/brave-browser.old > /opt/brave.com/brave/brave-browser
 # orig: "$HERE/brave" "$@" " --disable-gpu " || true
-RUN echo '"\$HERE/brave" "\$@" " --disable-gpu " || true' >> /opt/brave.com/brave/brave-browser
+RUN echo '"$HERE/brave" "$@" " --disable-gpu " || true' >> /opt/brave.com/brave/brave-browser
     
 # GNOME
 RUN DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3 gimp gedit nautilus vlc x11-apps xfce4
