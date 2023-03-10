@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source /home/devel/.bashrc
+source ~/.bashrc
 
 if [ -z $_NIX_MNT_LOCATION ]
 then 
