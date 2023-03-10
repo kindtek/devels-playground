@@ -147,7 +147,7 @@ RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg a
 RUN sudo apt-get update -yq && \
     sudo apt-get install -y brave-browser 
 
-RUN sudo mv /etc/alternatives/brave-browser /etc/alternatives/brave-browser.old
+RUN sudo cp /etc/alternatives/brave-browser /etc/alternatives/brave-browser.old
 # change last line of this file - fix for brave-browser displaying empty windows
 RUN sudo head -n -1 /etc/alternatives/brave-browser.old > /etc/alternatives/brave-browser
 # orig: "$HERE/brave" "$@" " --disable-gpu " || true
