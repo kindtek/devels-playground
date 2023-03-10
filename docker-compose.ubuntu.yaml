@@ -1,4 +1,4 @@
-version: "3.8"
+version: "3.9"
 name: devels-workshop-ubuntu
 services:
   # chown-hel:
@@ -13,11 +13,13 @@ services:
   #   command: chown -R devel:devels /tmp/change-ownership
   skel:
     # Need a user priviliged enough to chown
-    user: root
+    user: gabriel
     # Specify the group in question
     group_add:
+      - host
+      - archans
       - devels
-    image: kindtek/dplay:ubuntu-skel
+    # image: kindtek/dplay:ubuntu-skel
     build:
       context: .
       target: dplay_skel
@@ -28,12 +30,18 @@ services:
     init: true
     volumes:
       - hel-data:/tmp/devel
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
     command: chown -R devel:devels /tmp/devel
+    labels:
+      com.dplay_skel.description: "n/a"
+
 
   git:
+    # owner/group becomes owner of hel-data volume
+    user: devel
+    group_add:
+      # - archans
+      - devels 
+    privileged: true
     entrypoint:
       - sleep
       - infinity
@@ -51,6 +59,12 @@ services:
         condition: service_completed_successfully
     volumes:
       - hel-data:/home/devel
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
+    labels:
+      com.dplay_git.description: "basics + git"
+
   phat:
     extends: git
     image: kindtek/dplay:ubuntu-phat
@@ -60,6 +74,8 @@ services:
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
+    labels:
+      com.dplay_phat.description: "basics + git + powerhell"
   phatter:
     extends: phat
     image: kindtek/dplay:ubuntu-phatter
@@ -69,7 +85,8 @@ services:
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
-
+    labels:
+      com.dplay_phatter.description: "basics + git + powerhell + docker"
   phattest:
     extends: phatter
     image: kindtek/dplay:ubuntu-phattest
@@ -79,6 +96,8 @@ services:
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
+    labels:
+      com.dplay_phattest.description: "basics + git + powerhell + docker + gui"
   phatso:
     extends: phattest
     image: kindtek/dplay:ubuntu-phatso
@@ -88,6 +107,8 @@ services:
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
+      labels:
+        com.dplay_phatso.description: "basics + git + powerhell + docker + gui + cuda"
 volumes:
   hel-data:
 
@@ -96,3 +117,4 @@ networks:
   "${COMPOSE_PROJECT_NAME}_default":
     driver: overlay
     attachable: true
+
