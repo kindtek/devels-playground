@@ -14,11 +14,6 @@ services:
   skel:
     # Need a user priviliged enough to chown
     user: gabriel
-    # Specify the group in question
-    group_add:
-      - host
-      - archans
-      - devels
     # image: kindtek/dplay:ubuntu-skel
     build:
       context: .
@@ -30,7 +25,7 @@ services:
     init: true
     volumes:
       - hel-data:/tmp/devel
-    command: chown -R devel:devels /tmp/devel
+    command: sudo chown -R devel:devels /tmp/devel
     labels:
       com.dplay_skel.description: "n/a"
 
@@ -65,50 +60,7 @@ services:
     labels:
       com.dplay_git.description: "basics + git"
 
-  phat:
-    extends: git
-    image: kindtek/dplay:ubuntu-phat
-    build:
-      context: .
-      target: dplay_phat
-      args:
-        - username=${username:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
-    labels:
-      com.dplay_phat.description: "basics + git + powerhell"
-  phatter:
-    extends: phat
-    image: kindtek/dplay:ubuntu-phatter
-    build:
-      context: .
-      target: dplay_phatter
-      args:
-        - username=${username:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
-    labels:
-      com.dplay_phatter.description: "basics + git + powerhell + docker"
-  phattest:
-    extends: phatter
-    image: kindtek/dplay:ubuntu-phattest
-    build:
-      context: .
-      target: dplay_phattest
-      args:
-        - username=${username:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
-    labels:
-      com.dplay_phattest.description: "basics + git + powerhell + docker + gui"
-  phatso:
-    extends: phattest
-    image: kindtek/dplay:ubuntu-phatso
-    build:
-      context: .
-      target: dplay_phatso
-      args:
-        - username=${username:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
-      labels:
-        com.dplay_phatso.description: "basics + git + powerhell + docker + gui + cuda"
+ 
 volumes:
   hel-data:
 
