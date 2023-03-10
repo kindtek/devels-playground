@@ -33,7 +33,7 @@ services:
     # owner/group becomes owner of hel-data volume
     user: devel
     group_add:
-      # - archans
+      # - halos
       - horns
     privileged: true
     entrypoint:
@@ -61,6 +61,7 @@ services:
 
 volumes:
   hel-data:
+
 
 networks:
   "${COMPOSE_PROJECT_NAME}_default":
