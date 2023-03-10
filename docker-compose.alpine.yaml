@@ -21,14 +21,14 @@ services:
         source: ~/
         target: /home/host
 
-  phat:
+  phell:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/dplay:alpine-phat
+    image: kindtek/dplay:alpine-phell
     build:
       context: .
-      target: dplay_phat
+      target: dplay_phell
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.alpine.yaml
@@ -41,4 +41,3 @@ services:
       - type: bind
         source: ~/
         target: /home/host
-  

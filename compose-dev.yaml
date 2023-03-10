@@ -51,40 +51,40 @@ services:
         condition: service_completed_successfully
     volumes:
       - hel-data:/home/devel
-  phat:
+  phell:
     extends: git
-    image: kindtek/dplay:ubuntu-phat
+    image: kindtek/dplay:ubuntu-phell
     build:
       context: .
-      target: dplay_phat
+      target: dplay_phell
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
-  phatter:
-    extends: phat
-    image: kindtek/dplay:ubuntu-phatter
+  dind:
+    extends: phell
+    image: kindtek/dplay:ubuntu-dind
     build:
       context: .
-      target: dplay_phatter
+      target: dplay_dind
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
 
-  phattest:
-    extends: phatter
-    image: kindtek/dplay:ubuntu-phattest
+  gui:
+    extends: dind
+    image: kindtek/dplay:ubuntu-gui
     build:
       context: .
-      target: dplay_phattest
+      target: dplay_gui
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
-  phatso:
-    extends: phattest
-    image: kindtek/dplay:ubuntu-phatso
+  cuda:
+    extends: gui
+    image: kindtek/dplay:ubuntu-cuda
     build:
       context: .
-      target: dplay_phatso
+      target: dplay_cuda
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml

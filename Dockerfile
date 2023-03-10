@@ -108,7 +108,7 @@ RUN sudo mkdir -p $backup_mnt_location && sudo cp -arf dwork/mnt/backup.sh $back
 
 
 # microsoft stuff
-FROM dplay_git as dplay_phat
+FROM dplay_git as dplay_phell
 
 # for powershell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
@@ -122,7 +122,7 @@ RUN sudo apt-get update -yq && \
     sudo apt-get install -y powershell dotnet-sdk-7.0
 
 # for docker in docker
-FROM dplay_phat as dplay_phatter
+FROM dplay_phell as dplay_dind
 USER root
 # for docker install - https://docs.docker.com/engine/install/ubuntu/
 RUN mkdir -p /etc/apt/keyrings && \
@@ -139,7 +139,7 @@ RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> ~/.bashrc && . ~/.bashrc
 
 
 # for heavy gui (wsl2 required)
-FROM dplay_phatter as dplay_phattest
+FROM dplay_dind as dplay_gui
 USER root
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
 RUN curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
@@ -159,6 +159,6 @@ RUN echo '"$HERE/brave" "$@" " --disable-gpu " || true' >> /opt/brave.com/brave/
 RUN DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3 gimp gedit nautilus vlc x11-apps xfce4
 USER ${username}
 
-FROM dplay_phattest as dplay_phatso
+FROM dplay_gui as dplay_cuda
 # CUDA
 RUN sudo apt-get -y install nvidia-cuda-toolkit

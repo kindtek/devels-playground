@@ -23,13 +23,13 @@ scripts/wsl-docker-import
 
 &nbsp;
 
-### _0. [Example] When the program loads, at the main menu hit ENTER a few times to import and confirm the default [ubuntu-phatter image](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phatter/images/sha256-d4b592c32d92db53e8380a5556bdd771063d946e5614d0ebc953359941be5263?context=explore) ([see details below](https://github.com/kindtek/devels-workshop#ubuntu-phatter)) being imported on your WSL environment_
+### _0. [Example] When the program loads, at the main menu hit ENTER a few times to import and confirm the default [ubuntu-dind image](https://hub.docker.com/layers/kindtek/dplay/ubuntu-dind/images/sha256-d4b592c32d92db53e8380a5556bdd771063d946e5614d0ebc953359941be5263?context=explore) ([see details below](https://github.com/kindtek/devels-workshop#ubuntu-dind)) being imported on your WSL environment_
 
 ### 1. At the main menu, type "config" then hit ENTER to specify any compatible Linux distro on [hub.docker.com](https://hub.docker.com/) you would like to use with WSL. The format is
 
 #### - source: [kindtek](https://hub.docker.com/u/kindtek)
 
-#### - name: [dplay](https://hub.docker.com/r/kindtek/dplay/tags):[ubuntu-phat](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phat/images/sha256-638debdde2528366c7beb3c901fc709f1162273783d22a575d096753abd157ad?context=explore)
+#### - name: [dplay](https://hub.docker.com/r/kindtek/dplay/tags):[ubuntu-phell](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phell/images/sha256-638debdde2528366c7beb3c901fc709f1162273783d22a575d096753abd157ad?context=explore)
 
 ---
 
@@ -57,7 +57,7 @@ scripts/wsl-docker-import
 
 #### In theory, the gates of sudo should restrict the devel to only making changes to `/hel` and any mounted drives - leaving only `gabriel` to make changes at the root level. Since the devel is operating within the `/hel` or `/home/devel` directories, the rest of the environment is probably pretty safe. You never know what the devil developers can get into, though
 
-##### More notes: All images are built with the Dockerfiles in the devels-playhouse repo [root](devels-playground).  `/hel` is mounted as a volume in Docker and the data stored in `/hel` will persist throughout all images when running in Docker. This feature does not work with WSL, however
+##### More notes: All images are built with the Dockerfiles in the devels-playhouse repo [root](devels-playground). `/hel` is mounted as a volume in Docker and the data stored in `/hel` will persist throughout all images when running in Docker. This feature does not work with WSL, however
 
 ---
 
@@ -73,7 +73,7 @@ scripts/wsl-docker-import
 
 &nbsp;
 
-#### [**ubuntu-phat**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phat/images/sha256-638debdde2528366c7beb3c901fc709f1162273783d22a575d096753abd157ad?context=explore)
+#### [**ubuntu-phell**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phell/images/sha256-638debdde2528366c7beb3c901fc709f1162273783d22a575d096753abd157ad?context=explore)
 
 #### `apt-get install powershell dotnet-sdk-7.0`
 
@@ -81,7 +81,7 @@ scripts/wsl-docker-import
 
 &nbsp;
 
-#### [**ubuntu-phatt*er***](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phatter/images/sha256-d4b592c32d92db53e8380a5556bdd771063d946e5614d0ebc953359941be5263?context=explore)
+#### [**ubuntu-phellt*er***](https://hub.docker.com/layers/kindtek/dplay/ubuntu-dind/images/sha256-d4b592c32d92db53e8380a5556bdd771063d946e5614d0ebc953359941be5263?context=explore)
 
 #### `apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io `
 
@@ -89,7 +89,7 @@ scripts/wsl-docker-import
 
 &nbsp;
 
-#### [**ubuntu-phattest**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phattest/images/sha256-7b0b84ea76eb2ef418e4614d3bd843f3781b6014e1cbb4076127858f3e0a8f32?context=explore)
+#### [**ubuntu-gui**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-gui/images/sha256-7b0b84ea76eb2ef418e4614d3bd843f3781b6014e1cbb4076127858f3e0a8f32?context=explore)
 
 #### `apt-get install gnome-session gdm3 gimp nautilus vlc x11-apps apt-transport-https software-properties-common brave-browser`
 
@@ -97,7 +97,7 @@ Basically, if you want to run a GUI you can. This requires WSL 2
 
 &nbsp;
 
-#### [**ubuntu-phatso**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phatso/images/sha256-3a7fab2b8d29fb737ef85367e063f6e2d538b5703cab552c6d0e2ad13f4fd7fc?context=explore)
+#### [**ubuntu-cuda**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-cuda/images/sha256-3a7fab2b8d29fb737ef85367e063f6e2d538b5703cab552c6d0e2ad13f4fd7fc?context=explore)
 
 #### `apt-get install nvidia-cuda-toolkit`
 
@@ -105,7 +105,7 @@ If CUDA is a must have for your developer needs your life just became easier
 
 &nbsp;
 
-##### Note: Each version is built on top of the image documented above it. For instance, ubuntu-phatter will contain all of the features from the above ubuntu-git and ubuntu-phat versions
+##### Note: Each version is built on top of the image documented above it. For instance, ubuntu-dind will contain all of the features from the above ubuntu-git and ubuntu-phell versions
 
 &nbsp;
 

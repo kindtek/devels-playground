@@ -60,10 +60,8 @@ services:
     labels:
       com.dplay_git.description: "basics + git"
 
- 
 volumes:
   hel-data:
-
 
 networks:
   "${COMPOSE_PROJECT_NAME}_default":

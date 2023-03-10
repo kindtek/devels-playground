@@ -25,18 +25,18 @@ services:
     extends: skel
     build:
       target: dplay_git
-  phat:
+  phell:
     extends: git
-    image: kindtek/dplay:ubuntu-phat
+    image: kindtek/dplay:ubuntu-phell
     build:
-      target: dplay_phat
-  phattest:
-    extends: phat
-    image: kindtek/dplay:ubuntu-phattest
+      target: dplay_phell
+  gui:
+    extends: phell
+    image: kindtek/dplay:ubuntu-gui
     build:
-      target: dplay_phattest
-  phatso:
-    extends: phattest
-    image: kindtek/dplay:ubuntu-phatso
+      target: dplay_gui
+  cuda:
+    extends: gui
+    image: kindtek/dplay:ubuntu-cuda
     build:
-      target: dplay_phatso
+      target: dplay_cuda
