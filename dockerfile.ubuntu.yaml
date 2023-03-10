@@ -100,11 +100,12 @@ RUN chown devel:devels -R /home/devel/devels-workshop /home/devel/devels-worksho
 RUN ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay
 # make backup script executable
 RUN chmod +x dwork/mnt/backup.sh
-RUN cp -arf dwork/mnt/backup.sh $backup_mnt_location/devel-backup.sh
+
+USER ${username}
+RUN sudo mkdir -p $backup_mnt_location && sudo cp -arf dwork/mnt/backup.sh $backup_mnt_location/devel-backup.sh
 # wait to do this until we have WSL_DISTRO_NAME
 # RUN sh $backup_mnt_location/devel-backup.sh
 
-USER ${username}
 
 # microsoft stuff
 FROM dplay_git as dplay_phat
