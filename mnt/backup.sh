@@ -5,14 +5,15 @@ source /home/devel/.bashrc
 if [ -z $_NIX_MNT_LOCATION ]
 then 
     export _NIX_MNT_LOCATION='/mnt/n'
+fi
 if [ -z $WSL_DISTRO_NAME ] 
 then
     export WSL_DISTRO_NAME=orig
 fi
 
 HEL_DESTINATION="$_NIX_MNT_LOCATION/gabriel/devel-$WSL_DISTRO_NAME"
-HEL_BACKUP_SCRIPT="$_NIX_MNT_LOCATION/gabriel/backup-$WSL_DISTRO_NAME.sh"
-HEL_RESTORE_SCRIPT="$_NIX_MNT_LOCATION/gabriel/restore-$WSL_DISTRO_NAME.sh"
+HEL_BACKUP_SCRIPT="$_NIX_MNT_LOCATION/gabriel/backup-devel-$WSL_DISTRO_NAME.sh"
+HEL_RESTORE_SCRIPT="$_NIX_MNT_LOCATION/gabriel/restore-devel-$WSL_DISTRO_NAME.sh"
 
 echo "backing the /hel up to: $HEL_DESTINATION ..."
 
