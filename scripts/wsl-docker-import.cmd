@@ -289,6 +289,8 @@ if default==yes (
 )
 
 :wsl_or_exit
+@REM make sure windows paths transfer
+SET WSLENV=USERPROFILE/p
 ECHO Windows Subsystem for Linux Distributions:
 wsl -l -v
 ECHO:
@@ -296,6 +298,8 @@ wsl --status
 ECHO:
 ECHO press ENTER to open !distro! in WSL
 ECHO  ..or enter any character to skip 
+@REM make sure windows paths transfer
+SET WSLENV=USERPROFILE/p 
 SET /p "exit=$ "
 IF "%exit%"=="" (
     ECHO:
