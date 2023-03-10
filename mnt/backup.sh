@@ -4,10 +4,10 @@ source /home/devel/.bashrc
 
 if [ -z $_NIX_MNT_LOCATION ]
 then 
-    $_NIX_MNT_LOCATION='/mnt/n'
+    export _NIX_MNT_LOCATION='/mnt/n'
 elif [ -z $WSL_DISTRO_NAME ] 
 then
-    $WSL_DISTRO_NAME="orig"
+    export WSL_DISTRO_NAME="orig"
 fi
 
 HEL_DESTINATION="$_NIX_MNT_LOCATION/gabriel/devel-$WSL_DISTRO_NAME"
