@@ -34,11 +34,19 @@ services:
     build:
       context: .
       target: dplay_data
+      dockerfile: dockerfile.ubuntu.yaml
     init: true
     volumes:
       - hel-data:/mnt/w
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
     labels:
       com.dplay_data.description: "shared backup drive"
+    depends_on:
+      skel:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
 
   git:
     # owner/group becomes owner of hel-data volume
@@ -69,6 +77,50 @@ services:
         target: /var/run/docker.sock
     labels:
       com.dplay_git.description: "basics + git"
+  phell:
+    extends: git
+    image: kindtek/dplay:ubuntu-phell
+    build:
+      context: .
+      target: dplay_phell
+      args:
+        - username=${username:-gabriel}
+      dockerfile: dockerfile.ubuntu.yaml
+    labels:
+      com.dplay_phell.description: "basics + git + powerhell"
+  dind:
+    extends: phell
+    image: kindtek/dplay:ubuntu-dind
+    build:
+      context: .
+      target: dplay_dind
+      args:
+        - username=${username:-gabriel}
+      dockerfile: dockerfile.ubuntu.yaml
+    labels:
+      com.dplay_dind.description: "basics + git + powerhell + docker"
+  gui:
+    extends: dind
+    image: kindtek/dplay:ubuntu-gui
+    build:
+      context: .
+      target: dplay_gui
+      args:
+        - username=${username:-gabriel}
+      dockerfile: dockerfile.ubuntu.yaml
+    labels:
+      com.dplay_gui.description: "basics + git + powerhell + docker + gui"
+  cuda:
+    extends: gui
+    image: kindtek/dplay:ubuntu-cuda
+    build:
+      context: .
+      target: dplay_cuda
+      args:
+        - username=${username:-gabriel}
+      dockerfile: dockerfile.ubuntu.yaml
+      labels:
+        com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 
 volumes:
   hel-data:

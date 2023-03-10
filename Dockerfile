@@ -20,7 +20,7 @@ RUN python3 -m pip install --upgrade pip cryptography oauthlib pyjwt setuptools 
 # set up groups
 RUN addgroup --gid 111 ${groupname} && \
     addgroup --gid 888 halos && \
-    addgroup --gid 666 horns
+    addgroup --gid 666 horns 
 
 RUN adduser --home /home/${username} --shell /bin/bash --uid 1011 --disabled-password ${username}
 
@@ -32,7 +32,7 @@ USER ${username}
 # enable cdir on nonroot shell - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
 # also add powershell alias
 RUN pip3 install cdir --user && \
-    echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${backup_mnt_location}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c "set verbose showmode"'" >> ~/.bashrc
+    echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${backup_mnt_location}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> ~/.bashrc
 # add common paths
 ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
 # switch back to root to setup
@@ -50,11 +50,11 @@ RUN cp -r ./home/${username}/.local/bin /usr/local && \
 
 # add username only to sudo
 RUN usermod -aG halos host && usermod -aG halos ${username} 
-RUN usermod -aG horns devel && usermod -aG horns ${username} 
+RUN usermod -aG devels devel && usermod -aG horns ${username} 
 RUN usermod -aG sudo ${username}
 
 # RUN sed -e 's;^# \(%sudo.*NOPASSWD.*\);\1;g' -i /etc/sudoers
-# RUN chown -R ${username}:halos home/host
+# RUN chown -R ${username}:halos /home/host
 RUN chown -R host:halos /home/host
 RUN chown -R devel:horns /home/devel
 
@@ -84,7 +84,19 @@ USER ${username}
 ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
 
 
-FROM dplay_skel AS dplay_git
+FROM dplay_skel AS dplay_data
+RUN \
+if [ -d "/gabriel" ]; then \
+    if [ ! -f "/gabriel/backup-docker.sh" ]; then \
+            echo "#!/bin/bash " >> /gabriel/backup-docker.sh \
+    fi  \
+fi
+
+RUN echo "# # # # Docker # # # # " >> /gabriel/backup-docker.sh
+RUN sudo ./gabriel/backup-docker.sh
+
+
+FROM dplay_data AS dplay_git
 
 WORKDIR /hel
 USER devel
@@ -101,10 +113,18 @@ RUN ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay
 # make backup script executable
 RUN chmod +x dwork/mnt/backup.sh
 
+# mount with halos ownership
 USER ${username}
-RUN sudo mkdir -p $backup_mnt_location && sudo cp -arf dwork/mnt/backup.sh $backup_mnt_location/backup-devel.sh
-# wait to do this until we have WSL_DISTRO_NAME
-# RUN sh $backup_mnt_location/backup-devel.sh
+RUN sudo mkdir -p ${backup_mnt_location}/${username}/devel-orig && \
+    sudo chown ${username}:${groupname} ${backup_mnt_location}/${username} && \
+    sudo chown devel:horns ${backup_mnt_location}/${username}/devel-orig && \
+    sudo cp -arf dwork/mnt/backup.sh ${backup_mnt_location}/${username}/backup-devel.sh && \
+    # make rwx for owner and rx for group/others
+    sudo chmod 755 -R ${backup_mnt_location}/${username} \
+    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel will delete your files if you save them in this directory. Store ALL files you care about in the gabriel directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${backup_mnt_location}/README_ASAP.txt  && \
+    sudo chown ${username}:${groupname} ${backup_mnt_location}/README_ASAP.txt
+    # wait to do this until we have WSL_DISTRO_NAME
+    # sh ${backup_mnt_location}/backup-devel.sh
 
 
 # microsoft stuff
