@@ -149,9 +149,9 @@ RUN sudo apt-get update -yq && \
 
 RUN sudo cp /etc/alternatives/brave-browser /etc/alternatives/brave-browser.old
 # change last line of this file - fix for brave-browser displaying empty windows
-RUN sudo head -n -1 /etc/alternatives/brave-browser.old > /etc/alternatives/brave-browser
+RUN sudo head -n -1 /opt/brave.com/brave/brave-browser.old > /opt/brave.com/brave/brave-browser
 # orig: "$HERE/brave" "$@" " --disable-gpu " || true
-RUN sudo echo '"\$HERE/brave" "\$@" " --disable-gpu " || true' >> /etc/alternatives/brave-browser
+RUN sudo echo '"\$HERE/brave" "\$@" " --disable-gpu " || true' >> /opt/brave.com/brave/brave-browser
     
 # GNOME
 RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3 gimp gedit nautilus vlc x11-apps xfce4
