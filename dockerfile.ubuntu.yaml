@@ -11,7 +11,7 @@ ARG groupname=${groupname:-arcans}
 RUN apt-get update -yq && \
     apt-get upgrade -y && \
     # install github, build-essentials, libssl, etc
-    apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip vim apt-transport-https software-properties-common 
+    apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip nvi apt-transport-https software-properties-common 
 
 # # set up group/user 
 # RUN addgroup --system --gid 1001 ${groupname} && \
@@ -31,7 +31,7 @@ USER ${username}
 # enable cdir on nonroot shell - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
 # also add powershell alias
 RUN pip3 install cdir --user && \
-    echo "alias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh" >> ~/.bashrc
+    echo "alias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi=\"vi -c 'set verbose showmode'\"" >> ~/.bashrc
 # add common paths
 ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
 # switch back to root to setup
