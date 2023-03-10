@@ -11,7 +11,7 @@ ARG groupname=${groupname:-arcans}
 RUN apt-get update -yq && \
     apt-get upgrade -y && \
     # install github, build-essentials, libssl, etc
-    apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip vim apt-transport-https software-properties-common 
+    apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip nvi apt-transport-https software-properties-common 
 
 # # set up group/user 
 # RUN addgroup --system --gid 1001 ${groupname} && \
@@ -31,7 +31,7 @@ USER ${username}
 # enable cdir on nonroot shell - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
 # also add powershell alias
 RUN pip3 install cdir --user && \
-    echo "alias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh" >> ~/.bashrc
+    echo "alias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi=\"vi -c 'set verbose showmode'\"" >> ~/.bashrc
 # add common paths
 ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
 # switch back to root to setup
@@ -77,8 +77,14 @@ RUN passwd -d ${username} && passwd -d host && passwd -d root && passwd -l root
 # set up /devel folder as symbolic link to /home/devel for cloning repository(ies)
 RUN ln -s /home/devel /hel && chown -R devel:devels /hel
 RUN touch /hel/lo.world
-
+RUN mkdir /hel/.ssh && chmod 700 /hel/.ssh && chown -R devel:devels /hel/.ssh
+# add common paths
+ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
+USER devel
+ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
 USER ${username}
+ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
+
 
 FROM dplay_skel AS dplay_git
 
@@ -133,11 +139,12 @@ FROM dplay_phatter as dplay_phattest
 RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
 RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main"| sudo tee /etc/apt/sources.list.d/brave-browser-release.list
 
+# in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
 RUN sudo apt-get update -yq && \
     sudo apt-get install -y brave-browser 
-
+    
 # GNOME
-RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3 gimp gedit nautilus vlc x11-apps
+RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3 gimp gedit nautilus vlc x11-apps xfce4
 
 FROM dplay_phattest as dplay_phatso
 # CUDA
