@@ -29,6 +29,17 @@ services:
     labels:
       com.dplay_skel.description: "n/a"
 
+  data:
+    user: gabriel
+    build:
+      context: .
+      target: dplay_data
+    init: true
+    volumes:
+      - hel-data:/mnt/w
+    labels:
+      com.dplay_data.description: "shared backup drive"
+
   git:
     # owner/group becomes owner of hel-data volume
     user: devel
