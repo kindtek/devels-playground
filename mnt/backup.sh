@@ -17,6 +17,11 @@ HEL_RESTORE_SCRIPT="$_NIX_MNT_LOCATION/restore-$WSL_DISTRO_NAME.sh"
 
 echo "backing up hel to: $HEL_DESTINATION ..."
 
+if [ -d "$HEL_DESTINATION" ]
+then 
+    export VERSION_CONTROL=numbered; mv $HEL_DESTINATION $HEL_DESTINATION.old
+fi
+
 cp -arf /home/devel $HEL_DESTINATION
 
 echo "removing script $HEL_RESTORE_SCRIPT ..."
