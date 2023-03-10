@@ -102,9 +102,9 @@ RUN ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay
 RUN chmod +x dwork/mnt/backup.sh
 
 USER ${username}
-RUN sudo mkdir -p $backup_mnt_location && sudo cp -arf dwork/mnt/backup.sh $backup_mnt_location/devel-backup.sh
+RUN sudo mkdir -p $backup_mnt_location && sudo cp -arf dwork/mnt/backup.sh $backup_mnt_location/backup-devel.sh
 # wait to do this until we have WSL_DISTRO_NAME
-# RUN sh $backup_mnt_location/devel-backup.sh
+# RUN sh $backup_mnt_location/backup-devel.sh
 
 
 # microsoft stuff
