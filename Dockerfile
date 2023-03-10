@@ -50,7 +50,7 @@ RUN cp -r ./home/${username}/.local/bin /usr/local && \
 
 # add username only to sudo
 RUN usermod -aG halos host && usermod -aG halos ${username} 
-RUN usermod -aG devels devel && usermod -aG horns ${username} 
+RUN usermod -aG horns devel && usermod -aG horns ${username} 
 RUN usermod -aG sudo ${username}
 
 # RUN sed -e 's;^# \(%sudo.*NOPASSWD.*\);\1;g' -i /etc/sudoers

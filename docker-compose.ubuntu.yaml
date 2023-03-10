@@ -33,14 +33,14 @@ services:
     user: gabriel
     build:
       context: .
-      target: dplay_data
-      dockerfile: dockerfile.ubuntu.yaml
-    init: true
-    volumes:
-      - hel-data:/mnt/w
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
+      # target: DUMMERdata
+      # dockerfile: dockerfile.ubuntu.yaml
+    # init: true
+    # volumes:
+    #   - hel-data:/mnt/w
+    #   - type: bind
+    #     source: /var/run/docker.sock
+    #     target: /var/run/docker.sock
     labels:
       com.dplay_data.description: "shared backup drive"
     depends_on:
