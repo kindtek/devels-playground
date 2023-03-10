@@ -17,13 +17,10 @@ HEL_RESTORE_SCRIPT="$_NIX_MNT_LOCATION/gabriel/restore-devel-$WSL_DISTRO_NAME.sh
 
 echo "backing the /hel up to: $HEL_DESTINATION ..."
 
-if [ -d "$HEL_DESTINATION" ]
-then 
-    export VERSION_CONTROL=numbered; mv $HEL_DESTINATION $HEL_DESTINATION.old
-fi
+export VERSION_CONTROL=numbered
 
 mkdir -p $HEL_DESTINATION
-cp -arf /home/devel $HEL_DESTINATION
+cp -arf --backup=VERSION_CONTROL --update /home/devel $HEL_DESTINATION
 
 echo "removing script $HEL_RESTORE_SCRIPT ..."
 
