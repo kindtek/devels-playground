@@ -26,8 +26,8 @@ echo "#!/bin/bash
 # run as sudo
 source /home/devel/.bashrc
 
-echo 'restoring $_NIX_MNT_LOCATION/gabriel/devel-$WSL_DISTRO_NAME to /home/devel ...'
-cp --backup=$VERSION_CONTROL --remove-destination -arf $_NIX_MNT_LOCATION/gabriel/devel-$WSL_DISTRO_NAME/.* /home/devel" > $HEL_RESTORE_SCRIPT
+echo 'restoring $_NIX_MNT_LOCATION/gabriel/devel-$WSL_DISTRO_NAME/devel to /home ...'
+cp --backup=$VERSION_CONTROL --remove-destination -arf $_NIX_MNT_LOCATION/gabriel/devel-$WSL_DISTRO_NAME /home" > $HEL_RESTORE_SCRIPT
 
 chown devel:devels $HEL_RESTORE_SCRIPT
 chmod +x $HEL_RESTORE_SCRIPT
