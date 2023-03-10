@@ -38,3 +38,5 @@ mv /home/devel /home/devel.old
 mv /home/devel-$WSL_DISTRO_NAME.restored /home/devel" >> $HEL_RESTORE_SCRIPT
 
 chmod +x $HEL_RESTORE_SCRIPT
+
+echo "Backup complete."
