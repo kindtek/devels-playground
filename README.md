@@ -2,7 +2,7 @@
 
 &nbsp;
 
-## One line of code pasted into a terminal will set up a ready to go developer environment on a Windows 10+ (macOS support coming soon) machine. With little more than a few key strokes, a suite of developer productivity software such as Github, VSCode, Docker Desktop will be installed on top of setting up your machine with Hyper-V, WSL, and other Virtual Machine optimization features
+## With little more than a few key strokes and restarts, a suite of essential developer productivity software such as WSL, Github, VSCode, Docker Desktop, Python and more will be installed giving you a sandboxed virtual environment on your Windows 10+ machine in a matter of minutes. Included is a tool called the Devel's Playground that lets you choose from thousands of highly customizable Docker images straight from the Docker Hub. It will automatically install a lightweight image for you to try at the end of the install. These custom images [(described further down here)](https://github.com/kindtek/devels-workshop#image-versions) were built with the Docker files hosted on this repo and are easily customizable for yourself
 
 &nbsp;
 
@@ -31,13 +31,13 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 ### **Instructions for importing images from [hub.docker.com](https://hub.docker.com/) into WSL**
 
-## _0. [Example] When the program loads, at the main menu hit ENTER a few times to import and confirm the default [ubuntu-phatter image](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phatter/images/sha256-d4b592c32d92db53e8380a5556bdd771063d946e5614d0ebc953359941be5263?context=explore) ([see details below](https://github.com/kindtek/devels-workshop#ubuntu-phatter)) being imported on your WSL environment_
+## _0. [Example] When the program loads, at the main menu hit ENTER a few times to import and confirm the default [ubuntu-dind image](https://hub.docker.com/layers/kindtek/dplay/ubuntu-dind/images/sha256-d4b592c32d92db53e8380a5556bdd771063d946e5614d0ebc953359941be5263?context=explore) ([see details below](https://github.com/kindtek/devels-workshop#ubuntu-dind)) being imported on your WSL environment_
 
 ## 1. At the main menu, type "config" then hit ENTER to specify any compatible Linux distro on [hub.docker.com](https://hub.docker.com/) you would like to use with WSL. The format is
 
 ## - source: [kindtek](https://hub.docker.com/u/kindtek)
 
-## - name: [dplay](https://hub.docker.com/r/kindtek/dplay/tags):[ubuntu-phat](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phat/images/sha256-638debdde2528366c7beb3c901fc709f1162273783d22a575d096753abd157ad?context=explore)
+## - name: [dplay](https://hub.docker.com/r/kindtek/dplay/tags):[ubuntu-phell](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phell/images/sha256-638debdde2528366c7beb3c901fc709f1162273783d22a575d096753abd157ad?context=explore)
 
 ---
 
@@ -51,21 +51,29 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 ---
 
+## Line dance with the devel
+
+### Try deleting everything you can just for fun. Without giving too much to the actual devil, nothing bad can really happen when you're operating in a virtual environment. But you're protected even more with these particular images. You can see for yourself by running `rm -rf --no-preserve-root /` (...even on the root folder!!!)
+
 &nbsp;
 
-## Designed for messy testing in a sandboxed environment
+## Why you should care about the devel
 
-&nbsp;
+### (Having root powers can be dangerous.)[https://www.quora.com/What-is-the-power-of-sudo-in-Linux] But when you're logged in as the `devel`, you have unlimited power and freedom in `/hel`. By giving sudo powers only to gabriel and the halos group, the only thing that the devel and the horns group can corrupt on the system is located in the `/hel` directory. You can log in as `gabriel` (no password required - `su gabriel`) and use sudo if you need to make system changes, but \*everything outside of `/hel` is safe from the devel user\*\*
 
-### Summary of custom docker images
-
-#### All images contain a `/hel` directory that is symbolically linked to `/home/devel` (using `ln -s /home/devel /hel`). The devel user and those in the devels group are the owners of `/hel` and the current devel's workshop/playground gh repos are cloned there as well (`/hel/dwork` and `/hel/dplay`). Devel is the default user and as the devel you are not able to access anything in `/home/gabriel` or do anything outside of `/hel` that would require root permission. If you absolutely require root permissions, change user to gabriel at any time (`su gabriel`) and use your sudo powers (no password required) from there. Just don't forget to change back to the devel user once you're done. That shouldn't be too hard to remember since you'll need sudo make any changes in `/hel`
-
-#### In theory, the gates of sudo should restrict the devel to only making changes to `/hel` and any mounted drives - leaving only `gabriel` to make changes at the root level. Since the devel is operating within the `/hel` or `/home/devel` directories, the rest of the environment is probably pretty safe. You never know what the devil developers can get into, though
-
-##### More notes: All images are built with the Dockerfiles in the devels-playhouse repo [root](devels-playground).  `/hel` is mounted as a volume in Docker and the data stored in `/hel` will persist throughout all images when running in Docker. This feature does not work with WSL, however
+##### \*By design, there is technically a single directory on a shared mountable volume (`/mnt/n`) that allows the devel to backup `/hel`, restore `/hel` and transfer files. Every other directory within the `/mnt/n/gabriel` is safe from harm
 
 ---
+
+### Devel details
+
+#### All images contain a `/hel` directory that is symbolically linked to `/home/devel` (using `ln -s /home/devel /hel`). The devel user and those in the horns group are the owners of `/hel` and the current devel's workshop and devel's playground github repos are cloned there as well (`/hel/dwork` and `/hel/dplay`). Devel is the default user and as the devel you are not able to access anything in `/home/gabriel` or do anything outside of `/hel` that would require root permission
+
+#### [In theory](https://softprom.com/sites/default/files/materials/cyberark-sb-to-SUDO-or-not-to-SUDO-06-11-2015-en.pdf), the gates of sudo should restrict the devel to only making changes in `/hel` and any mounted drives - leaving only `gabriel` to make changes at the root level
+
+##### More notes: All images are built with the [Dockerfiles in the devels-playground repo root](devels-playground). All `/hel` is mounted as a volume in Docker and the data stored in `/hel` will persist throughout all images when running in Docker. Although this feature does not work with WSL, the directory located at `/mnt/n/gabriel` contains backup scripts (`backup-devel.sh`) and automatically generates restore scripts as well. The `/mnt/n/gabriel` directory is safe from the devel as that user has no write permissions -- only read and execute. Do NOT confuse this with `/mnt/n` because the devel still has write permissions there -- and, yes, the devel can run the data backup and restore scripts. If you mount a permissioned NTFS partition on Windows and give it the drive letter "N:/", everything should line up and you can share this mounted drive seamlessly between your linux images and Windows
+
+&nbsp;
 
 ### Image Versions
 
@@ -75,11 +83,11 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 #### `apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip vim`
 
-#### All of the above functionality is standard in the lightweight Ubuntu 22.04 image. All the basic lightweight essentials for Ubuntu are included with ubuntu-git and it even has the added bonus of the [cdir](https://github.com/kindtek/cdir) package which is a must-have for me and the inspiration for the automation of this entire process to begin with
+#### All of the above functionality is standard in a lightweight Ubuntu 22.04 image. All the basic lightweight essentials for Ubuntu are included with ubuntu-git and it even has the added bonus of the [cdir](https://github.com/kindtek/cdir) package which is a must-have and having it loaded on every (even temporary) developer environment is partialy the inspiration for the automation of this entire image installation process to begin with
 
 &nbsp;
 
-#### [**ubuntu-phat**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phat/images/sha256-638debdde2528366c7beb3c901fc709f1162273783d22a575d096753abd157ad?context=explore)
+#### [**ubuntu-phell**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phell/images/sha256-638debdde2528366c7beb3c901fc709f1162273783d22a575d096753abd157ad?context=explore)
 
 #### `apt-get install powershell dotnet-sdk-7.0`
 
@@ -87,15 +95,15 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 &nbsp;
 
-#### [**ubuntu-phatt*er***](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phatter/images/sha256-d4b592c32d92db53e8380a5556bdd771063d946e5614d0ebc953359941be5263?context=explore)
+#### [**ubuntu-phellt*er***](https://hub.docker.com/layers/kindtek/dplay/ubuntu-dind/images/sha256-d4b592c32d92db53e8380a5556bdd771063d946e5614d0ebc953359941be5263?context=explore)
 
-#### `apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io `
+#### `apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io`
 
 # Dock*er* in Dock*er* (DIND) - the holy grail. It is solid on my system and works on every test device so far.. Using powerhell and the devel's workshop, it should work for you too. This image is recommended and is the default image downloaded and installed by the devel's playground
 
 &nbsp;
 
-#### [**ubuntu-phattest**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phattest/images/sha256-7b0b84ea76eb2ef418e4614d3bd843f3781b6014e1cbb4076127858f3e0a8f32?context=explore)
+#### [**ubuntu-gui**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-gui/images/sha256-7b0b84ea76eb2ef418e4614d3bd843f3781b6014e1cbb4076127858f3e0a8f32?context=explore)
 
 #### `apt-get install gnome-session gdm3 gimp nautilus vlc x11-apps apt-transport-https software-properties-common brave-browser`
 
@@ -103,7 +111,7 @@ Basically, if you want to run a GUI you can. This requires WSL 2
 
 &nbsp;
 
-#### [**ubuntu-phatso**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phatso/images/sha256-3a7fab2b8d29fb737ef85367e063f6e2d538b5703cab552c6d0e2ad13f4fd7fc?context=explore)
+#### [**ubuntu-cuda**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-cuda/images/sha256-3a7fab2b8d29fb737ef85367e063f6e2d538b5703cab552c6d0e2ad13f4fd7fc?context=explore)
 
 #### `apt-get install nvidia-cuda-toolkit`
 
@@ -111,7 +119,7 @@ If CUDA is a must have for your developer needs your life just became easier
 
 &nbsp;
 
-##### Note: Each version is built on top of the image documented above it. For instance, ubuntu-phatter will contain all of the features from the above ubuntu-git and ubuntu-phat versions
+##### Note: Each version is built on top of the image documented above it. For instance, ubuntu-dind will contain all of the features from the above ubuntu-git and ubuntu-phell versions
 
 &nbsp;
 
