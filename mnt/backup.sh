@@ -4,18 +4,17 @@ source /home/devel/.bashrc
 
 if [ -z $_NIX_MNT_LOCATION ]
 then 
-    # set $_MNT_LOCATION here if desired
-    exit
+    $_NIX_MNT_LOCATION='/mnt/n'
 elif [ -z $WSL_DISTRO_NAME ] 
 then
-    exit
+    $WSL_DISTRO_NAME="orig"
 fi
 
-HEL_DESTINATION="$_NIX_MNT_LOCATION/devel-$WSL_DISTRO_NAME"
-HEL_BACKUP_SCRIPT="$_NIX_MNT_LOCATION/backup-$WSL_DISTRO_NAME.sh"
-HEL_RESTORE_SCRIPT="$_NIX_MNT_LOCATION/restore-$WSL_DISTRO_NAME.sh"
+HEL_DESTINATION="$_NIX_MNT_LOCATION/gabriel/devel-$WSL_DISTRO_NAME"
+HEL_BACKUP_SCRIPT="$_NIX_MNT_LOCATION/gabriel/backup-$WSL_DISTRO_NAME.sh"
+HEL_RESTORE_SCRIPT="$_NIX_MNT_LOCATION/gabriel/restore-$WSL_DISTRO_NAME.sh"
 
-echo "backing up hel to: $HEL_DESTINATION ..."
+echo "backing the /hel up to: $HEL_DESTINATION ..."
 
 if [ -d "$HEL_DESTINATION" ]
 then 
@@ -33,7 +32,7 @@ echo "creating restore script and saving as $HEL_RESTORE_SCRIPT ..."
 echo "#!/bin/bash
 # run as sudo
 source /home/devel/.bashrc
-cp -arf $_NIX_MNT_LOCATION/devel-$WSL_DISTRO_NAME /home/devel-$WSL_DISTRO_NAME.restored
+cp -arf $_NIX_MNT_LOCATION/gabriel/devel-$WSL_DISTRO_NAME /home/devel-$WSL_DISTRO_NAME.restored
 mv /home/devel /home/devel.old
 mv /home/devel-$WSL_DISTRO_NAME.restored /home/devel" >> $HEL_RESTORE_SCRIPT
 
