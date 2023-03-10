@@ -32,7 +32,7 @@ echo "#!/bin/bash
 # run as sudo
 source /home/devel/.bashrc
 
-echo 'copying $_NIX_MNT_LOCATION/gabriel/devel-$WSL_DISTRO_NAME to /home/devel-$WSL_DISTRO_NAME.restored ...
+echo 'copying $_NIX_MNT_LOCATION/gabriel/devel-$WSL_DISTRO_NAME to /home/devel-$WSL_DISTRO_NAME.restored ...'
 
 cp -arf $_NIX_MNT_LOCATION/gabriel/devel-$WSL_DISTRO_NAME /home/devel-$WSL_DISTRO_NAME.restored
 
@@ -42,6 +42,7 @@ mv /home/devel /home/devel.old
 echo 'restoring /home/devel-$WSL_DISTRO_NAME.restored to /home/devel ...'
 mv /home/devel-$WSL_DISTRO_NAME.restored /home/devel" >> $HEL_RESTORE_SCRIPT
 
+chown ${username:-gabriel}:${groupname:-arcans} "/home/devel-$WSL_DISTRO_NAME.restored"
 chmod +x $HEL_RESTORE_SCRIPT
 
 echo "Backup complete."
