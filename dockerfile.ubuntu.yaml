@@ -32,7 +32,7 @@ USER ${username}
 # enable cdir on nonroot shell - an absolute lifesaver for speedy nav in an interactive cli (cannot be root for install)
 # also add powershell alias
 RUN pip3 install cdir --user && \
-    echo "alias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi=\"vi -c 'set verbose showmode'\"" >> ~/.bashrc
+    echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi=\"vi -c 'set verbose showmode'\"" >> ~/.bashrc
 # add common paths
 ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
 # switch back to root to setup
