@@ -37,7 +37,7 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 ## - source: [kindtek](https://hub.docker.com/u/kindtek)
 
-## - name: [dplay](https://hub.docker.com/r/kindtek/dplay/tags):[ubuntu-phell](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phell/images/sha256-638debdde2528366c7beb3c901fc709f1162273783d22a575d096753abd157ad?context=explore)
+## - name: [dplay](https://hub.docker.com/r/kindtek/dplay/tags):[ubuntu-msdot](https://hub.docker.com/layers/kindtek/dplay/ubuntu-msdot/images/sha256-638debdde2528366c7beb3c901fc709f1162273783d22a575d096753abd157ad?context=explore)
 
 ---
 
@@ -59,7 +59,7 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 ## Why you should care about the devel
 
-### (Having root powers can be dangerous.)[https://www.quora.com/What-is-the-power-of-sudo-in-Linux] But when you're logged in as the `devel`, you have unlimited power and freedom in `/hel`. By giving sudo powers only to gabriel and the halos group, the only thing that the devel and the horns group can corrupt on the system is located in the `/hel` directory. You can log in as `gabriel` (no password required - `su gabriel`) and use sudo if you need to make system changes, but \*everything outside of `/hel` is safe from the devel user\*\*
+### [Having root powers can be dangerous.](https://www.quora.com/What-is-the-power-of-sudo-in-Linux) But when you're logged in as the `devel`, you have unlimited power and freedom in `/hel`. By giving sudo powers only to gabriel and the halos group, the only thing that the devel and the horns group can corrupt on the system is located in the `/hel` directory. You can log in as `gabriel` (no password required - `su gabriel`) and use sudo if you need to make system changes, but \*everything outside of `/hel` is safe from the devel user\*\*
 
 ##### \*By design, there is technically a single directory on a shared mountable volume (`/mnt/n`) that allows the devel to backup `/hel`, restore `/hel` and transfer files. Every other directory within the `/mnt/n/gabriel` is safe from harm
 
@@ -87,7 +87,7 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 &nbsp;
 
-#### [**ubuntu-phell**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phell/images/sha256-638debdde2528366c7beb3c901fc709f1162273783d22a575d096753abd157ad?context=explore)
+#### [**ubuntu-msdot**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-msdot/images/sha256-638debdde2528366c7beb3c901fc709f1162273783d22a575d096753abd157ad?context=explore)
 
 #### `apt-get install powershell dotnet-sdk-7.0`
 
@@ -95,11 +95,11 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 &nbsp;
 
-#### [**ubuntu-phellt*er***](https://hub.docker.com/layers/kindtek/dplay/ubuntu-dind/images/sha256-d4b592c32d92db53e8380a5556bdd771063d946e5614d0ebc953359941be5263?context=explore)
+#### [**ubuntu-dind**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-dind/images/sha256-d4b592c32d92db53e8380a5556bdd771063d946e5614d0ebc953359941be5263?context=explore)
 
 #### `apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io`
 
-# Dock*er* in Dock*er* (DIND) - the holy grail. It is solid on my system and works on every test device so far.. Using powerhell and the devel's workshop, it should work for you too. This image is recommended and is the default image downloaded and installed by the devel's playground
+# Docker in Docker (DIND) - the holy grail. It is solid on my system and works on every test device so far.. Using powerhell and the devel's workshop, it should work for you too. This image is recommended and is the default image downloaded and installed by the devel's playground
 
 &nbsp;
 
@@ -119,7 +119,7 @@ If CUDA is a must have for your developer needs your life just became easier
 
 &nbsp;
 
-##### Note: Each version is built on top of the image documented above it. For instance, ubuntu-dind will contain all of the features from the above ubuntu-git and ubuntu-phell versions
+##### Note: Each version is built on top of the image documented above it. For instance, ubuntu-dind will contain all of the features from the above ubuntu-git and ubuntu-msdot versions
 
 &nbsp;
 
