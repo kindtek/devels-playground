@@ -25,13 +25,13 @@ services:
     extends: skel
     build:
       target: dplay_git
-  phell:
+  msdot:
     extends: git
-    image: kindtek/dplay:ubuntu-phell
+    image: kindtek/dplay:ubuntu-msdot
     build:
-      target: dplay_phell
+      target: dplay_msdot
   gui:
-    extends: phell
+    extends: msdot
     image: kindtek/dplay:ubuntu-gui
     build:
       target: dplay_gui

@@ -29,7 +29,7 @@ scripts/wsl-docker-import
 
 #### - source: [kindtek](https://hub.docker.com/u/kindtek)
 
-#### - name: [dplay](https://hub.docker.com/r/kindtek/dplay/tags):[ubuntu-phell](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phell/images/sha256-638debdde2528366c7beb3c901fc709f1162273783d22a575d096753abd157ad?context=explore)
+#### - name: [dplay](https://hub.docker.com/r/kindtek/dplay/tags):[ubuntu-msdot](https://hub.docker.com/layers/kindtek/dplay/ubuntu-msdot/images/sha256-638debdde2528366c7beb3c901fc709f1162273783d22a575d096753abd157ad?context=explore)
 
 ---
 
@@ -73,7 +73,7 @@ scripts/wsl-docker-import
 
 &nbsp;
 
-#### [**ubuntu-phell**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-phell/images/sha256-638debdde2528366c7beb3c901fc709f1162273783d22a575d096753abd157ad?context=explore)
+#### [**ubuntu-msdot**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-msdot/images/sha256-638debdde2528366c7beb3c901fc709f1162273783d22a575d096753abd157ad?context=explore)
 
 #### `apt-get install powershell dotnet-sdk-7.0`
 
@@ -81,7 +81,7 @@ scripts/wsl-docker-import
 
 &nbsp;
 
-#### [**ubuntu-phellt*er***](https://hub.docker.com/layers/kindtek/dplay/ubuntu-dind/images/sha256-d4b592c32d92db53e8380a5556bdd771063d946e5614d0ebc953359941be5263?context=explore)
+#### [**ubuntu-msdott*er***](https://hub.docker.com/layers/kindtek/dplay/ubuntu-dind/images/sha256-d4b592c32d92db53e8380a5556bdd771063d946e5614d0ebc953359941be5263?context=explore)
 
 #### `apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io `
 
@@ -105,7 +105,7 @@ If CUDA is a must have for your developer needs your life just became easier
 
 &nbsp;
 
-##### Note: Each version is built on top of the image documented above it. For instance, ubuntu-dind will contain all of the features from the above ubuntu-git and ubuntu-phell versions
+##### Note: Each version is built on top of the image documented above it. For instance, ubuntu-dind will contain all of the features from the above ubuntu-git and ubuntu-msdot versions
 
 &nbsp;
 

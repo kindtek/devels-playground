@@ -2,7 +2,7 @@
 # `username=mine groupname=ours docker run -d -i`
 FROM ubuntu:latest AS dplay_skel
 ARG username=${username:-gabriel}
-ARG groupname=${groupname:-arcans}
+ARG groupname=${groupname:-halos}
 ARG backup_mnt_location='/mnt/n'
 # mount w drive - set up drive w in windows using https://allthings.how/how-to-partition-a-hard-drive-on-windows-11/
 # RUN sudo mkdir /mnt/n && sudo mount -t drvfs w: /mnt/n
@@ -88,13 +88,11 @@ FROM dplay_skel AS dplay_data
 RUN \
 if [ -d "/gabriel" ]; then \
     if [ ! -f "/gabriel/backup-docker.sh" ]; then \
-            echo "#!/bin/bash " >> /gabriel/backup-docker.sh \
+            echo "#!/bin/bash" >> /gabriel/backup-docker.sh \
     fi  \
-fi
-
-RUN echo "# # # # Docker # # # # " >> /gabriel/backup-docker.sh
-RUN sudo ./gabriel/backup-docker.sh
-
+fi \
+# echo "# # # # Docker # # # # " >> /gabriel/backup-docker.sh  && \
+# sudo ./gabriel/backup-docker.sh
 
 FROM dplay_data AS dplay_git
 
@@ -128,7 +126,7 @@ RUN sudo mkdir -p ${backup_mnt_location}/${username}/devel-orig && \
 
 
 # microsoft stuff
-FROM dplay_git as dplay_phell
+FROM dplay_git as dplay_msdot
 
 # for powershell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
@@ -142,7 +140,7 @@ RUN sudo apt-get update -yq && \
     sudo apt-get install -y powershell dotnet-sdk-7.0
 
 # for docker in docker
-FROM dplay_phell as dplay_dind
+FROM dplay_msdot as dplay_dind
 USER root
 # for docker install - https://docs.docker.com/engine/install/ubuntu/
 RUN mkdir -p /etc/apt/keyrings && \

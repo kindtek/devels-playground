@@ -33,14 +33,14 @@ services:
     user: gabriel
     build:
       context: .
-      # target: DUMMERdata
-      # dockerfile: dockerfile.ubuntu.yaml
-    # init: true
-    # volumes:
-    #   - hel-data:/mnt/w
-    #   - type: bind
-    #     source: /var/run/docker.sock
-    #     target: /var/run/docker.sock
+      target: dplay_data
+      dockerfile: dockerfile.ubuntu.yaml
+    init: true
+    volumes:
+      - hel-data:/mnt/w
+      - type: bind
+        source: /var/run/docker.sock
+        target: /var/run/docker.sock
     labels:
       com.dplay_data.description: "shared backup drive"
     depends_on:
@@ -77,19 +77,19 @@ services:
         target: /var/run/docker.sock
     labels:
       com.dplay_git.description: "basics + git"
-  phell:
+  msdot:
     extends: git
-    image: kindtek/dplay:ubuntu-phell
+    image: kindtek/dplay:ubuntu-msdot
     build:
       context: .
-      target: dplay_phell
+      target: dplay_msdot
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
     labels:
-      com.dplay_phell.description: "basics + git + powerhell"
+      com.dplay_msdot.description: "basics + git + powerhell"
   dind:
-    extends: phell
+    extends: msdot
     image: kindtek/dplay:ubuntu-dind
     build:
       context: .
@@ -110,6 +110,8 @@ services:
       dockerfile: dockerfile.ubuntu.yaml
     labels:
       com.dplay_gui.description: "basics + git + powerhell + docker + gui"
+    volumes:
+      - /run/dbus/system_bus_socket:/run/dbus/system_bus_socket
   cuda:
     extends: gui
     image: kindtek/dplay:ubuntu-cuda

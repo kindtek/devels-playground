@@ -60,7 +60,7 @@ RUN sudo passwd -d root && \
 USER ${username}:devbp
 WORKDIR /home/${username}
 
-FROM dplay_skel AS dplay_phell
+FROM dplay_skel AS dplay_msdot
 USER root:devbp
 # TODO: add audio support with - alsa-base pulseaudio (ubuntu packages need to be verified/updated for alpine)
 RUN apk update && \
@@ -88,7 +88,7 @@ USER ${username}:devbp
 
 # TODO: https://github.com/mbacchi/brave-docker
 
-FROM dplay_phell as dplay_phellt
+FROM dplay_msdot as dplay_msdott
 USER root:devbp
 ARG ALPINE_VERSION=${ALPINE_VERSION:-v3.17}
 # VSCODE

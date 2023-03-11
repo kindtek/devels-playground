@@ -51,17 +51,17 @@ services:
         condition: service_completed_successfully
     volumes:
       - hel-data:/home/devel
-  phell:
+  msdot:
     extends: git
-    image: kindtek/dplay:ubuntu-phell
+    image: kindtek/dplay:ubuntu-msdot
     build:
       context: .
-      target: dplay_phell
+      target: dplay_msdot
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
   dind:
-    extends: phell
+    extends: msdot
     image: kindtek/dplay:ubuntu-dind
     build:
       context: .
