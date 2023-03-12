@@ -42,9 +42,8 @@ services:
         # Wait for the ownership to change
         condition: service_completed_successfully
     volumes:
-      - hel-data:/home/devel
-      - halo-data:/home/${username}
-
+      - hel-data:/mnt/n/devel
+      - halo-data:${backup_mnt_location:-/mnt/n}/${username}
   skel:
     # Need a user priviliged enough to chown
     user: gabriel
@@ -54,7 +53,7 @@ services:
       target: dplay_skel
       args:
         - username=${username:-gabriel}
-        - backup_mnt_location=${backup_mnt_location:-/mnt/k}
+        - backup_mnt_location=${backup_mnt_location:-/mnt/n}
       dockerfile: dockerfile.ubuntu.yaml
       # network: ${COMPOSE_PROJECT_NAME}_default
     init: true
@@ -86,13 +85,16 @@ services:
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
-    # depends_on:
-    #   chown-hel:
-    #     # Wait for the ownership to change
-    #     condition: service_completed_successfully
-    #   chown-halo:
-    #     # Wait for the ownership to change
-    #     condition: service_completed_successfully
+    depends_on:
+      chown-hel:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
+      chown-halo:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
+      data:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
     volumes:
       - hel-data:/home/devel
       - halo-data:/home/gabriel

@@ -141,7 +141,6 @@ RUN sudo mkdir -p ${backup_mnt_location}/${username}/${username}-orig && \
 
     # copy newly pulled backup script to mount location and home dirs
     sudo cp -arf dwork/mnt/backup-gabriel.sh ${backup_mnt_location}/gabriel/backup-gabriel.sh && cp -arf dwork/mnt/backup-gabriel.sh /home/gabriel/backup-gabriel.sh  && \
-
     sudo cp -arf dwork/mnt/backup-custom.sh ${backup_mnt_location}/${username}/backup-${username}.sh && cp -arf dwork/mnt/backup-custom.sh /home/${username}/backup-${username}.sh && \
     sudo cp -arf dwork/mnt/backup-custom.sh ${backup_mnt_location}/gabriel/backup-${username}.sh && cp -arf dwork/mnt/backup-custom.sh /home/gabriel/${username}.sh && \
     sudo cp -arf dwork/mnt/backup-custom.sh ${backup_mnt_location}/${username}/backup-gabriel.sh && cp -arf dwork/mnt/backup-${username}.sh /home/gabriel/gabriel.sh && \
@@ -168,17 +167,18 @@ RUN sudo mkdir -p ${backup_mnt_location}/${username}/${username}-orig && \
 #python stuff
 FROM dplay_git as dplay_python
 RUN sudo apt-get install -y jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv && \
-    sudo python3 -m pip install --upgrade pip cryptography oauthlib openssl pyjwt setuptools wheel && \
-    sudo pip3 install cdir --user  && \
-    sudo pip3 install pip --upgrade --no-warn-script-location --no-deps && \
+    # sudo python3 -m pip install --upgrade pip cryptography oauthlib openssl pyjwt setuptools wheel && \
+    pip3 install cdir --user  && \
+    pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps && \
-    sudo cp -r ./home/${username}/.local/bin /usr/local
+    sudo cp -r /home/${username}/.local/bin /usr/local
 
 # microsoft stuff
 FROM dplay_python as dplay_msdot
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
-RUN sudo wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb" && \
+RUN sudo apt-get install -y lsb-release && \
+    sudo wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb" && \
     ## Register the Microsoft repository GPG keys
     sudo dpkg -i packages-microsoft-prod.deb && \
     sudo rm packages-microsoft-prod.deb && \
