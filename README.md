@@ -114,8 +114,8 @@ This will start a new container using the [example image](#ubuntu-dind) and the 
 
 ### The main two are
 
-- [Ubuntu Dockerfile](devels-playground/dockerfile.ubuntu.yaml)
-- [Ubuntu Docker Compose file](devels-playground/docker-compose.ubuntu.yaml)
+- [Ubuntu Dockerfile](dockerfile.ubuntu.yaml)
+- [Ubuntu Docker Compose file](docker-compose.ubuntu.yaml)
 
 #### There are some lightly tested Alpine images available if you dig around as well
 
@@ -155,7 +155,7 @@ This will start a new container using the [example image](#ubuntu-dind) and the 
 
 ## Image Tags
 
-_Note: Each image forms the base layer for the image described below it. For instance, ubuntu-dind will contain all of the features from the ubuntu-git and ubuntu-msdot tags listed above it. You could install most of the software manually from each layer on a Debian system by copying and pasting the line of code shown. Others, like Brave Browser, require you to add its respective repository registry first. Not having to do this is one of the many ways that running Docker images makes a developer's life easier_
+_Note: Each image forms the base layer for the image described below it. For instance, ubuntu-dind will contain all of the features from the ubuntu-git and ubuntu-msdot tags listed above it. You could install a lot of this software manually on a Debian system by copying and pasting the line of code shown. Others, like Brave Browser, require you to add its respective repository registry first which gets messy. Not having to do this is one of the many ways that running Docker images makes a developer's life easier_
 
 ---
 
