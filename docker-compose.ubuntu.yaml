@@ -105,7 +105,7 @@ services:
       com.dplay_git.description: "basics + git"
   python:
     extends: git
-    image: kindtek/dplay:ubuntu-python
+    image: kindtek/dplay:ubuntu-py
     build:
       context: .
       target: dplay_msdot
