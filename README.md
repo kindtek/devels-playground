@@ -1,19 +1,14 @@
 
 # Idle Hands are the **Developer's Workshop**
 
-## Import a Linux Docker image from the [Docker Hub](https://hub.docker.com/search?q=&image_filter=official) into WSL without virtually lifting a finger
+## Import a Linux Docker image from the [Docker Hub](https://hub.docker.com/search?q=&image_filter=official) into WSL virtually without lifting a finger
 
 ---
 
 ---
 
-## With little more than a few key strokes and restarts, a suite of essential developer productivity software such as WSL, Github, Visual Studio Code, Docker Desktop, Python and more will be installed that combine to allow for a lightweight, portable, sandboxed virtual environment on your Windows 10+ machine in a matter of minutes. Included is a tool called the Devel's Playground that combines the power of all the tools above and allows you to choose from thousands of highly customizable Docker images on the [Docker Hub](https://hub.docker.com/search?q=&image_filter=official) - all of which are free. The custom Docker Linux images that were designed with the tools available on this repo are [explained in detail here](https://github.com/kindtek/devels-playground#image-tags). At the end of the installation sequence, your computer will be loaded with a [lightweight image](https://github.com/kindtek/devels-playground#ubuntu-dind) that is built for lightning fast development - especially for teams
-
-## This tool will not only remove the tedious, time consuming job of setting up a Linux backend for your Windows front end environment, but it will allow team members to jump on common ready to go development chains. This tool will also demonstrate how easily you can design your own containerized developer environment around a separate standalone repo included as a submodule
-
-&nbsp;
-
-## Easy as 1, 2, .., 4
+## SETUP
+### Easy as 1, 2, .., 4
 
 1. Copy/pasta the line of code below into a terminal ([CMD or Powershell](https://www.wikihow.com/Open-Terminal-in-Windows))
 2. Confirm installation actions, restart device, and repeat step one as needed
@@ -24,17 +19,34 @@
 powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell-remote/devels-workshop/download-everything-and-install.ps1 -OutFile install-kindtek-devels-workshop.ps1; powershell.exe -executionpolicy remotesigned -File install-kindtek-devels-workshop.ps1"
 ```
 
-&nbsp;
+---
 
-## Set up occurs so smoothly that you will likely feel like you skipped a step - especially if you have done this type of set up before. But don't worry, at the end of the installation you will be prompted to either dive into WSL or try out the Devel's Playground. So now it is time for the fun stuff
+## With little more than a few key strokes and restarts, a suite of essential developer productivity software such as WSL, Github, Visual Studio Code, Docker Desktop, Python and more will be installed that combine to allow for a lightweight, portable, sandboxed virtual environment on your Windows 10+ machine in a matter of minutes. 
+
+## Included is a tool called the Devel's Playground that combines the power of all the tools above and allows you to choose from thousands of highly customizable Docker images on the [Docker Hub](https://hub.docker.com/search?q=&image_filter=official) - all of which are free. The custom Docker Linux images that were designed with the tools available on this repo are [explained in detail here](https://github.com/kindtek/devels-playground#image-tags). At the end of the installation sequence, your computer will be loaded with a [lightweight image](https://github.com/kindtek/devels-playground#ubuntu-dind) that is built for lightning fast development - especially for teams
+
+
+---
+
+### This tool will not only remove the tedious, time consuming job of setting up a Linux backend for your Windows front end environment, but it will allow team members to jump on common ready to go development chains. This tool will also demonstrate how easily you can design your own containerized developer environment around a separate standalone repo included as a submodule
+
+### Set up occurs so smoothly that you will likely feel like you skipped a step - especially if you have done this type of set up before. But don't worry, at the end of the installation you will be prompted to either dive into WSL or try out the Devel's Playground
+
+---
+---
+
+&nbsp;
+## Time for the fun stuff
+
+### **Instructions for importing images from [hub.docker.com](https://hub.docker.com/search?q=&image_filter=official) into WSL with the Devel's Playground are [found here](https://github.com/kindtek/devels-playground#idle-minds-are-the-developers-playground)**
 
 &nbsp;
 
 ---
-
-## **Instructions for importing images from [hub.docker.com](https://hub.docker.com/search?q=&image_filter=official) into WSL with the Devel's Playground are [found here](https://github.com/kindtek/devels-playground)**
-
 ---
+
+&nbsp;
+
 MIT License
 
 Copyright (c) 2023 KINDTEK, LLC
