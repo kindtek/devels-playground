@@ -54,7 +54,7 @@ services:
       target: dplay_skel
       args:
         - username=${username:-gabriel}
-        - backup_mnt_location=${backup_mnt_location:-/mnt/n}
+        - backup_mnt_location=${backup_mnt_location:-/mnt/k}
       dockerfile: dockerfile.ubuntu.yaml
       # network: ${COMPOSE_PROJECT_NAME}_default
     init: true
@@ -101,73 +101,70 @@ services:
         target: /var/run/docker.sock
     labels:
       com.dplay_git.description: "basics + git"
+  python:
+    extends: git
+    image: kindtek/dplay:ubuntu-python
+    build:
+      context: .
+      target: dplay_msdot
+      args:
+        - username=${username:-gabriel}
+      dockerfile: dockerfile.ubuntu.yaml
+    labels:
+      com.dplay_msdot.description: "basics + git + powerhell"
+
+  msdot:
+    extends: python
+    image: kindtek/dplay:ubuntu-msdot
+    build:
+      context: .
+      target: dplay_msdot
+      args:
+        - username=${username:-gabriel}
+      dockerfile: dockerfile.ubuntu.yaml
+    labels:
+      com.dplay_msdot.description: "basics + git + powerhell"
+  dind:
+    extends: msdot
+    image: kindtek/dplay:ubuntu-dind
+    build:
+      context: .
+      target: dplay_dind
+      args:
+        - username=${username:-gabriel}
+      dockerfile: dockerfile.ubuntu.yaml
+    labels:
+      com.dplay_dind.description: "basics + git + powerhell + docker"
+  gui:
+    extends: dind
+    image: kindtek/dplay:ubuntu-gui
+    build:
+      context: .
+      target: dplay_gui
+      args:
+        - username=${username:-gabriel}
+      dockerfile: dockerfile.ubuntu.yaml
+    labels:
+      com.dplay_gui.description: "basics + git + powerhell + docker + gui"
+    volumes:
+      - /run/dbus/system_bus_socket:/run/dbus/system_bus_socket
+  cuda:
+    extends: gui
+    image: kindtek/dplay:ubuntu-cuda
+    build:
+      context: .
+      target: dplay_cuda
+      args:
+        - username=${username:-gabriel}
+      dockerfile: dockerfile.ubuntu.yaml
+      labels:
+        com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 
 volumes:
   hel-data:
   halo-data:
 
-
 networks:
   "${COMPOSE_PROJECT_NAME}_default":
     driver: overlay
     attachable: true
-  # python:
-  #   extends: git
-  #   image: kindtek/dplay:ubuntu-python
-  #   build:
-  #     context: .
-  #     target: dplay_msdot
-  #     args:
-  #       - username=${username:-gabriel}
-  #     dockerfile: dockerfile.ubuntu.yaml
-  #   labels:
-  #     com.dplay_msdot.description: "basics + git + powerhell"
-
-  # msdot:
-  #   extends: python
-  #   image: kindtek/dplay:ubuntu-msdot
-  #   build:
-  #     context: .
-  #     target: dplay_msdot
-  #     args:
-  #       - username=${username:-gabriel}
-  #     dockerfile: dockerfile.ubuntu.yaml
-  #   labels:
-  #     com.dplay_msdot.description: "basics + git + powerhell"
-  # dind:
-  #   extends: msdot
-  #   image: kindtek/dplay:ubuntu-dind
-  #   build:
-  #     context: .
-  #     target: dplay_dind
-  #     args:
-  #       - username=${username:-gabriel}
-  #     dockerfile: dockerfile.ubuntu.yaml
-  #   labels:
-  #     com.dplay_dind.description: "basics + git + powerhell + docker"
-  # gui:
-  #   extends: dind
-  #   image: kindtek/dplay:ubuntu-gui
-  #   build:
-  #     context: .
-  #     target: dplay_gui
-  #     args:
-  #       - username=${username:-gabriel}
-  #     dockerfile: dockerfile.ubuntu.yaml
-  #   labels:
-  #     com.dplay_gui.description: "basics + git + powerhell + docker + gui"
-  #   volumes:
-  #     - /run/dbus/system_bus_socket:/run/dbus/system_bus_socket
-  # cuda:
-  #   extends: gui
-  #   image: kindtek/dplay:ubuntu-cuda
-  #   build:
-  #     context: .
-  #     target: dplay_cuda
-  #     args:
-  #       - username=${username:-gabriel}
-  #     dockerfile: dockerfile.ubuntu.yaml
-  #     labels:
-  #       com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
-
-
