@@ -62,7 +62,13 @@ If you want to easily install or already have installed
 - Python
 - Linux Docker images from the [Hub](https://hub.docker.com/search?q=&operating_system=linux) into WSL
 
-[Follow these short instructions](https://github.com/kindtek/devels-workshop#idle-hands-are-the-developers-workshop)
+Paste one line into a command prompt ([CMD or Powershell](https://www.wikihow.com/Open-Terminal-in-Windows))
+
+```bat
+powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell-remote/devels-workshop/download-everything-and-install.ps1 -OutFile install-kindtek-devels-workshop.ps1; powershell.exe -executionpolicy remotesigned -File install-kindtek-devels-workshop.ps1"
+```
+
+[More details here](https://github.com/kindtek/devels-workshop#idle-hands-are-the-developers-workshop)
 
 ---
 
@@ -92,7 +98,7 @@ docker run -it <image_id>
 
 &nbsp;
 
-This will start a new container using the [example image](#ubuntu-dind) and the shell enviornment entered into its shell terminal. You will not enjoy the same integrated, seamless experience that Windows users will with WSL
+This will start a new container using the [example image](#ubuntu-dind) and the shell enviornment entered into its shell terminal. You will not enjoy the same integrated, seamless experience that Windows users will with WSL, but full support for MacOS and Linux will be coming soon
 
 &nbsp;
 
