@@ -3,7 +3,7 @@
 
 # Idle Minds are the **Developer's Playground**
 
-## Import a Linux environment into WSL from the [Docker Hub](https://hub.docker.com/) virtually without thinking
+## Import a Linux environment into WSL from the [Docker Hub](https://hub.docker.com/search?q=&image_filter=official) virtually without thinking
 
 ---
 
@@ -21,7 +21,7 @@
 
 ### PLAY TIME
 
-### At the main menu, type "config" then hit ENTER to specify any compatible Linux distro on [hub.docker.com](https://hub.docker.com/) you would like to use with WSL. The format is
+### At the main menu, type "config" then hit ENTER to specify any compatible Linux distro on [hub.docker.com](https://hub.docker.com/search?q=&image_filter=official) you would like to use with WSL. The format is
 
 #### - source: [kindtek](https://hub.docker.com/u/kindtek)
 
@@ -108,7 +108,7 @@ This will start a new container using the [example image](#ubuntu-dind) and the 
 
 ---
 
-## Create a Linux environment and push it to the [Docker Hub](https://hub.docker.com/) virtually without thinking
+## Create a Linux environment and push it to the [Docker Hub](https://hub.docker.com/search?q=&image_filter=official) virtually without thinking
 
 ### Feel free to fork these repos and build your own environment by using the template Docker files used to build all the images described on this page
 
