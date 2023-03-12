@@ -10,13 +10,13 @@ then
 fi
 
 HEL_DESTINATION="$_NIX_MNT_LOCATION/gabriel/devel-$WSL_DISTRO_NAME"
-HEL_RESTORE_SCRIPT="$_NIX_MNT_LOCATION/gabriel/restore-devel-$WSL_DISTRO_NAME.sh"
+HEL_RESTORE_SCRIPT="$_NIX_MNT_LOCATION/devel/restore-devel-$WSL_DISTRO_NAME.sh"
 
 echo "backing the /hel up to: $HEL_DESTINATION ..."
 
 export VERSION_CONTROL=numbered
 
-mkdir -p $HEL_DESTINATION
+# mkdir -p $HEL_DESTINATION
 cp -arf --backup=$VERSION_CONTROL --update /home/devel $HEL_DESTINATION
 
 echo "creating restore script and saving as $HEL_RESTORE_SCRIPT ..."
