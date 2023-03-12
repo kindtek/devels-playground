@@ -152,7 +152,7 @@ docker pull !image_repo_image_name!
 ECHO:
 ECHO initializing the image container...
 @REM @TODO: handle WSL_DOCKER_IMG_ID case of multiple ids returned from docker images query
-ECHO docker images -aq !image_repo_image_name! > !docker_image_id_path!
+ECHO "docker images -aq !image_repo_image_name! > !docker_image_id_path!"
 docker images -aq !image_repo_image_name! > !docker_image_id_path!
 SET /P WSL_DOCKER_IMG_ID_RAW=< !docker_image_id_path!
 @REM ECHO WSL_DOCKER_IMG_ID_RAW: %WSL_DOCKER_IMG_ID_RAW%
