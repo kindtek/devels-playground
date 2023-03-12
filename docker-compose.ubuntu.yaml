@@ -1,16 +1,50 @@
 version: "3.9"
 name: devels-workshop-ubuntu
 services:
-  # chown-hel:
-  #   # Need a user priviliged enough to chown
-  #   user: 'root'
-  #   # Specify the group in question
-  #   group_add:
-  #     - 'horns'
-  #   volumes:
-  #     # The volume to chown
-  #     - hel-data:/tmp/change-ownership
-  #   command: chown -R devel:horns /tmp/change-ownership
+  chown-halo:
+    # Need a user priviliged enough to chown
+    user: ${username}
+    # Specify the group in question
+    group_add:
+      - halos
+    build:
+      context: .
+      target: dplay_halo
+      dockerfile: dockerfile.ubuntu.yaml
+    init: true
+    volumes:
+      - halo-data:/tmp/gabriel
+    command: chown -R gabriel:halos /tmp/gabriel
+  chown-hel:
+    # Need a user priviliged enough to chown
+    # user: devel
+    # # Specify the group in question
+    # group_add:
+    #   - horns
+    build:
+      context: .
+      target: dplay_hel
+      dockerfile: dockerfile.ubuntu.yaml
+    init: true
+    volumes:
+      - hel-data:/tmp/devel
+    # command: chown -R devel:horns /tmp/devel
+  data:
+    build:
+      context: .
+      target: dplay_data
+      dockerfile: dockerfile.ubuntu.yaml
+    depends_on:
+      chown-hel:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
+      chown-halo:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
+    volumes:
+      - hel-data:/home/devel
+      - halo-data:/home/${username}
+
   skel:
     # Need a user priviliged enough to chown
     user: gabriel
@@ -20,40 +54,26 @@ services:
       target: dplay_skel
       args:
         - username=${username:-gabriel}
+        - backup_mnt_location=${backup_mnt_location:-/mnt/n}
       dockerfile: dockerfile.ubuntu.yaml
       # network: ${COMPOSE_PROJECT_NAME}_default
     init: true
     volumes:
-      - hel-data:/tmp/devel
-    command: sudo chown -R devel:horns /tmp/devel
-    labels:
-      com.dplay_skel.description: "n/a"
-
-  data:
-    user: gabriel
-    build:
-      context: .
-      target: dplay_data
-      dockerfile: dockerfile.ubuntu.yaml
-    init: true
-    volumes:
-      - hel-data:/mnt/w
+      - hel-data:/home/devel
+      - halo-data:/home/${username}
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
-    labels:
-      com.dplay_data.description: "shared backup drive"
     depends_on:
-      skel:
+      data:
         # Wait for the ownership to change
         condition: service_completed_successfully
+    labels:
+      com.dplay_skel.description: "skeleton"
 
   git:
     # owner/group becomes owner of hel-data volume
     user: devel
-    group_add:
-      # - halos
-      - horns
     privileged: true
     entrypoint:
       - sleep
@@ -66,69 +86,88 @@ services:
       args:
         - username=${username:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
-    depends_on:
-      skel:
-        # Wait for the ownership to change
-        condition: service_completed_successfully
+    # depends_on:
+    #   chown-hel:
+    #     # Wait for the ownership to change
+    #     condition: service_completed_successfully
+    #   chown-halo:
+    #     # Wait for the ownership to change
+    #     condition: service_completed_successfully
     volumes:
       - hel-data:/home/devel
+      - halo-data:/home/gabriel
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
     labels:
       com.dplay_git.description: "basics + git"
-  msdot:
-    extends: git
-    image: kindtek/dplay:ubuntu-msdot
-    build:
-      context: .
-      target: dplay_msdot
-      args:
-        - username=${username:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
-    labels:
-      com.dplay_msdot.description: "basics + git + powerhell"
-  dind:
-    extends: msdot
-    image: kindtek/dplay:ubuntu-dind
-    build:
-      context: .
-      target: dplay_dind
-      args:
-        - username=${username:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
-    labels:
-      com.dplay_dind.description: "basics + git + powerhell + docker"
-  gui:
-    extends: dind
-    image: kindtek/dplay:ubuntu-gui
-    build:
-      context: .
-      target: dplay_gui
-      args:
-        - username=${username:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
-    labels:
-      com.dplay_gui.description: "basics + git + powerhell + docker + gui"
-    volumes:
-      - /run/dbus/system_bus_socket:/run/dbus/system_bus_socket
-  cuda:
-    extends: gui
-    image: kindtek/dplay:ubuntu-cuda
-    build:
-      context: .
-      target: dplay_cuda
-      args:
-        - username=${username:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
-      labels:
-        com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 
 volumes:
   hel-data:
+  halo-data:
 
 
 networks:
   "${COMPOSE_PROJECT_NAME}_default":
     driver: overlay
     attachable: true
+  # python:
+  #   extends: git
+  #   image: kindtek/dplay:ubuntu-python
+  #   build:
+  #     context: .
+  #     target: dplay_msdot
+  #     args:
+  #       - username=${username:-gabriel}
+  #     dockerfile: dockerfile.ubuntu.yaml
+  #   labels:
+  #     com.dplay_msdot.description: "basics + git + powerhell"
+
+  # msdot:
+  #   extends: python
+  #   image: kindtek/dplay:ubuntu-msdot
+  #   build:
+  #     context: .
+  #     target: dplay_msdot
+  #     args:
+  #       - username=${username:-gabriel}
+  #     dockerfile: dockerfile.ubuntu.yaml
+  #   labels:
+  #     com.dplay_msdot.description: "basics + git + powerhell"
+  # dind:
+  #   extends: msdot
+  #   image: kindtek/dplay:ubuntu-dind
+  #   build:
+  #     context: .
+  #     target: dplay_dind
+  #     args:
+  #       - username=${username:-gabriel}
+  #     dockerfile: dockerfile.ubuntu.yaml
+  #   labels:
+  #     com.dplay_dind.description: "basics + git + powerhell + docker"
+  # gui:
+  #   extends: dind
+  #   image: kindtek/dplay:ubuntu-gui
+  #   build:
+  #     context: .
+  #     target: dplay_gui
+  #     args:
+  #       - username=${username:-gabriel}
+  #     dockerfile: dockerfile.ubuntu.yaml
+  #   labels:
+  #     com.dplay_gui.description: "basics + git + powerhell + docker + gui"
+  #   volumes:
+  #     - /run/dbus/system_bus_socket:/run/dbus/system_bus_socket
+  # cuda:
+  #   extends: gui
+  #   image: kindtek/dplay:ubuntu-cuda
+  #   build:
+  #     context: .
+  #     target: dplay_cuda
+  #     args:
+  #       - username=${username:-gabriel}
+  #     dockerfile: dockerfile.ubuntu.yaml
+  #     labels:
+  #       com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
+
+

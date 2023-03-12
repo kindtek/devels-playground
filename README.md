@@ -161,9 +161,17 @@ _Note: Each image forms the base layer for the image described below it. For ins
 
 ### [**ubuntu-git**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-git/images/sha256-c6fdf507e9af5a864578a835ed38ebcb314b0c7488e22dc2a4d04510921cf1a3?context=explore)
 
-#### `apt-get install git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip nvi`
+#### `apt-get install apt-transport-https build-essential ca-certificates cifs-utils curl git gh libssl-dev nvi wget`
 
-#### At just 300MB, this lightweight Ubuntu 22.04 image packs a punch with all the basic essentials and of course has this Github repo pre-loaded. It even has the added bonus of the [cdir](https://github.com/kindtek/cdir) package which is a must-have and is partialy the inspiration for theis whole project. These are also included with the heavier Docker images below as well
+#### At just 300MB, this lightweight Ubuntu 22.04 image packs a punch with all the basic essentials and of course has this Github repo pre-loaded
+
+---
+
+### [**ubuntu-python**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-python/images/sha256-816677a90ae498b8873fdb54e9c1d71455089f400a41de01221d29068937bab7?context=explore)
+
+#### `jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv`
+
+#### This edition comes with Python and installs a very handy tool called [cdir](https://github.com/kindtek/cdir)  which is a must-have and is partially the inspiration for this whole project
 
 ---
 
