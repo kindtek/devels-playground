@@ -1,13 +1,13 @@
 
 # Idle Hands are the **Developer's Workshop**
 
-## Import a Linux Docker image from the [Docker Hub](https://hub.docker.com/) into WSL without virtually lifting a finger
+## Import a Linux Docker image from the [Docker Hub](https://hub.docker.com/search?q=&image_filter=official) into WSL without virtually lifting a finger
 
 ---
 
 ---
 
-## With little more than a few key strokes and restarts, a suite of essential developer productivity software such as WSL, Github, Visual Studio Code, Docker Desktop, Python and more will be installed that combine to allow for a lightweight, portable, sandboxed virtual environment on your Windows 10+ machine in a matter of minutes. Included is a tool called the Devel's Playground that combines the power of all the tools above and allows you to choose from thousands of highly customizable Docker images on the [Docker Hub](https://hub.docker.com/repositories) - all of which are free. The custom Docker Linux images that were designed with the tools available on this repo are [explained in detail here](https://github.com/kindtek/devels-playground#image-tags). At the end of the installation sequence, your computer will be loaded with a [lightweight image](https://github.com/kindtek/devels-playground#ubuntu-dind) that is built for lightning fast development - especially for teams
+## With little more than a few key strokes and restarts, a suite of essential developer productivity software such as WSL, Github, Visual Studio Code, Docker Desktop, Python and more will be installed that combine to allow for a lightweight, portable, sandboxed virtual environment on your Windows 10+ machine in a matter of minutes. Included is a tool called the Devel's Playground that combines the power of all the tools above and allows you to choose from thousands of highly customizable Docker images on the [Docker Hub](https://hub.docker.com/search?q=&image_filter=official) - all of which are free. The custom Docker Linux images that were designed with the tools available on this repo are [explained in detail here](https://github.com/kindtek/devels-playground#image-tags). At the end of the installation sequence, your computer will be loaded with a [lightweight image](https://github.com/kindtek/devels-playground#ubuntu-dind) that is built for lightning fast development - especially for teams
 
 ## This tool will not only remove the tedious, time consuming job of setting up a Linux backend for your Windows front end environment, but it will allow team members to jump on common ready to go development chains. This tool will also demonstrate how easily you can design your own containerized developer environment around a separate standalone repo included as a submodule
 
@@ -32,7 +32,7 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 ---
 
-## **Instructions for importing images from [hub.docker.com](https://hub.docker.com/) into WSL with the Devel's Playground are [found here](https://github.com/kindtek/devels-playground)**
+## **Instructions for importing images from [hub.docker.com](https://hub.docker.com/search?q=&image_filter=official) into WSL with the Devel's Playground are [found here](https://github.com/kindtek/devels-playground)**
 
 ---
 MIT License
