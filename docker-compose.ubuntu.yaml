@@ -8,14 +8,13 @@ services:
       target: dplay_init
       dockerfile: dockerfile.ubuntu.yaml
     init: true
-    command: 
+    command:
       - bin/bash
       - -c
       - export _GABRIEL=${_GABRIEL:-gabriel}
       - export _HALOS=${_HALOS:-halos}
       - ln -s /tmp/${_GABRIEL:-gabriel}
       - ln -s /tmp/devel
-
     # command: echo something
   chown-halo:
     # Need a user priviliged enough to chown
@@ -66,7 +65,7 @@ services:
       chown-halo:
         # Wait for the ownership to change
         condition: service_completed_successfully
-    volumes: 
+    volumes:
       - shared-data:/mnt/data
   skel:
     extends: data
@@ -128,9 +127,6 @@ services:
       - hel-data:/home/devel
       - halo-data:/home/gabriel
       - type: bind
-        source: root-fs-vol
-        target: /mnt/root_fs
-      - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
     labels:
@@ -139,8 +135,8 @@ volumes:
   hel-data:
   halo-data:
   shared-data:
-  # hel-bak:
-  # halo-bak:
+    # hel-bak:
+    # halo-bak:
 
 networks:
   "${COMPOSE_PROJECT_NAME}_default":
@@ -219,62 +215,62 @@ networks:
 
 
 
-#     volumes:
-#       - type: bind
-#         source: home-vol
-#         target: /home
-#       - type: bind
-#         source: usr-vol
-#         target: /usr
+  #     volumes:
+  #       - type: bind
+  #         source: home-vol
+  #         target: /home
+  #       - type: bind
+  #         source: usr-vol
+  #         target: /usr
 
-#     volumes:
-#       - bin-vol:/mnt/root_fs/bin
-#       - boot-vol:/mnt/root_fs/boot
-#       - dev-vol:/mnt/root_fs/dev
-#       - etc-vol:/mnt/root_fs/etc
-#       - halo-vol:/mnt/root_fs/halo
-#       - hel-vol:/mnt/root_fs/hel
-#       - home-vol:/mnt/root_fs/home
-#       - lib-vol:/mnt/root_fs/lib
-#       - lib32-vol:/mnt/root_fs/lib32
-#       - lib64-vol:/mnt/root_fs/lib64
-#       - libx32-vol:/mnt/root_fs/libx32
-#       - media-vol:/mnt/root_fs/media
-#       - mnt-vol:/mnt/root_fs/mnt
-#       - opt-vol:/mnt/root_fs/opt
-#       - proc-vol:/mnt/root_fs/proc
-#       - root-vol:/mnt/root_fs/root
-#       - run-vol:/mnt/root_fs/run
-#       - sbin-vol:/mnt/root_fs/sbin
-#       - srv-vol:/mnt/root_fs/srv
-#       - sys-vol:/mnt/root_fs/sys
-#       - tmp-vol:/mnt/root_fs/tmp
-#       - usr-vol:/mnt/root_fs/usr
-#       - var-vol:/mnt/root_fs/var
-# volumes:
-#   bin-vol:
-#   boot-vol:
-#   dev-vol:
-#   etc-vol:
-#   halo-vol:
-#   hel-vol:
-#   home-vol:
-#   lib-vol:
-#   lib32-vol:
-#   lib64-vol:
-#   libx32-vol:
-#   media-vol:
-#   mnt-vol:
-#   opt-vol:
-#   proc-vol:
-#   root-vol:
-#   run-vol:
-#   sbin-vol:
-#   srv-vol:
-#   sys-vol:
-#   tmp-vol:
-#   usr-vol:
-#   var-vol:
+  #     volumes:
+  #       - bin-vol:/mnt/root_fs/bin
+  #       - boot-vol:/mnt/root_fs/boot
+  #       - dev-vol:/mnt/root_fs/dev
+  #       - etc-vol:/mnt/root_fs/etc
+  #       - halo-vol:/mnt/root_fs/halo
+  #       - hel-vol:/mnt/root_fs/hel
+  #       - home-vol:/mnt/root_fs/home
+  #       - lib-vol:/mnt/root_fs/lib
+  #       - lib32-vol:/mnt/root_fs/lib32
+  #       - lib64-vol:/mnt/root_fs/lib64
+  #       - libx32-vol:/mnt/root_fs/libx32
+  #       - media-vol:/mnt/root_fs/media
+  #       - mnt-vol:/mnt/root_fs/mnt
+  #       - opt-vol:/mnt/root_fs/opt
+  #       - proc-vol:/mnt/root_fs/proc
+  #       - root-vol:/mnt/root_fs/root
+  #       - run-vol:/mnt/root_fs/run
+  #       - sbin-vol:/mnt/root_fs/sbin
+  #       - srv-vol:/mnt/root_fs/srv
+  #       - sys-vol:/mnt/root_fs/sys
+  #       - tmp-vol:/mnt/root_fs/tmp
+  #       - usr-vol:/mnt/root_fs/usr
+  #       - var-vol:/mnt/root_fs/var
+  # volumes:
+  #   bin-vol:
+  #   boot-vol:
+  #   dev-vol:
+  #   etc-vol:
+  #   halo-vol:
+  #   hel-vol:
+  #   home-vol:
+  #   lib-vol:
+  #   lib32-vol:
+  #   lib64-vol:
+  #   libx32-vol:
+  #   media-vol:
+  #   mnt-vol:
+  #   opt-vol:
+  #   proc-vol:
+  #   root-vol:
+  #   run-vol:
+  #   sbin-vol:
+  #   srv-vol:
+  #   sys-vol:
+  #   tmp-vol:
+  #   usr-vol:
+  #   var-vol:
 
 
 
