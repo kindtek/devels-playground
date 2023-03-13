@@ -131,6 +131,65 @@ services:
         target: /var/run/docker.sock
     labels:
       com.dplay_git.description: "basics + git"
+
+  python:
+    extends: git
+    image: kindtek/dplay:ubuntu-py
+    build:
+      context: .
+      target: dplay_msdot
+      args:
+        - _GABRIEL=${_GABRIEL:-gabriel}
+      dockerfile: dockerfile.ubuntu.yaml
+    labels:
+      com.dplay_msdot.description: "basics + git + powerhell"
+
+  msdot:
+    extends: python
+    image: kindtek/dplay:ubuntu-msdot
+    build:
+      context: .
+      target: dplay_msdot
+      args:
+        - _GABRIEL=${_GABRIEL:-gabriel}
+      dockerfile: dockerfile.ubuntu.yaml
+    labels:
+      com.dplay_msdot.description: "basics + git + powerhell"
+  dind:
+    extends: msdot
+    image: kindtek/dplay:ubuntu-dind
+    build:
+      context: .
+      target: dplay_dind
+      args:
+        - _GABRIEL=${_GABRIEL:-gabriel}
+      dockerfile: dockerfile.ubuntu.yaml
+    labels:
+      com.dplay_dind.description: "basics + git + powerhell + docker"
+  gui:
+    extends: dind
+    image: kindtek/dplay:ubuntu-gui
+    build:
+      context: .
+      target: dplay_gui
+      args:
+        - _GABRIEL=${_GABRIEL:-gabriel}
+      dockerfile: dockerfile.ubuntu.yaml
+    labels:
+      com.dplay_gui.description: "basics + git + powerhell + docker + gui"
+    volumes:
+      - /run/dbus/system_bus_socket:/run/dbus/system_bus_socket
+  cuda:
+    extends: gui
+    image: kindtek/dplay:ubuntu-cuda
+    build:
+      context: .
+      target: dplay_cuda
+      args:
+        - _GABRIEL=${_GABRIEL:-gabriel}
+      dockerfile: dockerfile.ubuntu.yaml
+      labels:
+        com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 volumes:
   hel-data:
   halo-data:
@@ -142,76 +201,6 @@ networks:
   "${COMPOSE_PROJECT_NAME}_default":
     driver: overlay
     attachable: true
-  # python:
-  #   extends: git
-  #   image: kindtek/dplay:ubuntu-py
-  #   build:
-  #     context: .
-  #     target: dplay_msdot
-  #     args:
-  #       - _GABRIEL=${_GABRIEL:-gabriel}
-  #     dockerfile: dockerfile.ubuntu.yaml
-  #   labels:
-  #     com.dplay_msdot.description: "basics + git + powerhell"
-
-  # msdot:
-  #   extends: python
-  #   image: kindtek/dplay:ubuntu-msdot
-  #   build:
-  #     context: .
-  #     target: dplay_msdot
-  #     args:
-  #       - _GABRIEL=${_GABRIEL:-gabriel}
-  #     dockerfile: dockerfile.ubuntu.yaml
-  #   labels:
-  #     com.dplay_msdot.description: "basics + git + powerhell"
-  # dind:
-  #   extends: msdot
-  #   image: kindtek/dplay:ubuntu-dind
-  #   build:
-  #     context: .
-  #     target: dplay_dind
-  #     args:
-  #       - _GABRIEL=${_GABRIEL:-gabriel}
-  #     dockerfile: dockerfile.ubuntu.yaml
-  #   labels:
-  #     com.dplay_dind.description: "basics + git + powerhell + docker"
-  # gui:
-  #   extends: dind
-  #   image: kindtek/dplay:ubuntu-gui
-  #   build:
-  #     context: .
-  #     target: dplay_gui
-  #     args:
-  #       - _GABRIEL=${_GABRIEL:-gabriel}
-  #     dockerfile: dockerfile.ubuntu.yaml
-  #   labels:
-  #     com.dplay_gui.description: "basics + git + powerhell + docker + gui"
-  #   volumes:
-  #     - /run/dbus/system_bus_socket:/run/dbus/system_bus_socket
-  # cuda:
-  #   extends: gui
-  #   image: kindtek/dplay:ubuntu-cuda
-  #   build:
-  #     context: .
-  #     target: dplay_cuda
-  #     args:
-  #       - _GABRIEL=${_GABRIEL:-gabriel}
-  #     dockerfile: dockerfile.ubuntu.yaml
-  #     labels:
-  #       com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
-  # volumes:
-  #   hel-data:
-  #   halo-data:
-  #   shared-data:
-  #     # hel-bak:
-  #     # halo-bak:
-
-  # networks:
-  #   "${COMPOSE_PROJECT_NAME}_default":
-  #     driver: overlay
-  #     attachable: true
-
 
 
 
