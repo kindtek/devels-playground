@@ -151,7 +151,7 @@ This will start a new container using the [example image](#ubuntu-dind) and the 
 
 ### [In theory](https://softprom.com/sites/default/files/materials/cyberark-sb-to-SUDO-or-not-to-SUDO-06-11-2015-en.pdf), the gates of sudo should restrict the devel to only making changes in `/hel` and any mounted drives - leaving only `gabriel` to make changes at the root level
 
-##### More notes: All images are built with the [Dockerfiles in the devels-playground repo root](devels-playground). All of `/hel` is mounted as a volume in Docker and the data stored in `/hel` will persist throughout all images when running in Docker. Although this particular feature does not work with WSL, the directory located at `/mnt/n/gabriel` contains backup scripts (`backup-devel.sh`) and automatically generates restore scripts when the backups are ran. The `/mnt/n/gabriel` directory is safe from the devel as the devel has no write priveleges there -- only read and execute. Do NOT confuse this with `/mnt/n`. The devel still has write priveleges there -- because, yes, even as destructive as devels can be, devels still want to make backups and restore them as well. If you mount a permissioned NTFS partition on Windows and give it the drive letter "N:/", everything should line up and you can share this mounted drive seamlessly between your Linux Docker images and Windows
+##### More notes: All images are built with the [Dockerfiles in the devels-playground repo root](devels-playground). All of `/hel` is mounted as a volume in Docker and the data stored in `/hel` will persist throughout all images when running in Docker. When in WSL, the volume will be stored in a WSL instance called Docker-Data.The directory located at `/mnt/data/gabriel` contains backup scripts (`backup-devel.sh`) and automatically generates restore scripts when the backups are ran. The `/mnt/data/gabriel` directory is safe from the devel as the devel has no write priveleges there -- only read and execute
 
 ---
 
@@ -177,7 +177,7 @@ _Note: Each image forms the base layer for the image described below it. For ins
 
 #### `jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv`
 
-#### This edition comes with Python and installs a very handy tool called [cdir](https://github.com/kindtek/cdir)  which is a must-have and is partially the inspiration for this whole project
+#### This edition comes with Python and installs a very handy tool called [cdir](https://github.com/kindtek/cdir) which is a must-have and is partially the inspiration for this whole project
 
 ---
 

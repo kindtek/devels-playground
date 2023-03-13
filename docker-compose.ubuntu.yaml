@@ -1,34 +1,59 @@
 version: "3.9"
 name: devels-workshop-ubuntu
 services:
+  initialize:
+    # Need a user priviliged enough to chown
+    build:
+      context: .
+      target: dplay_init
+      dockerfile: dockerfile.ubuntu.yaml
+    init: true
+    command: 
+      - bin/bash
+      - -c
+      - export _GABRIEL=${_GABRIEL:-gabriel}
+      - export _HALOS=${_HALOS:-halos}
+      - ln -s /tmp/${_GABRIEL:-gabriel}
+      - ln -s /tmp/devel
+
+    # command: echo something
   chown-halo:
     # Need a user priviliged enough to chown
-    user: ${username}
-    # Specify the group in question
+    user: ${_GABRIEL:-gabriel}
+    # Specify the wings in question
     group_add:
-      - halos
+      - ${_HALOS:-halos}
     build:
       context: .
       target: dplay_halo
       dockerfile: dockerfile.ubuntu.yaml
+    depends_on:
+      initialize:
+        # Wait for the groups to be added
+        condition: service_completed_successfully
     init: true
     volumes:
-      - halo-data:/tmp/gabriel
-    command: chown -R gabriel:halos /tmp/gabriel
+      - halo-data:/tmp/${_GABRIEL:-gabriel}
+    command: sudo chown -R ${_GABRIEL:-gabriel}:$_HALOS /tmp/${_GABRIEL:-gabriel}
+
   chown-hel:
     # Need a user priviliged enough to chown
-    # user: devel
-    # # Specify the group in question
-    # group_add:
-    #   - horns
+    user: devel
+    # Specify the wings in question
+    group_add:
+      - horns
     build:
       context: .
       target: dplay_hel
       dockerfile: dockerfile.ubuntu.yaml
+    depends_on:
+      initialize:
+        # Wait for groups to be added
+        condition: service_completed_successfully
     init: true
     volumes:
       - hel-data:/tmp/devel
-    # command: chown -R devel:horns /tmp/devel
+    command: chown -R devel:horns /tmp/devel
   data:
     build:
       context: .
@@ -41,10 +66,10 @@ services:
       chown-halo:
         # Wait for the ownership to change
         condition: service_completed_successfully
-    volumes:
-      - hel-data:/mnt/n/devel
-      - halo-data:${backup_mnt_location:-/mnt/n}/${username}
+    volumes: 
+      - shared-data:/mnt/data
   skel:
+    extends: data
     # Need a user priviliged enough to chown
     user: gabriel
     # image: kindtek/dplay:ubuntu-skel
@@ -52,14 +77,17 @@ services:
       context: .
       target: dplay_skel
       args:
-        - username=${username:-gabriel}
-        - backup_mnt_location=${backup_mnt_location:-/mnt/n}
+        - _GABRIEL=${_GABRIEL:-gabriel}
+        - _HALOS=${_HALOS:-halos}
       dockerfile: dockerfile.ubuntu.yaml
       # network: ${COMPOSE_PROJECT_NAME}_default
     init: true
     volumes:
       - hel-data:/home/devel
-      - halo-data:/home/${username}
+      - halo-data:/home/${_GABRIEL:-gabriel}
+      - type: bind
+        source: shared-data
+        target: /mnt/data
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
@@ -72,6 +100,7 @@ services:
 
   git:
     # owner/group becomes owner of hel-data volume
+    extends: data
     user: devel
     privileged: true
     entrypoint:
@@ -83,7 +112,7 @@ services:
       context: .
       target: dplay_git
       args:
-        - username=${username:-gabriel}
+        - _GABRIEL=${_GABRIEL:-gabriel}
       dockerfile: dockerfile.ubuntu.yaml
     depends_on:
       chown-hel:
@@ -99,74 +128,153 @@ services:
       - hel-data:/home/devel
       - halo-data:/home/gabriel
       - type: bind
+        source: root-fs-vol
+        target: /mnt/root_fs
+      - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
     labels:
       com.dplay_git.description: "basics + git"
-  python:
-    extends: git
-    image: kindtek/dplay:ubuntu-py
-    build:
-      context: .
-      target: dplay_msdot
-      args:
-        - username=${username:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
-    labels:
-      com.dplay_msdot.description: "basics + git + powerhell"
-
-  msdot:
-    extends: python
-    image: kindtek/dplay:ubuntu-msdot
-    build:
-      context: .
-      target: dplay_msdot
-      args:
-        - username=${username:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
-    labels:
-      com.dplay_msdot.description: "basics + git + powerhell"
-  dind:
-    extends: msdot
-    image: kindtek/dplay:ubuntu-dind
-    build:
-      context: .
-      target: dplay_dind
-      args:
-        - username=${username:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
-    labels:
-      com.dplay_dind.description: "basics + git + powerhell + docker"
-  gui:
-    extends: dind
-    image: kindtek/dplay:ubuntu-gui
-    build:
-      context: .
-      target: dplay_gui
-      args:
-        - username=${username:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
-    labels:
-      com.dplay_gui.description: "basics + git + powerhell + docker + gui"
-    volumes:
-      - /run/dbus/system_bus_socket:/run/dbus/system_bus_socket
-  cuda:
-    extends: gui
-    image: kindtek/dplay:ubuntu-cuda
-    build:
-      context: .
-      target: dplay_cuda
-      args:
-        - username=${username:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
-      labels:
-        com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
-
 volumes:
   hel-data:
   halo-data:
+  shared-data:
+  # hel-bak:
+  # halo-bak:
 
 networks:
   "${COMPOSE_PROJECT_NAME}_default":
     driver: overlay
     attachable: true
+  # python:
+  #   extends: git
+  #   image: kindtek/dplay:ubuntu-py
+  #   build:
+  #     context: .
+  #     target: dplay_msdot
+  #     args:
+  #       - _GABRIEL=${_GABRIEL:-gabriel}
+  #     dockerfile: dockerfile.ubuntu.yaml
+  #   labels:
+  #     com.dplay_msdot.description: "basics + git + powerhell"
+
+  # msdot:
+  #   extends: python
+  #   image: kindtek/dplay:ubuntu-msdot
+  #   build:
+  #     context: .
+  #     target: dplay_msdot
+  #     args:
+  #       - _GABRIEL=${_GABRIEL:-gabriel}
+  #     dockerfile: dockerfile.ubuntu.yaml
+  #   labels:
+  #     com.dplay_msdot.description: "basics + git + powerhell"
+  # dind:
+  #   extends: msdot
+  #   image: kindtek/dplay:ubuntu-dind
+  #   build:
+  #     context: .
+  #     target: dplay_dind
+  #     args:
+  #       - _GABRIEL=${_GABRIEL:-gabriel}
+  #     dockerfile: dockerfile.ubuntu.yaml
+  #   labels:
+  #     com.dplay_dind.description: "basics + git + powerhell + docker"
+  # gui:
+  #   extends: dind
+  #   image: kindtek/dplay:ubuntu-gui
+  #   build:
+  #     context: .
+  #     target: dplay_gui
+  #     args:
+  #       - _GABRIEL=${_GABRIEL:-gabriel}
+  #     dockerfile: dockerfile.ubuntu.yaml
+  #   labels:
+  #     com.dplay_gui.description: "basics + git + powerhell + docker + gui"
+  #   volumes:
+  #     - /run/dbus/system_bus_socket:/run/dbus/system_bus_socket
+  # cuda:
+  #   extends: gui
+  #   image: kindtek/dplay:ubuntu-cuda
+  #   build:
+  #     context: .
+  #     target: dplay_cuda
+  #     args:
+  #       - _GABRIEL=${_GABRIEL:-gabriel}
+  #     dockerfile: dockerfile.ubuntu.yaml
+  #     labels:
+  #       com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
+  # volumes:
+  #   hel-data:
+  #   halo-data:
+  #   shared-data:
+  #     # hel-bak:
+  #     # halo-bak:
+
+  # networks:
+  #   "${COMPOSE_PROJECT_NAME}_default":
+  #     driver: overlay
+  #     attachable: true
+
+
+
+
+#     volumes:
+#       - type: bind
+#         source: home-vol
+#         target: /home
+#       - type: bind
+#         source: usr-vol
+#         target: /usr
+
+#     volumes:
+#       - bin-vol:/mnt/root_fs/bin
+#       - boot-vol:/mnt/root_fs/boot
+#       - dev-vol:/mnt/root_fs/dev
+#       - etc-vol:/mnt/root_fs/etc
+#       - halo-vol:/mnt/root_fs/halo
+#       - hel-vol:/mnt/root_fs/hel
+#       - home-vol:/mnt/root_fs/home
+#       - lib-vol:/mnt/root_fs/lib
+#       - lib32-vol:/mnt/root_fs/lib32
+#       - lib64-vol:/mnt/root_fs/lib64
+#       - libx32-vol:/mnt/root_fs/libx32
+#       - media-vol:/mnt/root_fs/media
+#       - mnt-vol:/mnt/root_fs/mnt
+#       - opt-vol:/mnt/root_fs/opt
+#       - proc-vol:/mnt/root_fs/proc
+#       - root-vol:/mnt/root_fs/root
+#       - run-vol:/mnt/root_fs/run
+#       - sbin-vol:/mnt/root_fs/sbin
+#       - srv-vol:/mnt/root_fs/srv
+#       - sys-vol:/mnt/root_fs/sys
+#       - tmp-vol:/mnt/root_fs/tmp
+#       - usr-vol:/mnt/root_fs/usr
+#       - var-vol:/mnt/root_fs/var
+# volumes:
+#   bin-vol:
+#   boot-vol:
+#   dev-vol:
+#   etc-vol:
+#   halo-vol:
+#   hel-vol:
+#   home-vol:
+#   lib-vol:
+#   lib32-vol:
+#   lib64-vol:
+#   libx32-vol:
+#   media-vol:
+#   mnt-vol:
+#   opt-vol:
+#   proc-vol:
+#   root-vol:
+#   run-vol:
+#   sbin-vol:
+#   srv-vol:
+#   sys-vol:
+#   tmp-vol:
+#   usr-vol:
+#   var-vol:
+
+
+

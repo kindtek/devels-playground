@@ -1,29 +1,98 @@
 # to build, run: 
-# `username=mine groupname=ours docker run -d -i`
-FROM ubuntu:latest AS dplay_halo
-ARG username=${username:-gabriel}
-ARG groupname=${groupname:-wings}
-ARG backup_mnt_location=${backup_mnt_location:-/mnt/n}
+# `_GABRIEL=mine _HALOS=ours docker run -d -i`
+FROM ubuntu:latest AS dplay_init
 
-RUN addgroup --gid 1111 ${groupname} && \
-    addgroup --gid 888 halos && \
+ARG _GABRIEL=${_GABRIEL:-gabriel}
+ARG _HALOS=${_HALOS:-halos}
+ARG backup_mnt_location=${backup_mnt_location:-/mnt/data}
+
+RUN addgroup --gid 777 ${_HALOS} && \
     addgroup --gid 666 horns && \
-    adduser --home /home/${username} --shell /bin/bash --uid 1011 --disabled-password ${username}
+    adduser --home /home/${_GABRIEL} --ingroup ${_HALOS} --shell /bin/bash --uid 777 --disabled-password ${_GABRIEL} && \
+    adduser --system --home /home/host --ingroup ${_HALOS} --shell /bin/bash --uid 76667 --disabled-password host && \
+    adduser --home /home/devel --ingroup horns --shell /bin/bash --uid 666 --disabled-password devel && \
+    # ensure no passwords
+    passwd -d ${_GABRIEL} && \
+    passwd -d devel && \
+    passwd -d host && \
+    passwd -d root && \
+    passwd -l root
+
+FROM dplay_init AS dplay_halo
+
+# switch back to root to setup
+USER root
+
+# add devel and host users using custom user setup
+    # add only _GABRIEL to the sudo list
+RUN usermod -aG ${_HALOS} host && \
+    # usermod -aG horns ${_GABRIEL} && \
+    usermod -aG sudo ${_GABRIEL} && \
+    # chown -R ${_GABRIEL}:${_HALOS} /home/${_GABRIEL} \
+    chown -R host:${_HALOS} /home/host && \
+    chown -R ${_GABRIEL}:${_HALOS} /home/${_GABRIEL} && \
+    apt-get update -yq && \
+    apt-get upgrade -y && \
+    # non-root will need to use sudo from now on
+    apt-get -y install sudo && \
+    # add ${_GABRIEL} to sudo group
+    sudo adduser ${_GABRIEL} sudo && \
+    # uncomment to add sudo priveleges for host
+    # sudo adduser host sudo && \
+    # set up /halo folder as symbolic link to /home/gabriel 
+    ln -s /home/${_GABRIEL} /halo && chown -R ${_GABRIEL}:${_HALOS} /halo && \
+    # add a "readme" here later
+    touch /halo/.world && \
+    mkdir -p /halo/.ssh && chmod 700 /halo/.ssh && chown -R ${_GABRIEL}:${_HALOS} /halo/.ssh && \
+    # make devel default wsl user 
+    echo "[user]\ndefault=devel" >> /etc/wsl.conf && \
+    # mount stuff
+    # echo "//${backup_mnt_location}/${_GABRIEL} /home/${_GABRIEL} cifs _GABRIEL=${_GABRIEL}, file_mode=0777,dir_mode=0777 0 0\n/${backup_mnt_location}/devel /home/devel cifs _GABRIEL=devel, file_mode=0777, dir_mode=0777 0 0" >> /etc/fstab && \
+    # copy to skel
+    cp -r /home/${_GABRIEL}/. /etc/skel/
+    
+# add common paths
+USER ${_GABRIEL}
+ENV PATH=$PATH:/home/${_GABRIEL}/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts
+RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${backup_mnt_location}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> /home/${_GABRIEL}/.bashrc
+
+
+
 # backup location or optionally a mount partition
 # partition letter set up for n:/ - use this guide to set up partition https://allthings.how/how-to-partition-a-hard-drive-on-windows-11/
 
 FROM dplay_halo AS dplay_hel
 
+USER root
+    # set up /devel folder as symbolic link to /home/devel for cloning repository(ies)
+RUN ln -s /home/devel /hel && chown -R devel:horns /hel && \
+    # add an instructional "readme" here later
+    touch /hel/lo.world && \
+    # make sure .ssh has proper permissions
+    mkdir /hel/.ssh && chown -R devel:horns /hel/.ssh && chmod 700 /hel/.ssh
+    # uncomment to add sudo priveleges for host / devel
+    # sudo adduser devel sudo && \
+    
+USER devel
+
+# add common paths
+ENV PATH=$PATH:/home/devel/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts
+RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${backup_mnt_location}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> /home/devel/.bashrc
+
+
 FROM dplay_hel AS dplay_data
 
-RUN  if [ -d "${backup_mnt_location}/devel" ]; then \
+USER root
+
+RUN cp -rp /etc/skel/. /home/devel/ && \
+    if [ -d "${backup_mnt_location}/devel" ]; then \
         if [ ! -f "${backup_mnt_location}/devel/backup-docker.sh" ]; then \
             echo "#!/bin/bash" >> devel/backup-docker.sh; \
         fi \
-    fi
-# RUN if [ -d "${backup_mnt_location}/${username}" ]; then \
-#         if [ ! -f "${backup_mnt_location}/${username}/backup-docker.sh" ]; then \
-#             echo "#!/bin/bash" >> ${username}/backup-docker.sh; \
+    fi && \
+# RUN if [ -d "${backup_mnt_location}/${_GABRIEL}" ]; then \
+#         if [ ! -f "${backup_mnt_location}/${_GABRIEL}/backup-docker.sh" ]; then \
+#             echo "#!/bin/bash" >> ${_GABRIEL}/backup-docker.sh; \
 #         fi \
 #     fi \
 #     if [ -d "${backup_mnt_location}/gabriel" ]; then \
@@ -31,73 +100,22 @@ RUN  if [ -d "${backup_mnt_location}/devel" ]; then \
 #             echo "#!/bin/bash" >> gabriel/backup-docker.sh; \
 #         fi \
 #     fi
+    chown -R devel:horns /home/devel && chown -R ${_GABRIEL}:${_HALOS} /home/${_GABRIEL}
 
-# USER ${username}
+
 # RUN echo "# # # # Docker # # # # " >> ${backup_mnt_location}/gabriel/backup-docker.sh
 # RUN sudo .${backup_mnt_location}/gabriel/backup-docker.sh
 
 
 FROM dplay_data AS dplay_skel
-# set up basic utils
-RUN apt-get update -yq && \
-    apt-get upgrade -y && \
+    # set up basic utils
     # install github, build-essentials, libssl, etc
     # apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip nvi apt-transport-https software-properties-common 
-    apt-get install -y apt-transport-https build-essential ca-certificates cifs-utils curl git gh libssl-dev nvi wget && \
+RUN apt-get install -y apt-transport-https build-essential ca-certificates cifs-utils curl git gh libssl-dev nvi wget
     # apt-get install -y apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg libssl-dev lsb-release nvi software-properties-common wget && \
     # set up group/user 
-    # addgroup --system --gid 1001 ${groupname} && \
-    # adduser --system --home /home/${username} --shell /bin/bash --uid 1001 --gid 1001 --disabled-password ${username}  \
-    # make default user 
-    echo "[user]\ndefault=devel" >> /etc/wsl.conf && \
-    # mount stuff
-    echo "/${backup_mnt_location}/${username} /home/${username} cifs username=${username}, file_mode=0777,dir_mode=0777 0 0\n/${backup_mnt_location}/devel /home/devel cifs username=devel, file_mode=0777, dir_mode=0777 0 0" >> /etc/fstab
-# custom user setup
-USER ${username}
-RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${backup_mnt_location}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> ~/.bashrc
-    # echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${backup_mnt_location}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi=\"vi -c 'set verbose showmode'\"" >> ~/.bashrc
-# add common paths
-ENV PATH="$PATH:~/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
-# switch back to root to setup
-USER root
-
-# add devel and host users using custom user setup
-RUN adduser --system --home /home/host --shell /bin/bash --uid 888 --disabled-password host && \
-    adduser --system --home /home/devel --shell /bin/bash --uid 666 --disabled-password devel && \
-    cp -r /home/${username}/. /etc/skel/ && \
-    cp -rp /etc/skel/. /home/devel/ && \
-    # add only username to the sudo list
-    usermod -aG halos host && usermod -aG halos ${username} && \
-    usermod -aG horns devel && usermod -aG horns ${username} && \
-    usermod -aG sudo ${username} && \
-    # chown -R ${username}:${groupname} /home/${username} \
-    chown -R host:halos /home/host && \
-    chown -R devel:horns /home/devel && \
-    # non-root will need to use sudo from now on
-    apt-get -y install sudo && \
-    # add ${username} to sudo group
-    sudo adduser ${username} sudo && \
-    # uncomment to add sudo priveleges for host / devel
-    # sudo adduser devel sudo && \
-    # sudo adduser host sudo && \
-    # ensure no password and sudo runs as root
-    passwd -d ${username} && passwd -d devel && passwd -d root && passwd -l root && \
-    passwd -d ${username} && passwd -d host && passwd -d root && passwd -l root && \
-    # set up /devel folder as symbolic link to /home/devel for cloning repository(ies)
-    ln -s /home/${username} /halo && chown -R ${username}:${groupname} /halo && \
-    ln -s /home/devel /hel && chown -R devel:horns /hel && \
-    # add a "readme" here later
-    touch /hel/lo.world && touch /halo/.world && \
-    mkdir -p /halo/.ssh && chmod 700 /halo/.ssh && chown -R ${username}:${groupname} /halo/.ssh && \
-    mkdir /hel/.ssh && chmod 700 /hel/.ssh && chown -R devel:horns /hel/.ssh 
-    # add common paths
-    USER gabriel
-    ENV PATH="$PATH:/home/gabriel/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
-    USER devel
-    ENV PATH="$PATH:/home/devel/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
-    USER ${username}
-    ENV PATH="$PATH:/home/${username}/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts"
-
+    # addgroup --system --gid 1001 ${_HALOS} && \
+    # adduser --system --home /home/${_GABRIEL} --shell /bin/bash --uid 1001 --gid 1001 --disabled-password ${_GABRIEL} 
 
 FROM dplay_skel AS dplay_git
 WORKDIR /hel
@@ -121,60 +139,66 @@ RUN git config --global --add safe.directory /home/devel && \
     chmod +x dwork/mnt/backup-custom.sh
 
 # mount with halos ownership
-USER ${username}
+USER ${_GABRIEL}
 # set up shared backup drive structure 
-RUN sudo mkdir -p ${backup_mnt_location}/${username}/${username}-orig && \
+RUN sudo mkdir -p ${backup_mnt_location}/${_GABRIEL}/${_GABRIEL}-orig && \
     sudo mkdir -p ${backup_mnt_location}/gabriel/gabriel-orig && \
     sudo mkdir -p ${backup_mnt_location}/gabriel/devel-orig && \
     sudo mkdir -p ${backup_mnt_location}/devel/devel-orig && \
-    sudo chown ${username}:${groupname} ${backup_mnt_location}/${username} && \
-    sudo chown ${username}:${groupname} ${backup_mnt_location}/${username}/${username}-orig && \
+    sudo chown ${_GABRIEL}:${_HALOS} ${backup_mnt_location}/${_GABRIEL} && \
+    sudo chown ${_GABRIEL}:${_HALOS} ${backup_mnt_location}/${_GABRIEL}/${_GABRIEL}-orig && \
     sudo chown gabriel:halos ${backup_mnt_location}/gabriel && \
     sudo chown gabriel:halos ${backup_mnt_location}/gabriel/gabriel-orig && \
     sudo chown devel:horns ${backup_mnt_location}/devel && \
     sudo chown devel:horns ${backup_mnt_location}/devel/devel-orig && \
     # sudo chown devel:horns ${backup_mnt_location}/gabriel/devel-orig && \
     sudo chown devel:horns ${backup_mnt_location}/gabriel/devel-orig && \
-    # sudo chown devel:horns ${backup_mnt_location}/${username} && \
-    sudo chown devel:horns ${backup_mnt_location}/${username}/devel-orig && \
+    # sudo chown devel:horns ${backup_mnt_location}/${_GABRIEL} && \
+    sudo chown devel:horns ${backup_mnt_location}/${_GABRIEL}/devel-orig && \
     sudo chown devel:horns ${backup_mnt_location}/gabriel/devel-orig && \
-
     # copy newly pulled backup script to mount location and home dirs
     sudo cp -arf dwork/mnt/backup-gabriel.sh ${backup_mnt_location}/gabriel/backup-gabriel.sh && cp -arf dwork/mnt/backup-gabriel.sh /home/gabriel/backup-gabriel.sh  && \
-    sudo cp -arf dwork/mnt/backup-custom.sh ${backup_mnt_location}/${username}/backup-${username}.sh && cp -arf dwork/mnt/backup-custom.sh /home/${username}/backup-${username}.sh && \
-    sudo cp -arf dwork/mnt/backup-custom.sh ${backup_mnt_location}/gabriel/backup-${username}.sh && cp -arf dwork/mnt/backup-custom.sh /home/gabriel/${username}.sh && \
-    sudo cp -arf dwork/mnt/backup-custom.sh ${backup_mnt_location}/${username}/backup-gabriel.sh && cp -arf dwork/mnt/backup-${username}.sh /home/gabriel/gabriel.sh && \
+    sudo cp -arf dwork/mnt/backup-custom.sh ${backup_mnt_location}/${_GABRIEL}/backup-${_GABRIEL}.sh && cp -arf dwork/mnt/backup-custom.sh /home/${_GABRIEL}/backup-${_GABRIEL}.sh && \
+    sudo cp -arf dwork/mnt/backup-custom.sh ${backup_mnt_location}/gabriel/backup-${_GABRIEL}.sh && cp -arf dwork/mnt/backup-custom.sh /home/gabriel/backup-${_GABRIEL}.sh && \
+    sudo cp -arf dwork/mnt/backup-custom.sh ${backup_mnt_location}/${_GABRIEL}/backup-gabriel.sh && cp -arf dwork/mnt/backup-${_GABRIEL}.sh /home/gabriel/backup-gabriel.sh && \
     sudo cp -arf dwork/mnt/backup-custom.sh ${backup_mnt_location}/gabriel/backup-gabriel.sh && cp -arf dwork/mnt/backup-custom.sh /home/gabriel/backup-gabriel.sh && \
     sudo cp -arf dwork/mnt/backup-devel.sh ${backup_mnt_location}/devel/backup-devel.sh && \
-    sudo cp -arf dwork/mnt/backup-devel.sh ${backup_mnt_location}/${username}/backup-devel.sh && cp -arf dwork/mnt/backup-devel.sh /home/${username}/backup-devel.sh  && \
+    sudo cp -arf dwork/mnt/backup-devel.sh ${backup_mnt_location}/${_GABRIEL}/backup-devel.sh && cp -arf dwork/mnt/backup-devel.sh /home/${_GABRIEL}/backup-devel.sh  && \
     sudo cp -arf dwork/mnt/backup-devel.sh ${backup_mnt_location}/gabriel/backup-devel.sh && cp -arf dwork/mnt/backup-devel.sh /home/gabriel/backup-devel.sh  && \
     sudo cp -arf dwork/mnt/backup-devel.sh /home/devel/backup-devel.sh && \
     # make rwx for owner and rx for group - none for others
-    sudo chmod 750 -R ${backup_mnt_location}/${username} && \
-    sudo chmod 755 ${backup_mnt_location}/${username} && \
+    sudo chmod 750 -R ${backup_mnt_location}/${_GABRIEL} && \
+    sudo chmod 755 ${backup_mnt_location}/${_GABRIEL} && \
     sudo chmod 750 -R ${backup_mnt_location}/gabriel && \
     sudo chmod 755 ${backup_mnt_location}/gabriel && \
     sudo chmod 750 -R ${backup_mnt_location}/devel && \
     # # add warning for the backup drive
-    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${username}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${backup_mnt_location}/README_ASAP      && \
-    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${username}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${backup_mnt_location}/${username}/README_ASAP      && \
-    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${username}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${backup_mnt_location}/gabriel/README_ASAP      && \
-    sudo chown ${username}:${groupname} ${backup_mnt_location}/README_ASAP
+    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GABRIEL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${backup_mnt_location}/README_ASAP      && \
+    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GABRIEL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${backup_mnt_location}/${_GABRIEL}/README_ASAP      && \
+    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GABRIEL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${backup_mnt_location}/gabriel/README_ASAP      && \
+    sudo chown ${_GABRIEL}:${_HALOS} ${backup_mnt_location}/README_ASAP
     # wait to do this until we have WSL_DISTRO_NAME
     # sh ${backup_mnt_location}/backup-devel.sh
 
+USER devel
 
 #python stuff
 FROM dplay_git as dplay_python
+
+USER ${_GABRIEL}
 RUN sudo apt-get install -y jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv && \
     # sudo python3 -m pip install --upgrade pip cryptography oauthlib openssl pyjwt setuptools wheel && \
     pip3 install cdir --user  && \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps && \
-    sudo cp -r /home/${username}/.local/bin /usr/local
+    sudo cp -r /home/${_GABRIEL}/.local/bin /usr/local
+
+USER devel
 
 # microsoft stuff
 FROM dplay_python as dplay_msdot
+
+USER ${_GABRIEL}
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
 RUN sudo apt-get install -y lsb-release && \
@@ -185,6 +209,9 @@ RUN sudo apt-get install -y lsb-release && \
     sudo apt-get update -yq && \
     sudo apt-get install -y powershell dotnet-sdk-7.0
 
+USER devel
+
+
 FROM dplay_msdot as dplay_dind
 
 USER root
@@ -194,11 +221,9 @@ RUN mkdir -p /etc/apt/keyrings && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && \
     apt-get update && apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io 
 
+RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> /devel/.bashrc && \
+    echo "export DOCKER_HOST=tcp://localhost:2375" >> ${_GABRIEL}.bashrc
 USER devel
-RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> ~/.bashrc && . ~/.bashrc
-
-USER ${username}
-RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> ~/.bashrc && . ~/.bashrc
 
 
 # for heavy gui (wsl2 required)
@@ -218,8 +243,11 @@ RUN curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://br
     # GNOME
     DEBIAN_FRONTEND=noninteractive apt-get -yq install gnome-session gdm3 gimp gedit gnupg nautilus vlc x11-apps xfce4
 
-USER ${username}
+USER devel
 
 FROM dplay_gui as dplay_cuda
+
+USER ${_GABRIEL}
 # CUDA
 RUN sudo apt-get -y install nvidia-cuda-toolkit
+USER devel
