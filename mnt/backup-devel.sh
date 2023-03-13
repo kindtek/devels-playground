@@ -1,11 +1,11 @@
 #!/bin/bash
-backup_mnt_location=/mnt/n
+backup_mnt_location=/mnt/data
 username=${1:-gabriel}
-groupname=${2:-wings}
+groupname=${2:-halos}
 
 if [ -z $_NIX_MNT_LOCATION ]
 then 
-    export _NIX_MNT_LOCATION=/mnt/n
+    export _NIX_MNT_LOCATION=/mnt/data
 fi
 if [ -z $WSL_DISTRO_NAME ] 
 then

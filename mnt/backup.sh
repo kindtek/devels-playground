@@ -2,7 +2,7 @@
 
 if [ -z $_NIX_MNT_LOCATION ]
 then 
-    export _NIX_MNT_LOCATION=/mnt/n
+    export _NIX_MNT_LOCATION=/mnt/data
 fi
 if [ -z $WSL_DISTRO_NAME ] 
 then
