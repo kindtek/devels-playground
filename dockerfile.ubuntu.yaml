@@ -222,7 +222,7 @@ RUN mkdir -p /etc/apt/keyrings && \
     apt-get update && apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io 
 
 RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> /home/devel/.bashrc && \
-    echo "export DOCKER_HOST=tcp://localhost:2375" >> /home/${_GABRIEL}.bashrc
+    echo "export DOCKER_HOST=tcp://localhost:2375" >> /home/${_GABRIEL}/.bashrc
 USER devel
 
 
