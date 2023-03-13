@@ -2,3 +2,4 @@
 # for when unpacking winget in get-latest-winget.ps1
 scripts/Microsoft-*
 /.history*
+/devels-playground/shared-data/.hide
