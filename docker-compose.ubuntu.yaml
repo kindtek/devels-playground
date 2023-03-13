@@ -34,7 +34,7 @@ services:
     init: true
     volumes:
       - halo-data:/tmp/${_GABRIEL:-gabriel}
-    command: sudo chown -R ${_GABRIEL:-gabriel}:$_HALOS /tmp/${_GABRIEL:-gabriel}
+    command: sudo chown -R ${_GABRIEL:-gabriel}:${_HALOS:-halos} /tmp/${_GABRIEL:-gabriel}
 
   chown-hel:
     # Need a user priviliged enough to chown
