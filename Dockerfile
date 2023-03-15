@@ -130,13 +130,13 @@ RUN git config --global --add safe.directory /home/devel && \
     git clone https://github.com/kindtek/devels-workshop && \
     cd devels-workshop && git pull && git submodule update --force --recursive --init --remote && cd .. && \
     chown devel:horns -R /home/devel/devels-workshop /home/devel/devels-workshop/.git && \
-    # add symlinks for convenience
-    ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay && \
     # make backup script executable
-    chmod +x dwork/mnt/backup.sh && \
-    chmod +x dwork/mnt/backup-devel.sh && \
-    chmod +x dwork/mnt/backup-gabriel.sh && \
-    chmod +x dwork/mnt/backup-custom.sh
+    chmod +x devels-workshop/mnt/backup.sh && \
+    chmod +x devels-workshop/mnt/backup-devel.sh && \
+    chmod +x devels-workshop/mnt/backup-gabriel.sh && \
+    chmod +x devels-workshop/mnt/backup-custom.sh && \
+    # add symlinks for convenience
+    ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay     
 
 # mount with halos ownership
 USER ${_GABRIEL}
@@ -221,8 +221,8 @@ RUN mkdir -p /etc/apt/keyrings && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && \
     apt-get update && apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io 
 
-RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> /devel/.bashrc && \
-    echo "export DOCKER_HOST=tcp://localhost:2375" >> ${_GABRIEL}.bashrc
+RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> /home/devel/.bashrc && \
+    echo "export DOCKER_HOST=tcp://localhost:2375" >> /home/${_GABRIEL}/.bashrc
 USER devel
 
 

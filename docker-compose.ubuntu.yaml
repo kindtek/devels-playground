@@ -13,8 +13,11 @@ services:
       - -c
       - export _GABRIEL=${_GABRIEL:-gabriel}
       - export _HALOS=${_HALOS:-halos}
-      - ln -s /tmp/${_GABRIEL:-gabriel}
-      - ln -s /tmp/devel
+      - ln -s /home/${_GABRIEL:-gabriel} /tmp/${_GABRIEL:-gabriel} 
+      - ln -s /home/devel /tmp/devel
+      - mkdir -p /mnt/data 
+      - ln -s /mnt/data /tmp/data 
+
     # command: echo something
   chown-halo:
     # Need a user priviliged enough to chown
@@ -54,6 +57,9 @@ services:
       - hel-data:/tmp/devel
     command: chown -R devel:horns /tmp/devel
   data:
+    user: ${_GABRIEL:-gabriel}
+    group_add:
+      - ${_HALOS:-halos}
     build:
       context: .
       target: dplay_data
@@ -65,12 +71,15 @@ services:
       chown-halo:
         # Wait for the ownership to change
         condition: service_completed_successfully
+    init: true
     volumes:
-      - shared-data:/mnt/data
+      - mnt-data:/tmp/data
+    # command: 
+    #   - chown -R ${_GABRIEL:-gabriel}:${_HALOS:-halos} /tmp/data
   skel:
     extends: data
     # Need a user priviliged enough to chown
-    user: gabriel
+    user: ${_GABRIEL:-gabriel}
     # image: kindtek/dplay:ubuntu-skel
     build:
       context: .
@@ -84,12 +93,11 @@ services:
     volumes:
       - hel-data:/home/devel
       - halo-data:/home/${_GABRIEL:-gabriel}
-      - type: bind
-        source: shared-data
-        target: /mnt/data
+      - mnt-data:/mnt/data
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
+
     depends_on:
       data:
         # Wait for the ownership to change
@@ -125,10 +133,8 @@ services:
         condition: service_completed_successfully
     volumes:
       - hel-data:/home/devel
-      - halo-data:/home/gabriel
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
+      - halo-data:/home/${_GABRIEL:-gabriel}
+      - /mnt/data
     labels:
       com.dplay_git.description: "basics + git"
 
@@ -193,17 +199,11 @@ services:
 volumes:
   hel-data:
   halo-data:
-  shared-data:
-    # hel-bak:
-    # halo-bak:
-
+  mnt-data:
 networks:
   "${COMPOSE_PROJECT_NAME}_default":
     driver: overlay
     attachable: true
-
-
-
   #     volumes:
   #       - type: bind
   #         source: home-vol

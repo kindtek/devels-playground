@@ -4,7 +4,7 @@ FROM ubuntu:latest AS dplay_init
 
 ARG _GABRIEL=${_GABRIEL:-gabriel}
 ARG _HALOS=${_HALOS:-halos}
-ARG backup_mnt_location=${backup_mnt_location:-/mnt/data}
+ARG mnt_data=${mnt_data:-/mnt/data}
 
 RUN addgroup --gid 777 ${_HALOS} && \
     addgroup --gid 666 horns && \
@@ -45,18 +45,17 @@ RUN usermod -aG ${_HALOS} host && \
     touch /halo/.world && \
     mkdir -p /halo/.ssh && chmod 700 /halo/.ssh && chown -R ${_GABRIEL}:${_HALOS} /halo/.ssh && \
     # make devel default wsl user 
-    echo "[user]\ndefault=devel" >> /etc/wsl.conf && \
+    echo "[user]\ndefault=devel" >> /etc/wsl.conf
     # mount stuff
-    # echo "//${backup_mnt_location}/${_GABRIEL} /home/${_GABRIEL} cifs _GABRIEL=${_GABRIEL}, file_mode=0777,dir_mode=0777 0 0\n/${backup_mnt_location}/devel /home/devel cifs _GABRIEL=devel, file_mode=0777, dir_mode=0777 0 0" >> /etc/fstab && \
-    # copy to skel
-    cp -r /home/${_GABRIEL}/. /etc/skel/
+    # echo "//${mnt_data}/${_GABRIEL} /home/${_GABRIEL} cifs _GABRIEL=${_GABRIEL}, file_mode=0777,dir_mode=0777 0 0\n/${mnt_data}/devel /home/devel cifs _GABRIEL=devel, file_mode=0777, dir_mode=0777 0 0" >> /etc/fstab && \
+    # copy to skel and /hel
     
 # add common paths
 USER ${_GABRIEL}
 ENV PATH=$PATH:/home/${_GABRIEL}/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts
-RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${backup_mnt_location}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> /home/${_GABRIEL}/.bashrc
-
-
+RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${mnt_data}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> /home/${_GABRIEL}/.bashrc && \
+    sudo cp -rf /home/${_GABRIEL}/. /etc/skel/ && \
+    sudo cp -rf /home/${_GABRIEL}/. /home/devel/ 
 
 # backup location or optionally a mount partition
 # partition letter set up for n:/ - use this guide to set up partition https://allthings.how/how-to-partition-a-hard-drive-on-windows-11/
@@ -65,11 +64,11 @@ FROM dplay_halo AS dplay_hel
 
 USER root
     # set up /devel folder as symbolic link to /home/devel for cloning repository(ies)
-RUN ln -s /home/devel /hel && chown -R devel:horns /hel && \
+RUN ln -s /home/devel /hel && chown -R devel:horns /home/devel && chown -R devel:horns /hel  && \
     # add an instructional "readme" here later
     touch /hel/lo.world && \
     # make sure .ssh has proper permissions
-    mkdir /hel/.ssh && chown -R devel:horns /hel/.ssh && chmod 700 /hel/.ssh
+    mkdir -p /home/devel/.ssh && chown -R devel:horns /home/devel/.ssh && chmod 700 /home/devel/.ssh
     # uncomment to add sudo priveleges for host / devel
     # sudo adduser devel sudo && \
     
@@ -77,7 +76,7 @@ USER devel
 
 # add common paths
 ENV PATH=$PATH:/home/devel/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts
-RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${backup_mnt_location}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> /home/devel/.bashrc
+RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${mnt_data}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> /home/devel/.bashrc
 
 
 FROM dplay_hel AS dplay_data
@@ -85,26 +84,26 @@ FROM dplay_hel AS dplay_data
 USER root
 
 RUN cp -rp /etc/skel/. /home/devel/ && \
-    if [ -d "${backup_mnt_location}/devel" ]; then \
-        if [ ! -f "${backup_mnt_location}/devel/backup-docker.sh" ]; then \
-            echo "#!/bin/bash" >> devel/backup-docker.sh; \
+    if [ -d "${mnt_data}/devel" ]; then \
+        if [ ! -f "${mnt_data}/devel/backup-docker.sh" ]; then \
+            echo "#!/bin/bash" > devel/backup-docker.sh; \
         fi \
     fi && \
-# RUN if [ -d "${backup_mnt_location}/${_GABRIEL}" ]; then \
-#         if [ ! -f "${backup_mnt_location}/${_GABRIEL}/backup-docker.sh" ]; then \
+# RUN if [ -d "${mnt_data}/${_GABRIEL}" ]; then \
+#         if [ ! -f "${mnt_data}/${_GABRIEL}/backup-docker.sh" ]; then \
 #             echo "#!/bin/bash" >> ${_GABRIEL}/backup-docker.sh; \
 #         fi \
 #     fi \
-#     if [ -d "${backup_mnt_location}/gabriel" ]; then \
-#         if [ ! -f "${backup_mnt_location}/gabriel/backup-docker.sh" ]; then \
+#     if [ -d "${mnt_data}/gabriel" ]; then \
+#         if [ ! -f "${mnt_data}/gabriel/backup-docker.sh" ]; then \
 #             echo "#!/bin/bash" >> gabriel/backup-docker.sh; \
 #         fi \
 #     fi
     chown -R devel:horns /home/devel && chown -R ${_GABRIEL}:${_HALOS} /home/${_GABRIEL}
 
 
-# RUN echo "# # # # Docker # # # # " >> ${backup_mnt_location}/gabriel/backup-docker.sh
-# RUN sudo .${backup_mnt_location}/gabriel/backup-docker.sh
+# RUN echo "# # # # Docker # # # # " >> ${mnt_data}/gabriel/backup-docker.sh
+# RUN sudo .${mnt_data}/gabriel/backup-docker.sh
 
 
 FROM dplay_data AS dplay_skel
@@ -118,14 +117,13 @@ RUN apt-get install -y apt-transport-https build-essential ca-certificates cifs-
     # adduser --system --home /home/${_GABRIEL} --shell /bin/bash --uid 1001 --gid 1001 --disabled-password ${_GABRIEL} 
 
 FROM dplay_skel AS dplay_git
-WORKDIR /hel
+WORKDIR /home/devel
 USER devel
 
 # add safe directories
 RUN git config --global --add safe.directory /home/devel && \
     git config --global --add safe.directory /hel && \
     git config --global --add safe.directory /home/devel/devels-playground && \
-    git config --global --add safe.directory * && \
     # clone fresh repos and give devel ownership
     git clone https://github.com/kindtek/devels-workshop && \
     cd devels-workshop && git pull && git submodule update --force --recursive --init --remote && cd .. && \
@@ -141,44 +139,30 @@ RUN git config --global --add safe.directory /home/devel && \
 # mount with halos ownership
 USER ${_GABRIEL}
 # set up shared backup drive structure 
-RUN sudo mkdir -p ${backup_mnt_location}/${_GABRIEL}/${_GABRIEL}-orig && \
-    sudo mkdir -p ${backup_mnt_location}/gabriel/gabriel-orig && \
-    sudo mkdir -p ${backup_mnt_location}/gabriel/devel-orig && \
-    sudo mkdir -p ${backup_mnt_location}/devel/devel-orig && \
-    sudo chown ${_GABRIEL}:${_HALOS} ${backup_mnt_location}/${_GABRIEL} && \
-    sudo chown ${_GABRIEL}:${_HALOS} ${backup_mnt_location}/${_GABRIEL}/${_GABRIEL}-orig && \
-    sudo chown gabriel:halos ${backup_mnt_location}/gabriel && \
-    sudo chown gabriel:halos ${backup_mnt_location}/gabriel/gabriel-orig && \
-    sudo chown devel:horns ${backup_mnt_location}/devel && \
-    sudo chown devel:horns ${backup_mnt_location}/devel/devel-orig && \
-    # sudo chown devel:horns ${backup_mnt_location}/gabriel/devel-orig && \
-    sudo chown devel:horns ${backup_mnt_location}/gabriel/devel-orig && \
-    # sudo chown devel:horns ${backup_mnt_location}/${_GABRIEL} && \
-    sudo chown devel:horns ${backup_mnt_location}/${_GABRIEL}/devel-orig && \
-    sudo chown devel:horns ${backup_mnt_location}/gabriel/devel-orig && \
+RUN sudo mkdir -p ${mnt_data}/${_GABRIEL}/${_GABRIEL}-orig && \
+    sudo mkdir -p ${mnt_data}/${_GABRIEL}/devel-orig && \
+    sudo mkdir -p ${mnt_data}/devel/devel-orig && \
+    sudo chown ${_GABRIEL}:${_HALOS} -R ${mnt_data}/${_GABRIEL} && \
+    sudo chown devel:horns -R ${mnt_data}/devel && \
+    sudo chown devel:horns ${mnt_data}/${_GABRIEL}/devel-orig && \
     # copy newly pulled backup script to mount location and home dirs
-    sudo cp -arf dwork/mnt/backup-gabriel.sh ${backup_mnt_location}/gabriel/backup-gabriel.sh && cp -arf dwork/mnt/backup-gabriel.sh /home/gabriel/backup-gabriel.sh  && \
-    sudo cp -arf dwork/mnt/backup-custom.sh ${backup_mnt_location}/${_GABRIEL}/backup-${_GABRIEL}.sh && cp -arf dwork/mnt/backup-custom.sh /home/${_GABRIEL}/backup-${_GABRIEL}.sh && \
-    sudo cp -arf dwork/mnt/backup-custom.sh ${backup_mnt_location}/gabriel/backup-${_GABRIEL}.sh && cp -arf dwork/mnt/backup-custom.sh /home/gabriel/backup-${_GABRIEL}.sh && \
-    sudo cp -arf dwork/mnt/backup-custom.sh ${backup_mnt_location}/${_GABRIEL}/backup-gabriel.sh && cp -arf dwork/mnt/backup-${_GABRIEL}.sh /home/gabriel/backup-gabriel.sh && \
-    sudo cp -arf dwork/mnt/backup-custom.sh ${backup_mnt_location}/gabriel/backup-gabriel.sh && cp -arf dwork/mnt/backup-custom.sh /home/gabriel/backup-gabriel.sh && \
-    sudo cp -arf dwork/mnt/backup-devel.sh ${backup_mnt_location}/devel/backup-devel.sh && \
-    sudo cp -arf dwork/mnt/backup-devel.sh ${backup_mnt_location}/${_GABRIEL}/backup-devel.sh && cp -arf dwork/mnt/backup-devel.sh /home/${_GABRIEL}/backup-devel.sh  && \
-    sudo cp -arf dwork/mnt/backup-devel.sh ${backup_mnt_location}/gabriel/backup-devel.sh && cp -arf dwork/mnt/backup-devel.sh /home/gabriel/backup-devel.sh  && \
+    sudo cp -arf dwork/mnt/backup-gabriel.sh ${mnt_data}/gabriel/backup-gabriel.sh && cp -arf dwork/mnt/backup-gabriel.sh /home/gabriel/backup-gabriel.sh  && \
+    sudo cp -arf dwork/mnt/backup-custom.sh ${mnt_data}/${_GABRIEL}/backup-${_GABRIEL}.sh && cp -arf dwork/mnt/backup-custom.sh /home/${_GABRIEL}/backup-${_GABRIEL}.sh && \
+    # sudo cp -arf dwork/mnt/backup-custom.sh ${mnt_data}/gabriel/backup-gabriel.sh && cp -arf dwork/mnt/backup-custom.sh /home/gabriel/backup-gabriel.sh && \
+    sudo cp -arf dwork/mnt/backup-devel.sh ${mnt_data}/devel/backup-devel.sh && \
+    sudo cp -arf dwork/mnt/backup-devel.sh ${mnt_data}/${_GABRIEL}/backup-devel.sh && cp -arf dwork/mnt/backup-devel.sh /home/${_GABRIEL}/backup-devel.sh  && \
     sudo cp -arf dwork/mnt/backup-devel.sh /home/devel/backup-devel.sh && \
     # make rwx for owner and rx for group - none for others
-    sudo chmod 750 -R ${backup_mnt_location}/${_GABRIEL} && \
-    sudo chmod 755 ${backup_mnt_location}/${_GABRIEL} && \
-    sudo chmod 750 -R ${backup_mnt_location}/gabriel && \
-    sudo chmod 755 ${backup_mnt_location}/gabriel && \
-    sudo chmod 750 -R ${backup_mnt_location}/devel && \
+    sudo chmod 750 -R ${mnt_data}/${_GABRIEL} && \
+    sudo chmod 755 ${mnt_data}/${_GABRIEL} && \
+    sudo chmod 750 -R ${mnt_data}/devel && \
     # # add warning for the backup drive
-    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GABRIEL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${backup_mnt_location}/README_ASAP      && \
-    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GABRIEL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${backup_mnt_location}/${_GABRIEL}/README_ASAP      && \
-    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GABRIEL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${backup_mnt_location}/gabriel/README_ASAP      && \
-    sudo chown ${_GABRIEL}:${_HALOS} ${backup_mnt_location}/README_ASAP
+    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GABRIEL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/README_ASAP      && \
+    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GABRIEL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/${_GABRIEL}/README_ASAP      && \
+    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GABRIEL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/gabriel/README_ASAP      && \
+    sudo chown ${_GABRIEL}:${_HALOS} ${mnt_data}/README_ASAP
     # wait to do this until we have WSL_DISTRO_NAME
-    # sh ${backup_mnt_location}/backup-devel.sh
+    # sh ${mnt_data}/backup-devel.sh
 
 USER devel
 
