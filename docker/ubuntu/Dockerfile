@@ -203,7 +203,23 @@ USER root
 RUN mkdir -p /etc/apt/keyrings && \
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && \
-    apt-get update && apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io 
+    apt-get update && apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io  && \
+    chown -R devel:horns ../../../
+
+USER devel
+RUN cd linux && \
+    cp .config.new .config && \
+    yes "" | make prepare scripts && \
+    cd ../zfs && sh autogen.sh && \
+    sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=../linux --with-linux-obj=../linux && \
+    sh copy-builtin ../linux
+USER gabriel
+RUN sudo make install && \
+    cd ../linux/ && sudo sed -i 's/# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config && echo grep ZFS .config && \
+    sudo make && sudo make modules_install && sudo mkdir -p ../../../gabriel/kernels && sudo cp arch/x86/boot/bzImage ../../../gabriel/kernels/linux-kernel-626a5 && \
+    sudo cp arch/x86/boot/bzImage ../../mnt/linux-kernel-626a6 && \
+    sudo make -j16 && sudo make modules_install
+
 
 RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> /home/devel/.bashrc && \
     echo "export DOCKER_HOST=tcp://localhost:2375" >> /home/${_GABRIEL}/.bashrc
