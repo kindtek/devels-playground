@@ -6,7 +6,6 @@ services:
     build:
       context: .
       target: dplay_init
-      dockerfile: dockerfile.ubuntu.yaml
     init: true
     command:
       - bin/bash
@@ -28,7 +27,6 @@ services:
     build:
       context: .
       target: dplay_halo
-      dockerfile: dockerfile.ubuntu.yaml
     depends_on:
       initialize:
         # Wait for the groups to be added
@@ -47,7 +45,6 @@ services:
     build:
       context: .
       target: dplay_hel
-      dockerfile: dockerfile.ubuntu.yaml
     depends_on:
       initialize:
         # Wait for groups to be added
@@ -63,7 +60,6 @@ services:
     build:
       context: .
       target: dplay_data
-      dockerfile: dockerfile.ubuntu.yaml
     depends_on:
       chown-hel:
         # Wait for the ownership to change
@@ -87,7 +83,6 @@ services:
       args:
         - _GABRIEL=${_GABRIEL:-gabriel}
         - _HALOS=${_HALOS:-halos}
-      dockerfile: dockerfile.ubuntu.yaml
       # network: ${COMPOSE_PROJECT_NAME}_default
     init: true
     volumes:
@@ -120,7 +115,6 @@ services:
       target: dplay_git
       args:
         - _GABRIEL=${_GABRIEL:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
     depends_on:
       chown-hel:
         # Wait for the ownership to change
@@ -146,7 +140,6 @@ services:
       target: dplay_msdot
       args:
         - _GABRIEL=${_GABRIEL:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
     labels:
       com.dplay_msdot.description: "basics + git + powerhell"
 
@@ -158,7 +151,6 @@ services:
       target: dplay_msdot
       args:
         - _GABRIEL=${_GABRIEL:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
     labels:
       com.dplay_msdot.description: "basics + git + powerhell"
   dind:
@@ -169,7 +161,6 @@ services:
       target: dplay_dind
       args:
         - _GABRIEL=${_GABRIEL:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
     labels:
       com.dplay_dind.description: "basics + git + powerhell + docker"
   gui:
@@ -180,7 +171,6 @@ services:
       target: dplay_gui
       args:
         - _GABRIEL=${_GABRIEL:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
     labels:
       com.dplay_gui.description: "basics + git + powerhell + docker + gui"
     volumes:
@@ -193,7 +183,6 @@ services:
       target: dplay_cuda
       args:
         - _GABRIEL=${_GABRIEL:-gabriel}
-      dockerfile: dockerfile.ubuntu.yaml
       labels:
         com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 volumes:
