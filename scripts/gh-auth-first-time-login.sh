@@ -1,0 +1,38 @@
+git_user_email=$GH_REPO_OWNER_EMAIL
+git_user_name=kindtek
+ssh_dir=/home/devel/.ssh
+# rm -f $ssh_dir/id_ed25519 $ssh_dir/id_ed25519.pub 
+git config --global user.email $git_user_email 
+git config --global user.name $git_user_name
+rm -f $ssh_dir/id_ed25519 $ssh_dir/id_ed25519.pub
+ssh-keygen -C $git_user_name@github.com -f $ssh_dir/id_ed25519 -N "" -t ed25519
+eval "$(ssh-agent -s)"
+ssh-add $ssh_dir/id_ed25519
+
+# quietly verify host signature before using ssh-key
+host_fingerprint_expected_rsa='github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ=='
+host_fingerprint_actually_rsa="$(ssh-keyscan -t rsa github.com)"
+# quietly verify host signature before using ssh-key
+host_fingerprint_expected_ed25519='github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl'
+host_fingerprint_actually_ed25519="$(ssh-keyscan -t ed25519 github.com)"
+# quietly verify host signature before using ssh-key
+host_fingerprint_expected_ecdsa='github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg='
+host_fingerprint_actually_ecdsa="$(ssh-keyscan -t ecdsa github.com)"
+# if verified save - otherwise output error and stop
+if  [[ $host_fingerprint_actually_rsa == $host_fingerprint_expected_rsa ]] && \
+    [[ $host_fingerprint_actually_ed25519 == $host_fingerprint_expected_ed25519 ]] && \
+    [[ $host_fingerprint_actually_ecdsa == $host_fingerprint_expected_ecdsa ]]
+then
+    echo '
+    verfied host confirmed
+    '
+    if [ -f "$ssh_dir/known_hosts" ]; then
+        ssh-keyscan github.com >> $ssh_dir/known_hosts;
+    else    
+        ssh-keyscan github.com > $ssh_dir/known_hosts;
+    fi
+else
+	echo -e '\n !!!!!!!!! WARNING !!!!!!!!!\n\n\n GH SSH KEYS *NOT* AUTHENTIC! \n\n\n !!!!!!!!! WARNING !!!!!!!!!\n ';
+    exit
+fi
+
