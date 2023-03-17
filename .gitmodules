@@ -11,4 +11,5 @@
 	branch = latest-release
 	active = true
 	shallow = true
-	recurse = true
+	recurse = false
+	# update = none
