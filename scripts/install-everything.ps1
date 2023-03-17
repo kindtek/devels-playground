@@ -144,7 +144,7 @@ function test_repo_path {
     )
     try {
         # refresh environment variables
-        # cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
+        # cmd /c start powershell.exe "$git_path/devels-advocate/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
         if (Test-Path -Path "$parent_path/$repo_src_name") {
             Push-Location "$parent_path/$repo_src_name"
             # if git status works and finds devels-workshop repo, assume the install has been successfull and this script was ran once before
@@ -161,7 +161,7 @@ function test_repo_path {
     }
     catch {
         Write-Debug "Git command not found"
-        powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle "Hidden"
+        powershell.exe "$git_path/devels-advocate/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle "Hidden"
         
         return $false
     }
@@ -177,7 +177,7 @@ function install_repo {
     Write-Host "Now installing:`r`n`t- GitHub repos`r`n`t- Chocolatey`r`n" 
 
     # refresh environment variables using script in choco temp download location
-    powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle "Hidden"
+    powershell.exe "$git_path/devels-advocate/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle "Hidden"
     # Write-Host "parent path: $parent_path"
     Set-Location $parent_path
     $new_install = $false
@@ -209,27 +209,27 @@ function install_repo {
         $new_install = $true
         # getting error-0x80010135 path too long error when unzipping.. unzip operation at the shortest path
         # Push-Location $temp_repo_scripts_path
-        Push-Location scripts
+        # Push-Location scripts
 
         Push-Location choco
         # $choco = "devels-advocate/get-latest-choco.ps1"
         # Write-Host "`n`r`n`rInstalling $software_name ..." 
         # $env:path += ";C:\ProgramData\chocoportable"
         # &$choco = Invoke-Expression -command "devels-advocate/get-latest-choco.ps1" 
-        # $choco = "cmd.exe /c scripts/choco/build.bat"
+        # $choco = "cmd.exe /c devels-advocate/build.bat"
         Write-Host "`n`r`n`rInstalling $software_name ..." 
         $env:path += ";C:\ProgramData\chocoportable"
         $choco = "build.bat"
         Write-Host "Executing $choco ..."
-        $choco = "$parent_path/$repo_src_name/scripts/choco/build.bat"
+        $choco = "$parent_path/$repo_src_name/devels-advocate/build.bat"
         Write-Host "&$choco"
         # Push-Location ../../..
-        &$choco = "$parent_path/$repo_src_name/scripts/choco/build.bat"
+        &$choco = "$parent_path/$repo_src_name/devels-advocate/build.bat"
         # Pop-Location
         $refresh_env = "src/chocolatey.resources/redirects/RefreshEnv.cmd"
         &$refresh_env = "src/chocolatey.resources/redirects/RefreshEnv.cmd"
-        # cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
-        Pop-Location
+        # cmd /c start powershell.exe "$git_path/devels-advocate/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
+        # Pop-Location
         Pop-Location
         Write-Host "$software_name installed"  | Out-File -FilePath "$git_path/.choco-installed"
 
@@ -242,8 +242,8 @@ function install_repo {
         
         
 
-    $refresh_env = "scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd"
-    &$refresh_env = "scripts/chocosrc/chocolatey.resources/redirects/RefreshEnv.cmd"
+    $refresh_env = "devels-advocate/src/chocolatey.resources/redirects/RefreshEnv.cmd"
+    &$refresh_env = "devels-advocatesrc/chocolatey.resources/redirects/RefreshEnv.cmd"
     
 
     return $new_install
@@ -254,7 +254,7 @@ function install_repo {
 
 
 # refresh env again
-# cmd /c start powershell.exe "$git_path/scripts/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
+# cmd /c start powershell.exe "$git_path/devels-advocate/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
 
 # $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
 # if ( $user_input -ine "n" ) {

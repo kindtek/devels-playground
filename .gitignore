@@ -3,3 +3,6 @@
 scripts/Microsoft-*
 /.history*
 /devels-playground/shared-data/.hide
+**/data/logs/**
+**/.vscode-server/**
+**/.history/**
