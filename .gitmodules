@@ -5,4 +5,10 @@
 	active = true
 	shallow = false
 	recurse = true
-
+[submodule "linux"]
+	path = linux
+	url = https://github.com/kindtek/linux.git
+	branch = latest-release
+	active = true
+	shallow = true
+	recurse = true
