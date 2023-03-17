@@ -121,9 +121,13 @@ WORKDIR /home/devel
 USER devel
 
 # add safe directories
-RUN git config --global --add safe.directory /home/devel && \
-    git config --global --add safe.directory /hel && \
-    git config --global --add safe.directory /home/devel/devels-playground && \
+RUN "[user] \
+email = $GH_REPO_OWNER_EMAIL \
+name = kindtek \
+[credential "https://github.com"] \
+helper = !/usr/bin/gh auth git-credential \
+[url "ssh://git@github.com/"] \
+insteadOf = https://github.com" > /home/devel/.gitconfig && \
     # clone fresh repos and give devel ownership
     git clone https://github.com/kindtek/devels-workshop && \
     cd devels-workshop && git pull && git submodule update --force --recursive --init --remote && cd .. && \
