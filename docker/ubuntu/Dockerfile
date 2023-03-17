@@ -133,6 +133,7 @@ RUN git config --global --add safe.directory /home/devel && \
     chmod +x devels-workshop/mnt/backup-devel.sh && \
     chmod +x devels-workshop/mnt/backup-gabriel.sh && \
     chmod +x devels-workshop/mnt/backup-custom.sh && \
+    chmod +x devels-workshop/scripts/gh-auth-first-time-login.sh && \
     # add symlinks for convenience
     ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay && \
     ./devels-workshop/scripts/gh-auth-first-time-login.sh 
