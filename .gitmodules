@@ -8,7 +8,7 @@
 [submodule "linux"]
 	path = linux
 	url = https://github.com/kindtek/linux
-	branch = v6.2-latest
+	branch = latest-release
 	active = true
 	shallow = true
 	recurse = true
