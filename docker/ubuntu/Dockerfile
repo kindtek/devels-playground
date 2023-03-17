@@ -196,6 +196,8 @@ RUN sudo apt-get install -y lsb-release && \
 USER devel
 
 
+# for error "no valid drivers found: Cannot connect to the Docker daemon at tcp://localhost:2375":
+# try running `unset DOCKER_HO`
 FROM dplay_msdot as dplay_dind
 
 USER root
@@ -219,11 +221,7 @@ RUN sudo make install && \
     sudo cp arch/x86/boot/bzImage ../../mnt/linux-kernel-626a6 && \
     sudo make -j16 && sudo make modules_install
 
-
-RUN echo "export DOCKER_HOST=tcp://localhost:2375" >> /home/devel/.bashrc && \
-    echo "export DOCKER_HOST=tcp://localhost:2375" >> /home/${_GABRIEL}/.bashrc
 USER devel
-
 
 # for heavy gui (wsl2 required)
 FROM dplay_dind as dplay_gui
