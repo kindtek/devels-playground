@@ -33,6 +33,6 @@
     "ms-kubernetes-tools.vscode-kubernetes-tools",
     "ms-vscode.makefile-tools",
     "christian-kohler.path-intellisense",
-    "ms-vscode.powershell-preview"
+    "ms-vscode.powershell"
   ]
 }
