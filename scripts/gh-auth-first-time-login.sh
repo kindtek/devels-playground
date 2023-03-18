@@ -1,6 +1,6 @@
 git_user_email=$GH_REPO_OWNER_EMAIL
 git_user_name=kindtek
-ssh_dir=/home/devel/.ssh
+ssh_dir=/home/${1:-devel}/.ssh
 # rm -f $ssh_dir/id_ed25519 $ssh_dir/id_ed25519.pub 
 git config --global user.email $git_user_email 
 git config --global user.name $git_user_name
@@ -23,9 +23,7 @@ if  [[ $host_fingerprint_actually_rsa == $host_fingerprint_expected_rsa ]] && \
     [[ $host_fingerprint_actually_ed25519 == $host_fingerprint_expected_ed25519 ]] && \
     [[ $host_fingerprint_actually_ecdsa == $host_fingerprint_expected_ecdsa ]]
 then
-    echo '
-    verfied host confirmed
-    '
+    echo -e '\n verfied host confirmed \n'
     if [ -f "$ssh_dir/known_hosts" ]; then
         ssh-keyscan github.com >> $ssh_dir/known_hosts;
     else    
