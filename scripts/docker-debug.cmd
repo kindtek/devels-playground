@@ -6,7 +6,12 @@ SETLOCAL EnableDelayedExpansion
 @REM also try deleting the .docker folder in user directory (C:\Users\xxxx)
 
 SET prompt=prompt
+
 :prompt
+ECHO:
+ECHO  running this in linux fixes 90% of Docker connection problems: 
+ECHO  'unset DOCKER_HOST'
+ECHO:
 ECHO:
 ECHO  [s]soft docker restart (admin req)
 ECHO  [u]nregister docker desktop containers
@@ -36,6 +41,26 @@ goto prompt
 docker update --restart=always docker-desktop
 docker update --restart=always docker-desktop-data
 "C:\Program Files\Docker\Docker\DockerCli.exe" -SwitchDaemon
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @REM -SwitchLinuxEngine
 @REM -SwitchWindowsEngine
 @REM -Start
