@@ -1,3 +1,4 @@
+#!/bin/bash
 git_user_email=$GH_REPO_OWNER_EMAIL
 git_user_name=kindtek
 ssh_dir=/home/${1:-devel}/.ssh
@@ -19,18 +20,84 @@ host_fingerprint_actually_ed25519="$(ssh-keyscan -t ed25519 github.com)"
 host_fingerprint_expected_ecdsa='github.com ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBEmKSENjQEezOmxkZMy7opKgwFB9nkt5YRrYMjNuG5N87uRgg6CLrbo5wAdT/y6v0mKV0U2w0WZ2YB/++Tpockg='
 host_fingerprint_actually_ecdsa="$(ssh-keyscan -t ecdsa github.com)"
 # if verified save - otherwise output error and stop
-if  [[ $host_fingerprint_actually_rsa == $host_fingerprint_expected_rsa ]] && \
-    [[ $host_fingerprint_actually_ed25519 == $host_fingerprint_expected_ed25519 ]] && \
-    [[ $host_fingerprint_actually_ecdsa == $host_fingerprint_expected_ecdsa ]]
-then
-    echo -e '\n verfied host confirmed \n'
+
+matching_prints_rsa=false
+matching_prints_ed25519=false
+matching_prints_ecdsa=false
+if [ "$host_fingerprint_actually_ecdsa" = "$host_fingerprint_expected_ecdsa" ]; then
+    matching_prints_rsa=true;
+fi
+if [ "$host_fingerprint_actually_ed25519" = "$host_fingerprint_expected_ed25519" ]; then
+    matching_prints_ed25519=true;
+fi
+if [ "$host_fingerprint_actually_ecdsa" = "$host_fingerprint_expected_ecdsa" ]; then
+    matching_prints_ecdsa=true;
+fi
+
+if  [ $matching_prints_rsa ] && [ $matching_prints_ed25519 ] && [ $matching_prints_ecdsa ]; then
+    echo '\n verfied host confirmed \n'
     if [ -f "$ssh_dir/known_hosts" ]; then
         ssh-keyscan github.com >> $ssh_dir/known_hosts;
     else    
         ssh-keyscan github.com > $ssh_dir/known_hosts;
     fi
 else
-	echo -e '\n !!!!!!!!! WARNING !!!!!!!!!\n\n\n GH SSH KEYS *NOT* AUTHENTIC! \n\n\n !!!!!!!!! WARNING !!!!!!!!!\n ';
-    exit
+	echo '
+
+    !!!!!!!!! WARNING !!!!!!!!! 
+    GH SSH KEYS *NOT* AUTHENTIC 
+    !!!!!!!!! WARNING !!!!!!!!! 
+    
+    !!!!!!!!! WARNING !!!!!!!!! 
+    GH SSH KEYS *NOT* AUTHENTIC 
+    !!!!!!!!! WARNING !!!!!!!!! 
+    
+    !!!!!!!!! WARNING !!!!!!!!! 
+    GH SSH KEYS *NOT* AUTHENTIC 
+    !!!!!!!!! WARNING !!!!!!!!! 
+    
+    !!!!!!!!! WARNING !!!!!!!!! 
+    GH SSH KEYS *NOT* AUTHENTIC 
+    !!!!!!!!! WARNING !!!!!!!!! 
+    
+    !!!!!!!!! WARNING !!!!!!!!! 
+    GH SSH KEYS *NOT* AUTHENTIC 
+    !!!!!!!!! WARNING !!!!!!!!! 
+    
+    
+    ';
+    if ! [ $matching_prints_rsa ]; then
+        echo "\nexpected RSA:\t$host_fingerprint_expected_rsa\nactual RSA:\t$host_fingerprint_actually_rsa"
+    fi
+    if ! [ $matching_prints_ed25519 ]; then
+        echo "\nexpected ED25519:\t$host_fingerprint_expected_ed25519\nactual ED25519:\t$host_fingerprint_actually_ed25519"
+    fi
+    if ! [ $matching_prints_ecdsa ]; then
+        echo "\nexpected ECDSA:\t$host_fingerprint_expected_ecdsa\nactual ECDSA:\t$host_fingerprint_actually_ecdsa"
+    fi
+	echo '
+
+    !!!!!!!!! WARNING !!!!!!!!! 
+    GH SSH KEYS *NOT* AUTHENTIC 
+    !!!!!!!!! WARNING !!!!!!!!! 
+    
+    !!!!!!!!! WARNING !!!!!!!!! 
+    GH SSH KEYS *NOT* AUTHENTIC 
+    !!!!!!!!! WARNING !!!!!!!!! 
+    
+    !!!!!!!!! WARNING !!!!!!!!! 
+    GH SSH KEYS *NOT* AUTHENTIC 
+    !!!!!!!!! WARNING !!!!!!!!! 
+    
+    !!!!!!!!! WARNING !!!!!!!!! 
+    GH SSH KEYS *NOT* AUTHENTIC 
+    !!!!!!!!! WARNING !!!!!!!!! 
+    
+    !!!!!!!!! WARNING !!!!!!!!! 
+    GH SSH KEYS *NOT* AUTHENTIC 
+    !!!!!!!!! WARNING !!!!!!!!! 
+    
+    
+    ';
 fi
 
