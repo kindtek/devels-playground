@@ -37,7 +37,7 @@ RUN usermod -aG ${_HALOS} host && \
     apt-get -y install sudo && \
     # add ${_GABRIEL} to sudo group
     sudo adduser ${_GABRIEL} sudo && \
-    # uncomment to add sudo priveleges for host
+    # uncomment to add sudo privileges for host
     # sudo adduser host sudo && \
     # set up /halo folder as symbolic link to /home/gabriel 
     ln -s /home/${_GABRIEL} /halo && chown -R ${_GABRIEL}:${_HALOS} /halo && \
@@ -52,10 +52,11 @@ RUN usermod -aG ${_HALOS} host && \
 
 # add common paths
 USER ${_GABRIEL}
-ENV PATH=$PATH:/home/${_GABRIEL}/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts
+ENV PATH="$PATH:/home/${_GABRIEL}/.local/bin:/hel/devels-workshop/scripts:/home/devel/devels-workshop/devels-playground/scripts"
 RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${mnt_data}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> /home/${_GABRIEL}/.bashrc && \
     sudo cp -rf /home/${_GABRIEL}/. /etc/skel/ && \
-    sudo cp -rf /home/${_GABRIEL}/. /home/devel/ 
+    sudo cp -rf /home/${_GABRIEL}/. /home/devel/ && \
+    sudo rm /home/devel/.sudo_as_admin_successful
 
 # backup location or optionally a mount partition
 # partition letter set up for n:/ - use this guide to set up partition https://allthings.how/how-to-partition-a-hard-drive-on-windows-11/
@@ -75,7 +76,7 @@ RUN ln -s /home/devel /hel && chown -R devel:horns /home/devel && chown -R devel
 USER devel
 
 # add common paths
-ENV PATH=$PATH:/home/devel/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts
+ENV PATH="$PATH:/home/devel/.local/bin:/home/devel/devels-workshop/devels-playground/scripts"
 RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${mnt_data}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> /home/devel/.bashrc
 
 
@@ -119,15 +120,28 @@ RUN apt-get install -y apt-transport-https build-essential ca-certificates cifs-
 FROM dplay_skel AS dplay_git
 WORKDIR /home/devel
 USER devel
-
 # add safe directories
 RUN git config --global --add safe.directory /home/devel && \
     git config --global --add safe.directory /hel && \
-    git config --global --add safe.directory /home/devel/devels-playground && \
-    # clone fresh repos and give devel ownership
-    git clone https://github.com/kindtek/devels-workshop && \
-    cd devels-workshop && git pull && git submodule update --force --recursive --init --remote && cd .. && \
-    chown devel:horns -R /home/devel/devels-workshop /home/devel/devels-workshop/.git && \
+    git config --global --add safe.directory /home/devel/devels-playground 
+# && \
+# clone fresh repos and give devel ownership
+RUN git clone https://github.com/kindtek/devels-workshop 
+# RUN git clone https://github.com/kindtek/devels-workshop --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
+# && \
+# --filter=combine:tree:depth:1+blob:limit=10240000  --recurse-submodules --remote-submodules  --single-branch  --no-tags --filter=blob:limit=1024000 --single-branch --branch main
+WORKDIR /home/devel/devels-workshop
+
+RUN git pull && git submodule update --init --remote 
+
+WORKDIR /home/devel
+
+# cd devels-workshop && git pull && \
+# 
+# RUN git submodule --cached
+# && \
+#  && \
+RUN chown devel:horns -R /home/devel  && \
     # make backup script executable
     chmod +x devels-workshop/mnt/backup.sh && \
     chmod +x devels-workshop/mnt/backup-devel.sh && \
@@ -137,23 +151,26 @@ RUN git config --global --add safe.directory /home/devel && \
     # add symlinks for convenience
     ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay && \
     ./devels-workshop/scripts/gh-auth-first-time-login.sh 
-
 # mount with halos ownership
 USER ${_GABRIEL}
+RUN ./devels-workshop/scripts/gh-auth-first-time-login.sh account_owner=${_GABRIEL}
 # set up shared backup drive structure 
-RUN sudo mkdir -p ${mnt_data}/${_GABRIEL}/${_GABRIEL}-orig && \
-    sudo mkdir -p ${mnt_data}/${_GABRIEL}/devel-orig && \
+RUN sudo mkdir -p ${mnt_data}/${_GABRIEL}/${_GABRIEL}-orig
+RUN sudo mkdir -p ${mnt_data}/devel/${_GABRIEL}-orig && \
     sudo mkdir -p ${mnt_data}/devel/devel-orig && \
+    sudo mkdir -p ${mnt_data}/${_GABRIEL}/devel-orig && \
     sudo chown ${_GABRIEL}:${_HALOS} -R ${mnt_data}/${_GABRIEL} && \
     sudo chown devel:horns -R ${mnt_data}/devel && \
-    sudo chown devel:horns ${mnt_data}/${_GABRIEL}/devel-orig && \
-    # copy newly pulled backup script to mount location and home dirs
-    sudo cp -arf dwork/mnt/backup-gabriel.sh ${mnt_data}/gabriel/backup-gabriel.sh && cp -arf dwork/mnt/backup-gabriel.sh /home/gabriel/backup-gabriel.sh  && \
-    sudo cp -arf dwork/mnt/backup-custom.sh ${mnt_data}/${_GABRIEL}/backup-${_GABRIEL}.sh && cp -arf dwork/mnt/backup-custom.sh /home/${_GABRIEL}/backup-${_GABRIEL}.sh && \
-    # sudo cp -arf dwork/mnt/backup-custom.sh ${mnt_data}/gabriel/backup-gabriel.sh && cp -arf dwork/mnt/backup-custom.sh /home/gabriel/backup-gabriel.sh && \
-    sudo cp -arf dwork/mnt/backup-devel.sh ${mnt_data}/devel/backup-devel.sh && \
-    sudo cp -arf dwork/mnt/backup-devel.sh ${mnt_data}/${_GABRIEL}/backup-devel.sh && cp -arf dwork/mnt/backup-devel.sh /home/${_GABRIEL}/backup-devel.sh  && \
-    sudo cp -arf dwork/mnt/backup-devel.sh /home/devel/backup-devel.sh && \
+    sudo chown devel:horns ${mnt_data}/devel/devel-orig && \
+    sudo chown devel:horns ${mnt_data}/${_GABRIEL}/devel-orig 
+# && \
+# copy newly pulled backup script to mount location and home dirs
+RUN sudo cp -arf devels-workshop/mnt/backup-gabriel.sh ${mnt_data}/gabriel/backup-gabriel.sh && cp -arf devels-workshop/mnt/backup-gabriel.sh /home/gabriel/backup-gabriel.sh && \
+    sudo cp -arf devels-workshop/mnt/backup-custom.sh ${mnt_data}/${_GABRIEL}/backup-${_GABRIEL}.sh && cp -arf devels-workshop/mnt/backup-custom.sh /home/${_GABRIEL}/backup-${_GABRIEL}.sh && \
+    # sudo cp -arf devels-workshop/mnt/backup-custom.sh ${mnt_data}/gabriel/backup-gabriel.sh && cp -arf devels-workshop/mnt/backup-custom.sh /home/gabriel/backup-gabriel.sh && \
+    sudo cp -arf devels-workshop/mnt/backup-devel.sh ${mnt_data}/devel/backup-devel.sh && \
+    sudo cp -arf devels-workshop/mnt/backup-devel.sh ${mnt_data}/${_GABRIEL}/backup-devel.sh && cp -arf devels-workshop/mnt/backup-devel.sh /home/${_GABRIEL}/backup-devel.sh  && \
+    sudo cp -arf devels-workshop/mnt/backup-devel.sh /home/devel/backup-devel.sh && \
     # make rwx for owner and rx for group - none for others
     sudo chmod 750 -R ${mnt_data}/${_GABRIEL} && \
     sudo chmod 755 ${mnt_data}/${_GABRIEL} && \
@@ -165,12 +182,11 @@ RUN sudo mkdir -p ${mnt_data}/${_GABRIEL}/${_GABRIEL}-orig && \
     sudo chown ${_GABRIEL}:${_HALOS} ${mnt_data}/README_ASAP
 # wait to do this until we have WSL_DISTRO_NAME
 # sh ${mnt_data}/backup-devel.sh
-
 USER devel
+
 
 #python stuff
 FROM dplay_git as dplay_python
-
 USER ${_GABRIEL}
 RUN sudo apt-get install -y jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv && \
     # sudo python3 -m pip install --upgrade pip cryptography oauthlib openssl pyjwt setuptools wheel && \
@@ -180,53 +196,100 @@ RUN sudo apt-get install -y jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepo
     sudo cp -r /home/${_GABRIEL}/.local/bin /usr/local
 
 USER devel
-
 # microsoft stuff
 FROM dplay_python as dplay_msdot
-
 USER ${_GABRIEL}
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
-RUN sudo apt-get install -y lsb-release && \
-    sudo wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb" && \
-    ## Register the Microsoft repository GPG keys
-    sudo dpkg -i packages-microsoft-prod.deb && \
-    sudo rm packages-microsoft-prod.deb && \
-    sudo apt-get update -yq && \
-    sudo apt-get install -y powershell dotnet-sdk-7.0
-
+RUN sudo apt-get install -y lsb-release 
+RUN sudo wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
+#  && \
+## Register the Microsoft repository GPG keys
+RUN sudo dpkg -i packages-microsoft-prod.deb 
+RUN sudo apt-get install -y powershell 
+RUN sudo apt-get install -y dotnet-sdk-7.0
 USER devel
 
 
 # for error "no valid drivers found: Cannot connect to the Docker daemon at tcp://localhost:2375":
-# try running `unset DOCKER_HO`
+# try running `unset DOCKER_HOST`
 FROM dplay_msdot as dplay_dind
 
 USER root
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
-RUN mkdir -p /etc/apt/keyrings && \
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && \
-    apt-get update && apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io  && \
-    chown -R devel:horns ../../../
+RUN sudo mkdir -p /etc/apt/keyrings 
+#   && \
+RUN  sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg 
+#   && \
+RUN  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+#    && \
+RUN echo exit 0 > /usr/sbin/policy-rc.d
+RUN sudo apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io
+#    && \
+RUN sudo chown -R devel:horns /home/devel $mnt_data/devel $mnt_data/${_GABRIEL}/devel-orig
+USER ${_GABRIEL}
+RUN export DEBIAN_FRONTEND=noninteractive
+RUN DEBIAN_FRONTEND=noninteractive sudo apt-get install -yqq snapd daemonize
+# RUN  
+RUN DEBIAN_FRONTEND=noninteractive sudo apt-get install -yq  dialog apt-utils 
+RUN DEBIAN_FRONTEND=noninteractive sudo apt-get upgrade -yq libldap-common libldap-2.5-0
+# RUN DEBIAN_FRONTEND=noninteractive sudo apt-get install -yq  zfs-utils 
+# RUN yes $'23\n' | sudo apt-get install -y --force-yes zfs-dracut >/dev/null 2>&1 
+# RUN DEBIAN_FRONTEND=noninteractive sudo apt-get install -yq zfsutils-linux
+RUN DEBIAN_FRONTEND=noninteractive sudo apt-get install -yq lxc-utils
+#  
+RUN sudo apt-get install -y gnupg build-essential autoconf automake libtool gawk alien fakeroot dkms libblkid-dev uuid-dev libudev-dev libssl-dev \
+    zlib1g-dev libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi libffi-dev flex bison
 
-USER gabriel
-RUN cd linux && \
-    sudo cp .config.new .config && \
-    sudo make prepare scripts && \
-    cd ../zfs && sudo sh autogen.sh && \
-    sudo sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=../linux --with-linux-obj=../linux && \
-    sudo sh copy-builtin ../linux
-RUN sudo make install && \
-    cd ../linux/ && sudo sed -i 's/# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config && echo grep ZFS .config && \
-    sudo make && sudo make modules_install && sudo mkdir -p ../../../gabriel/kernels && sudo cp arch/x86/boot/bzImage ../../../gabriel/kernels/linux-kernel-626a5 && \
-    sudo cp arch/x86/boot/bzImage ../../mnt/linux-kernel-626a6 && \
-    sudo make -j16 && sudo make modules_install
+#  && \
+
+# RUN sudo systemctl unmask zsysd.service && sudo systemctl enable zsysd.service && sudo systemctl start zsysd.service 
+#     #  && \
+
+# RUN sudo systemctl unmask snapd.service && sudo systemctl enable snapd.service && sudo systemctl start snapd.service && \
+#     sudo snap install lxd -y && sudo lxd init 
+
+# RUN sudo systemctl unmask lxcfs.service && sudo systemctl enable lxcfs.service && sudo systemctl start lxcfs.service
+# #  && \
+
+# RUN sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target
+
+# RUN  sudo systemctl enable snapd.service && sudo systemctl start snapd.service
+# RUN  sudo systemctl enable snapd.service && sudo systemctl stop snapd.service
+
+# #  && \
+# RUN exec sudo nsenter -t $(echo pidof systemd) -a su - $LOGNAME
+
+
+# WORKDIR $PATH/devels-workshop/devels-playground/linux
+# RUN echo -e "pwd:$PWD\n"sudo cp -f .config.new .config 
+#     # && \
+# RUN sudo make prepare scripts
+# # && \
+#  RUN cd ../zfs && sudo sh autogen.sh && \
+#     sudo sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=../linux --with-linux-obj=../linux && \
+#     sudo sh copy-builtin ../linux
+# RUN sudo make install && \
+#     cd ../linux && sudo sed -i 's/# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config && echo grep ZFS .config && \
+#     sudo make && sudo make modules_install && sudo mkdir -p ../../../gabriel/kernels && sudo cp arch/x86/boot/bzImage ../../../gabriel/kernels/linux-kernel-626a5 && \
+#     sudo cp arch/x86/boot/bzImage ../../mnt/linux-kernel-626a6
+#     # && \
+# sudo make -j16 && sudo make modules_install
 
 USER devel
+RUN ln -s devels-workshop/devels-playground/linux
+RUN ln -s devels-workshop/devels-playground/docker/ubuntu dockerr
+
+FROM dplay_git as dplay_git_phat
+RUN cd devels-workshop && git submodule update --remote && cd ../
+
+
+FROM dplay_dind AS dplay_dind_phat
+RUN cd devels-workshop && git submodule update --remote && cd ../
+
 
 # for heavy gui (wsl2 required)
-FROM dplay_dind as dplay_gui
+FROM dplay_dind_phat as dplay_gui
 USER root
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
 RUN curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg && \
@@ -234,24 +297,20 @@ RUN curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://br
     # in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
     apt-get update -yq && \
     apt-get install -y brave-browser && \
-    cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
-    # change last line of this file - fix for brave-browser displaying empty windows
-    head -n -1 /opt/brave.com/brave/brave-browser.old > /opt/brave.com/brave/brave-browser && \
     # now no longeer need to add --disable-gpu flag everytime
-    echo '"$HERE/brave" "$@" " --disable-gpu " || true' >> /opt/brave.com/brave/brave-browser && \
+    # cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
+    # # change last line of this file - fix for brave-browser displaying empty windows
+    # head -n -1 /opt/brave.com/brave/brave-browser.old > /opt/brave.com/brave/brave-browser && \
+    # echo '"$HERE/brave" "$@" " --disable-gpu " || true' >> /opt/brave.com/brave/brave-browser && \
+    cd /opt/brave.com/brave && \
+    brave_old_line="\"$HERE/brave\" \"$@\" || true" && \
+    brave_new_line="\"$HERE/brave\" \"$@\" \" --disable-gpu \" || true" \
+    sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/devel && \
     # GNOME
-    DEBIAN_FRONTEND=noninteractive apt-get -yq install daemonize gnome-session gdm3 gimp gedit gnupg nautilus snapd vlc x11-apps xfce4 zfsutils-linux && \
-    daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target && \
-    exec sudo nsenter -t $(pidof systemd) -a su - $LOGNAME && \
-    systemctl restart snapd && \
-    snap install lxd && \
-    apt install -yqq build-essential autoconf automake libtool gawk alien fakeroot dkms libblkid-dev uuid-dev libudev-dev libssl-dev \
-    zlib1g-dev libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi libffi-dev flex bison && \
-    cp config-wsl linux-5.5.10/.config 
-
-
-
+    DEBIAN_FRONTEND=noninteractive apt-get -yq install daemonize gnome-session gdm3 gimp gedit nautilus vlc x11-apps xfce4
+#/ &&
 USER devel
+
 
 FROM dplay_gui as dplay_cuda
 
@@ -259,3 +318,4 @@ USER ${_GABRIEL}
 # CUDA
 RUN sudo apt-get -y install nvidia-cuda-toolkit
 USER devel
+

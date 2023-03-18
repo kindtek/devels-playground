@@ -132,6 +132,7 @@ services:
     labels:
       com.dplay_git.description: "basics + git"
 
+
   python:
     extends: git
     image: kindtek/dplay:ubuntu-py
@@ -175,16 +176,41 @@ services:
       com.dplay_gui.description: "basics + git + powerhell + docker + gui"
     volumes:
       - /run/dbus/system_bus_socket:/run/dbus/system_bus_socket
-  cuda:
-    extends: gui
-    image: kindtek/dplay:ubuntu-cuda
+  git_phat:
+    # owner/group becomes owner of hel-data volume
+    extends: data
+    user: devel
+    privileged: true
+    entrypoint:
+      - sleep
+      - infinity
+    image: kindtek/dplay:ubuntu-git-phat
     build:
       context: .
-      target: dplay_cuda
-      args:
-        - _GABRIEL=${_GABRIEL:-gabriel}
-      labels:
-        com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
+      target: dplay_git_phat
+      # extends: skel
+  dind_phat:
+      # owner/group becomes owner of hel-data volume
+      extends: data
+      user: devel
+      privileged: true
+      entrypoint:
+        - sleep
+        - infinity
+      image: kindtek/dplay:ubuntu-dind-phat
+      build:
+        context: .
+        target: dplay_git_phat
+# ///  # cuda:
+  #   extends: gui
+  #   image: kindtek/dplay:ubuntu-cuda
+  #   build:
+  #     context: .
+  #     target: dplay_cuda
+  #     args:
+  #       - _GABRIEL=${_GABRIEL:-gabriel}
+  #     labels:
+  #       com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 volumes:
   hel-data:
   halo-data:
