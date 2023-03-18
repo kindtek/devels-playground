@@ -1,15 +1,15 @@
-[submodule "scripts/devels-advocate"]
+[submodule "devels-advocate"]
 	active = true
 	shallow = false
-	path = scripts/devels-advocate
+	path = devels-advocate
 	url = https://github.com/kindtek/devels-advocate.git
 	branch = devels-workshop
 	recurse = false
 [submodule "powerhell-remote"]
 	active = true
 	shallow = false
-	path = scripts/powerhell-remote
-	url = https://github.com/kindtek/powerhell-remote
+	path = powerhell-remote
+	url = https://github.com/kindtek/powerhell-remote.git
 	branch = devels-workshop
 	recurse = false
 [submodule "devels-playground"]
@@ -19,18 +19,18 @@
 	url = https://github.com/kindtek/devels-playground.git
 	branch = devels-workshop
 	recurse = true
-[submodule "scripts/cdir"]
+[submodule "cdir"]
 	active = true
 	path = cdir
 	shallow = false
-	url = https://github.com/kindtek/cdir
+	url = https://github.com/kindtek/cdir.git
 	branch = master
 	recurse = false
 [submodule "choco"]
 	active = true
 	path = choco
 	shallow = false
-	url = https://github.com/kindtek/choco
+	url = https://github.com/kindtek/choco.git
 	branch = stable
 	recurse = false
 
