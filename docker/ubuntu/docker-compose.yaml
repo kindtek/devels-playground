@@ -131,8 +131,6 @@ services:
       - /mnt/data
     labels:
       com.dplay_git.description: "basics + git"
-
-
   python:
     extends: git
     image: kindtek/dplay:ubuntu-py
