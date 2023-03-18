@@ -50,7 +50,7 @@ function install_dependencies {
         # install winget and use winget to install everything else
         $winget = "devels-advocate/get-latest-winget.ps1"
         Write-Host "Installing $software_name ...`r`n" 
-        Invoke Expression  Stop-Process -Name PackageManagement -Force
+        Invoke Expression  Stop-Process -Name "PackageManagement" -Force
         &$winget = Invoke-Expression -command "devels-advocate/get-latest-winget.ps1" 
         Write-Host "`r`n$software_name installed`r`n" | Out-File -FilePath "$git_path/.winget-installed"
         Pop-Location
