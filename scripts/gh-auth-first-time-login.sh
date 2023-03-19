@@ -1,15 +1,13 @@
 #!/bin/bash
 
-git_user_email=$GH_REPO_OWNER_EMAIL
-git_user_name=kindtek@github.com
-ssh_dir=/home/$(echo ${1:-dvl})/.ssh
-if ! [ -d $ssh_dir ]; then
-    $ssh_dir=/home/dvl/.ssh
-fi
+git_user_email=$GH_REPO_OWNER_EMAIL;
+git_user_name=kindtek@github.com;
+ssh_dir=/home/$(echo ${1:-dvl})/.ssh;
+if ! [ -d $ssh_dir ]; then $ssh_dir=/home/dvl/.ssh; fi
 # rm -f $ssh_dir/id_ed25519 $ssh_dir/id_ed25519.pub 
-git config --global user.email $git_user_email 
-git config --global user.name $git_user_name
-rm -f $ssh_dir/id_ed25519 $ssh_dir/id_ed25519.pub
+# git config --global user.email $git_user_email;
+# git config --global user.name $git_user_name;
+rm -f $ssh_dir/id_ed25519 $ssh_dir/id_ed25519.pub;
 ssh-keygen -C $git_user_name -f $ssh_dir/id_ed25519 -N "" -t ed25519
 eval "$(ssh-agent -s)"
 ssh-add $ssh_dir/id_ed25519
@@ -28,23 +26,14 @@ host_fingerprint_actually_ecdsa="$(ssh-keyscan -t ecdsa github.com)"
 matching_prints_rsa=false
 matching_prints_ed25519=false
 matching_prints_ecdsa=false
-if [ "$host_fingerprint_actually_ecdsa" = "$host_fingerprint_expected_ecdsa" ]; then
-    matching_prints_rsa=true;
-fi
-if [ "$host_fingerprint_actually_ed25519" = "$host_fingerprint_expected_ed25519" ]; then
-    matching_prints_ed25519=true;
-fi
-if [ "$host_fingerprint_actually_ecdsa" = "$host_fingerprint_expected_ecdsa" ]; then
-    matching_prints_ecdsa=true;
-fi
 
+
+if [ "$host_fingerprint_actually_ecdsa" = "$host_fingerprint_expected_ecdsa" ]; then matching_prints_rsa=true; fi
+if [ "$host_fingerprint_actually_ed25519" = "$host_fingerprint_expected_ed25519" ]; then matching_prints_ed25519=true; fi
+if [ "$host_fingerprint_actually_ecdsa" = "$host_fingerprint_expected_ecdsa" ]; then matching_prints_ecdsa=true; fi
 if  [ $matching_prints_rsa ] && [ $matching_prints_ed25519 ] && [ $matching_prints_ecdsa ]; then
     echo '\n verfied host confirmed \n'
-    if [ -f "$ssh_dir/known_hosts" ]; then
-        ssh-keyscan github.com >> $ssh_dir/known_hosts;
-    else    
-        ssh-keyscan github.com > $ssh_dir/known_hosts;
-    fi
+    if [ -f "$ssh_dir/known_hosts" ]; then ssh-keyscan github.com >> $ssh_dir/known_hosts; else ssh-keyscan github.com > $ssh_dir/known_hosts; fi;
 else
 	echo '
 
@@ -70,14 +59,14 @@ else
     
     
     ';
-    if ! [ $matching_prints_rsa ]; then
-        echo "\nexpected RSA:\t$host_fingerprint_expected_rsa\nactual RSA:\t$host_fingerprint_actually_rsa"
+    if ! [ $matching_prints_rsa ]; 
+        then echo '\nexpected RSA:\t$host_fingerprint_expected_rsa\nactual RSA:\t$host_fingerprint_actually_rsa'
     fi
     if ! [ $matching_prints_ed25519 ]; then
-        echo "\nexpected ED25519:\t$host_fingerprint_expected_ed25519\nactual ED25519:\t$host_fingerprint_actually_ed25519"
+        echo '\nexpected ED25519:\t$host_fingerprint_expected_ed25519\nactual ED25519:\t$host_fingerprint_actually_ed25519'
     fi
     if ! [ $matching_prints_ecdsa ]; then
-        echo "\nexpected ECDSA:\t$host_fingerprint_expected_ecdsa\nactual ECDSA:\t$host_fingerprint_actually_ecdsa"
+        echo '\nexpected ECDSA:\t$host_fingerprint_expected_ecdsa\nactual ECDSA:\t$host_fingerprint_actually_ecdsa'
     fi
 	echo '
 
