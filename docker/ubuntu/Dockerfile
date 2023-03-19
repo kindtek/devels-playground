@@ -190,11 +190,12 @@ USER devel
 FROM dplay_git as dplay_python
 USER ${_GABRIEL}
 RUN sudo apt-get install -y jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv && \
-    # sudo python3 -m pip install --upgrade pip cryptography oauthlib openssl pyjwt setuptools wheel && \
     pip3 install cdir --user  && \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps && \
-    sudo cp -r /home/${_GABRIEL}/.local/bin /usr/local
+    sudo cp -r /home/${_GABRIEL}/.local/bin /usr/local && \
+    sudo cp -rf /home/${_GABRIEL}/.local /etc/skel/ && \
+    sudo cp -rf /home/${_GABRIEL}/.local /home/devel/ 
 
 USER devel
 # microsoft stuff
