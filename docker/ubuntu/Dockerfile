@@ -101,10 +101,8 @@ FROM dplay_data AS dplay_skel
 USER ${_GABRIEL}
 # set up basic utils
 # install github, build-essentials, libssl, etc
-RUN sudo apt-get install -y apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget
+RUN sudo apt-get -y update && sudo apt-get -yq install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget
 #RUN apt-get install -y lsb-release python3 python3-pip software-properties-common 
-RUN git config --global --add safe.directory /home/gabriel && \
-    git config --global --add safe.directory /hal
 USER devel
 
 # SKELETON framework
@@ -130,6 +128,8 @@ RUN ./devels-workshop/scripts/gh-auth-first-time-login.sh chown devel:horns -R /
     ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay 
 # RUN with halos ownership
 USER ${_GABRIEL}
+RUN sudo git config --global --add safe.directory /home/gabriel && \
+    sudo git config --global --add safe.directory /hal
 RUN ./devels-workshop/scripts/gh-auth-first-time-login.sh ${_GABRIEL} && \
     chown ${_GABRIEL}:${_HALOS} -R /home/${_GABRIEL}  
 # set up shared backup drive structure 
@@ -165,7 +165,7 @@ USER devel
 # PYTHON stuff
 FROM dplay_git as dplay_python
 USER ${_GABRIEL}
-RUN sudo apt-get install -y jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv && \
+RUN sudo apt-get -yq install jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv && \
     pip3 install cdir --user  && \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps && \
@@ -179,13 +179,13 @@ FROM dplay_python as dplay_msdot
 USER ${_GABRIEL}
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
-RUN sudo apt-get -y install lsb-release 
+RUN sudo apt-get -yq install lsb-release 
 RUN sudo wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
 #  && \
 ## Register the Microsoft repository GPG keys
 RUN sudo dpkg -i packages-microsoft-prod.deb 
 RUN sudo apt-get -y update
-RUN sudo apt-get -y install powershell dotnet-sdk-7.0
+RUN sudo apt-get -yq install powershell dotnet-sdk-7.0
 RUN sudo rm packages-microsoft-prod.deb
 USER devel
 
@@ -201,28 +201,28 @@ USER devel
 # KERNEL builder
 FROM dplay_dind as dplay_kernel
 RUN echo exit 0 > /usr/sbin/policy-rc.d
-RUN sudo apt-get update && sudo apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io
+RUN sudo apt-get -y update && sudo apt-get -yq install docker-compose-plugin docker-ce docker-ce-cli containerd.io
 #    && \
 USER ${_GABRIEL}
-RUN sudo apt-get update && sudo apt-get upgrade
+RUN sudo apt-get -y update && sudo apt-get -y upgrade
 # RUN  
-# RUN DEBIAN_FRONTEND=noninteractive sudo apt-get install -yq  
-RUN DEBIAN_FRONTEND=noninteractive sudo apt-get upgrade -yq libldap-common libldap-2.5-0 dpkg
+# RUN DEBIAN_FRONTEND=noninteractive sudo apt-get -yq install 
+RUN DEBIAN_FRONTEND=noninteractive sudo apt-get -y upgrade libldap-common libldap-2.5-0 dpkg
 ##########################################################################################
-# RUN DEBIAN_FRONTEND=noninteractive RUN sudo apt-get install -yq  zfs-utils 
-# RUN yes $'23\n' | sudo apt-get install -y --force-yes zfs-dracut >/dev/null 2>&1 
+# RUN DEBIAN_FRONTEND=noninteractive RUN sudo apt-get -yq install zfs-utils 
+# RUN yes $'23\n' | sudo apt-get -yq install --force-yes zfs-dracut >/dev/null 2>&1 
 #  
-RUN export DEBIAN_FRONTEND="noninteractive" && sudo apt-get install -y gnupg apt-utils build-essential autoconf automake libtool gawk alien fakeroot dkms libblkid-dev uuid-dev libudev-dev libssl-dev \
+RUN export DEBIAN_FRONTEND="noninteractive" && sudo apt-get -yq install gnupg apt-utils build-essential autoconf automake libtool gawk alien fakeroot dkms libblkid-dev uuid-dev libudev-dev libssl-dev \
     sysvinit-utils libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi libffi-dev flex bison snapd daemonize 
-RUN sudo apt-get update && sudo apt-get upgrade
+RUN sudo apt-get update -y && sudo apt-get -y upgrade
 # 
 # make this work eventually...
 # 
 # 
 # #  && \
-# RUN sudo apt-get update -y && sudo apt-get -y upgrade
-# RUN sudo apt-get install -y zfsutils-linux 
-# RUN sudo apt-get install -y zfsutils zlib1g-dev 
+# RUN sudo apt-get -y update && sudo apt-get -y upgrade
+# RUN sudo apt-get -yq install zfsutils-linux 
+# RUN sudo apt-get -yq install zfsutils zlib1g-dev 
 # RUN sudo apt-get -y update && sudo apt-get -y upgrade
 #     #  && \
 # RUN sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target
@@ -259,8 +259,8 @@ USER ${_GABRIEL}
 RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg 
 RUN    echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list 
 # in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
-RUN    sudo apt-get update -yq
-RUN    sudo apt-get install -y brave-browser
+RUN    sudo apt-get -yq update
+RUN    sudo apt-get -yq install brave-browser
 # now no longeer need to add --disable-gpu flag everytime
 # cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
 # # change last line of this file - fix for brave-browser displaying empty windows
@@ -277,6 +277,6 @@ USER devel
 FROM dplay_gui as dplay_cuda
 USER ${_GABRIEL}
 # CUDA
-RUN sudo apt-get -y install nvidia-cuda-toolkit
+RUN sudo apt-get -yq install nvidia-cuda-toolkit
 USER devel
 
