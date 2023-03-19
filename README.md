@@ -121,7 +121,7 @@ This will start a new container using the [example image](#ubuntu-dind) and the 
 ### The main two are
 
 - [Ubuntu Dockerfile](dockerfile.ubuntu.yaml)
-- [Ubuntu Docker Compose file](docker-compose.ubuntu.yaml)
+- [Ubuntu Docker Compose file](docker/ubuntu/docker-compose.yaml)
 
 #### There are some lightly tested Alpine images available if you dig around as well
 
