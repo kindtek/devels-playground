@@ -50,7 +50,7 @@ RUN usermod -aG ${_HALOS} host && \
 # echo "//${mnt_data}/${_GABRIEL} /home/${_GABRIEL} cifs _GABRIEL=${_GABRIEL}, file_mode=0777,dir_mode=0777 0 0\n/${mnt_data}/devel /home/devel cifs _GABRIEL=devel, file_mode=0777, dir_mode=0777 0 0" >> /etc/fstab && \
 # copy to skel and /hel, add common paths
 USER ${_GABRIEL}
-ENV PATH="$PATH:/home/${_GABRIEL}/.local/bin:/hel/devels-workshop/scripts:/home/devel/devels-workshop/devels-playground/scripts"
+ENV PATH="$PATH:/home/${_GABRIEL}/.local/bin:/hel/devels-work/scripts:/home/devel/devels-work/devels-play/scripts"
 RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${mnt_data}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> /home/${_GABRIEL}/.bashrc && \
     sudo cp -rf /home/${_GABRIEL}/. /etc/skel/ && \
     sudo rm /etc/skel/.sudo_as_admin_successful
@@ -73,7 +73,7 @@ RUN ln -s /home/devel /hel && \
 # sudo adduser devel sudo && \
 USER devel
 # add common paths
-ENV PATH="$PATH:/home/devel/.local/bin:/home/devel/devels-workshop/devels-playground/scripts"
+ENV PATH="$PATH:/home/devel/.local/bin:/home/devel/devels-work/devels-play/scripts"
 RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${mnt_data}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> /home/devel/.bashrc
 
 # DATA helper
@@ -87,12 +87,12 @@ WORKDIR /home/devel
 # add safe directories
 RUN git config --global --add safe.directory /home/devel && \
     git config --global --add safe.directory /hel && \
-    git config --global --add safe.directory /home/devel/devels-playground 
+    git config --global --add safe.directory /home/devel/devels-play 
 # clone fresh repos and give devel ownership
-RUN git clone https://github.com/kindtek/devels-workshop 
-# RUN git clone https://github.com/kindtek/devels-workshop --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
+RUN git clone https://github.com/kindtek/devels-work 
+# RUN git clone https://github.com/kindtek/devels-work --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
 # --filter=combine:tree:depth:1+blob:limit=10240000  --recurse-submodules --remote-submodules  --single-branch  --no-tags --filter=blob:limit=1024000 --single-branch --branch main
-WORKDIR /home/devel/devels-workshop
+WORKDIR /home/devel/devels-work
 RUN git pull && git submodule update --init --remote 
 WORKDIR /home/devel
 # && \
@@ -123,9 +123,9 @@ USER ${_GABRIEL}
 # RUN sudo chown ${_GABRIEL}:${_HALOS} -R ${mnt_data}/${_GABRIEL} /home/${_GABRIEL}  \
 #     git config --global --add safe.directory /home/gabriel && \
 #     git config --global --add safe.directory /hal
-RUN sudo sh devels-workshop/scripts/gh-auth-first-time-login.sh ${_GABRIEL} && \
+RUN sudo sh devels-work/scripts/gh-auth-first-time-login.sh ${_GABRIEL} && \
     # set up shared backup drive structure 
-    sudo chmod +x devels-workshop/mnt/backup-gabriel.sh && \
+    sudo chmod +x devels-work/mnt/backup-gabriel.sh && \
     sudo mkdir -p ${mnt_data}/${_GABRIEL}/${_GABRIEL}-orig && \
     sudo mkdir -p ${mnt_data}/devel/${_GABRIEL}-orig && \
     sudo mkdir -p ${mnt_data}/devel/devel-orig && \
@@ -135,12 +135,12 @@ RUN sudo sh devels-workshop/scripts/gh-auth-first-time-login.sh ${_GABRIEL} && \
     sudo chown devel:horns ${mnt_data}/devel/devel-orig && \
     sudo chown devel:horns ${mnt_data}/${_GABRIEL}/devel-orig 
 # copy newly pulled backup script to mount location and home dirs
-RUN sudo cp -arf devels-workshop/mnt/backup-gabriel.sh ${mnt_data}/gabriel/backup-gabriel.sh && \
-    sudo cp -arf devels-workshop/mnt/backup-custom.sh ${mnt_data}/${_GABRIEL}/backup-${_GABRIEL}.sh && \
-    # sudo cp -arf devels-workshop/mnt/backup-custom.sh ${mnt_data}/gabriel/backup-gabriel.sh && cp -arf devels-workshop/mnt/backup-custom.sh /home/gabriel/backup-gabriel.sh && \
-    sudo cp -arf devels-workshop/mnt/backup-devel.sh ${mnt_data}/devel/backup-devel.sh && \
-    sudo cp -arf devels-workshop/mnt/backup-devel.sh ${mnt_data}/${_GABRIEL}/backup-devel.sh && \
-    sudo cp -arf devels-workshop/mnt/backup-devel.sh /home/devel/backup-devel.sh && \
+RUN sudo cp -arf devels-work/mnt/backup-gabriel.sh ${mnt_data}/gabriel/backup-gabriel.sh && \
+    sudo cp -arf devels-work/mnt/backup-custom.sh ${mnt_data}/${_GABRIEL}/backup-${_GABRIEL}.sh && \
+    # sudo cp -arf devels-work/mnt/backup-custom.sh ${mnt_data}/gabriel/backup-gabriel.sh && cp -arf devels-work/mnt/backup-custom.sh /home/gabriel/backup-gabriel.sh && \
+    sudo cp -arf devels-work/mnt/backup-devel.sh ${mnt_data}/devel/backup-devel.sh && \
+    sudo cp -arf devels-work/mnt/backup-devel.sh ${mnt_data}/${_GABRIEL}/backup-devel.sh && \
+    sudo cp -arf devels-work/mnt/backup-devel.sh /home/devel/backup-devel.sh && \
     # make rwx for owner and rx for group - none for others
     sudo chmod 750 -R ${mnt_data}/${_GABRIEL} && \
     sudo chmod 755 ${mnt_data}/${_GABRIEL} && \
@@ -160,21 +160,21 @@ RUN chown devel:horns -R /home/devel && chown ${_GABRIEL}:${_HALOS} /home/gabrie
     # # # RUN sudo apt-get -y update && sudo apt-get -y install nvi curl git gh wget
     # # # RUN apt-get install -y lsb-release python3 python3-pip software-properties-common 
     # setup gh ssh login 
-    sudo chmod +x devels-workshop/scripts/gh-auth-first-time-login.sh && \
+    sudo chmod +x devels-work/scripts/gh-auth-first-time-login.sh && \
     # make backup script executable
-    sudo chmod +x devels-workshop/mnt/backup.sh && \
-    sudo chmod +x devels-workshop/mnt/backup-devel.sh && \
-    sudo chmod +x devels-workshop/mnt/backup-custom.sh
+    sudo chmod +x devels-work/mnt/backup.sh && \
+    sudo chmod +x devels-work/mnt/backup-devel.sh && \
+    sudo chmod +x devels-work/mnt/backup-custom.sh
 RUN sudo apt-get -y update && sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget
 
 USER devel
 # setup ssh gh login
-RUN sh devels-workshop/scripts/gh-auth-first-time-login.sh && \
+RUN sh devels-work/scripts/gh-auth-first-time-login.sh && \
     # add symlinks for convenience
-    ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay && \
-    ln -s linux devels-workshop/devels-playground/linux && \
-    ln -s docker devels-workshop/devels-playground/docker && \
-    ln -s devels-workshop/devels-playground/docker/ub devels-workshop/devels-playground/docker/ubuntu
+    ln -s devels-work dwork && ln -s devels-work/devels-play dplay && \
+    ln -s linux devels-work/devels-play/linux && \
+    ln -s docker devels-work/devels-play/docker && \
+    ln -s devels-work/devels-play/docker/ub devels-work/devels-play/docker/ubuntu
 
 
 # GIT
@@ -252,7 +252,7 @@ RUN apt-get update -y && apt-get -y upgrade
 # RUN  sudo systemctl enable snapd.service && sudo systemctl start snapd.service
 # RUN  sudo systemctl enable snapd.service && sudo systemctl stop snapd.service
 # #  && \
-# WORKDIR $PATH/devels-workshop/devels-playground/linux
+# WORKDIR $PATH/devels-work/devels-play/linux
 # RUN echo -e "pwd:$PWD\n"sudo cp -f .config.new .config 
 #     # && \
 # RUN sudo make prepare scripts

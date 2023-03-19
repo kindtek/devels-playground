@@ -45,7 +45,7 @@
   - Docker
 
 ```bat
-git clone https://github.com/kindtek/devels-playground
+git clone https://github.com/kindtek/devels-play
 scripts/wsl-docker-import
 ```
 
@@ -65,10 +65,10 @@ If you want to easily install or already have installed
 Paste one line into a command prompt ([CMD or Powershell](https://www.wikihow.com/Open-Terminal-in-Windows))
 
 ```bat
-powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell-remote/devels-workshop/download-everything-and-install.ps1 -OutFile install-kindtek-devels-workshop.ps1; powershell.exe -executionpolicy remotesigned -File install-kindtek-devels-workshop.ps1"
+powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell-remote/devels-work/download-everything-and-install.ps1 -OutFile install-kindtek-devels-work.ps1; powershell.exe -executionpolicy remotesigned -File install-kindtek-devels-work.ps1"
 ```
 
-[More details here](https://github.com/kindtek/devels-workshop#idle-hands-are-the-developers-workshop)
+[More details here](https://github.com/kindtek/devels-work#idle-hands-are-the-developers-workshop)
 
 ---
 
@@ -151,7 +151,7 @@ This will start a new container using the [example image](#ubuntu-dind) and the 
 
 ### [In theory](https://softprom.com/sites/default/files/materials/cyberark-sb-to-SUDO-or-not-to-SUDO-06-11-2015-en.pdf), the gates of sudo should restrict the devel to only making changes in `/hel` and any mounted drives - leaving only `gabriel` to make changes at the root level
 
-##### More notes: All images are built with the [Dockerfiles in the devels-playground repo root](devels-playground). All of `/hel` is mounted as a volume in Docker and the data stored in `/hel` will persist throughout all images when running in Docker. When in WSL, the volume will be stored in a WSL instance called Docker-Data.The directory located at `/mnt/data/gabriel` contains backup scripts (`backup-devel.sh`) and automatically generates restore scripts when the backups are ran. The `/mnt/data/gabriel` directory is safe from the devel as the devel has no write priveleges there -- only read and execute
+##### More notes: All images are built with the [Dockerfiles in the devels-play repo root](devels-play). All of `/hel` is mounted as a volume in Docker and the data stored in `/hel` will persist throughout all images when running in Docker. When in WSL, the volume will be stored in a WSL instance called Docker-Data.The directory located at `/mnt/data/gabriel` contains backup scripts (`backup-devel.sh`) and automatically generates restore scripts when the backups are ran. The `/mnt/data/gabriel` directory is safe from the devel as the devel has no write priveleges there -- only read and execute
 
 ---
 

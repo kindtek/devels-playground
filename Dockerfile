@@ -52,7 +52,7 @@ RUN usermod -aG ${_HALOS} host && \
 
 # add common paths
 USER ${_GABRIEL}
-ENV PATH=$PATH:/home/${_GABRIEL}/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts
+ENV PATH=$PATH:/home/${_GABRIEL}/.local/bin:/hel/devels-work/scripts:/hel/devels-work/devels-play/scripts
 RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${mnt_data}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> /home/${_GABRIEL}/.bashrc && \
     sudo cp -rf /home/${_GABRIEL}/. /etc/skel/ && \
     sudo cp -rf /home/${_GABRIEL}/. /home/devel/ 
@@ -75,7 +75,7 @@ RUN ln -s /home/devel /hel && chown -R devel:horns /home/devel && chown -R devel
 USER devel
 
 # add common paths
-ENV PATH=$PATH:/home/devel/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts
+ENV PATH=$PATH:/home/devel/.local/bin:/hel/devels-work/scripts:/hel/devels-work/devels-play/scripts
 RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${mnt_data}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> /home/devel/.bashrc
 
 
@@ -129,16 +129,16 @@ RUN "[user] \
     [url "ssh://git@github.com/"] \
     insteadOf = https://github.com" > /home/devel/.gitconfig && \
     # clone fresh repos and give devel ownership
-    git clone https://github.com/kindtek/devels-workshop && \
-    cd devels-workshop && git pull && git submodule update --force --recursive --init --remote && cd .. && \
-    chown devel:horns -R /home/devel/devels-workshop /home/devel/devels-workshop/.git && \
+    git clone https://github.com/kindtek/devels-work && \
+    cd devels-work && git pull && git submodule update --force --recursive --init --remote && cd .. && \
+    chown devel:horns -R /home/devel/devels-work /home/devel/devels-work/.git && \
     # make backup script executable
-    chmod +x devels-workshop/mnt/backup.sh && \
-    chmod +x devels-workshop/mnt/backup-devel.sh && \
-    chmod +x devels-workshop/mnt/backup-gabriel.sh && \
-    chmod +x devels-workshop/mnt/backup-custom.sh && \
+    chmod +x devels-work/mnt/backup.sh && \
+    chmod +x devels-work/mnt/backup-devel.sh && \
+    chmod +x devels-work/mnt/backup-gabriel.sh && \
+    chmod +x devels-work/mnt/backup-custom.sh && \
     # add symlinks for convenience
-    ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay     
+    ln -s devels-work dwork && ln -s devels-work/devels-play dplay     
 
 # mount with halos ownership
 USER ${_GABRIEL}
