@@ -124,6 +124,8 @@ USER ${_GBL}
 # RUN sudo chown ${_GBL}:${_HALOS} -R ${mnt_data}/${_GBL} /home/${_GBL}  \
 #     git config --global --add safe.directory /home/gbl && \
 #     git config --global --add safe.directory /hal
+RUN sudo apt-get -y update && sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget
+
 RUN sudo sh devels-work/scripts/gh-auth-first-time-login.sh ${_GBL} && \
     # set up shared backup drive structure 
     sudo chmod +x devels-work/mnt/backup-gbl.sh && \
@@ -160,12 +162,11 @@ RUN chown dvl:horns -R /home/dvl && chown ${_GBL}:${_HALOS} /home/gbl && \
     # # # RUN sudo apt-get -y update && sudo apt-get -y install nvi curl git gh wget
     # # # RUN apt-get install -y lsb-release python3 python3-pip software-properties-common 
     # setup gh ssh login 
-    sudo chmod +x devels-work/scripts/gh-auth-first-time-login.sh && \
+    # sudo chmod +x devels-work/scripts/gh-auth-first-time-login.sh && \
     # make backup script executable
     sudo chmod ugo+x devels-work/mnt/backup-gbl.sh && \
     sudo chmod ugo+x devels-work/mnt/backup-dvl.sh && \
     sudo chmod ugo+x devels-work/mnt/backup-custom.sh
-RUN sudo apt-get -y update && sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget
 
 USER dvl
 # setup ssh gh login
