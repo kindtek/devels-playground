@@ -32,8 +32,8 @@ function reboot_prompt {
 function install_windows_features {
     param ( $temp_repo_scripts_path )
     $new_install = $false
-    $winconfig = "$temp_repo_scripts_path/devels-advocate/add-windows-features.ps1"
-    &$winconfig = Invoke-Expression -command "$temp_repo_scripts_path/devels-advocate/add-windows-features.ps1"
+    $winconfig = "$temp_repo_scripts_path/devels-adv/add-windows-features.ps1"
+    &$winconfig = Invoke-Expression -command "$temp_repo_scripts_path/devels-adv/add-windows-features.ps1"
     return $new_install
 }
 
@@ -48,10 +48,10 @@ function install_dependencies {
     if (!(Test-Path -Path "$git_path/.winget-installed" -PathType Leaf)) {
         Push-Location $temp_repo_scripts_path
         # install winget and use winget to install everything else
-        $winget = "devels-advocate/get-latest-winget.ps1"
+        $winget = "devels-adv/get-latest-winget.ps1"
         Write-Host "Installing $software_name ...`r`n" 
         Invoke Expression  Stop-Process -Name "PackageManagement" -Force
-        &$winget = Invoke-Expression -command "devels-advocate/get-latest-winget.ps1" 
+        &$winget = Invoke-Expression -command "devels-adv/get-latest-winget.ps1" 
         Write-Host "`r`n$software_name installed`r`n" | Out-File -FilePath "$git_path/.winget-installed"
         Pop-Location
         $new_install = $true
@@ -148,7 +148,7 @@ function test_repo_path {
         # cmd /c start powershell.exe "$git_path/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
         if (Test-Path -Path "$parent_path/$repo_src_name") {
             Push-Location "$parent_path/$repo_src_name"
-            # if git status works and finds devels-workshop repo, assume the install has been successfull and this script was ran once before
+            # if git status works and finds devels-work repo, assume the install has been successfull and this script was ran once before
             $git_status = git remote show origin 
             # determine if git status works by checking output for LICENSE - see typical output of git status here: https://amitd.co/code/shell/git-status-porcelain
             if ($git_status.NotContains("github.com/$repo_src_owner/$repo_src_name")) {
@@ -213,10 +213,10 @@ function install_repo {
         # Push-Location scripts
 
         Push-Location choco
-        # $choco = "devels-advocate/get-latest-choco.ps1"
+        # $choco = "devels-adv/get-latest-choco.ps1"
         # Write-Host "`n`r`n`rInstalling $software_name ..." 
         # $env:path += ";C:\ProgramData\chocoportable"
-        # &$choco = Invoke-Expression -command "devels-advocate/get-latest-choco.ps1" 
+        # &$choco = Invoke-Expression -command "devels-adv/get-latest-choco.ps1" 
         # $choco = "cmd.exe /c choco/build.bat"
         Write-Host "`n`r`n`rInstalling $software_name ..." 
         $env:path += ";C:\ProgramData\chocoportable"
@@ -259,7 +259,7 @@ function install_repo {
 
 # $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
 # if ( $user_input -ine "n" ) {
-#     Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/devels-workshop@main" -WindowStyle "Hidden"
+#     Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/devels-work@main" -WindowStyle "Hidden"
 # } 
 
 function require_docker_online {
@@ -340,11 +340,11 @@ function run_devels_playground {
             # $cmd_command = "$git_path/devels_playground/docker-images-build-in-background.ps1"
             # &$cmd_command = cmd /c start powershell.exe -Command "$git_path/devels_playground/docker-images-build-in-background.ps1" -WindowStyle "Maximized"
                
-            $devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
+            $devs_playground = "$git_path/devels-play/scripts/wsl-docker-import.cmd"
             Write-Host "Launching Devel's Playground`r`n$devs_playground ...`r`n" 
             Write-Host "&$devs_playground"
             # Write-Host "$([char]27)[2J"
-            &$devs_playground = "$git_path/devels-playground/scripts/wsl-docker-import.cmd"
+            &$devs_playground = "$git_path/devels-play/scripts/wsl-docker-import.cmd"
             Write-Host "$software_name installed`r`n" | Out-File -FilePath "$git_path/.dplay-installed"
         }
     }
@@ -380,7 +380,7 @@ workflow start_installer_daemon {
     param ([string]$temp_repo_scripts_path)
 
     $repo_src_owner = 'kindtek'
-    $repo_src_name = 'devels-workshop'
+    $repo_src_name = 'devels-work'
     $repo_src_branch = 'main'
     $git_path = $temp_repo_scripts_path.Replace("\scripts", "")
     $git_path = $git_path.Replace("/scripts", "")
@@ -419,8 +419,8 @@ workflow start_installer_daemon {
     }
     else {
         InlineScript { Write-Host "Failed to launch docker. Not able to start Devel's Playground. Please restart and run the script again:" }
-        InlineScript { Write-Host "cmd `"$git_path/kindtek/devels-workshop/devels-playground/scripts/wsl-docker-import`"" }
-        InlineScript { Write-Host "powershell.exe ./kindtek/devels-workshop/devels-playground/scripts/wsl-docker-import.ps1" }
+        InlineScript { Write-Host "cmd `"$git_path/kindtek/devels-work/devels-play/scripts/wsl-docker-import`"" }
+        InlineScript { Write-Host "powershell.exe ./kindtek/devels-work/devels-play/scripts/wsl-docker-import.ps1" }
     }
 
     # }

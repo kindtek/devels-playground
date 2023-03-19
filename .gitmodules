@@ -1,23 +1,23 @@
-[submodule "devels-advocate"]
+[submodule "devels-adv"]
 	active = true
 	shallow = false
 	path = devels-adv
-	url = https://github.com/kindtek/devels-advocate.git
-	branch = devels-workshop
+	url = https://github.com/kindtek/devels-adv.git
+	branch = devels-work
 	recurse = false
 [submodule "powerhell-remote"]
 	active = true
 	shallow = false
 	path = powerhell-remote
 	url = https://github.com/kindtek/powerhell-remote.git
-	branch = devels-workshop
+	branch = devels-work
 	recurse = false
-[submodule "devels-playground"]
+[submodule "devels-play"]
 	active = true
 	path = devels-play
 	shallow = false
-	url = https://github.com/kindtek/devels-playground.git
-	branch = devels-workshop
+	url = https://github.com/kindtek/devels-play.git
+	branch = devels-work
 	recurse = true
 [submodule "cdir"]
 	active = true

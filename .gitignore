@@ -2,7 +2,7 @@
 # for when unpacking winget in get-latest-winget.ps1
 scripts/Microsoft-*
 /.history*
-/devels-playground/shared-data/.hide
+/devels-play/shared-data/.hide
 **/data/logs/**
 **/.vscode-server/**
 **/.history/**
