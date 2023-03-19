@@ -18,7 +18,7 @@ RUN addgroup --gid 777 ${_HALOS} && \
     passwd -d root && \
     passwd -l root
 
-FROM dplay_init AS dplay_halo
+FROM dplay_init AS dplay_hal
 
 # switch back to root to setup
 USER root
@@ -39,11 +39,13 @@ RUN usermod -aG ${_HALOS} host && \
     sudo adduser ${_GABRIEL} sudo && \
     # uncomment to add sudo privileges for host
     # sudo adduser host sudo && \
+    # set up /hal folder as symbolic link to /home/gabriel 
+    ln -s /home/${_GABRIEL} /hal && chown -R ${_GABRIEL}:${_HALOS} /hal && \
     ln -s ${mnt_data} /home/devel/data && \
     ln -s ${mnt_data} /home/${_GABRIEL}/data && \
     # add a "readme" here later
-    touch /halo/.world && \
-    mkdir -p /halo/.ssh && chmod 700 /halo/.ssh && chown -R ${_GABRIEL}:${_HALOS} /halo/.ssh && \
+    touch /hal/o.world && \
+    mkdir -p /hal/.ssh && chmod 700 /hal/.ssh && chown -R ${_GABRIEL}:${_HALOS} /hal/.ssh && \
     # make devel default wsl user 
     echo "[user]\ndefault=devel" >> /etc/wsl.conf
 # mount stuff
@@ -60,7 +62,7 @@ RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${
 # backup location or optionally a mount partition
 # partition letter set up for n:/ - use this guide to set up partition https://allthings.how/how-to-partition-a-hard-drive-on-windows-11/
 
-FROM dplay_halo AS dplay_hel
+FROM dplay_hal AS dplay_hel
 
 USER root
 # set up /devel folder as symbolic link to /home/devel for cloning repository(ies)

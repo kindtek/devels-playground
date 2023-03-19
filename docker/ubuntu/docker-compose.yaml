@@ -18,7 +18,7 @@ services:
       - ln -s /mnt/data /tmp/data 
 
     # command: echo something
-  chown-halo:
+  chown-hal:
     # Need a user priviliged enough to chown
     user: ${_GABRIEL:-gabriel}
     # Specify the wings in question
@@ -26,14 +26,14 @@ services:
       - ${_HALOS:-halos}
     build:
       context: .
-      target: dplay_halo
+      target: dplay_hal
     depends_on:
       initialize:
         # Wait for the groups to be added
         condition: service_completed_successfully
     init: true
     volumes:
-      - halo-data:/tmp/${_GABRIEL:-gabriel}
+      - hal-data:/tmp/${_GABRIEL:-gabriel}
     command: sudo chown -R ${_GABRIEL:-gabriel}:${_HALOS:-halos} /tmp/${_GABRIEL:-gabriel}
 
   chown-hel:
@@ -64,7 +64,7 @@ services:
       chown-hel:
         # Wait for the ownership to change
         condition: service_completed_successfully
-      chown-halo:
+      chown-hal:
         # Wait for the ownership to change
         condition: service_completed_successfully
     init: true
@@ -87,7 +87,7 @@ services:
     init: true
     volumes:
       - hel-data:/home/devel
-      - halo-data:/home/${_GABRIEL:-gabriel}
+      - hal-data:/home/${_GABRIEL:-gabriel}
       - mnt-data:/mnt/data
       - type: bind
         source: /var/run/docker.sock
@@ -121,7 +121,7 @@ services:
       chown-hel:
         # Wait for the ownership to change
         condition: service_completed_successfully
-      chown-halo:
+      chown-hal:
         # Wait for the ownership to change
         condition: service_completed_successfully
       data:
@@ -129,7 +129,7 @@ services:
         condition: service_completed_successfully
     volumes:
       - hel-data:/home/devel
-      - halo-data:/home/${_GABRIEL:-gabriel}
+      - hal-data:/home/${_GABRIEL:-gabriel}
       - /mnt/data
     labels:
       com.dplay_git.description: "basics + git"
@@ -189,7 +189,7 @@ services:
         com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 volumes:
   hel-data:
-  halo-data:
+  hal-data:
   mnt-data:
 networks:
   "${COMPOSE_PROJECT_NAME}_default":
@@ -208,7 +208,7 @@ networks:
   #       - boot-vol:/mnt/root_fs/boot
   #       - dev-vol:/mnt/root_fs/dev
   #       - etc-vol:/mnt/root_fs/etc
-  #       - halo-vol:/mnt/root_fs/halo
+  #       - hal-vol:/mnt/root_fs/hal
   #       - hel-vol:/mnt/root_fs/hel
   #       - home-vol:/mnt/root_fs/home
   #       - lib-vol:/mnt/root_fs/lib
@@ -232,7 +232,7 @@ networks:
   #   boot-vol:
   #   dev-vol:
   #   etc-vol:
-  #   halo-vol:
+  #   hal-vol:
   #   hel-vol:
   #   home-vol:
   #   lib-vol:

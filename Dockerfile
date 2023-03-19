@@ -24,7 +24,7 @@ FROM dplay_init AS dplay_halo
 USER root
 
 # add devel and host users using custom user setup
-    # add only _GABRIEL to the sudo list
+# add only _GABRIEL to the sudo list
 RUN usermod -aG ${_HALOS} host && \
     # usermod -aG horns ${_GABRIEL} && \
     usermod -aG sudo ${_GABRIEL} && \
@@ -39,17 +39,17 @@ RUN usermod -aG ${_HALOS} host && \
     sudo adduser ${_GABRIEL} sudo && \
     # uncomment to add sudo priveleges for host
     # sudo adduser host sudo && \
-    # set up /halo folder as symbolic link to /home/gabriel 
-    ln -s /home/${_GABRIEL} /halo && chown -R ${_GABRIEL}:${_HALOS} /halo && \
+    # set up /hal folder as symbolic link to /home/gabriel 
+    ln -s /home/${_GABRIEL} /hal && chown -R ${_GABRIEL}:${_HALOS} /hal && \
     # add a "readme" here later
-    touch /halo/.world && \
-    mkdir -p /halo/.ssh && chmod 700 /halo/.ssh && chown -R ${_GABRIEL}:${_HALOS} /halo/.ssh && \
+    touch /hal/.world && \
+    mkdir -p /hal/.ssh && chmod 700 /hal/.ssh && chown -R ${_GABRIEL}:${_HALOS} /hal/.ssh && \
     # make devel default wsl user 
     echo "[user]\ndefault=devel" >> /etc/wsl.conf
-    # mount stuff
-    # echo "//${mnt_data}/${_GABRIEL} /home/${_GABRIEL} cifs _GABRIEL=${_GABRIEL}, file_mode=0777,dir_mode=0777 0 0\n/${mnt_data}/devel /home/devel cifs _GABRIEL=devel, file_mode=0777, dir_mode=0777 0 0" >> /etc/fstab && \
-    # copy to skel and /hel
-    
+# mount stuff
+# echo "//${mnt_data}/${_GABRIEL} /home/${_GABRIEL} cifs _GABRIEL=${_GABRIEL}, file_mode=0777,dir_mode=0777 0 0\n/${mnt_data}/devel /home/devel cifs _GABRIEL=devel, file_mode=0777, dir_mode=0777 0 0" >> /etc/fstab && \
+# copy to skel and /hel
+
 # add common paths
 USER ${_GABRIEL}
 ENV PATH=$PATH:/home/${_GABRIEL}/.local/bin:/hel/devels-workshop/scripts:/hel/devels-workshop/devels-playground/scripts
@@ -63,15 +63,15 @@ RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${
 FROM dplay_halo AS dplay_hel
 
 USER root
-    # set up /devel folder as symbolic link to /home/devel for cloning repository(ies)
+# set up /devel folder as symbolic link to /home/devel for cloning repository(ies)
 RUN ln -s /home/devel /hel && chown -R devel:horns /home/devel && chown -R devel:horns /hel  && \
     # add an instructional "readme" here later
     touch /hel/lo.world && \
     # make sure .ssh has proper permissions
     mkdir -p /home/devel/.ssh && chown -R devel:horns /home/devel/.ssh && chmod 700 /home/devel/.ssh
-    # uncomment to add sudo priveleges for host / devel
-    # sudo adduser devel sudo && \
-    
+# uncomment to add sudo priveleges for host / devel
+# sudo adduser devel sudo && \
+
 USER devel
 
 # add common paths
@@ -85,20 +85,20 @@ USER root
 
 RUN cp -rp /etc/skel/. /home/devel/ && \
     if [ -d "${mnt_data}/devel" ]; then \
-        if [ ! -f "${mnt_data}/devel/backup-docker.sh" ]; then \
-            echo "#!/bin/bash" > devel/backup-docker.sh; \
-        fi \
+    if [ ! -f "${mnt_data}/devel/backup-docker.sh" ]; then \
+    echo "#!/bin/bash" > devel/backup-docker.sh; \
+    fi \
     fi && \
-# RUN if [ -d "${mnt_data}/${_GABRIEL}" ]; then \
-#         if [ ! -f "${mnt_data}/${_GABRIEL}/backup-docker.sh" ]; then \
-#             echo "#!/bin/bash" >> ${_GABRIEL}/backup-docker.sh; \
-#         fi \
-#     fi \
-#     if [ -d "${mnt_data}/gabriel" ]; then \
-#         if [ ! -f "${mnt_data}/gabriel/backup-docker.sh" ]; then \
-#             echo "#!/bin/bash" >> gabriel/backup-docker.sh; \
-#         fi \
-#     fi
+    # RUN if [ -d "${mnt_data}/${_GABRIEL}" ]; then \
+    #         if [ ! -f "${mnt_data}/${_GABRIEL}/backup-docker.sh" ]; then \
+    #             echo "#!/bin/bash" >> ${_GABRIEL}/backup-docker.sh; \
+    #         fi \
+    #     fi \
+    #     if [ -d "${mnt_data}/gabriel" ]; then \
+    #         if [ ! -f "${mnt_data}/gabriel/backup-docker.sh" ]; then \
+    #             echo "#!/bin/bash" >> gabriel/backup-docker.sh; \
+    #         fi \
+    #     fi
     chown -R devel:horns /home/devel && chown -R ${_GABRIEL}:${_HALOS} /home/${_GABRIEL}
 
 
@@ -107,14 +107,14 @@ RUN cp -rp /etc/skel/. /home/devel/ && \
 
 
 FROM dplay_data AS dplay_skel
-    # set up basic utils
-    # install github, build-essentials, libssl, etc
-    # apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip nvi apt-transport-https software-properties-common 
+# set up basic utils
+# install github, build-essentials, libssl, etc
+# apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip nvi apt-transport-https software-properties-common 
 RUN apt-get install -y apt-transport-https build-essential ca-certificates cifs-utils curl git gh libssl-dev nvi wget
-    # apt-get install -y apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg libssl-dev lsb-release nvi software-properties-common wget && \
-    # set up group/user 
-    # addgroup --system --gid 1001 ${_HALOS} && \
-    # adduser --system --home /home/${_GABRIEL} --shell /bin/bash --uid 1001 --gid 1001 --disabled-password ${_GABRIEL} 
+# apt-get install -y apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg libssl-dev lsb-release nvi software-properties-common wget && \
+# set up group/user 
+# addgroup --system --gid 1001 ${_HALOS} && \
+# adduser --system --home /home/${_GABRIEL} --shell /bin/bash --uid 1001 --gid 1001 --disabled-password ${_GABRIEL} 
 
 FROM dplay_skel AS dplay_git
 WORKDIR /home/devel
@@ -122,12 +122,12 @@ USER devel
 
 # add safe directories
 RUN "[user] \
-email = $GH_REPO_OWNER_EMAIL \
-name = kindtek \
-[credential "https://github.com"] \
-helper = !/usr/bin/gh auth git-credential \
-[url "ssh://git@github.com/"] \
-insteadOf = https://github.com" > /home/devel/.gitconfig && \
+    email = $GH_REPO_OWNER_EMAIL \
+    name = kindtek \
+    [credential "https://github.com"] \
+    helper = !/usr/bin/gh auth git-credential \
+    [url "ssh://git@github.com/"] \
+    insteadOf = https://github.com" > /home/devel/.gitconfig && \
     # clone fresh repos and give devel ownership
     git clone https://github.com/kindtek/devels-workshop && \
     cd devels-workshop && git pull && git submodule update --force --recursive --init --remote && cd .. && \
@@ -165,8 +165,8 @@ RUN sudo mkdir -p ${mnt_data}/${_GABRIEL}/${_GABRIEL}-orig && \
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GABRIEL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/${_GABRIEL}/README_ASAP      && \
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GABRIEL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/gabriel/README_ASAP      && \
     sudo chown ${_GABRIEL}:${_HALOS} ${mnt_data}/README_ASAP
-    # wait to do this until we have WSL_DISTRO_NAME
-    # sh ${mnt_data}/backup-devel.sh
+# wait to do this until we have WSL_DISTRO_NAME
+# sh ${mnt_data}/backup-devel.sh
 
 USER devel
 
