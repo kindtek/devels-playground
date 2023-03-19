@@ -39,8 +39,8 @@ RUN usermod -aG ${_HALOS} host && \
     sudo adduser ${_GABRIEL} sudo && \
     # uncomment to add sudo privileges for host
     # sudo adduser host sudo && \
-    # set up /halo folder as symbolic link to /home/gabriel 
-    ln -s /home/${_GABRIEL} /halo && chown -R ${_GABRIEL}:${_HALOS} /halo && \
+    ln -s ${mnt_data} /home/devel/data && \
+    ln -s ${mnt_data} /home/${_GABRIEL}/data && \
     # add a "readme" here later
     touch /halo/.world && \
     mkdir -p /halo/.ssh && chmod 700 /halo/.ssh && chown -R ${_GABRIEL}:${_HALOS} /halo/.ssh && \
@@ -123,7 +123,7 @@ RUN echo '[safe] \
     directory = /home/devel \
     directory = /hel \
     directory = /home/devel/devels-playground \
-    directory = lo.world' > .gitconfig
+    directory = lo.world' > /home/devel/.gitconfig
 # && \
 # clone fresh repos and give devel ownership
 RUN git clone https://github.com/kindtek/devels-workshop 
@@ -276,16 +276,8 @@ RUN sudo apt-get update && sudo apt-get upgrade
 
 USER devel
 RUN ln -s linux devels-workshop/devels-playground/linux && \
-    ln -s dockerr devels-workshop/devels-playground/docker/ubuntu && \
-    ln -s ${mnt_data} /home/devel/data && \
-    ln -s ${mnt_data} /home/${_GABRIEL}/data
-
-FROM dplay_git as dplay_git_phat
-RUN cd devels-workshop && git submodule update --remote && cd ../
-
-
-FROM dplay_dind AS dplay_dind_phat
-RUN cd devels-workshop && git submodule update --remote && cd ../
+    ln -s dockerr devels-workshop/devels-playground/docker/ubuntu
+    
 
 
 # for heavy gui (wsl2 required)
