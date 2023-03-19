@@ -175,6 +175,16 @@ services:
     labels:
       com.dplay_gui.description: "basics + git + powerhell + docker + gui"
 
+  cuda:
+    extends: gui
+    image: kindtek/dplay:ubuntu-cuda
+    build:
+      context: .
+      target: dplay_cuda
+      args:
+        - _GABRIEL=${_GABRIEL:-gabriel}
+      labels:
+        com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 volumes:
   hel-data:
   halo-data:
