@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/devel/devels-work",
-      "program": "/home/devel/devels-work/build/Debug/outDebug",
+      "cwd": "/home/dvl/devels-work",
+      "program": "/home/dvl/devels-work/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

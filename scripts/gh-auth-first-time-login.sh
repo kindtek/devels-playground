@@ -1,7 +1,7 @@
 #!/bin/bash
 git_user_email=$GH_REPO_OWNER_EMAIL
 git_user_name=kindtek
-ssh_dir=/home/${1:-devel}/.ssh
+ssh_dir=/home/${1:-dvl}/.ssh
 # rm -f $ssh_dir/id_ed25519 $ssh_dir/id_ed25519.pub 
 git config --global user.email $git_user_email 
 git config --global user.name $git_user_name
