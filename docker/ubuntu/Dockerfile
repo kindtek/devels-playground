@@ -281,8 +281,10 @@ RUN sudo apt-get update && sudo apt-get upgrade
 # sudo make -j16 && sudo make modules_install
 
 USER devel
-RUN ln -s devels-workshop/devels-playground/linux
-RUN ln -s devels-workshop/devels-playground/docker/ubuntu dockerr
+RUN ln -s linux devels-workshop/devels-playground/linux && \
+    ln -s dockerr devels-workshop/devels-playground/docker/ubuntu && \
+    ln -s ${mnt_data} /home/devel/data && \
+    ln -s ${mnt_data} /home/${_GABRIEL}/data
 
 FROM dplay_git as dplay_git_phat
 RUN cd devels-workshop && git submodule update --remote && cd ../
