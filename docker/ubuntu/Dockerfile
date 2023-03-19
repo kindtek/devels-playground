@@ -74,7 +74,7 @@ RUN ln -s /home/devel /hel && \
 # sudo adduser devel sudo && \
 USER devel
 # add common paths
-ENV PATH="$PATH:/home/devel/.local/bin:/home/devel/devels-work/devels-play/scripts"
+ENV PATH="$PATH:/home/devel/.local/bin:/hel/devels-work/scripts:/home/devel/devels-work/devels-play/scripts"
 RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${mnt_data}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> /home/devel/.bashrc
 
 # DATA helper
@@ -283,7 +283,7 @@ RUN    sudo apt-get -y install brave-browser
 # head -n -1 /opt/brave.com/brave/brave-browser.old > /opt/brave.com/brave/brave-browser && \
 # echo '"$HERE/brave" "$@" " --disable-gpu " || true' >> /opt/brave.com/brave/brave-browser && \
 RUN cd /opt/brave.com/brave && \
-    brave_old_line='"\$HERE/brave"\s"\$@"\s\|\|\strue"' && \
+    brave_old_line='\"\$HERE/brave\"\s\"\$\@"\s\|\|\strue\"' && \
     brave_new_line='\"\$HERE/brave\" \"\$@\" \" --disable-gpu \ || true' && \
     sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/devel
 RUN sudo apt-get -y install x11-apps xfce4

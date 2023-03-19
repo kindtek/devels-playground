@@ -1,5 +1,5 @@
 version: "3.9"
-name: devels-work-ubuntu
+name: devels-play-ubuntu
 services:
 
   initialize:
@@ -133,7 +133,7 @@ services:
       - hal-data:/home/${_GABRIEL:-gabriel}
       - /mnt/data
     labels:
-      com.dplay_git.description: "basics + git"
+      com.devels-play.description: "basics + git"
 
   python:
     extends: git
@@ -142,7 +142,7 @@ services:
       context: .
       target: dplay_msdot
     labels:
-      com.dplay_msdot.description: "basics + git + powerhell"
+      com.devels-play.description: "basics + git + powerhell"
 
   msdot:
     extends: python
@@ -151,7 +151,7 @@ services:
       context: .
       target: dplay_msdot
     labels:
-      com.dplay_msdot.description: "basics + git + powerhell"
+      com.devels-play.description: "basics + git + powerhell"
 
   dind:
     extends: msdot
@@ -160,7 +160,7 @@ services:
       context: .
       target: dplay_dind
     labels:
-      com.dplay_dind.description: "basics + git + powerhell + docker"
+      com.devels-play.description: "basics + git + powerhell + docker"
 
   kernel:
     extends: dind
@@ -169,7 +169,7 @@ services:
       context: .
       target: dplay_kernel
     labels:
-      com.dplay_dind.description: "basics + git + powerhell + docker + kernel"
+      com.devels-play.description: "basics + git + powerhell + docker + kernel"
 
   gui:
     extends: dind
@@ -180,7 +180,7 @@ services:
       args:
         - _GABRIEL=${_GABRIEL:-gabriel}
     labels:
-      com.dplay_gui.description: "basics + git + powerhell + docker + kernel + gui"
+      com.devels-play.description: "basics + git + powerhell + docker + kernel + gui"
 
   # cuda:
   #   extends: gui
