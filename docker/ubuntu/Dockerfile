@@ -171,7 +171,7 @@ USER dvl
 # setup ssh gh login
 
     # add symlinks for convenience
-RUN ln -s devels-work dwork && ln -s devels-work/devels-play dplay && \ && ln -s devels-play dplay && \
+RUN ln -s devels-work dwork && ln -s devels-work/devels-play dplay && ln -s devels-play devels-work/dplay && \
     ln -s linux devels-work/devels-play/linux && \
     ln -s docker devels-work/devels-play/docker && \
     ln -s devels-work/devels-play/docker/ub devels-work/devels-play/docker/ubuntu 
@@ -181,11 +181,21 @@ RUN ln -s devels-work dwork && ln -s devels-work/devels-play dplay && \ && ln -s
 
 # GIT
 FROM dplay_skel as dplay_git
+WORKDIR /home/dvl
+USER root
+# copy and set ownership
+RUN cp -rf devels-work/scripts/gh-auth-first-time-login.sh /home/dvl 
+RUN cp -rf devels-work/scripts/gh-auth-first-time-login.sh /home/${_GBL} 
+RUN chmod og+x /home/dvl/gh-auth-first-time-login.sh && chmod og+x /home/${_GBL}/gh-auth-first-time-login.sh
+RUN chown dvl:horns /home/dvl/gh-auth-first-time-login.sh && chown ${_GBL}:${_HALOS} /home/dvl/gh-auth-first-time-login.sh 
 USER ${_GBL}
-WORKDIR /home/gbl
-RUN sh scripts/gh-auth-first-time-login.sh
+WORKDIR /home/${_GBL}
+RUN sh gh-auth-first-time-login.sh ${_GBL}
+RUN rm gh-auth-first-time-login.sh
 USER devel
-RUN sh scripts/gh-auth-first-time-login.sh
+WORKDIR /home/dvl
+RUN sh gh-auth-first-time-login.sh dvl
+RUN rm gh-auth-first-time-login.sh
 
 # PYTHON stuff
 FROM dplay_git as dplay_python
