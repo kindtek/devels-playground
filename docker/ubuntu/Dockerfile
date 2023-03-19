@@ -1,16 +1,16 @@
 # to build, run: 
-# `_GABRIEL=mine _HALOS=ours docker run -d -i`
+# `_GBL=mine _HALOS=ours docker run -d -i`
 FROM ubuntu:latest AS dplay_init
-ARG _GABRIEL=${_GABRIEL:-gabriel}
+ARG _GBL=${_GBL:-gbl}
 ARG _HALOS=${_HALOS:-halos}
 ARG mnt_data=${mnt_data:-/mnt/data}
 RUN addgroup --gid 777 ${_HALOS} && \
     addgroup --gid 666 horns && \
-    adduser --home /home/${_GABRIEL} --ingroup ${_HALOS} --shell /bin/bash --uid 777 --disabled-password ${_GABRIEL} && \
+    adduser --home /home/${_GBL} --ingroup ${_HALOS} --shell /bin/bash --uid 777 --disabled-password ${_GBL} && \
     adduser --system --home /home/host --ingroup ${_HALOS} --shell /bin/bash --uid 76667 --disabled-password host && \
     adduser --home /home/dvl --ingroup horns --shell /bin/bash --uid 666 --disabled-password dvl && \
     # ensure no passwords
-    passwd -d ${_GABRIEL} && \
+    passwd -d ${_GBL} && \
     passwd -d dvl && \
     passwd -d host && \
     passwd -d root && \
@@ -20,40 +20,40 @@ RUN addgroup --gid 777 ${_HALOS} && \
 FROM dplay_init AS dplay_hal
 USER root
 # add dvl and host users using custom user setup
-# add only _GABRIEL to the sudo list
+# add only _GBL to the sudo list
 RUN usermod -aG ${_HALOS} host && \
-    # usermod -aG horns ${_GABRIEL} && \
-    usermod -aG sudo ${_GABRIEL} && \
-    # chown -R ${_GABRIEL}:${_HALOS} /home/${_GABRIEL} \
+    # usermod -aG horns ${_GBL} && \
+    usermod -aG sudo ${_GBL} && \
+    # chown -R ${_GBL}:${_HALOS} /home/${_GBL} \
     chown -R host:${_HALOS} /home/host && \
-    chown -R ${_GABRIEL}:${_HALOS} /home/${_GABRIEL} && \
+    chown -R ${_GBL}:${_HALOS} /home/${_GBL} && \
     apt-get update -yq && \
     apt-get upgrade -y && \
     # non-root will need to use sudo from now on
     apt-get -y install sudo && \
-    # add ${_GABRIEL} to sudo group
-    sudo adduser ${_GABRIEL} sudo && \
+    # add ${_GBL} to sudo group
+    sudo adduser ${_GBL} sudo && \
     # uncomment to add sudo privileges for host
     # sudo adduser host sudo && \
-    # set up /hal folder as symbolic link to /home/gabriel 
-    ln -s /home/${_GABRIEL} /hal && \
+    # set up /hal folder as symbolic link to /home/gbl 
+    ln -s /home/${_GBL} /hal && \
     ln -s ${mnt_data}/dvl /home/dvl/bak && \
-    ln -s ${mnt_data}/${_GABRIEL} /home/${_GABRIEL}/bak && \
-    chown -R ${_GABRIEL}:${_HALOS} /hal && \
+    ln -s ${mnt_data}/${_GBL} /home/${_GBL}/bak && \
+    chown -R ${_GBL}:${_HALOS} /hal && \
     # TODO: add a "readme" here
     touch /hal/o.world && \
     # set up .ssh and dls directories and make sure .ssh has proper permissions
     mkdir -p /hal/.ssh /hal/dls && chmod 700 /hal/.ssh && \
-    chown -R ${_GABRIEL}:${_HALOS} /hal/.ssh && \
+    chown -R ${_GBL}:${_HALOS} /hal/.ssh && \
     # make dvl default wsl user 
     echo "[user]\ndefault=dvl" >> /etc/wsl.conf
 # mount stuff if needed
-# echo "//${mnt_data}/${_GABRIEL} /home/${_GABRIEL} cifs _GABRIEL=${_GABRIEL}, file_mode=0777,dir_mode=0777 0 0\n/${mnt_data}/dvl /home/dvl cifs _GABRIEL=dvl, file_mode=0777, dir_mode=0777 0 0" >> /etc/fstab && \
+# echo "//${mnt_data}/${_GBL} /home/${_GBL} cifs _GBL=${_GBL}, file_mode=0777,dir_mode=0777 0 0\n/${mnt_data}/dvl /home/dvl cifs _GBL=dvl, file_mode=0777, dir_mode=0777 0 0" >> /etc/fstab && \
 # copy to skel and /hel, add common paths
-USER ${_GABRIEL}
-ENV PATH="$PATH:/home/${_GABRIEL}/.local/bin:/hel/devels-work/scripts:/home/dvl/devels-work/devels-play/scripts"
-RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${mnt_data}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> /home/${_GABRIEL}/.bashrc && \
-    sudo cp -rf /home/${_GABRIEL}/. /etc/skel/ && \
+USER ${_GBL}
+ENV PATH="$PATH:/home/${_GBL}/.local/bin:/hel/devels-work/scripts:/home/dvl/devels-work/devels-play/scripts"
+RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${mnt_data}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> /home/${_GBL}/.bashrc && \
+    sudo cp -rf /home/${_GBL}/. /etc/skel/ && \
     sudo rm /etc/skel/.sudo_as_admin_successful
 USER dvl
 
@@ -102,67 +102,67 @@ WORKDIR /home/dvl
 # echo "#!/bin/bash" > dvl/backup-docker.sh; \
 # fi \
 # fi && \
-# # RUN if [ -d "${mnt_data}/${_GABRIEL}" ]; then \
-# #         if [ ! -f "${mnt_data}/${_GABRIEL}/backup-docker.sh" ]; then \
-# #             echo "#!/bin/bash" >> ${_GABRIEL}/backup-docker.sh; \
+# # RUN if [ -d "${mnt_data}/${_GBL}" ]; then \
+# #         if [ ! -f "${mnt_data}/${_GBL}/backup-docker.sh" ]; then \
+# #             echo "#!/bin/bash" >> ${_GBL}/backup-docker.sh; \
 # #         fi \
 # #     fi \
-# #     if [ -d "${mnt_data}/gabriel" ]; then \
-# #         if [ ! -f "${mnt_data}/gabriel/backup-docker.sh" ]; then \
-# #             echo "#!/bin/bash" >> gabriel/backup-docker.sh; \
+# #     if [ -d "${mnt_data}/gbl" ]; then \
+# #         if [ ! -f "${mnt_data}/gbl/backup-docker.sh" ]; then \
+# #             echo "#!/bin/bash" >> gbl/backup-docker.sh; \
 # #         fi \
 # #     fi
-# chown -R dvl:horns /home/dvl && chown -R ${_GABRIEL}:${_HALOS} /home/${_GABRIEL}
-# RUN echo "# # # # Docker # # # # " >> ${mnt_data}/gabriel/backup-docker.sh
-# RUN sudo .${mnt_data}/gabriel/backup-docker.sh
+# chown -R dvl:horns /home/dvl && chown -R ${_GBL}:${_HALOS} /home/${_GBL}
+# RUN echo "# # # # Docker # # # # " >> ${mnt_data}/gbl/backup-docker.sh
+# RUN sudo .${mnt_data}/gbl/backup-docker.sh
 USER dvl
 
 # SKELETON framework
 FROM dplay_data AS dplay_skel
 # RUN with halos ownership
-USER ${_GABRIEL}
-# RUN sudo chown ${_GABRIEL}:${_HALOS} -R ${mnt_data}/${_GABRIEL} /home/${_GABRIEL}  \
-#     git config --global --add safe.directory /home/gabriel && \
+USER ${_GBL}
+# RUN sudo chown ${_GBL}:${_HALOS} -R ${mnt_data}/${_GBL} /home/${_GBL}  \
+#     git config --global --add safe.directory /home/gbl && \
 #     git config --global --add safe.directory /hal
-RUN sudo sh devels-work/scripts/gh-auth-first-time-login.sh ${_GABRIEL} && \
+RUN sudo sh devels-work/scripts/gh-auth-first-time-login.sh ${_GBL} && \
     # set up shared backup drive structure 
-    sudo chmod +x devels-work/mnt/backup-gabriel.sh && \
-    sudo mkdir -p ${mnt_data}/${_GABRIEL}/${_GABRIEL}-orig && \
-    sudo mkdir -p ${mnt_data}/${_GABRIEL}/dvl-orig && \
+    sudo chmod +x devels-work/mnt/backup-gbl.sh && \
+    sudo mkdir -p ${mnt_data}/${_GBL}/${_GBL}-orig && \
+    sudo mkdir -p ${mnt_data}/${_GBL}/dvl-orig && \
     sudo mkdir -p ${mnt_data}/dvl && \
-    sudo mkdir -p ${mnt_data}/${_GABRIEL}/dvl-orig && \
-    sudo chown ${_GABRIEL}:${_HALOS} -R ${mnt_data}/${_GABRIEL} && \
+    sudo mkdir -p ${mnt_data}/${_GBL}/dvl-orig && \
+    sudo chown ${_GBL}:${_HALOS} -R ${mnt_data}/${_GBL} && \
     sudo chown dvl:horns -R ${mnt_data}/dvl && \
-    sudo chown dvl:horns ${mnt_data}/${_GABRIEL}/dvl-orig 
+    sudo chown dvl:horns ${mnt_data}/${_GBL}/dvl-orig 
 # copy newly pulled backup script to mount location and home dirs
-RUN sudo cp -arf devels-work/mnt/backup-gabriel.sh ${mnt_data}/gabriel/backup-gabriel.sh && \
-    sudo cp -arf devels-work/mnt/backup-custom.sh ${mnt_data}/${_GABRIEL}/backup-${_GABRIEL}.sh && \
-    # sudo cp -arf devels-work/mnt/backup-custom.sh ${mnt_data}/gabriel/backup-gabriel.sh && cp -arf devels-work/mnt/backup-custom.sh /home/gabriel/backup-gabriel.sh && \
+RUN sudo cp -arf devels-work/mnt/backup-gbl.sh ${mnt_data}/gbl/backup-gbl.sh && \
+    sudo cp -arf devels-work/mnt/backup-custom.sh ${mnt_data}/${_GBL}/backup-${_GBL}.sh && \
+    # sudo cp -arf devels-work/mnt/backup-custom.sh ${mnt_data}/gbl/backup-gbl.sh && cp -arf devels-work/mnt/backup-custom.sh /home/gbl/backup-gbl.sh && \
     sudo cp -arf devels-work/mnt/backup-dvl.sh ${mnt_data}/dvl/backup-dvl.sh && \
-    sudo cp -arf devels-work/mnt/backup-dvl.sh ${mnt_data}/${_GABRIEL}/backup-dvl.sh && \
+    sudo cp -arf devels-work/mnt/backup-dvl.sh ${mnt_data}/${_GBL}/backup-dvl.sh && \
     sudo cp -arf devels-work/mnt/backup-dvl.sh /home/dvl/backup-dvl.sh && \
     # make rwx for owner and rx for group - none for others
-    sudo chmod 750 -R ${mnt_data}/${_GABRIEL} && \
-    sudo chmod 755 ${mnt_data}/${_GABRIEL} && \
+    sudo chmod 750 -R ${mnt_data}/${_GBL} && \
+    sudo chmod 755 ${mnt_data}/${_GBL} && \
     sudo chmod 750 -R ${mnt_data}/dvl && \
     # # add warning for the backup drive
-    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GABRIEL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/README_ASAP      && \
-    # echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GABRIEL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/${_GABRIEL}/README_ASAP      && \
-    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GABRIEL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/gabriel/README_ASAP      && \
-    sudo chown ${_GABRIEL}:${_HALOS} ${mnt_data}/README_ASAP ${mnt_data}/${_GABRIEL}/backup-${_GABRIEL}.sh
+    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GBL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/README_ASAP      && \
+    # echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GBL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/${_GBL}/README_ASAP      && \
+    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GBL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/gbl/README_ASAP      && \
+    sudo chown ${_GBL}:${_HALOS} ${mnt_data}/README_ASAP ${mnt_data}/${_GBL}/backup-${_GBL}.sh
 # wait to do this until we have WSL_DISTRO_NAME
 # sh ${mnt_data}/backup-dvl.sh
 USER root
 # set up basic utils
 # install github, build-essentials, libssl, etc
-RUN chown dvl:horns -R /home/dvl && chown ${_GABRIEL}:${_HALOS} /home/gabriel && \
+RUN chown dvl:horns -R /home/dvl && chown ${_GBL}:${_HALOS} /home/gbl && \
     # # # For debug only
     # # # RUN sudo apt-get -y update && sudo apt-get -y install nvi curl git gh wget
     # # # RUN apt-get install -y lsb-release python3 python3-pip software-properties-common 
     # setup gh ssh login 
     sudo chmod +x devels-work/scripts/gh-auth-first-time-login.sh && \
     # make backup script executable
-    sudo chmod ugo+x devels-work/mnt/backup-gabriel.sh && \
+    sudo chmod ugo+x devels-work/mnt/backup-gbl.sh && \
     sudo chmod ugo+x devels-work/mnt/backup-dvl.sh && \
     sudo chmod ugo+x devels-work/mnt/backup-custom.sh
 RUN sudo apt-get -y update && sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget
@@ -182,19 +182,19 @@ FROM dplay_skel as dplay_git
 
 # PYTHON stuff
 FROM dplay_git as dplay_python
-USER ${_GABRIEL}
+USER ${_GBL}
 RUN sudo apt-get -y install jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv && \
     pip3 install cdir --user  && \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps && \
-    sudo cp -rf /home/${_GABRIEL}/.local/bin /usr/local && \
-    sudo cp -rf /home/${_GABRIEL}/.local /etc/skel/ &&  sudo rm /etc/skel/bak && \
-    sudo cp -r /home/${_GABRIEL}/.local /home/dvl/ && sudo chown -R dvl:horns /home/dvl
+    sudo cp -rf /home/${_GBL}/.local/bin /usr/local && \
+    sudo cp -rf /home/${_GBL}/.local /etc/skel/ &&  sudo rm /etc/skel/bak && \
+    sudo cp -r /home/${_GBL}/.local /home/dvl/ && sudo chown -R dvl:horns /home/dvl
 USER dvl
 
 # MICROSOFT stuff
 FROM dplay_python as dplay_msdot
-USER ${_GABRIEL}
+USER ${_GBL}
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
 RUN sudo apt-get -y install lsb-release 
@@ -262,7 +262,7 @@ RUN apt-get update -y && apt-get -y upgrade
 #     sudo sh copy-builtin ../linux
 # RUN sudo make install && \
 #     cd ../linux && sudo sed -i 's/# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config && echo grep ZFS .config && \
-#     sudo make && sudo make modules_install && sudo mkdir -p ../../../gabriel/kernels && sudo cp arch/x86/boot/bzImage ../../../gabriel/kernels/linux-kernel-626a5 && \
+#     sudo make && sudo make modules_install && sudo mkdir -p ../../../gbl/kernels && sudo cp arch/x86/boot/bzImage ../../../gbl/kernels/linux-kernel-626a5 && \
 #     sudo cp arch/x86/boot/bzImage ../../mnt/linux-kernel-626a6
 # && \
 # # sudo make -j16 && sudo make modules_install
@@ -270,7 +270,7 @@ USER dvl
 
 # GUI - wsl2 required
 FROM dplay_dind as dplay_gui
-USER ${_GABRIEL}
+USER ${_GBL}
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
 RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg 
 RUN    echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list 
@@ -291,7 +291,7 @@ RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-conf
 USER dvl
 
 FROM dplay_gui as dplay_cuda
-USER ${_GABRIEL}
+USER ${_GBL}
 # CUDA
 RUN sudo apt-get -y install nvidia-cuda-toolkit
 USER dvl

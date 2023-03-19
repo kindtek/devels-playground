@@ -22,7 +22,7 @@ services:
       context: .
       target: dplay_skel
       args:
-        - username=${username:-gabriel}
+        - username=${username:-gbl}
       dockerfile: dockerfile.ubuntu.yaml
       # network: ${COMPOSE_PROJECT_NAME}_default
     init: true
@@ -43,7 +43,7 @@ services:
       context: .
       target: dplay_git
       args:
-        - username=${username:-gabriel}
+        - username=${username:-gbl}
       dockerfile: dockerfile.ubuntu.yaml
     depends_on:
       skel:
@@ -58,7 +58,7 @@ services:
       context: .
       target: dplay_msdot
       args:
-        - username=${username:-gabriel}
+        - username=${username:-gbl}
       dockerfile: dockerfile.ubuntu.yaml
   dind:
     extends: msdot
@@ -67,7 +67,7 @@ services:
       context: .
       target: dplay_dind
       args:
-        - username=${username:-gabriel}
+        - username=${username:-gbl}
       dockerfile: dockerfile.ubuntu.yaml
 
   gui:
@@ -77,7 +77,7 @@ services:
       context: .
       target: dplay_gui
       args:
-        - username=${username:-gabriel}
+        - username=${username:-gbl}
       dockerfile: dockerfile.ubuntu.yaml
   cuda:
     extends: gui
@@ -86,7 +86,7 @@ services:
       context: .
       target: dplay_cuda
       args:
-        - username=${username:-gabriel}
+        - username=${username:-gbl}
       dockerfile: dockerfile.ubuntu.yaml
 volumes:
   hel-data:
