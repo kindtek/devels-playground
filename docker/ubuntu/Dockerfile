@@ -42,7 +42,8 @@ RUN usermod -aG ${_HALOS} host && \
     chown -R ${_GABRIEL}:${_HALOS} /hal && \
     # TODO: add a "readme" here
     touch /hal/o.world && \
-    mkdir -p /hal/.ssh && chmod 700 /hal/.ssh && chown -R :${_HALOS} /hal/.ssh && \
+    mkdir -p /hal/.ssh && chmod 700 /hal/.ssh && \
+    chown -R ${_GABRIEL}:${_HALOS} /hal/.ssh && \
     # make devel default wsl user 
     echo "[user]\ndefault=devel" >> /etc/wsl.conf
 # mount stuff if needed
@@ -59,14 +60,15 @@ USER devel
 FROM dplay_hal AS dplay_hel
 USER root
 # set up /devel folder as symbolic link to /home/devel for cloning repository(ies)
-RUN ln -s /home/devel /hel && chown -R devel:horns /home/devel && chown -R devel:horns /hel  && \
+RUN ln -s /home/devel /hel && \
+    chown -R devel:horns /home/devel && chown -R devel:horns /hel  && \
     chown -R devel:horns /hel  && \
     # add an instructional "readme" here later
     touch /hel/lo.world && \
     # make sure .ssh has proper permissions
     mkdir -p /home/devel/.ssh && \
     # set up /devel folder as symbolic link to /home/devel for cloning repository(ies)
-    chown -R :horns /home/devel/.ssh && chmod 700 /home/devel/.ssh
+    chown -R devel:horns /home/devel/.ssh && chmod 700 /home/devel/.ssh
 # uncomment to add sudo priveleges for host / devel
 # sudo adduser devel sudo && \
 USER devel
@@ -116,33 +118,14 @@ USER devel
 
 # SKELETON framework
 FROM dplay_data AS dplay_skel
-USER root
-# set up basic utils
-# install github, build-essentials, libssl, etc
-RUN sudo apt-get -y update && sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget
-# # For debug only
-# RUN sudo apt-get -y update && sudo apt-get -y install nvi curl git gh wget
-# RUN apt-get install -y lsb-release python3 python3-pip software-properties-common 
-
-# set up ssh with github
-RUN sudo sh devels-workshop/scripts/gh-auth-first-time-login.sh && \
-    sudo chown devel:horns -R /home/devel 
-USER ${_GABRIEL}
-# make backup script executable
-RUN sudo chmod +x devels-workshop/mnt/backup.sh && \
-    sudo chmod +x devels-workshop/mnt/backup-devel.sh && \
-    sudo chmod +x devels-workshop/mnt/backup-custom.sh && \
-    sudo chmod +x devels-workshop/scripts/gh-auth-first-time-login.sh && \
-    # add symlinks for convenience
-    sudo ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay 
 # RUN with halos ownership
 USER ${_GABRIEL}
-RUN sudo git config --global --add safe.directory /home/gabriel && \
-    sudo git config --global --add safe.directory /hal
-RUN ./devels-workshop/scripts/gh-auth-first-time-login.sh ${_GABRIEL} && \
-    chown ${_GABRIEL}:${_HALOS} -R /home/${_GABRIEL}  
-# set up shared backup drive structure 
-RUN sudo chmod +x devels-workshop/mnt/backup-gabriel.sh && \
+# RUN sudo chown ${_GABRIEL}:${_HALOS} -R ${mnt_data}/${_GABRIEL} /home/${_GABRIEL}  \
+#     git config --global --add safe.directory /home/gabriel && \
+#     git config --global --add safe.directory /hal
+RUN sudo sh devels-workshop/scripts/gh-auth-first-time-login.sh ${_GABRIEL} && \
+    # set up shared backup drive structure 
+    sudo chmod +x devels-workshop/mnt/backup-gabriel.sh && \
     sudo mkdir -p ${mnt_data}/${_GABRIEL}/${_GABRIEL}-orig && \
     sudo mkdir -p ${mnt_data}/devel/${_GABRIEL}-orig && \
     sudo mkdir -p ${mnt_data}/devel/devel-orig && \
@@ -169,7 +152,30 @@ RUN sudo cp -arf devels-workshop/mnt/backup-gabriel.sh ${mnt_data}/gabriel/backu
     sudo chown ${_GABRIEL}:${_HALOS} ${mnt_data}/README_ASAP ${mnt_data}/${_GABRIEL}/backup-${_GABRIEL}.sh
 # wait to do this until we have WSL_DISTRO_NAME
 # sh ${mnt_data}/backup-devel.sh
+USER root
+# set up basic utils
+# install github, build-essentials, libssl, etc
+RUN chown devel:horns -R /home/devel && chown ${_GABRIEL}:${_HALOS} /home/gabriel && \
+    # # # For debug only
+    # # # RUN sudo apt-get -y update && sudo apt-get -y install nvi curl git gh wget
+    # # # RUN apt-get install -y lsb-release python3 python3-pip software-properties-common 
+    # setup gh ssh login 
+    sudo chmod +x devels-workshop/scripts/gh-auth-first-time-login.sh && \
+    # make backup script executable
+    sudo chmod +x devels-workshop/mnt/backup.sh && \
+    sudo chmod +x devels-workshop/mnt/backup-devel.sh && \
+    sudo chmod +x devels-workshop/mnt/backup-custom.sh
+RUN sudo apt-get -y update && sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget
+
 USER devel
+# setup ssh gh login
+RUN sh devels-workshop/scripts/gh-auth-first-time-login.sh && \
+    # add symlinks for convenience
+    ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay && \
+    ln -s linux devels-workshop/devels-playground/linux && \
+    ln -s docker devels-workshop/devels-playground/docker && \
+    ln -s devels-workshop/devels-playground/docker/ub devels-workshop/devels-playground/docker/ubuntu
+
 
 # GIT
 FROM dplay_skel as dplay_git
@@ -208,25 +214,25 @@ USER root
 RUN sudo mkdir -p /etc/apt/keyrings   && \
     sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg  && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+RUN sudo apt-get -y update && sudo apt-get -y install docker-compose-plugin docker-ce docker-ce-cli containerd.io
 USER devel
 
 # KERNEL builder
 FROM dplay_dind as dplay_kernel
+USER ROOT
 RUN echo exit 0 > /usr/sbin/policy-rc.d
-RUN sudo apt-get -y update && sudo apt-get -y install docker-compose-plugin docker-ce docker-ce-cli containerd.io
 #    && \
-USER ${_GABRIEL}
-RUN sudo apt-get -y update && sudo apt-get -y upgrade
+RUN sudo apt-get -y update && apt-get -y upgrade
 # RUN  
-# RUN DEBIAN_FRONTEND=noninteractive sudo apt-get -y install 
-RUN DEBIAN_FRONTEND=noninteractive sudo apt-get -y upgrade libldap-common libldap-2.5-0 dpkg
+# RUN DEBIAN_FRONTEND=noninteractive apt-get -y install 
+RUN DEBIAN_FRONTEND=noninteractive apt-get -y upgrade libldap-common libldap-2.5-0 dpkg
 ##########################################################################################
-# RUN DEBIAN_FRONTEND=noninteractive RUN sudo apt-get -y install zfs-utils 
-# RUN yes $'23\n' | sudo apt-get -y install --force-yes zfs-dracut >/dev/null 2>&1 
+# RUN DEBIAN_FRONTEND=noninteractive RUN apt-get -y install zfs-utils 
+# RUN yes $'23\n' | apt-get -y install --force-yes zfs-dracut >/dev/null 2>&1 
 #  
-RUN export DEBIAN_FRONTEND="noninteractive" && sudo apt-get -y install gnupg apt-utils build-essential autoconf automake libtool gawk alien fakeroot dkms libblkid-dev uuid-dev libudev-dev libssl-dev \
+RUN export DEBIAN_FRONTEND="noninteractive" && apt-get -y install gnupg apt-utils build-essential autoconf automake libtool gawk alien fakeroot dkms libblkid-dev uuid-dev libudev-dev libssl-dev \
     sysvinit-utils libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi libffi-dev flex bison snapd daemonize 
-RUN sudo apt-get update -y && sudo apt-get -y upgrade
+RUN apt-get update -y && apt-get -y upgrade
 # 
 # make this work eventually...
 # 
@@ -261,8 +267,6 @@ RUN sudo apt-get update -y && sudo apt-get -y upgrade
 # && \
 # # sudo make -j16 && sudo make modules_install
 USER devel
-RUN ln -s linux devels-workshop/devels-playground/linux && \
-    ln -s dockerr devels-workshop/devels-playground/docker/ubuntu
 
 # GUI - wsl2 required
 FROM dplay_dind as dplay_gui
