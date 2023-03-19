@@ -17,6 +17,9 @@
     },
     {
       "path": "../../../hel"
+    },
+    {
+      "path": "mnt"
     }
   ],
   "settings": {}

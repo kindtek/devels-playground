@@ -1,6 +1,8 @@
-backup_mnt_location=/mnt/data
-username=${1:-gabriel}
-groupname=${2:-halos}
+#!/bin/bash
+
+backup_mnt_location=${1:-/mnt/data}
+_GABRIEL=${2:-gabriel}
+_HALOS=${3:-halos}
 
 if [ -z $_NIX_MNT_LOCATION ]
 then 
@@ -38,40 +40,38 @@ sudo cp -arf dwork/mnt/backup-devel.sh ${backup_mnt_location}/devel/backup-devel
 sudo cp -arf dwork/mnt/backup-devel.sh ${backup_mnt_location}/${username}/backup-devel.sh && cp -arf dwork/mnt/backup-devel.sh /home/${username}/backup-devel.sh  && \
 sudo cp -arf dwork/mnt/backup-devel.sh ${backup_mnt_location}/gabriel/backup-devel.sh && cp -arf dwork/mnt/backup-devel.sh /home/gabriel/backup-devel.sh  && \
 sudo cp -arf dwork/mnt/backup-devel.sh /home/devel/backup-devel.sh && \
-# make rwx for owner and rx for group - none for others
-sudo chmod 750 -R ${backup_mnt_location}/${username} && \
-sudo chmod 755 ${backup_mnt_location}/${username} && \
-sudo chmod 750 -R ${backup_mnt_location}/gabriel && \
-sudo chmod 755 ${backup_mnt_location}/gabriel && \
-sudo chmod 750 -R ${backup_mnt_location}/devel && \
-# # add warning for the backup drive
-echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${username}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${backup_mnt_location}/README_ASAP      && \
-echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${username}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${backup_mnt_location}/${username}/README_ASAP      && \
-echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${username}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${backup_mnt_location}/gabriel/README_ASAP      && \
-sudo chown ${username}:${groupname} ${backup_mnt_location}/README_ASAP
+# # make rwx for owner and rx for group - none for others
+# sudo chmod 750 -R ${backup_mnt_location}/${username} && \
+# sudo chmod 755 ${backup_mnt_location}/${username} && \
+# sudo chmod 750 -R ${backup_mnt_location}/gabriel && \
+# sudo chmod 755 ${backup_mnt_location}/gabriel && \
+# sudo chmod 750 -R ${backup_mnt_location}/devel && \
+# # # add warning for the backup drive
+# echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${username}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${backup_mnt_location}/README_ASAP      && \
+# echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${username}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${backup_mnt_location}/${username}/README_ASAP      && \
+# echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${username}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${backup_mnt_location}/gabriel/README_ASAP      && \
+# sudo chown ${username}:${groupname} ${backup_mnt_location}/README_ASAP
 
-if [ ! -z $1 ]
-then
-    HALO_DESTINATION="$_NIX_MNT_LOCATION/$1/devel-$WSL_DISTRO_NAME";
-    HALO_RESTORE_SCRIPT="$_NIX_MNT_LOCATION/$1/restore-devel-$WSL_DISTRO_NAME.sh";
 
-    echo "backing the /hal up to: $HALO_DESTINATION ...";
+HALO_DESTINATION="$_NIX_MNT_LOCATION/$backup_mnt_location/devel-$WSL_DISTRO_NAME";
+HALO_RESTORE_SCRIPT="$_NIX_MNT_LOCATION/$backup_mnt_location/restore-devel-$WSL_DISTRO_NAME.sh";
 
-    export VERSION_CONTROL=numbered;
+echo "backing the /hal up to: $HALO_DESTINATION ...";
 
-    mkdir -p $HALO_DESTINATION;
-    cp -arf --backup=$VERSION_CONTROL --update /home/devel $HALO_DESTINATION;
+export VERSION_CONTROL=numbered;
 
-    echo "creating restore script and saving as $HALO_RESTORE_SCRIPT ...";
+mkdir -p $HALO_DESTINATION;
+cp -arf --backup=$VERSION_CONTROL --update /home/devel $HALO_DESTINATION;
 
-    echo "#!/bin/bash;
-    # run as sudo
+echo "creating restore script and saving as $HALO_RESTORE_SCRIPT ...";
 
-    echo 'restoring $_NIX_MNT_LOCATION/$1/devel-$WSL_DISTRO_NAME/devel to /home ...';
-    cp --backup=$VERSION_CONTROL --remove-destination -arf $_NIX_MNT_LOCATION/$1/devel-$WSL_DISTRO_NAME/devel /home" > $HALO_RESTORE_SCRIPT;
+echo "#!/bin/bash
+# run as sudo
 
-    chown devel:horns $HALO_RESTORE_SCRIPT;
-    chmod +x $HALO_RESTORE_SCRIPT;
+echo 'restoring $_NIX_MNT_LOCATION/$backup_mnt_location/devel-$WSL_DISTRO_NAME/devel to /home ...';
+cp --backup=$VERSION_CONTROL --remove-destination -arf $_NIX_MNT_LOCATION/$backup_mnt_location/devel-$WSL_DISTRO_NAME/devel /home" > $HALO_RESTORE_SCRIPT;
 
-    echo "Backup complete.";
-fi
+chown devel:horns $HALO_RESTORE_SCRIPT;
+chmod +x $HALO_RESTORE_SCRIPT;
+
+echo "Backup complete.";
