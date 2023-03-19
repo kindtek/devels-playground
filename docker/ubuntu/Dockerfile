@@ -202,13 +202,14 @@ FROM dplay_python as dplay_msdot
 USER ${_GABRIEL}
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
-RUN sudo apt-get install -y lsb-release 
+RUN sudo apt-get -y install lsb-release 
 RUN sudo wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
 #  && \
 ## Register the Microsoft repository GPG keys
 RUN sudo dpkg -i packages-microsoft-prod.deb 
-RUN sudo apt-get install -y powershell 
-RUN sudo apt-get install -y dotnet-sdk-7.0
+RUN sudo apt-get -y update
+RUN sudo apt-get -y install powershell dotnet-sdk-7.0
+RUN rm packages-microsoft-prod.deb
 USER devel
 
 
@@ -225,42 +226,44 @@ RUN  sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --d
 RUN  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 #    && \
 RUN echo exit 0 > /usr/sbin/policy-rc.d
-RUN sudo apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io
+
+RUN sudo apt-get update && sudo apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io
 #    && \
 RUN sudo chown -R devel:horns /home/devel $mnt_data/devel $mnt_data/${_GABRIEL}/devel-orig
 USER ${_GABRIEL}
-RUN export DEBIAN_FRONTEND=noninteractive
-RUN DEBIAN_FRONTEND=noninteractive sudo apt-get install -yqq snapd daemonize
+RUN sudo apt-get update && sudo apt-get upgrade
 # RUN  
-RUN DEBIAN_FRONTEND=noninteractive sudo apt-get install -yq  dialog apt-utils 
-RUN DEBIAN_FRONTEND=noninteractive sudo apt-get upgrade -yq libldap-common libldap-2.5-0
-# RUN DEBIAN_FRONTEND=noninteractive sudo apt-get install -yq  zfs-utils 
+# RUN DEBIAN_FRONTEND=noninteractive sudo apt-get install -yq  
+RUN DEBIAN_FRONTEND=noninteractive sudo apt-get upgrade -yq libldap-common libldap-2.5-0 dpkg
+##########################################################################################
+# RUN DEBIAN_FRONTEND=noninteractive RUN sudo apt-get install -yq  zfs-utils 
 # RUN yes $'23\n' | sudo apt-get install -y --force-yes zfs-dracut >/dev/null 2>&1 
-# RUN DEBIAN_FRONTEND=noninteractive sudo apt-get install -yq zfsutils-linux
-RUN DEBIAN_FRONTEND=noninteractive sudo apt-get install -yq lxc-utils
 #  
-RUN sudo apt-get install -y gnupg build-essential autoconf automake libtool gawk alien fakeroot dkms libblkid-dev uuid-dev libudev-dev libssl-dev \
-    zlib1g-dev libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi libffi-dev flex bison
+RUN export DEBIAN_FRONTEND="noninteractive" && sudo apt-get install -y gnupg apt-utils build-essential autoconf automake libtool gawk alien fakeroot dkms libblkid-dev uuid-dev libudev-dev libssl-dev \
+    sysvinit-utils libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi libffi-dev flex bison snapd daemonize 
+RUN sudo apt-get update && sudo apt-get upgrade
 
-#  && \
+# #  && \
+# RUN sudo apt-get update -y && sudo apt-get -y upgrade
+# RUN sudo apt-get install -y zfsutils-linux 
+# RUN sudo apt-get install -y zfsutils zlib1g-dev 
+# RUN sudo apt-get -y update && sudo apt-get -y upgrade
 
-# RUN sudo systemctl unmask zsysd.service && sudo systemctl enable zsysd.service && sudo systemctl start zsysd.service 
 #     #  && \
-
+# RUN sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target
+# RUN exec sudo nsenter -t $(`echo pidof bash`) -a su - $LOGNAME
 # RUN sudo systemctl unmask snapd.service && sudo systemctl enable snapd.service && sudo systemctl start snapd.service && \
 #     sudo snap install lxd -y && sudo lxd init 
 
 # RUN sudo systemctl unmask lxcfs.service && sudo systemctl enable lxcfs.service && sudo systemctl start lxcfs.service
 # #  && \
 
-# RUN sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target
+
 
 # RUN  sudo systemctl enable snapd.service && sudo systemctl start snapd.service
 # RUN  sudo systemctl enable snapd.service && sudo systemctl stop snapd.service
 
 # #  && \
-# RUN exec sudo nsenter -t $(echo pidof systemd) -a su - $LOGNAME
-
 
 # WORKDIR $PATH/devels-workshop/devels-playground/linux
 # RUN echo -e "pwd:$PWD\n"sudo cp -f .config.new .config 
@@ -274,7 +277,7 @@ RUN sudo apt-get install -y gnupg build-essential autoconf automake libtool gawk
 #     cd ../linux && sudo sed -i 's/# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config && echo grep ZFS .config && \
 #     sudo make && sudo make modules_install && sudo mkdir -p ../../../gabriel/kernels && sudo cp arch/x86/boot/bzImage ../../../gabriel/kernels/linux-kernel-626a5 && \
 #     sudo cp arch/x86/boot/bzImage ../../mnt/linux-kernel-626a6
-#     # && \
+    # && \
 # sudo make -j16 && sudo make modules_install
 
 USER devel
@@ -291,24 +294,27 @@ RUN cd devels-workshop && git submodule update --remote && cd ../
 
 # for heavy gui (wsl2 required)
 FROM dplay_dind_phat as dplay_gui
-USER root
+USER ${_GABRIEL}
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
-RUN curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main"| tee /etc/apt/sources.list.d/brave-browser-release.list  && \
-    # in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
-    apt-get update -yq && \
-    apt-get install -y brave-browser && \
+RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg 
+RUN    echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list 
+# in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
+RUN    sudo apt-get update -yq
+RUN    sudo apt-get install -y brave-browser
     # now no longeer need to add --disable-gpu flag everytime
     # cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
     # # change last line of this file - fix for brave-browser displaying empty windows
     # head -n -1 /opt/brave.com/brave/brave-browser.old > /opt/brave.com/brave/brave-browser && \
     # echo '"$HERE/brave" "$@" " --disable-gpu " || true' >> /opt/brave.com/brave/brave-browser && \
-    cd /opt/brave.com/brave && \
+    RUN cd /opt/brave.com/brave && \
     brave_old_line="\"$HERE/brave\" \"$@\" || true" && \
-    brave_new_line="\"$HERE/brave\" \"$@\" \" --disable-gpu \" || true" \
-    sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/devel && \
+    brave_new_line="\"$HERE/brave\" \"$@\" \" --disable-gpu \" || true" && \
+    sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/devel
+    
     # GNOME
-    DEBIAN_FRONTEND=noninteractive apt-get -yq install daemonize gnome-session gdm3 gimp gedit nautilus vlc x11-apps xfce4
+RUN sudo apt-get -yq install x11-apps xfce4
+RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -yq install gnome-session gdm3 gimp gedit nautilus vlc 
+
 #/ &&
 USER devel
 
