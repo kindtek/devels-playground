@@ -96,12 +96,6 @@ services:
       - hel-data:/home/devel
       - hal-data:/home/${_GABRIEL:-gabriel}
       - mnt-data:/mnt/data
-      - type: bind
-        source: /var/run/docker.sock
-        target: /var/run/docker.sock
-      - type: bind
-        source: /run/dbus/system_bus_socket
-        target: /run/dbus/system_bus_socket
     depends_on:
       data:
         # Wait for the ownership to change
@@ -188,16 +182,16 @@ services:
     labels:
       com.dplay_gui.description: "basics + git + powerhell + docker + kernel + gui"
 
-  cuda:
-    extends: gui
-    image: kindtek/dplay:ubuntu-cuda
-    build:
-      context: .
-      target: dplay_cuda
-      args:
-        - _GABRIEL=${_GABRIEL:-gabriel}
-      labels:
-        com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
+  # cuda:
+  #   extends: gui
+  #   image: kindtek/dplay:ubuntu-cuda
+  #   build:
+  #     context: .
+  #     target: dplay_cuda
+  #     args:
+  #       - _GABRIEL=${_GABRIEL:-gabriel}
+  #     labels:
+  #       com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 
 volumes:
   hel-data:

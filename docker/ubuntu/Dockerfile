@@ -37,8 +37,8 @@ RUN usermod -aG ${_HALOS} host && \
     # sudo adduser host sudo && \
     # set up /hal folder as symbolic link to /home/gabriel 
     ln -s /home/${_GABRIEL} /hal && \
-    ln -s ${mnt_data} /home/devel/data && \
-    ln -s ${mnt_data} /home/${_GABRIEL}/data && \
+    ln -s ${mnt_data}/devel /home/devel/bak && \
+    ln -s ${mnt_data}/${_GABRIEL} /home/${_GABRIEL}/bak && \
     chown -R ${_GABRIEL}:${_HALOS} /hal && \
     # TODO: add a "readme" here
     touch /hal/o.world && \
@@ -127,12 +127,11 @@ RUN sudo sh devels-work/scripts/gh-auth-first-time-login.sh ${_GABRIEL} && \
     # set up shared backup drive structure 
     sudo chmod +x devels-work/mnt/backup-gabriel.sh && \
     sudo mkdir -p ${mnt_data}/${_GABRIEL}/${_GABRIEL}-orig && \
-    sudo mkdir -p ${mnt_data}/devel/${_GABRIEL}-orig && \
-    sudo mkdir -p ${mnt_data}/devel/devel-orig && \
+    sudo mkdir -p ${mnt_data}/${_GABRIEL}/devel-orig && \
+    sudo mkdir -p ${mnt_data}/devel && \
     sudo mkdir -p ${mnt_data}/${_GABRIEL}/devel-orig && \
     sudo chown ${_GABRIEL}:${_HALOS} -R ${mnt_data}/${_GABRIEL} && \
     sudo chown devel:horns -R ${mnt_data}/devel && \
-    sudo chown devel:horns ${mnt_data}/devel/devel-orig && \
     sudo chown devel:horns ${mnt_data}/${_GABRIEL}/devel-orig 
 # copy newly pulled backup script to mount location and home dirs
 RUN sudo cp -arf devels-work/mnt/backup-gabriel.sh ${mnt_data}/gabriel/backup-gabriel.sh && \
@@ -162,9 +161,9 @@ RUN chown devel:horns -R /home/devel && chown ${_GABRIEL}:${_HALOS} /home/gabrie
     # setup gh ssh login 
     sudo chmod +x devels-work/scripts/gh-auth-first-time-login.sh && \
     # make backup script executable
-    sudo chmod +x devels-work/mnt/backup.sh && \
-    sudo chmod +x devels-work/mnt/backup-devel.sh && \
-    sudo chmod +x devels-work/mnt/backup-custom.sh
+    sudo chmod ugo+x devels-work/mnt/backup-gabriel.sh && \
+    sudo chmod ugo+x devels-work/mnt/backup-devel.sh && \
+    sudo chmod ugo+x devels-work/mnt/backup-custom.sh
 RUN sudo apt-get -y update && sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget
 
 USER devel
@@ -187,9 +186,9 @@ RUN sudo apt-get -y install jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepo
     pip3 install cdir --user  && \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps && \
-    sudo cp -r /home/${_GABRIEL}/.local/bin /usr/local && \
+    sudo cp -r /home/${_GABRIEL}/.local/bin /usr/local \
     sudo cp -rf /home/${_GABRIEL}/.local /etc/skel/ && \
-    sudo cp -rf /home/${_GABRIEL}/.local /home/devel/ 
+    sudo cp -r /home/${_GABRIEL}/.local /home/devel/ && sudo chown -R devel:horns /home/devel
 USER devel
 
 # MICROSOFT stuff
@@ -283,8 +282,8 @@ RUN    sudo apt-get -y install brave-browser
 # head -n -1 /opt/brave.com/brave/brave-browser.old > /opt/brave.com/brave/brave-browser && \
 # echo '"$HERE/brave" "$@" " --disable-gpu " || true' >> /opt/brave.com/brave/brave-browser && \
 RUN cd /opt/brave.com/brave && \
-    brave_old_line="\"\$HERE/brave\" \"\$@\" || true" && \
-    brave_new_line="\"\$HERE/brave\" \"\$@\" \" --disable-gpu \" || true" && \
+    brave_old_line='"\$HERE/brave"\s"\$@"\s\|\|\strue" || true' && \
+    brave_new_line='\"\$HERE/brave\" \"\$@\" \" --disable-gpu \' || true" && \
     sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/devel
 RUN sudo apt-get -y install x11-apps xfce4
 RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -yq install gnome-session gdm3 gimp gedit nautilus vlc 
