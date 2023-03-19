@@ -174,43 +174,7 @@ services:
         - _GABRIEL=${_GABRIEL:-gabriel}
     labels:
       com.dplay_gui.description: "basics + git + powerhell + docker + gui"
-    volumes:
-      - /run/dbus/system_bus_socket:/run/dbus/system_bus_socket
-  git_phat:
-    # owner/group becomes owner of hel-data volume
-    extends: data
-    user: devel
-    privileged: true
-    entrypoint:
-      - sleep
-      - infinity
-    image: kindtek/dplay:ubuntu-git-phat
-    build:
-      context: .
-      target: dplay_git_phat
-      # extends: skel
-  dind_phat:
-      # owner/group becomes owner of hel-data volume
-      extends: data
-      user: devel
-      privileged: true
-      entrypoint:
-        - sleep
-        - infinity
-      image: kindtek/dplay:ubuntu-dind-phat
-      build:
-        context: .
-        target: dplay_git_phat
-# ///  # cuda:
-  #   extends: gui
-  #   image: kindtek/dplay:ubuntu-cuda
-  #   build:
-  #     context: .
-  #     target: dplay_cuda
-  #     args:
-  #       - _GABRIEL=${_GABRIEL:-gabriel}
-  #     labels:
-  #       com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
+
 volumes:
   hel-data:
   halo-data:
