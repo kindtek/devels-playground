@@ -110,22 +110,18 @@ RUN cp -rp /etc/skel/. /home/devel/
 FROM dplay_data AS dplay_skel
 # set up basic utils
 # install github, build-essentials, libssl, etc
-# apt-get install -y git gh build-essential libssl-dev ca-certificates wget curl gnupg lsb-release python3 python3-pip nvi apt-transport-https software-properties-common 
 RUN apt-get install -y apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget
-# apt-get install -y apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg libssl-dev lsb-release nvi software-properties-common wget && \
-# set up group/user 
-# addgroup --system --gid 1001 ${_HALOS} && \
-# adduser --system --home /home/${_GABRIEL} --shell /bin/bash --uid 1001 --gid 1001 --disabled-password ${_GABRIEL} 
+#RUN apt-get install -y lsb-release python3 python3-pip software-properties-common 
+RUN git config --global --add safe.directory /home/gabriel && \
+    git config --global --add safe.directory /hal
 
 FROM dplay_skel AS dplay_git
 WORKDIR /home/devel
 USER devel
 # add safe directories
-RUN echo '[safe] \
-    directory = /home/devel \
-    directory = /hel \
-    directory = /home/devel/devels-playground \
-    directory = lo.world' > /home/devel/.gitconfig
+RUN git config --global --add safe.directory /home/devel && \
+    git config --global --add safe.directory /hel &&
+
 # && \
 # clone fresh repos and give devel ownership
 RUN git clone https://github.com/kindtek/devels-workshop 
@@ -149,7 +145,7 @@ RUN ./devels-workshop/scripts/gh-auth-first-time-login.sh chown devel:horns -R /
     chmod +x devels-workshop/scripts/gh-auth-first-time-login.sh && \
     # add symlinks for convenience
     ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay 
-# mount with halos ownership
+# RUN with halos ownership
 USER ${_GABRIEL}
 RUN ./devels-workshop/scripts/gh-auth-first-time-login.sh ${_GABRIEL} && \
     chown ${_GABRIEL}:${_HALOS} -R /home/${_GABRIEL}  
