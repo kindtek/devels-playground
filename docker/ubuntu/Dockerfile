@@ -42,7 +42,8 @@ RUN usermod -aG ${_HALOS} host && \
     chown -R ${_GABRIEL}:${_HALOS} /hal && \
     # TODO: add a "readme" here
     touch /hal/o.world && \
-    mkdir -p /hal/.ssh && chmod 700 /hal/.ssh && \
+    # set up .ssh and dls directories and make sure .ssh has proper permissions
+    mkdir -p /hal/.ssh /hal/dls && chmod 700 /hal/.ssh && \
     chown -R ${_GABRIEL}:${_HALOS} /hal/.ssh && \
     # make devel default wsl user 
     echo "[user]\ndefault=devel" >> /etc/wsl.conf
@@ -65,10 +66,10 @@ RUN ln -s /home/devel /hel && \
     chown -R devel:horns /hel  && \
     # add an instructional "readme" here later
     touch /hel/lo.world && \
-    # make sure .ssh has proper permissions
-    mkdir -p /home/devel/.ssh && \
+    # set up .ssh and dls directories and make sure .ssh has proper permissions
+    mkdir -p /hel/.ssh /hel/dls && chmod 700 /hel/.ssh && \
     # set up /devel folder as symbolic link to /home/devel for cloning repository(ies)
-    chown -R devel:horns /home/devel/.ssh && chmod 700 /home/devel/.ssh
+    chown -R devel:horns /hel/.ssh 
 # uncomment to add sudo priveleges for host / devel
 # sudo adduser devel sudo && \
 USER devel
@@ -283,7 +284,7 @@ RUN    sudo apt-get -y install brave-browser
 # echo '"$HERE/brave" "$@" " --disable-gpu " || true' >> /opt/brave.com/brave/brave-browser && \
 RUN cd /opt/brave.com/brave && \
     brave_old_line='"\$HERE/brave"\s"\$@"\s\|\|\strue" || true' && \
-    brave_new_line='\"\$HERE/brave\" \"\$@\" \" --disable-gpu \ || true"' && \
+    brave_new_line='\"\$HERE/brave\" \"\$@\" \" --disable-gpu \ || true' && \
     sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/devel
 RUN sudo apt-get -y install x11-apps xfce4
 RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -yq install gnome-session gdm3 gimp gedit nautilus vlc 
