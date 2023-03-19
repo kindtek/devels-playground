@@ -51,6 +51,7 @@ ENV PATH="$PATH:/home/${_GABRIEL}/.local/bin:/hel/devels-workshop/scripts:/home/
 RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${mnt_data}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> /home/${_GABRIEL}/.bashrc && \
     sudo cp -rf /home/${_GABRIEL}/. /etc/skel/ && \
     sudo rm /etc/skel/.sudo_as_admin_successful
+USER devel
 
 # HAL helper
 FROM dplay_hal AS dplay_hel
@@ -67,6 +68,7 @@ USER devel
 # add common paths
 ENV PATH="$PATH:/home/devel/.local/bin:/home/devel/devels-workshop/devels-playground/scripts"
 RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${mnt_data}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> /home/devel/.bashrc
+USER devel
 
 # HEL helper
 FROM dplay_hel AS dplay_data
@@ -92,20 +94,22 @@ RUN cp -rp /etc/skel/. /home/devel/
 # chown -R devel:horns /home/devel && chown -R ${_GABRIEL}:${_HALOS} /home/${_GABRIEL}
 # RUN echo "# # # # Docker # # # # " >> ${mnt_data}/gabriel/backup-docker.sh
 # RUN sudo .${mnt_data}/gabriel/backup-docker.sh
+USER devel
 
 # DATA helper
 FROM dplay_data AS dplay_skel
+USER ${_GABRIEL}
 # set up basic utils
 # install github, build-essentials, libssl, etc
-RUN apt-get install -y apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget
+RUN sudo apt-get install -y apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget
 #RUN apt-get install -y lsb-release python3 python3-pip software-properties-common 
 RUN git config --global --add safe.directory /home/gabriel && \
     git config --global --add safe.directory /hal
+USER devel
 
 # SKELETON framework
 FROM dplay_skel AS dplay_git
 WORKDIR /home/devel
-USER devel
 # add safe directories
 RUN git config --global --add safe.directory /home/devel && \
     git config --global --add safe.directory /hel
