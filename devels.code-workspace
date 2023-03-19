@@ -4,19 +4,19 @@
       "path": "."
     },
     {
-      "path": "../devels-play"
+      "path": "../devels-work/devels-play"
     },
     {
-      "path": "../devels-play/docker/ubuntu"
+      "path": "../devels-work/devels-play/docker/ubuntu"
     },
     {
-      "path": "../devels-play/linux"
+      "path": "../devels-work/devels-play/linux"
     },
     {
       "path": "../dls"
     },
     {
-      "path": "../../../hel"
+      "path": "../../hel"
     },
     {
       "path": "../devels-work/devels-play/mnt"
