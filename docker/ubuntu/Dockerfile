@@ -142,6 +142,7 @@ WORKDIR /home/devel
 # && \
 #  && \
 RUN chown devel:horns -R /home/devel  && \
+    chown ${_GABRIEL}:${_HALOS} -R /home/${_GABRIEL}  && \
     # make backup script executable
     chmod +x devels-workshop/mnt/backup.sh && \
     chmod +x devels-workshop/mnt/backup-devel.sh && \
@@ -153,7 +154,7 @@ RUN chown devel:horns -R /home/devel  && \
     ./devels-workshop/scripts/gh-auth-first-time-login.sh 
 # mount with halos ownership
 USER ${_GABRIEL}
-RUN ./devels-workshop/scripts/gh-auth-first-time-login.sh account_owner=${_GABRIEL}
+RUN ./devels-workshop/scripts/gh-auth-first-time-login.sh ${_GABRIEL}
 # set up shared backup drive structure 
 RUN sudo mkdir -p ${mnt_data}/${_GABRIEL}/${_GABRIEL}-orig
 RUN sudo mkdir -p ${mnt_data}/devel/${_GABRIEL}-orig && \
@@ -165,11 +166,11 @@ RUN sudo mkdir -p ${mnt_data}/devel/${_GABRIEL}-orig && \
     sudo chown devel:horns ${mnt_data}/${_GABRIEL}/devel-orig 
 # && \
 # copy newly pulled backup script to mount location and home dirs
-RUN sudo cp -arf devels-workshop/mnt/backup-gabriel.sh ${mnt_data}/gabriel/backup-gabriel.sh && cp -arf devels-workshop/mnt/backup-gabriel.sh /home/gabriel/backup-gabriel.sh && \
-    sudo cp -arf devels-workshop/mnt/backup-custom.sh ${mnt_data}/${_GABRIEL}/backup-${_GABRIEL}.sh && cp -arf devels-workshop/mnt/backup-custom.sh /home/${_GABRIEL}/backup-${_GABRIEL}.sh && \
+RUN sudo cp -arf devels-workshop/mnt/backup-gabriel.sh ${mnt_data}/gabriel/backup-gabriel.sh && \
+    sudo cp -arf devels-workshop/mnt/backup-custom.sh ${mnt_data}/${_GABRIEL}/backup-${_GABRIEL}.sh && \
     # sudo cp -arf devels-workshop/mnt/backup-custom.sh ${mnt_data}/gabriel/backup-gabriel.sh && cp -arf devels-workshop/mnt/backup-custom.sh /home/gabriel/backup-gabriel.sh && \
     sudo cp -arf devels-workshop/mnt/backup-devel.sh ${mnt_data}/devel/backup-devel.sh && \
-    sudo cp -arf devels-workshop/mnt/backup-devel.sh ${mnt_data}/${_GABRIEL}/backup-devel.sh && cp -arf devels-workshop/mnt/backup-devel.sh /home/${_GABRIEL}/backup-devel.sh  && \
+    sudo cp -arf devels-workshop/mnt/backup-devel.sh ${mnt_data}/${_GABRIEL}/backup-devel.sh && \
     sudo cp -arf devels-workshop/mnt/backup-devel.sh /home/devel/backup-devel.sh && \
     # make rwx for owner and rx for group - none for others
     sudo chmod 750 -R ${mnt_data}/${_GABRIEL} && \
@@ -177,9 +178,9 @@ RUN sudo cp -arf devels-workshop/mnt/backup-gabriel.sh ${mnt_data}/gabriel/backu
     sudo chmod 750 -R ${mnt_data}/devel && \
     # # add warning for the backup drive
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GABRIEL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/README_ASAP      && \
-    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GABRIEL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/${_GABRIEL}/README_ASAP      && \
+    # echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GABRIEL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/${_GABRIEL}/README_ASAP      && \
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GABRIEL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/gabriel/README_ASAP      && \
-    sudo chown ${_GABRIEL}:${_HALOS} ${mnt_data}/README_ASAP
+    sudo chown ${_GABRIEL}:${_HALOS} ${mnt_data}/README_ASAP ${mnt_data}/${_GABRIEL}/backup-${_GABRIEL}.sh
 # wait to do this until we have WSL_DISTRO_NAME
 # sh ${mnt_data}/backup-devel.sh
 USER devel
