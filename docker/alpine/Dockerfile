@@ -40,22 +40,22 @@ RUN export PATH=$PATH:\~/.local/bin:/usr/.local/bin
 RUN install -d -g devbp -m 775 ./home/${username}/.local/bin /usr/.local
 RUN install -d -g devbp -m 775 ./home/${username} /etc/skel
 
-RUN adduser -s /bin/ash -h /home/devel -G wheel devel -D && \
-    addgroup devel devbp
+RUN adduser -s /bin/ash -h /home/dvl -G wheel dvl -D && \
+    addgroup dvl devbp
 # RUN sed -e 's;^# \(%wheel.*NOPASSWD.*\);\1;g' -i /etc/sudoers
 # RUN addgroup ${username} wheel
 
 # non-root will need to use sudo from now on
 RUN apk add sudo 
-# add devel and ${username} to sudo group
+# add dvl and ${username} to sudo group
 # sudo adduser ${username} sudo && \
-# sudo adduser devel sudo
+# sudo adduser dvl sudo
 
 # ensure no one has a passwd 
-# RUN sudo passwd -d devel &&  sudo passwd -d ${username} && 
+# RUN sudo passwd -d dvl &&  sudo passwd -d ${username} && 
 RUN sudo passwd -d root && \
     sudo passwd -l root && \
-    sudo passwd -d devel && \
+    sudo passwd -d dvl && \
     sudo passwd -d  ${username}
 USER ${username}:devbp
 WORKDIR /home/${username}

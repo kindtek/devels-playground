@@ -10,7 +10,7 @@ services:
   #   volumes:
   #     # The volume to chown
   #     - hel-data:/tmp/change-ownership
-  #   command: chown -R devel:horns /tmp/change-ownership
+  #   command: chown -R dvl:horns /tmp/change-ownership
   skel:
     # Need a user priviliged enough to chown
     user: root
@@ -27,11 +27,11 @@ services:
       # network: ${COMPOSE_PROJECT_NAME}_default
     init: true
     volumes:
-      - hel-data:/tmp/devel
+      - hel-data:/tmp/dvl
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
-    command: chown -R devel:horns /tmp/devel
+    command: chown -R dvl:horns /tmp/dvl
 
   git:
     entrypoint:
@@ -50,7 +50,7 @@ services:
         # Wait for the ownership to change
         condition: service_completed_successfully
     volumes:
-      - hel-data:/home/devel
+      - hel-data:/home/dvl
   msdot:
     extends: git
     image: kindtek/dplay:ubuntu-msdot

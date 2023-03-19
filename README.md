@@ -139,7 +139,7 @@ This will start a new container using the [example image](#ubuntu-dind) and the 
 
 ## Why you should care about the devel
 
-### [Having root powers can be dangerous.](https://www.quora.com/What-is-the-power-of-sudo-in-Linux) When logged in as the `devel`, you have unlimited power and freedom... but only in `/hel`. Since the devel does not have sudo powers, the ability for you to accidentally corrupt your system while logged into that account are nearly nonexistant. When you need to make changes to your system, you can **s**witch **u**sers to `gabriel` (no password required - just type `su gabriel`). Any consequential changes you make will need to be always prefaced by `sudo` and even inconsequential changes in `/hel` will require sudo so your incentive is to remain logged in as the `devel` as much as possible
+### [Having root powers can be dangerous.](https://www.quora.com/What-is-the-power-of-sudo-in-Linux) When logged in as the `dvl`, you have unlimited power and freedom... but only in `/hel`. Since the devel does not have sudo powers, the ability for you to accidentally corrupt your system while logged into that account are nearly nonexistant. When you need to make changes to your system, you can **s**witch **u**sers to `gabriel` (no password required - just type `su gabriel`). Any consequential changes you make will need to be always prefaced by `sudo` and even inconsequential changes in `/hel` will require sudo so your incentive is to remain logged in as the `dvl` as much as possible
 
 ### TIP: If you make your own Docker image you will rarely ever need to use sudo - all your favorite packages will be pre-installed
 
@@ -147,7 +147,7 @@ This will start a new container using the [example image](#ubuntu-dind) and the 
 
 ## Devel details
 
-#### All images contain a `/hel` directory that is symbolically linked to `/home/devel` (using `ln -s /home/devel /hel`). This is both for convenience and as a practical safeguard. The devel user and other users in the horns group are the owners of `/hel` and the current devel's workshop and devel's playground github repos are cloned there as well (`/hel/dwork` and `/hel/dplay`). Devel is the default user and as the devel you are not able to access anything in `/home/gabriel` or do anything outside of `/hel` that would require root priveleges
+#### All images contain a `/hel` directory that is symbolically linked to `/home/dvl` (using `ln -s /home/devel /hel`). This is both for convenience and as a practical safeguard. The devel user and other users in the horns group are the owners of `/hel` and the current devel's workshop and devel's playground github repos are cloned there as well (`/hel/dwork` and `/hel/dplay`). Devel is the default user and as the devel you are not able to access anything in `/home/gabriel` or do anything outside of `/hel` that would require root priveleges
 
 #### [In theory](https://softprom.com/sites/default/files/materials/cyberark-sb-to-SUDO-or-not-to-SUDO-06-11-2015-en.pdf), the gates of sudo should restrict the devel to only making changes in `/hel` and any mounted drives - leaving only `gabriel` to make changes at the root level
 
