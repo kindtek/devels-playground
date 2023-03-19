@@ -135,12 +135,12 @@ RUN sudo sh devels-work/scripts/gh-auth-first-time-login.sh ${_GBL} && \
     sudo chown dvl:horns -R ${mnt_data}/dvl && \
     sudo chown dvl:horns ${mnt_data}/${_GBL}/dvl-orig 
 # copy newly pulled backup script to mount location and home dirs
-RUN sudo cp -arf devels-work/mnt/backup-gbl.sh ${mnt_data}/gbl/backup-gbl.sh && \
-    sudo cp -arf devels-work/mnt/backup-custom.sh ${mnt_data}/${_GBL}/backup-${_GBL}.sh && \
-    # sudo cp -arf devels-work/mnt/backup-custom.sh ${mnt_data}/gbl/backup-gbl.sh && cp -arf devels-work/mnt/backup-custom.sh /home/gbl/backup-gbl.sh && \
-    sudo cp -arf devels-work/mnt/backup-dvl.sh ${mnt_data}/dvl/backup-dvl.sh && \
-    sudo cp -arf devels-work/mnt/backup-dvl.sh ${mnt_data}/${_GBL}/backup-dvl.sh && \
-    sudo cp -arf devels-work/mnt/backup-dvl.sh /home/dvl/backup-dvl.sh && \
+RUN sudo cp -arf devels-work/devels-play/mnt/backup-gbl.sh ${mnt_data}/gbl/backup-gbl.sh && \
+    sudo cp -arf devels-work/devels-play/mnt/backup-custom.sh ${mnt_data}/${_GBL}/backup-${_GBL}.sh && \
+    # sudo cp -arf devels-work/devels-play/mnt/backup-custom.sh ${mnt_data}/gbl/backup-gbl.sh && cp -arf devels-work/devels-play/mnt/backup-custom.sh /home/gbl/backup-gbl.sh && \
+    sudo cp -arf devels-work/devels-play/mnt/backup-dvl.sh ${mnt_data}/dvl/backup-dvl.sh && \
+    sudo cp -arf devels-work/devels-play/mnt/backup-dvl.sh ${mnt_data}/${_GBL}/backup-dvl.sh && \
+    sudo cp -arf devels-work/devels-play/backup-dvl.sh /home/dvl/backup-dvl.sh && \
     # make rwx for owner and rx for group - none for others
     sudo chmod 750 -R ${mnt_data}/${_GBL} && \
     sudo chmod 755 ${mnt_data}/${_GBL} && \
