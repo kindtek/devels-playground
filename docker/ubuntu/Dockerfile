@@ -196,7 +196,7 @@ RUN sudo apt-get -y install jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepo
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps && \
     sudo cp -rf /home/${_GBL}/.local/bin /usr/local && \
     sudo cp -rf /home/${_GBL}/.local /etc/skel/ &&  sudo rm /etc/skel/bak && \
-    sudo cp -r /home/${_GBL}/.local /home/dvl/ && sudo chown -R dvl:horns /home/dvl
+    sudo cp -rf /home/${_GBL}/.local /home/dvl/ && sudo chown -R dvl:horns /home/dvl
 USER dvl
 
 # MICROSOFT stuff
