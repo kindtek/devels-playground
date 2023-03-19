@@ -126,23 +126,22 @@ USER ${_GBL}
 #     git config --global --add safe.directory /hal
 RUN sudo apt-get -y update && sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget
 
-RUN sudo sh devels-work/scripts/gh-auth-first-time-login.sh ${_GBL} && \
-    # set up shared backup drive structure 
-    sudo chmod +x devels-work/mnt/backup-gbl.sh && \
-    sudo mkdir -p ${mnt_data}/${_GBL}/${_GBL}-orig && \
-    sudo mkdir -p ${mnt_data}/${_GBL}/dvl-orig && \
-    sudo mkdir -p ${mnt_data}/dvl && \
-    sudo mkdir -p ${mnt_data}/${_GBL}/dvl-orig && \
-    sudo chown ${_GBL}:${_HALOS} -R ${mnt_data}/${_GBL} && \
-    sudo chown dvl:horns -R ${mnt_data}/dvl && \
-    sudo chown dvl:horns ${mnt_data}/${_GBL}/dvl-orig 
+# RUN sudo sh devels-work/scripts/gh-auth-first-time-login.sh ${_GBL}
+RUN sudo chmod +x devels-work/devels-play/mnt/backup-gbl.sh 
+RUN sudo mkdir -p ${mnt_data}/${_GBL}/${_GBL}-orig 
+RUN sudo mkdir -p ${mnt_data}/${_GBL}/dvl-orig 
+RUN sudo mkdir -p ${mnt_data}/dvl 
+RUN sudo mkdir -p ${mnt_data}/${_GBL}/dvl-orig
+RUN sudo chown ${_GBL}:${_HALOS} -R ${mnt_data}/${_GBL} 
+RUN sudo chown dvl:horns -R ${mnt_data}/dvl
+RUN sudo chown dvl:horns ${mnt_data}/${_GBL}/dvl-orig 
 # copy newly pulled backup script to mount location and home dirs
 RUN sudo cp -arf devels-work/devels-play/mnt/backup-gbl.sh ${mnt_data}/gbl/backup-gbl.sh && \
     sudo cp -arf devels-work/devels-play/mnt/backup-custom.sh ${mnt_data}/${_GBL}/backup-${_GBL}.sh && \
     # sudo cp -arf devels-work/devels-play/mnt/backup-custom.sh ${mnt_data}/gbl/backup-gbl.sh && cp -arf devels-work/devels-play/mnt/backup-custom.sh /home/gbl/backup-gbl.sh && \
     sudo cp -arf devels-work/devels-play/mnt/backup-dvl.sh ${mnt_data}/dvl/backup-dvl.sh && \
     sudo cp -arf devels-work/devels-play/mnt/backup-dvl.sh ${mnt_data}/${_GBL}/backup-dvl.sh && \
-    sudo cp -arf devels-work/devels-play/backup-dvl.sh /home/dvl/backup-dvl.sh && \
+    sudo cp -arf devels-work/devels-play/mnt/backup-dvl.sh /home/dvl/backup-dvl.sh && \
     # make rwx for owner and rx for group - none for others
     sudo chmod 750 -R ${mnt_data}/${_GBL} && \
     sudo chmod 755 ${mnt_data}/${_GBL} && \
@@ -164,22 +163,29 @@ RUN chown dvl:horns -R /home/dvl && chown ${_GBL}:${_HALOS} /home/gbl && \
     # setup gh ssh login 
     # sudo chmod +x devels-work/scripts/gh-auth-first-time-login.sh && \
     # make backup script executable
-    sudo chmod ugo+x devels-work/mnt/backup-gbl.sh && \
-    sudo chmod ugo+x devels-work/mnt/backup-dvl.sh && \
-    sudo chmod ugo+x devels-work/mnt/backup-custom.sh
+    sudo chmod ugo+x devels-work/devels-play/mnt/backup-gbl.sh && \
+    sudo chmod ugo+x devels-work/devels-play/mnt/backup-dvl.sh && \
+    sudo chmod ugo+x devels-work/devels-play/mnt/backup-custom.sh
 
 USER dvl
 # setup ssh gh login
-RUN sh devels-work/scripts/gh-auth-first-time-login.sh && \
+
     # add symlinks for convenience
-    ln -s devels-work dwork && ln -s devels-work/devels-play dplay && \
+RUN ln -s devels-work dwork && ln -s devels-work/devels-play dplay && \ && ln -s devels-play dplay && \
     ln -s linux devels-work/devels-play/linux && \
     ln -s docker devels-work/devels-play/docker && \
-    ln -s devels-work/devels-play/docker/ub devels-work/devels-play/docker/ubuntu
+    ln -s devels-work/devels-play/docker/ub devels-work/devels-play/docker/ubuntu 
+    # && \
+    # sh devels-work/scripts/gh-auth-first-time-login.sh
 
 
 # GIT
 FROM dplay_skel as dplay_git
+USER ${_GBL}
+WORKDIR /home/gbl
+RUN sh scripts/gh-auth-first-time-login.sh
+USER devel
+RUN sh scripts/gh-auth-first-time-login.sh
 
 # PYTHON stuff
 FROM dplay_git as dplay_python
