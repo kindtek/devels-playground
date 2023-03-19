@@ -1,7 +1,7 @@
 [submodule "devels-advocate"]
 	active = true
 	shallow = false
-	path = devels-advocate
+	path = devels-adv
 	url = https://github.com/kindtek/devels-advocate.git
 	branch = devels-workshop
 	recurse = false
@@ -14,7 +14,7 @@
 	recurse = false
 [submodule "devels-playground"]
 	active = true
-	path = devels-playground
+	path = devels-play
 	shallow = false
 	url = https://github.com/kindtek/devels-playground.git
 	branch = devels-workshop
