@@ -1,12 +1,23 @@
 {
   "folders": [
-	{
-		"path": "."
-	},
-	{
-		"name": "devels-work @ c466e91",
-		"uri": "gitlens://7b22726566223a2263343636653931363334666631633035383562396333373233333962376437633033396437393635222c227265706f50617468223a222f686f6d652f646576656c2f646576656c732d776f726b73686f70227d/home/devel/devels-work?{\"ref\":\"c466e91\"}"
-	}
-],
+    {
+      "path": "."
+    },
+    {
+      "path": "../devels-play"
+    },
+    {
+      "path": "../devels-play/docker/ubuntu"
+    },
+    {
+      "path": "../devels-play/linux"
+    },
+    {
+      "path": "../dls"
+    },
+    {
+      "path": "../../../hel"
+    }
+  ],
   "settings": {}
 }
