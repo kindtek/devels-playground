@@ -186,8 +186,8 @@ RUN sudo apt-get -y install jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepo
     pip3 install cdir --user  && \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps && \
-    sudo cp -r /home/${_GABRIEL}/.local/bin /usr/local && \
-    sudo cp -r /home/${_GABRIEL}/.local /etc/skel/ && \
+    sudo cp -rf /home/${_GABRIEL}/.local/bin /usr/local && \
+    sudo cp -rf /home/${_GABRIEL}/.local /etc/skel/ &&  sudo rm /etc/skel/bak && \
     sudo cp -r /home/${_GABRIEL}/.local /home/devel/ && sudo chown -R devel:horns /home/devel
 USER devel
 
