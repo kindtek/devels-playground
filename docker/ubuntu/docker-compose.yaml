@@ -1,6 +1,7 @@
 version: "3.9"
 name: devels-workshop-ubuntu
 services:
+
   initialize:
     # Need a user priviliged enough to chown
     build:
@@ -12,12 +13,12 @@ services:
       - -c
       - export _GABRIEL=${_GABRIEL:-gabriel}
       - export _HALOS=${_HALOS:-halos}
-      - ln -s /home/${_GABRIEL:-gabriel} /tmp/${_GABRIEL:-gabriel} 
+      - ln -s /home/${_GABRIEL:-gabriel} /tmp/${_GABRIEL:-gabriel}
       - ln -s /home/devel /tmp/devel
-      - mkdir -p /mnt/data 
-      - ln -s /mnt/data /tmp/data 
-
+      - mkdir -p /mnt/data
+      - ln -s /mnt/data /tmp/data
     # command: echo something
+
   chown-hal:
     # Need a user priviliged enough to chown
     user: ${_GABRIEL:-gabriel}
@@ -53,6 +54,7 @@ services:
     volumes:
       - hel-data:/tmp/devel
     command: chown -R devel:horns /tmp/devel
+
   data:
     user: ${_GABRIEL:-gabriel}
     group_add:
@@ -72,6 +74,7 @@ services:
       - mnt-data:/tmp/data
     # command: 
     #   - chown -R ${_GABRIEL:-gabriel}:${_HALOS:-halos} /tmp/data
+
   skel:
     extends: data
     # Need a user priviliged enough to chown
@@ -133,6 +136,7 @@ services:
       - /mnt/data
     labels:
       com.dplay_git.description: "basics + git"
+
   python:
     extends: git
     image: kindtek/dplay:ubuntu-py
@@ -150,6 +154,7 @@ services:
       target: dplay_msdot
     labels:
       com.dplay_msdot.description: "basics + git + powerhell"
+
   dind:
     extends: msdot
     image: kindtek/dplay:ubuntu-dind
@@ -158,6 +163,7 @@ services:
       target: dplay_dind
     labels:
       com.dplay_dind.description: "basics + git + powerhell + docker"
+
   kernel:
     extends: dind
     image: kindtek/dplay:ubuntu-kernel
@@ -166,6 +172,7 @@ services:
       target: dplay_kernel
     labels:
       com.dplay_dind.description: "basics + git + powerhell + docker + kernel"
+
   gui:
     extends: dind
     image: kindtek/dplay:ubuntu-gui
@@ -187,10 +194,12 @@ services:
         - _GABRIEL=${_GABRIEL:-gabriel}
       labels:
         com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
+
 volumes:
   hel-data:
   hal-data:
   mnt-data:
+  
 networks:
   "${COMPOSE_PROJECT_NAME}_default":
     driver: overlay
