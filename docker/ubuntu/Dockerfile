@@ -186,7 +186,7 @@ RUN sudo apt-get -y install jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepo
     pip3 install cdir --user  && \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps && \
-    sudo cp -r /home/${_GABRIEL}/.local/bin /usr/local \
+    sudo cp -r /home/${_GABRIEL}/.local/bin /usr/local && \
     sudo cp -r /home/${_GABRIEL}/.local /etc/skel/ && \
     sudo cp -r /home/${_GABRIEL}/.local /home/devel/ && sudo chown -R devel:horns /home/devel
 USER devel
@@ -283,7 +283,7 @@ RUN    sudo apt-get -y install brave-browser
 # echo '"$HERE/brave" "$@" " --disable-gpu " || true' >> /opt/brave.com/brave/brave-browser && \
 RUN cd /opt/brave.com/brave && \
     brave_old_line='"\$HERE/brave"\s"\$@"\s\|\|\strue" || true' && \
-    brave_new_line='\"\$HERE/brave\" \"\$@\" \" --disable-gpu \' || true" && \
+    brave_new_line='\"\$HERE/brave\" \"\$@\" \" --disable-gpu \ || true"' && \
     sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/devel
 RUN sudo apt-get -y install x11-apps xfce4
 RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -yq install gnome-session gdm3 gimp gedit nautilus vlc 
