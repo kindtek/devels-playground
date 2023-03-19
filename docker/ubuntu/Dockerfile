@@ -290,8 +290,8 @@ RUN    sudo apt-get -y install brave-browser
 # head -n -1 /opt/brave.com/brave/brave-browser.old > /opt/brave.com/brave/brave-browser && \
 # echo '"$HERE/brave" "$@" " --disable-gpu " || true' >> /opt/brave.com/brave/brave-browser && \
 RUN cd /opt/brave.com/brave && \
-    brave_old_line='\"\$HERE/brave\"\s\"\$\@"\s\|\|\strue\"' && \
-    brave_new_line='\"\$HERE/brave\" \"\$@\" \" --disable-gpu \ || true' && \
+    brave_old_line='"$HERE/brave"\s"\$@"\s\|\|\strue\"' && \
+    brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
     sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl
 RUN sudo apt-get -y install x11-apps xfce4
 RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -yq install gnome-session gdm3 gimp gedit nautilus vlc 
