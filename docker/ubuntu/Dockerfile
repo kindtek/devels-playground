@@ -309,8 +309,8 @@ RUN    sudo apt-get install -y brave-browser
     # head -n -1 /opt/brave.com/brave/brave-browser.old > /opt/brave.com/brave/brave-browser && \
     # echo '"$HERE/brave" "$@" " --disable-gpu " || true' >> /opt/brave.com/brave/brave-browser && \
     RUN cd /opt/brave.com/brave && \
-    brave_old_line="\"$HERE/brave\" \"$@\" || true" && \
-    brave_new_line="\"$HERE/brave\" \"$@\" \" --disable-gpu \" || true" && \
+    brave_old_line="\"\$HERE/brave\" \"\$@\" || true" && \
+    brave_new_line="\"\$HERE/brave\" \"\$@\" \" --disable-gpu \" || true" && \
     sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/devel
     
     # GNOME
