@@ -55,7 +55,7 @@ sudo chown ${username}:${groupname} ${backup_mnt_location}/README_ASAP
 HALO_DESTINATION="$_NIX_MNT_LOCATION/gabriel/devel-$WSL_DISTRO_NAME"
 HALO_RESTORE_SCRIPT="$_NIX_MNT_LOCATION/gabriel/restore-devel-$WSL_DISTRO_NAME.sh"
 
-echo "backing the /halo up to: $HALO_DESTINATION ..."
+echo "backing the /hal up to: $HALO_DESTINATION ..."
 
 export VERSION_CONTROL=numbered
 
