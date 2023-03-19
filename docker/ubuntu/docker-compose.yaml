@@ -72,6 +72,10 @@ services:
     init: true
     volumes:
       - mnt-data:/tmp/data
+      - type: bind
+        source: /run/dbus/system_bus_socket
+        target: /run/dbus/system_bus_socket
+
     # command: 
     #   - chown -R ${_GABRIEL:-gabriel}:${_HALOS:-halos} /tmp/data
 

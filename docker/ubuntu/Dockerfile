@@ -16,6 +16,7 @@ RUN addgroup --gid 777 ${_HALOS} && \
     passwd -d root && \
     passwd -l root
 
+# HAL permissions/volume builder
 FROM dplay_init AS dplay_hal
 USER root
 # add devel and host users using custom user setup
@@ -35,12 +36,13 @@ RUN usermod -aG ${_HALOS} host && \
     # uncomment to add sudo privileges for host
     # sudo adduser host sudo && \
     # set up /hal folder as symbolic link to /home/gabriel 
-    ln -s /home/${_GABRIEL} /hal && chown -R ${_GABRIEL}:${_HALOS} /hal && \
+    ln -s /home/${_GABRIEL} /hal && \
     ln -s ${mnt_data} /home/devel/data && \
     ln -s ${mnt_data} /home/${_GABRIEL}/data && \
-    # add a "readme" here later
+    chown -R ${_GABRIEL}:${_HALOS} /hal && \
+    # TODO: add a "readme" here
     touch /hal/o.world && \
-    mkdir -p /hal/.ssh && chmod 700 /hal/.ssh && chown -R ${_GABRIEL}:${_HALOS} /hal/.ssh && \
+    mkdir -p /hal/.ssh && chmod 700 /hal/.ssh && chown -R :${_HALOS} /hal/.ssh && \
     # make devel default wsl user 
     echo "[user]\ndefault=devel" >> /etc/wsl.conf
 # mount stuff if needed
@@ -53,28 +55,44 @@ RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${
     sudo rm /etc/skel/.sudo_as_admin_successful
 USER devel
 
-# HAL helper
+# HEL volume/permissions builder
 FROM dplay_hal AS dplay_hel
 USER root
 # set up /devel folder as symbolic link to /home/devel for cloning repository(ies)
 RUN ln -s /home/devel /hel && chown -R devel:horns /home/devel && chown -R devel:horns /hel  && \
+    chown -R devel:horns /hel  && \
     # add an instructional "readme" here later
     touch /hel/lo.world && \
     # make sure .ssh has proper permissions
-    mkdir -p /home/devel/.ssh && chown -R devel:horns /home/devel/.ssh && chmod 700 /home/devel/.ssh
+    mkdir -p /home/devel/.ssh && \
+    # set up /devel folder as symbolic link to /home/devel for cloning repository(ies)
+    chown -R :horns /home/devel/.ssh && chmod 700 /home/devel/.ssh
 # uncomment to add sudo priveleges for host / devel
 # sudo adduser devel sudo && \
 USER devel
 # add common paths
 ENV PATH="$PATH:/home/devel/.local/bin:/home/devel/devels-workshop/devels-playground/scripts"
 RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${mnt_data}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> /home/devel/.bashrc
-USER devel
 
-# HEL helper
+# DATA helper
 FROM dplay_hel AS dplay_data
 USER root
 # copy skel files to devel
-RUN cp -rp /etc/skel/. /home/devel/ 
+RUN cp -rp /etc/skel/. /home/devel/ && chown -R devel:horns /home/devel
+RUN apt-get -y install git
+USER devel
+WORKDIR /home/devel
+# add safe directories
+RUN git config --global --add safe.directory /home/devel && \
+    git config --global --add safe.directory /hel && \
+    git config --global --add safe.directory /home/devel/devels-playground 
+# clone fresh repos and give devel ownership
+RUN git clone https://github.com/kindtek/devels-workshop 
+# RUN git clone https://github.com/kindtek/devels-workshop --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
+# --filter=combine:tree:depth:1+blob:limit=10240000  --recurse-submodules --remote-submodules  --single-branch  --no-tags --filter=blob:limit=1024000 --single-branch --branch main
+WORKDIR /home/devel/devels-workshop
+RUN git pull && git submodule update --init --remote 
+WORKDIR /home/devel
 # && \
 # if [ -d "${mnt_data}/devel" ]; then \
 # if [ ! -f "${mnt_data}/devel/backup-docker.sh" ]; then \
@@ -96,36 +114,27 @@ RUN cp -rp /etc/skel/. /home/devel/
 # RUN sudo .${mnt_data}/gabriel/backup-docker.sh
 USER devel
 
-# DATA helper
+# SKELETON framework
 FROM dplay_data AS dplay_skel
-USER ${_GABRIEL}
+USER root
 # set up basic utils
 # install github, build-essentials, libssl, etc
-RUN sudo apt-get -y update && sudo apt-get -yq install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget
-#RUN apt-get install -y lsb-release python3 python3-pip software-properties-common 
-USER devel
+RUN sudo apt-get -y update && sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget
+# # For debug only
+# RUN sudo apt-get -y update && sudo apt-get -y install nvi curl git gh wget
+# RUN apt-get install -y lsb-release python3 python3-pip software-properties-common 
 
-# SKELETON framework
-FROM dplay_skel AS dplay_git
-WORKDIR /home/devel
-# add safe directories
-RUN git config --global --add safe.directory /home/devel && \
-    git config --global --add safe.directory /hel
-# clone fresh repos and give devel ownership
-RUN git clone https://github.com/kindtek/devels-workshop 
-# RUN git clone https://github.com/kindtek/devels-workshop --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
-# --filter=combine:tree:depth:1+blob:limit=10240000  --recurse-submodules --remote-submodules  --single-branch  --no-tags --filter=blob:limit=1024000 --single-branch --branch main
-WORKDIR /home/devel/devels-workshop
-RUN git pull && git submodule update --init --remote 
-WORKDIR /home/devel
-RUN ./devels-workshop/scripts/gh-auth-first-time-login.sh chown devel:horns -R /home/devel  && \
-    # make backup script executable
-    chmod +x devels-workshop/mnt/backup.sh && \
-    chmod +x devels-workshop/mnt/backup-devel.sh && \
-    chmod +x devels-workshop/mnt/backup-custom.sh && \
-    chmod +x devels-workshop/scripts/gh-auth-first-time-login.sh && \
+# set up ssh with github
+RUN sudo sh devels-workshop/scripts/gh-auth-first-time-login.sh && \
+    sudo chown devel:horns -R /home/devel 
+USER ${_GABRIEL}
+# make backup script executable
+RUN sudo chmod +x devels-workshop/mnt/backup.sh && \
+    sudo chmod +x devels-workshop/mnt/backup-devel.sh && \
+    sudo chmod +x devels-workshop/mnt/backup-custom.sh && \
+    sudo chmod +x devels-workshop/scripts/gh-auth-first-time-login.sh && \
     # add symlinks for convenience
-    ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay 
+    sudo ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay 
 # RUN with halos ownership
 USER ${_GABRIEL}
 RUN sudo git config --global --add safe.directory /home/gabriel && \
@@ -162,10 +171,13 @@ RUN sudo cp -arf devels-workshop/mnt/backup-gabriel.sh ${mnt_data}/gabriel/backu
 # sh ${mnt_data}/backup-devel.sh
 USER devel
 
+# GIT
+FROM dplay_skel as dplay_git
+
 # PYTHON stuff
 FROM dplay_git as dplay_python
 USER ${_GABRIEL}
-RUN sudo apt-get -yq install jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv && \
+RUN sudo apt-get -y install jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv && \
     pip3 install cdir --user  && \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps && \
@@ -179,13 +191,13 @@ FROM dplay_python as dplay_msdot
 USER ${_GABRIEL}
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
-RUN sudo apt-get -yq install lsb-release 
+RUN sudo apt-get -y install lsb-release 
 RUN sudo wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
 #  && \
 ## Register the Microsoft repository GPG keys
 RUN sudo dpkg -i packages-microsoft-prod.deb 
 RUN sudo apt-get -y update
-RUN sudo apt-get -yq install powershell dotnet-sdk-7.0
+RUN sudo apt-get -y install powershell dotnet-sdk-7.0
 RUN sudo rm packages-microsoft-prod.deb
 USER devel
 
@@ -201,18 +213,18 @@ USER devel
 # KERNEL builder
 FROM dplay_dind as dplay_kernel
 RUN echo exit 0 > /usr/sbin/policy-rc.d
-RUN sudo apt-get -y update && sudo apt-get -yq install docker-compose-plugin docker-ce docker-ce-cli containerd.io
+RUN sudo apt-get -y update && sudo apt-get -y install docker-compose-plugin docker-ce docker-ce-cli containerd.io
 #    && \
 USER ${_GABRIEL}
 RUN sudo apt-get -y update && sudo apt-get -y upgrade
 # RUN  
-# RUN DEBIAN_FRONTEND=noninteractive sudo apt-get -yq install 
+# RUN DEBIAN_FRONTEND=noninteractive sudo apt-get -y install 
 RUN DEBIAN_FRONTEND=noninteractive sudo apt-get -y upgrade libldap-common libldap-2.5-0 dpkg
 ##########################################################################################
-# RUN DEBIAN_FRONTEND=noninteractive RUN sudo apt-get -yq install zfs-utils 
-# RUN yes $'23\n' | sudo apt-get -yq install --force-yes zfs-dracut >/dev/null 2>&1 
+# RUN DEBIAN_FRONTEND=noninteractive RUN sudo apt-get -y install zfs-utils 
+# RUN yes $'23\n' | sudo apt-get -y install --force-yes zfs-dracut >/dev/null 2>&1 
 #  
-RUN export DEBIAN_FRONTEND="noninteractive" && sudo apt-get -yq install gnupg apt-utils build-essential autoconf automake libtool gawk alien fakeroot dkms libblkid-dev uuid-dev libudev-dev libssl-dev \
+RUN export DEBIAN_FRONTEND="noninteractive" && sudo apt-get -y install gnupg apt-utils build-essential autoconf automake libtool gawk alien fakeroot dkms libblkid-dev uuid-dev libudev-dev libssl-dev \
     sysvinit-utils libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi libffi-dev flex bison snapd daemonize 
 RUN sudo apt-get update -y && sudo apt-get -y upgrade
 # 
@@ -221,8 +233,8 @@ RUN sudo apt-get update -y && sudo apt-get -y upgrade
 # 
 # #  && \
 # RUN sudo apt-get -y update && sudo apt-get -y upgrade
-# RUN sudo apt-get -yq install zfsutils-linux 
-# RUN sudo apt-get -yq install zfsutils zlib1g-dev 
+# RUN sudo apt-get -y install zfsutils-linux 
+# RUN sudo apt-get -y install zfsutils zlib1g-dev 
 # RUN sudo apt-get -y update && sudo apt-get -y upgrade
 #     #  && \
 # RUN sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target
@@ -260,7 +272,7 @@ RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https
 RUN    echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list 
 # in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
 RUN    sudo apt-get -yq update
-RUN    sudo apt-get -yq install brave-browser
+RUN    sudo apt-get -y install brave-browser
 # now no longeer need to add --disable-gpu flag everytime
 # cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
 # # change last line of this file - fix for brave-browser displaying empty windows
@@ -270,13 +282,13 @@ RUN cd /opt/brave.com/brave && \
     brave_old_line="\"\$HERE/brave\" \"\$@\" || true" && \
     brave_new_line="\"\$HERE/brave\" \"\$@\" \" --disable-gpu \" || true" && \
     sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/devel
-RUN sudo apt-get -yq install x11-apps xfce4
+RUN sudo apt-get -y install x11-apps xfce4
 RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -yq install gnome-session gdm3 gimp gedit nautilus vlc 
 USER devel
 
 FROM dplay_gui as dplay_cuda
 USER ${_GABRIEL}
 # CUDA
-RUN sudo apt-get -yq install nvidia-cuda-toolkit
+RUN sudo apt-get -y install nvidia-cuda-toolkit
 USER devel
 
