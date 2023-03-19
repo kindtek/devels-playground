@@ -182,7 +182,6 @@ RUN sudo cp -arf devels-workshop/mnt/backup-gabriel.sh ${mnt_data}/gabriel/backu
 # sh ${mnt_data}/backup-devel.sh
 USER devel
 
-
 #python stuff
 FROM dplay_git as dplay_python
 USER ${_GABRIEL}
@@ -195,6 +194,7 @@ RUN sudo apt-get install -y jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepo
     sudo cp -rf /home/${_GABRIEL}/.local /home/devel/ 
 
 USER devel
+
 # microsoft stuff
 FROM dplay_python as dplay_msdot
 USER ${_GABRIEL}
@@ -210,19 +210,16 @@ RUN sudo apt-get -y install powershell dotnet-sdk-7.0
 RUN sudo rm packages-microsoft-prod.deb
 USER devel
 
-
-# for error "no valid drivers found: Cannot connect to the Docker daemon at tcp://localhost:2375":
-# try running `unset DOCKER_HOST`
+# DOCKER IN DOCKER
 FROM dplay_msdot as dplay_dind
-
 USER root
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
-RUN sudo mkdir -p /etc/apt/keyrings 
-#   && \
-RUN  sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg 
-#   && \
-RUN  echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-#    && \
+RUN sudo mkdir -p /etc/apt/keyrings   && \
+    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg  && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+USER devel
+
+FROM dplay_dind as dplay_kernel
 RUN echo exit 0 > /usr/sbin/policy-rc.d
 
 RUN sudo apt-get update && sudo apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io

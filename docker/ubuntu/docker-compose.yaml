@@ -139,8 +139,6 @@ services:
     build:
       context: .
       target: dplay_msdot
-      args:
-        - _GABRIEL=${_GABRIEL:-gabriel}
     labels:
       com.dplay_msdot.description: "basics + git + powerhell"
 
@@ -150,8 +148,6 @@ services:
     build:
       context: .
       target: dplay_msdot
-      args:
-        - _GABRIEL=${_GABRIEL:-gabriel}
     labels:
       com.dplay_msdot.description: "basics + git + powerhell"
   dind:
@@ -160,10 +156,16 @@ services:
     build:
       context: .
       target: dplay_dind
-      args:
-        - _GABRIEL=${_GABRIEL:-gabriel}
     labels:
       com.dplay_dind.description: "basics + git + powerhell + docker"
+  kernel:
+    extends: dind
+    image: kindtek/dplay:ubuntu-kernel
+    build:
+      context: .
+      target: dplay_kernel
+    labels:
+      com.dplay_dind.description: "basics + git + powerhell + docker + kernel"
   gui:
     extends: dind
     image: kindtek/dplay:ubuntu-gui
@@ -173,7 +175,7 @@ services:
       args:
         - _GABRIEL=${_GABRIEL:-gabriel}
     labels:
-      com.dplay_gui.description: "basics + git + powerhell + docker + gui"
+      com.dplay_gui.description: "basics + git + powerhell + docker + kernel + gui"
 
   cuda:
     extends: gui
