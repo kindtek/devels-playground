@@ -253,7 +253,7 @@ RUN ln -s linux devels-workshop/devels-playground/linux && \
     ln -s dockerr devels-workshop/devels-playground/docker/ubuntu
 
 # GUI - wsl2 required
-FROM dplay_dind_phat as dplay_gui
+FROM dplay_dind as dplay_gui
 USER ${_GABRIEL}
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
 RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg 
