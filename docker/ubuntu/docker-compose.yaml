@@ -92,7 +92,9 @@ services:
       - type: bind
         source: /var/run/docker.sock
         target: /var/run/docker.sock
-
+      - type: bind
+        source: /run/dbus/system_bus_socket
+        target: /run/dbus/system_bus_socket
     depends_on:
       data:
         # Wait for the ownership to change
