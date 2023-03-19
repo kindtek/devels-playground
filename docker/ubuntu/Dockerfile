@@ -219,7 +219,7 @@ USER devel
 
 # KERNEL builder
 FROM dplay_dind as dplay_kernel
-USER ROOT
+USER root
 RUN echo exit 0 > /usr/sbin/policy-rc.d
 #    && \
 RUN sudo apt-get -y update && apt-get -y upgrade
