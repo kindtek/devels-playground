@@ -55,8 +55,7 @@ USER ${_GABRIEL}
 ENV PATH="$PATH:/home/${_GABRIEL}/.local/bin:/hel/devels-workshop/scripts:/home/devel/devels-workshop/devels-playground/scripts"
 RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${mnt_data}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> /home/${_GABRIEL}/.bashrc && \
     sudo cp -rf /home/${_GABRIEL}/. /etc/skel/ && \
-    sudo cp -rf /home/${_GABRIEL}/. /home/devel/ && \
-    sudo rm /home/devel/.sudo_as_admin_successful
+    sudo rm /etc/skel/.sudo_as_admin_successful
 
 # backup location or optionally a mount partition
 # partition letter set up for n:/ - use this guide to set up partition https://allthings.how/how-to-partition-a-hard-drive-on-windows-11/
@@ -83,26 +82,25 @@ RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${
 FROM dplay_hel AS dplay_data
 
 USER root
-
-RUN cp -rp /etc/skel/. /home/devel/ && \
-    if [ -d "${mnt_data}/devel" ]; then \
-    if [ ! -f "${mnt_data}/devel/backup-docker.sh" ]; then \
-    echo "#!/bin/bash" > devel/backup-docker.sh; \
-    fi \
-    fi && \
-    # RUN if [ -d "${mnt_data}/${_GABRIEL}" ]; then \
-    #         if [ ! -f "${mnt_data}/${_GABRIEL}/backup-docker.sh" ]; then \
-    #             echo "#!/bin/bash" >> ${_GABRIEL}/backup-docker.sh; \
-    #         fi \
-    #     fi \
-    #     if [ -d "${mnt_data}/gabriel" ]; then \
-    #         if [ ! -f "${mnt_data}/gabriel/backup-docker.sh" ]; then \
-    #             echo "#!/bin/bash" >> gabriel/backup-docker.sh; \
-    #         fi \
-    #     fi
-    chown -R devel:horns /home/devel && chown -R ${_GABRIEL}:${_HALOS} /home/${_GABRIEL}
-
-
+# copy skel files to devel
+RUN cp -rp /etc/skel/. /home/devel/ 
+    # && \
+    # if [ -d "${mnt_data}/devel" ]; then \
+    # if [ ! -f "${mnt_data}/devel/backup-docker.sh" ]; then \
+    # echo "#!/bin/bash" > devel/backup-docker.sh; \
+    # fi \
+    # fi && \
+    # # RUN if [ -d "${mnt_data}/${_GABRIEL}" ]; then \
+    # #         if [ ! -f "${mnt_data}/${_GABRIEL}/backup-docker.sh" ]; then \
+    # #             echo "#!/bin/bash" >> ${_GABRIEL}/backup-docker.sh; \
+    # #         fi \
+    # #     fi \
+    # #     if [ -d "${mnt_data}/gabriel" ]; then \
+    # #         if [ ! -f "${mnt_data}/gabriel/backup-docker.sh" ]; then \
+    # #             echo "#!/bin/bash" >> gabriel/backup-docker.sh; \
+    # #         fi \
+    # #     fi
+    # chown -R devel:horns /home/devel && chown -R ${_GABRIEL}:${_HALOS} /home/${_GABRIEL}
 # RUN echo "# # # # Docker # # # # " >> ${mnt_data}/gabriel/backup-docker.sh
 # RUN sudo .${mnt_data}/gabriel/backup-docker.sh
 
@@ -121,9 +119,11 @@ FROM dplay_skel AS dplay_git
 WORKDIR /home/devel
 USER devel
 # add safe directories
-RUN git config --global --add safe.directory /home/devel && \
-    git config --global --add safe.directory /hel && \
-    git config --global --add safe.directory /home/devel/devels-playground 
+RUN echo '[safe] \
+    directory = /home/devel \
+    directory = /hel \
+    directory = /home/devel/devels-playground \
+    directory = lo.world' > .gitconfig
 # && \
 # clone fresh repos and give devel ownership
 RUN git clone https://github.com/kindtek/devels-workshop 
@@ -131,9 +131,7 @@ RUN git clone https://github.com/kindtek/devels-workshop
 # && \
 # --filter=combine:tree:depth:1+blob:limit=10240000  --recurse-submodules --remote-submodules  --single-branch  --no-tags --filter=blob:limit=1024000 --single-branch --branch main
 WORKDIR /home/devel/devels-workshop
-
 RUN git pull && git submodule update --init --remote 
-
 WORKDIR /home/devel
 
 # cd devels-workshop && git pull && \
@@ -141,23 +139,22 @@ WORKDIR /home/devel
 # RUN git submodule --cached
 # && \
 #  && \
-RUN chown devel:horns -R /home/devel  && \
-    chown ${_GABRIEL}:${_HALOS} -R /home/${_GABRIEL}  && \
+RUN ./devels-workshop/scripts/gh-auth-first-time-login.sh chown devel:horns -R /home/devel  && \
     # make backup script executable
     chmod +x devels-workshop/mnt/backup.sh && \
     chmod +x devels-workshop/mnt/backup-devel.sh && \
-    chmod +x devels-workshop/mnt/backup-gabriel.sh && \
     chmod +x devels-workshop/mnt/backup-custom.sh && \
     chmod +x devels-workshop/scripts/gh-auth-first-time-login.sh && \
     # add symlinks for convenience
-    ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay && \
-    ./devels-workshop/scripts/gh-auth-first-time-login.sh 
+    ln -s devels-workshop dwork && ln -s devels-workshop/devels-playground dplay 
 # mount with halos ownership
 USER ${_GABRIEL}
-RUN ./devels-workshop/scripts/gh-auth-first-time-login.sh ${_GABRIEL}
+RUN ./devels-workshop/scripts/gh-auth-first-time-login.sh ${_GABRIEL} && \
+    chown ${_GABRIEL}:${_HALOS} -R /home/${_GABRIEL}  
 # set up shared backup drive structure 
-RUN sudo mkdir -p ${mnt_data}/${_GABRIEL}/${_GABRIEL}-orig
-RUN sudo mkdir -p ${mnt_data}/devel/${_GABRIEL}-orig && \
+RUN sudo chmod +x devels-workshop/mnt/backup-gabriel.sh && \
+    sudo mkdir -p ${mnt_data}/${_GABRIEL}/${_GABRIEL}-orig && \
+    sudo mkdir -p ${mnt_data}/devel/${_GABRIEL}-orig && \
     sudo mkdir -p ${mnt_data}/devel/devel-orig && \
     sudo mkdir -p ${mnt_data}/${_GABRIEL}/devel-orig && \
     sudo chown ${_GABRIEL}:${_HALOS} -R ${mnt_data}/${_GABRIEL} && \
@@ -210,7 +207,7 @@ RUN sudo wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs
 RUN sudo dpkg -i packages-microsoft-prod.deb 
 RUN sudo apt-get -y update
 RUN sudo apt-get -y install powershell dotnet-sdk-7.0
-RUN rm packages-microsoft-prod.deb
+RUN sudo rm packages-microsoft-prod.deb
 USER devel
 
 
@@ -230,7 +227,6 @@ RUN echo exit 0 > /usr/sbin/policy-rc.d
 
 RUN sudo apt-get update && sudo apt-get install -y docker-compose-plugin docker-ce docker-ce-cli containerd.io
 #    && \
-RUN sudo chown -R devel:horns /home/devel $mnt_data/devel $mnt_data/${_GABRIEL}/devel-orig
 USER ${_GABRIEL}
 RUN sudo apt-get update && sudo apt-get upgrade
 # RUN  
