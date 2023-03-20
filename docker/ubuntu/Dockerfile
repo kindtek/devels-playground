@@ -190,7 +190,6 @@ RUN chmod og+x /home/dvl/gh-auth-first-time-login.sh && chmod og+x /home/${_GBL}
 RUN chown dvl:horns /home/dvl/gh-auth-first-time-login.sh && chown ${_GBL}:${_HALOS} /home/${_GBL}/gh-auth-first-time-login.sh 
 USER dvl
 WORKDIR /home/dvl/devels-work
-RUN git pull
 WORKDIR /home/dvl
 RUN sh gh-auth-first-time-login.sh dvl
 RUN rm gh-auth-first-time-login.sh
