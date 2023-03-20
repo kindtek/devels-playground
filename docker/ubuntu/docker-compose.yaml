@@ -72,9 +72,9 @@ services:
     init: true
     volumes:
       - mnt-data:/tmp/data
-      - type: bind
-        source: /run/dbus/system_bus_socket
-        target: /run/dbus/system_bus_socket
+      # - type: bind
+      #   source: /run/dbus/system_bus_socket
+      #   target: /run/dbus/system_bus_socket
     # command: 
     #   - chown -R ${_GBL:-gbl}:${_HALOS:-halos} /tmp/data
 
