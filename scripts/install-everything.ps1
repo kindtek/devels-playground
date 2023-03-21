@@ -94,6 +94,7 @@ function install_dependencies {
         Write-Host "Installing $software_name ...`r`n" 
         winget install --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements
         winget upgrade --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements
+        # "Docker Desktop Installer.exe" install --accept-license --backend=wsl-2 installation-dir=C:\Docker 
         Write-Host "`r`n$software_name installed`r`n" | Out-File -FilePath "$git_path/.docker-installed"
         $new_install = $true
     }
