@@ -44,7 +44,7 @@ RUN usermod -aG ${_HALOS} host && \
     touch /hal/o.world && \
     # set up .ssh and dls directories and make sure .ssh has proper permissions
     mkdir -p /hal/.ssh /hal/dls && chmod 700 /hal/.ssh && \
-    chown -R ${_GBL}:${_HALOS} /hal/.ssh && \
+    chown -R ${_GBL}:${_HALOS} /hal/.ssh /hal/dls && \
     # make dvl default wsl user 
     echo "[user]\ndefault=dvl" >> /etc/wsl.conf
 # mount stuff if needed
@@ -69,7 +69,7 @@ RUN ln -s /home/dvl /hel && \
     # set up .ssh and dls directories and make sure .ssh has proper permissions
     mkdir -p /hel/.ssh /hel/dls && chmod 700 /hel/.ssh && \
     # set up /dvl folder as symbolic link to /home/dvl for cloning repository(ies)
-    chown -R dvl:horns /hel/.ssh 
+    chown -R dvl:horns /hel/.ssh /hel/dls
 # uncomment to add sudo priveleges for host / dvl
 # sudo adduser dvl sudo && \
 USER dvl
