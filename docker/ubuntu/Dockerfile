@@ -212,6 +212,7 @@ USER ${_GBL}
 WORKDIR /home/${_GBL}
 RUN sh gh-auth-first-time-login.sh ${_GBL} && \
     rm gh-auth-first-time-login.sh
+WORKDIR /home/dvl
 
 
 

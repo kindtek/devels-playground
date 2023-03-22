@@ -1,8 +1,8 @@
 #!/bin/bash
 
 backup_mnt_location=${1:-/mnt/data}
-_GABRIEL=gbl
-_HALOS=halos
+username=gbl
+groupname=halos
 
 if [ -z $backup_mnt_location ]
 then 

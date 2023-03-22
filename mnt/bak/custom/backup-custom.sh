@@ -1,8 +1,8 @@
 #!/bin/bash
 
 backup_mnt_location=${1:-/mnt/data}
-_GBL=${2:-gbl}
-_HALOS=${3:-halos}
+username=${2:-gbl}
+groupname=${3:-halos}
 
 if [ -z $backup_mnt_location ]
 then 
@@ -12,7 +12,6 @@ if [ -z $WSL_DISTRO_NAME ]
 then
     export WSL_DISTRO_NAME=orig
 fi
-
 
 sudo mkdir -p ${backup_mnt_location}/${username}/${username}-orig && \
 sudo mkdir -p ${backup_mnt_location}/gbl/gbl-orig && \
@@ -53,15 +52,15 @@ sudo cp -arfv dwork/mnt/backup-dvl.sh /home/dvl/backup-dvl.sh && \
 # sudo chown ${username}:${groupname} ${backup_mnt_location}/README_ASAP
 
 
-HALO_DESTINATION="$backup_mnt_location/${_GBL}-$WSL_DISTRO_NAME";
-HALO_RESTORE_SCRIPT="$backup_mnt_location/restore-${_GBL}-$WSL_DISTRO_NAME.sh";
+HALO_DESTINATION="$backup_mnt_location/${username}-$WSL_DISTRO_NAME";
+HALO_RESTORE_SCRIPT="$backup_mnt_location/restore-${username}-$WSL_DISTRO_NAME.sh";
 
 echo "backing the /hal up to: $HALO_DESTINATION ...";
 
 export VERSION_CONTROL=numbered;
 
 mkdir -p $HALO_DESTINATION;
-cp -arfv --backup=$VERSION_CONTROL --update /home/${_GBL} $HALO_DESTINATION;
+cp -arfv --backup=$VERSION_CONTROL --update /home/${username} $HALO_DESTINATION;
 
 echo "creating restore script and saving as $HALO_RESTORE_SCRIPT ...";
 
