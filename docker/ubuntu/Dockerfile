@@ -270,9 +270,18 @@ RUN sudo mv /var/lib/dpkg/info/ /var/lib/dpkg/info_old/ && \
 # RUN sudo apt-get -y update && sudo apt-get -y upgrade
 RUN sudo apt-get -y install zfsutils-linux 
 RUN sudo apt-get -y install zlib1g-dev zfs-dkms
-# RUN sudo apt-get -y update && sudo apt-get -y upgrade
-#     #  && \
-    
+
+WORKDIR /hal/dls
+RUN wget https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.2.6.tar.xz && \
+tar -xvf linux-6.2.6.tar.xz && \
+mv linux-6.2.6 && \
+cd linux && \
+wget https://github.com/openzfs/zfs/releases/download/zfs-2.1.9/zfs-2.1.9.tar.gz && \
+tar -xvf zfs-2.1.9.tar.gz && \
+mv zfs-2.1.9 zfs
+# #  && \
+# WORKDIR $PATH/devels-work/devels-play/linux
+WORKDIR /hal/dls/linux
 RUN sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target && \
 sleep 20 && \
 echo "$(pidof systemd)" && \
@@ -280,18 +289,16 @@ exec sudo nsenter -t "$(pidof -s systemd)" -a su - $LOGNAME
 RUN sudo systemctl unmask snapd.service && sudo systemctl enable snapd.service && sudo systemctl start snapd.service && \
     sudo snap install lxd  && sudo lxd init 
 
-# #  && \
-# WORKDIR $PATH/devels-work/devels-play/linux
-# RUN sudo cp .config.new .config && \
-#     yes "" | sudo make prepare scripts && \
-#     cd ../zfs && sudo sh autogen.sh && \
-#     sudo sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=../linux --with-linux-obj=../linux && \
-#     sudo sh copy-builtin ../linux && \
-#     sudo make install  && \
-#     cd ../linux/ && sudo sed -i 's/# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config && echo grep ZFS .config && \
-#     sudo make && sudo make modules_install && sudo mkdir -p ../../../gabriel/kernels && sudo cp arch/x86/boot/bzImage ../../../gabriel/kernels/linux-kernel-626a5 && \
-#     sudo cp arch/x86/boot/bzImage /mnt/c/users/n8kin/linux-kernel-626a6 && \
-#     sudo make -j16 && sudo make modules_install
+RUN sudo cp /home/dvl/devels-work/devels-play/kernel-confs/.config1 .config && \
+    yes "" | sudo make prepare scripts && \
+    cd ../zfs && sudo sh autogen.sh && \
+    sudo sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=/hal/dls/linux --with-linux-obj=/hal/dls/linux && \
+    sudo sh copy-builtin ../linux && \
+    sudo make install  && \
+    cd ../linux/ && sudo sed -i 's/# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config && echo grep ZFS .config && \
+    sudo make && sudo make modules_install && sudo mkdir -p ../../../gbl/kernels && sudo cp -f arch/x86/boot/bzImage ../../../gbl/kernels/linux-kernel-51519-a0 && \
+    sudo make -j16 && sudo make modules_install
+
 USER dvl
 
 # GUI - wsl2 required
