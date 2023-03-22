@@ -97,11 +97,11 @@ RUN git config --global --add safe.directory /home/dvl && \
     git config --global --add safe.directory /hel && \
     git config --global --add safe.directory /home/dvl/devels-play 
 # clone fresh repos and give dvl ownership
-RUN git clone https://github.com/kindtek/devels-work 
+RUN git clone https://github.com/kindtek/devels-work --depth=1
 # RUN git clone https://github.com/kindtek/devels-work --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
 # --filter=combine:tree:depth:1+blob:limit=10240000  --recurse-submodules --remote-submodules  --single-branch  --no-tags --filter=blob:limit=1024000 --single-branch --branch main
 WORKDIR /home/dvl/devels-work
-RUN git pull && git submodule update --init --remote 
+RUN git pull && git submodule update --init --remote --depth=1
 WORKDIR /home/dvl
 # && \
 # if [ -d "${mnt_data}/dvl" ]; then \
@@ -182,13 +182,13 @@ RUN chown dvl:horns -R /home/dvl && chown ${_GBL}:${_HALOS} /home/gbl && \
 USER dvl
 # setup ssh gh login
 
-    # add symlinks for convenience
+# add symlinks for convenience
 RUN ln -s devels-work dwork && ln -s devels-work/devels-play dplay && ln -s devels-play devels-work/dplay && \
     ln -s linux devels-work/devels-play/linux && \
     # ln -s ub devels-work/devels-play/docker/ubuntu && \
     # ln -s kernel devels-work/devels-play/kernel && \
     ln -s docker devels-work/devels-play/docker
-    # sh devels-work/scripts/gh-auth-first-time-login.sh
+# sh devels-work/scripts/gh-auth-first-time-login.sh
 
 
 # GIT
@@ -279,8 +279,8 @@ WORKDIR /home/${_GBL}/dls
 # tar -xvf zfs-2.1.9.tar.gz && \
 # mv zfs-2.1.9 zfs
 RUN sudo apt install build-essential flex bison libssl-dev libelf-dev git dwarves && \
-git clone https://github.com/microsoft/WSL2-Linux-Kernel.git --progress --depth=1 --single-branch   && \
-mv WSL2-Linux-Kernel wsl2
+    git clone https://github.com/microsoft/WSL2-Linux-Kernel.git --progress --depth=1 --single-branch   && \
+    mv WSL2-Linux-Kernel wsl2
 # #  && \
 # WORKDIR $PATH/devels-work/devels-play/linux
 # WORKDIR /hal/dls/linux
@@ -294,14 +294,14 @@ RUN sudo cp /home/dvl/devels-work/devels-play/kernel/5_1519/.config0 /home/${_GB
     sudo chown ${_GBL}:${_HALOS} .config && \
     yes "" | make -j $(expr $(nproc) - 1) && sudo make modules_install && sudo mkdir -p ../../../${_GBL}/kernels && sudo cp -f arch/x86/boot/bzImage ../../../gbl/kernels/linux-kernel-51519-a0 && \
     rm -rf /hal/dls/*
-    # yes "" | sudo make prepare scripts && \
-    # cd ../zfs && sudo sh autogen.sh && \
-    # sudo sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=/hal/dls/wsl2 --with-linux-obj=/hal/dls/wsl2 && \
-    # sudo sh copy-builtin ../wsl2 && \
-    # yes "" | sudo make install  && \
-    # cd ../wsl2/ && sudo sed -i 's/\# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config && echo grep ZFS .config && \
-    # yes "" | sudo make -j16 && sudo make modules_install && sudo mkdir -p ../../../gbl/kernels && sudo cp -f arch/x86/boot/bzImage ../../../gbl/kernels/linux-kernel-51519-a0 && \
-    # && rm -rf /hal/dls/*
+# yes "" | sudo make prepare scripts && \
+# cd ../zfs && sudo sh autogen.sh && \
+# sudo sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=/hal/dls/wsl2 --with-linux-obj=/hal/dls/wsl2 && \
+# sudo sh copy-builtin ../wsl2 && \
+# yes "" | sudo make install  && \
+# cd ../wsl2/ && sudo sed -i 's/\# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config && echo grep ZFS .config && \
+# yes "" | sudo make -j16 && sudo make modules_install && sudo mkdir -p ../../../gbl/kernels && sudo cp -f arch/x86/boot/bzImage ../../../gbl/kernels/linux-kernel-51519-a0 && \
+# && rm -rf /hal/dls/*
 USER dvl
 
 # GUI - wsl2 required
