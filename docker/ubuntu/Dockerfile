@@ -165,7 +165,7 @@ RUN chown dvl:horns -R /home/dvl && chown ${_GBL}:${_HALOS} /home/gbl && \
     # # # RUN sudo apt-get -y update && sudo apt-get -y install nvi curl git gh wget
     # # # RUN apt-get install -y lsb-release python3 python3-pip software-properties-common 
     # setup gh ssh login 
-    # sudo chmod +x devels-work/scripts/gh-auth-first-time-login.sh && \
+    sudo chmod +x devels-work/scripts/gh-auth-first-time-login.sh && \
     # make backup script executable
     sudo chmod ugo+x devels-work/devels-play/mnt/backup-gbl.sh && \
     sudo chmod ugo+x devels-work/devels-play/mnt/backup-dvl.sh && \
@@ -180,7 +180,7 @@ RUN ln -s devels-work dwork && ln -s devels-work/devels-play dplay && ln -s deve
     ln -s docker devels-work/devels-play/docker && \
     ln -s devels-work/devels-play/docker/ub devels-work/devels-play/docker/ubuntu 
     # && \
-    # sh devels-work/scripts/gh-auth-first-time-login.sh
+    sh devels-work/scripts/gh-auth-first-time-login.sh
 
 
 # GIT
