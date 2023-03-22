@@ -132,7 +132,7 @@ RUN sudo apt-get -y update && \
     sudo apt-get install -y tzdata && \
     sudo dpkg-reconfigure --frontend noninteractive tzdata && \
     sudo dpkg --configure -a && \
-    sudo apt-get upgrade -y libsnmp40 && \
+    # sudo apt-get upgrade -y libsnmp40 && \
     sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget
 # RUN sudo sh devels-work/scripts/gh-auth-first-time-login.sh ${_GBL}
 RUN sudo chmod +x devels-work/devels-play/mnt/backup-gbl.sh 
@@ -252,29 +252,29 @@ RUN echo exit 0 > /usr/sbin/policy-rc.d
 #    && \
 RUN sudo apt-get -y update && apt-get -y upgrade
 # RUN  
-# RUN DEBIAN_FRONTEND=noninteractive apt-get -y install 
-RUN DEBIAN_FRONTEND=noninteractive apt-get -y upgrade libldap-common libldap-2.5-0 dpkg
 ##########################################################################################
 # RUN DEBIAN_FRONTEND=noninteractive RUN apt-get -y install zfs-utils 
 # RUN yes $'23\n' | apt-get -y install --force-yes zfs-dracut >/dev/null 2>&1 
 #  
-RUN export DEBIAN_FRONTEND="noninteractive" && apt-get -y install gnupg apt-utils build-essential autoconf automake libtool gawk alien fakeroot dkms libblkid-dev uuid-dev libudev-dev libssl-dev \
-    sysvinit-utils libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi libffi-dev flex bison snapd daemonize 
+RUN apt-get -y install gnupg apt-utils build-essential autoconf automake libtool gawk alien fakeroot dkms libblkid-dev uuid-dev libudev-dev libssl-dev \
+    sysvinit-utils libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi libffi-dev lxcfs flex bison snapd daemonize dbus-user-session fontconfig
 RUN apt-get update -y && apt-get -y upgrade
 # 
 # make this work eventually...
 # 
 # 
 # #  && \
-
+RUN sudo mv /var/lib/dpkg/info/ /var/lib/dpkg/info_old/ && \
+    sudo mkdir /var/lib/dpkg/info/ && \
+    sudo apt-get update
 # RUN sudo apt-get -y update && sudo apt-get -y upgrade
-# # sudo apt-get -y install zfsutils-linux 
-# # sudo apt-get -y install zfsutils zlib1g-dev 
+RUN sudo apt-get -y install zfsutils-linux 
+RUN sudo apt-get -y install zlib1g-dev zfs-dkms
 # RUN sudo apt-get -y update && sudo apt-get -y upgrade
 #     #  && \
     
 RUN sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target && \
-sleep 10 && \
+sleep 20 && \
 echo "$(pidof systemd)" && \
 exec sudo nsenter -t "$(pidof -s systemd)" -a su - $LOGNAME
 RUN sudo systemctl unmask snapd.service && sudo systemctl enable snapd.service && sudo systemctl start snapd.service && \
@@ -313,7 +313,7 @@ RUN cd /opt/brave.com/brave && \
     brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
     sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl
 RUN sudo apt-get -y install x11-apps xfce4
-RUN sudo DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -yq install gnome-session gdm3 gimp gedit nautilus vlc 
+RUN sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -yq install gnome-session gdm3 gimp gedit nautilus vlc 
 USER dvl
 
 FROM dplay_gui as dplay_cuda
