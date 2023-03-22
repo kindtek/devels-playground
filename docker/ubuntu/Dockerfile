@@ -128,7 +128,7 @@ USER ${_GBL}
 #     git config --global --add safe.directory /home/gbl && \
 #     git config --global --add safe.directory /hal
 RUN DEBIAN_FRONTEND=noninteractive sudo apt-get -y update && \
-    sudo apt-get install -y --no-install-recommends tzdata && \
+    sudo dpkg --configure -a && sudo apt-get install -y --no-install-recommends tzdata && \
 sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget
 # RUN sudo sh devels-work/scripts/gh-auth-first-time-login.sh ${_GBL}
 RUN sudo chmod +x devels-work/devels-play/mnt/backup-gbl.sh 
@@ -269,12 +269,12 @@ RUN apt-get update -y && apt-get -y upgrade
 # RUN sudo apt-get -y update && sudo apt-get -y upgrade
 #     #  && \
     
-# RUN sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target
-# RUN sleep 10
-# RUN echo "$(pidof systemd)"
-# RUN exec sudo nsenter -t "$(pidof -s systemd)" -a su - $LOGNAME
-# RUN sudo systemctl unmask snapd.service && sudo systemctl enable snapd.service && sudo systemctl start snapd.service && \
-#     sudo snap install lxd  && sudo lxd init 
+RUN sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target && \
+sleep 10 && \
+echo "$(pidof systemd)" && \
+exec sudo nsenter -t "$(pidof -s systemd)" -a su - $LOGNAME
+RUN sudo systemctl unmask snapd.service && sudo systemctl enable snapd.service && sudo systemctl start snapd.service && \
+    sudo snap install lxd  && sudo lxd init 
 
 # #  && \
 # WORKDIR $PATH/devels-work/devels-play/linux
