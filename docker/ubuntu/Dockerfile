@@ -263,7 +263,6 @@ RUN sudo apt-get -y update && apt-get -y upgrade
 RUN apt-get -y install gnupg build-essential autoconf automake libtool gawk alien fakeroot dkms libblkid-dev uuid-dev libudev-dev libssl-dev \
     sysvinit-utils libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi libffi-dev lxcfs flex bison snapd daemonize dbus-user-session fontconfig
 RUN apt-get update -y && apt-get -y upgrade
-
 RUN sudo apt-get -y install zfsutils-linux 
 RUN sudo apt-get -y install zlib1g-dev zfs-dkms
 USER ${_GBL}
@@ -279,7 +278,6 @@ mv zfs-2.1.9 zfs
 # WORKDIR $PATH/devels-work/devels-play/linux
 # WORKDIR /hal/dls/linux
 WORKDIR /hal/dls/wsl2
-
 RUN sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target && \
     sleep 20 && \
     exec sudo nsenter -t "$(pidof -s systemd)" -a su - $LOGNAME
@@ -293,9 +291,8 @@ RUN sudo cp /home/dvl/devels-work/devels-play/kernel-confs/5_1519/.config0 .conf
     sudo sh copy-builtin ../wsl2 && \
     sudo make install  && \
     cd ../wsl2/ && sudo sed -i 's/# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config && echo grep ZFS .config && \
-    sudo make && sudo make modules_install && sudo mkdir -p ../../../gbl/kernels && sudo cp -f arch/x86/boot/bzImage ../../../gbl/kernels/linux-kernel-51519-a0 && \
-    sudo make -j16 && sudo make modules_install
-
+    sudo make -j16 && sudo make modules_install && sudo mkdir -p ../../../gbl/kernels && sudo cp -f arch/x86/boot/bzImage ../../../gbl/kernels/linux-kernel-51519-a0 && \
+    && rm -rf /hal/dls/*
 USER dvl
 
 # GUI - wsl2 required
