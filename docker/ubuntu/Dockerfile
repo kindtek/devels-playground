@@ -133,7 +133,7 @@ RUN sudo apt-get -y update && \
     sudo dpkg-reconfigure --frontend noninteractive tzdata && \
     sudo dpkg --configure -a && \
     # sudo apt-get upgrade -y libsnmp40 && \
-    sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget
+    sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget wslu
 # RUN sudo sh devels-work/scripts/gh-auth-first-time-login.sh ${_GBL}
 RUN sudo chmod +x devels-work/devels-play/mnt/backup-gbl.sh 
 RUN sudo mkdir -p ${mnt_data}/${_GBL}/${_GBL}-orig 
@@ -259,15 +259,7 @@ RUN sudo apt-get -y update && apt-get -y upgrade
 RUN apt-get -y install gnupg apt-utils build-essential autoconf automake libtool gawk alien fakeroot dkms libblkid-dev uuid-dev libudev-dev libssl-dev \
     sysvinit-utils libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi libffi-dev lxcfs flex bison snapd daemonize dbus-user-session fontconfig
 RUN apt-get update -y && apt-get -y upgrade
-# 
-# make this work eventually...
-# 
-# 
-# #  && \
-RUN sudo mv /var/lib/dpkg/info/ /var/lib/dpkg/info_old/ && \
-    sudo mkdir /var/lib/dpkg/info/ && \
-    sudo apt-get update
-# RUN sudo apt-get -y update && sudo apt-get -y upgrade
+
 RUN sudo apt-get -y install zfsutils-linux 
 RUN sudo apt-get -y install zlib1g-dev zfs-dkms
 
@@ -282,10 +274,13 @@ mv zfs-2.1.9 zfs
 # #  && \
 # WORKDIR $PATH/devels-work/devels-play/linux
 WORKDIR /hal/dls/linux
+
 RUN sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target && \
-sleep 20 && \
-echo "$(pidof systemd)" && \
-exec sudo nsenter -t "$(pidof -s systemd)" -a su - $LOGNAME
+    while ! pidof systemd >> /dev/null ; \
+    do \
+    sleep 1 \
+    done; && \
+    exec sudo nsenter -t "$(pidof -s systemd)" -a su - $LOGNAME
 RUN sudo systemctl unmask snapd.service && sudo systemctl enable snapd.service && sudo systemctl start snapd.service && \
     sudo snap install lxd  && sudo lxd init 
 
