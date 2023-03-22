@@ -126,10 +126,14 @@ FROM dplay_data AS dplay_skel
 USER ${_GBL}
 # RUN sudo chown ${_GBL}:${_HALOS} -R ${mnt_data}/${_GBL} /home/${_GBL}  \
 #     git config --global --add safe.directory /home/gbl && \
-#     git config --global --add safe.directory /hal
-RUN DEBIAN_FRONTEND=noninteractive sudo apt-get -y update && \
-    sudo dpkg --configure -a && sudo apt-get install -y --no-install-recommends tzdata && \
-sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget
+#     git config --global --add safe.directory /hal 
+RUN sudo apt-get -y update && \
+    sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
+    sudo apt-get install -y tzdata && \
+    sudo dpkg-reconfigure --frontend noninteractive tzdata && \
+    sudo dpkg --configure -a && \
+    sudo apt-get upgrade -y libsnmp40 && \
+    sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget
 # RUN sudo sh devels-work/scripts/gh-auth-first-time-login.sh ${_GBL}
 RUN sudo chmod +x devels-work/devels-play/mnt/backup-gbl.sh 
 RUN sudo mkdir -p ${mnt_data}/${_GBL}/${_GBL}-orig 
