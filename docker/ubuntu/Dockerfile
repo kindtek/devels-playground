@@ -277,7 +277,8 @@ tar -xvf zfs-2.1.9.tar.gz && \
 mv zfs-2.1.9 zfs
 # #  && \
 # WORKDIR $PATH/devels-work/devels-play/linux
-WORKDIR /hal/dls/linux
+# WORKDIR /hal/dls/linux
+WORKDIR /hal/dls/wsl2
 
 RUN sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target && \
     sleep 20 && \
@@ -285,13 +286,13 @@ RUN sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/syste
 RUN sudo systemctl unmask snapd.service && sudo systemctl enable snapd.service && sudo systemctl start snapd.service && \
     sudo snap install lxd  && sudo lxd init 
 
-RUN sudo cp /home/dvl/devels-work/devels-play/kernel-confs/.config0 .config && \
+RUN sudo cp /home/dvl/devels-work/devels-play/kernel-confs/5_1519/.config0 .config && \
     yes "" | sudo make prepare scripts && \
     cd ../zfs && sudo sh autogen.sh && \
-    sudo sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=/hal/dls/linux --with-linux-obj=/hal/dls/linux && \
-    sudo sh copy-builtin ../linux && \
+    sudo sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=/hal/dls/wsl2 --with-linux-obj=/hal/dls/wsl2 && \
+    sudo sh copy-builtin ../wsl2 && \
     sudo make install  && \
-    cd ../linux/ && sudo sed -i 's/# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config && echo grep ZFS .config && \
+    cd ../wsl2/ && sudo sed -i 's/# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config && echo grep ZFS .config && \
     sudo make && sudo make modules_install && sudo mkdir -p ../../../gbl/kernels && sudo cp -f arch/x86/boot/bzImage ../../../gbl/kernels/linux-kernel-51519-a0 && \
     sudo make -j16 && sudo make modules_install
 
