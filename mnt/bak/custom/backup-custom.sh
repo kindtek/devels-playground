@@ -53,15 +53,15 @@ sudo cp -arfv dwork/mnt/backup-dvl.sh /home/dvl/backup-dvl.sh && \
 # sudo chown ${username}:${groupname} ${backup_mnt_location}/README_ASAP
 
 
-HALO_DESTINATION="$backup_mnt_location/dvl-$WSL_DISTRO_NAME";
-HALO_RESTORE_SCRIPT="$backup_mnt_location/restore-dvl-$WSL_DISTRO_NAME.sh";
+HALO_DESTINATION="$backup_mnt_location/${_GBL}-$WSL_DISTRO_NAME";
+HALO_RESTORE_SCRIPT="$backup_mnt_location/restore-${_GBL}-$WSL_DISTRO_NAME.sh";
 
 echo "backing the /hal up to: $HALO_DESTINATION ...";
 
 export VERSION_CONTROL=numbered;
 
 mkdir -p $HALO_DESTINATION;
-cp -arfv --backup=$VERSION_CONTROL --update /home/dvl $HALO_DESTINATION;
+cp -arfv --backup=$VERSION_CONTROL --update /home/${_GBL} $HALO_DESTINATION;
 
 echo "creating restore script and saving as $HALO_RESTORE_SCRIPT ...";
 

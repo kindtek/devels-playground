@@ -51,8 +51,8 @@ sudo cp -arfv dwork/mnt/backup-dvl.sh /home/dvl/backup-dvl.sh && \
 # echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${username}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${backup_mnt_location}/gbl/README_ASAP      && \
 # sudo chown ${username}:${groupname} ${backup_mnt_location}/README_ASAP
 
-HALO_DESTINATION="$_NIX_MNT_LOCATION/gbl/dvl-$WSL_DISTRO_NAME";
-HALO_RESTORE_SCRIPT="$_NIX_MNT_LOCATION/gbl/restore-dvl-$WSL_DISTRO_NAME.sh";
+HALO_DESTINATION="$backup_mnt_location/gbl/dvl-$WSL_DISTRO_NAME";
+HALO_RESTORE_SCRIPT="$backup_mnt_location/gbl/restore-gbl-$WSL_DISTRO_NAME.sh"
 
 echo "backing the /hal up to: $HALO_DESTINATION ...";
 
@@ -66,8 +66,8 @@ echo "creating restore script and saving as $HALO_RESTORE_SCRIPT ...";
 echo "#!/bin/bash
 # run as sudo
 
-echo 'restoring $_NIX_MNT_LOCATION/gbl/dvl-$WSL_DISTRO_NAME/dvl to /home ...';
-cp --backup=$VERSION_CONTROL --remove-destination -arfv $_NIX_MNT_LOCATION/gbl/dvl-$WSL_DISTRO_NAME/dvl /home" > $HALO_RESTORE_SCRIPT;
+echo 'restoring $backup_mnt_location/gbl/dvl-$WSL_DISTRO_NAME/dvl to /home ...';
+cp --backup=$VERSION_CONTROL --remove-destination -arfv $backup_mnt_location/gbl/dvl-$WSL_DISTRO_NAME/dvl /home" > $HALO_RESTORE_SCRIPT;
 
 chown dvl:horns $HALO_RESTORE_SCRIPT;
 chmod +x $HALO_RESTORE_SCRIPT;

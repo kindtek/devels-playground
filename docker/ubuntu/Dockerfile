@@ -301,6 +301,7 @@ RUN sudo cp -fv /home/dvl/devels-work/devels-play/kernel/5_1519/amd/.config_0 /h
 # cd ../wsl2/ && sudo sed -i 's/\# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config && echo grep ZFS .config && \
 # yes "" | sudo make -j16 && sudo make modules_install && sudo mkdir -pv ../../../gbl/kernels && sudo cp -fv arch/x86/boot/bzImage ../../../gbl/kernels/linux-kernel-51519-a0 && \
 # && rm -rfv /hal/dls/*
+WORKDIR /home/dvl
 USER dvl
 
 # GUI - wsl2 required

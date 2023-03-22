@@ -49,7 +49,7 @@ sudo cp -arfv dwork/mnt/backup-dvl.sh ${backup_mnt_location}/gbl/backup-dvl.sh &
 
 HEL_DESTINATION="$backup_mnt_location/${_GBL}/dvl-$WSL_DISTRO_NAME"
 HEL_RESTORE_SCRIPT="$backup_mnt_location/dvl/restore-dvl-$WSL_DISTRO_NAME.sh"
-HEL_RESTORE_SCRIPT="$backup_mnt_location/gbl/restore-dvl-$WSL_DISTRO_NAME.sh"
+# HEL_RESTORE_SCRIPT="$backup_mnt_location/gbl/restore-dvl-$WSL_DISTRO_NAME.sh"
 
 
 echo "backing the /hel up to: $HEL_DESTINATION ..."
