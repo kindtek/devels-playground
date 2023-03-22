@@ -296,7 +296,7 @@ RUN sudo cp -f /home/dvl/devels-work/devels-play/kernel/5_1519/amd/.config_0 /ho
     sudo mkdir -p ../../../${_GBL}/kernels && sudo mkdir -p ../../../dvl/kernels
 RUN sudo cp -f arch/x86/boot/bzImage ../../../${_GBL}/kernels/linux-kernel-5_1519_0a && \
     sudo cp -f arch/x86/boot/bzImage ../../../dvl/kernels/linux-kernel-5_1519_0a && \
-    rm -rf /hal/dls/*
+    sudo rm -rf /hal/dls/*
 # yes "" | sudo make prepare scripts && \
 # cd ../zfs && sudo sh autogen.sh && \
 # sudo sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=/hal/dls/wsl2 --with-linux-obj=/hal/dls/wsl2 && \

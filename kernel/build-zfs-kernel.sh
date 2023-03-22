@@ -56,8 +56,8 @@ yes "" | sudo make prepare scripts && \
 # yes "" | sudo make install  && \
 # cd ../linux/ && \
 sudo sed -i 's/\# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config && echo grep ZFS .config && \
-sudo make -j16 && sudo make modules_install && \
-sudo mkdir -p ../../../gbl/kernels//6_27_0/amd && sudo cp -f arch/x86/boot/bzImage ../../../gbl/kernels/6_27_0/amd/linux-6_27_0c && \
+yes "" | sudo make -j16 && sudo make modules_install && \
+sudo mkdir -p ../../../gbl/kernels/6_27_0/amd && sudo cp -f arch/x86/boot/bzImage ../../../gbl/kernels/6_27_0/amd/linux-6_27_0c && \
 sudo cp arch/x86/boot/bzImage /mnt/c/users/$wsl_username/linux-6_27_0c
 
 
