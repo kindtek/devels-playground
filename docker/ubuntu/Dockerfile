@@ -57,11 +57,11 @@ USER ${_GBL}
 ENV PATH="$PATH:/home/${_GBL}/.local/bin:/hel/devels-work/scripts:/home/dvl/devels-work/devels-play/scripts"
 RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${mnt_data}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> /home/${_GBL}/.bashrc && \
     sudo cp -rf /home/${_GBL}/. /etc/skel/ && \
-    sudo rm /etc/skel/.sudo_as_admin_successful && \
-    echo 'sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target && \
-    sleep 20 && \
-    exec sudo nsenter -t "$(pidof -s systemd)" -a su - $LOGNAME && \
-    echo "exec sudo nsenter -t "$(pidof -s systemd)" -a su - $LOGNAME"' >> .bashrc
+    sudo rm /etc/skel/.sudo_as_admin_successful 
+RUN echo 'sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target \
+    sleep 20 \
+    exec sudo nsenter -t "$(pidof -s systemd)" -a su - $LOGNAME \
+    echo "\"exec sudo nsenter -t \"$(pidof -s systemd)\" -a su - $LOGNAME\"' | sudo tee .bashrc
 USER dvl
 
 # HEL volume/permissions builder
