@@ -178,7 +178,7 @@ USER dvl
 RUN ln -s devels-work dwork && ln -s devels-work/devels-play dplay && ln -s devels-play devels-work/dplay && \
     ln -s linux devels-work/devels-play/linux && \
     ln -s docker devels-work/devels-play/docker && \
-    ln -s devels-work/devels-play/docker/ub devels-work/devels-play/docker/ubuntu 
+    ln -s ub devels-work/devels-play/docker/ubuntu && \
     # && \
     sh devels-work/scripts/gh-auth-first-time-login.sh
 
