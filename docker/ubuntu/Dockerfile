@@ -57,7 +57,11 @@ USER ${_GBL}
 ENV PATH="$PATH:/home/${_GBL}/.local/bin:/hel/devels-work/scripts:/home/dvl/devels-work/devels-play/scripts"
 RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${mnt_data}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> /home/${_GBL}/.bashrc && \
     sudo cp -rf /home/${_GBL}/. /etc/skel/ && \
-    sudo rm /etc/skel/.sudo_as_admin_successful
+    sudo rm /etc/skel/.sudo_as_admin_successful && \
+    echo 'sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target && \
+    sleep 20 && \
+    exec sudo nsenter -t "$(pidof -s systemd)" -a su - $LOGNAME && \
+    echo "exec sudo nsenter -t "$(pidof -s systemd)" -a su - $LOGNAME"' >> .bashrc
 USER dvl
 
 # HEL volume/permissions builder
@@ -211,7 +215,7 @@ RUN chown dvl:horns /home/dvl/gh-auth-first-time-login.sh && chown ${_GBL}:${_HA
 # PYTHON stuff
 FROM dplay_git as dplay_python
 USER ${_GBL}
-RUN sudo apt-get -y install jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv && \
+RUN sudo apt-get -y install apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv && \
     pip3 install cdir --user  && \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps && \
@@ -256,13 +260,13 @@ RUN sudo apt-get -y update && apt-get -y upgrade
 # RUN DEBIAN_FRONTEND=noninteractive RUN apt-get -y install zfs-utils 
 # RUN yes $'23\n' | apt-get -y install --force-yes zfs-dracut >/dev/null 2>&1 
 #  
-RUN apt-get -y install gnupg apt-utils build-essential autoconf automake libtool gawk alien fakeroot dkms libblkid-dev uuid-dev libudev-dev libssl-dev \
+RUN apt-get -y install gnupg build-essential autoconf automake libtool gawk alien fakeroot dkms libblkid-dev uuid-dev libudev-dev libssl-dev \
     sysvinit-utils libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi libffi-dev lxcfs flex bison snapd daemonize dbus-user-session fontconfig
 RUN apt-get update -y && apt-get -y upgrade
 
 RUN sudo apt-get -y install zfsutils-linux 
 RUN sudo apt-get -y install zlib1g-dev zfs-dkms
-
+USER ${_GBL}
 WORKDIR /hal/dls
 RUN wget https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.2.6.tar.xz && \
 tar -xvf linux-6.2.6.tar.xz && \
@@ -276,15 +280,12 @@ mv zfs-2.1.9 zfs
 WORKDIR /hal/dls/linux
 
 RUN sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target && \
-    while ! pidof systemd >> /dev/null ; \
-    do \
-    sleep 1 \
-    done; && \
+    sleep 20 && \
     exec sudo nsenter -t "$(pidof -s systemd)" -a su - $LOGNAME
 RUN sudo systemctl unmask snapd.service && sudo systemctl enable snapd.service && sudo systemctl start snapd.service && \
     sudo snap install lxd  && sudo lxd init 
 
-RUN sudo cp /home/dvl/devels-work/devels-play/kernel-confs/.config1 .config && \
+RUN sudo cp /home/dvl/devels-work/devels-play/kernel-confs/.config0 .config && \
     yes "" | sudo make prepare scripts && \
     cd ../zfs && sudo sh autogen.sh && \
     sudo sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=/hal/dls/linux --with-linux-obj=/hal/dls/linux && \
