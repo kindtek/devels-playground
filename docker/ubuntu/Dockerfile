@@ -138,7 +138,7 @@ RUN sudo apt-get -y update && \
     sudo dpkg --configure -a && \
     # sudo apt-get upgrade -y libsnmp40 && \
     sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget wslu && \
-    sudo chmod +x devels-work/devels-play/mnt/backup-gbl.sh && \
+    sudo chmod +x devels-work/devels-play/mnt/bak/gbl/backup-gbl.sh && \
     sudo mkdir -pv ${mnt_data}/${_GBL}/${_GBL}-orig && \
     sudo mkdir -pv ${mnt_data}/${_GBL}/dvl-orig && \
     sudo mkdir -pv ${mnt_data}/dvl && \
@@ -147,14 +147,15 @@ RUN sudo apt-get -y update && \
     sudo chown dvl:horns -R ${mnt_data}/dvl && \
     sudo chown dvl:horns ${mnt_data}/${_GBL}/dvl-orig && \
     # copy newly pulled backup script to mount location and home dirs
-    sudo cp -arfv devels-work/devels-play/mnt/backup-gbl.sh ${mnt_data}/gbl/backup-gbl.sh && \
-    sudo cp -arfv devels-work/devels-play/mnt/backup-custom.sh ${mnt_data}/${_GBL}/backup-${_GBL}.sh && \
-    # sudo cp -arfv devels-work/devels-play/mnt/backup-custom.sh ${mnt_data}/gbl/backup-gbl.sh && cp -arfv devels-work/devels-play/mnt/backup-custom.sh /home/gbl/backup-gbl.sh && \
-    # sudo cp -arfv devels-work/devels-play/mnt/backup-dvl.sh ${mnt_data}/dvl/backup-dvl.sh && \
-    # sudo cp -arfv devels-work/devels-play/mnt/backup-dvl.sh ${mnt_data}/${_GBL}/backup-dvl.sh && \
-    # sudo cp -arfv devels-work/devels-play/mnt/backup-dvl.sh /home/dvl/backup-dvl.sh && \
+    sudo cp -arfv devels-work/devels-play/mnt/bak/gbl/backup-gbl.sh ${mnt_data}/gbl/backup-gbl.sh && \
+    sudo cp -arfv devels-work/devels-play/mnt/bak/custom/backup-custom.sh ${mnt_data}/${_GBL}/backup-${_GBL}.sh && \
+    # sudo cp -arfv devels-work/devels-play/mnt/bak/backup-custom.sh ${mnt_data}/gbl/backup-gbl.sh && cp -arfv devels-work/devels-play/mnt/bak/backup-custom.sh /home/gbl/backup-gbl.sh && \
+    # sudo cp -arfv devels-work/devels-play/mnt/dvl/bak/backup-dvl.sh ${mnt_data}/dvl/backup-dvl.sh && \
+    # sudo cp -arfv devels-work/devels-play/mnt/dvl/bak/backup-dvl.sh ${mnt_data}/${_GBL}/backup-dvl.sh && \
+    # sudo cp -arfv devels-work/devels-play/mnt/dvl/bak/backup-dvl.sh /home/dvl/backup-dvl.sh && \
     # copy contents in dplay/mnt/bak to mnt_data
     sudo cp -arfv devels-work/devels-play/mnt/bak/** ${mnt_data} && \
+    # overwrite gbl if default username or create custom
     sudo mv -fv ${mnt_data}/custom ${mnt_data}/${_GBL} && \
     # make rwx for owner and rx for group - none for others
     sudo chmod 750 -R ${mnt_data}/${_GBL} && \
@@ -177,9 +178,9 @@ RUN chown dvl:horns -R /home/dvl && chown ${_GBL}:${_HALOS} /home/gbl && \
     # setup gh ssh login 
     sudo chmod +x devels-work/scripts/gh-auth-first-time-login.sh && \
     # make backup script executable
-    sudo chmod ugo+x devels-work/devels-play/mnt/backup-gbl.sh && \
-    sudo chmod ugo+x devels-work/devels-play/mnt/backup-dvl.sh && \
-    sudo chmod ugo+x devels-work/devels-play/mnt/backup-custom.sh
+    sudo chmod ugo+x devels-work/devels-play/mnt/bak/gbl/backup-gbl.sh && \
+    sudo chmod ugo+x devels-work/devels-play/mnt/bak/dvl/backup-dvl.sh && \
+    sudo chmod ugo+x devels-work/devels-play/mnt/bak/custom/backup-custom.sh
 
 USER dvl
 # setup ssh gh login
@@ -222,7 +223,7 @@ RUN sudo apt-get -y install apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps && \
     sudo cp -rfv /home/${_GBL}/.local/bin /usr/local && \
-    sudo cp -rfv /home/${_GBL}/.local /etc/skel/ &&  sudo rm /etc/skel/bak && \
+    sudo cp -rfv /home/${_GBL}/.local /etc/skel/ &&  sudo rm -r /etc/skel/bak && \
     sudo cp -rfv /home/${_GBL}/.local /home/dvl/ && sudo chown -R dvl:horns /home/dvl
 USER dvl
 
@@ -305,7 +306,9 @@ WORKDIR /home/dvl
 USER dvl
 
 # GUI - wsl2 required
-FROM dplay_kernel as dplay_gui
+FROM dplay_dind as dplay_gui
+COPY --from=dplay_kernel /home/gbl/kernels /home/gbl
+COPY --from=dplay_kernel /home/dvl/kernels /home/dvl
 USER ${_GBL}
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
 RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg && \
@@ -314,19 +317,29 @@ RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https
     sudo apt-get -yq update && \
     sudo apt-get -y install brave-browser && \
     # now no longeer need to add --disable-gpu flag everytime
-    # cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
-    # # change last line of this file - fix for brave-browser displaying empty windows
-    # head -n -1 /opt/brave.com/brave/brave-browser.old > /opt/brave.com/brave/brave-browser && \
-    # echo '"$HERE/brave" "$@" " --disable-gpu " || true' >> /opt/brave.com/brave/brave-browser && \
-    cd /opt/brave.com/brave && \
-    brave_old_line='\"\$HERE\/brave\"\s\"\$\@\"\s\|\|\strue' && \
-    brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
-    sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl && \
+    cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
+    # change last line of this file - fix for brave-browser displaying empty windows
+    head -n -1 /opt/brave.com/brave/brave-browser.old > /opt/brave.com/brave/brave-browser && \
+    echo '"$HERE/brave" "$@" " --disable-gpu " || true' >> /opt/brave.com/brave/brave-browser && \
+    # this is a better way to do this but needs work
+    # cd /opt/brave.com/brave && \
+    # brave_old_line='\"\$HERE\/brave\"\s\"\$\@\"\s\|\|\strue' && \
+    # brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
+    # sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl && \
     sudo apt-get -y install x11-apps xfce4 && \
     sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -yq install gnome-session gdm3 gimp gedit nautilus vlc 
 USER dvl
 
+FROM dplay_gui AS dplay_gui-phat
+COPY --from=dplay_kernel ./ ./
+
 FROM dplay_gui as dplay_cuda
+USER ${_GBL}
+# CUDA
+RUN sudo apt-get -y install nvidia-cuda-toolkit
+USER dvl
+
+FROM dplay_gui_phat as dplay_cuda_phat
 USER ${_GBL}
 # CUDA
 RUN sudo apt-get -y install nvidia-cuda-toolkit
