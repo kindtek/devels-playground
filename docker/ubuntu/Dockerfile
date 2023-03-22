@@ -185,10 +185,10 @@ USER dvl
     # add symlinks for convenience
 RUN ln -s devels-work dwork && ln -s devels-work/devels-play dplay && ln -s devels-play devels-work/dplay && \
     ln -s linux devels-work/devels-play/linux && \
-    ln -s docker devels-work/devels-play/docker && \
-    ln -s ub devels-work/devels-play/docker/ubuntu && \
-    # && \
-    sh devels-work/scripts/gh-auth-first-time-login.sh
+    # ln -s ub devels-work/devels-play/docker/ubuntu && \
+    # ln -s kernel devels-work/devels-play/kernel && \
+    ln -s docker devels-work/devels-play/docker
+    # sh devels-work/scripts/gh-auth-first-time-login.sh
 
 
 # GIT
@@ -261,38 +261,47 @@ RUN sudo apt-get -y update && apt-get -y upgrade
 # RUN yes $'23\n' | apt-get -y install --force-yes zfs-dracut >/dev/null 2>&1 
 #  
 RUN apt-get -y install gnupg build-essential autoconf automake libtool gawk alien fakeroot dkms libblkid-dev uuid-dev libudev-dev libssl-dev \
-    sysvinit-utils libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi libffi-dev lxcfs flex bison snapd daemonize dbus-user-session fontconfig
-RUN apt-get update -y && apt-get -y upgrade
-RUN sudo apt-get -y install zfsutils-linux 
-RUN sudo apt-get -y install zlib1g-dev zfs-dkms
+    sysvinit-utils libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi libffi-dev lxcfs flex bison bc snapd daemonize dbus-user-session fontconfig dwarves
+
+# # RUN sudo apt-get -y install zfsutils-linux 
+# RUN apt-get update -y && apt-get -y upgrade && \
+#     sudo apt-get -y install --no-install-recommends zfsutils-linux  && \
+#     sudo dpkg-reconfigure --frontend noninteractive zfsutils-linux  
+
+# RUN sudo apt-get -y install zfsutils-linux zlib1g-dev zfs-dkms zstd zsys zfs-dracut zfs-zed
 USER ${_GBL}
-WORKDIR /hal/dls
-RUN wget https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.2.6.tar.xz && \
-tar -xvf linux-6.2.6.tar.xz && \
-mv linux-6.2.6 && \
-cd linux && \
-wget https://github.com/openzfs/zfs/releases/download/zfs-2.1.9/zfs-2.1.9.tar.gz && \
-tar -xvf zfs-2.1.9.tar.gz && \
-mv zfs-2.1.9 zfs
+WORKDIR /home/${_GBL}/dls
+# RUN wget https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.2.7.tar.xz
+# RUN tar -xvf linux-6.2.7.tar.xz
+# RUN mv linux-6.2.7 linux
+# RUN cd zfs && \
+# wget https://github.com/openzfs/zfs/releases/download/zfs-2.1.9/zfs-2.1.9.tar.gz && \
+# tar -xvf zfs-2.1.9.tar.gz && \
+# mv zfs-2.1.9 zfs
+RUN sudo apt install build-essential flex bison libssl-dev libelf-dev git dwarves && \
+git clone https://github.com/microsoft/WSL2-Linux-Kernel.git --progress --depth=1 --single-branch   && \
+mv WSL2-Linux-Kernel wsl2
 # #  && \
 # WORKDIR $PATH/devels-work/devels-play/linux
 # WORKDIR /hal/dls/linux
-WORKDIR /hal/dls/wsl2
-RUN sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target && \
-    sleep 20 && \
-    exec sudo nsenter -t "$(pidof -s systemd)" -a su - $LOGNAME
-RUN sudo systemctl unmask snapd.service && sudo systemctl enable snapd.service && sudo systemctl start snapd.service && \
-    sudo snap install lxd  && sudo lxd init 
-
-RUN sudo cp /home/dvl/devels-work/devels-play/kernel-confs/5_1519/.config0 .config && \
-    yes "" | sudo make prepare scripts && \
-    cd ../zfs && sudo sh autogen.sh && \
-    sudo sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=/hal/dls/wsl2 --with-linux-obj=/hal/dls/wsl2 && \
-    sudo sh copy-builtin ../wsl2 && \
-    sudo make install  && \
-    cd ../wsl2/ && sudo sed -i 's/# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config && echo grep ZFS .config && \
-    sudo make -j16 && sudo make modules_install && sudo mkdir -p ../../../gbl/kernels && sudo cp -f arch/x86/boot/bzImage ../../../gbl/kernels/linux-kernel-51519-a0 && \
-    && rm -rf /hal/dls/*
+WORKDIR /home/${_GBL}/dls/wsl2
+# RUN sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target && \
+#     sleep 13 && \
+#     exec sudo nsenter -t "$(pidof -s systemd)" -a su - $LOGNAME
+# RUN sudo systemctl unmask snapd.service && sudo systemctl enable snapd.service && sudo systemctl start snapd.service && \
+#     sudo snap install lxd 
+RUN sudo cp /home/dvl/devels-work/devels-play/kernel/5_1519/.config0 /home/${_GBL}/dls/wsl2/.config && \
+    sudo chown ${_GBL}:${_HALOS} .config && \
+    yes "" | make -j $(expr $(nproc) - 1) && sudo make modules_install && sudo mkdir -p ../../../${_GBL}/kernels && sudo cp -f arch/x86/boot/bzImage ../../../gbl/kernels/linux-kernel-51519-a0 && \
+    rm -rf /hal/dls/*
+    # yes "" | sudo make prepare scripts && \
+    # cd ../zfs && sudo sh autogen.sh && \
+    # sudo sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=/hal/dls/wsl2 --with-linux-obj=/hal/dls/wsl2 && \
+    # sudo sh copy-builtin ../wsl2 && \
+    # yes "" | sudo make install  && \
+    # cd ../wsl2/ && sudo sed -i 's/\# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config && echo grep ZFS .config && \
+    # yes "" | sudo make -j16 && sudo make modules_install && sudo mkdir -p ../../../gbl/kernels && sudo cp -f arch/x86/boot/bzImage ../../../gbl/kernels/linux-kernel-51519-a0 && \
+    # && rm -rf /hal/dls/*
 USER dvl
 
 # GUI - wsl2 required
