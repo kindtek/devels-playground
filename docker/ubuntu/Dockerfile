@@ -97,7 +97,7 @@ RUN git config --global --add safe.directory /home/dvl && \
     git config --global --add safe.directory /hel && \
     git config --global --add safe.directory /home/dvl/devels-play 
 # clone fresh repos and give dvl ownership
-RUN git clone https://github.com/kindtek/devels-work --depth=1
+RUN git clone https://github.com/kindtek/devels-work --depth=1 --single-branch
 # RUN git clone https://github.com/kindtek/devels-work --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
 # --filter=combine:tree:depth:1+blob:limit=10240000  --recurse-submodules --remote-submodules  --single-branch  --no-tags --filter=blob:limit=1024000 --single-branch --branch main
 WORKDIR /home/dvl/devels-work
