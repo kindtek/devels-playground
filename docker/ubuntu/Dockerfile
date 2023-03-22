@@ -290,9 +290,12 @@ WORKDIR /home/${_GBL}/dls/wsl2
 #     exec sudo nsenter -t "$(pidof -s systemd)" -a su - $LOGNAME
 # RUN sudo systemctl unmask snapd.service && sudo systemctl enable snapd.service && sudo systemctl start snapd.service && \
 #     sudo snap install lxd 
-RUN sudo cp /home/dvl/devels-work/devels-play/kernel/5_1519/.config0 /home/${_GBL}/dls/wsl2/.config && \
+RUN sudo cp -f /home/dvl/devels-work/devels-play/kernel/5_1519/amd/.config_0 /home/${_GBL}/dls/wsl2/.config && \
     sudo chown ${_GBL}:${_HALOS} .config && \
-    yes "" | make -j $(expr $(nproc) - 1) && sudo make modules_install && sudo mkdir -p ../../../${_GBL}/kernels && sudo cp -f arch/x86/boot/bzImage ../../../gbl/kernels/linux-kernel-51519-a0 && \
+    yes "" | sudo make -j $(expr $(nproc) - 1) && sudo make modules_install && \
+    sudo mkdir -p ../../../${_GBL}/kernels && sudo mkdir -p ../../../dvl/kernels
+RUN sudo cp -f arch/x86/boot/bzImage ../../../${_GBL}/kernels/linux-kernel-5_1519_0a && \
+    sudo cp -f arch/x86/boot/bzImage ../../../dvl/kernels/linux-kernel-5_1519_0a && \
     rm -rf /hal/dls/*
 # yes "" | sudo make prepare scripts && \
 # cd ../zfs && sudo sh autogen.sh && \

@@ -8,6 +8,7 @@ sudo apt-get install -y autoconf automake libtool gawk alien apt-utils fakeroot 
 
 sudo apt-get -y remove zfsutils-linux zlib1g-dev zfs-dkms zstd zsys zfs-dracut zfs-zed
 
+########################################################################################
 
 wget https://github.com/openzfs/zfs/releases/download/zfs-2.1.9/zfs-2.1.9.tar.gz
 tar -xvf zfs-2.1.9.tar.gz
@@ -36,7 +37,7 @@ sudo cp arch/x86/boot/bzImage /mnt/c/users/$wsl_username/amd/5_1519/linux-5_1519
 # RUN sudo systemctl unmask snapd.service && sudo systemctl enable snapd.service && sudo systemctl start snapd.service && \
 #     sudo snap install lxd 
 
-
+#################################################################################
 
 
 
@@ -48,13 +49,35 @@ cd linux
 wsl_username=$(wslvar USERNAME)
 sudo cp /home/dvl/devels-work/devels-play/kernel/6_27/amd/.config_0 .config && \
 sudo chown $LOGNAME:$(id -gn) .config && \
-
 yes "" | sudo make prepare scripts && \
-cd ../zfs && sudo sh autogen.sh && \
-sudo sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=/hal/dls/linux --with-linux-obj=/hal/dls/linux && \
-sudo sh copy-builtin ../linux && \
-yes "" | sudo make install  && \
-cd ../linux/ && sudo sed -i 's/\# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config && echo grep ZFS .config && \
-yes "" | sudo make -j16 && sudo make modules_install && \
-sudo mkdir -p ../../../gbl/kernels && sudo cp -f arch/x86/boot/bzImage ../../../gbl/kernels/amd/6_27_0/linux-6_27_0a && \
-sudo cp arch/x86/boot/bzImage /mnt/c/users/$wsl_username/amd/6_27_0/linux-6_27_0a
+# cd ../zfs && sudo sh autogen.sh && \
+# sudo sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=/hal/dls/linux --with-linux-obj=/hal/dls/linux && \
+# sudo sh copy-builtin ../linux && \
+# yes "" | sudo make install  && \
+# cd ../linux/ && \
+sudo sed -i 's/\# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config && echo grep ZFS .config && \
+sudo make -j16 && sudo make modules_install && \
+sudo mkdir -p ../../../gbl/kernels//6_27_0/amd && sudo cp -f arch/x86/boot/bzImage ../../../gbl/kernels/6_27_0/amd/linux-6_27_0c && \
+sudo cp arch/x86/boot/bzImage /mnt/c/users/$wsl_username/linux-6_27_0c
+
+
+
+###############################################################################################
+cd /home/gbl/dls && rm -rf linux && \
+wget https://git.kernel.org/torvalds/t/linux-6.3-rc3.tar.gz && \
+tar -xvf linux-6.3-rc3.tar.gz && \
+mv linux-6.3-rc3 linux && \
+cd linux && \
+# wsl_username=$(wslvar USERNAME)
+sudo cp /hel/devels-work/devels-play/kernel/6_3-rc/.config_0 .config && \
+sudo chown $LOGNAME:$(id -gn) .config && \
+yes "" | sudo make prepare scripts && \
+# cd ../zfs && sudo sh autogen.sh && \
+# sudo sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=/hal/dls/linux --with-linux-obj=/hal/dls/linux && \
+# sudo sh copy-builtin ../linux && \
+# yes "" | sudo make install  && \
+# cd ../linux/ && \
+# sudo sed -i 's/\# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config && echo grep ZFS .config && \
+sudo make -j16 && sudo make modules_install && \
+sudo mkdir -p ../../../gbl/kernels/6_3-rc/amd && sudo cp -f arch/x86/boot/bzImage ../../../gbl/kernels/6_3-rc/amd/linux-6_3rc_a && \
+sudo cp arch/x86/boot/bzImage /mnt/c/users/$wsl_username/linux-6_3rc_a
