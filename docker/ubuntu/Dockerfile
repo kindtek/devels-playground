@@ -128,10 +128,8 @@ USER ${_GBL}
 #     git config --global --add safe.directory /home/gbl && \
 #     git config --global --add safe.directory /hal
 RUN DEBIAN_FRONTEND=noninteractive sudo apt-get -y update && \
-sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget && \
-sudo apt-get install -y --no-install-recommends tzdata
-
-
+    sudo apt-get install -y --no-install-recommends tzdata && \
+sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget
 # RUN sudo sh devels-work/scripts/gh-auth-first-time-login.sh ${_GBL}
 RUN sudo chmod +x devels-work/devels-play/mnt/backup-gbl.sh 
 RUN sudo mkdir -p ${mnt_data}/${_GBL}/${_GBL}-orig 
