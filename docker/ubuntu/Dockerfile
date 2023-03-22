@@ -4,9 +4,12 @@ FROM ubuntu:latest AS dplay_init
 ARG _GBL=${_GBL:-gbl}
 ARG _HALOS=${_HALOS:-halos}
 ARG mnt_data=${mnt_data:-/mnt/data}
+ARG DEBIAN_FRONTEND=noninteractive
+RUN echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
+    echo 'tzdata tzdata/Zones/America select Los Angeles' | debconf-set-selections
 RUN addgroup --gid 777 ${_HALOS} && \
     addgroup --gid 666 horns && \
-    adduser --home /home/${_GBL} --ingroup ${_HALOS} --shell /bin/bash --uid 777 --disabled-password ${_GBL} && \
+    adduser --home /home/${_GBL} --ingroup ${_HALOS} --shell /bin/bash --uid 1000 --disabled-password ${_GBL} && \
     adduser --system --home /home/host --ingroup ${_HALOS} --shell /bin/bash --uid 76667 --disabled-password host && \
     adduser --home /home/dvl --ingroup horns --shell /bin/bash --uid 666 --disabled-password dvl && \
     # ensure no passwords
@@ -124,7 +127,10 @@ USER ${_GBL}
 # RUN sudo chown ${_GBL}:${_HALOS} -R ${mnt_data}/${_GBL} /home/${_GBL}  \
 #     git config --global --add safe.directory /home/gbl && \
 #     git config --global --add safe.directory /hal
-RUN sudo apt-get -y update && sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget
+RUN DEBIAN_FRONTEND=noninteractive sudo apt-get -y update && \
+sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget && \
+sudo apt-get install -y --no-install-recommends tzdata
+
 
 # RUN sudo sh devels-work/scripts/gh-auth-first-time-login.sh ${_GBL}
 RUN sudo chmod +x devels-work/devels-play/mnt/backup-gbl.sh 
