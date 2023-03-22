@@ -200,15 +200,15 @@ RUN cp -rf devels-work/scripts/gh-auth-first-time-login.sh /home/dvl
 RUN cp -rf devels-work/scripts/gh-auth-first-time-login.sh /home/${_GBL} 
 RUN chmod og+x /home/dvl/gh-auth-first-time-login.sh && chmod og+x /home/${_GBL}/gh-auth-first-time-login.sh
 RUN chown dvl:horns /home/dvl/gh-auth-first-time-login.sh && chown ${_GBL}:${_HALOS} /home/${_GBL}/gh-auth-first-time-login.sh 
-# USER dvl
-# WORKDIR /home/dvl/devels-work
-# WORKDIR /home/dvl
-# RUN sh gh-auth-first-time-login.sh dvl
-# RUN rm gh-auth-first-time-login.sh
-# USER ${_GBL}
-# WORKDIR /home/${_GBL}
-# RUN sh gh-auth-first-time-login.sh ${_GBL}
-# RUN rm gh-auth-first-time-login.sh
+USER dvl
+WORKDIR /home/dvl/devels-work
+WORKDIR /home/dvl
+RUN sh gh-auth-first-time-login.sh dvl
+RUN rm gh-auth-first-time-login.sh
+USER ${_GBL}
+WORKDIR /home/${_GBL}
+RUN sh gh-auth-first-time-login.sh ${_GBL}
+RUN rm gh-auth-first-time-login.sh
 
 
 
