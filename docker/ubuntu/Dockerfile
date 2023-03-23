@@ -53,10 +53,9 @@ RUN usermod -aG ${_HALOS} host && \
 # copy to skel and /hel, add common paths
 USER ${_GBL}
 ENV PATH="$PATH:/home/${_GBL}/.local/bin:/hel/devels-work/scripts:/home/dvl/devels-work/devels-play/scripts"
-RUN echo 'export WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c \"set verbose showmode\""'  >> /home/${_GBL}/.bashrc && \
+RUN echo 'export WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'"'set verbose showmode'"'"'"'  >> /home/${_GBL}/.bashrc && \
     sudo cp -rfv /home/${_GBL}/. /etc/skel/ && \
-    sudo rm /etc/skel/.sudo_as_admin_successful && \
-    echo 'sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\nexec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\necho "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/${_GBL}/.bashrc
+    sudo rm /etc/skel/.sudo_as_admin_successful 
 USER dvl
                                                                                                                                              
                                                                                                                                                       
@@ -95,11 +94,11 @@ RUN git config --global --add safe.directory /home/dvl && \
     git config --global --add safe.directory /hel && \
     git config --global --add safe.directory /home/dvl/devels-play && \
     # clone fresh repos and give dvl ownership
-    git clone https://github.com/kindtek/devels-work --depth=1 --single-branch
+    git clone https://github.com/kindtek/devels-work --depth=1 --single-branch --progress
 # RUN git clone https://github.com/kindtek/devels-work --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
 # --filter=combine:tree:depth:1+blob:limit=10240000  --recurse-submodules --remote-submodules  --single-branch  --no-tags --filter=blob:limit=1024000 --single-branch --branch main
 WORKDIR /home/dvl/devels-work
-RUN git pull && git submodule update --init --remote --depth=1
+RUN git pull && git submodule update --init --remote --depth=1 --progress
 WORKDIR /home/dvl
 # && \
 # if [ -d "${mnt_data}/dvl" ]; then \
@@ -262,7 +261,9 @@ RUN sudo cp -fv /home/dvl/devels-work/devels-play/kernel/5_1519/amd/.config_0 /h
     sudo mkdir -pv ../../../${_GBL}/kernels && sudo mkdir -pv ../../../dvl/kernels && \
     sudo cp -fv arch/x86/boot/bzImage ../../../${_GBL}/kernels/linux-kernel-5_1519_0a && \
     sudo cp -fv arch/x86/boot/bzImage ../../../dvl/kernels/linux-kernel-5_1519_0a && \
-    sudo rm -rfv /hal/dls/*
+    sudo rm -rfv /hal/dls/* && \
+    echo '# sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/${_GBL}/.bashrc
+
 WORKDIR /home/dvl
 USER dvl
 
