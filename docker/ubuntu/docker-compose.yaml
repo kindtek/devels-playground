@@ -1,5 +1,5 @@
 version: "3.9"
-name: devels-play-ubuntu
+name: dvl-playg-ubuntu
 services:
 
   initialize:
@@ -124,7 +124,7 @@ services:
       - hal-data:/home/${_AGL:-agl}
       - /mnt/data
     labels:
-      com.devels-play.description: "basics + git"
+      com.dvl-playg.description: "basics + git"
 
   python:
     extends: git
@@ -133,7 +133,7 @@ services:
       context: .
       target: dvlp_python
     labels:
-      com.devels-play.description: "basics + git + powerhell"
+      com.dvl-playg.description: "basics + git + powerhell"
 
   msdot:
     extends: git
@@ -142,7 +142,7 @@ services:
       context: .
       target: dvlp_msdot
     labels:
-      com.devels-play.description: "basics + git + powerhell"
+      com.dvl-playg.description: "basics + git + powerhell"
 
   dind:
     extends: git
@@ -151,7 +151,7 @@ services:
       context: .
       target: dvlp_dind
     labels:
-      com.devels-play.description: "basics + git + powerhell + docker"
+      com.dvl-playg.description: "basics + git + powerhell + docker"
 
   kernel:
     extends: git
@@ -160,7 +160,7 @@ services:
       context: .
       target: dvlp_kernel
     labels:
-      com.devels-play.description: "basics + git + powerhell + docker + kernel"
+      com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
 
   kernel_phat:
     extends: git
@@ -169,7 +169,7 @@ services:
       context: .
       target: dvlp_kernel-phat
     labels:
-      com.devels-play.description: "basics + git + powerhell + docker + kernel"
+      com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
 
   gui:
     extends: git
@@ -178,7 +178,7 @@ services:
       context: .
       target: dvlp_gui
     labels:
-      com.devels-play.description: "basics + git + powerhell + docker + kernel + gui"
+      com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
 
   gui_phat:
     extends: git
@@ -187,7 +187,7 @@ services:
       context: .
       target: dvlp_gui-phat
     labels:
-      com.devels-play.description: "basics + git + powerhell + docker + kernel + gui"
+      com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
   # cuda:
   #   extends: gui
   #   image: kindtek/dvlp:ubuntu-cuda

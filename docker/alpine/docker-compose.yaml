@@ -1,5 +1,5 @@
 version: '3.8'
-name: devels-work-alpine
+name: dvl-works-alpine
 services:
   skel:
     entrypoint:

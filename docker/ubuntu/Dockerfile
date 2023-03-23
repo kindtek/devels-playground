@@ -52,7 +52,7 @@ RUN usermod -aG ${_HALOS} host && \
 # echo "//${mnt_data}/${_AGL} /home/${_AGL} cifs _AGL=${_AGL}, file_mode=0777,dir_mode=0777 0 0\n/${mnt_data}/dvl /home/dvl cifs _AGL=dvl, file_mode=0777, dir_mode=0777 0 0" >> /etc/fstab && \
 # copy to skel and /hel, add common paths
 USER ${_AGL}
-ENV PATH="$PATH:/home/${_AGL}/.local/bin:/hel/devels-work/scripts:/home/dvl/devels-work/devels-play/scripts"
+ENV PATH="$PATH:/home/${_AGL}/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvl-playg/scripts"
 RUN echo 'export WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"'  >> /home/${_AGL}/.bashrc && \
     sudo cp -rfv /home/${_AGL}/. /etc/skel/ && \
     sudo rm /etc/skel/.sudo_as_admin_successful 
@@ -75,7 +75,7 @@ RUN ln -s /home/dvl /hel && \
 # sudo adduser dvl sudo && \
 USER dvl
 # add common paths
-ENV PATH="$PATH:/home/dvl/.local/bin:/hel/devels-work/scripts:/home/dvl/devels-work/devels-play/scripts"
+ENV PATH="$PATH:/home/dvl/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvl-playg/scripts"
 
 # DATA helper
 FROM dvlp_hel AS dvlp_data
@@ -88,12 +88,12 @@ WORKDIR /home/dvl
 # add safe directories
 RUN git config --global --add safe.directory /home/dvl && \
     git config --global --add safe.directory /hel && \
-    git config --global --add safe.directory /home/dvl/devels-play && \
+    git config --global --add safe.directory /home/dvl/dvl-playg && \
     # clone fresh repos and give dvl ownership
-    git clone https://github.com/kindtek/devels-work --depth=1 --single-branch --progress
-# RUN git clone https://github.com/kindtek/devels-work --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
+    git clone https://github.com/kindtek/dvl-works --depth=1 --single-branch --progress
+# RUN git clone https://github.com/kindtek/dvl-works --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
 # --filter=combine:tree:depth:1+blob:limit=10240000  --recurse-submodules --remote-submodules  --single-branch  --no-tags --filter=blob:limit=1024000 --single-branch --branch main
-WORKDIR /home/dvl/devels-work
+WORKDIR /home/dvl/dvl-works
 RUN git pull && git submodule update --init --remote --depth=1 --progress
 WORKDIR /home/dvl
 # && \
@@ -132,10 +132,10 @@ RUN sudo apt-get -y update && \
     # sudo apt-get upgrade -y libsnmp40 && \
     sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget wslu && \
     # make gh files executable
-    sudo chmod +x devels-work/devels-play/mnt/bak/*/backup-*.sh && \
-    sudo chmod +x devels-work/scripts/gh-auth-first-time-login.sh && \
+    sudo chmod +x dvl-works/dvl-playg/mnt/bak/*/backup-*.sh && \
+    sudo chmod +x dvl-works/scripts/gh-auth-first-time-login.sh && \
     # copy gh files to mount location and home dirs
-    sudo mkdir -p ${mnt_data} && sudo cp -arfv devels-work/devels-play/mnt/bak/** ${mnt_data} && sudo chown ${_AGL}:${_HALOS} -Rv ${mnt_data} && \
+    sudo mkdir -p ${mnt_data} && sudo cp -arfv dvl-works/dvl-playg/mnt/bak/** ${mnt_data} && sudo chown ${_AGL}:${_HALOS} -Rv ${mnt_data} && \
     sudo mv -unv ${mnt_data}/custom ${mnt_data}/${_AGL} && \
     sudo ln -s ${mnt_data}/agl /home/agl/bak && sudo chown -Rv ${_AGL}:${_HALO} /home/agl/bak && \
     sudo ln -sf ${mnt_data}/${_AGL} /home/${_AGL}/bak && sudo chown -Rv ${_AGL}:${_HALO} /home/${_AGL}/bak && \
@@ -154,22 +154,22 @@ RUN sudo apt-get -y update && \
 USER dvl
 # setup ssh gh login
 # add symlinks for convenience
-RUN ln -s devels-work dvlw && \
-    ln -s devels-work/devels-play dvlp && \
-    ln -s devels-play devels-work/dvlp && \
-    ln -s devels-work/devels-play/linux linux && \
-    ln -s devels-work/devels-play/docker/ubuntu ub && \
-    ln -s devels-work/devels-play/kernel kernel && \
-    ln -s docker devels-work/devels-play/docker docker
-# sh devels-work/scripts/gh-auth-first-time-login.sh
+RUN ln -s dvl-works dvlw && \
+    ln -s dvl-works/dvl-playg dvlp && \
+    ln -s dvl-playg dvl-works/dvlp && \
+    ln -s dvl-works/dvl-playg/linux linux && \
+    ln -s dvl-works/dvl-playg/docker/ubuntu ub && \
+    ln -s dvl-works/dvl-playg/kernel kernel && \
+    ln -s docker dvl-works/dvl-playg/docker docker
+# sh dvl-works/scripts/gh-auth-first-time-login.sh
 
 # GIT
 FROM dvlp_skel as dvlp_git
 WORKDIR /home/dvl
 USER root
 # copy and set ownership
-RUN cp -rfv devels-work/scripts/gh-auth-first-time-login.sh /home/dvl && \
-    cp -rfv devels-work/scripts/gh-auth-first-time-login.sh /home/${_AGL}  && \
+RUN cp -rfv dvl-works/scripts/gh-auth-first-time-login.sh /home/dvl && \
+    cp -rfv dvl-works/scripts/gh-auth-first-time-login.sh /home/${_AGL}  && \
     chmod og+x /home/dvl/gh-auth-first-time-login.sh && chmod og+x /home/${_AGL}/gh-auth-first-time-login.sh && \
     chown dvl:horns /home/dvl/gh-auth-first-time-login.sh && chown ${_AGL}:${_HALOS} /home/${_AGL}/gh-auth-first-time-login.sh 
 USER dvl
@@ -228,7 +228,7 @@ RUN sudo apt install build-essential flex bison libssl-dev libelf-dev git dwarve
     git clone https://github.com/microsoft/WSL2-Linux-Kernel.git --progress --depth=1 --single-branch   && \
     mv -v WSL2-Linux-Kernel wsl2
 WORKDIR /home/${_AGL}/dls/wsl2
-RUN sudo cp -fv /home/dvl/devels-work/devels-play/kernel/5_1519/amd/.config_0 /home/${_AGL}/dls/wsl2/.config && \
+RUN sudo cp -fv /home/dvl/dvl-works/dvl-playg/kernel/5_1519/amd/.config_0 /home/${_AGL}/dls/wsl2/.config && \
     sudo chown ${_AGL}:${_HALOS} .config && \
     yes "" | sudo make -j $(expr $(nproc) - 1) && sudo make modules_install && \
     sudo mkdir -pv ../../../${_AGL}/kernels && sudo mkdir -pv ../../../dvl/kernels && \

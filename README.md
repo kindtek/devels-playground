@@ -52,7 +52,7 @@ Images now include:
   - Docker
 
 ```bat
-git clone https://github.com/kindtek/devels-play
+git clone https://github.com/kindtek/dvl-playg
 scripts/wsl-docker-import
 ```
 
@@ -72,10 +72,10 @@ If you want to easily install or already have installed
 Paste one line into a command prompt ([CMD or Powershell](https://www.wikihow.com/Open-Terminal-in-Windows))
 
 ```bat
-powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell-remote/devels-work/download-everything-and-install.ps1 -OutFile install-kindtek-devels-work.ps1; powershell.exe -executionpolicy remotesigned -File install-kindtek-devels-work.ps1"
+powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell/dvl-works/download-everything-and-install.ps1 -OutFile install-kindtek-dvl-works.ps1; powershell.exe -executionpolicy remotesigned -File install-kindtek-dvl-works.ps1"
 ```
 
-[More details here](https://github.com/kindtek/devels-work#idle-hands-are-the-developers-workshop)
+[More details here](https://github.com/kindtek/dvl-works#idle-hands-are-the-developers-workshop)
 
 ---
 

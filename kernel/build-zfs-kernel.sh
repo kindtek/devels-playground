@@ -21,7 +21,7 @@ cd wsl2
 # cp Microsoft/config-wsl .config
 # make -j $(expr $(nproc) - 1)
 wsl_username=$(wslvar USERNAME)
-sudo cp /home/dvl/devels-work/devels-play/kernel/amd/5_1519/.config_zfs .config && \
+sudo cp /home/dvl/dvl-works/dvl-playg/kernel/amd/5_1519/.config_zfs .config && \
 sudo chown $LOGNAME:$(id -gn) .config && \
 
 yes "" | sudo make prepare scripts && \

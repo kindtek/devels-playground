@@ -1,5 +1,5 @@
 version: "3.8"
-name: devels-work-ubuntu
+name: dvl-works-ubuntu
 services:
   # chown-hel:
   #   # Need a user priviliged enough to chown

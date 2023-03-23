@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/dvl/devels-play/linux",
-      "program": "/home/dvl/devels-play/linux/build/Debug/outDebug",
+      "cwd": "/home/dvl/dvl-playg/linux",
+      "program": "/home/dvl/dvl-playg/linux/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
