@@ -148,7 +148,7 @@ RUN sudo apt-get -y update && \
     # sudo cp -arfv devels-work/devels-play/mnt/dvl/bak/backup-dvl.sh /home/dvl/backup-dvl.sh && \
     # copy contents in dplay/mnt/bak to mnt_data
     sudo cp -arfv devels-work/devels-play/mnt/bak/** ${mnt_data} && \
-    sudo mv ${mnt_data}/bak/custom ${mnt_data}/bak/custom-orig && sudo chown -R ${_GBL}:${_HALO} ${mnt_data}/bak/custom-orig && \
+    sudo mv -u ${mnt_data}/custom ${mnt_data}/${_GBL} && sudo chown -R ${_GBL}:${_HALO} ${mnt_data}/bak/custom-orig && \
     sudo ln -s ${mnt_data}/${_GBL} /home/${_GBL}/bak && sudo chown -R ${_GBL}:${_HALO} /home/${_GBL}/bak && \
     # sudo ln -s ${mnt_data}/dvl /home/dvl/bak && sudo chown -R dvl:horns /home/dvl/bak && \
     # overwrite gbl if default username or create custom
