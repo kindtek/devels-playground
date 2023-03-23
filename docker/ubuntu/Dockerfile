@@ -27,9 +27,9 @@ USER root
 RUN usermod -aG ${_HALOS} host && \
     # usermod -aG horns ${_GBL} && \
     usermod -aG sudo ${_GBL} && \
-    # chown -R ${_GBL}:${_HALOS} /home/${_GBL} \
-    chown -R host:${_HALOS} /home/host && \
-    chown -R ${_GBL}:${_HALOS} /home/${_GBL} && \
+    # chown -Rv ${_GBL}:${_HALOS} /home/${_GBL} \
+    chown -Rv host:${_HALOS} /home/host && \
+    chown -Rv ${_GBL}:${_HALOS} /home/${_GBL} && \
     apt-get update -yq && \
     apt-get upgrade -y && \
     # non-root will need to use sudo from now on
@@ -40,12 +40,12 @@ RUN usermod -aG ${_HALOS} host && \
     # sudo adduser host sudo && \
     # set up /hal folder as symbolic link to /home/gbl 
     ln -s /home/${_GBL} /hal && \
-    chown -R ${_GBL}:${_HALOS} /hal && \
+    chown -Rv ${_GBL}:${_HALOS} /hal && \
     # TODO: add a "readme" here
     touch /hal/o.world && \
     # set up .ssh and dls directories and make sure .ssh has proper permissions
     mkdir -pv /hal/.ssh /hal/dls && chmod 700 /hal/.ssh && \
-    chown -R ${_GBL}:${_HALOS} /hal/.ssh /hal/dls && \
+    chown -Rv ${_GBL}:${_HALOS} /hal/.ssh /hal/dls && \
     # make dvl default wsl user 
     echo "[user]\ndefault=dvl" >> /etc/wsl.conf
 # mount stuff if needed
@@ -63,14 +63,14 @@ FROM dplay_hal AS dplay_hel
 USER root
 # set up /dvl folder as symbolic link to /home/dvl for cloning repository(ies)
 RUN ln -s /home/dvl /hel && \
-    chown -R dvl:horns /home/dvl && chown -R dvl:horns /hel  && \
-    chown -R dvl:horns /hel  && \
+    chown -Rv dvl:horns /home/dvl && chown -Rv dvl:horns /hel  && \
+    chown -Rv dvl:horns /hel  && \
     # add an instructional "readme" here later
     touch /hel/lo.world && \
     # set up .ssh and dls directories and make sure .ssh has proper permissions
     mkdir -pv /hel/.ssh /hel/dls && chmod 700 /hel/.ssh && \
     # set up /dvl folder as symbolic link to /home/dvl for cloning repository(ies)
-    chown -R dvl:horns /hel/.ssh /hel/dls
+    chown -Rv dvl:horns /hel/.ssh /hel/dls
 # uncomment to add sudo priveleges for host / dvl
 # sudo adduser dvl sudo && \
 USER dvl
@@ -81,7 +81,7 @@ ENV PATH="$PATH:/home/dvl/.local/bin:/hel/devels-work/scripts:/home/dvl/devels-w
 FROM dplay_hel AS dplay_data
 USER root
 # copy skel files to dvl
-RUN cp -rpv /etc/skel/. /home/dvl/ && chown -R dvl:horns /home/dvl && \
+RUN cp -rpv /etc/skel/. /home/dvl/ && chown -Rv dvl:horns /home/dvl && \
     apt-get -y install git
 USER dvl
 WORKDIR /home/dvl
@@ -112,7 +112,7 @@ WORKDIR /home/dvl
 # #             echo "#!/bin/bash" >> gbl/backup-docker.sh; \
 # #         fi \
 # #     fi
-# chown -R dvl:horns /home/dvl && chown -R ${_GBL}:${_HALOS} /home/${_GBL}
+# chown -Rv dvl:horns /home/dvl && chown -Rv ${_GBL}:${_HALOS} /home/${_GBL}
 # RUN echo "# # # # Docker # # # # " >> ${mnt_data}/gbl/backup-docker.sh
 # RUN sudo .${mnt_data}/gbl/backup-docker.sh
 USER dvl
@@ -121,7 +121,7 @@ USER dvl
 FROM dplay_data AS dplay_skel
 # RUN with halos ownership
 USER ${_GBL}
-# RUN sudo chown ${_GBL}:${_HALOS} -R ${mnt_data}/${_GBL} /home/${_GBL}  \
+# RUN sudo chown ${_GBL}:${_HALOS} -Rv ${mnt_data}/${_GBL} /home/${_GBL}  \
 #     git config --global --add safe.directory /home/gbl && \
 #     git config --global --add safe.directory /hal 
 RUN sudo apt-get -y update && \
@@ -131,60 +131,34 @@ RUN sudo apt-get -y update && \
     sudo dpkg --configure -a && \
     # sudo apt-get upgrade -y libsnmp40 && \
     sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget wslu && \
-    sudo chmod +x devels-work/devels-play/mnt/bak/gbl/backup-gbl.sh && \
-    sudo mkdir -pv ${mnt_data}/${_GBL}/${_GBL}-orig && \
-    sudo mkdir -pv ${mnt_data}/${_GBL}/dvl-orig && \
-    sudo mkdir -pv ${mnt_data}/dvl && \
-    sudo mkdir -pv ${mnt_data}/${_GBL}/dvl-orig && \
-    sudo chown ${_GBL}:${_HALOS} -R ${mnt_data}/${_GBL} && \
-    sudo chown ${_GBL}:${_HALOS} -R ${mnt_data}/dvl && \
-    sudo chown ${_GBL}:${_HALOS} ${mnt_data}/${_GBL}/dvl-orig && \
-    # copy newly pulled backup script to mount location and home dirs
-    sudo cp -arfv devels-work/devels-play/mnt/bak/gbl/backup-gbl.sh ${mnt_data}/gbl/backup-gbl.sh && \
-    sudo cp -arfv devels-work/devels-play/mnt/bak/custom/backup-custom.sh ${mnt_data}/${_GBL}/backup-${_GBL}.sh && \
-    # sudo cp -arfv devels-work/devels-play/mnt/bak/backup-custom.sh ${mnt_data}/gbl/backup-gbl.sh && cp -arfv devels-work/devels-play/mnt/bak/backup-custom.sh /home/gbl/backup-gbl.sh && \
-    # sudo cp -arfv devels-work/devels-play/mnt/dvl/bak/backup-dvl.sh ${mnt_data}/dvl/backup-dvl.sh && \
-    # sudo cp -arfv devels-work/devels-play/mnt/dvl/bak/backup-dvl.sh ${mnt_data}/${_GBL}/backup-dvl.sh && \
-    # sudo cp -arfv devels-work/devels-play/mnt/dvl/bak/backup-dvl.sh /home/dvl/backup-dvl.sh && \
-    # copy contents in dplay/mnt/bak to mnt_data
-    sudo cp -arfv devels-work/devels-play/mnt/bak/** ${mnt_data} && \
-    sudo mv -u ${mnt_data}/custom ${mnt_data}/${_GBL} && sudo chown -R ${_GBL}:${_HALO} ${mnt_data}/bak/custom-orig && \
-    sudo ln -s ${mnt_data}/${_GBL} /home/${_GBL}/bak && sudo chown -R ${_GBL}:${_HALO} /home/${_GBL}/bak && \
-    # sudo ln -s ${mnt_data}/dvl /home/dvl/bak && sudo chown -R dvl:horns /home/dvl/bak && \
-    # overwrite gbl if default username or create custom
-    sudo mv -nv ${mnt_data}/custom ${mnt_data}/${_GBL} && \
-    # make rwx for owner and rx for group - none for others
-    sudo chmod 750 -R ${mnt_data}/${_GBL} && \
-    sudo chmod 755 ${mnt_data}/${_GBL} && \
-    sudo chmod 750 -R ${mnt_data}/dvl && \
+    # make gh files executable
+    sudo chmod +x devels-work/devels-play/mnt/bak/*/backup-*.sh && \
+    sudo chmod +x devels-work/scripts/gh-auth-first-time-login.sh && \
+    # copy gh files to mount location and home dirs
+    sudo mkdir -p ${mnt_data} && sudo cp -arfv devels-work/devels-play/mnt/bak/** ${mnt_data} && sudo chown ${_GBL}:${_HALOS} -Rv ${mnt_data} && \
+    sudo mv -unv ${mnt_data}/custom ${mnt_data}/${_GBL} && \
+    sudo ln -s ${mnt_data}/gbl /home/gbl/bak && sudo chown -Rv ${_GBL}:${_HALO} /home/gbl/bak && \
+    sudo ln -sf ${mnt_data}/${_GBL} /home/${_GBL}/bak && sudo chown -Rv ${_GBL}:${_HALO} /home/${_GBL}/bak && \
+    sudo ln -s ${mnt_data}/dvl /home/dvl/bak && sudo chown -Rv ${_GBL}:${_HALO} /home/dvl/bak && \
+    # make rwx for owner and rw for group - x/rx for others
+    sudo chmod 754 -Rv ${mnt_data}/${_GBL} && \
+    sudo chmod 751 ${mnt_data}/${_GBL} && sudo chmod 751 ${mnt_data}/gbl && sudo chmod 751 ${mnt_data}/dvl && \
+    sudo chmod 754 -Rv ${mnt_data}/dvl && \
     # # add warning for the backup drive
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GBL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/README_ASAP      && \
     # echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GBL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/${_GBL}/README_ASAP      && \
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GBL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/gbl/README_ASAP      && \
-    sudo chown ${_GBL}:${_HALOS} ${mnt_data}/README_ASAP ${mnt_data}/${_GBL}/backup-${_GBL}.sh
-# wait to do this until we have WSL_DISTRO_NAME
-# sh ${mnt_data}/backup-dvl.sh
-USER root
-# set up basic utils
-# install github, build-essentials, libssl, etc
-RUN chown dvl:horns -R /home/dvl && chown ${_GBL}:${_HALOS} /home/gbl && \
-    # # # For debug only
-    # # # RUN sudo apt-get -y update && sudo apt-get -y install nvi curl git gh wget
-    # # # RUN apt-get install -y lsb-release python3 python3-pip software-properties-common 
-    # setup gh ssh login 
-    sudo chmod +x devels-work/scripts/gh-auth-first-time-login.sh && \
-    # make backup script executable
-    sudo chmod ugo+x devels-work/devels-play/mnt/bak/gbl/backup-gbl.sh && \
-    sudo chmod ugo+x devels-work/devels-play/mnt/bak/dvl/backup-dvl.sh && \
-    sudo chmod ugo+x devels-work/devels-play/mnt/bak/custom/backup-custom.sh
+    sudo chown gbl:halos ${mnt_data}/README_ASAP ${mnt_data}/${_GBL}/backup-gbl.sh && \
+    sudo chown ${_GBL}:${_HALOS} ${mnt_data}/${_GBL}/backup-${_GBL}.sh ${mnt_data}/dvl/backup-dvl.sh && \
+    sudo chown dvl:horns -RPv /home/dvl && sudo chown ${_GBL}:${_HALOS} -RPv /home/gbl 
 USER dvl
 # setup ssh gh login
 # add symlinks for convenience
 RUN ln -s devels-work dwork && ln -s devels-work/devels-play dplay && ln -s devels-play devels-work/dplay && \
-    ln -s linux devels-work/devels-play/linux && \
-    # ln -s ub devels-work/devels-play/docker/ubuntu && \
-    # ln -s kernel devels-work/devels-play/kernel && \
-    ln -s docker devels-work/devels-play/docker
+    ln -s devels-work/devels-play/linux linux && \
+    ln -s devels-work/devels-play/docker/ubuntu ub && \
+    ln -s devels-work/devels-play/kernel kernel && \
+    ln -s docker devels-work/devels-play/docker docker
 # sh devels-work/scripts/gh-auth-first-time-login.sh
 
 # GIT
@@ -208,7 +182,7 @@ RUN sudo apt-get -y install apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps && \
     sudo cp -rfv /home/${_GBL}/.local/bin /usr/local && \
     sudo cp -afv /home/${_GBL}/.local /etc/skel/ && \
-    sudo cp -afv /home/${_GBL}/.local /home/dvl/ && sudo chown -R dvl:horns /home/dvl
+    sudo cp -afv /home/${_GBL}/.local /home/dvl/ && sudo chown -Rv dvl:horns /home/dvl
 USER dvl
 
 # MICROSOFT stuff
