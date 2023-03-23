@@ -13,7 +13,7 @@
 1. Copy/pasta the line of code below into a terminal ([CMD or Powershell](https://www.wikihow.com/Open-Terminal-in-Windows))
 2. Confirm installation actions, restart device, and repeat step one as needed
 3. ??
-4. Profit
+4. KERNEL!
 
 ```bat
 powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell-remote/devels-work/download-everything-and-install.ps1 -OutFile install-kindtek-devels-work.ps1; powershell.exe -executionpolicy remotesigned -File install-kindtek-devels-work.ps1"
@@ -39,9 +39,19 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 ## Time for the fun stuff
 
-### **Instructions for importing images from [hub.docker.com](https://hub.docker.com/search?q=&image_filter=official) into WSL with the Devel's Playground are [found here](https://github.com/kindtek/devels-play#idle-minds-are-the-developers-playground)**
+### Import your Linux Docker image
+
+
+### **Instructions for importing images (NEW: ability to build and your own custom Linux kernel to run them on) from [hub.docker.com](https://hub.docker.com/search?q=&image_filter=official) into WSL with the Devel's Playground are [found here](https://github.com/kindtek/devels-play#idle-minds-are-the-developers-playground)**
 
 &nbsp;
+
+#### NEW FEATURES
+Images now include: 
+- pre-built Linux kernel 
+- templates to build your own kernel
+- ZFS (Advanced: Even build/mount your own ZFS partition!])
+
 
 ---
 
