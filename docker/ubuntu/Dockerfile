@@ -133,7 +133,7 @@ USER ${_GBL}
 RUN sudo apt-get -y update && \
     sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
     sudo apt-get install -y tzdata && \
-    sudo dpkg-reconfigure --frontend noninteractive tzdata chronos && \
+    sudo dpkg-reconfigure --frontend noninteractive tzdata chrony && \
     sudo dpkg --configure -a && \
     # sudo apt-get upgrade -y libsnmp40 && \
     sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget wslu && \
