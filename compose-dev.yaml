@@ -17,10 +17,10 @@ services:
     # Specify the group in question
     group_add:
       - horns
-    image: kindtek/dplay:ubuntu-skel
+    image: kindtek/dvlp:ubuntu-skel
     build:
       context: .
-      target: dplay_skel
+      target: dvlp_skel
       args:
         - username=${username:-agl}
       dockerfile: dockerfile.ubuntu.yaml
@@ -37,11 +37,11 @@ services:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/dplay:ubuntu-git
+    image: kindtek/dvlp:ubuntu-git
     # extends: skel
     build:
       context: .
-      target: dplay_git
+      target: dvlp_git
       args:
         - username=${username:-agl}
       dockerfile: dockerfile.ubuntu.yaml
@@ -53,38 +53,38 @@ services:
       - hel-data:/home/dvl
   msdot:
     extends: git
-    image: kindtek/dplay:ubuntu-msdot
+    image: kindtek/dvlp:ubuntu-msdot
     build:
       context: .
-      target: dplay_msdot
+      target: dvlp_msdot
       args:
         - username=${username:-agl}
       dockerfile: dockerfile.ubuntu.yaml
   dind:
     extends: msdot
-    image: kindtek/dplay:ubuntu-dind
+    image: kindtek/dvlp:ubuntu-dind
     build:
       context: .
-      target: dplay_dind
+      target: dvlp_dind
       args:
         - username=${username:-agl}
       dockerfile: dockerfile.ubuntu.yaml
 
   gui:
     extends: dind
-    image: kindtek/dplay:ubuntu-gui
+    image: kindtek/dvlp:ubuntu-gui
     build:
       context: .
-      target: dplay_gui
+      target: dvlp_gui
       args:
         - username=${username:-agl}
       dockerfile: dockerfile.ubuntu.yaml
   cuda:
     extends: gui
-    image: kindtek/dplay:ubuntu-cuda
+    image: kindtek/dvlp:ubuntu-cuda
     build:
       context: .
-      target: dplay_cuda
+      target: dvlp_cuda
       args:
         - username=${username:-agl}
       dockerfile: dockerfile.ubuntu.yaml

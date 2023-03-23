@@ -1,6 +1,6 @@
 # to build, run: 
 # `_AGL=mine _HALOS=ours docker run -d -i`
-FROM ubuntu:latest AS dplay_init
+FROM ubuntu:latest AS dvlp_init
 ARG _AGL=${_AGL:-agl}
 ARG _HALOS=${_HALOS:-halos}
 ARG mnt_data=${mnt_data:-/mnt/data}
@@ -20,7 +20,7 @@ RUN echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
     passwd -l root
 
 # HAL permissions/volume builder
-FROM dplay_init AS dplay_hal
+FROM dvlp_init AS dvlp_hal
 USER root
 # add dvl and host users using custom user setup
 # add only _AGL to the sudo list
@@ -59,7 +59,7 @@ RUN echo 'export WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nalias cdir="source cdir.sh"
 USER dvl
 
 # HEL volume/permissions builder
-FROM dplay_hal AS dplay_hel
+FROM dvlp_hal AS dvlp_hel
 USER root
 # set up /dvl folder as symbolic link to /home/dvl for cloning repository(ies)
 RUN ln -s /home/dvl /hel && \
@@ -78,7 +78,7 @@ USER dvl
 ENV PATH="$PATH:/home/dvl/.local/bin:/hel/devels-work/scripts:/home/dvl/devels-work/devels-play/scripts"
 
 # DATA helper
-FROM dplay_hel AS dplay_data
+FROM dvlp_hel AS dvlp_data
 USER root
 # copy skel files to dvl
 RUN cp -rpv /etc/skel/. /home/dvl/ && chown -Rv dvl:horns /home/dvl && \
@@ -118,7 +118,7 @@ WORKDIR /home/dvl
 USER dvl
 
 # SKELETON framework
-FROM dplay_data AS dplay_skel
+FROM dvlp_data AS dvlp_skel
 # RUN with halos ownership
 USER ${_AGL}
 # RUN sudo chown ${_AGL}:${_HALOS} -Rv ${mnt_data}/${_AGL} /home/${_AGL}  \
@@ -154,9 +154,9 @@ RUN sudo apt-get -y update && \
 USER dvl
 # setup ssh gh login
 # add symlinks for convenience
-RUN ln -s devels-work dwork && \
-    ln -s devels-work/devels-play dplay && \
-    ln -s devels-play devels-work/dplay && \
+RUN ln -s devels-work dvlw && \
+    ln -s devels-work/devels-play dvlp && \
+    ln -s devels-play devels-work/dvlp && \
     ln -s devels-work/devels-play/linux linux && \
     ln -s devels-work/devels-play/docker/ubuntu ub && \
     ln -s devels-work/devels-play/kernel kernel && \
@@ -164,7 +164,7 @@ RUN ln -s devels-work dwork && \
 # sh devels-work/scripts/gh-auth-first-time-login.sh
 
 # GIT
-FROM dplay_skel as dplay_git
+FROM dvlp_skel as dvlp_git
 WORKDIR /home/dvl
 USER root
 # copy and set ownership
@@ -176,7 +176,7 @@ USER dvl
 WORKDIR /home/dvl
 
 # PYTHON stuff
-FROM dplay_git AS dplay_python
+FROM dvlp_git AS dvlp_python
 USER ${_AGL}
 RUN sudo apt-get -y install apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv && \
     pip3 install cdir --user  && \
@@ -188,7 +188,7 @@ RUN sudo apt-get -y install apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev
 USER dvl
 
 # MICROSOFT stuff
-FROM dplay_python AS dplay_msdot
+FROM dvlp_python AS dvlp_msdot
 USER ${_AGL}
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
@@ -203,7 +203,7 @@ RUN sudo apt-get -y install lsb-release && \
 USER dvl
 
 # DOCKER IN DOCKER
-FROM dplay_msdot AS dplay_dind
+FROM dvlp_msdot AS dvlp_dind
 USER root
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
 RUN sudo mkdir -pv /etc/apt/keyrings   && \
@@ -214,7 +214,7 @@ USER dvl
 
 # KERNEL builder
 ############################## DEFAULT MICROSOFT WSL 5_1519 KERNEL ######################################
-FROM dplay_dind AS dplay_kernel-phat
+FROM dvlp_dind AS dvlp_kernel-phat
 USER root
 RUN echo exit 0 > /usr/sbin/policy-rc.d && \
     sudo apt-get -y update && apt-get -y upgrade && \
@@ -241,12 +241,12 @@ WORKDIR /home/dvl
 USER dvl
 
 # Kernel only
-FROM dplay_dind AS dplay_kernel
-COPY --from=dplay_kernel-phat /home/agl/kernels /home/agl
-COPY --from=dplay_kernel-phat /home/dvl/kernels /home/dvl
+FROM dvlp_dind AS dvlp_kernel
+COPY --from=dvlp_kernel-phat /home/agl/kernels /home/agl
+COPY --from=dvlp_kernel-phat /home/dvl/kernels /home/dvl
 
 # GUI - wsl2 required
-FROM dplay_kernel AS dplay_gui
+FROM dvlp_kernel AS dvlp_gui
 USER ${_AGL}
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
 RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg && \
@@ -268,16 +268,16 @@ RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https
     sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -yq install gnome-session gdm3 gimp gedit nautilus vlc 
 USER dvl
 
-FROM dplay_gui AS dplay_gui-phat
-COPY --from=dplay_kernel-phat ./ ./
+FROM dvlp_gui AS dvlp_gui-phat
+COPY --from=dvlp_kernel-phat ./ ./
 
-FROM dplay_gui AS dplay_cuda
+FROM dvlp_gui AS dvlp_cuda
 USER ${_AGL}
 # CUDA
 RUN sudo apt-get -y install nvidia-cuda-toolkit
 USER dvl
 
-FROM dplay_gui-phat AS dplay_cuda-phat
+FROM dvlp_gui-phat AS dvlp_cuda-phat
 USER ${_AGL}
 # CUDA
 RUN sudo apt-get -y install nvidia-cuda-toolkit

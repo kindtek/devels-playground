@@ -5,10 +5,10 @@ services:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/dplay:alpine-skel
+    image: kindtek/dvlp:alpine-skel
     build:
       context: .
-      target: dplay_skel
+      target: dvlp_skel
       args:
         - username=${username:-agl
       dockerfile: dockerfile.alpine.yaml
@@ -25,10 +25,10 @@ services:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/dplay:alpine-msdot
+    image: kindtek/dvlp:alpine-msdot
     build:
       context: .
-      target: dplay_msdot
+      target: dvlp_msdot
       args:
         - username=${username:-agl
       dockerfile: dockerfile.alpine.yaml

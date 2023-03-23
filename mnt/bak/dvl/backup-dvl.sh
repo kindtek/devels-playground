@@ -30,11 +30,11 @@ sudo chown dvl:horns ${backup_mnt_location}/${username}/dvl-orig && \
 sudo chown dvl:horns ${backup_mnt_location}/${username}/dvl-orig && \
 
 # copy newly pulled backup script to mount location and home dirs
-sudo cp -arfv dwork/mnt/backup-agl.sh ${backup_mnt_location}/agl/backup-agl.sh && cp -arfv dwork/mnt/backup-agl.sh /home/agl/backup-agl.sh  && \
-sudo cp -arfv dwork/mnt/backup-custom.sh ${backup_mnt_location}/${username}/backup-${username}.sh && cp -arfv dwork/mnt/backup-custom.sh /home/${username}/backup-${username}.sh && \
-sudo cp -arfv dwork/mnt/backup-dvl.sh ${backup_mnt_location}/dvl/backup-dvl.sh && \
-sudo cp -arfv dwork/mnt/backup-dvl.sh ${backup_mnt_location}/${username}/backup-dvl.sh && cp -arfv dwork/mnt/backup-dvl.sh /home/${username}/backup-dvl.sh  && \
-sudo cp -arfv dwork/mnt/backup-dvl.sh ${backup_mnt_location}/agl/backup-dvl.sh && cp -arfv dwork/mnt/backup-dvl.sh /home/agl/backup-dvl.sh
+sudo cp -arfv dvlw/mnt/backup-agl.sh ${backup_mnt_location}/agl/backup-agl.sh && cp -arfv dvlw/mnt/backup-agl.sh /home/agl/backup-agl.sh  && \
+sudo cp -arfv dvlw/mnt/backup-custom.sh ${backup_mnt_location}/${username}/backup-${username}.sh && cp -arfv dvlw/mnt/backup-custom.sh /home/${username}/backup-${username}.sh && \
+sudo cp -arfv dvlw/mnt/backup-dvl.sh ${backup_mnt_location}/dvl/backup-dvl.sh && \
+sudo cp -arfv dvlw/mnt/backup-dvl.sh ${backup_mnt_location}/${username}/backup-dvl.sh && cp -arfv dvlw/mnt/backup-dvl.sh /home/${username}/backup-dvl.sh  && \
+sudo cp -arfv dvlw/mnt/backup-dvl.sh ${backup_mnt_location}/agl/backup-dvl.sh && cp -arfv dvlw/mnt/backup-dvl.sh /home/agl/backup-dvl.sh
 #  # make rwx for owner and rx for group - x for others
 # sudo chmod 751 -R ${backup_mnt_location}/${username} && \
 # sudo chmod 755 ${backup_mnt_location}/${username} && \

@@ -6,7 +6,7 @@ services:
     # Need a user priviliged enough to chown
     build:
       context: .
-      target: dplay_init
+      target: dvlp_init
     init: true
     command:
       - bin/bash
@@ -27,7 +27,7 @@ services:
       - ${_HALOS:-halos}
     build:
       context: .
-      target: dplay_hal
+      target: dvlp_hal
     depends_on:
       initialize:
         # Wait for the groups to be added
@@ -45,7 +45,7 @@ services:
       - horns
     build:
       context: .
-      target: dplay_hel
+      target: dvlp_hel
     depends_on:
       initialize:
         # Wait for groups to be added
@@ -61,7 +61,7 @@ services:
       - ${_HALOS:-halos}
     build:
       context: .
-      target: dplay_data
+      target: dvlp_data
     depends_on:
       chown-hel:
         # Wait for the ownership to change
@@ -77,7 +77,7 @@ services:
     user: ${_AGL:-agl}
     build:
       context: .
-      target: dplay_skel
+      target: dvlp_skel
       args:
         - _AGL=${_AGL:-agl}
         - _HALOS=${_HALOS:-halos}
@@ -92,7 +92,7 @@ services:
         # Wait for the ownership to change
         condition: service_completed_successfully
     labels:
-      com.dplay_skel.description: "skeleton"
+      com.dvlp_skel.description: "skeleton"
 
   git:
     # owner/group becomes owner of hel-data volume
@@ -102,11 +102,11 @@ services:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/dplay:ubuntu-git
+    image: kindtek/dvlp:ubuntu-git
     # extends: skel
     build:
       context: .
-      target: dplay_git
+      target: dvlp_git
       args:
         - _AGL=${_AGL:-agl}
     depends_on:
@@ -128,87 +128,87 @@ services:
 
   python:
     extends: git
-    image: kindtek/dplay:ubuntu-py
+    image: kindtek/dvlp:ubuntu-py
     build:
       context: .
-      target: dplay_python
+      target: dvlp_python
     labels:
       com.devels-play.description: "basics + git + powerhell"
 
   msdot:
     extends: git
-    image: kindtek/dplay:ubuntu-msdot
+    image: kindtek/dvlp:ubuntu-msdot
     build:
       context: .
-      target: dplay_msdot
+      target: dvlp_msdot
     labels:
       com.devels-play.description: "basics + git + powerhell"
 
   dind:
     extends: git
-    image: kindtek/dplay:ubuntu-dind
+    image: kindtek/dvlp:ubuntu-dind
     build:
       context: .
-      target: dplay_dind
+      target: dvlp_dind
     labels:
       com.devels-play.description: "basics + git + powerhell + docker"
 
   kernel:
     extends: git
-    image: kindtek/dplay:ubuntu-kernel
+    image: kindtek/dvlp:ubuntu-kernel
     build:
       context: .
-      target: dplay_kernel
+      target: dvlp_kernel
     labels:
       com.devels-play.description: "basics + git + powerhell + docker + kernel"
 
   kernel_phat:
     extends: git
-    image: kindtek/dplay:ubuntu-kernel-phat
+    image: kindtek/dvlp:ubuntu-kernel-phat
     build:
       context: .
-      target: dplay_kernel-phat
+      target: dvlp_kernel-phat
     labels:
       com.devels-play.description: "basics + git + powerhell + docker + kernel"
 
   gui:
     extends: git
-    image: kindtek/dplay:ubuntu-gui
+    image: kindtek/dvlp:ubuntu-gui
     build:
       context: .
-      target: dplay_gui
+      target: dvlp_gui
     labels:
       com.devels-play.description: "basics + git + powerhell + docker + kernel + gui"
 
   gui_phat:
     extends: git
-    image: kindtek/dplay:ubuntu-gui-phat
+    image: kindtek/dvlp:ubuntu-gui-phat
     build:
       context: .
-      target: dplay_gui-phat
+      target: dvlp_gui-phat
     labels:
       com.devels-play.description: "basics + git + powerhell + docker + kernel + gui"
   # cuda:
   #   extends: gui
-  #   image: kindtek/dplay:ubuntu-cuda
+  #   image: kindtek/dvlp:ubuntu-cuda
   #   build:
   #     context: .
-  #     target: dplay_cuda
+  #     target: dvlp_cuda
   #     args:
   #       - _AGL=${_AGL:-agl}
   #     labels:
-  #       com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
+  #       com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 
   # cuda_phat:
   #   extends: gui
-  #   image: kindtek/dplay:ubuntu-cuda-phat
+  #   image: kindtek/dvlp:ubuntu-cuda-phat
   #   build:
   #     context: .
-  #     target: dplay_cuda-phat
+  #     target: dvlp_cuda-phat
   #     args:
   #       - _AGL=${_AGL:-agl}
   #     labels:
-  #       com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
+  #       com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 
 volumes:
   hel-data:

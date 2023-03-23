@@ -22,7 +22,7 @@ Images now include:
 
 ### [TEST FIRST]
 
-### _When the Devel's Playground loads, at the main menu hit ENTER a few times to import and confirm the default [ubuntu-dind image](https://hub.docker.com/layers/kindtek/dplay/ubuntu-dind/images/sha256-d4b592c32d92db53e8380a5556bdd771063d946e5614d0ebc953359941be5263?context=explore) ([see details below](#ubuntu-dind)) being imported on your WSL environment_
+### _When the Devel's Playground loads, at the main menu hit ENTER a few times to import and confirm the default [ubuntu-dind image](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-dind/images/sha256-d4b592c32d92db53e8380a5556bdd771063d946e5614d0ebc953359941be5263?context=explore) ([see details below](#ubuntu-dind)) being imported on your WSL environment_
 
 &nbsp;
 
@@ -32,7 +32,7 @@ Images now include:
 
 #### - source: [kindtek](https://hub.docker.com/u/kindtek)
 
-#### - name: [dplay](https://hub.docker.com/r/kindtek/dplay/tags):[ubuntu-msdot](https://hub.docker.com/layers/kindtek/dplay/ubuntu-msdot/images/sha256-638debdde2528366c7beb3c901fc709f1162273783d22a575d096753abd157ad?context=explore)
+#### - name: [dvlp](https://hub.docker.com/r/kindtek/dvlp/tags):[ubuntu-msdot](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-msdot/images/sha256-638debdde2528366c7beb3c901fc709f1162273783d22a575d096753abd157ad?context=explore)
 
 &nbsp;
 
@@ -88,13 +88,13 @@ It is not quite so simple and seamless, but you can run the images referenced in
 Run the following in a terminal on any operating system with Docker installed:
 
 ```shell
-docker pull kindtek/dplay:ubuntu-dind
+docker pull kindtek/dvlp:ubuntu-dind
 ```
 
 The above line downloads the image and Docker registers the image id. You will now get that image id by running:
 
 ```shell
-docker images -aq kindtek/dplay:ubuntu-dind
+docker images -aq kindtek/dvlp:ubuntu-dind
 ```
 
 The above code will output your image id to the screen. Replace \<image_id\> in the code below with this image id and run it:
@@ -154,7 +154,7 @@ This will start a new container using the [example image](#ubuntu-dind) and the 
 
 ## Devel details
 
-#### All images contain a `/hel` directory that is symbolically linked to `/home/dvl` (using `ln -s /home/dvl /hel`). This is both for convenience and as a practical safeguard. The devel user and other users in the horns group are the owners of `/hel` and the current devel's workshop and devel's playground github repos are cloned there as well (`/hel/dwork` and `/hel/dplay`). Devel is the default user and as the devel you are not able to access anything in `/home/agl` or do anything outside of `/hel` that would require root priveleges
+#### All images contain a `/hel` directory that is symbolically linked to `/home/dvl` (using `ln -s /home/dvl /hel`). This is both for convenience and as a practical safeguard. The devel user and other users in the horns group are the owners of `/hel` and the current devel's workshop and devel's playground github repos are cloned there as well (`/hel/dvlw` and `/hel/dvlp`). Devel is the default user and as the devel you are not able to access anything in `/home/agl` or do anything outside of `/hel` that would require root priveleges
 
 #### [In theory](https://softprom.com/sites/default/files/materials/cyberark-sb-to-SUDO-or-not-to-SUDO-06-11-2015-en.pdf), the gates of sudo should restrict the devel to only making changes in `/hel` and any mounted drives - leaving only `agl` to make changes at the root level
 
@@ -172,7 +172,7 @@ _Note: Each image forms the base layer for the image described below it. For ins
 
 ---
 
-### [**ubuntu-git**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-git/images/sha256-c6fdf507e9af5a864578a835ed38ebcb314b0c7488e22dc2a4d04510921cf1a3?context=explore)
+### [**ubuntu-git**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-git/images/sha256-c6fdf507e9af5a864578a835ed38ebcb314b0c7488e22dc2a4d04510921cf1a3?context=explore)
 
 #### `apt-get install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget wslu`
 
@@ -180,7 +180,7 @@ _Note: Each image forms the base layer for the image described below it. For ins
 
 ---
 
-### [**ubuntu-python**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-python/images/sha256-816677a90ae498b8873fdb54e9c1d71455089f400a41de01221d29068937bab7?context=explore)
+### [**ubuntu-python**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-python/images/sha256-816677a90ae498b8873fdb54e9c1d71455089f400a41de01221d29068937bab7?context=explore)
 
 #### `apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv`
 
@@ -188,7 +188,7 @@ _Note: Each image forms the base layer for the image described below it. For ins
 
 ---
 
-### [**ubuntu-msdot**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-msdot/images/sha256-816677a90ae498b8873fdb54e9c1d71455089f400a41de01221d29068937bab7?context=explore)
+### [**ubuntu-msdot**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-msdot/images/sha256-816677a90ae498b8873fdb54e9c1d71455089f400a41de01221d29068937bab7?context=explore)
 
 #### `apt-get install powershell dotnet-sdk-7.0`
 
@@ -196,7 +196,7 @@ _Note: Each image forms the base layer for the image described below it. For ins
 
 ---
 
-## [**ubuntu-dind**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-dind/images/sha256-cba70a7cf5c005b2522156c495a0036c44138f77fdf1a4fd0f57ae813e377cb9?context=explore)
+## [**ubuntu-dind**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-dind/images/sha256-cba70a7cf5c005b2522156c495a0036c44138f77fdf1a4fd0f57ae813e377cb9?context=explore)
 
 #### `apt-get install docker-compose-plugin docker-ce docker-ce-cli containerd.io`
 
@@ -223,7 +223,7 @@ If you end up building your own kernel, please consider contributing to this pro
 
 ---
 
-## [**ubuntu-gui**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-gui/images/sha256-b55f2582363d995f9fffe67b5845df06607c1ecb6d12d795b428be66b6904db2?context=explore)
+## [**ubuntu-gui**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-gui/images/sha256-b55f2582363d995f9fffe67b5845df06607c1ecb6d12d795b428be66b6904db2?context=explore)
 
 ### `apt-get install brave-browser gnome-session gdm3 gimp gedit nautilus vlc `
 
@@ -231,7 +231,7 @@ This is a lightweight Graphical User Interface by most standards but still weigh
 
 ---
 
-## [**ubuntu-cuda**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-cuda/images/sha256-2c22d060e3a35474a469a61357b4d020b057260b67db83f0ebc9fbb5f90171ea?context=explore)
+## [**ubuntu-cuda**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda/images/sha256-2c22d060e3a35474a469a61357b4d020b057260b67db83f0ebc9fbb5f90171ea?context=explore)
 
 ### `apt-get install nvidia-cuda-toolkit`
 

@@ -21,7 +21,7 @@ function dev_boilerplate {
     # $image_repo_mask = "official"
     # $image_name = "ubuntu:latest"
     $image_repo = $image_repo_mask = "kindtek"
-    $image_name = "dplay:ubuntu-dind"
+    $image_name = "dvlp:ubuntu-dind"
     $mount_drive_letter = "c"
     $unix_mount_drive = "/mnt/$mount_drive_letter"
     $windows_mount_drive = "${mount_drive_letter}:"
