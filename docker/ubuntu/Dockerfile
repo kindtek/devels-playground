@@ -53,7 +53,7 @@ RUN usermod -aG ${_HALOS} host && \
 # copy to skel and /hel, add common paths
 USER ${_GBL}
 ENV PATH="$PATH:/home/${_GBL}/.local/bin:/hel/devels-work/scripts:/home/dvl/devels-work/devels-play/scripts"
-RUN echo 'export WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c "'"set verbose showmode"'""'  >> /home/${_GBL}/.bashrc && \
+RUN echo 'export WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"'  >> /home/${_GBL}/.bashrc && \
     sudo cp -rfv /home/${_GBL}/. /etc/skel/ && \
     sudo rm /etc/skel/.sudo_as_admin_successful 
 USER dvl
@@ -137,8 +137,8 @@ RUN sudo apt-get -y update && \
     sudo mkdir -pv ${mnt_data}/dvl && \
     sudo mkdir -pv ${mnt_data}/${_GBL}/dvl-orig && \
     sudo chown ${_GBL}:${_HALOS} -R ${mnt_data}/${_GBL} && \
-    sudo chown dvl:horns -R ${mnt_data}/dvl && \
-    sudo chown dvl:horns ${mnt_data}/${_GBL}/dvl-orig && \
+    sudo chown ${_GBL}:${_HALOS} -R ${mnt_data}/dvl && \
+    sudo chown ${_GBL}:${_HALOS} ${mnt_data}/${_GBL}/dvl-orig && \
     # copy newly pulled backup script to mount location and home dirs
     sudo cp -arfv devels-work/devels-play/mnt/bak/gbl/backup-gbl.sh ${mnt_data}/gbl/backup-gbl.sh && \
     sudo cp -arfv devels-work/devels-play/mnt/bak/custom/backup-custom.sh ${mnt_data}/${_GBL}/backup-${_GBL}.sh && \
@@ -148,8 +148,9 @@ RUN sudo apt-get -y update && \
     # sudo cp -arfv devels-work/devels-play/mnt/dvl/bak/backup-dvl.sh /home/dvl/backup-dvl.sh && \
     # copy contents in dplay/mnt/bak to mnt_data
     sudo cp -arfv devels-work/devels-play/mnt/bak/** ${mnt_data} && \
+    sudo mv -R ${mnt_data}/bak/custom ${mnt_data}/bak/custom-orig && sudo chown -R ${_GBL}:${_HALO} ${mnt_data}/bak/custom-orig && \
     sudo ln -s ${mnt_data}/${_GBL} /home/${_GBL}/bak && sudo chown -R ${_GBL}:${_HALO} /home/${_GBL}/bak && \
-    sudo ln -s ${mnt_data}/dvl /home/dvl/bak && sudo chown -R dvl:horns /home/dvl/bak && \
+    # sudo ln -s ${mnt_data}/dvl /home/dvl/bak && sudo chown -R dvl:horns /home/dvl/bak && \
     # overwrite gbl if default username or create custom
     sudo mv -nv ${mnt_data}/custom ${mnt_data}/${_GBL} && \
     # make rwx for owner and rx for group - none for others
