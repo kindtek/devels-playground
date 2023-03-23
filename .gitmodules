@@ -14,7 +14,7 @@
 	recurse = false
 [submodule "devels-play"]
 	active = true
-	path = devels-play
+	path = dvl-playg
 	shallow = false
 	url = https://github.com/kindtek/devels-play.git
 	branch = devels-work
