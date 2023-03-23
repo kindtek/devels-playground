@@ -211,7 +211,7 @@ RUN sh gh-auth-first-time-login.sh ${_GBL} && \
 WORKDIR /home/dvl
 
 # PYTHON stuff
-FROM dplay_git as dplay_python
+FROM dplay_git AS dplay_python
 USER ${_GBL}
 RUN sudo apt-get -y install apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv && \
     pip3 install cdir --user  && \
@@ -224,7 +224,7 @@ RUN sudo apt-get -y install apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev
 USER dvl
 
 # MICROSOFT stuff
-FROM dplay_python as dplay_msdot
+FROM dplay_python AS dplay_msdot
 USER ${_GBL}
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
@@ -239,7 +239,7 @@ RUN sudo apt-get -y install lsb-release && \
 USER dvl
 
 # DOCKER IN DOCKER
-FROM dplay_msdot as dplay_dind
+FROM dplay_msdot AS dplay_dind
 USER root
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
 RUN sudo mkdir -pv /etc/apt/keyrings   && \
@@ -250,7 +250,7 @@ USER dvl
 
 # KERNEL builder
 ############################## DEFAULT MICROSOFT WSL 5_1519 KERNEL ######################################
-FROM dplay_dind as dplay_kernel-phat
+FROM dplay_dind AS dplay_kernel-phat
 USER root
 RUN echo exit 0 > /usr/sbin/policy-rc.d && \
     sudo apt-get -y update && apt-get -y upgrade && \
@@ -275,12 +275,12 @@ WORKDIR /home/dvl
 USER dvl
 
 # Kernel only
-FROM dplay_dind as dplay_kernel
+FROM dplay_dind AS dplay_kernel
 COPY --from=dplay_kernel-phat /home/gbl/kernels /home/gbl
 COPY --from=dplay_kernel-phat /home/dvl/kernels /home/dvl
 
 # GUI - wsl2 required
-FROM dplay_kernel as dplay_gui
+FROM dplay_kernel AS dplay_gui
 USER ${_GBL}
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
 RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg && \
@@ -311,7 +311,7 @@ USER ${_GBL}
 RUN sudo apt-get -y install nvidia-cuda-toolkit
 USER dvl
 
-FROM dplay_gui_phat AS dplay_cuda_phat
+FROM dplay_gui_phat AS dplay_cuda-phat
 USER ${_GBL}
 # CUDA
 RUN sudo apt-get -y install nvidia-cuda-toolkit
