@@ -1,7 +1,7 @@
 # to build, for exemple, run: 
 # `username=mine groupname=ours docker run -d -i`
 FROM alpine:latest AS dplay_skel
-ARG username=${username:-gbl
+ARG username=${username:-agl
 ARG groupname=${groupname:-archan}
 
 # set up basic utils

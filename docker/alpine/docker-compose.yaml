@@ -10,7 +10,7 @@ services:
       context: .
       target: dplay_skel
       args:
-        - username=${username:-gbl
+        - username=${username:-agl
       dockerfile: dockerfile.alpine.yaml
     init: true
     volumes:
@@ -30,7 +30,7 @@ services:
       context: .
       target: dplay_msdot
       args:
-        - username=${username:-gbl
+        - username=${username:-agl
       dockerfile: dockerfile.alpine.yaml
 
     init: true

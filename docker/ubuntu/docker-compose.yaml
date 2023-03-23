@@ -11,9 +11,9 @@ services:
     command:
       - bin/bash
       - -c
-      - export _GBL=${_GBL:-gbl}
+      - export _AGL=${_AGL:-agl}
       - export _HALOS=${_HALOS:-halos}
-      - ln -s /home/${_GBL:-gbl} /tmp/${_GBL:-gbl}
+      - ln -s /home/${_AGL:-agl} /tmp/${_AGL:-agl}
       - ln -s /home/dvl /tmp/dvl
       - mkdir -p /mnt/data
       - ln -s /mnt/data /tmp/data
@@ -21,7 +21,7 @@ services:
 
   chown-hal:
     # Need a user priviliged enough to chown
-    user: ${_GBL:-gbl}
+    user: ${_AGL:-agl}
     # Specify the wings in question
     group_add:
       - ${_HALOS:-halos}
@@ -34,8 +34,8 @@ services:
         condition: service_completed_successfully
     init: true
     volumes:
-      - hal-data:/tmp/${_GBL:-gbl}
-    command: sudo chown -R ${_GBL:-gbl}:${_HALOS:-halos} /tmp/${_GBL:-gbl}
+      - hal-data:/tmp/${_AGL:-agl}
+    command: sudo chown -R ${_AGL:-agl}:${_HALOS:-halos} /tmp/${_AGL:-agl}
 
   chown-hel:
     # Need a user priviliged enough to chown
@@ -56,7 +56,7 @@ services:
     command: chown -R dvl:horns /tmp/dvl
 
   data:
-    user: ${_GBL:-gbl}
+    user: ${_AGL:-agl}
     group_add:
       - ${_HALOS:-halos}
     build:
@@ -74,18 +74,18 @@ services:
       - mnt-data:/tmp/data
   skel:
     extends: data
-    user: ${_GBL:-gbl}
+    user: ${_AGL:-agl}
     build:
       context: .
       target: dplay_skel
       args:
-        - _GBL=${_GBL:-gbl}
+        - _AGL=${_AGL:-agl}
         - _HALOS=${_HALOS:-halos}
       # network: ${COMPOSE_PROJECT_NAME}_default
     init: true
     volumes:
       - hel-data:/home/dvl
-      - hal-data:/home/${_GBL:-gbl}
+      - hal-data:/home/${_AGL:-agl}
       - mnt-data:/mnt/data
     depends_on:
       data:
@@ -108,7 +108,7 @@ services:
       context: .
       target: dplay_git
       args:
-        - _GBL=${_GBL:-gbl}
+        - _AGL=${_AGL:-agl}
     depends_on:
       chown-hel:
         # Wait for the ownership to change
@@ -121,7 +121,7 @@ services:
         condition: service_completed_successfully
     volumes:
       - hel-data:/home/dvl
-      - hal-data:/home/${_GBL:-gbl}
+      - hal-data:/home/${_AGL:-agl}
       - /mnt/data
     labels:
       com.devels-play.description: "basics + git"
@@ -188,27 +188,27 @@ services:
       target: dplay_gui-phat
     labels:
       com.devels-play.description: "basics + git + powerhell + docker + kernel + gui"
-  cuda:
-    extends: gui
-    image: kindtek/dplay:ubuntu-cuda
-    build:
-      context: .
-      target: dplay_cuda
-      args:
-        - _GBL=${_GBL:-gbl}
-      labels:
-        com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
+  # cuda:
+  #   extends: gui
+  #   image: kindtek/dplay:ubuntu-cuda
+  #   build:
+  #     context: .
+  #     target: dplay_cuda
+  #     args:
+  #       - _AGL=${_AGL:-agl}
+  #     labels:
+  #       com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 
-  cuda_phat:
-    extends: gui
-    image: kindtek/dplay:ubuntu-cuda-phat
-    build:
-      context: .
-      target: dplay_cuda-phat
-      args:
-        - _GBL=${_GBL:-gbl}
-      labels:
-        com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
+  # cuda_phat:
+  #   extends: gui
+  #   image: kindtek/dplay:ubuntu-cuda-phat
+  #   build:
+  #     context: .
+  #     target: dplay_cuda-phat
+  #     args:
+  #       - _AGL=${_AGL:-agl}
+  #     labels:
+  #       com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 
 volumes:
   hel-data:
@@ -220,5 +220,3 @@ networks:
   "${COMPOSE_PROJECT_NAME}_default":
     driver: overlay
     attachable: true
-
-
