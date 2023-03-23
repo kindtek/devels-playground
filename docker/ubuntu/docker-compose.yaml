@@ -131,7 +131,7 @@ services:
     image: kindtek/dplay:ubuntu-py
     build:
       context: .
-      target: dplay_msdot
+      target: dplay_python
     labels:
       com.devels-play.description: "basics + git + powerhell"
 
