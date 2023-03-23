@@ -158,7 +158,7 @@ This will start a new container using the [example image](#ubuntu-dind) and the 
 
 #### [In theory](https://softprom.com/sites/default/files/materials/cyberark-sb-to-SUDO-or-not-to-SUDO-06-11-2015-en.pdf), the gates of sudo should restrict the devel to only making changes in `/hel` and any mounted drives - leaving only `gbl` to make changes at the root level
 
-##### More notes: All images are built with the [Dockerfiles in the devels-play repo root](devels-play). All of `/hel` is mounted as a volume in Docker and the data stored in `/hel` will persist throughout all images when running in Docker. When in WSL, the volume will be stored in a WSL instance called Docker-Data.The directory located at `/mnt/data/gbl` contains backup scripts (`backup-devel.sh`) and automatically generates restore scripts when the backups are ran. The `/mnt/data/gbl` directory is safe from the devel as the devel has no write priveleges there -- only read and execute
+##### More notes: All of `/hel` is mounted as a volume in Docker and the data stored in `/hel` will persist throughout all images when running in Docker. When in WSL, the volume will be stored in a WSL instance called Docker-Data.The directory located at `/mnt/data/gbl` contains backup scripts (`backup-devel.sh`) and automatically generates restore scripts when the backups are ran. The `/mnt/data/gbl` directory is safe from the devel as the devel has no write priveleges there -- only read and execute
 
 ---
 
@@ -174,7 +174,7 @@ _Note: Each image forms the base layer for the image described below it. For ins
 
 ### [**ubuntu-git**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-git/images/sha256-c6fdf507e9af5a864578a835ed38ebcb314b0c7488e22dc2a4d04510921cf1a3?context=explore)
 
-#### `apt-get install apt-transport-https build-essential ca-certificates cifs-utils curl git gh libssl-dev nvi wget`
+#### `apt-get install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget wslu`
 
 #### At just 300MB, this lightweight Ubuntu 22.04 image packs a punch with all the basic essentials and of course has this Github repo pre-loaded
 
@@ -182,7 +182,7 @@ _Note: Each image forms the base layer for the image described below it. For ins
 
 ### [**ubuntu-python**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-python/images/sha256-816677a90ae498b8873fdb54e9c1d71455089f400a41de01221d29068937bab7?context=explore)
 
-#### `jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv`
+#### `apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv`
 
 #### This edition comes with Python and installs a very handy tool called [cdir](https://github.com/kindtek/cdir) which is a must-have and is partially the inspiration for this whole project
 
@@ -217,7 +217,7 @@ apt-get install alien autoconf automake bc bison build-essential dbus-user-sessi
 
 ### This pre-built image (and those below) comes with a kernel saved conveniently in both `/hel/kernels` and `/hal/kernels`. 
 
-The default kernel included is generic cloned from https://github.com/microsoft/WSL2-Linux-Kernel.git. If you own a machine with an AMD processor you are in luck and there are already kernels pre-built and saved in the [repository](kernel/amd) you want to optimize your kernel for your hardware it is not hard to do it yourself with the [template config files and scripts already made](kernel). To do this or partition a hard drive with [ZFS]((https://zfsonlinux.org/)) built in to the latest kernels released by [Linux]([Linux](https://www.kernel.org/)), you will need either the kernel-phat, gui-phat, or cuda-phat images. Read up what the gui and cuda images include below
+The default kernel included is generic cloned from https://github.com/microsoft/WSL2-Linux-Kernel.git. If you own a machine with an AMD processor you are in luck and there are already kernels pre-built and saved in the [repository](kernel) you want to optimize your kernel for your hardware it is not hard to do it yourself with the template config files and scripts already madekernel. To do this or partition a hard drive with [ZFS]((https://zfsonlinux.org/)) built in to the latest kernels released by [Linux](https://www.kernel.org/), you will need either the kernel-phat, gui-phat, or cuda-phat images. Read up what the gui and cuda images include below
 
 If you end up building your own kernel, please consider contributing to this project by making a pull request with your .config file and/or kernel
 
@@ -225,7 +225,7 @@ If you end up building your own kernel, please consider contributing to this pro
 
 ## [**ubuntu-gui**](https://hub.docker.com/layers/kindtek/dplay/ubuntu-gui/images/sha256-b55f2582363d995f9fffe67b5845df06607c1ecb6d12d795b428be66b6904db2?context=explore)
 
-### `apt-get install gnome-session gdm3 gimp nautilus vlc x11-apps apt-transport-https software-properties-common brave-browser`
+### `apt-get install brave-browser gnome-session gdm3 gimp gedit nautilus vlc `
 
 This is a lightweight Graphical User Interface by most standards but still weighs in at ~1.3GB. It also requires WSL 2. One of the coolest things ever is to type `brave-browser` into your shell terminal and watch a browser window pop up out of the void
 
