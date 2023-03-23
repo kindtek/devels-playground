@@ -40,7 +40,6 @@ RUN usermod -aG ${_HALOS} host && \
     # sudo adduser host sudo && \
     # set up /hal folder as symbolic link to /home/gbl 
     ln -s /home/${_GBL} /hal && \
-    ln -s ${mnt_data}/${_GBL} /home/${_GBL}/bak && \
     chown -R ${_GBL}:${_HALOS} /hal && \
     # TODO: add a "readme" here
     touch /hal/o.world && \
@@ -54,13 +53,15 @@ RUN usermod -aG ${_HALOS} host && \
 # copy to skel and /hel, add common paths
 USER ${_GBL}
 ENV PATH="$PATH:/home/${_GBL}/.local/bin:/hel/devels-work/scripts:/home/dvl/devels-work/devels-play/scripts"
-RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${mnt_data}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> /home/${_GBL}/.bashrc && \
+RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME \
+    alias cdir='source cdir.sh'\nalias grep='grep --color=auto' \
+    alias powershell=pwsh \
+    alias vi='vi -c \"set verbose showmode\"'" >> /home/${_GBL}/.bashrc && \
     sudo cp -rfv /home/${_GBL}/. /etc/skel/ && \
     sudo rm /etc/skel/.sudo_as_admin_successful && \
     echo 'sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target \
-    sleep 20 \
     exec sudo nsenter -t "$(pidof -s systemd)" -a su - $LOGNAME \
-    echo "\"exec sudo nsenter -t \"$(pidof -s systemd)\" -a su - $LOGNAME\"' | sudo tee .bashrc
+    echo "\"exec sudo nsenter -t \"$(pidof -s systemd)\" -a su - $LOGNAME > /dev/null && wait -n\"' >> /home/${_GBL}/.bashrc
 USER dvl
 
 # HEL volume/permissions builder
@@ -81,7 +82,6 @@ RUN ln -s /home/dvl /hel && \
 USER dvl
 # add common paths
 ENV PATH="$PATH:/home/dvl/.local/bin:/hel/devels-work/scripts:/home/dvl/devels-work/devels-play/scripts"
-RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\nexport _NIX_MNT_LOCATION='${mnt_data}'\nalias cdir='source cdir.sh'\nalias grep='grep --color=auto'\nalias powershell=pwsh\nalias vi='vi -c \"set verbose showmode\"'" >> /home/dvl/.bashrc
 
 # DATA helper
 FROM dplay_hel AS dplay_data
@@ -133,7 +133,7 @@ USER ${_GBL}
 RUN sudo apt-get -y update && \
     sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
     sudo apt-get install -y tzdata && \
-    sudo dpkg-reconfigure --frontend noninteractive tzdata && \
+    sudo dpkg-reconfigure --frontend noninteractive tzdata chronos && \
     sudo dpkg --configure -a && \
     # sudo apt-get upgrade -y libsnmp40 && \
     sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget wslu && \
@@ -154,8 +154,10 @@ RUN sudo apt-get -y update && \
     # sudo cp -arfv devels-work/devels-play/mnt/dvl/bak/backup-dvl.sh /home/dvl/backup-dvl.sh && \
     # copy contents in dplay/mnt/bak to mnt_data
     sudo cp -arfv devels-work/devels-play/mnt/bak/** ${mnt_data} && \
+    sudo ln -s ${mnt_data}/${_GBL} /home/${_GBL}/bak && \
+    sudo ln -s ${mnt_data}/dvl /home/dvl/bak && sudo chown -R dvl:horns /home/dvl/bak && \
     # overwrite gbl if default username or create custom
-    sudo mv -fv ${mnt_data}/custom ${mnt_data}/${_GBL} && \
+    sudo mv -nv ${mnt_data}/custom ${mnt_data}/${_GBL} && \
     # make rwx for owner and rx for group - none for others
     sudo chmod 750 -R ${mnt_data}/${_GBL} && \
     sudo chmod 755 ${mnt_data}/${_GBL} && \
@@ -219,7 +221,6 @@ RUN sudo apt-get -y install apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps && \
     sudo cp -rfv /home/${_GBL}/.local/bin /usr/local && \
     sudo cp -afv /home/${_GBL}/.local /etc/skel/ &&  sudo rm /etc/skel/bak && \
-    sudo rm /home/dvl/bak && sudo ln -s ${mnt_data}/dvl /home/dvl/bak && sudo chown -R dvl:horns /home/dvl/bak && \
     sudo cp -afv /home/${_GBL}/.local /home/dvl/ && sudo chown -R dvl:horns /home/dvl
 USER dvl
 
@@ -254,8 +255,8 @@ FROM dplay_dind AS dplay_kernel-phat
 USER root
 RUN echo exit 0 > /usr/sbin/policy-rc.d && \
     sudo apt-get -y update && apt-get -y upgrade && \
-    apt-get -y install alien autoconf automake bc bison build-essential dbus-user-session daemonize dwarves fakeroot flex fontconfig gawk gnupg libtooldkms libblkid-dev libffi-dev lxcfs libudev-dev libssl-dev \
-    libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi snapd sysvinit-utils uuid-dev
+    apt-get -y install alien autoconf bison dbus-user-session daemonize dwarves fakeroot flex fontconfig gawk libtooldkms libblkid-dev libffi-dev \
+    lxcfs libudev-dev libssl-dev libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi snapd sysvinit-utils uuid-dev
 
 # RUN sudo apt-get -y install zfsutils-linux zlib1g-dev zfs-dkms zstd zsys zfs-dracut zfs-zed
 USER ${_GBL}
@@ -289,10 +290,10 @@ RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https
     sudo apt-get -yq update && \
     sudo apt-get -y install brave-browser && \
     # now no longeer need to add --disable-gpu flag everytime
-    cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
+    sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
     # change last line of this file - fix for brave-browser displaying empty windows
-    head -n -1 /opt/brave.com/brave/brave-browser.old > /opt/brave.com/brave/brave-browser && \
-    echo '"$HERE/brave" "$@" " --disable-gpu " || true' >> /opt/brave.com/brave/brave-browser && \
+    head -n -1 /opt/brave.com/brave/brave-browser.old | sudo tee /opt/brave.com/brave/brave-browser > /dev/null && \
+    echo '"$HERE/brave" "$@" " --disable-gpu " || true' | sudo tee --append /opt/brave.com/brave/brave-browser > /dev/null && \
     # this is a better way to do this but needs work
     # cd /opt/brave.com/brave && \
     # brave_old_line='\"\$HERE\/brave\"\s\"\$\@\"\s\|\|\strue' && \
