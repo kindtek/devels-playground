@@ -53,10 +53,10 @@ RUN usermod -aG ${_HALOS} host && \
 # copy to skel and /hel, add common paths
 USER ${_GBL}
 ENV PATH="$PATH:/home/${_GBL}/.local/bin:/hel/devels-work/scripts:/home/dvl/devels-work/devels-play/scripts"
-RUN echo $'export WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c set verbose showmode"'  >> /home/${_GBL}/.bashrc && \
+RUN echo 'export WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c \"set verbose showmode\""'  >> /home/${_GBL}/.bashrc && \
     sudo cp -rfv /home/${_GBL}/. /etc/skel/ && \
     sudo rm /etc/skel/.sudo_as_admin_successful && \
-    echo $'sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n"exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME"\necho "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/${_GBL}/.bashrc
+    echo 'sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\nexec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\necho "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/${_GBL}/.bashrc
 USER dvl
                                                                                                                                              
                                                                                                                                                       
@@ -201,14 +201,6 @@ RUN cp -rfv devels-work/scripts/gh-auth-first-time-login.sh /home/dvl && \
     chmod og+x /home/dvl/gh-auth-first-time-login.sh && chmod og+x /home/${_GBL}/gh-auth-first-time-login.sh && \
     chown dvl:horns /home/dvl/gh-auth-first-time-login.sh && chown ${_GBL}:${_HALOS} /home/${_GBL}/gh-auth-first-time-login.sh 
 USER dvl
-WORKDIR /home/dvl/devels-work
-WORKDIR /home/dvl
-RUN sh gh-auth-first-time-login.sh dvl && \
-    rm gh-auth-first-time-login.sh
-USER ${_GBL}
-WORKDIR /home/${_GBL}
-RUN sh gh-auth-first-time-login.sh ${_GBL} && \
-    rm gh-auth-first-time-login.sh
 WORKDIR /home/dvl
 
 # PYTHON stuff
