@@ -220,7 +220,7 @@ RUN sudo apt-get -y install apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps && \
     sudo cp -rfv /home/${_GBL}/.local/bin /usr/local && \
-    sudo cp -afv /home/${_GBL}/.local /etc/skel/ &&  sudo rm /etc/skel/bak && \
+    sudo cp -afv /home/${_GBL}/.local /etc/skel/ && \
     sudo cp -afv /home/${_GBL}/.local /home/dvl/ && sudo chown -R dvl:horns /home/dvl
 USER dvl
 
