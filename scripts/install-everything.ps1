@@ -324,7 +324,7 @@ function run_devels_playground {
     )
     try {
         $software_name = "Devel`'s Playground"
-        if (!(Test-Path -Path "$git_path/.dplay-installed" -PathType Leaf)) {
+        if (!(Test-Path -Path "$git_path/.dvlp-installed" -PathType Leaf)) {
             # @TODO: add cdir and python to install with same behavior as other installs above
             # not eloquent at all but good for now
 
@@ -348,7 +348,7 @@ function run_devels_playground {
             Write-Host "&$devs_playground"
             # Write-Host "$([char]27)[2J"
             &$devs_playground = "$git_path/devels-play/scripts/wsl-docker-import.cmd"
-            Write-Host "$software_name installed`r`n" | Out-File -FilePath "$git_path/.dplay-installed"
+            Write-Host "$software_name installed`r`n" | Out-File -FilePath "$git_path/.dvlp-installed"
         }
     }
     catch {}
