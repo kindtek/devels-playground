@@ -1,7 +1,7 @@
 [submodule "devels-adv"]
 	active = true
 	shallow = false
-	path = devels-adv
+	path = dvl-adv
 	url = https://github.com/kindtek/devels-adv.git
 	branch = devels-work
 	recurse = false
