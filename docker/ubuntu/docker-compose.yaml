@@ -2,7 +2,7 @@ version: "3.9"
 name: dvl-playg-ubuntu
 services:
 
-  initialize:
+  init:
     # Need a user priviliged enough to chown
     build:
       context: .
@@ -19,7 +19,7 @@ services:
       - ln -s /mnt/data /tmp/data
     # command: echo something
 
-  chown-hal:
+  init-hal:
     # Need a user priviliged enough to chown
     user: ${_AGL:-agl}
     # Specify the wings in question
@@ -29,7 +29,7 @@ services:
       context: .
       target: dvlp_hal
     depends_on:
-      initialize:
+      init:
         # Wait for the groups to be added
         condition: service_completed_successfully
     init: true
@@ -37,7 +37,7 @@ services:
       - hal-data:/tmp/${_AGL:-agl}
     command: sudo chown -R ${_AGL:-agl}:${_HALOS:-halos} /tmp/${_AGL:-agl}
 
-  chown-hel:
+  init-hel:
     # Need a user priviliged enough to chown
     user: dvl
     # Specify the wings in question
@@ -47,7 +47,7 @@ services:
       context: .
       target: dvlp_hel
     depends_on:
-      initialize:
+      init:
         # Wait for groups to be added
         condition: service_completed_successfully
     init: true
@@ -63,10 +63,10 @@ services:
       context: .
       target: dvlp_data
     depends_on:
-      chown-hel:
+      init-hel:
         # Wait for the ownership to change
         condition: service_completed_successfully
-      chown-hal:
+      init-hal:
         # Wait for the ownership to change
         condition: service_completed_successfully
     init: true
@@ -110,10 +110,10 @@ services:
       args:
         - _AGL=${_AGL:-agl}
     depends_on:
-      chown-hel:
+      init-hel:
         # Wait for the ownership to change
         condition: service_completed_successfully
-      chown-hal:
+      init-hal:
         # Wait for the ownership to change
         condition: service_completed_successfully
       data:
