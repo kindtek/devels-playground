@@ -276,8 +276,8 @@ USER dvl
 
 # Kernel only
 FROM dplay_dind as dplay_kernel
-COPY --from=dplay_kernel /home/gbl/kernels /home/gbl
-COPY --from=dplay_kernel /home/dvl/kernels /home/dvl
+COPY --from=dplay_kernel-phat /home/gbl/kernels /home/gbl
+COPY --from=dplay_kernel-phat /home/dvl/kernels /home/dvl
 
 # GUI - wsl2 required
 FROM dplay_kernel as dplay_gui
