@@ -8,7 +8,7 @@
 [submodule "powerhell-remote"]
 	active = true
 	shallow = false
-	path = powerhell-remote
+	path = powerhell
 	url = https://github.com/kindtek/powerhell-remote.git
 	branch = devels-work
 	recurse = false
