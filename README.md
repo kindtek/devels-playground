@@ -10,7 +10,7 @@
 Images now include: 
 - pre-built Linux kernel 
 - templates to build your own kernel
-- ZFS (Advanced: Even build/mount your own ZFS partition!])
+- ZFS (Advanced: Even build/mount your own ZFS partition!)
 
 ---
 
