@@ -23,7 +23,7 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 ## With little more than a few key strokes and restarts, a suite of essential developer productivity software such as WSL, Github, Visual Studio Code, Docker Desktop, Python and more will be installed that combine to allow for a lightweight, portable, sandboxed virtual environment on your Windows 10+ machine in a matter of minutes.
 
-## Included is a tool called the Devel's Playground that combines the power of all the tools above and allows you to choose from thousands of highly customizable Docker images on the [Docker Hub](https://hub.docker.com/search?q=&image_filter=official) - all of which are free. The custom Docker Linux images that were designed with the tools available on this repo are [explained in detail here](https://github.com/kindtek/devels-play#image-tags). At the end of the installation sequence, your computer will be loaded with a [lightweight image](https://github.com/kindtek/devels-play#ubuntu-dind) that is built for lightning fast development - especially for teams
+## Included is a tool called the Devel's Playground that combines the power of all the tools above and allows you to choose from thousands of highly customizable Docker images on the [Docker Hub](https://hub.docker.com/search?q=&image_filter=official) - all of which are free. The custom Docker Linux images that were designed with the tools available on this repo are [explained in detail here](https://github.com/kindtek/devels-play#image-tags). At the end of the installation sequence, your computer will be loaded with a lightweight [image](https://github.com/kindtek/devels-play#ubuntu-dind) that is built for lightning fast development - especially for teams
 
 ---
 
