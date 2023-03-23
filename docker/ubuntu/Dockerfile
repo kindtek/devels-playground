@@ -53,7 +53,7 @@ RUN usermod -aG ${_HALOS} host && \
 # copy to skel and /hel, add common paths
 USER ${_GBL}
 ENV PATH="$PATH:/home/${_GBL}/.local/bin:/hel/devels-work/scripts:/home/dvl/devels-work/devels-play/scripts"
-RUN echo 'export WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'"'set verbose showmode'"'"'"'  >> /home/${_GBL}/.bashrc && \
+RUN echo 'export WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c "'"set verbose showmode"'""'  >> /home/${_GBL}/.bashrc && \
     sudo cp -rfv /home/${_GBL}/. /etc/skel/ && \
     sudo rm /etc/skel/.sudo_as_admin_successful 
 USER dvl
