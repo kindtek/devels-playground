@@ -303,7 +303,7 @@ RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https
 USER dvl
 
 FROM dplay_gui AS dplay_gui-phat
-COPY --from=dplay_kernel ./ ./
+COPY --from=dplay_kernel-phat ./ ./
 
 FROM dplay_gui AS dplay_cuda
 USER ${_GBL}
