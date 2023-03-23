@@ -53,15 +53,15 @@ RUN usermod -aG ${_HALOS} host && \
 # copy to skel and /hel, add common paths
 USER ${_GBL}
 ENV PATH="$PATH:/home/${_GBL}/.local/bin:/hel/devels-work/scripts:/home/dvl/devels-work/devels-play/scripts"
-RUN echo "export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME \
-    alias cdir='source cdir.sh'\nalias grep='grep --color=auto' \
-    alias powershell=pwsh \
-    alias vi='vi -c \"set verbose showmode\"'" >> /home/${_GBL}/.bashrc && \
+RUN echo $'export WSL_DISTRO_NAME=\$WSL_DISTRO_NAME\n\
+    alias cdir=\'source cdir.sh\'\nalias grep=\'grep --color=auto\'\n\
+    alias powershell=pwsh \n\
+    alias vi=\'vi -c "set verbose showmode"\'' >> /home/${_GBL}/.bashrc && \
     sudo cp -rfv /home/${_GBL}/. /etc/skel/ && \
     sudo rm /etc/skel/.sudo_as_admin_successful && \
-    echo 'sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target \
-    exec sudo nsenter -t "$(pidof -s systemd)" -a su - $LOGNAME \
-    echo "\"exec sudo nsenter -t \"$(pidof -s systemd)\" -a su - $LOGNAME > /dev/null && wait -n\"' >> /home/${_GBL}/.bashrc
+    echo $'sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target \n\
+    exec sudo nsenter -t "$(pidof -s systemd)" -a su - $LOGNAME \n\
+    echo "\"exec sudo nsenter -t \"$(pidof -s systemd)\" -a su - $LOGNAME > /dev/null && wait -n\n\"' >> /home/${_GBL}/.bashrc
 USER dvl
 
 # HEL volume/permissions builder
