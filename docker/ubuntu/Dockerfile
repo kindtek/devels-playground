@@ -305,13 +305,13 @@ USER dvl
 FROM dplay_gui AS dplay_gui-phat
 COPY --from=dplay_kernel ./ ./
 
-FROM dplay_gui as dplay_cuda
+FROM dplay_gui AS dplay_cuda
 USER ${_GBL}
 # CUDA
 RUN sudo apt-get -y install nvidia-cuda-toolkit
 USER dvl
 
-FROM dplay_gui_phat as dplay_cuda_phat
+FROM dplay_gui_phat AS dplay_cuda_phat
 USER ${_GBL}
 # CUDA
 RUN sudo apt-get -y install nvidia-cuda-toolkit
