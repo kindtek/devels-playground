@@ -161,57 +161,66 @@ services:
     labels:
       com.devels-play.description: "basics + git + powerhell + docker"
 
-  # kernel:
-  #   extends: git
-  #   image: kindtek/dplay:ubuntu-kernel
-  #   build:
-  #     context: .
-  #     target: dplay_kernel
-  #   labels:
-  #     com.devels-play.description: "basics + git + powerhell + docker + kernel"
+  kernel:
+    extends: git
+    image: kindtek/dplay:ubuntu-kernel
+    build:
+      context: .
+      target: dplay_kernel
+    labels:
+      com.devels-play.description: "basics + git + powerhell + docker + kernel"
 
-  # gui:
-  #   extends: git
-  #   image: kindtek/dplay:ubuntu-gui
-  #   build:
-  #     context: .
-  #     target: dplay_gui
-  #     args:
-  #       - _GBL=${_GBL:-gbl}
-  #   labels:
-  #     com.devels-play.description: "basics + git + powerhell + docker + kernel + gui"
+  kernel_phat:
+    extends: git
+    image: kindtek/dplay:ubuntu-kernel-phat
+    build:
+      context: .
+      target: dplay_kernel-phat
+    labels:
+      com.devels-play.description: "basics + git + powerhell + docker + kernel"
 
-  # gui_phat:
-  #   extends: git
-  #   image: kindtek/dplay:ubuntu-gui-phat
-  #   build:
-  #     context: .
-  #     target: dplay_gui-phat
-  #     args:
-  #       - _GBL=${_GBL:-gbl}
-  #   labels:
-  #     com.devels-play.description: "basics + git + powerhell + docker + kernel + gui"
-  # cuda:
-  #   extends: gui
-  #   image: kindtek/dplay:ubuntu-cuda
-  #   build:
-  #     context: .
-  #     target: dplay_cuda
-  #     args:
-  #       - _GBL=${_GBL:-gbl}
-  #     labels:
-  #       com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
+  gui:
+    extends: git
+    image: kindtek/dplay:ubuntu-gui
+    build:
+      context: .
+      target: dplay_gui
+      args:
+        - _GBL=${_GBL:-gbl}
+    labels:
+      com.devels-play.description: "basics + git + powerhell + docker + kernel + gui"
 
-  # cuda_phat:
-  #   extends: gui
-  #   image: kindtek/dplay:ubuntu-cuda-phat
-  #   build:
-  #     context: .
-  #     target: dplay_cuda-phat
-  #     args:
-  #       - _GBL=${_GBL:-gbl}
-  #     labels:
-  #       com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
+  gui_phat:
+    extends: git
+    image: kindtek/dplay:ubuntu-gui-phat
+    build:
+      context: .
+      target: dplay_gui-phat
+      args:
+        - _GBL=${_GBL:-gbl}
+    labels:
+      com.devels-play.description: "basics + git + powerhell + docker + kernel + gui"
+  cuda:
+    extends: gui
+    image: kindtek/dplay:ubuntu-cuda
+    build:
+      context: .
+      target: dplay_cuda
+      args:
+        - _GBL=${_GBL:-gbl}
+      labels:
+        com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
+
+  cuda_phat:
+    extends: gui
+    image: kindtek/dplay:ubuntu-cuda-phat
+    build:
+      context: .
+      target: dplay_cuda-phat
+      args:
+        - _GBL=${_GBL:-gbl}
+      labels:
+        com.dplay_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 
 volumes:
   hel-data:

@@ -40,7 +40,6 @@ RUN usermod -aG ${_HALOS} host && \
     # sudo adduser host sudo && \
     # set up /hal folder as symbolic link to /home/gbl 
     ln -s /home/${_GBL} /hal && \
-    ln -s ${mnt_data}/dvl /home/dvl/bak && \
     ln -s ${mnt_data}/${_GBL} /home/${_GBL}/bak && \
     chown -R ${_GBL}:${_HALOS} /hal && \
     # TODO: add a "readme" here
@@ -181,10 +180,8 @@ RUN chown dvl:horns -R /home/dvl && chown ${_GBL}:${_HALOS} /home/gbl && \
     sudo chmod ugo+x devels-work/devels-play/mnt/bak/gbl/backup-gbl.sh && \
     sudo chmod ugo+x devels-work/devels-play/mnt/bak/dvl/backup-dvl.sh && \
     sudo chmod ugo+x devels-work/devels-play/mnt/bak/custom/backup-custom.sh
-
 USER dvl
 # setup ssh gh login
-
 # add symlinks for convenience
 RUN ln -s devels-work dwork && ln -s devels-work/devels-play dplay && ln -s devels-play devels-work/dplay && \
     ln -s linux devels-work/devels-play/linux && \
@@ -192,7 +189,6 @@ RUN ln -s devels-work dwork && ln -s devels-work/devels-play dplay && ln -s deve
     # ln -s kernel devels-work/devels-play/kernel && \
     ln -s docker devels-work/devels-play/docker
 # sh devels-work/scripts/gh-auth-first-time-login.sh
-
 
 # GIT
 FROM dplay_skel as dplay_git
@@ -214,8 +210,6 @@ RUN sh gh-auth-first-time-login.sh ${_GBL} && \
     rm gh-auth-first-time-login.sh
 WORKDIR /home/dvl
 
-
-
 # PYTHON stuff
 FROM dplay_git as dplay_python
 USER ${_GBL}
@@ -224,8 +218,9 @@ RUN sudo apt-get -y install apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps && \
     sudo cp -rfv /home/${_GBL}/.local/bin /usr/local && \
-    sudo cp -rfv /home/${_GBL}/.local /etc/skel/ &&  sudo rm -r /etc/skel/bak && \
-    sudo cp -rfv /home/${_GBL}/.local /home/dvl/ && sudo chown -R dvl:horns /home/dvl
+    sudo cp -afv /home/${_GBL}/.local /etc/skel/ &&  sudo rm /etc/skel/bak && \
+    sudo rm /home/dvl/bak && sudo ln -s ${mnt_data}/dvl /home/dvl/bak && sudo chown -R dvl:horns /home/dvl/bak && \
+    sudo cp -afv /home/${_GBL}/.local /home/dvl/ && sudo chown -R dvl:horns /home/dvl
 USER dvl
 
 # MICROSOFT stuff
@@ -254,40 +249,21 @@ RUN sudo mkdir -pv /etc/apt/keyrings   && \
 USER dvl
 
 # KERNEL builder
-FROM dplay_dind as dplay_kernel
+############################## DEFAULT MICROSOFT WSL 5_1519 KERNEL ######################################
+FROM dplay_dind as dplay_kernel-phat
 USER root
 RUN echo exit 0 > /usr/sbin/policy-rc.d && \
     sudo apt-get -y update && apt-get -y upgrade && \
-    apt-get -y install gnupg build-essential autoconf automake libtool gawk alien fakeroot dkms libblkid-dev uuid-dev libudev-dev libssl-dev \
-    sysvinit-utils libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi libffi-dev lxcfs flex bison bc snapd daemonize dbus-user-session fontconfig dwarves
-
-# # RUN sudo apt-get -y install zfsutils-linux 
-# RUN apt-get update -y && apt-get -y upgrade && \
-#     sudo apt-get -y install --no-install-recommends zfsutils-linux  && \
-#     sudo dpkg-reconfigure --frontend noninteractive zfsutils-linux  
+    apt-get -y install alien autoconf automake bc bison build-essential dbus-user-session daemonize dwarves fakeroot flex fontconfig gawk gnupg libtooldkms libblkid-dev libffi-dev lxcfs libudev-dev libssl-dev \
+    libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi snapd sysvinit-utils uuid-dev
 
 # RUN sudo apt-get -y install zfsutils-linux zlib1g-dev zfs-dkms zstd zsys zfs-dracut zfs-zed
 USER ${_GBL}
 WORKDIR /home/${_GBL}/dls
-# RUN wget https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.2.7.tar.xz
-# RUN tar -xvf linux-6.2.7.tar.xz
-# RUN mv -v linux-6.2.7 linux
-# RUN cd zfs && \
-# wget https://github.com/openzfs/zfs/releases/download/zfs-2.1.9/zfs-2.1.9.tar.gz && \
-# tar -xvf zfs-2.1.9.tar.gz && \
-# mv -v zfs-2.1.9 zfs
 RUN sudo apt install build-essential flex bison libssl-dev libelf-dev git dwarves && \
     git clone https://github.com/microsoft/WSL2-Linux-Kernel.git --progress --depth=1 --single-branch   && \
     mv -v WSL2-Linux-Kernel wsl2
-# #  && \
-# WORKDIR $PATH/devels-work/devels-play/linux
-# WORKDIR /hal/dls/linux
 WORKDIR /home/${_GBL}/dls/wsl2
-# RUN sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target && \
-#     sleep 13 && \
-#     exec sudo nsenter -t "$(pidof -s systemd)" -a su - $LOGNAME
-# RUN sudo systemctl unmask snapd.service && sudo systemctl enable snapd.service && sudo systemctl start snapd.service && \
-#     sudo snap install lxd 
 RUN sudo cp -fv /home/dvl/devels-work/devels-play/kernel/5_1519/amd/.config_0 /home/${_GBL}/dls/wsl2/.config && \
     sudo chown ${_GBL}:${_HALOS} .config && \
     yes "" | sudo make -j $(expr $(nproc) - 1) && sudo make modules_install && \
@@ -295,21 +271,16 @@ RUN sudo cp -fv /home/dvl/devels-work/devels-play/kernel/5_1519/amd/.config_0 /h
     sudo cp -fv arch/x86/boot/bzImage ../../../${_GBL}/kernels/linux-kernel-5_1519_0a && \
     sudo cp -fv arch/x86/boot/bzImage ../../../dvl/kernels/linux-kernel-5_1519_0a && \
     sudo rm -rfv /hal/dls/*
-# yes "" | sudo make prepare scripts && \
-# cd ../zfs && sudo sh autogen.sh && \
-# sudo sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=/hal/dls/wsl2 --with-linux-obj=/hal/dls/wsl2 && \
-# sudo sh copy-builtin ../wsl2 && \
-# yes "" | sudo make install  && \
-# cd ../wsl2/ && sudo sed -i 's/\# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config && echo grep ZFS .config && \
-# yes "" | sudo make -j16 && sudo make modules_install && sudo mkdir -pv ../../../gbl/kernels && sudo cp -fv arch/x86/boot/bzImage ../../../gbl/kernels/linux-kernel-51519-a0 && \
-# && rm -rfv /hal/dls/*
 WORKDIR /home/dvl
 USER dvl
 
-# GUI - wsl2 required
-FROM dplay_dind as dplay_gui
+# Kernel only
+FROM dplay_dind as dplay_kernel
 COPY --from=dplay_kernel /home/gbl/kernels /home/gbl
 COPY --from=dplay_kernel /home/dvl/kernels /home/dvl
+
+# GUI - wsl2 required
+FROM dplay_kernel as dplay_gui
 USER ${_GBL}
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
 RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg && \
