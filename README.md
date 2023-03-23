@@ -16,14 +16,14 @@
 4. KERNEL!
 
 ```bat
-powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell-remote/devels-work/download-everything-and-install.ps1 -OutFile install-kindtek-devels-work.ps1; powershell.exe -executionpolicy remotesigned -File install-kindtek-devels-work.ps1"
+powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell-remote/dvl-works/download-everything-and-install.ps1 -OutFile install-kindtek-dvl-works.ps1; powershell.exe -executionpolicy remotesigned -File install-kindtek-dvl-works.ps1"
 ```
 
 ---
 
 ## With little more than a few key strokes and restarts, a suite of essential developer productivity software such as WSL, Github, Visual Studio Code, Docker Desktop, Python and more will be installed that combine to allow for a lightweight, portable, sandboxed virtual environment on your Windows 10+ machine in a matter of minutes.
 
-## Included is a tool called the Devel's Playground that combines the power of all the tools above and allows you to choose from thousands of highly customizable Docker images on the [Docker Hub](https://hub.docker.com/search?q=&image_filter=official) - all of which are free. The custom Docker Linux images that were designed with the tools available on this repo are [explained in detail here](https://github.com/kindtek/devels-play#image-tags). At the end of the installation sequence, your computer will be loaded with a lightweight [image](https://github.com/kindtek/devels-play#ubuntu-dind) that is built for lightning fast development - especially for teams
+## Included is a tool called the Devel's Playground that combines the power of all the tools above and allows you to choose from thousands of highly customizable Docker images on the [Docker Hub](https://hub.docker.com/search?q=&image_filter=official) - all of which are free. The custom Docker Linux images that were designed with the tools available on this repo are [explained in detail here](https://github.com/kindtek/dvl-playg#image-tags). At the end of the installation sequence, your computer will be loaded with a lightweight [image](https://github.com/kindtek/dvl-playg#ubuntu-dind) that is built for lightning fast development - especially for teams
 
 ---
 
@@ -42,7 +42,7 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 ### Import your Linux Docker image
 
 
-### **Instructions for importing images (NEW: ability to build and your own custom Linux kernel to run them on) from [hub.docker.com](https://hub.docker.com/search?q=&image_filter=official) into WSL with the Devel's Playground are [found here](https://github.com/kindtek/devels-play#idle-minds-are-the-developers-playground)**
+### **Instructions for importing images (NEW: ability to build and your own custom Linux kernel to run them on) from [hub.docker.com](https://hub.docker.com/search?q=&image_filter=official) into WSL with the Devel's Playground are [found here](https://github.com/kindtek/dvl-playg#idle-minds-are-the-developers-playground)**
 
 &nbsp;
 

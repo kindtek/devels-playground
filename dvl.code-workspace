@@ -4,13 +4,13 @@
       "path": "."
     },
     {
-      "path": "../devels-work/devels-play"
+      "path": "../dvl-works/dvl-playg"
     },
     {
-      "path": "../devels-work/devels-play/docker/ubuntu"
+      "path": "../dvl-works/dvl-playg/docker/ubuntu"
     },
     {
-      "path": "../devels-work/devels-play/linux"
+      "path": "../dvl-works/dvl-playg/linux"
     },
     {
       "path": "../dls"
@@ -19,7 +19,7 @@
       "path": "../../hel"
     },
     {
-      "path": "../devels-work/devels-play/mnt"
+      "path": "../dvl-works/dvl-playg/mnt"
     }
   ],
   "settings": {}
