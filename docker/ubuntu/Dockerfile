@@ -311,7 +311,7 @@ USER ${_GBL}
 RUN sudo apt-get -y install nvidia-cuda-toolkit
 USER dvl
 
-FROM dplay_gui_phat AS dplay_cuda-phat
+FROM dplay_gui-phat AS dplay_cuda-phat
 USER ${_GBL}
 # CUDA
 RUN sudo apt-get -y install nvidia-cuda-toolkit
