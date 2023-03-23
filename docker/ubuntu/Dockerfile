@@ -154,7 +154,9 @@ RUN sudo apt-get -y update && \
 USER dvl
 # setup ssh gh login
 # add symlinks for convenience
-RUN ln -s devels-work dwork && ln -s devels-work/devels-play dplay && ln -s devels-play devels-work/dplay && \
+RUN ln -s devels-work dwork && \
+    ln -s devels-work/devels-play dplay && \
+    ln -s devels-play devels-work/dplay && \
     ln -s devels-work/devels-play/linux linux && \
     ln -s devels-work/devels-play/docker/ubuntu ub && \
     ln -s devels-work/devels-play/kernel kernel && \
