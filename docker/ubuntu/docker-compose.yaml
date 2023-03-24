@@ -62,7 +62,11 @@ services:
     build:
       context: .
       target: dvlp_data
+    command: tail -f /dev/null
     depends_on:
+      init:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
       init-hel:
         # Wait for the ownership to change
         condition: service_completed_successfully
@@ -75,6 +79,9 @@ services:
   skel:
     extends: data
     user: ${_AGL:-agl}
+    entrypoint:
+     - sleep
+     - infinity
     build:
       context: .
       target: dvlp_skel
@@ -99,9 +106,7 @@ services:
     extends: data
     user: dvl
     privileged: true
-    entrypoint:
-      - sleep
-      - infinity
+    command: tail -f /dev/null
     image: kindtek/dvlp:ubuntu-git
     # extends: skel
     build:
@@ -117,6 +122,9 @@ services:
         # Wait for the ownership to change
         condition: service_completed_successfully
       data:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
+      skel:
         # Wait for the ownership to change
         condition: service_completed_successfully
     volumes:
