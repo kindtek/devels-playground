@@ -34,8 +34,8 @@ services:
         condition: service_completed_successfully
     init: true
     volumes:
-      - halo-data:/tmp/${_AGL:-agl}
-    command: sudo chown -R ${_AGL:-agl}:${_HALO:-halo} /tmp/${_AGL:-agl}
+      - halo-data:/mnt/data/home/${_AGL:-agl}
+    command: sudo chown -R ${_AGL:-agl}:${_HALO:-halo} /mnt/data/home/${_AGL:-agl}
 
   init-hel:
     # Need a user priviliged enough to chown
@@ -52,8 +52,8 @@ services:
         condition: service_completed_successfully
     init: true
     volumes:
-      - hel-data:/tmp/dvl
-    command: chown -R dvl:hel /tmp/dvl
+      - hel-data:/mnt/data/home/dvl
+    command: chown -R dvl:hel /mnt/data/home/dvl
 
   data:
     user: ${_AGL:-agl}
@@ -62,7 +62,6 @@ services:
     build:
       context: .
       target: dvlp_data
-    command: tail -f /dev/null
     depends_on:
       init:
         # Wait for the ownership to change
@@ -73,15 +72,20 @@ services:
       init-halo:
         # Wait for the ownership to change
         condition: service_completed_successfully
-    init: true
+    # # init: true
+    # volumes_from:
+    #   - init-halo
+    #   - init-hel
     volumes:
-      - mnt-data:/tmp/data
+      - hel-data:/home/dvl
+      - halo-data:/home/${_AGL:-agl}
+      - mnt-data:/mnt/data
   skel:
     extends: data
-    user: ${_AGL:-agl}
     entrypoint:
      - sleep
      - infinity
+    user: ${_AGL:-agl}
     build:
       context: .
       target: dvlp_skel
@@ -91,8 +95,6 @@ services:
       # network: ${COMPOSE_PROJECT_NAME}_default
     init: true
     volumes:
-      - hel-data:/home/dvl
-      - halo-data:/home/${_AGL:-agl}
       - mnt-data:/mnt/data
     depends_on:
       data:
@@ -104,9 +106,12 @@ services:
   git:
     # owner/group becomes owner of hel-data volume
     extends: data
+    restart: on-failure
     user: dvl
     privileged: true
-    command: tail -f /dev/null
+    entrypoint:
+     - sleep
+     - infinity
     image: kindtek/dvlp:ubuntu-git
     # extends: skel
     build:
@@ -127,6 +132,7 @@ services:
       skel:
         # Wait for the ownership to change
         condition: service_completed_successfully
+    init: true
     volumes:
       - hel-data:/home/dvl
       - halo-data:/home/${_AGL:-agl}
