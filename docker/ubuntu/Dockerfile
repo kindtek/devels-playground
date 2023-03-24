@@ -3,6 +3,7 @@
 FROM ubuntu:latest AS dvlp_init
 ARG _AGL=${_AGL:-agl}
 ARG _HALOS=${_HALOS:-halos}
+ARG _CONFIG_FILE=../kernels/ubuntu/x86/generic/.config_wsl0
 ARG mnt_data=${mnt_data:-/mnt/data}
 ARG DEBIAN_FRONTEND=noninteractive
 RUN echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
@@ -52,7 +53,7 @@ RUN usermod -aG ${_HALOS} host && \
 # echo "//${mnt_data}/${_AGL} /home/${_AGL} cifs _AGL=${_AGL}, file_mode=0777,dir_mode=0777 0 0\n/${mnt_data}/dvl /home/dvl cifs _AGL=dvl, file_mode=0777, dir_mode=0777 0 0" >> /etc/fstab && \
 # copy to skel and /hel, add common paths
 USER ${_AGL}
-ENV PATH="$PATH:/home/${_AGL}/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvl-playg/scripts"
+ENV PATH="$PATH:/home/${_AGL}/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvlp/scripts"
 RUN echo 'export WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"'  >> /home/${_AGL}/.bashrc && \
     sudo cp -rfv /home/${_AGL}/. /etc/skel/ && \
     sudo rm /etc/skel/.sudo_as_admin_successful 
@@ -75,7 +76,7 @@ RUN ln -s /home/dvl /hel && \
 # sudo adduser dvl sudo && \
 USER dvl
 # add common paths
-ENV PATH="$PATH:/home/dvl/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvl-playg/scripts"
+ENV PATH="$PATH:/home/dvl/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvlp/scripts"
 
 # DATA helper
 FROM dvlp_hel AS dvlp_data
@@ -88,7 +89,7 @@ WORKDIR /home/dvl
 # add safe directories
 RUN git config --global --add safe.directory /home/dvl && \
     git config --global --add safe.directory /hel && \
-    git config --global --add safe.directory /home/dvl/dvl-playg && \
+    git config --global --add safe.directory /home/dvl/dvlp && \
     # clone fresh repos and give dvl ownership
     git clone https://github.com/kindtek/dvl-works --depth=1 --single-branch --progress
 # RUN git clone https://github.com/kindtek/dvl-works --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
@@ -132,10 +133,10 @@ RUN sudo apt-get -y update && \
     # sudo apt-get upgrade -y libsnmp40 && \
     sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget wslu && \
     # make gh files executable
-    sudo chmod +x dvl-works/dvl-playg/mnt/bak/*/backup-*.sh && \
+    sudo chmod +x dvl-works/dvlp/mnt/bak/*/backup-*.sh && \
     sudo chmod +x dvl-works/scripts/gh-auth-first-time-login.sh && \
     # copy gh files to mount location and home dirs
-    sudo mkdir -p ${mnt_data} && sudo cp -arfv dvl-works/dvl-playg/mnt/bak/** ${mnt_data} && sudo chown ${_AGL}:${_HALOS} -Rv ${mnt_data} && \
+    sudo mkdir -p ${mnt_data} && sudo cp -arfv dvl-works/dvlp/mnt/bak/** ${mnt_data} && sudo chown ${_AGL}:${_HALOS} -Rv ${mnt_data} && \
     sudo mv -unv ${mnt_data}/custom ${mnt_data}/${_AGL} && \
     sudo ln -s ${mnt_data}/agl /home/agl/bak && sudo chown -Rv ${_AGL}:${_HALO} /home/agl/bak && \
     sudo ln -sf ${mnt_data}/${_AGL} /home/${_AGL}/bak && sudo chown -Rv ${_AGL}:${_HALO} /home/${_AGL}/bak && \
@@ -155,12 +156,12 @@ USER dvl
 # setup ssh gh login
 # add symlinks for convenience
 RUN ln -s dvl-works dvlw && \
-    ln -s dvl-works/dvl-playg dvlp && \
-    ln -s dvl-playg dvl-works/dvlp && \
-    ln -s dvl-works/dvl-playg/linux linux && \
-    ln -s dvl-works/dvl-playg/docker/ubuntu ub && \
-    ln -s dvl-works/dvl-playg/kernel kernel && \
-    ln -s docker dvl-works/dvl-playg/docker docker
+    ln -s dvl-works/dvlp dvlp && \
+    ln -s dvl-works/dvlp/linux linux && \
+    ln -s dvl-works/dvlp/docker/ubuntu udocker && \
+    ln -s dvl-works/dvlp/kernels/ubuntu/x86/amd u64amdkernels && \
+    ln -s dvl-works/dvlp/kernels/ubuntu ukernels && \
+    ln -s docker dvl-works/dvlp/docker docker
 # sh dvl-works/scripts/gh-auth-first-time-login.sh
 
 # GIT
@@ -214,7 +215,7 @@ USER dvl
 
 # KERNEL builder
 ############################## DEFAULT MICROSOFT WSL 5_1519 KERNEL ######################################
-FROM dvlp_dind AS dvlp_kernel-phat
+FROM dvlp_dind AS dvlp_kernel-phat_ub-gen-
 USER root
 RUN echo exit 0 > /usr/sbin/policy-rc.d && \
     sudo apt-get -y update && apt-get -y upgrade && \
@@ -228,12 +229,12 @@ RUN sudo apt install build-essential flex bison libssl-dev libelf-dev git dwarve
     git clone https://github.com/microsoft/WSL2-Linux-Kernel.git --progress --depth=1 --single-branch   && \
     mv -v WSL2-Linux-Kernel wsl2
 WORKDIR /home/${_AGL}/dls/wsl2
-RUN sudo cp -fv /home/dvl/dvl-works/dvl-playg/kernel/5_1519/amd/.config_0 /home/${_AGL}/dls/wsl2/.config && \
+RUN if ! [ ${_CONFIG_FILE} -f ]; then sudo cp -fv /home/dvl/dvl-works/dvlp/kernels/ubuntu/x86/generic/.config_wsl0 /home/${_AGL}/dls/wsl2/.config; else cp -fv ${_CONFIG_FILE} /home/${_AGL}/dls/wsl2/.config && \
     sudo chown ${_AGL}:${_HALOS} .config && \
     yes "" | sudo make -j $(expr $(nproc) - 1) && sudo make modules_install && \
     sudo mkdir -pv ../../../${_AGL}/kernels && sudo mkdir -pv ../../../dvl/kernels && \
-    sudo cp -fv arch/x86/boot/bzImage ../../../${_AGL}/kernels/linux-kernel-5_1519_0a && \
-    sudo cp -fv arch/x86/boot/bzImage ../../../dvl/kernels/linux-kernel-5_1519_0a && \
+    sudo cp -fv arch/x86/boot/bzImage ../../../${_AGL}/linux-kernel-5_1519_0a && \
+    sudo cp -fv arch/x86/boot/bzImage ../../../dvl/linux-kernel-5_1519_0a && \
     sudo rm -rfv /halo/dls/* && \
     echo '# sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/${_AGL}/.bashrc
 

@@ -168,6 +168,9 @@ services:
     build:
       context: .
       target: dvlp_kernel-phat
+      args:
+        - _AGL=${_AGL:-agl}
+        - _CONFIG_FILE=../kernels/ubuntu/x86/generic/.config_wsl0
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
 
