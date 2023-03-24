@@ -343,11 +343,11 @@ function run_devels_playground {
             # $cmd_command = "$git_path/devels_playground/docker-images-build-in-background.ps1"
             # &$cmd_command = cmd /c start powershell.exe -Command "$git_path/devels_playground/docker-images-build-in-background.ps1" -WindowStyle "Maximized"
                
-            $devs_playground = "$git_path/dvl-playg/scripts/wsl-docker-import.cmd"
+            $devs_playground = "$git_path/dvpg/scripts/wsl-docker-import.cmd"
             Write-Host "Launching Devel's Playground`r`n$devs_playground ...`r`n" 
             Write-Host "&$devs_playground"
             # Write-Host "$([char]27)[2J"
-            &$devs_playground = "$git_path/dvl-playg/scripts/wsl-docker-import.cmd"
+            &$devs_playground = "$git_path/dvpg/scripts/wsl-docker-import.cmd"
             Write-Host "$software_name installed`r`n" | Out-File -FilePath "$git_path/.dvlp-installed"
         }
     }
@@ -422,8 +422,8 @@ workflow start_installer_daemon {
     }
     else {
         InlineScript { Write-Host "Failed to launch docker. Not able to start Devel's Playground. Please restart and run the script again:" }
-        InlineScript { Write-Host "cmd `"$git_path/kindtek/dvl-works/dvl-playg/scripts/wsl-docker-import`"" }
-        InlineScript { Write-Host "powershell.exe ./kindtek/dvl-works/dvl-playg/scripts/wsl-docker-import.ps1" }
+        InlineScript { Write-Host "cmd `"$git_path/kindtek/dvl-works/dvpg/scripts/wsl-docker-import`"" }
+        InlineScript { Write-Host "powershell.exe ./kindtek/dvl-works/dvpg/scripts/wsl-docker-import.ps1" }
     }
 
     # }
