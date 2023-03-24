@@ -12,7 +12,7 @@
 	url = https://github.com/kindtek/powerhell.git
 	branch = dvl-works
 	recurse = false
-[submodule "dvl-play"]
+[submodule "dvl-playg"]
 	active = true
 	path = dvl-playg
 	shallow = false
