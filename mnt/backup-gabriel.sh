@@ -2,7 +2,7 @@
 
 backup_mnt_location=${1:-/mnt/data}
 _GABRIEL=${2:-gbl}
-_HALOS=${3:-halos}
+_HALO=${3:-halo}
 
 if [ -z $WSL_DISTRO_NAME ] 
 then
@@ -15,15 +15,15 @@ sudo mkdir -p ${backup_mnt_location}/gbl/devel-orig && \
 sudo mkdir -p ${backup_mnt_location}/devel/devel-orig && \
 sudo chown ${username}:${groupname} ${backup_mnt_location}/${username} && \
 sudo chown ${username}:${groupname} ${backup_mnt_location}/${username}/${username}-orig && \
-sudo chown gbl:halos ${backup_mnt_location}/gbl && \
-sudo chown gbl:halos ${backup_mnt_location}/gbl/gbl-orig && \
-sudo chown devel:horns ${backup_mnt_location}/devel && \
-sudo chown devel:horns ${backup_mnt_location}/devel/devel-orig && \
-# sudo chown devel:horns ${backup_mnt_location}/gbl/devel-orig && \
-sudo chown devel:horns ${backup_mnt_location}/gbl/devel-orig && \
-# sudo chown devel:horns ${backup_mnt_location}/${username} && \
-sudo chown devel:horns ${backup_mnt_location}/${username}/devel-orig && \
-sudo chown devel:horns ${backup_mnt_location}/gbl/devel-orig && \
+sudo chown gbl:halo ${backup_mnt_location}/gbl && \
+sudo chown gbl:halo ${backup_mnt_location}/gbl/gbl-orig && \
+sudo chown devel:hel ${backup_mnt_location}/devel && \
+sudo chown devel:hel ${backup_mnt_location}/devel/devel-orig && \
+# sudo chown devel:hel ${backup_mnt_location}/gbl/devel-orig && \
+sudo chown devel:hel ${backup_mnt_location}/gbl/devel-orig && \
+# sudo chown devel:hel ${backup_mnt_location}/${username} && \
+sudo chown devel:hel ${backup_mnt_location}/${username}/devel-orig && \
+sudo chown devel:hel ${backup_mnt_location}/gbl/devel-orig && \
 
 # copy newly pulled backup script to mount location and home dirs
 sudo cp -arf dwork/mnt/backup-gbl.sh ${backup_mnt_location}/gbl/backup-gbl.sh && cp -arf dwork/mnt/backup-gbl.sh /home/gbl/backup-gbl.sh  && \
@@ -65,7 +65,7 @@ echo "#!/bin/bash
 echo 'restoring $_NIX_MNT_LOCATION/gbl/devel-$WSL_DISTRO_NAME/devel to /home ...';
 cp --backup=$VERSION_CONTROL --remove-destination -arf $_NIX_MNT_LOCATION/gbl/devel-$WSL_DISTRO_NAME/devel /home" > $HALO_RESTORE_SCRIPT;
 
-chown devel:horns $HALO_RESTORE_SCRIPT;
+chown devel:hel $HALO_RESTORE_SCRIPT;
 chmod +x $HALO_RESTORE_SCRIPT;
 
 echo "Backup complete.";
