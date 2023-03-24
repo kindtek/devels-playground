@@ -19,7 +19,7 @@ services:
       - ln -s /mnt/data /tmp/data
     # command: echo something
 
-  init-hal:
+  init-halo:
     # Need a user priviliged enough to chown
     user: ${_AGL:-agl}
     # Specify the wings in question
@@ -27,14 +27,14 @@ services:
       - ${_HALOS:-halos}
     build:
       context: .
-      target: dvlp_hal
+      target: dvlp_halo
     depends_on:
       init:
         # Wait for the groups to be added
         condition: service_completed_successfully
     init: true
     volumes:
-      - hal-data:/tmp/${_AGL:-agl}
+      - halo-data:/tmp/${_AGL:-agl}
     command: sudo chown -R ${_AGL:-agl}:${_HALOS:-halos} /tmp/${_AGL:-agl}
 
   init-hel:
@@ -66,7 +66,7 @@ services:
       init-hel:
         # Wait for the ownership to change
         condition: service_completed_successfully
-      init-hal:
+      init-halo:
         # Wait for the ownership to change
         condition: service_completed_successfully
     init: true
@@ -85,7 +85,7 @@ services:
     init: true
     volumes:
       - hel-data:/home/dvl
-      - hal-data:/home/${_AGL:-agl}
+      - halo-data:/home/${_AGL:-agl}
       - mnt-data:/mnt/data
     depends_on:
       data:
@@ -113,7 +113,7 @@ services:
       init-hel:
         # Wait for the ownership to change
         condition: service_completed_successfully
-      init-hal:
+      init-halo:
         # Wait for the ownership to change
         condition: service_completed_successfully
       data:
@@ -121,7 +121,7 @@ services:
         condition: service_completed_successfully
     volumes:
       - hel-data:/home/dvl
-      - hal-data:/home/${_AGL:-agl}
+      - halo-data:/home/${_AGL:-agl}
       - /mnt/data
     labels:
       com.dvl-playg.description: "basics + git"
@@ -162,7 +162,7 @@ services:
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
 
-  kernel_phat:
+  kernel-phat:
     extends: git
     image: kindtek/dvlp:ubuntu-kernel-phat
     build:
@@ -180,7 +180,7 @@ services:
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
 
-  gui_phat:
+  gui-phat:
     extends: git
     image: kindtek/dvlp:ubuntu-gui-phat
     build:
@@ -199,7 +199,7 @@ services:
   #     labels:
   #       com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 
-  # cuda_phat:
+  # cuda-phat:
   #   extends: gui
   #   image: kindtek/dvlp:ubuntu-cuda-phat
   #   build:
@@ -212,7 +212,7 @@ services:
 
 volumes:
   hel-data:
-  hal-data:
+  halo-data:
   mnt-data:
 
 

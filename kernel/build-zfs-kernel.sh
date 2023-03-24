@@ -26,7 +26,7 @@ sudo chown $LOGNAME:$(id -gn) .config && \
 
 yes "" | sudo make prepare scripts && \
 cd ../zfs && sudo sh autogen.sh && \
-sudo sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=/hal/dls/wsl2 --with-linux-obj=/hal/dls/wsl2 && \
+sudo sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=/halo/dls/wsl2 --with-linux-obj=/halo/dls/wsl2 && \
 sudo sh copy-builtin ../wsl2 && \
 yes "" | sudo make install  && \
 cd ../wsl2/ && sudo sed -i 's/\# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config && echo grep ZFS .config && \

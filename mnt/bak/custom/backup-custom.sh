@@ -55,7 +55,7 @@ sudo cp -arfv dvlw/mnt/backup-dvl.sh /home/dvl/backup-dvl.sh && \
 HALO_DESTINATION="$backup_mnt_location/${username}-$WSL_DISTRO_NAME";
 HALO_RESTORE_SCRIPT="$backup_mnt_location/restore-${username}-$WSL_DISTRO_NAME.sh";
 
-echo "backing the /hal up to: $HALO_DESTINATION ...";
+echo "backing the /halo up to: $HALO_DESTINATION ...";
 
 export VERSION_CONTROL=numbered;
 

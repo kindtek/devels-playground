@@ -215,7 +215,7 @@ _Note: Each image forms the base layer for the image described below it. For ins
 apt-get install alien autoconf automake bc bison build-essential dbus-user-session daemonize dwarves fakeroot flex fontconfig gawk gnupg libtooldkms libblkid-dev libffi-dev lxcfs libudev-dev libssl-dev libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi snapd sysvinit-utils uuid-dev
 ```
 
-### This pre-built image (and those below) comes with a kernel saved conveniently in both `/hel/kernels` and `/hal/kernels`. 
+### This pre-built image (and those below) comes with a kernel saved conveniently in both `/hel/kernels` and `/halo/kernels`. 
 
 The default kernel included is generic cloned from https://github.com/microsoft/WSL2-Linux-Kernel.git. If you own a machine with an AMD processor you are in luck and there are already kernels pre-built and saved in the [repository](kernel) you want to optimize your kernel for your hardware it is not hard to do it yourself with the template config files and scripts already madekernel. To do this or partition a hard drive with [ZFS]((https://zfsonlinux.org/)) built in to the latest kernels released by [Linux](https://www.kernel.org/), you will need either the kernel-phat, gui-phat, or cuda-phat images. Read up what the gui and cuda images include below
 
