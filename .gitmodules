@@ -14,7 +14,7 @@
 	recurse = false
 [submodule "dvl-playg"]
 	active = true
-	path = dvl-playg
+	path = dvlp
 	shallow = false
 	url = https://github.com/kindtek/dvl-playg.git
 	branch = dvl-works
