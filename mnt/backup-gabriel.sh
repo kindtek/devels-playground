@@ -50,7 +50,7 @@ sudo cp -arf dwork/mnt/backup-devel.sh /home/devel/backup-devel.sh && \
 HALO_DESTINATION="$_NIX_MNT_LOCATION/gbl/devel-$WSL_DISTRO_NAME";
 HALO_RESTORE_SCRIPT="$_NIX_MNT_LOCATION/gbl/restore-devel-$WSL_DISTRO_NAME.sh";
 
-echo "backing the /hal up to: $HALO_DESTINATION ...";
+echo "backing the /halo up to: $HALO_DESTINATION ...";
 
 export VERSION_CONTROL=numbered;
 

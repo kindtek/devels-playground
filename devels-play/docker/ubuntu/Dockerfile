@@ -19,8 +19,8 @@ RUN echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
     passwd -d root && \
     passwd -l root
 
-# HAL permissions/volume builder
-FROM dvlp_init AS dvlp_hal
+# HALO permissions/volume builder
+FROM dvlp_init AS dvlp_halo
 USER root
 # add dvl and host users using custom user setup
 # add only _AGL to the sudo list
@@ -38,14 +38,14 @@ RUN usermod -aG ${_HALOS} host && \
     sudo adduser ${_AGL} sudo && \
     # uncomment to add sudo privileges for host
     # sudo adduser host sudo && \
-    # set up /hal folder as symbolic link to /home/agl 
-    ln -s /home/${_AGL} /hal && \
-    chown -Rv ${_AGL}:${_HALOS} /hal && \
+    # set up /halo folder as symbolic link to /home/agl 
+    ln -s /home/${_AGL} /halo && \
+    chown -Rv ${_AGL}:${_HALOS} /halo && \
     # TODO: add a "readme" here
-    touch /hal/o.world && \
+    touch /halo/o.world && \
     # set up .ssh and dls directories and make sure .ssh has proper permissions
-    mkdir -pv /hal/.ssh /hal/dls && chmod 700 /hal/.ssh && \
-    chown -Rv ${_AGL}:${_HALOS} /hal/.ssh /hal/dls && \
+    mkdir -pv /halo/.ssh /halo/dls && chmod 700 /halo/.ssh && \
+    chown -Rv ${_AGL}:${_HALOS} /halo/.ssh /halo/dls && \
     # make dvl default wsl user 
     echo "[user]\ndefault=dvl" >> /etc/wsl.conf
 # mount stuff if needed
@@ -59,7 +59,7 @@ RUN echo 'export WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nalias cdir="source cdir.sh"
 USER dvl
 
 # HEL volume/permissions builder
-FROM dvlp_hal AS dvlp_hel
+FROM dvlp_halo AS dvlp_hel
 USER root
 # set up /dvl folder as symbolic link to /home/dvl for cloning repository(ies)
 RUN ln -s /home/dvl /hel && \
@@ -123,7 +123,7 @@ FROM dvlp_data AS dvlp_skel
 USER ${_AGL}
 # RUN sudo chown ${_AGL}:${_HALOS} -Rv ${mnt_data}/${_AGL} /home/${_AGL}  \
 #     git config --global --add safe.directory /home/agl && \
-#     git config --global --add safe.directory /hal 
+#     git config --global --add safe.directory /halo 
 RUN sudo apt-get -y update && \
     sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
     sudo apt-get install -y tzdata && \
@@ -234,7 +234,7 @@ RUN sudo cp -fv /home/dvl/dvl-works/dvl-playg/kernel/5_1519/amd/.config_0 /home/
     sudo mkdir -pv ../../../${_AGL}/kernels && sudo mkdir -pv ../../../dvl/kernels && \
     sudo cp -fv arch/x86/boot/bzImage ../../../${_AGL}/kernels/linux-kernel-5_1519_0a && \
     sudo cp -fv arch/x86/boot/bzImage ../../../dvl/kernels/linux-kernel-5_1519_0a && \
-    sudo rm -rfv /hal/dls/* && \
+    sudo rm -rfv /halo/dls/* && \
     echo '# sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/${_AGL}/.bashrc
 
 WORKDIR /home/dvl
