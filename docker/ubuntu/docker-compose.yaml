@@ -52,8 +52,8 @@ services:
         condition: service_completed_successfully
     init: true
     volumes:
-      - hel-data:/mnt/data/home/dvl
-    command: chown -R dvl:hel /mnt/data/home/dvl
+      - hel-data:/mnt/home/dvl
+    command: chown -R dvl:hel /mnt/home/dvl
 
   data:
     user: ${_AGL:-agl}

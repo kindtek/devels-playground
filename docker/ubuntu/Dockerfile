@@ -253,9 +253,8 @@ RUN sudo apt-get -y update && \
 # RUN sudo apt-get -y install zfsutils-linux zlib1g-dev zfs-dkms zstd zsys zfs-dracut zfs-zed
 USER ${_AGL}
 WORKDIR /home/${_AGL}/dls
-RUN sudo apt-get -y install build-essential flex bison libssl-dev libelf-dev git dwarves 
-WORKDIR /home/dvl-works/dvlp/kernels/ubuntu
-RUN sudo apt-get clean all && \
+RUN sudo apt-get -y install build-essential flex bison libssl-dev libelf-dev git dwarves && \
+    sudo apt-get clean all && \
     sudo apt-get autoremove --purge
 WORKDIR /home/dvl
 USER dvl
@@ -274,7 +273,7 @@ USER dvl
 
 FROM dvlp_dind AS dvlp_kernel-lite
 WORKDIR /
-COPY --from=dvlp_kernel-phat ./home/dvl/dvl-works/dvlp/kernels ./home/dvl/dvl-works/dvlp/kernels
+COPY --from=dvlp_kernel-phat ./home/dvl/dvl-works/dvlp/kernels ./home/dvl/dvl-works/dvlp
 WORKDIR /home/dvl
 USER dvl
 
