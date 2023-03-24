@@ -161,7 +161,14 @@ services:
       target: dvlp_kernel
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
-
+  kernel-lite:
+      extends: git
+      image: kindtek/dvlp:ubuntu-kernel-lite
+      build:
+        context: .
+        target: dvlp_kernel-lite
+      labels:
+        com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
   kernel-phat:
     extends: git
     image: kindtek/dvlp:ubuntu-kernel-phat

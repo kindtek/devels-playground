@@ -1,6 +1,8 @@
 # to build, run: 
 # `_AGL=mine _HALOS=ours docker run -d -i`
 FROM ubuntu:latest AS dvlp_init
+SHELL ["/bin/bash", "-c"]
+RUN chsh -s /bin/bash
 ARG _AGL=${_AGL:-agl}
 ARG _HALOS=${_HALOS:-halos}
 ARG _CONFIG_FILE=../kernels/ubuntu/x86/generic/.config_wsl0
@@ -53,11 +55,13 @@ RUN usermod -aG ${_HALOS} host && \
 # echo "//${mnt_data}/${_AGL} /home/${_AGL} cifs _AGL=${_AGL}, file_mode=0777,dir_mode=0777 0 0\n/${mnt_data}/dvl /home/dvl cifs _AGL=dvl, file_mode=0777, dir_mode=0777 0 0" >> /etc/fstab && \
 # copy to skel and /hel, add common paths
 USER ${_AGL}
+RUN chsh -s /bin/bash
 ENV PATH="$PATH:/home/${_AGL}/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvlp/scripts"
 RUN echo 'export WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"'  >> /home/${_AGL}/.bashrc && \
     sudo cp -rfv /home/${_AGL}/. /etc/skel/ && \
     sudo rm /etc/skel/.sudo_as_admin_successful 
 USER dvl
+RUN chsh -s /bin/bash
 
 # HEL volume/permissions builder
 FROM dvlp_halo AS dvlp_hel
@@ -152,6 +156,12 @@ RUN sudo apt-get -y update && \
     sudo chown agl:halos ${mnt_data}/README_ASAP ${mnt_data}/${_AGL}/backup-agl.sh && \
     sudo chown ${_AGL}:${_HALOS} ${mnt_data}/${_AGL}/backup-${_AGL}.sh ${mnt_data}/dvl/backup-dvl.sh && \
     sudo chown dvl:horns -RPv /home/dvl && sudo chown ${_AGL}:${_HALOS} -RPv /home/agl 
+USER root
+# copy and set ownership
+RUN cp -rfv dvl-works/scripts/gh-auth-first-time-login.sh /home/dvl && \
+    cp -rfv dvl-works/scripts/gh-auth-first-time-login.sh /home/${_AGL}  && \
+    chmod og+x /home/dvl/gh-auth-first-time-login.sh && chmod og+x /home/${_AGL}/gh-auth-first-time-login.sh && \
+    chown dvl:horns /home/dvl/gh-auth-first-time-login.sh && chown ${_AGL}:${_HALOS} /home/${_AGL}/gh-auth-first-time-login.sh 
 USER dvl
 # setup ssh gh login
 # add symlinks for convenience
@@ -162,22 +172,15 @@ RUN ln -s dvl-works dvlw && \
     ln -s dvl-works/dvlp/kernels/ubuntu/x86/amd u64amdkernels && \
     ln -s dvl-works/dvlp/kernels/ubuntu ukernels && \
     ln -s docker dvl-works/dvlp/docker docker
-# sh dvl-works/scripts/gh-auth-first-time-login.sh
+WORKDIR /home/dvl
+USER dvl
 
 # GIT
 FROM dvlp_skel as dvlp_git
-WORKDIR /home/dvl
-USER root
-# copy and set ownership
-RUN cp -rfv dvl-works/scripts/gh-auth-first-time-login.sh /home/dvl && \
-    cp -rfv dvl-works/scripts/gh-auth-first-time-login.sh /home/${_AGL}  && \
-    chmod og+x /home/dvl/gh-auth-first-time-login.sh && chmod og+x /home/${_AGL}/gh-auth-first-time-login.sh && \
-    chown dvl:horns /home/dvl/gh-auth-first-time-login.sh && chown ${_AGL}:${_HALOS} /home/${_AGL}/gh-auth-first-time-login.sh 
-USER dvl
-WORKDIR /home/dvl
+
 
 # PYTHON stuff
-FROM dvlp_git AS dvlp_python
+FROM dvlp_skel AS dvlp_python_lite
 USER ${_AGL}
 RUN sudo apt-get -y install apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv && \
     pip3 install cdir --user  && \
@@ -186,10 +189,14 @@ RUN sudo apt-get -y install apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev
     sudo cp -rfv /home/${_AGL}/.local/bin /usr/local && \
     sudo cp -afv /home/${_AGL}/.local /etc/skel/ && \
     sudo cp -afv /home/${_AGL}/.local /home/dvl/ && sudo chown -Rv dvl:horns /home/dvl
+WORKDIR /home/dvl
 USER dvl
 
+FROM dvlp_skel_lite AS dvlp_python
+
+
 # MICROSOFT stuff
-FROM dvlp_python AS dvlp_msdot
+FROM dvlp_skel AS dvlp_msdot_lite
 USER ${_AGL}
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
@@ -201,21 +208,36 @@ RUN sudo apt-get -y install lsb-release && \
     sudo apt-get -y update && \
     sudo apt-get -y install powershell dotnet-sdk-7.0 && \
     sudo rm packages-microsoft-prod.deb
+WORKDIR /home/dvl
+USER dvl
+
+FROM dvlp_msdot_lite AS dvlp_msdot
+WORKDIR /
+COPY --from=dvlp_python . .
+WORKDIR /home/dvl
 USER dvl
 
 # DOCKER IN DOCKER
-FROM dvlp_msdot AS dvlp_dind
+FROM dvlp_skel AS dvlp_dind_lite
 USER root
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
 RUN sudo mkdir -pv /etc/apt/keyrings   && \
     sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg  && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && \
     sudo apt-get -y update && sudo apt-get -y install docker-compose-plugin docker-ce docker-ce-cli containerd.io
+WORKDIR /home/dvl
+USER dvl
+
+FROM dvlp_dind_lite AS dvlp_dind
+WORKDIR /
+COPY --from=dvlp_python_lite . .
+COPY --from=dvlp_msdot_lite . .
+WORKDIR /home/dvl
 USER dvl
 
 # KERNEL builder
 ############################## DEFAULT MICROSOFT WSL 5_1519 KERNEL ######################################
-FROM dvlp_dind AS dvlp_kernel-phat_ub-gen-
+FROM dvlp_skel AS dvlp_kernel
 USER root
 RUN echo exit 0 > /usr/sbin/policy-rc.d && \
     sudo apt-get -y update && apt-get -y upgrade && \
@@ -237,17 +259,28 @@ RUN if ! [ ${_CONFIG_FILE} -f ]; then sudo cp -fv /home/dvl/dvl-works/dvlp/kerne
     sudo cp -fv arch/x86/boot/bzImage ../../../dvl/linux-kernel-5_1519_0a && \
     sudo rm -rfv /halo/dls/* && \
     echo '# sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/${_AGL}/.bashrc
+WORKDIR /home/dvl
+USER dvl
 
+FROM dvlp_kernel AS dvlp_kernel-phat
+WORKDIR /
+COPY --from=dvlp_python_lite . .
+COPY --from=dvlp_msdot_lite . .
+COPY --from=dvlp_dind_lite . .
 WORKDIR /home/dvl
 USER dvl
 
 # Kernel only
-FROM dvlp_dind AS dvlp_kernel
-COPY --from=dvlp_kernel-phat /home/agl/kernels /home/agl
-COPY --from=dvlp_kernel-phat /home/dvl/kernels /home/dvl
+FROM dvlp_skel AS dvlp_kernel-lite
+WORKDIR /home/agl
+COPY --from=dvlp_kernel-phat /home/agl .
+WORKDIR /home/dvl/dvl-works/dvlp/kernels
+COPY --from=dvlp_kernel-phat /home/dvl/dvl-works/dvlp/kernels .
+WORKDIR /home/dvl
+USER dvl
 
 # GUI - wsl2 required
-FROM dvlp_kernel AS dvlp_gui
+FROM dvlp_skel AS dvlp_gui
 USER ${_AGL}
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
 RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg && \
@@ -267,20 +300,32 @@ RUN sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https
     # sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl && \
     sudo apt-get -y install x11-apps xfce4 && \
     sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -yq install gnome-session gdm3 gimp gedit nautilus vlc 
+WORKDIR /home/dvl
 USER dvl
 
 FROM dvlp_gui AS dvlp_gui-phat
-COPY --from=dvlp_kernel-phat ./ ./
+WORKDIR /
+COPY --from=dvlp_python_lite . .
+COPY --from=dvlp_msdot_lite . .
+COPY --from=dvlp_dind_lite . .
+COPY --from=dvlp_kernel-phat . .
+WORKDIR /home/dvl
+USER dvl
 
 FROM dvlp_gui AS dvlp_cuda
 USER ${_AGL}
 # CUDA
 RUN sudo apt-get -y install nvidia-cuda-toolkit
+WORKDIR /home/dvl
 USER dvl
 
 FROM dvlp_gui-phat AS dvlp_cuda-phat
-USER ${_AGL}
-# CUDA
-RUN sudo apt-get -y install nvidia-cuda-toolkit
+WORKDIR /
+COPY --from=dvlp_python_lite . .
+COPY --from=dvlp_msdot_lite . .
+COPY --from=dvlp_dind_lite . .
+COPY --from=dvlp_kernel-phat . .
+COPY --from=dvlp_cuda . .
+WORKDIR /home/dvl
 USER dvl
 
