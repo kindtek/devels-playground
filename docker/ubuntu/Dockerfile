@@ -20,10 +20,15 @@ RUN echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
     passwd -d dvl && \
     passwd -d host && \
     passwd -d root && \
-    passwd -l root
+    passwd -l root && \
+    apt-get update -yq && \
+    apt-get upgrade -y && \
+    # non-root will need to use sudo from now on
+    apt-get -y install sudo && \
+    echo "[user]\ndefault=dvl" >> /etc/wsl.conf
 
 # HALO permissions/volume builder
-FROM dvlp_init AS dvlp_halo
+FROM scratch AS dvlp_halo
 USER root
 # add dvl and host users using custom user setup
 # add only _AGL to the sudo list
@@ -33,10 +38,6 @@ RUN usermod -aG ${_HALOS} host && \
     # chown -Rv ${_AGL}:${_HALOS} /home/${_AGL} \
     chown -Rv host:${_HALOS} /home/host && \
     chown -Rv ${_AGL}:${_HALOS} /home/${_AGL} && \
-    apt-get update -yq && \
-    apt-get upgrade -y && \
-    # non-root will need to use sudo from now on
-    apt-get -y install sudo && \
     # add ${_AGL} to sudo group
     sudo adduser ${_AGL} sudo && \
     # uncomment to add sudo privileges for host
@@ -50,7 +51,6 @@ RUN usermod -aG ${_HALOS} host && \
     mkdir -pv /halo/.ssh /halo/dls && chmod 700 /halo/.ssh && \
     chown -Rv ${_AGL}:${_HALOS} /halo/.ssh /halo/dls && \
     # make dvl default wsl user 
-    echo "[user]\ndefault=dvl" >> /etc/wsl.conf
 # mount stuff if needed
 # echo "//${mnt_data}/${_AGL} /home/${_AGL} cifs _AGL=${_AGL}, file_mode=0777,dir_mode=0777 0 0\n/${mnt_data}/dvl /home/dvl cifs _AGL=dvl, file_mode=0777, dir_mode=0777 0 0" >> /etc/fstab && \
 # copy to skel and /hel, add common paths
@@ -64,18 +64,18 @@ USER dvl
 RUN chsh -s /bin/bash
 
 # HEL volume/permissions builder
-FROM dvlp_halo AS dvlp_hel
+FROM scratch AS dvlp_hel
 USER root
 # set up /dvl folder as symbolic link to /home/dvl for cloning repository(ies)
 RUN ln -s /home/dvl /hel && \
-    chown -Rv dvl:horns /home/dvl && chown -Rv dvl:horns /hel  && \
-    chown -Rv dvl:horns /hel  && \
+    # chown -Rv dvl:horns /home/dvl && chown -Rv dvl:horns /hel  && \
+    # chown -Rv dvl:horns /hel  && \
     # add an instructional "readme" here later
     touch /hel/lo.world && \
     # set up .ssh and dls directories and make sure .ssh has proper permissions
     mkdir -pv /hel/.ssh /hel/dls && chmod 700 /hel/.ssh && \
     # set up /dvl folder as symbolic link to /home/dvl for cloning repository(ies)
-    chown -Rv dvl:horns /hel/.ssh /hel/dls
+    # chown -Rv dvl:horns /hel/.ssh /hel/dls
 # uncomment to add sudo priveleges for host / dvl
 # sudo adduser dvl sudo && \
 USER dvl
@@ -85,6 +85,11 @@ ENV PATH="$PATH:/home/dvl/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/
 # DATA helper
 FROM dvlp_hel AS dvlp_data
 USER root
+WORKDIR /
+COPY --from=dvlp_init . .
+COPY --from=dvlp_halo --chown=${_AGL}:${_HALO} . .
+COPY --from=dvlp_hel --chown=dvl:hel . .
+
 # copy skel files to dvl
 RUN cp -rpv /etc/skel/. /home/dvl/ && chown -Rv dvl:horns /home/dvl && \
     apt-get -y install git
@@ -171,16 +176,15 @@ RUN ln -s dvl-works dvlw && \
     ln -s dvl-works/dvlp/docker/ubuntu udocker && \
     ln -s dvl-works/dvlp/kernels/ubuntu/x86/amd u64amdkernels && \
     ln -s dvl-works/dvlp/kernels/ubuntu ukernels && \
-    ln -s docker dvl-works/dvlp/docker docker
+    ln -s dvl-works/dvlp/docker docker
 WORKDIR /home/dvl
 USER dvl
 
 # GIT
 FROM dvlp_skel as dvlp_git
 
-
 # PYTHON stuff
-FROM dvlp_skel AS dvlp_python_lite
+FROM dvlp_init AS dvlp_python_lite
 USER ${_AGL}
 RUN sudo apt-get -y install apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv && \
     pip3 install cdir --user  && \
@@ -188,12 +192,15 @@ RUN sudo apt-get -y install apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps && \
     sudo cp -rfv /home/${_AGL}/.local/bin /usr/local && \
     sudo cp -afv /home/${_AGL}/.local /etc/skel/ && \
-    sudo cp -afv /home/${_AGL}/.local /home/dvl/ && sudo chown -Rv dvl:horns /home/dvl
+    sudo cp -afv /home/${_AGL}/.local /home/dvl/ && sudo chown -Rv dvl:horns /home/dvl && \
+    sudo apt-get -y autoremove --purge
 WORKDIR /home/dvl
 USER dvl
 
-FROM dvlp_skel_lite AS dvlp_python
-
+FROM dvlp_python_lite AS dvlp_python
+WORKDIR / 
+COPY --from=dvlp_skel . .
+WORKDIR /home/dvl
 
 # MICROSOFT stuff
 FROM dvlp_skel AS dvlp_msdot_lite
@@ -207,43 +214,47 @@ RUN sudo apt-get -y install lsb-release && \
     sudo dpkg -i packages-microsoft-prod.deb && \
     sudo apt-get -y update && \
     sudo apt-get -y install powershell dotnet-sdk-7.0 && \
-    sudo rm packages-microsoft-prod.deb
+    sudo rm packages-microsoft-prod.deb && \
+    sudo apt-get -y remove lsb_release && \
+    sudo apt-get -y autoremove --purge
 WORKDIR /home/dvl
 USER dvl
 
 FROM dvlp_msdot_lite AS dvlp_msdot
 WORKDIR /
+COPY --from=dvlp_skel . .
 COPY --from=dvlp_python . .
 WORKDIR /home/dvl
-USER dvl
 
 # DOCKER IN DOCKER
 FROM dvlp_skel AS dvlp_dind_lite
 USER root
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
-RUN sudo mkdir -pv /etc/apt/keyrings   && \
+RUN sudo apt-get -y install lsb-release && \
+    sudo mkdir -pv /etc/apt/keyrings   && \
     sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg  && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && \
-    sudo apt-get -y update && sudo apt-get -y install docker-compose-plugin docker-ce docker-ce-cli containerd.io
+    sudo apt-get -y update && sudo apt-get -y install docker-compose-plugin docker-ce docker-ce-cli containerd.io && \
+    sudo apt-get remove -y lsb_release && \
+    sudo apt-get -y autoremove --purge
 WORKDIR /home/dvl
 USER dvl
 
 FROM dvlp_dind_lite AS dvlp_dind
 WORKDIR /
+COPY --from=dvlp_skel . .
 COPY --from=dvlp_python_lite . .
 COPY --from=dvlp_msdot_lite . .
 WORKDIR /home/dvl
 USER dvl
 
 # KERNEL builder
-############################## DEFAULT MICROSOFT WSL 5_1519 KERNEL ######################################
 FROM dvlp_skel AS dvlp_kernel
 USER root
 RUN echo exit 0 > /usr/sbin/policy-rc.d && \
     sudo apt-get -y update && apt-get -y upgrade && \
     apt-get -y install alien autoconf bison dbus-user-session daemonize dwarves fakeroot flex fontconfig gawk libblkid-dev libffi-dev \
     lxcfs libudev-dev libssl-dev libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi snapd sysvinit-utils uuid-dev
-
 # RUN sudo apt-get -y install zfsutils-linux zlib1g-dev zfs-dkms zstd zsys zfs-dracut zfs-zed
 USER ${_AGL}
 WORKDIR /home/${_AGL}/dls
@@ -264,6 +275,7 @@ USER dvl
 
 FROM dvlp_kernel AS dvlp_kernel-phat
 WORKDIR /
+COPY --from=dvlp_skel . .
 COPY --from=dvlp_python_lite . .
 COPY --from=dvlp_msdot_lite . .
 COPY --from=dvlp_dind_lite . .
@@ -272,6 +284,8 @@ USER dvl
 
 # Kernel only
 FROM dvlp_skel AS dvlp_kernel-lite
+WORKDIR /
+COPY --from=dvlp_skel . .
 WORKDIR /home/agl
 COPY --from=dvlp_kernel-phat /home/agl .
 WORKDIR /home/dvl/dvl-works/dvlp/kernels
@@ -305,6 +319,7 @@ USER dvl
 
 FROM dvlp_gui AS dvlp_gui-phat
 WORKDIR /
+COPY --from=dvlp_skel . .
 COPY --from=dvlp_python_lite . .
 COPY --from=dvlp_msdot_lite . .
 COPY --from=dvlp_dind_lite . .
@@ -321,6 +336,7 @@ USER dvl
 
 FROM dvlp_gui-phat AS dvlp_cuda-phat
 WORKDIR /
+COPY --from=dvlp_skel . .
 COPY --from=dvlp_python_lite . .
 COPY --from=dvlp_msdot_lite . .
 COPY --from=dvlp_dind_lite . .
