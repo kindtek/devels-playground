@@ -2,7 +2,7 @@
 
 backup_mnt_location=${1:-/mnt/data}
 username=${2:-agl}
-groupname=${3:-halos}
+groupname=${3:-halo}
 
 if [ -z $backup_mnt_location ]
 then 
@@ -19,15 +19,15 @@ sudo mkdir -p ${backup_mnt_location}/agl/dvl-orig && \
 sudo mkdir -p ${backup_mnt_location}/dvl/dvl-orig && \
 sudo chown ${username}:${groupname} ${backup_mnt_location}/${username} && \
 sudo chown ${username}:${groupname} ${backup_mnt_location}/${username}/${username}-orig && \
-sudo chown agl:halos ${backup_mnt_location}/agl && \
-sudo chown agl:halos ${backup_mnt_location}/agl/agl-orig && \
-sudo chown dvl:horns ${backup_mnt_location}/dvl && \
-sudo chown dvl:horns ${backup_mnt_location}/dvl/dvl-orig && \
-# sudo chown dvl:horns ${backup_mnt_location}/agl/dvl-orig && \
-sudo chown dvl:horns ${backup_mnt_location}/agl/dvl-orig && \
-# sudo chown dvl:horns ${backup_mnt_location}/${username} && \
-sudo chown dvl:horns ${backup_mnt_location}/${username}/dvl-orig && \
-sudo chown dvl:horns ${backup_mnt_location}/agl/dvl-orig && \
+sudo chown agl:halo ${backup_mnt_location}/agl && \
+sudo chown agl:halo ${backup_mnt_location}/agl/agl-orig && \
+sudo chown dvl:hel ${backup_mnt_location}/dvl && \
+sudo chown dvl:hel ${backup_mnt_location}/dvl/dvl-orig && \
+# sudo chown dvl:hel ${backup_mnt_location}/agl/dvl-orig && \
+sudo chown dvl:hel ${backup_mnt_location}/agl/dvl-orig && \
+# sudo chown dvl:hel ${backup_mnt_location}/${username} && \
+sudo chown dvl:hel ${backup_mnt_location}/${username}/dvl-orig && \
+sudo chown dvl:hel ${backup_mnt_location}/agl/dvl-orig && \
 
 # copy newly pulled backup script to mount location and home dirs
 sudo cp -arfv dvlw/mnt/backup-agl.sh ${backup_mnt_location}/agl/backup-agl.sh && cp -arfv dvlw/mnt/backup-agl.sh /home/agl/backup-agl.sh  && \
@@ -70,7 +70,7 @@ echo "#!/bin/bash
 echo 'restoring $_NIX_MNT_LOCATION/$backup_mnt_location/dvl-$WSL_DISTRO_NAME/dvl to /home ...';
 cp --backup=$VERSION_CONTROL --remove-destination -arfv $_NIX_MNT_LOCATION/$backup_mnt_location/dvl-$WSL_DISTRO_NAME/dvl /home" > $HALO_RESTORE_SCRIPT;
 
-chown dvl:horns $HALO_RESTORE_SCRIPT;
+chown dvl:hel $HALO_RESTORE_SCRIPT;
 chmod +x $HALO_RESTORE_SCRIPT;
 
 echo "Backup complete.";

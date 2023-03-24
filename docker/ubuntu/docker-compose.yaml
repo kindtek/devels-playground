@@ -12,7 +12,7 @@ services:
       - bin/bash
       - -c
       - export _AGL=${_AGL:-agl}
-      - export _HALOS=${_HALOS:-halos}
+      - export _HALO=${_HALO:-halo}
       - ln -s /home/${_AGL:-agl} /tmp/${_AGL:-agl}
       - ln -s /home/dvl /tmp/dvl
       - mkdir -p /mnt/data
@@ -24,7 +24,7 @@ services:
     user: ${_AGL:-agl}
     # Specify the wings in question
     group_add:
-      - ${_HALOS:-halos}
+      - ${_HALO:-halo}
     build:
       context: .
       target: dvlp_halo
@@ -35,14 +35,14 @@ services:
     init: true
     volumes:
       - halo-data:/tmp/${_AGL:-agl}
-    command: sudo chown -R ${_AGL:-agl}:${_HALOS:-halos} /tmp/${_AGL:-agl}
+    command: sudo chown -R ${_AGL:-agl}:${_HALO:-halo} /tmp/${_AGL:-agl}
 
   init-hel:
     # Need a user priviliged enough to chown
     user: dvl
     # Specify the wings in question
     group_add:
-      - horns
+      - hel
     build:
       context: .
       target: dvlp_hel
@@ -53,12 +53,12 @@ services:
     init: true
     volumes:
       - hel-data:/tmp/dvl
-    command: chown -R dvl:horns /tmp/dvl
+    command: chown -R dvl:hel /tmp/dvl
 
   data:
     user: ${_AGL:-agl}
     group_add:
-      - ${_HALOS:-halos}
+      - ${_HALO:-halo}
     build:
       context: .
       target: dvlp_data
@@ -80,7 +80,7 @@ services:
       target: dvlp_skel
       args:
         - _AGL=${_AGL:-agl}
-        - _HALOS=${_HALOS:-halos}
+        - _HALO=${_HALO:-halo}
       # network: ${COMPOSE_PROJECT_NAME}_default
     init: true
     volumes:
@@ -162,13 +162,13 @@ services:
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
   kernel-lite:
-      extends: git
-      image: kindtek/dvlp:ubuntu-kernel-lite
-      build:
-        context: .
-        target: dvlp_kernel-lite
-      labels:
-        com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
+    extends: git
+    image: kindtek/dvlp:ubuntu-kernel-lite
+    build:
+      context: .
+      target: dvlp_kernel-lite
+    labels:
+      com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
   kernel-phat:
     extends: git
     image: kindtek/dvlp:ubuntu-kernel-phat

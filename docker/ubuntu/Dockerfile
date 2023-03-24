@@ -1,20 +1,20 @@
 # to build, run: 
-# `_AGL=mine _HALOS=ours docker run -d -i`
+# `_AGL=mine _HALO=ours docker run -d -i`
 FROM ubuntu:latest AS dvlp_init
 SHELL ["/bin/bash", "-c"]
 RUN chsh -s /bin/bash
 ARG _AGL=${_AGL:-agl}
-ARG _HALOS=${_HALOS:-halos}
+ARG _HALO=${_HALO:-halo}
 ARG _CONFIG_FILE=../kernels/ubuntu/x86/generic/.config_wsl0
 ARG mnt_data=${mnt_data:-/mnt/data}
 ARG DEBIAN_FRONTEND=noninteractive
 RUN echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
     echo 'tzdata tzdata/Zones/America select Los Angeles' | debconf-set-selections && \
-    addgroup --gid 777 ${_HALOS} && \
-    addgroup --gid 666 horns && \
-    adduser --home /home/${_AGL} --ingroup ${_HALOS} --shell /bin/bash --uid 1000 --disabled-password ${_AGL} && \
-    adduser --system --home /home/host --ingroup ${_HALOS} --shell /bin/bash --uid 76667 --disabled-password host && \
-    adduser --home /home/dvl --ingroup horns --shell /bin/bash --uid 666 --disabled-password dvl && \
+    addgroup --gid 777 ${_HALO} && \
+    addgroup --gid 666 hel && \
+    adduser --home /home/${_AGL} --ingroup ${_HALO} --shell /bin/bash --uid 1000 --disabled-password ${_AGL} && \
+    adduser --system --home /home/host --ingroup ${_HALO} --shell /bin/bash --uid 76667 --disabled-password host && \
+    adduser --home /home/dvl --ingroup hel --shell /bin/bash --uid 666 --disabled-password dvl && \
     # ensure no passwords
     passwd -d ${_AGL} && \
     passwd -d dvl && \
@@ -32,29 +32,29 @@ FROM scratch AS dvlp_halo
 USER root
 # add dvl and host users using custom user setup
 # add only _AGL to the sudo list
-RUN usermod -aG ${_HALOS} host && \
-    # usermod -aG horns ${_AGL} && \
+RUN usermod -aG ${_HALO} host && \
+    # usermod -aG hel ${_AGL} && \
     usermod -aG sudo ${_AGL} && \
-    # chown -Rv ${_AGL}:${_HALOS} /home/${_AGL} \
-    chown -Rv host:${_HALOS} /home/host && \
-    chown -Rv ${_AGL}:${_HALOS} /home/${_AGL} && \
+    # chown -Rv ${_AGL}:${_HALO} /home/${_AGL} \
+    chown -Rv host:${_HALO} /home/host && \
+    chown -Rv ${_AGL}:${_HALO} /home/${_AGL} && \
     # add ${_AGL} to sudo group
     sudo adduser ${_AGL} sudo && \
     # uncomment to add sudo privileges for host
     # sudo adduser host sudo && \
     # set up /halo folder as symbolic link to /home/agl 
     ln -s /home/${_AGL} /halo && \
-    chown -Rv ${_AGL}:${_HALOS} /halo && \
+    chown -Rv ${_AGL}:${_HALO} /halo && \
     # TODO: add a "readme" here
     touch /halo/o.world && \
     # set up .ssh and dls directories and make sure .ssh has proper permissions
     mkdir -pv /halo/.ssh /halo/dls && chmod 700 /halo/.ssh && \
-    chown -Rv ${_AGL}:${_HALOS} /halo/.ssh /halo/dls && \
+    chown -Rv ${_AGL}:${_HALO} /halo/.ssh /halo/dls && \
     # make dvl default wsl user 
-# mount stuff if needed
-# echo "//${mnt_data}/${_AGL} /home/${_AGL} cifs _AGL=${_AGL}, file_mode=0777,dir_mode=0777 0 0\n/${mnt_data}/dvl /home/dvl cifs _AGL=dvl, file_mode=0777, dir_mode=0777 0 0" >> /etc/fstab && \
-# copy to skel and /hel, add common paths
-USER ${_AGL}
+    # mount stuff if needed
+    # echo "//${mnt_data}/${_AGL} /home/${_AGL} cifs _AGL=${_AGL}, file_mode=0777,dir_mode=0777 0 0\n/${mnt_data}/dvl /home/dvl cifs _AGL=dvl, file_mode=0777, dir_mode=0777 0 0" >> /etc/fstab && \
+    # copy to skel and /hel, add common paths
+    USER ${_AGL}
 RUN chsh -s /bin/bash
 ENV PATH="$PATH:/home/${_AGL}/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvlp/scripts"
 RUN echo 'export WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"'  >> /home/${_AGL}/.bashrc && \
@@ -68,17 +68,17 @@ FROM scratch AS dvlp_hel
 USER root
 # set up /dvl folder as symbolic link to /home/dvl for cloning repository(ies)
 RUN ln -s /home/dvl /hel && \
-    # chown -Rv dvl:horns /home/dvl && chown -Rv dvl:horns /hel  && \
-    # chown -Rv dvl:horns /hel  && \
+    # chown -Rv dvl:hel /home/dvl && chown -Rv dvl:hel /hel  && \
+    # chown -Rv dvl:hel /hel  && \
     # add an instructional "readme" here later
     touch /hel/lo.world && \
     # set up .ssh and dls directories and make sure .ssh has proper permissions
     mkdir -pv /hel/.ssh /hel/dls && chmod 700 /hel/.ssh && \
     # set up /dvl folder as symbolic link to /home/dvl for cloning repository(ies)
-    # chown -Rv dvl:horns /hel/.ssh /hel/dls
-# uncomment to add sudo priveleges for host / dvl
-# sudo adduser dvl sudo && \
-USER dvl
+    # chown -Rv dvl:hel /hel/.ssh /hel/dls
+    # uncomment to add sudo priveleges for host / dvl
+    # sudo adduser dvl sudo && \
+    USER dvl
 # add common paths
 ENV PATH="$PATH:/home/dvl/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvlp/scripts"
 
@@ -91,7 +91,7 @@ COPY --from=dvlp_halo --chown=${_AGL}:${_HALO} . .
 COPY --from=dvlp_hel --chown=dvl:hel . .
 
 # copy skel files to dvl
-RUN cp -rpv /etc/skel/. /home/dvl/ && chown -Rv dvl:horns /home/dvl && \
+RUN cp -rpv /etc/skel/. /home/dvl/ && chown -Rv dvl:hel /home/dvl && \
     apt-get -y install git
 USER dvl
 WORKDIR /home/dvl
@@ -122,16 +122,16 @@ WORKDIR /home/dvl
 # #             echo "#!/bin/bash" >> agl/backup-docker.sh; \
 # #         fi \
 # #     fi
-# chown -Rv dvl:horns /home/dvl && chown -Rv ${_AGL}:${_HALOS} /home/${_AGL}
+# chown -Rv dvl:hel /home/dvl && chown -Rv ${_AGL}:${_HALO} /home/${_AGL}
 # RUN echo "# # # # Docker # # # # " >> ${mnt_data}/agl/backup-docker.sh
 # RUN sudo .${mnt_data}/agl/backup-docker.sh
 USER dvl
 
 # SKELETON framework
 FROM dvlp_data AS dvlp_skel
-# RUN with halos ownership
+# RUN with halo ownership
 USER ${_AGL}
-# RUN sudo chown ${_AGL}:${_HALOS} -Rv ${mnt_data}/${_AGL} /home/${_AGL}  \
+# RUN sudo chown ${_AGL}:${_HALO} -Rv ${mnt_data}/${_AGL} /home/${_AGL}  \
 #     git config --global --add safe.directory /home/agl && \
 #     git config --global --add safe.directory /halo 
 RUN sudo apt-get -y update && \
@@ -145,7 +145,7 @@ RUN sudo apt-get -y update && \
     sudo chmod +x dvl-works/dvlp/mnt/bak/*/backup-*.sh && \
     sudo chmod +x dvl-works/scripts/gh-auth-first-time-login.sh && \
     # copy gh files to mount location and home dirs
-    sudo mkdir -p ${mnt_data} && sudo cp -arfv dvl-works/dvlp/mnt/bak/** ${mnt_data} && sudo chown ${_AGL}:${_HALOS} -Rv ${mnt_data} && \
+    sudo mkdir -p ${mnt_data} && sudo cp -arfv dvl-works/dvlp/mnt/bak/** ${mnt_data} && sudo chown ${_AGL}:${_HALO} -Rv ${mnt_data} && \
     sudo mv -unv ${mnt_data}/custom ${mnt_data}/${_AGL} && \
     sudo ln -s ${mnt_data}/agl /home/agl/bak && sudo chown -Rv ${_AGL}:${_HALO} /home/agl/bak && \
     sudo ln -sf ${mnt_data}/${_AGL} /home/${_AGL}/bak && sudo chown -Rv ${_AGL}:${_HALO} /home/${_AGL}/bak && \
@@ -158,15 +158,15 @@ RUN sudo apt-get -y update && \
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_AGL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/README_ASAP      && \
     # echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_AGL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/${_AGL}/README_ASAP      && \
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_AGL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/agl/README_ASAP      && \
-    sudo chown agl:halos ${mnt_data}/README_ASAP ${mnt_data}/${_AGL}/backup-agl.sh && \
-    sudo chown ${_AGL}:${_HALOS} ${mnt_data}/${_AGL}/backup-${_AGL}.sh ${mnt_data}/dvl/backup-dvl.sh && \
-    sudo chown dvl:horns -RPv /home/dvl && sudo chown ${_AGL}:${_HALOS} -RPv /home/agl 
+    sudo chown agl:halo ${mnt_data}/README_ASAP ${mnt_data}/${_AGL}/backup-agl.sh && \
+    sudo chown ${_AGL}:${_HALO} ${mnt_data}/${_AGL}/backup-${_AGL}.sh ${mnt_data}/dvl/backup-dvl.sh && \
+    sudo chown dvl:hel -RPv /home/dvl && sudo chown ${_AGL}:${_HALO} -RPv /home/agl 
 USER root
 # copy and set ownership
 RUN cp -rfv dvl-works/scripts/gh-auth-first-time-login.sh /home/dvl && \
     cp -rfv dvl-works/scripts/gh-auth-first-time-login.sh /home/${_AGL}  && \
     chmod og+x /home/dvl/gh-auth-first-time-login.sh && chmod og+x /home/${_AGL}/gh-auth-first-time-login.sh && \
-    chown dvl:horns /home/dvl/gh-auth-first-time-login.sh && chown ${_AGL}:${_HALOS} /home/${_AGL}/gh-auth-first-time-login.sh 
+    chown dvl:hel /home/dvl/gh-auth-first-time-login.sh && chown ${_AGL}:${_HALO} /home/${_AGL}/gh-auth-first-time-login.sh 
 USER dvl
 # setup ssh gh login
 # add symlinks for convenience
@@ -192,7 +192,7 @@ RUN sudo apt-get -y install apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps && \
     sudo cp -rfv /home/${_AGL}/.local/bin /usr/local && \
     sudo cp -afv /home/${_AGL}/.local /etc/skel/ && \
-    sudo cp -afv /home/${_AGL}/.local /home/dvl/ && sudo chown -Rv dvl:horns /home/dvl && \
+    sudo cp -afv /home/${_AGL}/.local /home/dvl/ && sudo chown -Rv dvl:hel /home/dvl && \
     sudo apt-get -y autoremove --purge
 WORKDIR /home/dvl
 USER dvl
@@ -263,7 +263,7 @@ RUN sudo apt install build-essential flex bison libssl-dev libelf-dev git dwarve
     mv -v WSL2-Linux-Kernel wsl2
 WORKDIR /home/${_AGL}/dls/wsl2
 RUN if ! [ ${_CONFIG_FILE} -f ]; then sudo cp -fv /home/dvl/dvl-works/dvlp/kernels/ubuntu/x86/generic/.config_wsl0 /home/${_AGL}/dls/wsl2/.config; else cp -fv ${_CONFIG_FILE} /home/${_AGL}/dls/wsl2/.config && \
-    sudo chown ${_AGL}:${_HALOS} .config && \
+    sudo chown ${_AGL}:${_HALO} .config && \
     yes "" | sudo make -j $(expr $(nproc) - 1) && sudo make modules_install && \
     sudo mkdir -pv ../../../${_AGL}/kernels && sudo mkdir -pv ../../../dvl/kernels && \
     sudo cp -fv arch/x86/boot/bzImage ../../../${_AGL}/linux-kernel-5_1519_0a && \
