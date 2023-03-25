@@ -3,7 +3,7 @@
 FROM ubuntu:latest AS dvlp_init
 ARG _AGL=${_AGL:-agl}
 ARG _HALO=${_HALO:-halo}
-ARG _CONFIG_FILE=../kernels/ubuntu/x86/generic/.config_wsl0
+ARG _CONFIG_FILE
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
@@ -11,59 +11,55 @@ RUN echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
     apt-get update -yq && \
     apt-get upgrade -y && \
     apt-get -y install sudo && \
-    # adduser --system --home /home/host --ingroup ${_HALO} --shell /bin/bash --uid 76667 --disabled-password host && \
-    # usermod -aG ${_HALO} host && \
-    # ensure no passwords
-    # passwd -d host && \
-    addgroup --gid 777 ${_HALO}  && \
-    adduser --home /home/${_AGL} --ingroup ${_HALO} --shell /bin/bash --uid 1000 --disabled-password --gecos GECOS ${_AGL} && \
-    passwd -d ${_AGL} && \
-    # usermod -aG hel ${_AGL} && \
-    usermod -aG sudo ${_AGL} && \
+    # non-root will need to use sudo from now on
+    addgroup --gid 777 ${_HALO} && \
     addgroup --gid 666 hel && \
-    adduser --home /home/dvl --ingroup hel --shell /bin/bash --uid 666 --disabled-password --gecos GECOS dvl && \
-    passwd -d dvl && \
+    # add just agl for now 
+    adduser --home /home/${_AGL} --ingroup ${_HALO} --shell /bin/bash --uid 1000 --disabled-password --gecos GECOS ${_AGL} && \
+    # add only _AGL to the sudo list
+    usermod -aG sudo ${_AGL} && \
+    # ensure no passwords
     passwd -d root && \
     passwd -l root && \
-    # non-root will need to use sudo from now on
-    echo "[user]\ndefault=dvl" >> /etc/wsl.conf
-
+    passwd -d ${_AGL} && \
+    # make dvl default wsl user 
+    echo "[user]\ndefault=dvl" >> /etc/wsl.conf && \    
+    echo 'export PATH=$PATH:/home/${_AGL}/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvlp/scripts:WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"'  >> /home/${_AGL}/.bashrc && \
+    # copy this .bashrc to skel
+    cp -rfv /home/${_AGL}/.bashrc /etc/skel/.bashrc && \
+    # add dvl (and host - optional) users
+    adduser --home /home/dvl --ingroup hel --shell /bin/bash --uid 666 --disabled-password --gecos GECOS dvl && \
+    passwd -d dvl
+    # adduser --system --home /home/host --ingroup ${_HALO} --shell /bin/bash --uid 76667 --disabled-password host && \ 
+    # passwd -d host
 # HALO permissions/volume builder
 FROM dvlp_init AS dvlp_halo
-ARG _AGL=${_AGL:-agl}
-ARG _HALO=${_HALO:-halo}
-# add dvl and host users using custom user setup
-# add only _AGL to the sudo list
-
-# chown -Rv ${_AGL}:${_HALO} /home/${_AGL} \
-# chown -Rv host:${_HALO} /home/host && \
-RUN ln -s /home/${_AGL} /halo && \
+RUN ln -sf /home/${_AGL} /halo && \
+    ln -sf ${mnt_data}/bak/${_AGL} /home/${_AGL}/bak && \
+    ln -sf ${mnt_data}/bak/agl /home/agl/bak && \
+    ln -sf ${mnt_data}/bak/dvl /home/dvl/bak && \
+    mkdir -m 753 -p ${mnt_data}/home/agl && \
+    mkdir -m 753 -p ${mnt_data}/home/${_AGL}
     # set up .ssh and dls directories and make sure .ssh has proper permissions
     # mkdir -pv /home/${_AGL}/.ssh /home/${_AGL}/dls && chmod 700 /home/${_AGL}/.ssh
-    # chown -Rv ${_AGL}:${_HALO} /home/${_AGL}/.ssh /home/${_AGL}/dls
-    # make dvl default wsl user 
     # mount stuff if needed
     # echo "//${mnt_data}/bak/${_AGL} /home/${_AGL} cifs _AGL=${_AGL}, file_mode=0777,dir_mode=0777 0 0\n/${mnt_data}/bak/dvl /home/dvl cifs _AGL=dvl, file_mode=0777, dir_mode=0777 0 0" >> /etc/fstab && \
-    # copy to skel and /hel, add common paths
-    echo 'export PATH=$PATH:/home/${_AGL}/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvlp/scripts:WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"'  >> /home/${_AGL}/.bashrc && \
-    cp -rfv /home/${_AGL}/. /etc/skel/
-
 # HEL volume/permissions builder
 FROM dvlp_init AS dvlp_hel
-# chsh -s /bin/bash && \
-# set up /dvl folder as symbolic link to /home/dvl for cloning repository(ies)
-RUN ln -s /home/dvl /hel && \
-    cp -rpv /etc/skel/. /home/dvl/ 
-
-# chown -Rv dvl:hel /home/dvl && chown -Rv dvl:hel /hel  && \
-# chown -Rv dvl:hel /hel  && \
+RUN ln -sf /home/dvl /hel && \
+    ln -s dvl-works dvlw && \
+    ln -s dvl-works/dvlp dvlp && \
+    ln -s dvl-works/dvlp/linux linux && \
+    ln -s dvl-works/dvlp/docker/ubuntu udocker && \
+    ln -s dvl-works/dvlp/kernels/ubuntu/x86/amd u64amdkernels && \
+    ln -s dvl-works/dvlp/kernels/ubuntu ukernels && \
+    ln -s dvl-works/dvlp/docker docker && \
+    mkdir -m 753 -p ${mnt_data}/home/dvl
+# chsh -s /bin/bash 
 # add an instructional "readme" here later
 # set up .ssh and dls directories and make sure .ssh has proper permissions
-# mkdir -pv /home/dvl/.ssh /home/dvl/dls && chmod 700 /home/dvl/.ssh 
-# set up /dvl folder as symbolic link to /home/dvl for cloning repository(ies)
-# chown -Rv dvl:hel /hel/.ssh /hel/dls
-# uncomment to add sudo priveleges for host / dvl
-# sudo adduser dvl sudo && \
+# mkdir -pv /home/dvl/.ssh /home/dvl/dls
+# chmod 700 /home/dvl/.ssh 
 USER dvl
 # add common paths
 
@@ -136,39 +132,25 @@ RUN sudo apt-get -y update && \
     sudo chmod -R +x dvl-works/dvlp/mnt/bak && \
     sudo chmod +x dvl-works/scripts/gh-auth-first-time-login.sh && \
     # copy gh files to mount location and home dirs
-    sudo mkdir -p ${mnt_data}/bak && sudo cp -arfv dvl-works/dvlp/mnt/bak ${mnt_data} && sudo chown ${_AGL}:${_HALO} -Rv ${mnt_data}/bak && \
+    sudo cp -arfv dvl-works/dvlp/mnt/bak ${mnt_data} \
     # sudo mv -unv ${mnt_data}/bak/custom ${mnt_data}/bak/${_AGL} && \
-    sudo ln -s ${mnt_data}/bak/agl /home/agl/bak && sudo chown -Rv ${_AGL}:${_HALO} /home/agl/bak && \
-    sudo ln -sf ${mnt_data}/bak/${_AGL} /home/${_AGL}/bak && sudo chown -Rv ${_AGL}:${_HALO} /home/${_AGL}/bak && \
-    sudo ln -s ${mnt_data}/bak/dvl /home/dvl/bak && sudo chown -Rv ${_AGL}:${_HALO} /home/dvl/bak && \
     # make rwx for owner and rw for group - x/rx for others
-    sudo chmod 754 -Rv ${mnt_data}/bak/${_AGL} && \
-    sudo chmod 751 ${mnt_data}/bak/${_AGL} && \
-    sudo chmod 751 ${mnt_data}/bak/agl && sudo chmod 751 ${mnt_data}/bak/dvl && \
-    sudo chmod 754 -Rv ${mnt_data}/bak/dvl && \
+    # sudo chmod 754 -Rv ${mnt_data}/bak/${_AGL} && \
+    # sudo chmod 751 ${mnt_data}/bak/${_AGL} && \
+    # sudo chmod 751 ${mnt_data}/bak/agl && sudo chmod 751 ${mnt_data}/bak/dvl && \
+    # sudo chmod 754 -Rv ${mnt_data}/bak/dvl && \
     # # add warning for the backup drive
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_AGL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/README_ASAP      && \
     # echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_AGL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/${_AGL}/README_ASAP      && \
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_AGL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/agl/README_ASAP && \
-    sudo chown agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/${_AGL}/backup-agl.sh && \
-    sudo chown ${_AGL}:${_HALO} ${mnt_data}/bak/${_AGL}/backup-${_AGL}.sh ${mnt_data}/bak/dvl/backup-dvl.sh && \
-    sudo chown dvl:hel -RPv /home/dvl && sudo chown ${_AGL}:${_HALO} -RPv /home/agl 
+    sudo chown agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/${_AGL}/backup-agl.sh
+    # sudo chown ${_AGL}:${_HALO} ${mnt_data}/bak/${_AGL}/backup-${_AGL}.sh ${mnt_data}/bak/dvl/backup-dvl.sh && 
 USER root
 # copy and set ownership
 RUN cp -rfv dvl-works/scripts/gh-auth-first-time-login.sh /home/dvl && \
-    cp -rfv dvl-works/scripts/gh-auth-first-time-login.sh /home/${_AGL}  && \
-    chmod og+x /home/dvl/gh-auth-first-time-login.sh && chmod og+x /home/${_AGL}/gh-auth-first-time-login.sh && \
-    chown dvl:hel /home/dvl/gh-auth-first-time-login.sh && chown ${_AGL}:${_HALO} /home/${_AGL}/gh-auth-first-time-login.sh 
-USER dvl
-# setup ssh gh login
-# add symlinks for convenience
-RUN ln -s dvl-works dvlw && \
-    ln -s dvl-works/dvlp dvlp && \
-    ln -s dvl-works/dvlp/linux linux && \
-    ln -s dvl-works/dvlp/docker/ubuntu udocker && \
-    ln -s dvl-works/dvlp/kernels/ubuntu/x86/amd u64amdkernels && \
-    ln -s dvl-works/dvlp/kernels/ubuntu ukernels && \
-    ln -s dvl-works/dvlp/docker docker
+    cp -rfv dvl-works/scripts/gh-auth-first-time-login.sh /home/${_AGL}
+    # chmod og+x /home/dvl/gh-auth-first-time-login.sh && chmod og+x /home/${_AGL}/gh-auth-first-time-login.sh && \
+    # chown dvl:hel /home/dvl/gh-auth-first-time-login.sh && chown ${_AGL}:${_HALO} /home/${_AGL}/gh-auth-first-time-login.sh 
 WORKDIR /home/dvl
 USER dvl
 
@@ -185,7 +167,8 @@ RUN sudo apt-get -y install apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev
     sudo cp -rfv /home/${_AGL}/.local/bin /usr/local && \
     sudo cp -afv /home/${_AGL}/.local /etc/skel/ && \
     sudo cp -afv /home/${_AGL}/.local /home/dvl/ && sudo chown -Rv dvl:hel /home/dvl && \
-    sudo apt-get -y autoremove --purge
+    sudo apt-get clean all && \
+    sudo apt-get autoremove --purge
 WORKDIR /home/dvl
 USER dvl
 
@@ -261,13 +244,15 @@ USER dvl
 
 # Kernel only
 FROM dvlp_dind AS dvlp_kernel-phat
+ARG _CONFIG_FILE
+ARG _AGL
 WORKDIR /
 COPY --from=dvlp_kernel ./ ./
 WORKDIR /home/dvl/dvlp/kernels/ubuntu
 USER ${_AGL}
 SHELL ["/bin/bash", "-c"]
-RUN sudo chmod +x build-basic-wsl-kernel.sh
-RUN sudo sh build-basic-wsl-kernel.sh '' ${_AGL}
+# RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
+# RUN sudo sh build-basic-wsl-kernel.sh ${_CONFIG_FILE} ${_AGL}
 RUN echo '# sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/${_AGL}/.bashrc
 USER dvl
 

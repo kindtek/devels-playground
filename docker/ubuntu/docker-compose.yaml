@@ -13,10 +13,9 @@ services:
       - -c
       - export _AGL=${_AGL:-agl}
       - export _HALO=${_HALO:-halo}
-      - ln -s /home/${_AGL:-agl} /tmp/${_AGL:-agl}
-      - ln -s /home/dvl /tmp/dvl
-      - mkdir -p /mnt/data
-      - ln -s /mnt/data /tmp/data
+      - ln -sf /home /mnt
+      # - mkdir -p /mnt/data
+      - ln -sf /mnt/data /tmp/data
     # command: echo something
 
   init-halo:
@@ -35,7 +34,7 @@ services:
     init: true
     volumes:
       - halo-data:/mnt/data/home/${_AGL:-agl}
-    command: sudo chown -R ${_AGL:-agl}:${_HALO:-halo} /mnt/data/home/${_AGL:-agl}
+    # command: sudo chown -R ${_AGL:-agl}:${_HALO:-halo} /mnt/data/home/${_AGL:-agl}
 
   init-hel:
     # Need a user priviliged enough to chown
@@ -53,7 +52,7 @@ services:
     init: true
     volumes:
       - hel-data:/mnt/home/dvl
-    command: chown -R dvl:hel /mnt/home/dvl
+    # command: chown -R dvl:hel /mnt/home/dvl
 
   data:
     user: ${_AGL:-agl}
