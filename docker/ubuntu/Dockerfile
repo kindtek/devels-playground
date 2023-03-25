@@ -255,7 +255,7 @@ WORKDIR /home/dvl/dvlp/kernels/ubuntu
 USER ${_AGL}
 SHELL ["/bin/bash", "-c"]
 # RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
-# RUN sudo sh build-basic-wsl-kernel.sh ${_CONFIG_FILE} ${_AGL}
+RUN sudo sh build-basic-wsl-kernel.sh ${_CONFIG_FILE} ${_AGL}
 RUN echo '# sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/${_AGL}/.bashrc
 USER dvl
 
