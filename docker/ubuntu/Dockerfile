@@ -24,7 +24,7 @@ RUN echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
     passwd -d ${_AGL} && \
     # make dvl default wsl user 
     echo "[user]\ndefault=dvl" >> /etc/wsl.conf && \    
-    echo 'export PATH=$PATH:/home/${_AGL}/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvlp/scripts:WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"'  >> /home/${_AGL}/.bashrc && \
+    echo 'export PATH=$PATH:/home/\$LOGNAME/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvlp/scripts:WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"'  >> /home/${_AGL}/.bashrc && \
     # copy this .bashrc to skel
     cp -rfv /home/${_AGL}/.bashrc /etc/skel/.bashrc && \
     # add dvl (and host - optional) users
@@ -34,6 +34,7 @@ RUN echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
     # passwd -d host
 # HALO permissions/volume builder
 FROM dvlp_init AS dvlp_halo
+ARG mnt_data=${mnt_data:-/mnt/data}
 RUN ln -sf /home/${_AGL} /halo && \
     ln -sf ${mnt_data}/bak/${_AGL} /home/${_AGL}/bak && \
     ln -sf ${mnt_data}/bak/agl /home/agl/bak && \
@@ -46,6 +47,8 @@ RUN ln -sf /home/${_AGL} /halo && \
     # echo "//${mnt_data}/bak/${_AGL} /home/${_AGL} cifs _AGL=${_AGL}, file_mode=0777,dir_mode=0777 0 0\n/${mnt_data}/bak/dvl /home/dvl cifs _AGL=dvl, file_mode=0777, dir_mode=0777 0 0" >> /etc/fstab && \
 # HEL volume/permissions builder
 FROM dvlp_init AS dvlp_hel
+ARG mnt_data=${mnt_data:-/mnt/data}
+WORKDIR /home/dvl
 RUN ln -sf /home/dvl /hel && \
     ln -s dvl-works dvlw && \
     ln -s dvl-works/dvlp dvlp && \

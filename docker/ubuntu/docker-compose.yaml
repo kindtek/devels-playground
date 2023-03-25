@@ -165,81 +165,88 @@ services:
       target: dvlp_dind
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker"
-
-  kernel:
-    extends: git
-    image: kindtek/dvlp:ubuntu-kernel
-    build:
-      context: .
-      target: dvlp_kernel
-    labels:
-      com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
-  kernel-lite:
-    extends: git
-    image: kindtek/dvlp:ubuntu-kernel-lite
-    build:
-      context: .
-      target: dvlp_kernel-lite
-    labels:
-      com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
-  kernel-phat:
-    extends: git
-    image: kindtek/dvlp:ubuntu-kernel-phat
-    build:
-      context: .
-      target: dvlp_kernel-phat
-      args:
-        - _AGL=${_AGL:-agl}
-        - _CONFIG_FILE=../kernels/ubuntu/x86/generic/.config_wsl0
-    labels:
-      com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
-
-  gui:
-    extends: git
-    image: kindtek/dvlp:ubuntu-gui
-    build:
-      context: .
-      target: dvlp_gui
-    labels:
-      com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
-
-  gui-phat:
-    extends: git
-    image: kindtek/dvlp:ubuntu-gui-phat
-    build:
-      context: .
-      target: dvlp_gui-phat
-    labels:
-      com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
-  # cuda:
-  #   extends: gui
-  #   image: kindtek/dvlp:ubuntu-cuda
-  #   build:
-  #     context: .
-  #     target: dvlp_cuda
-  #     args:
-  #       - _AGL=${_AGL:-agl}
-  #     labels:
-  #       com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
-
-  # cuda-phat:
-  #   extends: gui
-  #   image: kindtek/dvlp:ubuntu-cuda-phat
-  #   build:
-  #     context: .
-  #     target: dvlp_cuda-phat
-  #     args:
-  #       - _AGL=${_AGL:-agl}
-  #     labels:
-  #       com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
-
 volumes:
   hel-data:
   halo-data:
   mnt-data:
 
-
 networks:
   "${COMPOSE_PROJECT_NAME}_default":
     driver: overlay
     attachable: true
+
+  # kernel:
+  #   extends: git
+  #   image: kindtek/dvlp:ubuntu-kernel
+  #   build:
+  #     context: .
+  #     target: dvlp_kernel
+  #   labels:
+  #     com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
+  # kernel-lite:
+  #   extends: git
+  #   image: kindtek/dvlp:ubuntu-kernel-lite
+  #   build:
+  #     context: .
+  #     target: dvlp_kernel-lite
+  #   labels:
+  #     com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
+  # kernel-phat:
+  #   extends: git
+  #   image: kindtek/dvlp:ubuntu-kernel-phat
+  #   build:
+  #     context: .
+  #     target: dvlp_kernel-phat
+  #     args:
+  #       - _AGL=${_AGL:-agl}
+  #       - _CONFIG_FILE=../kernels/ubuntu/x86/generic/.config_wsl0
+  #   labels:
+  #     com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
+
+  # gui:
+  #   extends: git
+  #   image: kindtek/dvlp:ubuntu-gui
+  #   build:
+  #     context: .
+  #     target: dvlp_gui
+  #   labels:
+  #     com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
+
+  # gui-phat:
+  #   extends: git
+  #   image: kindtek/dvlp:ubuntu-gui-phat
+  #   build:
+  #     context: .
+  #     target: dvlp_gui-phat
+  #   labels:
+  #     com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
+  # # cuda:
+  # #   extends: gui
+  # #   image: kindtek/dvlp:ubuntu-cuda
+  # #   build:
+  # #     context: .
+  # #     target: dvlp_cuda
+  # #     args:
+  # #       - _AGL=${_AGL:-agl}
+  # #     labels:
+  # #       com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
+
+  # # cuda-phat:
+  # #   extends: gui
+  # #   image: kindtek/dvlp:ubuntu-cuda-phat
+  # #   build:
+  # #     context: .
+  # #     target: dvlp_cuda-phat
+  # #     args:
+  # #       - _AGL=${_AGL:-agl}
+  # #     labels:
+  # #       com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
+# volumes:
+#   hel-data:
+#   halo-data:
+#   mnt-data:
+
+# networks:
+#   "${COMPOSE_PROJECT_NAME}_default":
+#     driver: overlay
+#     attachable: true
