@@ -13,11 +13,12 @@ services:
       - -c
       - export _AGL=${_AGL:-agl}
       - export _HALO=${_HALO:-halo}
-      - ln -sf /home /mnt
+      # - ln -sf /home /mnt
       # - mkdir -p /mnt/data
-      - ln -sf /mnt/data /tmp/data
+      # - ln -sf /mnt/data /tmp/data
+    volumes:
+      - mnt-data:/mnt/data
     # command: echo something
-
   init-halo:
     # Need a user priviliged enough to chown
     user: ${_AGL:-agl}
@@ -33,9 +34,8 @@ services:
         condition: service_completed_successfully
     init: true
     volumes:
-      - halo-data:/mnt/data/home/${_AGL:-agl}
+      - halo-data:/home/${_AGL:-agl}
     # command: sudo chown -R ${_AGL:-agl}:${_HALO:-halo} /mnt/data/home/${_AGL:-agl}
-
   init-hel:
     # Need a user priviliged enough to chown
     user: dvl
@@ -51,9 +51,8 @@ services:
         condition: service_completed_successfully
     init: true
     volumes:
-      - hel-data:/mnt/home/dvl
+      - hel-data:/home/dvl
     # command: chown -R dvl:hel /mnt/home/dvl
-
   data:
     user: ${_AGL:-agl}
     group_add:
@@ -76,14 +75,11 @@ services:
     #   - init-halo
     #   - init-hel
     volumes:
-      - hel-data:/home/dvl
-      - halo-data:/home/${_AGL:-agl}
+      - hel-data:/hel
+      - halo-data:/hal
       - mnt-data:/mnt/data
   skel:
     extends: data
-    entrypoint:
-     - sleep
-     - infinity
     user: ${_AGL:-agl}
     build:
       context: .
@@ -94,6 +90,8 @@ services:
       # network: ${COMPOSE_PROJECT_NAME}_default
     init: true
     volumes:
+      - hel-data:/hel
+      - halo-data:/hal
       - mnt-data:/mnt/data
     depends_on:
       data:
@@ -101,16 +99,13 @@ services:
         condition: service_completed_successfully
     labels:
       com.dvlp_skel.description: "skeleton"
-
   git:
     # owner/group becomes owner of hel-data volume
     extends: data
     restart: on-failure
+    entrypoint: tail -F /dev/null
     user: dvl
     privileged: true
-    entrypoint:
-     - sleep
-     - infinity
     image: kindtek/dvlp:ubuntu-git
     # extends: skel
     build:
@@ -118,17 +113,11 @@ services:
       target: dvlp_git
       args:
         - _AGL=${_AGL:-agl}
+        - _HALO=${_HALO:-halo}
+        - mnt_data=${mnt_data:-/mnt/data}
+        - _CONFIG_FILE
     depends_on:
-      init-hel:
-        # Wait for the ownership to change
-        condition: service_completed_successfully
-      init-halo:
-        # Wait for the ownership to change
-        condition: service_completed_successfully
       data:
-        # Wait for the ownership to change
-        condition: service_completed_successfully
-      skel:
         # Wait for the ownership to change
         condition: service_completed_successfully
     init: true
@@ -138,7 +127,6 @@ services:
       - /mnt/data
     labels:
       com.dvl-playg.description: "basics + git"
-
   python:
     extends: git
     image: kindtek/dvlp:ubuntu-py
@@ -165,6 +153,71 @@ services:
       target: dvlp_dind
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker"
+  kernel:
+    extends: git
+    image: kindtek/dvlp:ubuntu-kernel
+    build:
+      context: .
+      target: dvlp_kernel
+    labels:
+      com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
+  kernel-lite:
+    extends: git
+    image: kindtek/dvlp:ubuntu-kernel-lite
+    build:
+      context: .
+      target: dvlp_kernel-lite
+    labels:
+      com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
+  kernel-phat:
+    extends: git
+    image: kindtek/dvlp:ubuntu-kernel-phat
+    build:
+      context: .
+      target: dvlp_kernel-phat
+      args:
+        - _AGL=${_AGL:-agl}
+        - _CONFIG_FILE=../kernels/ubuntu/x86/generic/.config_wsl0
+    labels:
+      com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
+  gui:
+    extends: git
+    image: kindtek/dvlp:ubuntu-gui
+    build:
+      context: .
+      target: dvlp_gui
+    labels:
+      com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
+
+  gui-phat:
+    extends: git
+    image: kindtek/dvlp:ubuntu-gui-phat
+    build:
+      context: .
+      target: dvlp_gui-phat
+    labels:
+      com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
+  # cuda:
+  #   extends: gui
+  #   image: kindtek/dvlp:ubuntu-cuda
+  #   build:
+  #     context: .
+  #     target: dvlp_cuda
+  #     args:
+  #       - _AGL=${_AGL:-agl}
+  #     labels:
+  #       com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
+
+  # cuda-phat:
+  #   extends: gui
+  #   image: kindtek/dvlp:ubuntu-cuda-phat
+  #   build:
+  #     context: .
+  #     target: dvlp_cuda-phat
+  #     args:
+  #       - _AGL=${_AGL:-agl}
+  #     labels:
+  #       com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 volumes:
   hel-data:
   halo-data:
@@ -174,79 +227,3 @@ networks:
   "${COMPOSE_PROJECT_NAME}_default":
     driver: overlay
     attachable: true
-
-  # kernel:
-  #   extends: git
-  #   image: kindtek/dvlp:ubuntu-kernel
-  #   build:
-  #     context: .
-  #     target: dvlp_kernel
-  #   labels:
-  #     com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
-  # kernel-lite:
-  #   extends: git
-  #   image: kindtek/dvlp:ubuntu-kernel-lite
-  #   build:
-  #     context: .
-  #     target: dvlp_kernel-lite
-  #   labels:
-  #     com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
-  # kernel-phat:
-  #   extends: git
-  #   image: kindtek/dvlp:ubuntu-kernel-phat
-  #   build:
-  #     context: .
-  #     target: dvlp_kernel-phat
-  #     args:
-  #       - _AGL=${_AGL:-agl}
-  #       - _CONFIG_FILE=../kernels/ubuntu/x86/generic/.config_wsl0
-  #   labels:
-  #     com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
-
-  # gui:
-  #   extends: git
-  #   image: kindtek/dvlp:ubuntu-gui
-  #   build:
-  #     context: .
-  #     target: dvlp_gui
-  #   labels:
-  #     com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
-
-  # gui-phat:
-  #   extends: git
-  #   image: kindtek/dvlp:ubuntu-gui-phat
-  #   build:
-  #     context: .
-  #     target: dvlp_gui-phat
-  #   labels:
-  #     com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
-  # # cuda:
-  # #   extends: gui
-  # #   image: kindtek/dvlp:ubuntu-cuda
-  # #   build:
-  # #     context: .
-  # #     target: dvlp_cuda
-  # #     args:
-  # #       - _AGL=${_AGL:-agl}
-  # #     labels:
-  # #       com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
-
-  # # cuda-phat:
-  # #   extends: gui
-  # #   image: kindtek/dvlp:ubuntu-cuda-phat
-  # #   build:
-  # #     context: .
-  # #     target: dvlp_cuda-phat
-  # #     args:
-  # #       - _AGL=${_AGL:-agl}
-  # #     labels:
-  # #       com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
-# volumes:
-#   hel-data:
-#   halo-data:
-#   mnt-data:
-
-# networks:
-#   "${COMPOSE_PROJECT_NAME}_default":
-#     driver: overlay
-#     attachable: true
