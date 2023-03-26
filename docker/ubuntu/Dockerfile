@@ -1,12 +1,12 @@
 # syntax=docker/dockerfile:experimental
 # to build, run: 
 # docker compose build   ( ... don't try docker run - permissions built with docker compose are needed )
-ARG DEBIAN_FRONTEND=noninteractive
 
 FROM ubuntu:latest AS dvlp_init
 ARG _AGL=agl
 ARG _HALO=halo
 ARG _CONFIG_FILE
+ARG DEBIAN_FRONTEND=noninteractive
 RUN echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
     echo 'tzdata tzdata/Zones/America select Los Angeles' | debconf-set-selections
 RUN \
@@ -142,6 +142,7 @@ FROM scratch AS dvlp_skel
 ARG _AGL=agl
 ARG _HALO=halo
 ARG mnt_data=${mnt_data:-/mnt/data}
+ARG DEBIAN_FRONTEND=noninteractive
 WORKDIR /
 COPY --from=dvlp_init --chown=root:root ./ ./
 COPY --from=dvlp_dvl --chown=dvl:hell  ./home/dvl ./home/dvl 
