@@ -116,7 +116,7 @@ services:
     #   - init-dvl
     volumes:
       - god-data:/root:ro
-      - gdi-data:/root:rw
+      - gdi-data:/home/god:rw
       - hell-data:/home/dvl
       - hell-data:/home/devel
       - hell-data:/home/${_DVL_USR:-duser}
