@@ -327,10 +327,10 @@ USER dvl
 
 # GUI - wsl2 required
 FROM dvlp_init AS dvlp_gui
-ARG DEBIAN_FRONTEND=noninteractive
+USER agl
+ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /
 COPY --from=dvlp_kernel-lite ./ ./
-USER agl
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
 RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \

@@ -2,6 +2,7 @@ export PATH=$PATH:/home/$LOGNAME/.local/bin:/hel/dvlw/scripts:/home/dvl/dvlw/dvl
 export DOCKER_BUILDKIT=1
 export COMPOSE_DOCKER_CLI_BUILD=1
 export DOCKER_CLI_EXPERIMENTAL=enabled
+export DEBIAN_FRONTEND=dialog
 alias cdir='source cdir.sh'
 alias grep='grep --color=auto'
 alias powershell=pwsh
