@@ -16,9 +16,10 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    sudo add-apt-repository ppa:apt-fast/stable && \
     apt-get update -y && \
     apt-get upgrade -y && \
-    apt-get -y install sudo
+    apt-get -y install sudo apt-fast
 # non-root will need to use sudo from now on
 RUN addgroup --gid 777 halo && \
     addgroup --gid 666 hell && \
@@ -144,11 +145,11 @@ USER agl
 #     git config --global --add safe.directory /home/agl && \
 #     git config --global --add safe.directory /halo 
 RUN sudo apt-get -y update && \
-    sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
-    sudo apt-get install -y tzdata && \
-    sudo dpkg-reconfigure --frontend noninteractive tzdata && \
-    sudo dpkg --configure -a && \
-    # sudo apt-get upgrade -y libsnmp40 && \
+    # sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
+    # sudo apt-get install -y tzdata && \
+    # sudo dpkg-reconfigure --frontend noninteractive tzdata && \
+    # sudo dpkg --configure -a && \
+    # # sudo apt-get upgrade -y libsnmp40 && \
     sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget wslu && \
     # make gh files executable
     sudo chmod -R +x dvlw/dvlp/mnt/bak && \
@@ -355,7 +356,7 @@ RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browse
     # sudo apt-get clean all && \
     # sudo apt-get autoremove --purge
 RUN export DEBIAN_FRONTEND=noninteractive &&\
-    sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install gnome-session
+    DEBIAN_FRONTEND=noninteractive sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install gnome-session
 
 WORKDIR /home/dvl
 USER dvl
