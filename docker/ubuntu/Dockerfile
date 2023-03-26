@@ -341,6 +341,9 @@ RUN \
 RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    sudo apt-get -y install x11-apps xfce4
+RUN \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y install locales && sudo update-locale locales && \
     echo "LANG=en_US.UTF-8" | sudo tee -a /etc/locale.gen && \
     sudo locale-gen
@@ -377,12 +380,6 @@ RUN \
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y install vlc 
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -y install x11-apps 
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -y install xfce4 
 RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
     # change last line of this file - fix for brave-browser displaying empty windows
     head -n -1 /opt/brave.com/brave/brave-browser.old | sudo tee /opt/brave.com/brave/brave-browser > /dev/null && \
