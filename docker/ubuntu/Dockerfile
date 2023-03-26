@@ -341,14 +341,13 @@ RUN \
 RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    # in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
     sudo apt-get -y install locales && sudo update-locale locales && \
     echo "LANG=en_US.UTF-8" | sudo tee -a /etc/locale.gen && \
     sudo locale-gen
     
 RUN \
     # --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -y install lightdm 
+    sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo apt-get -y install lightdm 
 RUN \
     sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo dpkg-reconfigure lightdm
 RUN \
@@ -361,7 +360,8 @@ RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get install -y locales && sudo update-locale locales \
     # in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
-    sudo apt-get -yq update && \
+    sudo apt-get -yq update
+# in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y install brave-browser
