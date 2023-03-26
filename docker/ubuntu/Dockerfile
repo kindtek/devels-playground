@@ -254,7 +254,7 @@ FROM dvlp_init AS dvlp_dind-lite
 USER root
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
 RUN \
-    --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/cache/apt && \
     sudo apt-get -y install lsb-release curl gpg 
 # sudo apt-get clean all && \
 RUN sudo mkdir -pv /etc/apt/keyrings
