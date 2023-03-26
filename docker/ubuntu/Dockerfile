@@ -59,7 +59,6 @@ RUN ln -fs /home/agl /hal && \
     mkdir -m 753 -pv ${mnt_data}/bak/agl && \
     ln -sv /home/agl/bak /mnt/data/bak/agl
 
-
 # dvl permissions/volume builder
 FROM dvlp_init AS dvlp_dvl
 USER root
@@ -71,10 +70,9 @@ RUN ln -sfv /home/dvl /hel && \
     ln -sv dvlw/dvlp/docker/ubuntu udocker && \
     ln -sv dvlw/dvlp/kernels/ubuntu/x86/amd u64amdkernels && \
     ln -sv dvlw/dvlp/kernels/ubuntu ukernels && \
-    ln -sv dvlw/dvlp/docker docker
-#  && \
-# mkdir -m 753 -pv ${mnt_data}/bak/dvl && \
-# ln -sv /home/dvl/bak /mnt/data/bak/dvl 
+    ln -sv dvlw/dvlp/docker docker && \
+    mkdir -m 753 -pv ${mnt_data}/bak/dvl && \
+    ln -sv /home/dvl/bak /mnt/data/bak/dvl 
 
 USER dvl
 
@@ -88,9 +86,9 @@ FROM dvlp_init AS dvlp_data
 ARG mnt_data=${mnt_data:-/mnt/data}
 USER root
 WORKDIR /
-# COPY --from=dvlp_dvl --chown=dvl:hell ./home/dvl ./home/dvl
-# COPY --from=dvlp_agl --chown=agl:halo ./home/agl ./home/agl
-# COPY --from=dvlp_god --chown=god:rootg ./home/god ./home/god
+COPY --from=dvlp_dvl --chown=dvl:hell ./home/dvl ./home/dvl
+COPY --from=dvlp_agl --chown=agl:halo ./home/agl ./home/agl
+COPY --from=dvlp_god --chown=god:rootg ./home/god ./home/god
 # copy skel files to dvl
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
