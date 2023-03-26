@@ -71,8 +71,9 @@ RUN ln -sfv /home/dvl /hel && \
     ln -sv dvlw/dvlp/kernels/ubuntu/x86/amd u64amdkernels && \
     ln -sv dvlw/dvlp/kernels/ubuntu ukernels && \
     ln -sv dvlw/dvlp/docker docker && \
-    ln -sv /home/dvl/bak /mnt/data/bak/dvl && \
-    mkdir -m 753 -pv ${mnt_data}/bak/dvl
+    mkdir -m 753 -pv ${mnt_data}/bak/dvl && \
+    ln -sv /home/dvl/bak /mnt/data/bak/dvl 
+
 USER dvl
 
 # build aliases
