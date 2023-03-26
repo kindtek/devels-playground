@@ -59,7 +59,7 @@ RUN ln -fs /home/agl /hal && \
 
 # dvl permissions/volume builder
 FROM dvlp_init AS dvlp_dvl
-# ARG mnt_data=${mnt_data:-/mnt/data}
+USER root
 WORKDIR /home/dvl
 RUN ln -sfv /home/dvl /hel && \
     ln -sv dvlw devels-workshop && \
