@@ -135,8 +135,8 @@ WORKDIR /
 COPY --from=dvlp_init --chown=root:root ./ ./
 COPY --from=dvlp_god --chown=god:rootg ./home/god ./home/god
 COPY --from=dvlp_dvl --chown=dvl:hell  ./home/dvl ./home/dvl 
-COPY --from=dvlp_agl --chown=agl:halo ./home/agl ./home/agl
 COPY --from=dvlp_agl --chown=agl:halo .${mnt_data} .${mnt_data}
+COPY --from=dvlp_agl --chown=agl:halo ./home/agl ./home/agl
 COPY --from=dvlp_data --chown=dvl:hell ./home/dvl ./home/dvl
 COPY --from=dvlp_data --chown=agl:halo ./home/agl ./home/agl
 COPY --from=dvlp_data --chown=god:rootg ./home/god ./home/god
@@ -203,7 +203,9 @@ RUN --mount=type=cache,target=/var/cache/pip \pip3 install cdir --user  && \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps
 RUN sudo cp -rfv /home/agl/.local/bin /usr/local && \
-    sudo cp -rv /home/agl/.local /etc/skel/ /hel /rootg
+    sudo cp -rv /home/agl/.local /etc/skel/ && \
+    sudo cp -rv /home/agl/.local /hel &&\
+    sudo cp -rv /home/agl/.local /rootg
 # sudo apt-get clean all && \
 # sudo apt-get autoremove --purge
 WORKDIR /hel
@@ -353,12 +355,12 @@ RUN \
     sudo apt-get -y install locales && sudo update-locale locales && \
     echo "LANG=en_US.UTF-8" | sudo tee -a /etc/locale.gen && \
     sudo locale-gen
-    
+
 # RUN \
-    # --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    # sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo apt-get -y install lightdm gnome-session
+# --mount=type=cache,target=/var/cache/apt,sharing=locked \
+# sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo apt-get -y install lightdm gnome-session
 # RUN \
-    # sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo dpkg-reconfigure lightdm
+# sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo dpkg-reconfigure lightdm
 # RUN \
 #     --mount=type=cache,target=/var/cache/apt,sharing=locked \
 #     sudo dpkg-reconfigure --frontend noninteractive locales && \
@@ -368,7 +370,7 @@ RUN \
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get install -y locales && sudo update-locale locales
-    # in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
+# in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
 # in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
