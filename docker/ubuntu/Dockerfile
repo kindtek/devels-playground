@@ -362,25 +362,25 @@ RUN \
     sudo apt-get -yq update && \
     sudo apt-get -y install lightdm
 RUN \
-    sudo apt-get install -y locales && sudo update-locale locales \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y install brave-browser
 RUN \
-    sudo apt-get install -y locales && sudo update-locale locales \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y install  gimp 
 RUN \
-    sudo apt-get install -y locales && sudo update-locale locales \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y install gedit 
 RUN \
-    sudo apt-get install -y locales && sudo update-locale locales \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y install nautilus 
 RUN \
-    sudo apt-get install -y locales && sudo update-locale locales \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y install vlc 
 RUN \
-    sudo apt-get install -y locales && sudo update-locale locales \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y install x11-apps 
 RUN \
-    sudo apt-get install -y locales && sudo update-locale locales \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y install xfce4 
 RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
     # change last line of this file - fix for brave-browser displaying empty windows
