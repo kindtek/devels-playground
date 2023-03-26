@@ -21,6 +21,9 @@ RUN \
     adduser --home /home/agl --ingroup halo --shell /bin/bash --uid 777 --disabled-password --gecos GECOS agl && \
     # add only _AGL to the sudo list
     usermod -aG sudo agl && \
+    # add god to both groups
+    usermod -aG halo god && \
+    usermod -aG hell god && \
     # ensure no passwords
     passwd -d root && \
     passwd -l root && \
@@ -184,13 +187,6 @@ USER dvl
 
 # GIT
 FROM dvlp_skel as dvlp_git
-COPY --from=dvlp_init --chown=root:root ./ ./
-COPY --from=dvlp_hell --chown=dvl:hell  ./home/dvl ./home/dvl 
-COPY --from=dvlp_halo --chown=agl:halo ./home/agl ./home/agl
-COPY --from=dvlp_halo --chown=agl:halo .${mnt_data} .${mnt_data}
-COPY --from=dvlp_data --chown=dvl:hell ./home/dvl ./home/dvl
-COPY --from=dvlp_init --chown=god:root ./rootg ./rootg
-COPY --from=dvlp_skel ./ ./
 
 # PYTHON stuff
 FROM dvlp_init AS dvlp_python-lite
@@ -309,7 +305,7 @@ ARG mnt_data=${mnt_data:-/mnt/data}
 
 USER agl
 WORKDIR /
-COPY --from=dvlp_kernel-phat ./home/dvl/dvl-works/dvlp/kernels ./home/dvl/dvl-works/dvlp
+COPY --from=dvlp_kernel-phat ./home/dvl/dvl-works/dvlp/kernels ./home/dvl/dvl-works/dvlp/kernels
 # RUN sudo apt-get clean all && \
 #     sudo apt-get autoremove --purge
 WORKDIR /home/dvl
