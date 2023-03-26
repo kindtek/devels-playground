@@ -119,8 +119,8 @@ services:
       - gdi-data:/root:rw
       - hell-data:/home/dvl
       - hell-data:/home/devel
-      - hell-data:/home/$_DVL_USR
-      - halo-data:/home/${_AGL:-agl}
+      - hell-data:/home/${_DVL_USR:-duser}
+      - halo-data:/home/${_AGL_USR:-auser}
       - halo-data:/home/angel
       - halo-data:/home/agl
       - dls-data:/dls
@@ -166,8 +166,7 @@ services:
       context: .
       target: dvlp_git
       args:
-        - _AGL=${_AGL:-agl}
-        - _HALO=${_HALO:-halo}
+        - _AGL_USR=${_AGL:-agl}
         - mnt_data=${mnt_data:-/mnt/data}
         - _CONFIG_FILE
     depends_on:
