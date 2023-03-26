@@ -342,7 +342,7 @@ RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg a
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     echo "/usr/sbin/lightdm" | sudo tee /etc/X11/default-display-manager && \
-    sudo apt-get install lightdm && \
+    sudo apt-get -y install lightdm && \
     echo "set shared/default-x-display-manager lightdm" | sudo debconf-communicate && \
     sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
     DEBIAN_FRONTEND=noninteractive sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install gnome-session tzdata && \
