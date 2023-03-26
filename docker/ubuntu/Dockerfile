@@ -356,7 +356,6 @@ RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browse
     # sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl && \
     # sudo apt-get clean all && \
     # sudo apt-get autoremove --purge
-RUN RUN \
     # sudo dpkg-reconfigure --frontend noninteractive gnome-session && \
     # echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
     # sudo echo "/usr/sbin/lightdm" > /etc/X11/default-display-manager && \
