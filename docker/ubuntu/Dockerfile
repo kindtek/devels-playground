@@ -356,7 +356,10 @@ RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browse
     # sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl && \
     # sudo apt-get clean all && \
     # sudo apt-get autoremove --purge
-RUN export DEBIAN_FRONTEND=noninteractive &&\
+RUN RUN \
+    --mount=type=cache,target=/var/cache/dpkg \
+    sudo dpkg-reconfigure --frontend noninteractive tzdata && \
+    sudo dpkg --configure -a && \
     DEBIAN_FRONTEND=noninteractive sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install gnome-session
 
 WORKDIR /home/dvl
