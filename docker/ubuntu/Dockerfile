@@ -38,14 +38,14 @@ RUN addgroup --gid 777 halo && \
     passwd -d agl && \
     # make dvl default wsl user 
     echo "[user]\ndefault=dvl" >> /etc/wsl.conf && \
-    echo 'export PATH=$PATH:/home/\$LOGNAME/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvlp/scripts:WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nexport DOCKER_BUILDKIT=1\nexport COMPOSE_DOCKER_CLI_BUILD=1\nDOCKER_CLI_EXPERIMENTAL=enabled\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"' >> /rootg/.bashrc && \
-    echo 'export PATH=$PATH:/home/\$LOGNAME/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvlp/scripts:WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nexport DOCKER_BUILDKIT=1\nexport COMPOSE_DOCKER_CLI_BUILD=1\nDOCKER_CLI_EXPERIMENTAL=enabled\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"' >> /home/agl/.bashrc && \
+    echo 'export PATH=$PATH:/home/\$LOGNAME/.local/bin:/hel/dvlw/scripts:/home/dvl/dvlw/dvlp/scripts:WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nexport DOCKER_BUILDKIT=1\nexport COMPOSE_DOCKER_CLI_BUILD=1\nDOCKER_CLI_EXPERIMENTAL=enabled\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"' >> /rootg/.bashrc && \
+    echo 'export PATH=$PATH:/home/\$LOGNAME/.local/bin:/hel/dvlw/scripts:/home/dvl/dvlw/dvlp/scripts:WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nexport DOCKER_BUILDKIT=1\nexport COMPOSE_DOCKER_CLI_BUILD=1\nDOCKER_CLI_EXPERIMENTAL=enabled\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"' >> /home/agl/.bashrc && \
     # copy this .bashrc to skel
     cp -rfv /home/agl/.bashrc /etc/skel/.bashrc && \
     # add dvl (and host - optional) users
     adduser --home /home/dvl --ingroup hell --shell /bin/bash --uid 666 --disabled-password --gecos GECOS dvl && \
     passwd -d dvl && \
-    echo 'export PATH=$PATH:/home/\$LOGNAME/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvlp/scripts:WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nexport DOCKER_BUILDKIT=1\nexport COMPOSE_DOCKER_CLI_BUILD=1\nDOCKER_CLI_EXPERIMENTAL=enabled\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"' >> /home/dvl/.bashrc
+    echo 'export PATH=$PATH:/home/\$LOGNAME/.local/bin:/hel/dvlw/scripts:/home/dvl/dvlw/dvlp/scripts:WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nexport DOCKER_BUILDKIT=1\nexport COMPOSE_DOCKER_CLI_BUILD=1\nDOCKER_CLI_EXPERIMENTAL=enabled\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"' >> /home/dvl/.bashrc
 # adduser --system --home /home/host --ingroup halo --shell /bin/bash --uid 76667 --disabled-password host && \ 
 # passwd -d host
 # HALO permissions/volume builder
@@ -68,13 +68,13 @@ FROM dvlp_init AS dvlp_dvl
 # ARG mnt_data=${mnt_data:-/mnt/data}
 WORKDIR /home/dvl
 RUN ln -sfv /home/dvl /hel && \
-    ln -sv dvl-works dvlw && \
-    ln -sv dvl-works/dvlp dvlp && \
-    ln -sv dvl-works/dvlp/linux linux && \
-    ln -sv dvl-works/dvlp/docker/ubuntu udocker && \
-    ln -sv dvl-works/dvlp/kernels/ubuntu/x86/amd u64amdkernels && \
-    ln -sv dvl-works/dvlp/kernels/ubuntu ukernels && \
-    ln -sv dvl-works/dvlp/docker docker && \
+    ln -sv dvlw dvlw && \
+    ln -sv dvlw/dvlp dvlp && \
+    ln -sv dvlw/dvlp/linux linux && \
+    ln -sv dvlw/dvlp/docker/ubuntu udocker && \
+    ln -sv dvlw/dvlp/kernels/ubuntu/x86/amd u64amdkernels && \
+    ln -sv dvlw/dvlp/kernels/ubuntu ukernels && \
+    ln -sv dvlw/dvlp/docker docker && \
     mkdir -m 753 -pv ${mnt_data}/bak/dvl
 # chsh -s /bin/bash 
 # add an instructional "readme" here later
@@ -109,20 +109,20 @@ RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 RUN \
-    --mount=type=cache,target=/var/cache/git-dvl-works \
+    --mount=type=cache,target=/var/cache/git-dvlw \
     git config --global --add safe.directory /home/dvl && \
     git config --global --add safe.directory /hel && \
     git config --global --add safe.directory /home/dvl/dvlp && \
     # clone fresh repos and give dvl ownership
-    git clone https://github.com/kindtek/dvl-works --depth=1 --single-branch --progress
-# RUN git clone https://github.com/kindtek/dvl-works --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
+    git clone https://github.com/kindtek/dvl-works --depth=1 --single-branch --progress dvlw
+# RUN git clone https://github.com/kindtek/dvlw --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
 # --filter=combine:tree:depth:1+blob:limit=10240000  --recurse-submodules --remote-submodules  --single-branch  --no-tags --filter=blob:limit=1024000 --single-branch --branch main
-WORKDIR /home/dvl/dvl-works
+WORKDIR /home/dvl/dvlw
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 RUN \
-    --mount=type=cache,target=/var/cache/git-dvl-works/dvlp \
+    --mount=type=cache,target=/var/cache/git-dvlw/dvlp \
     git submodule update --init --remote --depth=1 --progress
 WORKDIR /home/dvl
 # && \
@@ -183,11 +183,11 @@ RUN \
     sudo dpkg --configure -a
 # sudo apt-get upgrade -y libsnmp40 && \
 # make gh files executable
-RUN sudo chmod -R +x -v dvl-works/dvlp/mnt/bak && \
-    sudo chmod +x -v dvl-works/scripts/gh-auth-first-time-login.sh && \
+RUN sudo chmod -R +x -v dvlw/dvlp/mnt/bak && \
+    sudo chmod +x -v dvlw/scripts/gh-auth-first-time-login.sh && \
     sudo ls -al ${mnt_data} && \
     # copy gh files to mount location and home dirs
-    sudo cp -arfv dvl-works/dvlp/mnt/bak ${mnt_data} && \
+    sudo cp -arfv dvlw/dvlp/mnt/bak ${mnt_data} && \
     sudo ls -al ${mnt_data} && \
     sudo mv -v ${mnt_data}/bak/custom ${mnt_data}/bak/agl && \
     # make rwx for owner and rw for group - x/rx for others
@@ -202,8 +202,8 @@ RUN sudo chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backu
     sudo chown agl:halo ${mnt_data}/bak/agl/backup-agl.sh ${mnt_data}/bak/dvl/backup-dvl.sh
 USER root
 # copy and set ownership
-RUN cp -rfv dvl-works/scripts/gh-auth-first-time-login.sh /home/dvl && \
-    cp -rfv dvl-works/scripts/gh-auth-first-time-login.sh /home/agl
+RUN cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/dvl && \
+    cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/agl
 # chmod og+x /home/dvl/gh-auth-first-time-login.sh && chmod og+x /home/agl/gh-auth-first-time-login.sh && \
 # chown dvl:hell /home/dvl/gh-auth-first-time-login.sh && chown agl:halo /home/agl/gh-auth-first-time-login.sh 
 WORKDIR /home/dvl
@@ -363,7 +363,7 @@ FROM dvlp_dind-lite AS dvlp_kernel-lite
 ARG mnt_data=${mnt_data:-/mnt/data}
 USER agl
 WORKDIR /
-COPY --from=dvlp_kernel-plus ./home/dvl/dvl-works/dvlp/kernels ./home/dvl/dvl-works/dvlp/kernels
+COPY --from=dvlp_kernel-plus ./home/dvl/dvlw/dvlp/kernels ./home/dvl/dvlw/dvlp/kernels
 # RUN sudo apt-get clean all && \
 #     sudo apt-get autoremove --purge
 WORKDIR /home/dvl
