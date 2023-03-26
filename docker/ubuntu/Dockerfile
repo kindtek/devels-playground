@@ -49,7 +49,7 @@ RUN addgroup --gid 777 halo && \
 
 FROM dvlp_init AS dvlp_god
 ARG mnt_data=${mnt_data:-/mnt/data}
-RUN ln -fs /home/god /rootg && 
+RUN ln -fs /home/god /rootg
 
 FROM dvlp_init AS dvlp_agl
 ARG mnt_data=${mnt_data:-/mnt/data}
