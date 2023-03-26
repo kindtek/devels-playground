@@ -327,7 +327,7 @@ USER dvl
 
 # GUI - wsl2 required
 FROM dvlp_init AS dvlp_gui
-USER agl
+USER ROOT
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /
 COPY --from=dvlp_kernel-lite ./ ./
@@ -347,7 +347,7 @@ RUN \
     sudo locale-gen
     
 RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    # --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo dpkg-reconfigure lightdm
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
