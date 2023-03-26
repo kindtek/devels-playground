@@ -24,6 +24,9 @@ services:
     build:
       context: .
       target: dvlp_init
+      # args: 
+      #   - _AGL_USR=$_AGL
+      #   - _DVL_USR=$_DVL
     init: true
     # command:
     # - /bin/bash

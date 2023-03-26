@@ -4,7 +4,8 @@
 ARG DEBIAN_FRONTEND=noninteractive
 
 FROM ubuntu:latest AS dvlp_init
-ARG _AGL=agl
+# ARG _AGL_USR=${_AGL_USR:-agl}
+# ARG _DVL_USR=${_DVL_USR:-dvl}
 ARG _HALO=halo
 ARG _CONFIG_FILE
 ARG DEBIAN_FRONTEND=noninteractive
@@ -140,8 +141,6 @@ USER dvl
 
 # SKELETON framework
 FROM scratch AS dvlp_skel
-ARG _AGL=agl
-ARG _HALO=halo
 ARG mnt_data=${mnt_data:-/mnt/data}
 ARG DEBIAN_FRONTEND=noninteractive
 WORKDIR /
