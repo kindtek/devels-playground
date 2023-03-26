@@ -89,7 +89,7 @@ RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    # --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt-get -y install git
 WORKDIR /home/dvl
 # add safe directories
