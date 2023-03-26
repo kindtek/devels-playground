@@ -17,8 +17,8 @@ sudo mkdir -p ${backup_mnt_location}/${_GBL}/${_GBL}-orig && \
 sudo mkdir -p ${backup_mnt_location}/${_GBL}/${_GBL}-orig && \
 sudo mkdir -p ${backup_mnt_location}/${_GBL}/devel-orig && \
 sudo mkdir -p ${backup_mnt_location}/devel/devel-orig && \
-sudo chown ${_GBL}:${_HALO} ${backup_mnt_location}/${_GBL} && \
-sudo chown ${_GBL}:${_HALO} ${backup_mnt_location}/${_GBL}/${_GBL}-orig && \
+sudo chown ${_GBL}:halo ${backup_mnt_location}/${_GBL} && \
+sudo chown ${_GBL}:halo ${backup_mnt_location}/${_GBL}/${_GBL}-orig && \
 sudo chown ${_GBL}:halo ${backup_mnt_location}/${_GBL} && \
 sudo chown ${_GBL}:halo ${backup_mnt_location}/${_GBL}/${_GBL}-orig && \
 sudo chown devel:hel ${backup_mnt_location}/devel && \
@@ -45,7 +45,7 @@ sudo cp -arf dwork/mnt/backup-devel.sh ${backup_mnt_location}/gbl/backup-devel.s
 # echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GBL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${backup_mnt_location}/README_ASAP      && \
 # echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GBL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${backup_mnt_location}/${_GBL}/README_ASAP      && \
 # echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *${_GBL}* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${backup_mnt_location}/gbl/README_ASAP      && \
-# sudo chown ${_GBL}:${_HALO} ${backup_mnt_location}/README_ASAP
+# sudo chown ${_GBL}:halo ${backup_mnt_location}/README_ASAP
 
 HEL_DESTINATION="$_NIX_MNT_LOCATION/${_GBL}/devel-$WSL_DISTRO_NAME"
 HEL_RESTORE_SCRIPT="$_NIX_MNT_LOCATION/devel/restore-devel-$WSL_DISTRO_NAME.sh"
