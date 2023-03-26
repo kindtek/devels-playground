@@ -3,7 +3,7 @@
 # docker compose build   ( ... don't try docker run - permissions built with docker compose are needed )
 ARG DEBIAN_FRONTEND=noninteractive
 
-FROM ubuntu:latest AS dvlp_init
+FROM ubuntu:devel AS dvlp_init
 ARG _AGL_USR=${_AGL_USR:-agl}
 ARG _DVL_USR=${_DVL_USR:-dvl}
 ARG _HALO=halo
@@ -82,7 +82,7 @@ USER root
 WORKDIR /
 COPY --from=dvlp_dvl --chown=dvl:hell ./home/dvl ./home/dvl
 COPY --from=dvlp_agl --chown=agl:halo ./home/agl ./home/agl
-COPY --from=dvlp_agl --chown=god:root ./home/god ./home/god
+COPY --from=dvlp_god --chown=god:rootg ./home/god ./home/god
 # copy skel files to dvl
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -133,6 +133,7 @@ ARG mnt_data=${mnt_data:-/mnt/data}
 ARG DEBIAN_FRONTEND=noninteractive
 WORKDIR /
 COPY --from=dvlp_init --chown=root:root ./ ./
+COPY --from=dvlp_god --chown=god:rootg ./home/god ./home/god
 COPY --from=dvlp_dvl --chown=dvl:hell  ./home/dvl ./home/dvl 
 COPY --from=dvlp_agl --chown=agl:halo ./home/agl ./home/agl
 COPY --from=dvlp_agl --chown=agl:halo .${mnt_data} .${mnt_data}
