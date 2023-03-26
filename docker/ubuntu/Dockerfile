@@ -79,7 +79,11 @@ RUN ln -sfv /home/dvl /hel && \
 # mkdir -pv /home/dvl/.ssh /home/dvl/dls
 # chmod 700 /home/dvl/.ssh 
 USER dvl
-# add common paths
+
+# build alieses
+FROM dvlp_halo AS dvlp_auser
+
+FROM dvlp_hell AS dvlp_duser
 
 # DATA helper
 FROM dvlp_init AS dvlp_data
