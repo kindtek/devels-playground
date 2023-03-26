@@ -345,6 +345,10 @@ RUN \
     sudo apt-get -y install locales && sudo update-locale locales && \
     echo "LANG=en_US.UTF-8" | sudo tee -a /etc/locale.gen && \
     sudo locale-gen
+    
+RUN \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true dpkg-reconfigure lightdm
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo dpkg-reconfigure --frontend noninteractive locales && \
