@@ -12,6 +12,9 @@ services:
     build:
       context: .
       target: dvlp_god
+    entrypoint:
+      - sleep
+      - infinity
     depends_on:
       init:
         # Wait for the groups to be added
@@ -24,6 +27,9 @@ services:
     build:
       context: .
       target: dvlp_init
+    entrypoint:
+      - sleep
+      - infinity
       # args: 
       #   - _AGL_USR=$_AGL
       #   - _DVL_USR=$_DVL
@@ -48,6 +54,9 @@ services:
     build:
       context: .
       target: dvlp_agl
+    entrypoint:
+      - sleep
+      - infinity
     depends_on:
       init:
         # Wait for the groups to be added
@@ -60,6 +69,9 @@ services:
     # Specify the wings in question
     group_add:
       - hell
+    entrypoint:
+      - sleep
+      - infinity
     build:
       context: .
       target: dvlp_dvl
@@ -97,9 +109,9 @@ services:
     user: agl
     group_add:
       - halo
-    # entrypoint:
-    #   - sleep
-    #   - infinity
+    entrypoint:
+      - sleep
+      - infinity
     build:
       context: .
       target: dvlp_data
