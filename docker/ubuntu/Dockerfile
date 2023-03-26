@@ -359,7 +359,9 @@ RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browse
 RUN RUN \
     --mount=type=cache,target=/var/cache/apt \
     sudo dpkg-reconfigure --frontend noninteractive gnome-session && \
+    echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
     sudo dpkg --configure -a && \
+    sudo echo "/usr/sbin/lightdm" > /etc/X11/default-display-manager && \
     DEBIAN_FRONTEND=noninteractive sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install gnome-session
 
 WORKDIR /home/dvl
