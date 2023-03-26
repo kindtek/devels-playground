@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:experimental
 # to build, run: 
 # `_AGL=mine _HALO=ours docker run -d -i`
 FROM ubuntu:latest AS dvlp_init
@@ -5,16 +6,16 @@ ARG _AGL=agl
 ARG _HALO=halo
 ARG _CONFIG_FILE
 ARG DEBIAN_FRONTEND=noninteractive
+RUN echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
+    echo 'tzdata tzdata/Zones/America select Los Angeles' | debconf-set-selections
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache \
-    -mount=type=cache,target=/var/cache/apt1 \
-    echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
-    echo 'tzdata tzdata/Zones/America select Los Angeles' | debconf-set-selections && \
-    apt-get update -yq && \
+    -mount=type=cache,target=/var/cache/apt \
+    apt-get update -y && \
     apt-get upgrade -y && \
-    apt-get -y install sudo && \
-    # non-root will need to use sudo from now on
-    addgroup --gid 777 halo && \
+    apt-get -y install sudo
+# non-root will need to use sudo from now on
+RUN addgroup --gid 777 halo && \
     addgroup --gid 666 hell && \
     # add just god and agl for now 
     adduser --home /home/rootg --ingroup root --shell /bin/bash --uid 60000 --disabled-password --gecos GECOS god && \
@@ -30,9 +31,10 @@ RUN \
     passwd -d god && \
     passwd -d agl && \
     # make dvl default wsl user 
-    echo "[user]\ndefault=dvl" >> /etc/wsl.conf && \    
-    echo 'export PATH=$PATH:/home/\$LOGNAME/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvlp/scripts:WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"'  >> /home/agl/.bashrc && \
-    echo 'export PATH=$PATH:/home/\$LOGNAME/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvlp/scripts:WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"'  >> /home/agl/.bashrc && \
+    echo "[user]\ndefault=dvl" >> /etc/wsl.conf && \
+    echo 'export PATH=$PATH:/home/\$LOGNAME/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvlp/scripts:WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nexport DOCKER_BUILDKIT=1\nexport COMPOSE_DOCKER_CLI_BUILD=1\nDOCKER_CLI_EXPERIMENTAL=enabled\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"' >> /home/god/.bashrc && \
+    echo 'export PATH=$PATH:/home/\$LOGNAME/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvlp/scripts:WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nexport DOCKER_BUILDKIT=1\nexport COMPOSE_DOCKER_CLI_BUILD=1\nDOCKER_CLI_EXPERIMENTAL=enabled\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"' >> /home/dvl/.bashrc && \
+    echo 'export PATH=$PATH:/home/\$LOGNAME/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvlp/scripts:WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nexport DOCKER_BUILDKIT=1\nexport COMPOSE_DOCKER_CLI_BUILD=1\nDOCKER_CLI_EXPERIMENTAL=enabled\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"' >> /home/agl/.bashrc && \
     # copy this .bashrc to skel
     cp -rfv /home/agl/.bashrc /etc/skel/.bashrc && \
     # add dvl (and host - optional) users
@@ -86,14 +88,12 @@ COPY --from=dvlp_halo --chown=agl:halo ./home/agl ./home/agl
 COPY --from=dvlp_halo --chown=god:root ./rootg ./rootg
 # copy skel files to dvl
 RUN \
-    rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache \
-    --mount=type=cache,target=/var/cache/git0 \
+    --mount=type=cache,target=/var/cache/apt \
     apt-get -y install git
 WORKDIR /home/dvl
 # add safe directories
 RUN \
-    rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache \
-    --mount=type=cache,target=/var/cache/git1 \
+    --mount=type=cache,target=/var/cache/git-dvl-works \
     git config --global --add safe.directory /home/dvl && \
     git config --global --add safe.directory /hel && \
     git config --global --add safe.directory /home/dvl/dvlp && \
@@ -103,8 +103,7 @@ RUN \
 # --filter=combine:tree:depth:1+blob:limit=10240000  --recurse-submodules --remote-submodules  --single-branch  --no-tags --filter=blob:limit=1024000 --single-branch --branch main
 WORKDIR /home/dvl/dvl-works
 RUN \
-    rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache \
-    --mount=type=cache,target=/var/cache/git2 \
+    --mount=type=cache,target=/var/cache/git-dvl-works/dvlp \
     git submodule update --init --remote --depth=1 --progress
 WORKDIR /home/dvl
 # && \
@@ -149,15 +148,15 @@ USER agl
 #     git config --global --add safe.directory /home/agl && \
 #     git config --global --add safe.directory /hal 
 RUN \
-    rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache \
-    --mount=type=cache,target=/var/cache/apt2 \
+    --mount=type=cache,target=/var/cache/apt \
     sudo apt-get -y update && \
-    sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
-    sudo apt-get install -y tzdata && \
+    sudo apt-get install -y apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi tzdata wget wslu
+RUN sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
+RUN \
+    --mount=type=cache,target=/var/cache/dpkg \
     sudo dpkg-reconfigure --frontend noninteractive tzdata && \
-    sudo dpkg --configure -a && \
-    # sudo apt-get upgrade -y libsnmp40 && \
-    sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget wslu 
+    sudo dpkg --configure -a
+# sudo apt-get upgrade -y libsnmp40 && \
 # make gh files executable
 RUN sudo chmod -R +x -v dvl-works/dvlp/mnt/bak && \
     sudo chmod +x -v dvl-works/scripts/gh-auth-first-time-login.sh && \
@@ -192,10 +191,10 @@ FROM dvlp_skel as dvlp_git
 FROM dvlp_init AS dvlp_python-lite
 USER agl
 RUN \
-    rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache \
-    --mount=type=cache,target=/var/cache/apt3 \
-    sudo apt-get -y install apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv && \
-    pip3 install cdir --user  && \
+    --mount=type=cache,target=/var/cache/apt \
+    sudo apt-get -y install apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv
+RUN \
+    --mount=type=cache,target=/var/cache/pip \pip3 install cdir --user  && \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps
 RUN sudo cp -rfv /home/agl/.local/bin /usr/local && \
@@ -218,17 +217,19 @@ USER agl
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
 RUN \
-    rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache \
-    --mount=type=cache,target=/var/cache/apt4 \
+    --mount=type=cache,target=/var/cache/apt \
     sudo apt-get -y install lsb-release wget
 RUN \
-    rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache \
-    --mount=type=cache,target=/var/cache/deb1 \
-    sudo wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb" && \
-    sudo dpkg -i packages-microsoft-prod.deb && \
+    --mount=type=cache,target=/var/cache/wget \
+    sudo wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
+RUN \
+    --mount=type=cache,target=/var/cache/deb \
+    sudo dpkg -i packages-microsoft-prod.deb
+RUN sudo rm packages-microsoft-prod.deb 
+RUN \
+    --mount=type=cache,target=/var/cache/apt \
     sudo apt-get -y update && \
     sudo apt-get -y install powershell dotnet-sdk-7.0
-    RUN sudo rm packages-microsoft-prod.deb 
 # RUN sudo apt-get -y remove lsb_release
 # sudo apt-get clean all && \
 # sudo apt-get autoremove --purge
@@ -246,13 +247,17 @@ FROM dvlp_init AS dvlp_dind-lite
 USER root
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
 RUN \
-    rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache \
-    --mount=type=cache,target=/var/cache/apt5 \
-    sudo apt-get -y install lsb-release curl gpg && \
-    # sudo apt-get clean all && \
-    sudo mkdir -pv /etc/apt/keyrings && \
-    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg  && \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    --mount=type=cache,target=/var/cache/apt \
+    sudo apt-get -y install lsb-release curl gpg 
+# sudo apt-get clean all && \
+RUN sudo mkdir -pv /etc/apt/keyrings
+RUN \
+    --mount=type=cache,target=/var/cache/curl \
+    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    echo echo '"experimental": "enabled"'>> /home/dvl/.docker/config.json 
+RUN \
+    --mount=type=cache,target=/var/cache/apt \
     sudo apt-get -y update && sudo apt-get -y install docker-compose-plugin docker-ce docker-ce-cli containerd.io 
 # sudo apt-get remove -y lsb-release && \
 # sudo apt-get clean all && \
@@ -266,13 +271,17 @@ COPY --from=dvlp_dind-lite ./ ./
 WORKDIR /home/dvl
 USER dvl
 
+FROM dvlp_dind AS dvlp_dind-plus
+RUN \
+    --mount=type=cache,target=/var/cache/apt \
+    sudo apt-get -y install buildkitd
+
 # KERNEL builder
 FROM dvlp_init AS dvlp_kernel
 USER agl
 # RUN echo exit 0 > /usr/sbin/policy-rc.d 
 RUN \
-    rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache \
-    --mount=type=cache,target=/var/cache/apt6 \
+    --mount=type=cache,target=/var/cache/apt \
     sudo apt-get -y update && \
     sudo apt-get -y upgrade && \
     sudo apt-get -y install alien autoconf bison build-essential  dbus-user-session daemonize dwarves \ 
@@ -286,7 +295,7 @@ WORKDIR /home/dvl
 USER dvl
 
 # Kernel only
-FROM dvlp_dind AS dvlp_kernel-phat
+FROM dvlp_dind-plus AS dvlp_kernel-plus
 # ARG _CONFIG_FILE
 # ARG _AGL
 WORKDIR /
@@ -300,12 +309,11 @@ SHELL ["/bin/bash", "-c"]
 WORKDIR /home/dvl
 USER dvl
 
-FROM dvlp_dind AS dvlp_kernel-lite
+FROM dvlp_dind-lite AS dvlp_kernel-lite
 ARG mnt_data=${mnt_data:-/mnt/data}
-
 USER agl
 WORKDIR /
-COPY --from=dvlp_kernel-phat ./home/dvl/dvl-works/dvlp/kernels ./home/dvl/dvl-works/dvlp/kernels
+COPY --from=dvlp_kernel-plus ./home/dvl/dvl-works/dvlp/kernels ./home/dvl/dvl-works/dvlp/kernels
 # RUN sudo apt-get clean all && \
 #     sudo apt-get autoremove --purge
 WORKDIR /home/dvl
@@ -318,24 +326,27 @@ COPY --from=dvlp_kernel-lite ./ ./
 USER agl
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
 RUN \
-    rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache \
-    --mount=type=cache,target=/var/cache/apt7 \
-    sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg && \
-    echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list && \
-    # in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
+    --mount=type=cache,target=/var/cache/curl \
+    sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg 
+RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+# in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
+RUN  \
+    --mount=type=cache,target=/var/cache/apt \
     sudo apt-get -yq update && \
-    sudo apt-get -y install brave-browser && \
-    # sudo apt-get clean all && \
-    # now no longeer need to add --disable-gpu flag everytime
-    sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
+    sudo apt-get -y install brave-browser
+# sudo apt-get clean all && \
+# now no longeer need to add --disable-gpu flag everytime
+RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
     # change last line of this file - fix for brave-browser displaying empty windows
     head -n -1 /opt/brave.com/brave/brave-browser.old | sudo tee /opt/brave.com/brave/brave-browser > /dev/null && \
-    echo '"$HERE/brave" "$@" " --disable-gpu " || true' | sudo tee --append /opt/brave.com/brave/brave-browser > /dev/null && \
-    # this is a better way to do this but needs work
-    # cd /opt/brave.com/brave && \
-    # brave_old_line='\"\$HERE\/brave\"\s\"\$\@\"\s\|\|\strue' && \
-    # brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
-    # sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl && \
+    echo '"$HERE/brave" "$@" " --disable-gpu " || true' | sudo tee --append /opt/brave.com/brave/brave-browser > /dev/null
+# this is a better way to do this but needs work
+# cd /opt/brave.com/brave && \
+# brave_old_line='\"\$HERE\/brave\"\s\"\$\@\"\s\|\|\strue' && \
+# brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
+# sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl && \
+RUN \
+    --mount=type=cache,target=/var/cache/apt \
     sudo apt-get -y install x11-apps xfce4 && \
     sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install gnome-session gdm3 gimp gedit nautilus vlc 
 # sudo apt-get clean all && \
@@ -343,7 +354,7 @@ RUN \
 WORKDIR /home/dvl
 USER dvl
 
-FROM dvlp_kernel-phat AS dvlp_gui-phat
+FROM dvlp_kernel-plus AS dvlp_gui-plus
 WORKDIR /
 COPY --from=dvlp_gui ./ ./
 WORKDIR /home/dvl
@@ -361,7 +372,7 @@ USER dvl
 # WORKDIR /home/dvl
 # USER dvl
 
-# FROM dvlp_gui-phat AS dvlp_cuda-phat
+# FROM dvlp_gui-plus AS dvlp_cuda-plus
 # WORKDIR /
 # COPY --from=dvlp_cuda ./ ./
 # WORKDIR /home/dvl

@@ -223,12 +223,12 @@ services:
       target: dvlp_kernel-lite
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
-  kernel-phat:
+  kernel-plus:
     extends: git
-    image: kindtek/dvlp:ubuntu-kernel-phat
+    image: kindtek/dvlp:ubuntu-kernel-plus
     build:
       context: .
-      target: dvlp_kernel-phat
+      target: dvlp_kernel-plus
       args:
         - _AGL_USR=${_AGL:-agl}
         - _CONFIG_FILE=../kernels/ubuntu/x86/generic/.config_wsl0
@@ -243,12 +243,12 @@ services:
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
 
-  gui-phat:
+  gui-plus:
     extends: git
-    image: kindtek/dvlp:ubuntu-gui-phat
+    image: kindtek/dvlp:ubuntu-gui-plus
     build:
       context: .
-      target: dvlp_gui-phat
+      target: dvlp_gui-plus
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
     # cuda:
@@ -262,12 +262,12 @@ services:
     #     labels:
     #       com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 
-    # cuda-phat:
+    # cuda-plus:
     #   extends: gui
-    #   image: kindtek/dvlp:ubuntu-cuda-phat
+    #   image: kindtek/dvlp:ubuntu-cuda-plus
     #   build:
     #     context: .
-    #     target: dvlp_cuda-phat
+    #     target: dvlp_cuda-plus
     #     args:
     #       - _AGL_USR=${_AGL:-agl}
     #     labels:
