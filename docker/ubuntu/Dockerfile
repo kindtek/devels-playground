@@ -66,7 +66,7 @@ RUN ln -sfv /home/dvl /hel && \
     ln -sv dvlw/dvlp/kernels/ubuntu/x86/amd u64amdkernels && \
     ln -sv dvlw/dvlp/kernels/ubuntu ukernels && \
     ln -sv dvlw/dvlp/docker docker && \
-    ln -s /mnt/data/bak/dvl /home/dvl/bak && \
+    ln -sv /mnt/data/bak/dvl /home/dvl/bak && \
     mkdir -m 753 -pv ${mnt_data}/bak/dvl
 USER dvl
 
@@ -138,7 +138,7 @@ COPY --from=dvlp_agl --chown=agl:halo ./home/agl ./home/agl
 COPY --from=dvlp_agl --chown=agl:halo .${mnt_data} .${mnt_data}
 COPY --from=dvlp_data --chown=dvl:hell ./home/dvl ./home/dvl
 COPY --from=dvlp_data --chown=agl:halo ./home/agl ./home/agl
-COPY --from=dvlp_data --chown=god:root ./home/god ./home/god
+COPY --from=dvlp_data --chown=god:rootg ./home/god ./home/god
 
 WORKDIR /home/dvl
 # RUN with halo ownership
@@ -170,12 +170,12 @@ RUN sudo apt-get -y update && \
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/dvl/README_ASAP  && \
     sudo chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh && \
     sudo chown agl:halo ${mnt_data}/bak/agl/backup-agl.sh ${mnt_data}/bak/dvl/backup-dvl.sh && \
-    cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /home/god/.bashrc /home/dvl/.bashrc /home/agl/.bashrc /etc/skel/.bashrc
+    echo cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /home/god/.bashrc /home/dvl/.bashrc /home/agl/.bashrc /etc/skel/.bashrc
 USER root
 # copy and set ownership
-RUN cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/dvl && \
+RUN cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/god && \
     cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/agl && \
-    cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/god
+    cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/dvl
 # chmod og+x /home/dvl/gh-auth-first-time-login.sh && chmod og+x /home/agl/gh-auth-first-time-login.sh && \
 # chown dvl:hell /home/dvl/gh-auth-first-time-login.sh && chown agl:halo /home/agl/gh-auth-first-time-login.sh 
 WORKDIR /home/dvl
