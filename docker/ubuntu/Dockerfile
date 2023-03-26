@@ -290,12 +290,6 @@ USER dvl
 
 FROM dvlp_dind AS dvlp_dind-plus
 USER root
-RUN \
-    rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -y install buildkitd
 USER dvl
 
 # KERNEL builder
