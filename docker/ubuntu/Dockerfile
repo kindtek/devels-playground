@@ -165,7 +165,7 @@ RUN \
     # sudo dpkg-reconfigure --frontend noninteractive tzdata && \
     # sudo dpkg --configure -a && \
     # # sudo apt-get upgrade -y libsnmp40 && \
-    sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget wslu
+    sudo apt-get -y install apt-transport-https build-essential ca-certificates curl git gh gnupg2 libssl-dev nvi wget wslu
 # make gh files executable
 RUN sudo chmod -R +x dvlw/dvlp/mnt/bak
 RUN sudo chmod +x dvlw/scripts/gh-auth-first-time-login.sh
