@@ -157,6 +157,9 @@ USER agl
 # RUN sudo chown agl:halo -Rv ${mnt_data}/bak/agl /home/agl  \
 #     git config --global --add safe.directory /home/agl && \
 #     git config --global --add safe.directory /halo 
+RUN \
+    --mount=type=cache,target=/var/cache/wget \
+    sudo wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
 RUN sudo apt-get -y update && \
     # sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
     # sudo apt-get install -y tzdata && \
