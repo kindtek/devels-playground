@@ -348,11 +348,11 @@ RUN \
     
 RUN \
     # --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    sudo apt-get -y install lightdm && \
     sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo dpkg-reconfigure lightdm
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo dpkg-reconfigure --frontend noninteractive locales && \
-    sudo apt-get -y install lightdm && \
     echo "/usr/sbin/lightdm" | sudo tee /etc/X11/default-display-manager 
 RUN echo "set shared/default-x-display-manager lightdm" | sudo debconf-communicate && \
     sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
