@@ -1,6 +1,7 @@
 # syntax=docker/dockerfile:experimental
 # to build, run: 
 # docker compose build   ( ... don't try docker run - permissions built with docker compose are needed )
+ARG DEBIAN_FRONTEND=noninteractive
 
 FROM ubuntu:latest AS dvlp_init
 ARG _AGL=agl
@@ -157,24 +158,17 @@ WORKDIR /home/dvl
 USER agl
 # RUN sudo chown agl:halo -Rv ${mnt_data}/bak/agl /home/agl  \
 #     git config --global --add safe.directory /home/agl && \
-#     git config --global --add safe.directory /hal 
-# RUN \
-    # sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
-    # echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
-RUN \
-    # --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -y update && \
-    sudo apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi tzdata wget wslu
-RUN sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
-RUN \
-    # --mount=type=cache,target=/var/cache/dpkg \
+#     git config --global --add safe.directory /halo 
+RUN sudo apt-get -y update && \
+    sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
+    sudo apt-get install -y tzdata && \
     sudo dpkg-reconfigure --frontend noninteractive tzdata && \
-    sudo dpkg --configure -a
-# sudo apt-get upgrade -y libsnmp40 && \
-# make gh files executable
-RUN sudo chmod -R +x -v dvlw/dvlp/mnt/bak && \
-    sudo chmod +x -v dvlw/scripts/gh-auth-first-time-login.sh && \
-    sudo ls -al ${mnt_data} && \
+    sudo dpkg --configure -a && \
+    # sudo apt-get upgrade -y libsnmp40 && \
+    sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget wslu && \
+    # make gh files executable
+    sudo chmod -R +x dvl-works/dvlp/mnt/bak && \
+    sudo chmod +x dvl-works/scripts/gh-auth-first-time-login.sh && \
     # copy gh files to mount location and home dirs
     sudo cp -arfv dvlw/dvlp/mnt/bak ${mnt_data} && \
     sudo ls -al ${mnt_data} && \
