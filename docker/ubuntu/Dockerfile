@@ -168,7 +168,7 @@ RUN sudo apt-get -y update && \
     sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget wslu && \
     # make gh files executable
     sudo chmod -R +x dvlw/dvlp/mnt/bak && \
-    sudo chmod +x dvl-works/scripts/gh-auth-first-time-login.sh && \
+    sudo chmod +x dvlw/scripts/gh-auth-first-time-login.sh && \
     # copy gh files to mount location and home dirs
     sudo cp -arfv dvlw/dvlp/mnt/bak ${mnt_data} && \
     sudo ls -al ${mnt_data} && \
@@ -186,7 +186,8 @@ RUN sudo chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backu
 USER root
 # copy and set ownership
 RUN cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/dvl && \
-    cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/agl
+    cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/agl && \
+    cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /rootg
 # chmod og+x /home/dvl/gh-auth-first-time-login.sh && chmod og+x /home/agl/gh-auth-first-time-login.sh && \
 # chown dvl:hell /home/dvl/gh-auth-first-time-login.sh && chown agl:halo /home/agl/gh-auth-first-time-login.sh 
 WORKDIR /home/dvl
