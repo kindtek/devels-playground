@@ -339,6 +339,7 @@ USER dvl
 
 # GUI - wsl2 required
 FROM dvlp_init AS dvlp_gui
+ARG DEBIAN_FRONTEND=noninteractive
 WORKDIR /
 COPY --from=dvlp_kernel-lite ./ ./
 USER agl
