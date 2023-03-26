@@ -341,9 +341,9 @@ RUN \
 RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    update-locale "LANG=en_US.UTF-8" && \
-    locale-gen --purge "en_US.UTF-8" && \
-    dpkg-reconfigure --frontend noninteractive locales && \
+    sudo update-locale "LANG=en_US.UTF-8" && \
+    sudo locale-gen --purge "en_US.UTF-8" && \
+    sudo dpkg-reconfigure --frontend noninteractive locales && \
     echo "/usr/sbin/lightdm" | sudo tee /etc/X11/default-display-manager && \
     sudo apt-get -y install lightdm && \
     echo "set shared/default-x-display-manager lightdm" | sudo debconf-communicate && \
