@@ -228,6 +228,7 @@ USER dvl
 # MICROSOFT stuff
 FROM dvlp_init AS dvlp_msdot-lite
 USER agl
+RUN sudo apt-get -y install lsb-release wget
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
 RUN \
