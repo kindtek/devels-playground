@@ -16,10 +16,11 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    add-apt-repository ppa:apt-fast/stable && \
+    # sudo add-apt-repository ppa:apt-fast/stable && \
     apt-get update -y && \
     apt-get upgrade -y && \
-    apt-get -y install sudo apt-fast
+    apt-get -y install sudo
+#   apt-get -y install sudo apt-fast
 # non-root will need to use sudo from now on
 RUN addgroup --gid 777 halo && \
     addgroup --gid 666 hell && \
