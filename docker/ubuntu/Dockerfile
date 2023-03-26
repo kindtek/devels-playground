@@ -359,8 +359,8 @@ RUN \
     sudo apt-get -y install x11-apps xfce4
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     export DEBIAN_FRONTEND=noninteractive && \
-    sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install gdm3 gimp gedit nautilus vlc 
-RUN sudo apt-get install -y install gnome-session
+    sudo apt-get -y install gdm3 gimp gedit nautilus vlc 
+RUN sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install gnome-session
 # sudo apt-get clean all && \
 # sudo apt-get autoremove --purge
 WORKDIR /home/dvl
