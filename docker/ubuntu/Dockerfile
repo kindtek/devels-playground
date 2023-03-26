@@ -327,7 +327,7 @@ USER dvl
 
 # GUI - wsl2 required
 FROM dvlp_init AS dvlp_gui
-USER ROOT
+USER root
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /
 COPY --from=dvlp_kernel-lite ./ ./
