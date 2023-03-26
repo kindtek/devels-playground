@@ -164,7 +164,7 @@ RUN \
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y update && \
-    sudo apt-get install -y apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi tzdata wget wslu
+    sudo apt-get install -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi tzdata wget wslu
 RUN sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
 RUN \
     --mount=type=cache,target=/var/cache/dpkg \
