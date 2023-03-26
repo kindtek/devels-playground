@@ -63,6 +63,7 @@ RUN ln -fs /home/agl /hal && \
 FROM dvlp_init AS dvlp_dvl
 USER root
 WORKDIR /home/dvl
+ARG mnt_data=${mnt_data:-/mnt/data}
 RUN ln -sfv /home/dvl /hel && \
     ln -sv dvlw devels-workshop && \
     ln -sv dvlw/dvlp dvlp && \
@@ -72,7 +73,7 @@ RUN ln -sfv /home/dvl /hel && \
     ln -sv dvlw/dvlp/kernels/ubuntu ukernels && \
     ln -sv dvlw/dvlp/docker docker && \
     mkdir -m 753 -pv ${mnt_data}/bak/dvl && \
-    ln -sv /home/dvl/bak /mnt/data/bak/dvl 
+    ln -sv /home/dvl/bak ${mnt_data}/bak/dvl 
 
 USER dvl
 
