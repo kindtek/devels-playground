@@ -27,19 +27,17 @@ RUN addgroup --gid 777 halo && \
     # add just god and agl for now 
     adduser --home /rootg --ingroup root --shell /bin/bash --uid 60000 --disabled-password --gecos GECOS god && \
     adduser --home /home/agl --ingroup halo --shell /bin/bash --uid 777 --disabled-password --gecos GECOS agl && \
-    # add only _AGL to the sudo list
-    usermod -aG sudo agl && \
+    adduser --home /home/dvl --ingroup hell --shell /bin/bash --uid 666 --disabled-password --gecos GECOS dvl && \
+    # add god and agl to the sudo list
+    usermod -aG sudo god agl && \
+    usermod -aG rootg god && \
     # add god to both groups
     usermod -aG halo god && \
     usermod -aG hell god && \
     # ensure no passwords
-    passwd -d root && \
+    passwd -d root god agl && \
     passwd -l root && \
-    passwd -d god && \
-    passwd -d agl && \
-    # add dvl
-    adduser --home /home/dvl --ingroup hell --shell /bin/bash --uid 666 --disabled-password --gecos GECOS dvl && \
-    passwd -d dvl && \
+    # add dvl    passwd -d dvl && \
     # make dvl default wsl user 
     echo "[user]\ndefault=dvl" >> /etc/wsl.conf
 
