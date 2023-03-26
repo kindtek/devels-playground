@@ -51,7 +51,7 @@ FROM dvlp_init AS dvlp_god
 ARG mnt_data=${mnt_data:-/mnt/data}
 RUN ln -fs /home/god /rootg && 
 
-FROM dvlp_init AS dvlp_halo
+FROM dvlp_init AS dvlp_agl
 ARG mnt_data=${mnt_data:-/mnt/data}
 RUN ln -fs /home/agl /hal && \
     mkdir -m 753 -pv ${mnt_data}/bak/agl
@@ -61,7 +61,7 @@ RUN ln -fs /home/agl /hal && \
 # mount stuff if needed
 # echo "//${mnt_data}/bak/agl /home/agl cifs _AGL=agl, file_mode=0777,dir_mode=0777 0 0\n/${mnt_data}/bak/dvl /home/dvl cifs _AGL=dvl, file_mode=0777, dir_mode=0777 0 0" >> /etc/fstab && \
 # hell volume/permissions builder
-FROM dvlp_init AS dvlp_hell
+FROM dvlp_init AS dvlp_dvl
 # ARG mnt_data=${mnt_data:-/mnt/data}
 WORKDIR /home/dvl
 RUN ln -sfv /home/dvl /hel && \
@@ -90,9 +90,9 @@ FROM dvlp_init AS dvlp_data
 ARG mnt_data=${mnt_data:-/mnt/data}
 USER root
 WORKDIR /
-COPY --from=dvlp_hell --chown=dvl:hell ./home/dvl ./home/dvl
-COPY --from=dvlp_halo --chown=agl:halo ./home/agl ./home/agl
-COPY --from=dvlp_halo --chown=god:root ./rootg ./rootg
+COPY --from=dvlp_dvl --chown=dvl:hell ./home/dvl ./home/dvl
+COPY --from=dvlp_agl --chown=agl:halo ./home/agl ./home/agl
+COPY --from=dvlp_agl --chown=god:root ./rootg ./rootg
 # copy skel files to dvl
 RUN \
     --mount=type=cache,target=/var/cache/apt \
@@ -141,9 +141,9 @@ ARG _HALO=halo
 ARG mnt_data=${mnt_data:-/mnt/data}
 WORKDIR /
 COPY --from=dvlp_init --chown=root:root ./ ./
-COPY --from=dvlp_hell --chown=dvl:hell  ./home/dvl ./home/dvl 
-COPY --from=dvlp_halo --chown=agl:halo ./home/agl ./home/agl
-COPY --from=dvlp_halo --chown=agl:halo .${mnt_data} .${mnt_data}
+COPY --from=dvlp_dvl --chown=dvl:hell  ./home/dvl ./home/dvl 
+COPY --from=dvlp_agl --chown=agl:halo ./home/agl ./home/agl
+COPY --from=dvlp_agl --chown=agl:halo .${mnt_data} .${mnt_data}
 COPY --from=dvlp_data --chown=dvl:hell ./home/dvl ./home/dvl
 COPY --from=dvlp_data --chown=agl:halo ./home/agl ./home/agl
 COPY --from=dvlp_data --chown=god:root ./rootg ./rootg
