@@ -355,7 +355,10 @@ RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browse
 # sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl && \
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -y install x11-apps xfce4 && \
+    export DEBIAN_FRONTEND=noninteractive && \
+    sudo apt-get -y install x11-apps xfce4
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    export DEBIAN_FRONTEND=noninteractive && \
     sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install gnome-session gdm3 gimp gedit nautilus vlc 
 # sudo apt-get clean all && \
 # sudo apt-get autoremove --purge
