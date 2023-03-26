@@ -6,7 +6,7 @@ services:
     user: root
     # Specify the wings in question
     group_add:
-      - god
+      - rootg
       - halo
       - hell
     build:

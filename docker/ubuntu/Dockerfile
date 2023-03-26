@@ -140,7 +140,10 @@ FROM scratch AS dvlp_skel
 ARG mnt_data=${mnt_data:-/mnt/data}
 ARG DEBIAN_FRONTEND=noninteractive
 WORKDIR /
-# COPY --from=dvlp_init --chown=root:root ./ ./
+COPY --from=dvlp_init --chown=root:root ./etc ./etc
+# COPY --from=dvlp_init --chown=root:root ./etc/group ./etc/group
+# COPY --from=dvlp_init --chown=root:root ./etc/passwd ./etc/passwd
+# COPY --from=dvlp_init --chown=root:root ./etc/sudoers ./etc/sudoers
 COPY --from=dvlp_god --chown=god:rootg ./home/god ./home/god
 COPY --from=dvlp_dvl --chown=dvl:hell  ./home/dvl ./home/dvl 
 COPY --from=dvlp_agl --chown=agl:halo .${mnt_data} .${mnt_data}
