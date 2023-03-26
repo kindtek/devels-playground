@@ -10,7 +10,7 @@ RUN echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
     echo 'tzdata tzdata/Zones/America select Los Angeles' | debconf-set-selections
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache \
-    -mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/cache/apt \
     apt-get update -y && \
     apt-get upgrade -y && \
     apt-get -y install sudo
