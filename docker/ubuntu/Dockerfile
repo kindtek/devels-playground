@@ -356,10 +356,14 @@ RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browse
     # sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl && \
     # sudo apt-get clean all && \
     # sudo apt-get autoremove --purge
-    # sudo dpkg-reconfigure --frontend noninteractive gnome-session && \
-    # echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
-    # sudo echo "/usr/sbin/lightdm" > /etc/X11/default-display-manager && \
-    # DEBIAN_FRONTEND=noninteractive sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install gnome-session
+RUN sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
+    sudo apt-get install -y tzdata && \
+    sudo dpkg-reconfigure --frontend noninteractive tzdata && \
+    sudo dpkg-reconfigure --frontend noninteractive gnome-session && \
+    echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
+    sudo echo "/usr/sbin/lightdm" > /etc/X11/default-display-manager && \
+    DEBIAN_FRONTEND=noninteractive sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install gnome-session
+
 WORKDIR /home/dvl
 USER dvl
 
