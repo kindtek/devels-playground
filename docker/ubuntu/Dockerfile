@@ -46,7 +46,7 @@ RUN addgroup --gid 777 halo && \
 # god permissions/volume builder
 FROM dvlp_init AS dvlp_god
 ARG mnt_data=${mnt_data:-/mnt/data}
-RUN ln -fs /home/god /rootg
+RUN ln -fs /rootg /home/god
 
 # agl permissions/volume builder
 FROM dvlp_init AS dvlp_agl
