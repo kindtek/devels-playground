@@ -18,7 +18,7 @@ services:
         condition: service_completed_successfully
     volumes:
       - god-data:/root:ro
-      - gdi-data:/rootg:rw
+      - gdi-data:/home/god
   init:
     # Need a user priviliged enough to chown
     build:
@@ -183,6 +183,8 @@ services:
       - god-data:/root:ro
       - gdi-data:/rootg
       - mnt-data:/mnt/data
+      - dls-data:/mnt/data/dls
+
     labels:
       com.dvl-playg.description: "basics + git"
   python:

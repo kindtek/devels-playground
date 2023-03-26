@@ -25,9 +25,9 @@ RUN \
 RUN addgroup --gid 777 halo && \
     addgroup --gid 666 hell && \
     # add just god and agl for now 
-    adduser --home /rootg --ingroup root --shell /bin/bash --uid 60000 --disabled-password --gecos GECOS god && \
-    adduser --home /home/agl --ingroup halo --shell /bin/bash --uid 777 --disabled-password --gecos GECOS agl && \
-    adduser --home /home/dvl --ingroup hell --shell /bin/bash --uid 666 --disabled-password --gecos GECOS dvl && \
+    adduser --home /home/god --ingroup root --shell /bin/bash --uid 60000 --disabled-password --gecos GECOS god && \
+    adduser --home /home/agl --ingroup halo --shell /bin/bash --uid 00777 --disabled-password --gecos GECOS agl && \
+    adduser --home /home/dvl --ingroup hell --shell /bin/bash --uid 00666 --disabled-password --gecos GECOS dvl && \
     # add god and agl to the sudo list
     usermod -aG sudo god agl && \
     usermod -aG rootg god && \
@@ -44,12 +44,14 @@ RUN addgroup --gid 777 halo && \
 # god permissions/volume builder
 FROM dvlp_init AS dvlp_god
 ARG mnt_data=${mnt_data:-/mnt/data}
-RUN ln -fs /rootg /home/god
+RUN ln -fs /home/god /rootg && \
+    ln -s /mnt/data/bak /home/god/bak
 
 # agl permissions/volume builder
 FROM dvlp_init AS dvlp_agl
 ARG mnt_data=${mnt_data:-/mnt/data}
 RUN ln -fs /home/agl /hal && \
+    ln -s /mnt/data/bak/agl /home/agl/bak && \
     mkdir -m 753 -pv ${mnt_data}/bak/agl
 
 # dvl permissions/volume builder
@@ -64,6 +66,7 @@ RUN ln -sfv /home/dvl /hel && \
     ln -sv dvlw/dvlp/kernels/ubuntu/x86/amd u64amdkernels && \
     ln -sv dvlw/dvlp/kernels/ubuntu ukernels && \
     ln -sv dvlw/dvlp/docker docker && \
+    ln -s /mnt/data/bak/dvl /home/dvl/bak && \
     mkdir -m 753 -pv ${mnt_data}/bak/dvl
 USER dvl
 
@@ -79,7 +82,7 @@ USER root
 WORKDIR /
 COPY --from=dvlp_dvl --chown=dvl:hell ./home/dvl ./home/dvl
 COPY --from=dvlp_agl --chown=agl:halo ./home/agl ./home/agl
-COPY --from=dvlp_agl --chown=god:root ./rootg ./rootg
+COPY --from=dvlp_agl --chown=god:root ./home/god ./home/god
 # copy skel files to dvl
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -135,7 +138,7 @@ COPY --from=dvlp_agl --chown=agl:halo ./home/agl ./home/agl
 COPY --from=dvlp_agl --chown=agl:halo .${mnt_data} .${mnt_data}
 COPY --from=dvlp_data --chown=dvl:hell ./home/dvl ./home/dvl
 COPY --from=dvlp_data --chown=agl:halo ./home/agl ./home/agl
-COPY --from=dvlp_data --chown=god:root ./rootg ./rootg
+COPY --from=dvlp_data --chown=god:root ./home/god ./home/god
 
 WORKDIR /home/dvl
 # RUN with halo ownership
@@ -156,7 +159,7 @@ RUN sudo apt-get -y update && \
     # copy gh files to mount location and home dirs
     sudo cp -arfv dvlw/dvlp/mnt/bak ${mnt_data} && \
     sudo ls -al ${mnt_data} && \
-    sudo mv -v ${mnt_data}/bak/custom ${mnt_data}/bak/agl && \
+    sudo mv -v ${mnt_data}/bak/custom ${mnt_data}/bak/agl/ && \
     # make rwx for owner and rw for group - x/rx for others
     # sudo chmod 754 -Rv ${mnt_data}/bak/agl && \
     # sudo chmod 751 ${mnt_data}/bak/agl && \
@@ -167,12 +170,12 @@ RUN sudo apt-get -y update && \
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/dvl/README_ASAP  && \
     sudo chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh && \
     sudo chown agl:halo ${mnt_data}/bak/agl/backup-agl.sh ${mnt_data}/bak/dvl/backup-dvl.sh && \
-    echo cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /rootg/.bashrc /home/dvl/.bashrc /home/agl/.bashrc
+    echo cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /home/god/.bashrc /home/dvl/.bashrc /home/agl/.bashrc /etc/skel/.bashrc
 USER root
 # copy and set ownership
 RUN cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/dvl && \
     cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/agl && \
-    cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /rootg
+    cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/god
 # chmod og+x /home/dvl/gh-auth-first-time-login.sh && chmod og+x /home/agl/gh-auth-first-time-login.sh && \
 # chown dvl:hell /home/dvl/gh-auth-first-time-login.sh && chown agl:halo /home/agl/gh-auth-first-time-login.sh 
 WORKDIR /home/dvl
@@ -180,7 +183,9 @@ USER dvl
 
 # GIT
 FROM dvlp_skel as dvlp_git
-
+# these are the new home directories from now on
+RUN usermod -d /hal agl && \
+    usermod -d /hel dvl
 # PYTHON stuff
 FROM dvlp_init AS dvlp_python-lite
 USER agl
@@ -194,8 +199,7 @@ RUN --mount=type=cache,target=/var/cache/pip \pip3 install cdir --user  && \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps
 RUN sudo cp -rfv /home/agl/.local/bin /usr/local && \
-    sudo cp -rv /home/agl/.local /etc/skel/ && \
-    sudo cp -rv /home/agl/.local /home/dvl/ && sudo chown -Rv dvl:hell /home/dvl 
+    sudo cp -rv /home/agl/.local /etc/skel/ /hel /rootg
 # sudo apt-get clean all && \
 # sudo apt-get autoremove --purge
 WORKDIR /home/dvl
