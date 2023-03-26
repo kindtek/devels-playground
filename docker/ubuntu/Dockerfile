@@ -343,7 +343,7 @@ RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg a
 RUN  \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -yq update && \
-    sudo apt-get -y install brave-browser gdm3 gimp gedit nautilus vlc 
+    sudo apt-get -y install brave-browser gdm3 gimp gedit nautilus vlc x11-apps xfce4 
 RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
     # change last line of this file - fix for brave-browser displaying empty windows
     head -n -1 /opt/brave.com/brave/brave-browser.old | sudo tee /opt/brave.com/brave/brave-browser > /dev/null && \
@@ -358,10 +358,9 @@ RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browse
     # sudo apt-get autoremove --purge
 RUN RUN \
     # sudo dpkg-reconfigure --frontend noninteractive gnome-session && \
-    echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
-    sudo echo "/usr/sbin/lightdm" > /etc/X11/default-display-manager && \
-    DEBIAN_FRONTEND=noninteractive sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install gnome-session x11-apps xfce4 
-
+    # echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
+    # sudo echo "/usr/sbin/lightdm" > /etc/X11/default-display-manager && \
+    # DEBIAN_FRONTEND=noninteractive sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install gnome-session
 WORKDIR /home/dvl
 USER dvl
 
