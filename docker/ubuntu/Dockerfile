@@ -223,9 +223,9 @@ FROM dvlp_init AS dvlp_msdot-lite
 USER agl
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
-RUN \
-    --mount=type=cache,target=/var/cache/apt \
-    sudo apt-get -y install lsb-release wget
+# RUN \
+#     --mount=type=cache,target=/var/cache/apt \
+RUN sudo apt-get -y install lsb-release wget
 RUN \
     --mount=type=cache,target=/var/cache/wget \
     sudo wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
