@@ -8,16 +8,16 @@ services:
       context: .
       target: dvlp_init
     init: true
-    command:
-      - bin/bash
-      - -c
-      - export _AGL=${_AGL:-agl}
-      - export _HALO=${_HALO:-halo}
+    # command:
+      # - /bin/bash
+      # - -c
+      # - export _AGL=${_AGL:-agl}
+      # - export _HALO=${_HALO:-halo}
+      # - sleep
+      # - infinity
       # - ln -sf /home /mnt
       # - mkdir -p /mnt/data
       # - ln -sf /mnt/data /tmp/data
-    volumes:
-      - mnt-data:/mnt/data
     # command: echo something
   init-halo:
     # Need a user priviliged enough to chown
@@ -33,8 +33,8 @@ services:
         # Wait for the groups to be added
         condition: service_completed_successfully
     init: true
-    volumes:
-      - halo-data:/home/${_AGL:-agl}
+    # volumes:
+    #   - halo-data:/home/${_AGL:-agl}
     # command: sudo chown -R ${_AGL:-agl}:${_HALO:-halo} /mnt/data/home/${_AGL:-agl}
   init-hel:
     # Need a user priviliged enough to chown
@@ -50,13 +50,16 @@ services:
         # Wait for groups to be added
         condition: service_completed_successfully
     init: true
-    volumes:
-      - hel-data:/home/dvl
+    # volumes:
+    #   - hel-data:/home/dvl
     # command: chown -R dvl:hel /mnt/home/dvl
   data:
     user: ${_AGL:-agl}
     group_add:
       - ${_HALO:-halo}
+    # entrypoint:
+    #   - sleep
+    #   - infinity
     build:
       context: .
       target: dvlp_data
@@ -75,12 +78,16 @@ services:
     #   - init-halo
     #   - init-hel
     volumes:
-      - hel-data:/hel
-      - halo-data:/hal
+      - hel-data:/home/dvl
+      - halo-data:/home/${_AGL:-agl}
       - mnt-data:/mnt/data
   skel:
     extends: data
     user: ${_AGL:-agl}
+    tty: false
+    entrypoint:
+      - sleep
+      - infinity
     build:
       context: .
       target: dvlp_skel
@@ -89,10 +96,10 @@ services:
         - _HALO=${_HALO:-halo}
       # network: ${COMPOSE_PROJECT_NAME}_default
     init: true
-    volumes:
-      - hel-data:/hel
-      - halo-data:/hal
-      - mnt-data:/mnt/data
+    # volumes:
+    #   - hel-data:/home/dvl
+    #   - halo-data:/home/${_AGL:-agl}
+    #   - mnt-data:/mnt/data
     depends_on:
       data:
         # Wait for the ownership to change
@@ -101,9 +108,12 @@ services:
       com.dvlp_skel.description: "skeleton"
   git:
     # owner/group becomes owner of hel-data volume
-    extends: data
+    extends: skel
     restart: on-failure
-    entrypoint: tail -F /dev/null
+    tty: true
+    # entrypoint:
+    #   - sleep
+    #   - infinity
     user: dvl
     privileged: true
     image: kindtek/dvlp:ubuntu-git
@@ -122,9 +132,9 @@ services:
         condition: service_completed_successfully
     init: true
     volumes:
-      - hel-data:/home/dvl
-      - halo-data:/home/${_AGL:-agl}
-      - /mnt/data
+      - hel-data:/hel
+      - halo-data:/hal
+      - mnt-data:/mnt/data
     labels:
       com.dvl-playg.description: "basics + git"
   python:
@@ -197,27 +207,27 @@ services:
       target: dvlp_gui-phat
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
-  # cuda:
-  #   extends: gui
-  #   image: kindtek/dvlp:ubuntu-cuda
-  #   build:
-  #     context: .
-  #     target: dvlp_cuda
-  #     args:
-  #       - _AGL=${_AGL:-agl}
-  #     labels:
-  #       com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
+  cuda:
+    extends: gui
+    image: kindtek/dvlp:ubuntu-cuda
+    build:
+      context: .
+      target: dvlp_cuda
+      args:
+        - _AGL=${_AGL:-agl}
+      labels:
+        com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 
-  # cuda-phat:
-  #   extends: gui
-  #   image: kindtek/dvlp:ubuntu-cuda-phat
-  #   build:
-  #     context: .
-  #     target: dvlp_cuda-phat
-  #     args:
-  #       - _AGL=${_AGL:-agl}
-  #     labels:
-  #       com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
+  cuda-phat:
+    extends: gui
+    image: kindtek/dvlp:ubuntu-cuda-phat
+    build:
+      context: .
+      target: dvlp_cuda-phat
+      args:
+        - _AGL=${_AGL:-agl}
+      labels:
+        com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 volumes:
   hel-data:
   halo-data:
