@@ -147,9 +147,9 @@ COPY --from=dvlp_god --chown=god:rootg ./home/god ./home/god
 COPY --from=dvlp_dvl --chown=dvl:hell  ./home/dvl ./home/dvl 
 COPY --from=dvlp_agl --chown=agl:halo .${mnt_data} .${mnt_data}
 COPY --from=dvlp_agl --chown=agl:halo ./home/agl ./home/agl
-COPY --from=dvlp_data --chown=dvl:hell ./home/dvl ./home/dvl
-COPY --from=dvlp_data --chown=agl:halo ./home/agl ./home/agl
-COPY --from=dvlp_data --chown=god:rootg ./home/god ./home/god
+# COPY --from=dvlp_data --chown=dvl:hell ./home/dvl ./home/dvl
+# COPY --from=dvlp_data --chown=agl:halo ./home/agl ./home/agl
+# COPY --from=dvlp_data --chown=god:rootg ./home/god ./home/god
 
 WORKDIR /home/dvl
 # RUN with halo ownership
@@ -163,13 +163,13 @@ RUN sudo apt-get -y update && \
     # sudo dpkg-reconfigure --frontend noninteractive tzdata && \
     # sudo dpkg --configure -a && \
     # # sudo apt-get upgrade -y libsnmp40 && \
-    sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget wslu
+    sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget wslu && \
     # make gh files executable
-RUN sudo chmod -R +x dvlw/dvlp/mnt/bak 
-RUN sudo chmod +x dvlw/scripts/gh-auth-first-time-login.sh 
+    sudo chmod -R +x dvlw/dvlp/mnt/bak && \
+    sudo chmod +x dvlw/scripts/gh-auth-first-time-login.sh && \
     # copy gh files to mount location and home dirs
-RUN sudo cp -arfv dvlw/dvlp/mnt ${mnt_data}
-RUN sudo ls -al ${mnt_data} 
+    sudo cp -arfv dvlw/dvlp/mnt ${mnt_data} && \
+    sudo ls -al ${mnt_data} && \
     # sudo mv -v ${mnt_data}/bak/custom ${mnt_data}/bak/agl/ && \
     # make rwx for owner and rw for group - x/rx for others
     # sudo chmod 754 -Rv ${mnt_data}/bak/agl && \
@@ -177,14 +177,13 @@ RUN sudo ls -al ${mnt_data}
     # sudo chmod 751 ${mnt_data}/bak/agl && sudo chmod 751 ${mnt_data}/bak/dvl && \
     # sudo chmod 754 -Rv ${mnt_data}/bak/dvl && \
     # # add warning for the backup drive
-RUN echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/README_ASAP      && \
+    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/README_ASAP      && \
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/dvl/README_ASAP  && \
-    sudo chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh && \
-    sudo chown agl:halo ${mnt_data}/bak/agl/backup-agl.sh ${mnt_data}/bak/dvl/backup-dvl.sh && \
+    sudo chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh
+RUN sudo chown agl:halo ${mnt_data}/bak/agl/backup-agl.sh ${mnt_data}/bak/dvl/backup-dvl.sh && \
     cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /home/god/.bashrc && \
     cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /home/dvl/.bashrc && \
-    cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /home/agl/.bashrc && \
-    cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /etc/skel/.bashrc
+    cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /home/agl/.bashrc /etc/skel/.bashrc
 USER root
 # copy and set ownership
 RUN cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/god && \
