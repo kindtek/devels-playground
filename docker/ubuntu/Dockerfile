@@ -357,8 +357,8 @@ RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browse
     # sudo apt-get clean all && \
     # sudo apt-get autoremove --purge
 RUN RUN \
-    --mount=type=cache,target=/var/cache/dpkg \
-    sudo dpkg-reconfigure --frontend noninteractive tzdata && \
+    --mount=type=cache,target=/var/cache/apt \
+    sudo dpkg-reconfigure --frontend noninteractive gnome-session && \
     sudo dpkg --configure -a && \
     DEBIAN_FRONTEND=noninteractive sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install gnome-session
 
