@@ -341,8 +341,8 @@ RUN \
 RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    echo "set shared/default-x-display-manager lightdm" | sudo debconf-communicate && \
     echo "/usr/sbin/lightdm" | sudo tee /etc/X11/default-display-manager && \
+    echo "set shared/default-x-display-manager lightdm" | sudo debconf-communicate && \
     sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
     DEBIAN_FRONTEND=noninteractive sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install gnome-session tzdata && \
     sudo dpkg-reconfigure --frontend noninteractive tzdata gnome-session
