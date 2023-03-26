@@ -36,9 +36,11 @@ RUN addgroup --gid 59999 rootg && \
     usermod -aG halo god && \
     usermod -aG hell god && \
     # ensure no passwords
-    passwd -d root god agl && \
+    passwd -d god && \
+    passwd -d agl && \
+    passwd -d dvl && \
     passwd -l root && \
-    # add dvl    passwd -d dvl && \
+
     # make dvl default wsl user 
     echo "[user]\ndefault=dvl" >> /etc/wsl.conf
 
