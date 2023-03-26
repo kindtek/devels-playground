@@ -20,11 +20,10 @@ RUN \
     apt-get update -y && \
     apt-get upgrade -y && \
     # non-root will need to use sudo from now on
-    apt-get -y install sudo
 #   apt-get -y install sudo apt-fast
-RUN addgroup --gid 00777 halo && \
+    addgroup --gid 00777 halo && \
     addgroup --gid 00666 hell && \
-    # RUN addgroup --gid 59999 rootg && \
+    RUN addgroup --gid 59999 rootg && \
     # add just god and agl for now 
     adduser --home /home/god --ingroup root --shell /bin/bash --uid 59999 --disabled-password --gecos GECOS god && \
     adduser --home /home/agl --ingroup halo --shell /bin/bash --uid 00777 --disabled-password --gecos GECOS agl && \
@@ -40,9 +39,10 @@ RUN addgroup --gid 00777 halo && \
     passwd -d agl && \
     passwd -d dvl && \
     passwd -l root && \
-
     # make dvl default wsl user 
-    echo "[user]\ndefault=dvl" >> /etc/wsl.conf
+    echo "[user]\ndefault=dvl" >> /etc/wsl.conf && \
+    apt-get -y install sudo
+
 
 # god permissions/volume builder
 FROM dvlp_init AS dvlp_god
