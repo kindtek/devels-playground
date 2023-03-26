@@ -337,30 +337,26 @@ RUN \
     --mount=type=cache,target=/var/cache/curl \
     sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg 
 RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
-# in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
+    # in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
 RUN  \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -yq update && \
-    sudo apt-get -y install brave-browser
-# sudo apt-get clean all && \
-# now no longeer need to add --disable-gpu flag everytime
+    sudo apt-get -y install brave-browser gdm3 gimp gedit nautilus vlc x11-apps xfce4 
 RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
     # change last line of this file - fix for brave-browser displaying empty windows
     head -n -1 /opt/brave.com/brave/brave-browser.old | sudo tee /opt/brave.com/brave/brave-browser > /dev/null && \
+    # now no longeer need to add --disable-gpu flag everytime
     echo '"$HERE/brave" "$@" " --disable-gpu " || true' | sudo tee --append /opt/brave.com/brave/brave-browser > /dev/null
-# this is a better way to do this but needs work
-# cd /opt/brave.com/brave && \
-# brave_old_line='\"\$HERE\/brave\"\s\"\$\@\"\s\|\|\strue' && \
-# brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
-# sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl && \
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -y install x11-apps xfce4 && \
-    sudo apt-get -y install gdm3 gimp gedit nautilus vlc 
+    # this is a better way to do this but needs work
+    # cd /opt/brave.com/brave && \
+    # brave_old_line='\"\$HERE\/brave\"\s\"\$\@\"\s\|\|\strue' && \
+    # brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
+    # sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl && \
+    # sudo apt-get clean all && \
+    # sudo apt-get autoremove --purge
 RUN export DEBIAN_FRONTEND=noninteractive &&\
     sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install gnome-session
-# sudo apt-get clean all && \
-# sudo apt-get autoremove --purge
+
 WORKDIR /home/dvl
 USER dvl
 
