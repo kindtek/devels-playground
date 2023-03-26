@@ -68,7 +68,7 @@ FROM dvlp_init AS dvlp_dvl
 # ARG mnt_data=${mnt_data:-/mnt/data}
 WORKDIR /home/dvl
 RUN ln -sfv /home/dvl /hel && \
-    ln -sv dvlw dvlw && \
+    ln -sv dvlw devels-workshop && \
     ln -sv dvlw/dvlp dvlp && \
     ln -sv dvlw/dvlp/linux linux && \
     ln -sv dvlw/dvlp/docker/ubuntu udocker && \
