@@ -274,8 +274,8 @@ RUN \
     --mount=type=cache,target=/var/cache/curl \
     sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-RUN echo ', \
-"experimental": "enabled"' | sudo tee --append /home/dvl/.docker/config.json 
+# RUN echo ', \
+# "experimental": "enabled"' | sudo tee --append /home/dvl/.docker/config.json 
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y update && sudo apt-get -y install docker-compose-plugin docker-ce docker-ce-cli containerd.io 
