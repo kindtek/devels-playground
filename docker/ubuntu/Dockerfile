@@ -340,8 +340,6 @@ RUN \
     sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg 
 RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
 RUN \
-
-    RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     # in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
     sudo apt-get -y install locales && sudo update-locale locales \
