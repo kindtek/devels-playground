@@ -111,7 +111,8 @@ RUN \
 # RUN git clone https://github.com/kindtek/dvlw --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
 # --filter=combine:tree:depth:1+blob:limit=10240000  --recurse-submodules --remote-submodules  --single-branch  --no-tags --filter=blob:limit=1024000 --single-branch --branch main
 WORKDIR /home/dvl/dvlw
-RUN \--mount=type=cache,target=/var/cache/git-dvlw/dvlp \
+RUN \
+    --mount=type=cache,target=/var/cache/git-dvlw/dvlp \
     git submodule update --init --remote --depth=1 --progress
 WORKDIR /home/dvl
 # && \
