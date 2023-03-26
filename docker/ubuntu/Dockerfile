@@ -348,7 +348,8 @@ RUN \
     
 RUN \
     # --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -y install lightdm && \
+    sudo apt-get -y install lightdm 
+RUN \
     sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo dpkg-reconfigure lightdm
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
