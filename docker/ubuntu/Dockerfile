@@ -163,12 +163,11 @@ RUN sudo apt-get -y update && \
     # sudo dpkg-reconfigure --frontend noninteractive tzdata && \
     # sudo dpkg --configure -a && \
     # # sudo apt-get upgrade -y libsnmp40 && \
-    sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget wslu && \
+    sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget wslu
     # make gh files executable
-    sudo chmod -R +x dvlw/dvlp/mnt/bak && \
-    sudo chmod +x dvlw/scripts/gh-auth-first-time-login.sh && \
-    # copy gh files to mount location and home dirs
-    sudo cp -arfv dvlw/dvlp/mnt ${mnt_data} && \
+RUN sudo chmod -R +x dvlw/dvlp/mnt/bak
+RUN sudo chmod +x dvlw/scripts/gh-auth-first-time-login.sh
+RUN sudo cp -arfv dvlw/dvlp/mnt ${mnt_data} && \
     # sudo mv -v ${mnt_data}/bak/custom ${mnt_data}/bak/agl/ && \
     # make rwx for owner and rw for group - x/rx for others
     # sudo chmod 754 -Rv ${mnt_data}/bak/agl && \
