@@ -342,9 +342,11 @@ RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg a
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     # in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
-    sudo apt-get -y install locales && sudo update-locale locales \
+    sudo apt-get -y install locales && sudo update-locale locales && \
     echo "LANG=en_US.UTF-8" | sudo tee -a /etc/locale.gen && \
-    sudo locale-gen && \
+    sudo locale-gen
+RUN \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo dpkg-reconfigure --frontend noninteractive locales && \
     echo "/usr/sbin/lightdm" | sudo tee /etc/X11/default-display-manager && \
     echo "set shared/default-x-display-manager lightdm" | sudo debconf-communicate && \
