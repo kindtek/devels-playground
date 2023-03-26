@@ -48,8 +48,9 @@ RUN \
 FROM dvlp_init AS dvlp_god
 USER root
 ARG mnt_data=${mnt_data:-/mnt/data}
-RUN ln -fs /home/god /rootg && \
-    ln -sv /home/god/bak /mnt/data/bak 
+RUN ln -fs /home/god /rootg 
+# && \
+#     ln -sv /home/god/bak /mnt/data/bak 
 
 # agl permissions/volume builder
 FROM dvlp_init AS dvlp_agl
