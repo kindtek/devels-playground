@@ -23,7 +23,7 @@ RUN \
 #   apt-get -y install sudo apt-fast
     addgroup --gid 00777 halo && \
     addgroup --gid 00666 hell && \
-    RUN addgroup --gid 59999 rootg && \
+    addgroup --gid 59999 rootg && \
     # add just god and agl for now 
     adduser --home /home/god --ingroup root --shell /bin/bash --uid 59999 --disabled-password --gecos GECOS god && \
     adduser --home /home/agl --ingroup halo --shell /bin/bash --uid 00777 --disabled-password --gecos GECOS agl && \
