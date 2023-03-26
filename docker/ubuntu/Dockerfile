@@ -344,7 +344,7 @@ RUN \
     echo "/usr/sbin/lightdm" | sudo tee /etc/X11/default-display-manager && \
     echo "set shared/default-x-display-manager lightdm" | sudo debconf-communicate && \
     sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
-    DEBIAN_FRONTEND=noninteractive sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install gnome-session tzdata && \
+    DEBIAN_FRONTEND=noninteractive sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install gnome-session tzdata lightdm && \
     sudo dpkg-reconfigure --frontend noninteractive tzdata gnome-session
 # in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
 RUN  \
