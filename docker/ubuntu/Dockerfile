@@ -3,7 +3,7 @@
 # docker compose build   ( ... don't try docker run - permissions built with docker compose are needed )
 ARG DEBIAN_FRONTEND=noninteractive
 
-FROM ubuntu:devel AS dvlp_init
+FROM ubuntu:latest AS dvlp_init
 ARG _AGL_USR=${_AGL_USR:-agl}
 ARG _DVL_USR=${_DVL_USR:-dvl}
 ARG _HALO=halo
