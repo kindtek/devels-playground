@@ -1,11 +1,12 @@
 # syntax=docker/dockerfile:experimental
 # to build, run: 
-# `_AGL=mine _HALO=ours docker run -d -i`
+# docker compose build   ( ... don't try docker run - permissions built with docker compose are needed )
+ARG DEBIAN_FRONTEND=noninteractive
+
 FROM ubuntu:latest AS dvlp_init
 ARG _AGL=agl
 ARG _HALO=halo
 ARG _CONFIG_FILE
-ARG DEBIAN_FRONTEND=noninteractive
 RUN echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
     echo 'tzdata tzdata/Zones/America select Los Angeles' | debconf-set-selections
 RUN \
