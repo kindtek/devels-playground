@@ -36,13 +36,13 @@ RUN addgroup --gid 777 halo && \
     # make dvl default wsl user 
     echo "[user]\ndefault=dvl" >> /etc/wsl.conf && \
     echo 'export PATH=$PATH:/home/\$LOGNAME/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvlp/scripts:WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nexport DOCKER_BUILDKIT=1\nexport COMPOSE_DOCKER_CLI_BUILD=1\nDOCKER_CLI_EXPERIMENTAL=enabled\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"' >> /rootg/.bashrc && \
-    echo 'export PATH=$PATH:/home/\$LOGNAME/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvlp/scripts:WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nexport DOCKER_BUILDKIT=1\nexport COMPOSE_DOCKER_CLI_BUILD=1\nDOCKER_CLI_EXPERIMENTAL=enabled\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"' >> /home/dvl/.bashrc && \
     echo 'export PATH=$PATH:/home/\$LOGNAME/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvlp/scripts:WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nexport DOCKER_BUILDKIT=1\nexport COMPOSE_DOCKER_CLI_BUILD=1\nDOCKER_CLI_EXPERIMENTAL=enabled\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"' >> /home/agl/.bashrc && \
     # copy this .bashrc to skel
     cp -rfv /home/agl/.bashrc /etc/skel/.bashrc && \
     # add dvl (and host - optional) users
     adduser --home /home/dvl --ingroup hell --shell /bin/bash --uid 666 --disabled-password --gecos GECOS dvl && \
-    passwd -d dvl
+    passwd -d dvl && \
+    echo 'export PATH=$PATH:/home/\$LOGNAME/.local/bin:/hel/dvl-works/scripts:/home/dvl/dvl-works/dvlp/scripts:WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nexport DOCKER_BUILDKIT=1\nexport COMPOSE_DOCKER_CLI_BUILD=1\nDOCKER_CLI_EXPERIMENTAL=enabled\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"' >> /home/dvl/.bashrc
 # adduser --system --home /home/host --ingroup halo --shell /bin/bash --uid 76667 --disabled-password host && \ 
 # passwd -d host
 # HALO permissions/volume builder
