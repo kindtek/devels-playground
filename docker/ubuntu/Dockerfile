@@ -20,16 +20,15 @@ RUN \
     apt-get update -y && \
     apt-get upgrade -y && \
     # non-root will need to use sudo from now on
-#   apt-get -y install sudo apt-fast
-    addgroup --gid 00777 halo && \
-    addgroup --gid 00666 hell && \
-    addgroup --gid 59999 rootg && \
+    #   apt-get -y install sudo apt-fast
+    addgroup --gid 4321 rootg && \
+    addgroup --gid 777 halo && \
+    addgroup --gid 666 hell && \
     # add just god and agl for now 
     adduser --home /home/god --ingroup root --shell /bin/bash --uid 4321 --disabled-password --gecos GECOS god && \
     adduser --home /home/agl --ingroup halo --shell /bin/bash --uid 777 --disabled-password --gecos GECOS agl && \
     adduser --home /home/dvl --ingroup hell --shell /bin/bash --uid 666 --disabled-password --gecos GECOS dvl && \
     # add god and agl to the sudo list
-    # usermod -aG sudo god agl && \
     usermod -aG rootg god && \
     # add god to both groups
     usermod -aG halo god && \
@@ -41,8 +40,8 @@ RUN \
     passwd -l root && \
     # make dvl default wsl user 
     echo "[user]\ndefault=dvl" >> /etc/wsl.conf && \
-    apt-get -y install sudo
-
+    apt-get -y install sudo && \
+    usermod -aG sudo agl 
 
 # god permissions/volume builder
 FROM dvlp_init AS dvlp_god
@@ -73,9 +72,9 @@ RUN ln -sfv /home/dvl /hel && \
     ln -sv dvlw/dvlp/kernels/ubuntu/x86/amd u64amdkernels && \
     ln -sv dvlw/dvlp/kernels/ubuntu ukernels && \
     ln -sv dvlw/dvlp/docker docker
-    #  && \
-    # mkdir -m 753 -pv ${mnt_data}/bak/dvl && \
-    # ln -sv /home/dvl/bak /mnt/data/bak/dvl 
+#  && \
+# mkdir -m 753 -pv ${mnt_data}/bak/dvl && \
+# ln -sv /home/dvl/bak /mnt/data/bak/dvl 
 
 USER dvl
 
