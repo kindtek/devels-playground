@@ -180,7 +180,7 @@ RUN sudo cp -arfv dvlw/dvlp/mnt/ ${mnt_data}/
 # RUN echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/README_ASAP      && \
 #     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/dvl/README_ASAP 
 # sudo chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh
-RUN sudo chown agl:halo ${mnt_data}/bak/agl/backup-agl.sh ${mnt_data}/bak/dvl/backup-dvl.sh
+# RUN sudo chown agl:halo ${mnt_data}/bak/agl/backup-agl.sh ${mnt_data}/bak/dvl/backup-dvl.sh
 RUN cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /home/god/.bashrc && \
     cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /home/dvl/.bashrc && \
     cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /home/agl/.bashrc && \
