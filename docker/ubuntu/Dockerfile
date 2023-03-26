@@ -158,7 +158,7 @@ USER agl
 #     git config --global --add safe.directory /home/agl && \
 #     git config --global --add safe.directory /halo 
 RUN \
-    --mount=type=cache,target=/var/cache/wget \
+    --mount=type=cache,target=/var/cache/apt \
     sudo apt-get -y update && \
     # sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
     # sudo apt-get install -y tzdata && \
@@ -166,7 +166,7 @@ RUN \
     # sudo dpkg --configure -a && \
     # # sudo apt-get upgrade -y libsnmp40 && \
     sudo apt-get -y install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget wslu
-    # make gh files executable
+# make gh files executable
 RUN sudo chmod -R +x dvlw/dvlp/mnt/bak
 RUN sudo chmod +x dvlw/scripts/gh-auth-first-time-login.sh
 RUN sudo cp -arfv dvlw/dvlp/mnt ${mnt_data} && \
@@ -179,7 +179,7 @@ RUN sudo cp -arfv dvlw/dvlp/mnt ${mnt_data} && \
     # # add warning for the backup drive
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/README_ASAP      && \
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/dvl/README_ASAP 
-    # sudo chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh
+# sudo chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh
 RUN sudo ls -al ${mnt_data} && \sudo chown agl:halo ${mnt_data}/bak/agl/backup-agl.sh ${mnt_data}/bak/dvl/backup-dvl.sh
 RUN cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /home/god/.bashrc && \
     cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /home/dvl/.bashrc && \
