@@ -348,11 +348,11 @@ RUN \
     echo "LANG=en_US.UTF-8" | sudo tee -a /etc/locale.gen && \
     sudo locale-gen
     
-RUN \
+# RUN \
     # --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo apt-get -y install lightdm 
-RUN \
-    sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo dpkg-reconfigure lightdm
+    # sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo apt-get -y install lightdm gnome-session
+# RUN \
+    # sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo dpkg-reconfigure lightdm
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo dpkg-reconfigure --frontend noninteractive locales && \
