@@ -4,8 +4,8 @@
 ARG DEBIAN_FRONTEND=noninteractive
 
 FROM ubuntu:latest AS dvlp_init
-# ARG _AGL_USR=${_AGL_USR:-agl}
-# ARG _DVL_USR=${_DVL_USR:-dvl}
+ARG _AGL_USR=${_AGL_USR:-agl}
+ARG _DVL_USR=${_DVL_USR:-dvl}
 ARG _HALO=halo
 ARG _CONFIG_FILE
 ARG DEBIAN_FRONTEND=noninteractive
@@ -35,34 +35,24 @@ RUN addgroup --gid 777 halo && \
     passwd -l root && \
     passwd -d god && \
     passwd -d agl && \
-    # make dvl default wsl user 
-    echo "[user]\ndefault=dvl" >> /etc/wsl.conf && \
-    echo 'export PATH=$PATH:/home/\$LOGNAME/.local/bin:/hel/dvlw/scripts:/home/dvl/dvlw/dvlp/scripts:WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nexport DOCKER_BUILDKIT=1\nexport COMPOSE_DOCKER_CLI_BUILD=1\nDOCKER_CLI_EXPERIMENTAL=enabled\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"' >> /rootg/.bashrc && \
-    echo 'export PATH=$PATH:/home/\$LOGNAME/.local/bin:/hel/dvlw/scripts:/home/dvl/dvlw/dvlp/scripts:WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nexport DOCKER_BUILDKIT=1\nexport COMPOSE_DOCKER_CLI_BUILD=1\nDOCKER_CLI_EXPERIMENTAL=enabled\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"' >> /home/agl/.bashrc && \
-    # copy this .bashrc to skel
-    cp -rfv /home/agl/.bashrc /etc/skel/.bashrc && \
-    # add dvl (and host - optional) users
+    # add dvl
     adduser --home /home/dvl --ingroup hell --shell /bin/bash --uid 666 --disabled-password --gecos GECOS dvl && \
     passwd -d dvl && \
-    echo 'export PATH=$PATH:/home/\$LOGNAME/.local/bin:/hel/dvlw/scripts:/home/dvl/dvlw/dvlp/scripts:WSL_DISTRO_NAME="$WSL_DISTRO_NAME"\nexport DOCKER_BUILDKIT=1\nexport COMPOSE_DOCKER_CLI_BUILD=1\nDOCKER_CLI_EXPERIMENTAL=enabled\nalias cdir="source cdir.sh"\nalias grep="grep --color=auto"\nalias powershell=pwsh\nalias vi="vi -c '"'set verbose showmode'"'"' >> /home/dvl/.bashrc
-# adduser --system --home /home/host --ingroup halo --shell /bin/bash --uid 76667 --disabled-password host && \ 
-# passwd -d host
-# HALO permissions/volume builder
+    # make dvl default wsl user 
+    echo "[user]\ndefault=dvl" >> /etc/wsl.conf
 
+# god permissions/volume builder
 FROM dvlp_init AS dvlp_god
 ARG mnt_data=${mnt_data:-/mnt/data}
 RUN ln -fs /home/god /rootg
 
+# agl permissions/volume builder
 FROM dvlp_init AS dvlp_agl
 ARG mnt_data=${mnt_data:-/mnt/data}
 RUN ln -fs /home/agl /hal && \
     mkdir -m 753 -pv ${mnt_data}/bak/agl
-# set up .ssh and dls directories and make sure .ssh has proper permissions
-# set up .ssh and dls directories and make sure .ssh has proper permissions
-# mkdir -pv /home/agl/.ssh /home/agl/dls && chmod 700 /home/agl/.ssh
-# mount stuff if needed
-# echo "//${mnt_data}/bak/agl /home/agl cifs _AGL=agl, file_mode=0777,dir_mode=0777 0 0\n/${mnt_data}/bak/dvl /home/dvl cifs _AGL=dvl, file_mode=0777, dir_mode=0777 0 0" >> /etc/fstab && \
-# hell volume/permissions builder
+
+# dvl permissions/volume builder
 FROM dvlp_init AS dvlp_dvl
 # ARG mnt_data=${mnt_data:-/mnt/data}
 WORKDIR /home/dvl
@@ -75,14 +65,9 @@ RUN ln -sfv /home/dvl /hel && \
     ln -sv dvlw/dvlp/kernels/ubuntu ukernels && \
     ln -sv dvlw/dvlp/docker docker && \
     mkdir -m 753 -pv ${mnt_data}/bak/dvl
-# chsh -s /bin/bash 
-# add an instructional "readme" here later
-# set up .ssh and dls directories and make sure .ssh has proper permissions
-# mkdir -pv /home/dvl/.ssh /home/dvl/dls
-# chmod 700 /home/dvl/.ssh 
 USER dvl
 
-# build alieses
+# build aliases
 FROM dvlp_agl AS dvlp_auser
 
 FROM dvlp_dvl AS dvlp_duser
@@ -179,9 +164,10 @@ RUN sudo apt-get -y update && \
     # sudo chmod 754 -Rv ${mnt_data}/bak/dvl && \
     # # add warning for the backup drive
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/README_ASAP      && \
-    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/dvl/README_ASAP 
-RUN sudo chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh && \
-    sudo chown agl:halo ${mnt_data}/bak/agl/backup-agl.sh ${mnt_data}/bak/dvl/backup-dvl.sh
+    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/dvl/README_ASAP  && \
+    sudo chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh && \
+    sudo chown agl:halo ${mnt_data}/bak/agl/backup-agl.sh ${mnt_data}/bak/dvl/backup-dvl.sh && \
+    echo cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /rootg/.bashrc /home/dvl/.bashrc /home/agl/.bashrc
 USER root
 # copy and set ownership
 RUN cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/dvl && \
