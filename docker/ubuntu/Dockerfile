@@ -348,7 +348,7 @@ RUN \
     
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true dpkg-reconfigure lightdm
+    sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo dpkg-reconfigure lightdm
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo dpkg-reconfigure --frontend noninteractive locales && \
