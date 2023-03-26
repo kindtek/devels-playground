@@ -339,7 +339,14 @@ RUN \
     --mount=type=cache,target=/var/cache/curl \
     sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg 
 RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
-    # in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
+RUN \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
+    sudo echo "/usr/sbin/lightdm" > /etc/X11/default-display-manager && \
+    sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
+    DEBIAN_FRONTEND=noninteractive sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install gnome-session tzdata && \
+    sudo dpkg-reconfigure --frontend noninteractive tzdata gnome-session
+# in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
 RUN  \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -yq update && \
@@ -349,20 +356,13 @@ RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browse
     head -n -1 /opt/brave.com/brave/brave-browser.old | sudo tee /opt/brave.com/brave/brave-browser > /dev/null && \
     # now no longeer need to add --disable-gpu flag everytime
     echo '"$HERE/brave" "$@" " --disable-gpu " || true' | sudo tee --append /opt/brave.com/brave/brave-browser > /dev/null
-    # this is a better way to do this but needs work
-    # cd /opt/brave.com/brave && \
-    # brave_old_line='\"\$HERE\/brave\"\s\"\$\@\"\s\|\|\strue' && \
-    # brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
-    # sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl && \
-    # sudo apt-get clean all && \
-    # sudo apt-get autoremove --purge
-RUN sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
-    sudo apt-get install -y tzdata && \
-    sudo dpkg-reconfigure --frontend noninteractive tzdata && \
-    sudo dpkg-reconfigure --frontend noninteractive gnome-session && \
-    echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
-    sudo echo "/usr/sbin/lightdm" > /etc/X11/default-display-manager && \
-    DEBIAN_FRONTEND=noninteractive sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install gnome-session
+# this is a better way to do this but needs work
+# cd /opt/brave.com/brave && \
+# brave_old_line='\"\$HERE\/brave\"\s\"\$\@\"\s\|\|\strue' && \
+# brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
+# sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl && \
+# sudo apt-get clean all && \
+# sudo apt-get autoremove --purge
 
 WORKDIR /home/dvl
 USER dvl
