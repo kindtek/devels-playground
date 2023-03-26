@@ -170,7 +170,7 @@ RUN sudo apt-get -y update && \
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/dvl/README_ASAP  && \
     sudo chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh && \
     sudo chown agl:halo ${mnt_data}/bak/agl/backup-agl.sh ${mnt_data}/bak/dvl/backup-dvl.sh && \
-    echo cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /home/god/.bashrc /home/dvl/.bashrc /home/agl/.bashrc /etc/skel/.bashrc
+    cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /home/god/.bashrc /home/dvl/.bashrc /home/agl/.bashrc /etc/skel/.bashrc
 USER root
 # copy and set ownership
 RUN cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/dvl && \
