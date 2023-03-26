@@ -12,7 +12,7 @@ RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 RUN \
-    --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt-get update -y && \
     apt-get upgrade -y && \
     apt-get -y install sudo
@@ -97,7 +97,7 @@ RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 RUN \
-    --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt-get -y install git
 WORKDIR /home/dvl
 # add safe directories
@@ -160,7 +160,7 @@ RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
-    --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y update && \
     sudo apt-get install -y apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi tzdata wget wslu
 RUN sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
@@ -206,7 +206,7 @@ RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
-    --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y install apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv
 RUN --mount=type=cache,target=/var/cache/pip \pip3 install cdir --user  && \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
@@ -242,7 +242,7 @@ RUN \
     sudo dpkg -i packages-microsoft-prod.deb
 RUN sudo rm packages-microsoft-prod.deb 
 RUN \
-    --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y update && \
     sudo apt-get -y install powershell dotnet-sdk-7.0
 # RUN sudo apt-get -y remove lsb_release
@@ -262,7 +262,7 @@ FROM dvlp_init AS dvlp_dind-lite
 USER root
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
 # RUN \
-# --mount=type=cache,target=/var/cache/apt \
+# --mount=type=cache,target=/var/cache/apt,sharing=locked \
 #     sudo apt-get -y install lsb-release curl gpg
 RUN sudo apt-get -y install lsb-release curl gpg
 # sudo apt-get clean all && \
@@ -276,7 +276,7 @@ RUN \
 RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null && \
     echo echo '"experimental": "enabled"'>> /home/dvl/.docker/config.json 
 RUN \
-    --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y update && sudo apt-get -y install docker-compose-plugin docker-ce docker-ce-cli containerd.io 
 # sudo apt-get remove -y lsb-release && \
 # sudo apt-get clean all && \
@@ -296,7 +296,7 @@ RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 RUN \
-    --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y install buildkitd
 USER dvl
 
@@ -308,7 +308,7 @@ RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
-    --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y update && \
     sudo apt-get -y upgrade && \
     sudo apt-get -y install alien autoconf bison build-essential  dbus-user-session daemonize dwarves \ 
@@ -361,7 +361,7 @@ RUN \
 RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
 # in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
 RUN  \
-    --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -yq update && \
     sudo apt-get -y install brave-browser
 # sudo apt-get clean all && \
@@ -376,7 +376,7 @@ RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browse
 # brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
 # sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl && \
 RUN \
-    --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y install x11-apps xfce4 && \
     sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install gnome-session gdm3 gimp gedit nautilus vlc 
 # sudo apt-get clean all && \
