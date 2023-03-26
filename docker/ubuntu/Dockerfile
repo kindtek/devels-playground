@@ -342,15 +342,16 @@ RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg a
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     echo "/usr/sbin/lightdm" | sudo tee /etc/X11/default-display-manager && \
+    sudo apt-get install lightdm && \
     echo "set shared/default-x-display-manager lightdm" | sudo debconf-communicate && \
     sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
-    DEBIAN_FRONTEND=noninteractive sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install gnome-session tzdata lightdm && \
+    DEBIAN_FRONTEND=noninteractive sudo apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install gnome-session tzdata && \
     sudo dpkg-reconfigure --frontend noninteractive tzdata gnome-session
 # in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
 RUN  \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -yq update && \
-    sudo apt-get -y install brave-browser gdm3 gimp gedit nautilus vlc x11-apps xfce4 
+    sudo apt-get -y install brave-browser gimp gedit nautilus vlc x11-apps xfce4 
 RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
     # change last line of this file - fix for brave-browser displaying empty windows
     head -n -1 /opt/brave.com/brave/brave-browser.old | sudo tee /opt/brave.com/brave/brave-browser > /dev/null && \
