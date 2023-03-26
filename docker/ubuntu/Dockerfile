@@ -136,8 +136,8 @@ USER dvl
 
 # SKELETON framework
 FROM scratch AS dvlp_skel
+ENV DEBIAN_FRONTEND=noninteractive
 ARG mnt_data=${mnt_data:-/mnt/data}
-ARG DEBIAN_FRONTEND=noninteractive
 WORKDIR /
 COPY --from=dvlp_init --chown=root:root ./ ./
 # COPY --from=dvlp_init --chown=root:root ./etc/group ./etc/group
@@ -159,13 +159,15 @@ USER agl
 #     git config --global --add safe.directory /halo 
 RUN \
     # --mount=type=cache,target=/var/cache/apt \
+    # sudo add-apt-repository ppa:saiarcot895/myppa && \
     sudo apt-get -y update && \
     # sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
     # sudo apt-get install -y tzdata && \
     # sudo dpkg-reconfigure --frontend noninteractive tzdata && \
     # sudo dpkg --configure -a && \
     # # sudo apt-get upgrade -y libsnmp40 && \
-    sudo apt-get -y install apt-transport-https build-essential ca-certificates curl git gh gnupg2 libssl-dev nvi wget wslu
+    # sudo apt-get -y install apt-fast 
+    sudo apt-get -y install apt-fast apt-transport-https aria2 build-essential ca-certificates curl git gh gnupg2 libssl-dev nvi wget wslu
 # make gh files executable
 RUN sudo chmod -R +x dvlw/dvlp/mnt/bak
 RUN sudo chmod +x dvlw/scripts/gh-auth-first-time-login.sh
