@@ -54,7 +54,7 @@ RUN ln -fs /home/god /rootg && \
 FROM dvlp_init AS dvlp_agl
 ARG mnt_data=${mnt_data:-/mnt/data}
 RUN ln -fs /home/agl /hal && \
-    ln -s /home/agl/bak && /mnt/data/bak/agl \
+    ln -s /home/agl/bak && /mnt/data/bak/agl && \
     mkdir -m 753 -pv ${mnt_data}/bak/agl
 
 # dvl permissions/volume builder
