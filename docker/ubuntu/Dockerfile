@@ -70,9 +70,9 @@ RUN ln -sfv /home/dvl /hel && \
 USER dvl
 
 # build aliases
-FROM dvlp_agl AS dvlp_auser
+# FROM dvlp_agl AS dvlp_auser
 
-FROM dvlp_dvl AS dvlp_duser
+# FROM dvlp_dvl AS dvlp_duser
 
 # DATA helper
 FROM dvlp_init AS dvlp_data

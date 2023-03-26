@@ -71,28 +71,28 @@ services:
       - hell-data:/home/devel
     init: true
   # alias(es) for agl
-  init-ausr:
-    user: _AGL_USR
-    extends: init-agl
-    build:
-      context: .
-      target: dvlp_agl
-      args:
-        - _AGL_USR=${_AGL:-angel}
-    volumes:
-      - halo-data:/home/${_AGL_USR}
-    init: true
-  # alias(es) for dvl
-  init-daus:
-    user: _DVL_USR
-    extends: init-dvl
-    build:
-      context: .
-      target: dvlp_dvl
-      args:
-        - _DVL_USR=${_DVL-:devel}
-    volumes:
-      - hell-data:/home/$_DVL_USR
+  # init-ausr:
+  #   user: _AGL_USR
+  #   extends: init-agl
+  #   build:
+  #     context: .
+  #     target: dvlp_agl
+  #     args:
+  #       - _AGL_USR=${_AGL:-angel}
+  #   volumes:
+  #     - halo-data:/home/${_AGL_USR}
+  #   init: true
+  # # alias(es) for dvl
+  # init-daus:
+  #   user: _DVL_USR
+  #   extends: init-dvl
+  #   build:
+  #     context: .
+  #     target: dvlp_dvl
+  #     args:
+  #       - _DVL_USR=${_DVL-:devel}
+  #   volumes:
+  #     - hell-data:/home/$_DVL_USR
   data:
     user: agl
     group_add:
@@ -178,8 +178,10 @@ services:
         condition: service_completed_successfully
     init: true
     volumes:
-      - hell-data:/hell
+      - hell-data:/hel
       - halo-data:/hal
+      - god-data:/root:ro
+      - gdi-data:/rootg
       - mnt-data:/mnt/data
     labels:
       com.dvl-playg.description: "basics + git"
