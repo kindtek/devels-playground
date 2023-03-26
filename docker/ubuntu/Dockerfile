@@ -352,6 +352,7 @@ RUN \
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo dpkg-reconfigure --frontend noninteractive locales && \
+    sudo apt-get -y install lightdm && \
     echo "/usr/sbin/lightdm" | sudo tee /etc/X11/default-display-manager 
 RUN echo "set shared/default-x-display-manager lightdm" | sudo debconf-communicate && \
     sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
@@ -360,7 +361,6 @@ RUN \
     sudo apt-get install -y locales && sudo update-locale locales \
     # in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
     sudo apt-get -yq update && \
-    sudo apt-get -y install lightdm
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y install brave-browser
