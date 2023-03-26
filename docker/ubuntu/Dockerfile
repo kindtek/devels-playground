@@ -25,9 +25,9 @@ RUN \
     addgroup --gid 00666 hell && \
     addgroup --gid 59999 rootg && \
     # add just god and agl for now 
-    adduser --home /home/god --ingroup root --shell /bin/bash --uid 54321 --disabled-password --gecos GECOS god && \
-    adduser --home /home/agl --ingroup halo --shell /bin/bash --uid 00777 --disabled-password --gecos GECOS agl && \
-    adduser --home /home/dvl --ingroup hell --shell /bin/bash --uid 00666 --disabled-password --gecos GECOS dvl && \
+    adduser --home /home/god --ingroup root --shell /bin/bash --uid 4321 --disabled-password --gecos GECOS god && \
+    adduser --home /home/agl --ingroup halo --shell /bin/bash --uid 777 --disabled-password --gecos GECOS agl && \
+    adduser --home /home/dvl --ingroup hell --shell /bin/bash --uid 666 --disabled-password --gecos GECOS dvl && \
     # add god and agl to the sudo list
     # usermod -aG sudo god agl && \
     usermod -aG rootg god && \
