@@ -21,7 +21,7 @@ RUN \
 RUN addgroup --gid 777 halo && \
     addgroup --gid 666 hell && \
     # add just god and agl for now 
-    adduser --home /home/rootg --ingroup root --shell /bin/bash --uid 60000 --disabled-password --gecos GECOS god && \
+    adduser --home /rootg --ingroup root --shell /bin/bash --uid 60000 --disabled-password --gecos GECOS god && \
     adduser --home /home/agl --ingroup halo --shell /bin/bash --uid 777 --disabled-password --gecos GECOS agl && \
     # add only _AGL to the sudo list
     usermod -aG sudo agl && \
