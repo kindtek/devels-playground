@@ -4,13 +4,13 @@
       "path": "."
     },
     {
-      "path": "../dvl-works/dvpg"
+      "path": "../dvlw/dvpg"
     },
     {
-      "path": "../dvl-works/dvpg/docker/ubuntu"
+      "path": "../dvlw/dvpg/docker/ubuntu"
     },
     {
-      "path": "../dvl-works/dvpg/linux"
+      "path": "../dvlw/dvpg/linux"
     },
     {
       "path": "../dls"
@@ -19,7 +19,7 @@
       "path": "../../hel"
     },
     {
-      "path": "../dvl-works/dvpg/mnt"
+      "path": "../dvlw/dvpg/mnt"
     }
   ],
   "settings": {}

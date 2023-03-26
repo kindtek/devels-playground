@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/dvl/dvl-works",
-      "program": "/home/dvl/dvl-works/build/Debug/outDebug",
+      "cwd": "/home/dvl/dvlw",
+      "program": "/home/dvl/dvlw/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
