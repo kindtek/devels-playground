@@ -45,13 +45,13 @@ RUN addgroup --gid 777 halo && \
 FROM dvlp_init AS dvlp_god
 ARG mnt_data=${mnt_data:-/mnt/data}
 RUN ln -fs /home/god /rootg && \
-    ln -s /mnt/data/bak /home/god/bak
+    ln -s /home/god/bak /mnt/data/bak 
 
 # agl permissions/volume builder
 FROM dvlp_init AS dvlp_agl
 ARG mnt_data=${mnt_data:-/mnt/data}
 RUN ln -fs /home/agl /hal && \
-    ln -s /mnt/data/bak/agl /home/agl/bak && \
+    ln -s /home/agl/bak && /mnt/data/bak/agl \
     mkdir -m 753 -pv ${mnt_data}/bak/agl
 
 # dvl permissions/volume builder
@@ -66,7 +66,7 @@ RUN ln -sfv /home/dvl /hel && \
     ln -sv dvlw/dvlp/kernels/ubuntu/x86/amd u64amdkernels && \
     ln -sv dvlw/dvlp/kernels/ubuntu ukernels && \
     ln -sv dvlw/dvlp/docker docker && \
-    ln -sv /mnt/data/bak/dvl /home/dvl/bak && \
+    ln -sv /home/dvl/bak /mnt/data/bak/dvl && \
     mkdir -m 753 -pv ${mnt_data}/bak/dvl
 USER dvl
 
@@ -184,8 +184,11 @@ USER dvl
 # GIT
 FROM dvlp_skel as dvlp_git
 # these are the new home directories from now on
+USER root
 RUN usermod -d /hal agl && \
     usermod -d /hel dvl
+USER dvl
+WORKDIR /hel
 # PYTHON stuff
 FROM dvlp_init AS dvlp_python-lite
 USER agl
@@ -202,13 +205,13 @@ RUN sudo cp -rfv /home/agl/.local/bin /usr/local && \
     sudo cp -rv /home/agl/.local /etc/skel/ /hel /rootg
 # sudo apt-get clean all && \
 # sudo apt-get autoremove --purge
-WORKDIR /home/dvl
+WORKDIR /hel
 USER dvl
 
 FROM dvlp_git AS dvlp_python
 WORKDIR / 
 COPY --from=dvlp_python-lite ./ ./
-WORKDIR /home/dvl
+WORKDIR /hel
 USER dvl
 
 # MICROSOFT stuff
@@ -234,13 +237,13 @@ RUN \
 # RUN sudo apt-get -y remove lsb_release
 # sudo apt-get clean all && \
 # sudo apt-get autoremove --purge
-WORKDIR /home/dvl
+WORKDIR /hel
 USER dvl
 
 FROM dvlp_python AS dvlp_msdot
 WORKDIR /
 COPY --from=dvlp_msdot-lite ./ ./
-WORKDIR /home/dvl
+WORKDIR /hel
 USER dvl
 
 # DOCKER IN DOCKER
@@ -268,13 +271,13 @@ RUN \
 # sudo apt-get remove -y lsb-release && \
 # sudo apt-get clean all && \
 # sudo apt-get autoremove --purge
-WORKDIR /home/dvl
+WORKDIR /hel
 USER dvl
 
 FROM dvlp_msdot AS dvlp_dind
 WORKDIR /
 COPY --from=dvlp_dind-lite ./ ./
-WORKDIR /home/dvl
+WORKDIR /hel
 USER dvl
 
 FROM dvlp_dind AS dvlp_dind-plus
@@ -299,7 +302,7 @@ RUN \
 USER agl
 # RUN sudo apt-get clean all && \
 #     sudo apt-get autoremove --purge
-WORKDIR /home/dvl
+WORKDIR /hel
 USER dvl
 
 # Kernel only
@@ -308,13 +311,13 @@ FROM dvlp_dind-plus AS dvlp_kernel-plus
 # ARG _AGL
 WORKDIR /
 COPY --from=dvlp_kernel ./ ./
-WORKDIR /home/dvl/dvlp/kernels/ubuntu
+WORKDIR /hel/dvlp/kernels/ubuntu
 USER agl
 SHELL ["/bin/bash", "-c"]
 # RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
 # RUN sudo bash build-basic-wsl-kernel.sh ${_CONFIG_FILE} agl
 # RUN echo '# sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/agl/.bashrc
-WORKDIR /home/dvl
+WORKDIR /hel
 USER dvl
 
 FROM dvlp_dind-lite AS dvlp_kernel-lite
@@ -324,7 +327,7 @@ WORKDIR /
 COPY --from=dvlp_kernel-plus ./home/dvl/dvlw/dvlp/kernels ./home/dvl/dvlw/dvlp/kernels
 # RUN sudo apt-get clean all && \
 #     sudo apt-get autoremove --purge
-WORKDIR /home/dvl
+WORKDIR /hel
 USER dvl
 
 # GUI - wsl2 required
@@ -396,13 +399,13 @@ RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browse
 # # sudo apt-get autoremove --purge
 
 
-WORKDIR /home/dvl
+WORKDIR /hel
 USER dvl
 
 FROM dvlp_kernel-plus AS dvlp_gui-plus
 WORKDIR /
 COPY --from=dvlp_gui ./ ./
-WORKDIR /home/dvl
+WORKDIR /hel
 USER dvl
 
 # FROM dvlp_init AS dvlp_cuda
@@ -417,12 +420,12 @@ USER dvl
 #     sudo apt-get -y install nvidia-cuda-toolkit 
 # # sudo apt-get clean all && \
 # # sudo apt-get autoremove --purge
-# WORKDIR /home/dvl
+# WORKDIR /hel
 # USER dvl
 
 # FROM dvlp_gui-plus AS dvlp_cuda-plus
 # WORKDIR /
 # COPY --from=dvlp_cuda ./ ./
-# WORKDIR /home/dvl
+# WORKDIR /hel
 # USER dvl
 
