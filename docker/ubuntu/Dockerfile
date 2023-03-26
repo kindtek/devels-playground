@@ -16,7 +16,7 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo add-apt-repository ppa:apt-fast/stable && \
+    add-apt-repository ppa:apt-fast/stable && \
     apt-get update -y && \
     apt-get upgrade -y && \
     apt-get -y install sudo apt-fast
