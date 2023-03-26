@@ -158,7 +158,7 @@ USER agl
 # RUN sudo chown agl:halo -Rv ${mnt_data}/bak/agl /home/agl  \
 #     git config --global --add safe.directory /home/agl && \
 #     git config --global --add safe.directory /hal 
-RUN \
+# RUN \
     # sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
     # echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
