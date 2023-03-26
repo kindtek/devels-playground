@@ -342,7 +342,8 @@ RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg a
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo update-locale "LANG=en_US.UTF-8" && \
-    sudo locale-gen --purge "en_US.UTF-8" && \
+    echo "en_HK.UTF-8" | sudo tee -a /etc/locale.gen && \
+    sudo locale-gen && \
     sudo dpkg-reconfigure --frontend noninteractive locales && \
     echo "/usr/sbin/lightdm" | sudo tee /etc/X11/default-display-manager && \
     sudo apt-get -y install lightdm && \
