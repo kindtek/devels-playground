@@ -160,9 +160,9 @@ USER agl
 #     git config --global --add safe.directory /halo 
 
 RUN \
-    # --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/cache/apt \
     sudo apt-get -y update && \
-    wget wslu curl git gh gnupg2
+    sudo apt-get -y install wget wslu curl git gh gnupg2
 RUN \
     # --mount=type=cache,target=/var/cache/apt \
     # sudo add-apt-repository ppa:saiarcot895/myppa && \
