@@ -50,7 +50,7 @@ services:
       init:
         condition: service_completed_successfully
     volumes:
-      - hell-data:/home/angel
+      - hell-data:/home/agl
   init-dvl:
     user: dvl
     group_add:
@@ -63,7 +63,7 @@ services:
         # Wait for groups to be added
         condition: service_completed_successfully
     volumes:
-      - hell-data:/home/devel
+      - hell-data:/home/dvl
     init: true
   # alias(es) for agl
   # init-ausr:
@@ -112,12 +112,12 @@ services:
     volumes:
       - god-data:/root:ro
       - gdi-data:/home/god:rw
-      # - hell-data:/home/dvl
+      - hell-data:/home/dvl
       # - hell-data:/home/devel
-      - hell-data:/home/${_DVL_USR:-devel}
-      - halo-data:/home/${_AGL_USR:-angel}
+      # - hell-data:/home/${_DVL_USR:-dvl}
+      # - halo-data:/home/${_AGL_USR:-agl}
       # - halo-data:/home/angel
-      # - halo-data:/home/agl
+      - halo-data:/home/agl
       - dls-data:/dls
       - mnt-data:/data
   skel:
@@ -145,8 +145,8 @@ services:
         condition: service_completed_successfully
     volumes:
       - mnt-data:/data
-      - hell-data:/home/${_DVL_USR:-devel}
-      - halo-data:/home/${_AGL_USR:-angel}
+      - hell-data:/home/${_DVL_USR:-dvl}
+      - halo-data:/home/${_AGL_USR:-agl}
       - gdi-data:/home/god
 
     labels:
