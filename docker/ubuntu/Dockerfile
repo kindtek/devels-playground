@@ -206,11 +206,11 @@ USER dvl
 
 FROM dvlp_git AS dvlp_python
 WORKDIR / 
-COPY --from=dvlp_python-lite ./usr/sbin ./usr/sbin
-# COPY --from=dvlp_python-lite ./home/agl/.local/bin ./usr/local
-# COPY --from=dvlp_python-lite ./home/agl/.local ./etc/skel/.local
-# COPY --from=dvlp_python-lite ./home/agl/.local ./home/dvl/.local
-# COPY --from=dvlp_python-lite ./home/agl/.local ./home/god/.local
+COPY --from=dvlp_python-lite ./usr/sbin ./usr
+COPY --from=dvlp_python-lite ./home/agl/.local/bin ./usr/local
+COPY --from=dvlp_python-lite ./home/agl/.local ./etc/skel
+COPY --from=dvlp_python-lite ./home/agl/.local ./home/dvl
+COPY --from=dvlp_python-lite ./home/agl/.local ./home/god
 
 WORKDIR /hel
 USER dvl
