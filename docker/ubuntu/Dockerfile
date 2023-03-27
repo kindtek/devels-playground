@@ -160,7 +160,8 @@ USER agl
 #     git config --global --add safe.directory /halo 
 RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache 
+    
 RUN \
     --mount=type=cache,target=/var/cache/apt \
     sudo apt-get -y update && \
