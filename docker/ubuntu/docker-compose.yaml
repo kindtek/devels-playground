@@ -100,9 +100,6 @@ services:
     user: agl
     group_add:
       - halo
-    entrypoint:
-      - sleep
-      - infinity
     build:
       context: .
       target: dvlp_data
