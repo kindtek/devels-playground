@@ -154,11 +154,10 @@ COPY --from=dvlp_agl --chown=agl:halo ./home/agl ./home/agl
 
 WORKDIR /home/dvl
 # RUN with halo ownership
-USER agl
+USER root
 # RUN sudo chown agl:halo -Rv ${mnt_data}/bak/agl /home/agl  \
 #     git config --global --add safe.directory /home/agl && \
 #     git config --global --add safe.directory /halo 
-
 RUN \
     # --mount=type=cache,target=/var/cache/apt \
     sudo apt-get -y update && \
@@ -188,11 +187,8 @@ RUN sudo cp -arfv dvlw/dvlp/mnt/. ${mnt_data}
 #     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/dvl/README_ASAP 
 # sudo chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh
 # RUN sudo chown agl:halo ${mnt_data}/bak/agl/backup-agl.sh ${mnt_data}/bak/dvl/backup-dvl.sh
-RUN cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /home/god/.bashrc && \
-    cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /home/dvl/.bashrc && \
-    cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /home/agl/.bashrc && \
-    cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /etc/skel/.bashrc
-USER root
+
+RUN cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /home/god/.bashrc /home/dvl/.bashrc /home/agl/.bashrc /etc/skel/.bashrc
 # copy and set ownership
 RUN cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/god && \
     cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/agl && \
