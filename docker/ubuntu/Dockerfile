@@ -112,12 +112,15 @@ RUN \
 WORKDIR /home/dvl/dvlw
 RUN \
     --mount=type=cache,target=/var/cache/git-dvlw/dvlp \
-    git submodule update --init --remote --depth=1 --progress
+    git submodule update --init --remote --depth=1 --progress && \
+    chmod -R +x dvlp/mnt/bak && \
+    chmod +x scripts/gh-auth-first-time-login.sh && \
+    cat dvlp/mnt/home/.bashrc | sudo tee --append /home/god/.bashrc /home/dvl/.bashrc /home/agl/.bashrc /etc/skel/.bashrc && \
+# # add warning for the backup drive
+    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/README_ASAP && \
+    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/dvl/README_ASAP  && \
+    sudo chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh
 WORKDIR /home/dvl
-RUN chmod -R +x dvlw/dvlp/mnt/bak
-RUN chmod +x dvlw/scripts/gh-auth-first-time-login.sh
-RUN cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /home/god/.bashrc /home/dvl/.bashrc /home/agl/.bashrc /etc/skel/.bashrc
-
 # && \
 # if [ -d "${mnt_data}/bak/dvl" ]; then \
 # if [ ! -fv "${mnt_data}/bak/dvl/backup-docker.sh" ]; then \
@@ -140,7 +143,7 @@ RUN cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /home/god/.bashrc /home/d
 USER dvl
 
 # SKELETON framework
-FROM dvlp_init AS dvlp_skel
+FROM dvlp_init AS dvlp_skel-slim
 ENV DEBIAN_FRONTEND=noninteractive
 ARG mnt_data=${mnt_data:-/mnt/data}
 COPY --from=dvlp_data --chown=dvl:hell ./home/dvl ./home/dvl
@@ -150,33 +153,19 @@ COPY --from=dvlp_data --chown=agl:halo .${mnt_data} .${mnt_data}
 COPY --from=dvlp_data --chown=god:rootg ./home/dvl/dvlw/scripts/gh-auth-first-time-login.sh ./home/god/
 COPY --from=dvlp_data --chown=dvl:hell ./home/dvl/dvlw/scripts/gh-auth-first-time-login.sh ./home/dvl/
 COPY --from=dvlp_data --chown=agl:halo ./home/dvl/dvlw/scripts/gh-auth-first-time-login.sh ./home/agl/
+COPY --from=dvlp_data ./home/dvl/dvlw/dvlp/mnt/. .${mnt_data}
+
 WORKDIR /home/dvl
+
+FROM dvlp_skel-slim AS dvlp_skel
 # RUN with agl ownership
 USER agl
-# RUN sudo chown agl:halo -Rv ${mnt_data}/bak/agl /home/agl  \
-#     git config --global --add safe.directory /home/agl && \
-#     git config --global --add safe.directory /halo 
-# make gh files executable
-
-RUN sudo cp -arfv dvlw/dvlp/mnt/. ${mnt_data}
-    # sudo mv -v ${mnt_data}/bak/custom ${mnt_data}/bak/agl/ && \
-    # make rwx for owner and rw for group - x/rx for others
-    # sudo chmod 754 -Rv ${mnt_data}/bak/agl && \
-    # sudo chmod 751 ${mnt_data}/bak/agl && \
-    # sudo chmod 751 ${mnt_data}/bak/agl && sudo chmod 751 ${mnt_data}/bak/dvl && \
-    # sudo chmod 754 -Rv ${mnt_data}/bak/dvl && \
-    # # add warning for the backup drive
-# RUN echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/README_ASAP      && \
-#     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/dvl/README_ASAP 
-# sudo chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh
-# RUN sudo chown agl:halo ${mnt_data}/bak/agl/backup-agl.sh ${mnt_data}/bak/dvl/backup-dvl.sh
-
-# copy and set ownership
-RUN sudo cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/god && \
-    sudo cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/agl && \
-    sudo cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/dvl
-# chmod og+x /home/dvl/gh-auth-first-time-login.sh && chmod og+x /home/agl/gh-auth-first-time-login.sh && \
-# chown dvl:hell /home/dvl/gh-auth-first-time-login.sh && chown agl:halo /home/agl/gh-auth-first-time-login.sh 
+# sudo mv -v ${mnt_data}/bak/custom ${mnt_data}/bak/agl/ && \
+# make rwx for owner and rw for group - x/rx for others
+# sudo chmod 754 -Rv ${mnt_data}/bak/agl && \
+# sudo chmod 751 ${mnt_data}/bak/agl && \
+# sudo chmod 751 ${mnt_data}/bak/agl && sudo chmod 751 ${mnt_data}/bak/dvl && \
+# sudo chmod 754 -Rv ${mnt_data}/bak/dvl && \
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y update && \

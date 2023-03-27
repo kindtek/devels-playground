@@ -123,7 +123,7 @@ services:
       - halo-data:/home/agl
       - dls-data:/dls
       - mnt-data:/data
-  skel:
+  skel-slim:
     extends: data
     user: agl
     tty: false
@@ -155,7 +155,11 @@ services:
       # - gdi-data:/home/god
 
     labels:
-      com.dvlp_skel.description: "skeleton"
+      com.dvlp_skel.description: "slim skeleton"
+  skel:
+    extends: skel-slim
+    labels:
+      com.dvlp_skel.description: "skeleton"    
   git:
     # owner/group becomes owner of hell-data volume
     extends: skel
