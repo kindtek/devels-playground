@@ -12,18 +12,13 @@ services:
     build:
       context: .
       target: dvlp_god
-    entrypoint:
-      - sleep
-      - infinity
     depends_on:
       init:
-        # Wait for the groups to be added
         condition: service_completed_successfully
     volumes:
       - god-data:/root:ro
       - gdi-data:/home/god
   init:
-    # Need a user priviliged enough to chown
     build:
       context: .
       target: dvlp_init
@@ -53,14 +48,11 @@ services:
       target: dvlp_agl
     depends_on:
       init:
-        # Wait for the groups to be added
         condition: service_completed_successfully
     volumes:
       - hell-data:/home/angel
   init-dvl:
-    # Need a user priviliged enough to chown
     user: dvl
-    # Specify the wings in question
     group_add:
       - hell
     build:
