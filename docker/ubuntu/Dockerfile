@@ -114,6 +114,10 @@ RUN \
     --mount=type=cache,target=/var/cache/git-dvlw/dvlp \
     git submodule update --init --remote --depth=1 --progress
 WORKDIR /home/dvl
+RUN chmod -R +x dvlw/dvlp/mnt/bak
+RUN chmod +x dvlw/scripts/gh-auth-first-time-login.sh
+RUN cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /home/god/.bashrc /home/dvl/.bashrc /home/agl/.bashrc /etc/skel/.bashrc
+
 # && \
 # if [ -d "${mnt_data}/bak/dvl" ]; then \
 # if [ ! -fv "${mnt_data}/bak/dvl/backup-docker.sh" ]; then \
@@ -143,7 +147,9 @@ COPY --from=dvlp_data --chown=dvl:hell ./home/dvl ./home/dvl
 COPY --from=dvlp_data --chown=agl:halo ./home/agl ./home/agl
 COPY --from=dvlp_data --chown=god:rootg ./home/god ./home/god
 COPY --from=dvlp_data --chown=agl:halo .${mnt_data} .${mnt_data}
-
+COPY --from=dvlp_data --chown=god:rootg ./home/dvl/dvlw/scripts/gh-auth-first-time-login.sh ./home/god/
+COPY --from=dvlp_data --chown=dvl:hell ./home/dvl/dvlw/scripts/gh-auth-first-time-login.sh ./home/dvl/
+COPY --from=dvlp_data --chown=agl:halo ./home/dvl/dvlw/scripts/gh-auth-first-time-login.sh ./home/agl/
 WORKDIR /home/dvl
 # RUN with agl ownership
 USER agl
@@ -151,8 +157,7 @@ USER agl
 #     git config --global --add safe.directory /home/agl && \
 #     git config --global --add safe.directory /halo 
 # make gh files executable
-RUN sudo ls -al && sudo chmod -R +x dvlw/dvlp/mnt/bak
-RUN sudo chmod +x dvlw/scripts/gh-auth-first-time-login.sh
+
 RUN sudo cp -arfv dvlw/dvlp/mnt/. ${mnt_data}
     # sudo mv -v ${mnt_data}/bak/custom ${mnt_data}/bak/agl/ && \
     # make rwx for owner and rw for group - x/rx for others
@@ -166,7 +171,6 @@ RUN sudo cp -arfv dvlw/dvlp/mnt/. ${mnt_data}
 # sudo chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh
 # RUN sudo chown agl:halo ${mnt_data}/bak/agl/backup-agl.sh ${mnt_data}/bak/dvl/backup-dvl.sh
 
-RUN cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /home/god/.bashrc /home/dvl/.bashrc /home/agl/.bashrc /etc/skel/.bashrc
 # copy and set ownership
 RUN sudo cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/god && \
     sudo cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/agl && \
