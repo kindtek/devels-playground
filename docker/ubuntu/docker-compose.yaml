@@ -148,8 +148,10 @@ services:
         condition: service_completed_successfully
     volumes:
       # - mnt-data:/data
-      - hell-data:/home/${_DVL_USR:-dvl}
-      - halo-data:/home/${_AGL_USR:-agl}
+      # - hell-data:/home/${_DVL_USR:-dvl}
+      - hell-data:/home/dvl
+      # - halo-data:/home/${_AGL_USR:-agl}
+      - halo-data:/home/agl
       # - gdi-data:/home/god
 
     labels:

@@ -150,6 +150,8 @@ WORKDIR /
 COPY --from=dvlp_data --chown=dvl:hell ./home/dvl ./home/dvl
 COPY --from=dvlp_data --chown=agl:halo ./home/agl ./home/agl
 COPY --from=dvlp_data --chown=god:rootg ./home/god ./home/god
+COPY --from=dvlp_data --chown=agl:halo .${mnt_data} .${mnt_data}
+
 WORKDIR /home/dvl
 # RUN with halo ownership
 USER root
@@ -166,7 +168,7 @@ RUN \
     # sudo dpkg --configure -a && \
     # # sudo apt-get upgrade -y libsnmp40 && \
     # sudo apt-get -y install apt-fast aria2 
-    sudo apt-get -y install gh wget apt-transport-https
+    sudo apt-get -y apt-transport-https install gh wget
 # cant cache these ..
 RUN sudo apt-get -y install  build-essential ca-certificates curl git gnupg2 libssl-dev nvi wslu
 # make gh files executable
