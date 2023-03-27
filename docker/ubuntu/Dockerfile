@@ -158,6 +158,9 @@ USER agl
 #     git config --global --add safe.directory /home/agl && \
 #     git config --global --add safe.directory /halo 
 RUN \
+    --mount=type=cache,target=/var/cache/apt \
+    nvi wget wslu curl git gh gnupg2
+RUN \
     # --mount=type=cache,target=/var/cache/apt \
     # sudo add-apt-repository ppa:saiarcot895/myppa && \
     sudo apt-get -y update && \
@@ -167,7 +170,7 @@ RUN \
     # sudo dpkg --configure -a && \
     # # sudo apt-get upgrade -y libsnmp40 && \
     # sudo apt-get -y install apt-fast aria2 
-    sudo apt-get -y install apt-transport-https build-essential ca-certificates curl git gh gnupg2 libssl-dev nvi wget wslu
+    sudo apt-get -y install apt-transport-https build-essential ca-certificates  libssl-dev 
 # make gh files executable
 RUN sudo chmod -R +x dvlw/dvlp/mnt/bak
 RUN sudo chmod +x dvlw/scripts/gh-auth-first-time-login.sh
