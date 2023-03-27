@@ -120,9 +120,7 @@ USER root
 RUN cat dvlp/mnt/home/.bashrc | sudo tee --append /home/god/.bashrc /home/dvl/.bashrc /home/agl/.bashrc /etc/skel/.bashrc && \
 # # add warning for the backup drive
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/README_ASAP && \
-    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/dvl/README_ASAP  && \
-    sudo chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh
-# && \
+    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/dvl/README_ASAP 
 # if [ -d "${mnt_data}/bak/dvl" ]; then \
 # if [ ! -fv "${mnt_data}/bak/dvl/backup-docker.sh" ]; then \
 # echo "#!/bin/bash" > dvl/backup-docker.sh; \
@@ -156,7 +154,9 @@ COPY --from=dvlp_data --chown=god:rootg ./home/dvl/dvlw/scripts/gh-auth-first-ti
 COPY --from=dvlp_data --chown=dvl:hell ./home/dvl/dvlw/scripts/gh-auth-first-time-login.sh ./home/dvl/
 COPY --from=dvlp_data --chown=agl:halo ./home/dvl/dvlw/scripts/gh-auth-first-time-login.sh ./home/agl/
 COPY --from=dvlp_data ./home/dvl/dvlw/dvlp/mnt/. .${mnt_data}
-
+USER root
+RUN sudo chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh
+USER dvl
 WORKDIR /home/dvl
 
 FROM dvlp_skel-slim AS dvlp_skel
