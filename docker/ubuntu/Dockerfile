@@ -160,7 +160,7 @@ USER agl
 #     git config --global --add safe.directory /halo 
 
 RUN \
-    --mount=type=cache,target=/var/cache/apt \
+    # --mount=type=cache,target=/var/cache/apt \
     sudo apt-get -y update && \
     wget wslu curl git gh gnupg2
 RUN \
