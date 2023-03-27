@@ -91,7 +91,6 @@ COPY --from=dvlp_agl --chown=agl:halo ./home/agl ./home/agl
 COPY --from=dvlp_god --chown=god:rootg ./home/god ./home/god
 COPY --from=dvlp_dvl --chown=agl:halo .${mnt_data} .${mnt_data}
 COPY --from=dvlp_agl --chown=agl:halo .${mnt_data} .${mnt_data}
-COPY --from=dvlp_god --chown=agl:halo .${mnt_data} .${mnt_data}
 # copy skel files to dvl
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
