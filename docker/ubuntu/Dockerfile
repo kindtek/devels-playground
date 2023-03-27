@@ -210,20 +210,14 @@ FROM dvlp_python-lite AS dvlp_python
 WORKDIR / 
 USER agl
 # COPY --from=dvlp_python-lite ./usr/sbin ./usr/sbin
-RUN \
-    sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
-RUN \
-    --mount=type=cache,target=/var/cache/pip \
-    pip3 install cdir --user
+# RUN \
+#     --mount=type=cache,target=/var/cache/pip \
+#     pip3 install cdir --user
+RUN pip3 install cdir --user
 USER dvl
-RUN \
-    --mount=type=cache,target=/var/cache/pip \
-    pip3 install cdir --user
+RUN pip3 install cdir --user
 USER god
-RUN \
-    --mount=type=cache,target=/var/cache/pip \
-    pip3 install cdir --user
+RUN pip3 install cdir --user
 WORKDIR /hel
 USER dvl
 
