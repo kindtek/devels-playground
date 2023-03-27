@@ -28,8 +28,6 @@ services:
       context: .
       target: dvlp_init
     entrypoint:
-      - sleep
-      - infinity
       # args: 
       #   - _AGL_USR=$_AGL
       #   - _DVL_USR=$_DVL
@@ -54,9 +52,6 @@ services:
     build:
       context: .
       target: dvlp_agl
-    entrypoint:
-      - sleep
-      - infinity
     depends_on:
       init:
         # Wait for the groups to be added
