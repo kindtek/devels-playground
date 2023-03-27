@@ -1,23 +1,6 @@
 version: "3.9"
 name: dvl-playg-ubuntu
 services:
-  init-god:
-    # Need a user priviliged enough to chown
-    user: root
-    # Specify the wings in question
-    group_add:
-      - rootg
-      - halo
-      - hell
-    build:
-      context: .
-      target: dvlp_god
-    depends_on:
-      init:
-        condition: service_completed_successfully
-    volumes:
-      - god-data:/root:ro
-      - gdi-data:/home/god
   init:
     build:
       context: .
@@ -37,6 +20,23 @@ services:
     # - mkdir -p /mnt/data
     # - ln -sf /mnt/data /tmp/data
     # command: echo something
+  init-god:
+    # Need a user priviliged enough to chown
+    user: root
+    # Specify the wings in question
+    group_add:
+      - rootg
+      - halo
+      - hell
+    build:
+      context: .
+      target: dvlp_god
+    depends_on:
+      init:
+        condition: service_completed_successfully
+    volumes:
+      - god-data:/root:ro
+      - gdi-data:/home/god
   init-agl:
     # Need a user priviliged enough to chown
     user: agl
