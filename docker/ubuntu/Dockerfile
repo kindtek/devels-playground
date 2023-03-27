@@ -142,15 +142,13 @@ COPY --from=dvlp_init --chown=root:root ./ ./
 # COPY --from=dvlp_init --chown=root:root ./etc/group ./etc/group
 # COPY --from=dvlp_init --chown=root:root ./etc/passwd ./etc/passwd
 # COPY --from=dvlp_init --chown=root:root ./etc/sudoers ./etc/sudoers
-COPY --from=dvlp_god --chown=god:rootg ./home/god ./home/god
-COPY --from=dvlp_data --chown=god:rootg ./home/god ./home/god
-COPY --from=dvlp_agl --chown=agl:halo ./home/agl ./home/agl
-COPY --from=dvlp_data --chown=agl:halo ./home/agl ./home/agl
-# COPY --from=dvlp_agl --chown=agl:halo .${mnt_data} .${mnt_data}
 COPY --from=dvlp_dvl --chown=dvl:hell  ./home/dvl ./home/dvl 
-
+COPY --from=dvlp_agl --chown=agl:halo ./home/agl ./home/agl
+COPY --from=dvlp_god --chown=god:rootg ./home/god ./home/god
+COPY --from=dvlp_agl --chown=agl:halo .${mnt_data} .${mnt_data}
 COPY --from=dvlp_data --chown=dvl:hell ./home/dvl ./home/dvl
-
+COPY --from=dvlp_data --chown=agl:halo ./home/agl ./home/agl
+COPY --from=dvlp_data --chown=god:rootg ./home/god ./home/god
 WORKDIR /home/dvl
 # RUN with halo ownership
 USER root
@@ -199,12 +197,14 @@ USER dvl
 
 # GIT
 FROM dvlp_skel as dvlp_git
-# these are the new home directories from now on
-USER root
-RUN usermod -d /hal agl && \
-    usermod -d /hel dvl
-USER dvl
-WORKDIR /hel
+COPY --from=dvlp_init --chown=root:root ./ ./
+COPY --from=dvlp_dvl --chown=dvl:hell  ./home/dvl ./home/dvl 
+COPY --from=dvlp_agl --chown=agl:halo ./home/agl ./home/agl
+COPY --from=dvlp_agl --chown=agl:halo .${mnt_data} .${mnt_data}
+COPY --from=dvlp_data --chown=dvl:hell ./home/dvl ./home/dvl
+COPY --from=dvlp_data --chown=agl:halo ./home/agl ./home/agl
+COPY --from=dvlp_skel ./ ./
+
 # PYTHON stuff
 FROM dvlp_init AS dvlp_python-lite
 USER agl

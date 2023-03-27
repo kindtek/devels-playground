@@ -49,8 +49,8 @@ services:
     depends_on:
       init:
         condition: service_completed_successfully
-    volumes:
-      - hell-data:/home/agl
+    # volumes:
+    #   - hell-data:/home/agl
   init-dvl:
     user: dvl
     group_add:
@@ -62,8 +62,8 @@ services:
       init:
         # Wait for groups to be added
         condition: service_completed_successfully
-    volumes:
-      - hell-data:/home/dvl
+    # volumes:
+    #   - hell-data:/home/dvl
     init: true
   # alias(es) for agl
   # init-ausr:
