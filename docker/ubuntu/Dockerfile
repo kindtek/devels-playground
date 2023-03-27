@@ -136,7 +136,7 @@ WORKDIR /home/dvl
 USER dvl
 
 # SKELETON framework
-FROM dvlp_init AS dvlp_skel
+FROM dvlp_init AS dvlp_git
 ENV DEBIAN_FRONTEND=noninteractive
 ARG mnt_data=${mnt_data:-/mnt/data}
 COPY --from=dvlp_data --chown=dvl:hell ./home/dvl ./home/dvl
@@ -191,7 +191,7 @@ WORKDIR /home/dvl
 USER dvl
 
 # GIT
-FROM dvlp_skel as dvlp_git
+# FROM dvlp_skel AS dvlp_git
 
 # PYTHON stuff
 FROM dvlp_init AS dvlp_python-lite
