@@ -219,8 +219,8 @@ RUN --mount=type=cache,target=/var/cache/pip \pip3 install cdir --user  && \
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps
 RUN sudo cp -rfv /home/agl/.local/bin /usr/local && \
     sudo cp -rv /home/agl/.local /etc/skel/ && \
-    sudo cp -rv /home/agl/.local /hel &&\
-    sudo cp -rv /home/agl/.local /rootg
+    sudo cp -rv /home/agl/.local /hel/ &&\
+    sudo cp -rv /home/agl/.local /rootg/
 # sudo apt-get clean all && \
 # sudo apt-get autoremove --purge
 WORKDIR /hel
