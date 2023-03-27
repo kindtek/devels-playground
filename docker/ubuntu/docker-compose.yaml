@@ -146,11 +146,11 @@ services:
       data:
         # Wait for the ownership to change
         condition: service_completed_successfully
-    # volumes:
-    #   - mnt-data:/data
-    #   - hell-data:/home/${_DVL_USR:-dvl}
-    #   - halo-data:/home/${_AGL_USR:-agl}
-    #   - gdi-data:/home/god
+    volumes:
+      - mnt-data:/data
+      - hell-data:/home/${_DVL_USR:-dvl}
+      - halo-data:/home/${_AGL_USR:-agl}
+      - gdi-data:/home/god
 
     labels:
       com.dvlp_skel.description: "skeleton"
