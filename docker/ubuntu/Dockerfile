@@ -205,6 +205,7 @@ WORKDIR /hel
 USER dvl
 
 FROM dvlp_git AS dvlp_python
+USER root
 WORKDIR / 
 COPY --from=dvlp_python-lite ./usr/sbin ./usr
 RUN \
