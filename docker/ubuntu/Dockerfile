@@ -160,11 +160,11 @@ USER agl
 #     git config --global --add safe.directory /halo 
 RUN \
     --mount=type=cache,target=/var/cache/apt \
+    sudo apt-get -y update && \
     nvi wget wslu curl git gh gnupg2
 RUN \
     # --mount=type=cache,target=/var/cache/apt \
     # sudo add-apt-repository ppa:saiarcot895/myppa && \
-    sudo apt-get -y update && \
     # sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
     # sudo apt-get install -y tzdata && \
     # sudo dpkg-reconfigure --frontend noninteractive tzdata && \
