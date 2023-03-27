@@ -136,7 +136,7 @@ WORKDIR /home/dvl
 USER dvl
 
 # SKELETON framework
-FROM dvlp_init AS dvlp_skel
+FROM dvlp_data AS dvlp_skel
 ENV DEBIAN_FRONTEND=noninteractive
 ARG mnt_data=${mnt_data:-/mnt/data}
 WORKDIR /
