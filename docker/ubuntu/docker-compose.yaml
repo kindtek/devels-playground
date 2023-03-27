@@ -99,10 +99,13 @@ services:
       init:
         # Wait for the ownership to change
         condition: service_completed_successfully
-      init-dvl:
+      init-god:
         # Wait for the ownership to change
         condition: service_completed_successfully
       init-agl:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
+      init-dvl:
         # Wait for the ownership to change
         condition: service_completed_successfully
     # # init: true
