@@ -168,7 +168,7 @@ RUN \
     # sudo dpkg --configure -a && \
     # # sudo apt-get upgrade -y libsnmp40 && \
     # sudo apt-get -y install apt-fast aria2 
-    sudo apt-get -y apt-transport-https install gh wget
+    sudo apt-get -y install apt-transport-https gh wget
 # cant cache these ..
 RUN sudo apt-get -y install  build-essential ca-certificates curl git gnupg2 libssl-dev nvi wslu
 # make gh files executable
