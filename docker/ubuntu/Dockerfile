@@ -133,13 +133,10 @@ WORKDIR /home/dvl
 # chown -Rv dvl:hell /home/dvl && chown -Rv agl:halo /home/agl
 # RUN echo "# # # # Docker # # # # " >> ${mnt_data}/bak/agl/backup-docker.sh
 # RUN sudo .${mnt_data}/bak/agl/backup-docker.sh
-USER dvl
 
-# SKELETON framework
-FROM dvlp_data AS dvlp_skel
 ENV DEBIAN_FRONTEND=noninteractive
 ARG mnt_data=${mnt_data:-/mnt/data}
-WORKDIR /hel
+WORKDIR /home/dvl
 # RUN with agl ownership
 USER agl
 # RUN sudo chown agl:halo -Rv ${mnt_data}/bak/agl /home/agl  \
@@ -186,7 +183,7 @@ WORKDIR /home/dvl
 USER dvl
 
 # GIT
-FROM dvlp_skel as dvlp_git
+FROM dvlp_data as dvlp_git
 
 # PYTHON stuff
 FROM dvlp_init AS dvlp_python-lite
