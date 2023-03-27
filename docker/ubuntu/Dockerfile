@@ -157,7 +157,7 @@ USER root
 #     git config --global --add safe.directory /home/agl && \
 #     git config --global --add safe.directory /halo 
 RUN \
-    --mount=type=cache,target=/var/cache/apt \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y update && \
     # sudo add-apt-repository ppa:saiarcot895/myppa && \
     # sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
