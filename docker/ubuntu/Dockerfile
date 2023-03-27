@@ -205,27 +205,23 @@ WORKDIR /hel
 USER dvl
 
 FROM dvlp_git AS dvlp_python
-USER root
 WORKDIR / 
 COPY --from=dvlp_python-lite ./usr/sbin ./usr
 RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -y install jq python3-pip python3-venv
 USER agl
 RUN \
     --mount=type=cache,target=/var/cache/pip \
-    sudo apt-get -y pip3 install cdir --user
+    pip3 install cdir --user
 USER dvl
 RUN \
     --mount=type=cache,target=/var/cache/pip \
-    sudo apt-get -y pip3 install cdir --user
+    pip3 install cdir --user
 USER god
 RUN \
     --mount=type=cache,target=/var/cache/pip \
-    sudo apt-get -y pip3 install cdir --user
+    pip3 install cdir --user
 WORKDIR /hel
 USER dvl
 
