@@ -48,7 +48,7 @@ FROM dvlp_init AS dvlp_god
 USER root
 ARG mnt_data=${mnt_data:-/mnt/data}
 RUN ln -fs /home/god /rootg  && \
-    mkdir pv /home/god && \
+    mkdir pv /home/god 
 # && \
 #     ln -sv /home/god/bak /mnt/data/bak 
 
