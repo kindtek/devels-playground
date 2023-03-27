@@ -98,6 +98,7 @@ RUN \
 RUN \
     # --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt-get -y install git
+USER dvl
 WORKDIR /home/dvl
 # add safe directories
 RUN \
@@ -109,6 +110,7 @@ RUN \
     git clone https://github.com/kindtek/dvl-works --depth=1 --single-branch --progress dvlw
 # RUN git clone https://github.com/kindtek/dvlw --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
 # --filter=combine:tree:depth:1+blob:limit=10240000  --recurse-submodules --remote-submodules  --single-branch  --no-tags --filter=blob:limit=1024000 --single-branch --branch main
+USER root
 WORKDIR /home/dvl/dvlw
 RUN \
     --mount=type=cache,target=/var/cache/git-dvlw/dvlp \
@@ -120,7 +122,6 @@ RUN \
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/README_ASAP && \
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/dvl/README_ASAP  && \
     sudo chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh
-WORKDIR /home/dvl
 # && \
 # if [ -d "${mnt_data}/bak/dvl" ]; then \
 # if [ ! -fv "${mnt_data}/bak/dvl/backup-docker.sh" ]; then \
@@ -141,6 +142,7 @@ WORKDIR /home/dvl
 # RUN echo "# # # # Docker # # # # " >> ${mnt_data}/bak/agl/backup-docker.sh
 # RUN sudo .${mnt_data}/bak/agl/backup-docker.sh
 USER dvl
+WORKDIR /home/dvl
 
 # SKELETON framework
 FROM dvlp_init AS dvlp_skel-slim
