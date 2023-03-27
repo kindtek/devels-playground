@@ -209,7 +209,7 @@ USER dvl
 FROM dvlp_git AS dvlp_python
 WORKDIR / 
 USER agl
-COPY --from=dvlp_python-lite ./usr/sbin ./usr
+COPY --from=dvlp_python-lite ./usr/sbin ./usr/sbin
 RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
