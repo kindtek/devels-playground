@@ -145,19 +145,6 @@ USER agl
 # RUN sudo chown agl:halo -Rv ${mnt_data}/bak/agl /home/agl  \
 #     git config --global --add safe.directory /home/agl && \
 #     git config --global --add safe.directory /halo 
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -y update && \
-    # sudo add-apt-repository ppa:saiarcot895/myppa && \
-    # sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
-    # sudo apt-get install -y tzdata && \
-    # sudo dpkg-reconfigure --frontend noninteractive tzdata && \
-    # sudo dpkg --configure -a && \
-    # # sudo apt-get upgrade -y libsnmp40 && \
-    # sudo apt-get -y install apt-fast aria2 
-    sudo apt-get -y install apt-transport-https gh wget
-# cant cache these ..
-RUN sudo apt-get -y install  build-essential ca-certificates curl git gnupg2 libssl-dev nvi wslu
 # make gh files executable
 RUN sudo chmod -R +x dvlw/dvlp/mnt/bak
 RUN sudo chmod +x dvlw/scripts/gh-auth-first-time-login.sh
@@ -181,6 +168,20 @@ RUN cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/god && \
     cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/dvl
 # chmod og+x /home/dvl/gh-auth-first-time-login.sh && chmod og+x /home/agl/gh-auth-first-time-login.sh && \
 # chown dvl:hell /home/dvl/gh-auth-first-time-login.sh && chown agl:halo /home/agl/gh-auth-first-time-login.sh 
+RUN \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    sudo apt-get -y update && \
+    # sudo add-apt-repository ppa:saiarcot895/myppa && \
+    # sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
+    # sudo apt-get install -y tzdata && \
+    # sudo dpkg-reconfigure --frontend noninteractive tzdata && \
+    # sudo dpkg --configure -a && \
+    # # sudo apt-get upgrade -y libsnmp40 && \
+    # sudo apt-get -y install apt-fast aria2 
+    sudo apt-get -y install apt-transport-https gh wget
+# cant cache these ..
+RUN sudo apt-get -y install  build-essential ca-certificates curl git gnupg2 libssl-dev nvi wslu
+
 WORKDIR /home/dvl
 USER dvl
 
