@@ -143,7 +143,7 @@ USER dvl
 WORKDIR /home/dvl
 
 # SKELETON framework
-FROM dvlp_init AS dvlp_skel-slim
+FROM dvlp_init AS dvlp_skel-lite
 ENV DEBIAN_FRONTEND=noninteractive
 ARG mnt_data=${mnt_data:-/mnt/data}
 COPY --from=dvlp_data --chown=dvl:hell ./home/dvl ./home/dvl
@@ -159,7 +159,7 @@ RUN chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl
 USER dvl
 WORKDIR /home/dvl
 
-FROM dvlp_skel-slim AS dvlp_skel
+FROM dvlp_skel-lite AS dvlp_skel
 # RUN with agl ownership
 USER agl
 # sudo mv -v ${mnt_data}/bak/custom ${mnt_data}/bak/agl/ && \
