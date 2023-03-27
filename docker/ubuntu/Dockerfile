@@ -139,7 +139,7 @@ USER dvl
 FROM dvlp_data AS dvlp_skel
 ENV DEBIAN_FRONTEND=noninteractive
 ARG mnt_data=${mnt_data:-/mnt/data}
-WORKDIR /home/dvl
+WORKDIR /hel
 # RUN with agl ownership
 USER agl
 # RUN sudo chown agl:halo -Rv ${mnt_data}/bak/agl /home/agl  \
