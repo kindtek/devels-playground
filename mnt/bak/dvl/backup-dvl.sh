@@ -21,13 +21,13 @@ sudo chown ${username}:${groupname} ${backup_mnt_location}/${username} && \
 sudo chown ${username}:${groupname} ${backup_mnt_location}/${username}/${username}-orig && \
 sudo chown ${username}:halo ${backup_mnt_location}/${username} && \
 sudo chown ${username}:halo ${backup_mnt_location}/${username}/${username}-orig && \
-sudo chown dvl:hel ${backup_mnt_location}/dvl && \
-sudo chown dvl:hel ${backup_mnt_location}/dvl/dvl-orig && \
-# sudo chown dvl:hel ${backup_mnt_location}/${username}/dvl-orig && \
-sudo chown dvl:hel ${backup_mnt_location}/${username}/dvl-orig && \
-# sudo chown dvl:hel ${backup_mnt_location}/${username} && \
-sudo chown dvl:hel ${backup_mnt_location}/${username}/dvl-orig && \
-sudo chown dvl:hel ${backup_mnt_location}/${username}/dvl-orig && \
+sudo chown dvl:hell ${backup_mnt_location}/dvl && \
+sudo chown dvl:hell ${backup_mnt_location}/dvl/dvl-orig && \
+# sudo chown dvl:hell ${backup_mnt_location}/${username}/dvl-orig && \
+sudo chown dvl:hell ${backup_mnt_location}/${username}/dvl-orig && \
+# sudo chown dvl:hell ${backup_mnt_location}/${username} && \
+sudo chown dvl:hell ${backup_mnt_location}/${username}/dvl-orig && \
+sudo chown dvl:hell ${backup_mnt_location}/${username}/dvl-orig && \
 
 # copy newly pulled backup script to mount location and home dirs
 sudo cp -arfv dvlw/mnt/backup-agl.sh ${backup_mnt_location}/agl/backup-agl.sh && cp -arfv dvlw/mnt/backup-agl.sh /home/agl/backup-agl.sh  && \
@@ -67,7 +67,7 @@ echo "#!/bin/bash
 echo 'restoring $_NIX_MNT_LOCATION/agl/dvl-$WSL_DISTRO_NAME/dvl to /home ...'
 cp --backup=$VERSION_CONTROL --remove-destination -arfv $_NIX_MNT_LOCATION/agl/dvl-$WSL_DISTRO_NAME/dvl /home" > $HEL_RESTORE_SCRIPT
 
-chown dvl:hel $HEL_RESTORE_SCRIPT
+chown dvl:hell $HEL_RESTORE_SCRIPT
 chmod +x $HEL_RESTORE_SCRIPT
 
 echo "Backup complete."

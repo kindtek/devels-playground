@@ -114,7 +114,7 @@ WORKDIR /home/dvl/dvlw
 RUN \
     --mount=type=cache,target=/var/cache/git-dvlw/dvlp \
     git submodule update --init --remote --depth=1 --progress && \
-    chmod +x scripts/gh-auth-first-time-login.sh && \
+    chmod +x dvlp/mnt/home/gh-auth-first-time-login.sh && \
     chmod -R +x dvlp/mnt/bak
 USER root
 RUN cat dvlp/mnt/home/.bashrc | sudo tee --append /home/god/.bashrc /home/dvl/.bashrc /home/agl/.bashrc /etc/skel/.bashrc && \
@@ -150,12 +150,10 @@ COPY --from=dvlp_data --chown=dvl:hell ./home/dvl ./home/dvl
 COPY --from=dvlp_data --chown=agl:halo ./home/agl ./home/agl
 COPY --from=dvlp_data --chown=god:rootg ./home/god ./home/god
 COPY --from=dvlp_data --chown=agl:halo .${mnt_data} .${mnt_data}
-COPY --from=dvlp_data --chown=god:rootg ./home/dvl/dvlw/scripts/gh-auth-first-time-login.sh ./home/god/
-COPY --from=dvlp_data --chown=dvl:hell ./home/dvl/dvlw/scripts/gh-auth-first-time-login.sh ./home/dvl/
-COPY --from=dvlp_data --chown=agl:halo ./home/dvl/dvlw/scripts/gh-auth-first-time-login.sh ./home/agl/
 COPY --from=dvlp_data ./home/dvl/dvlw/dvlp/mnt/. .${mnt_data}
 USER root
-RUN sudo chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh
+RUN chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh && \
+    cp ${mnt_data}/home/gh-auth-first-time-login.sh /home/.*/
 USER dvl
 WORKDIR /home/dvl
 
