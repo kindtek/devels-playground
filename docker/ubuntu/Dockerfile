@@ -86,9 +86,9 @@ FROM dvlp_init AS dvlp_data
 ARG mnt_data=${mnt_data:-/mnt/data}
 USER root
 WORKDIR /
+COPY --from=dvlp_god --chown=god:rootg ./home/god ./home/god
 COPY --from=dvlp_dvl --chown=dvl:hell ./home/dvl ./home/dvl
 COPY --from=dvlp_agl --chown=agl:halo ./home/agl ./home/agl
-COPY --from=dvlp_god --chown=god:rootg ./home/god ./home/god
 # copy skel files to dvl
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
