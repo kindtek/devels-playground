@@ -135,7 +135,7 @@ WORKDIR /home/dvl
 USER dvl
 
 # SKELETON framework
-FROM dvlp_init AS dvlp_skel
+FROM dvlp_data AS dvlp_skel
 ENV DEBIAN_FRONTEND=noninteractive
 ARG mnt_data=${mnt_data:-/mnt/data}
 WORKDIR /
@@ -218,9 +218,9 @@ RUN --mount=type=cache,target=/var/cache/pip \pip3 install cdir --user  && \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps
 RUN sudo cp -rfv /home/agl/.local/bin /usr/local && \
-    sudo cp -rv /home/agl/.local /etc/skel/ && \
-    sudo cp -rv /home/agl/.local /hel/ &&\
-    sudo cp -rv /home/agl/.local /rootg/
+    sudo cp -rv /home/agl/.local /etc/skel && \
+    sudo cp -rv /home/agl/.local /hel &&\
+    sudo cp -rv /home/agl/.local /rootg
 # sudo apt-get clean all && \
 # sudo apt-get autoremove --purge
 WORKDIR /hel
