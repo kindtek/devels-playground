@@ -143,6 +143,9 @@ COPY --from=dvlp_init --chown=root:root ./etc ./etc
 COPY --from=dvlp_init --chown=root:root ./usr ./usr
 COPY --from=dvlp_init --chown=root:root ./bin ./bin
 COPY --from=dvlp_init --chown=root:root ./var ./var
+COPY --from=dvlp_init --chown=root:root ./run ./run
+COPY --from=dvlp_init --chown=root:root ./sys ./sys
+
 
 # COPY --from=dvlp_init --chown=root:root ./etc/group ./etc/group
 # COPY --from=dvlp_init --chown=root:root ./etc/passwd ./etc/passwd
