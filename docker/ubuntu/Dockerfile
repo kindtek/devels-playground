@@ -82,7 +82,7 @@ USER dvl
 # FROM dvlp_dvl AS dvlp_duser
 
 # DATA helper
-FROM dvlp_init AS dvlp_data
+FROM scratch AS dvlp_data
 ARG mnt_data=${mnt_data:-/mnt/data}
 USER root
 WORKDIR /
@@ -136,7 +136,7 @@ WORKDIR /home/dvl
 USER dvl
 
 # SKELETON framework
-FROM dvlp_data AS dvlp_skel
+FROM dvlp_init AS dvlp_skel
 ENV DEBIAN_FRONTEND=noninteractive
 ARG mnt_data=${mnt_data:-/mnt/data}
 WORKDIR /
