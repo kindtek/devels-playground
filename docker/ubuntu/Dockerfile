@@ -188,7 +188,7 @@ COPY --from=dvlp_skel-lite ./usr/sbin ./usr
 
 # GIT
 FROM dvlp_skel-lite AS dvlp_git
-COPY --from=dvlp_skel ./usr/sbin ./usr
+COPY --from=dvlp_skel ./usr/sbin ./usr/sbin
 
 # PYTHON stuff
 FROM dvlp_init AS dvlp_python-lite
@@ -206,7 +206,7 @@ RUN --mount=type=cache,target=/var/cache/pip \
 WORKDIR /hel
 USER dvl
 
-FROM dvlp_git AS dvlp_python
+FROM dvlp_python-lite AS dvlp_python
 WORKDIR / 
 USER agl
 COPY --from=dvlp_python-lite ./usr/sbin ./usr/sbin
