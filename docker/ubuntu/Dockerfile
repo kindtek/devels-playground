@@ -159,7 +159,7 @@ USER root
 RUN \
     --mount=type=cache,target=/var/cache/apt \
     sudo apt-get -y update && \
-    sudo apt-get -y install wget wslu  git gh 
+    sudo apt-get -y install  wslu  git gh 
 RUN \
     # --mount=type=cache,target=/var/cache/apt \
     # sudo add-apt-repository ppa:saiarcot895/myppa && \
@@ -169,7 +169,7 @@ RUN \
     # sudo dpkg --configure -a && \
     # # sudo apt-get upgrade -y libsnmp40 && \
     # sudo apt-get -y install apt-fast aria2 
-    sudo apt-get -y install apt-transport-https build-essential ca-certificates curl gnupg2 libssl-dev nvi 
+    sudo apt-get -y install apt-transport-https build-essential ca-certificates curl gnupg2 libssl-dev nvi wget
 # make gh files executable
 RUN sudo chmod -R +x dvlw/dvlp/mnt/bak
 RUN sudo chmod +x dvlw/scripts/gh-auth-first-time-login.sh
