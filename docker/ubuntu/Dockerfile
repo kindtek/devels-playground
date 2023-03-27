@@ -139,16 +139,9 @@ USER dvl
 FROM dvlp_data AS dvlp_skel
 ENV DEBIAN_FRONTEND=noninteractive
 ARG mnt_data=${mnt_data:-/mnt/data}
-WORKDIR /
-
-# COPY --from=dvlp_data --chown=dvl:hell ./home/dvl ./home/dvl
-# COPY --from=dvlp_data --chown=agl:halo ./home/agl ./home/agl
-# COPY --from=dvlp_data --chown=god:rootg ./home/god ./home/god
-# COPY --from=dvlp_data --chown=agl:halo .${mnt_data} .${mnt_data}
-
 WORKDIR /home/dvl
-# RUN with halo ownership
-USER root
+# RUN with agl ownership
+USER agl
 # RUN sudo chown agl:halo -Rv ${mnt_data}/bak/agl /home/agl  \
 #     git config --global --add safe.directory /home/agl && \
 #     git config --global --add safe.directory /halo 
@@ -194,7 +187,6 @@ USER dvl
 # GIT
 FROM dvlp_skel as dvlp_git
 
-
 # PYTHON stuff
 FROM dvlp_init AS dvlp_python-lite
 USER agl
@@ -207,18 +199,18 @@ RUN \
 RUN --mount=type=cache,target=/var/cache/pip \pip3 install cdir --user  && \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps
-RUN sudo cp -rfv /home/agl/.local/bin /usr/local && \
-    sudo cp -rv /home/agl/.local /etc/skel && \
-    sudo cp -rv /home/agl/.local /hel &&\
-    sudo cp -rv /home/agl/.local /rootg
-# sudo apt-get clean all && \
 # sudo apt-get autoremove --purge
 WORKDIR /hel
 USER dvl
 
 FROM dvlp_git AS dvlp_python
 WORKDIR / 
-COPY --from=dvlp_python-lite ./ ./
+COPY --from=dvlp_python-lite ./usr/sbin ./usr/sbin
+COPY --from=dvlp_python-lite ./hal/.local/bin ./usr/local
+COPY --from=dvlp_python-lite ./hal/.local ./etc/skel/.local
+COPY --from=dvlp_python-lite ./hal/.local ./hel/.local
+COPY --from=dvlp_python-lite ./hal/.local ./rootg/.local
+
 WORKDIR /hel
 USER dvl
 
