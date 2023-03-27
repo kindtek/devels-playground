@@ -120,12 +120,12 @@ services:
     volumes:
       - god-data:/root:ro
       - gdi-data:/home/god:rw
-      - hell-data:/home/dvl
-      - hell-data:/home/devel
-      - hell-data:/home/${_DVL_USR:-duser}
-      - halo-data:/home/${_AGL_USR:-auser}
-      - halo-data:/home/angel
-      - halo-data:/home/agl
+      # - hell-data:/home/dvl
+      # - hell-data:/home/devel
+      - hell-data:/home/${_DVL_USR:-devel}
+      - halo-data:/home/${_AGL_USR:-angel}
+      # - halo-data:/home/angel
+      # - halo-data:/home/agl
       - dls-data:/dls
       - mnt-data:/data
   skel:
@@ -151,6 +151,12 @@ services:
       data:
         # Wait for the ownership to change
         condition: service_completed_successfully
+    volumes:
+      - mnt-data:/data
+      - hell-data:/home/${_DVL_USR:-devel}
+      - halo-data:/home/${_AGL_USR:-angel}
+      - gdi-data:/home/god
+
     labels:
       com.dvlp_skel.description: "skeleton"
   git:
