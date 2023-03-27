@@ -159,21 +159,27 @@ RUN \
 # cant cache these ..
 RUN sudo apt-get -y install  build-essential ca-certificates curl git gnupg2 libssl-dev nvi wslu
 # make gh files executable
+
+
+WORKDIR /home/dvl
+USER dvl
+
+# GIT
+FROM dvlp_skel as dvlp_git
 RUN sudo chmod -R +x dvlw/dvlp/mnt/bak
 RUN sudo chmod +x dvlw/scripts/gh-auth-first-time-login.sh
 RUN sudo cp -arfv dvlw/dvlp/mnt/. ${mnt_data}
-    # sudo mv -v ${mnt_data}/bak/custom ${mnt_data}/bak/agl/ && \
-    # make rwx for owner and rw for group - x/rx for others
-    # sudo chmod 754 -Rv ${mnt_data}/bak/agl && \
-    # sudo chmod 751 ${mnt_data}/bak/agl && \
-    # sudo chmod 751 ${mnt_data}/bak/agl && sudo chmod 751 ${mnt_data}/bak/dvl && \
-    # sudo chmod 754 -Rv ${mnt_data}/bak/dvl && \
-    # # add warning for the backup drive
+# sudo mv -v ${mnt_data}/bak/custom ${mnt_data}/bak/agl/ && \
+# make rwx for owner and rw for group - x/rx for others
+# sudo chmod 754 -Rv ${mnt_data}/bak/agl && \
+# sudo chmod 751 ${mnt_data}/bak/agl && \
+# sudo chmod 751 ${mnt_data}/bak/agl && sudo chmod 751 ${mnt_data}/bak/dvl && \
+# sudo chmod 754 -Rv ${mnt_data}/bak/dvl && \
+# # add warning for the backup drive
 # RUN echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/README_ASAP      && \
 #     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/dvl/README_ASAP 
 # sudo chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh
 # RUN sudo chown agl:halo ${mnt_data}/bak/agl/backup-agl.sh ${mnt_data}/bak/dvl/backup-dvl.sh
-
 RUN cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /home/god/.bashrc /home/dvl/.bashrc /home/agl/.bashrc /etc/skel/.bashrc
 # copy and set ownership
 RUN cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/god && \
@@ -181,11 +187,6 @@ RUN cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/god && \
     cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/dvl
 # chmod og+x /home/dvl/gh-auth-first-time-login.sh && chmod og+x /home/agl/gh-auth-first-time-login.sh && \
 # chown dvl:hell /home/dvl/gh-auth-first-time-login.sh && chown agl:halo /home/agl/gh-auth-first-time-login.sh 
-WORKDIR /home/dvl
-USER dvl
-
-# GIT
-FROM dvlp_skel as dvlp_git
 
 # PYTHON stuff
 FROM dvlp_init AS dvlp_python-lite
