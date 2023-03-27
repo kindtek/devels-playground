@@ -155,8 +155,7 @@ COPY --from=dvlp_data ./home/dvl/dvlw/dvlp/mnt/home/gh-auth-first-time-login.sh 
 COPY --from=dvlp_data ./home/dvl/dvlw/dvlp/mnt/home/gh-auth-first-time-login.sh ./home/agl
 COPY --from=dvlp_data ./home/dvl/dvlw/dvlp/mnt/home/gh-auth-first-time-login.sh ./home/god
 USER root
-RUN chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh && \
-    cp ${mnt_data}/home/gh-auth-first-time-login.sh /home/.*
+RUN chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh
 USER dvl
 WORKDIR /home/dvl
 
