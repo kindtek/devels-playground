@@ -70,8 +70,6 @@ services:
     group_add:
       - hell
     entrypoint:
-      - sleep
-      - infinity
     build:
       context: .
       target: dvlp_dvl
