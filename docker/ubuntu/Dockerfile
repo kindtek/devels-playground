@@ -159,9 +159,6 @@ USER root
 RUN \
     --mount=type=cache,target=/var/cache/apt \
     sudo apt-get -y update && \
-    sudo apt-get -y install gh wget apt-transport-https
-RUN \
-    # --mount=type=cache,target=/var/cache/apt \
     # sudo add-apt-repository ppa:saiarcot895/myppa && \
     # sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
     # sudo apt-get install -y tzdata && \
@@ -169,7 +166,9 @@ RUN \
     # sudo dpkg --configure -a && \
     # # sudo apt-get upgrade -y libsnmp40 && \
     # sudo apt-get -y install apt-fast aria2 
-    sudo apt-get -y install  curl build-essential  ca-certificates git gnupg2 libssl-dev nvi   wslu
+    sudo apt-get -y install gh wget apt-transport-https
+# cant cache these ..
+RUN sudo apt-get -y install  build-essential ca-certificates curl git gnupg2 libssl-dev nvi wslu
 # make gh files executable
 RUN sudo chmod -R +x dvlw/dvlp/mnt/bak
 RUN sudo chmod +x dvlw/scripts/gh-auth-first-time-login.sh
