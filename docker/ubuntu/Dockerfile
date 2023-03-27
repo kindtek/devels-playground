@@ -135,17 +135,10 @@ WORKDIR /home/dvl
 USER dvl
 
 # SKELETON framework
-FROM scratch AS dvlp_skel
+FROM dvlp_init AS dvlp_skel
 ENV DEBIAN_FRONTEND=noninteractive
 ARG mnt_data=${mnt_data:-/mnt/data}
 WORKDIR /
-COPY --from=dvlp_init --chown=root:root ./etc ./etc
-COPY --from=dvlp_init --chown=root:root ./usr ./usr
-COPY --from=dvlp_init --chown=root:root ./bin ./bin
-COPY --from=dvlp_init --chown=root:root ./var ./var
-COPY --from=dvlp_init --chown=root:root ./run ./run
-COPY --from=dvlp_init --chown=root:root ./sys ./sys
-
 
 # COPY --from=dvlp_init --chown=root:root ./etc/group ./etc/group
 # COPY --from=dvlp_init --chown=root:root ./etc/passwd ./etc/passwd
