@@ -47,7 +47,8 @@ RUN \
 FROM dvlp_init AS dvlp_god
 USER root
 ARG mnt_data=${mnt_data:-/mnt/data}
-RUN ln -fs /home/god /rootg 
+RUN ln -fs /home/god /rootg  && \
+    mkdir pv /home/god && \
 # && \
 #     ln -sv /home/god/bak /mnt/data/bak 
 
@@ -57,6 +58,7 @@ USER root
 ARG mnt_data=${mnt_data:-/mnt/data}
 RUN ln -fs /home/agl /hal && \
     mkdir -m 753 -pv ${mnt_data}/bak/agl && \
+    mkdir pv /home/agl && \
     ln -sv /home/agl/bak /mnt/data/bak/agl
 
 # dvl permissions/volume builder
@@ -73,6 +75,7 @@ RUN ln -sfv /home/dvl /hel && \
     ln -sv dvlw/dvlp/kernels/ubuntu ukernels && \
     ln -sv dvlw/dvlp/docker docker && \
     mkdir -m 753 -pv ${mnt_data}/bak/dvl && \
+    mkdir pv /home/dvl && \
     ln -sv /home/dvl/bak ${mnt_data}/bak/dvl 
 
 USER dvl
