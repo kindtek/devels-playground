@@ -69,7 +69,6 @@ services:
     # Specify the wings in question
     group_add:
       - hell
-    entrypoint:
     build:
       context: .
       target: dvlp_dvl
