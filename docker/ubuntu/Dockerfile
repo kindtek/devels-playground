@@ -151,7 +151,7 @@ USER agl
 #     git config --global --add safe.directory /home/agl && \
 #     git config --global --add safe.directory /halo 
 # make gh files executable
-RUN sudo chmod -R +x dvlw/dvlp/mnt/bak
+RUN sudo ls -al && sudo chmod -R +x dvlw/dvlp/mnt/bak
 RUN sudo chmod +x dvlw/scripts/gh-auth-first-time-login.sh
 RUN sudo cp -arfv dvlw/dvlp/mnt/. ${mnt_data}
     # sudo mv -v ${mnt_data}/bak/custom ${mnt_data}/bak/agl/ && \
