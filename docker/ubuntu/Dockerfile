@@ -168,9 +168,9 @@ RUN sudo cp -arfv dvlw/dvlp/mnt/. ${mnt_data}
 
 RUN cat dvlw/dvlp/mnt/home/.bashrc | sudo tee --append /home/god/.bashrc /home/dvl/.bashrc /home/agl/.bashrc /etc/skel/.bashrc
 # copy and set ownership
-RUN cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/god && \
-    cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/agl && \
-    cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/dvl
+RUN sudo cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/god && \
+    sudo cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/agl && \
+    sudo cp -rfv dvlw/scripts/gh-auth-first-time-login.sh /home/dvl
 # chmod og+x /home/dvl/gh-auth-first-time-login.sh && chmod og+x /home/agl/gh-auth-first-time-login.sh && \
 # chown dvl:hell /home/dvl/gh-auth-first-time-login.sh && chown agl:halo /home/agl/gh-auth-first-time-login.sh 
 RUN \
