@@ -190,15 +190,14 @@ FROM dvlp_skel AS dvlp_git
 
 # PYTHON stuff
 FROM dvlp_init AS dvlp_python-lite
-USER agl
+USER root
 RUN \
-    sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
+    rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y install apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv
 RUN --mount=type=cache,target=/var/cache/pip \
-    pip3 install cdir --user  && \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     sudo python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps
 # sudo apt-get autoremove --purge
@@ -208,16 +207,21 @@ USER dvl
 FROM dvlp_git AS dvlp_python
 WORKDIR / 
 COPY --from=dvlp_python-lite ./usr/sbin ./usr
-COPY --from=dvlp_python-lite ./home/agl/.local/bin ./usr/local
-COPY --from=dvlp_python-lite ./home/agl/.local ./etc/skel
-COPY --from=dvlp_python-lite ./home/agl/.local ./home/dvl
-COPY --from=dvlp_python-lite ./home/agl/.local ./home/god
 RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y install jq python3-pip python3-venv
+USER agl
+RUN \
+    --mount=type=cache,target=/var/cache/pip \
+    sudo apt-get -y pip3 install cdir --user
+USER dvl
+RUN \
+    --mount=type=cache,target=/var/cache/pip \
+    sudo apt-get -y pip3 install cdir --user
+USER god
 RUN \
     --mount=type=cache,target=/var/cache/pip \
     sudo apt-get -y pip3 install cdir --user
