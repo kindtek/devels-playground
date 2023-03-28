@@ -202,6 +202,7 @@ USER dvl
 
 # GIT
 FROM dvlp_base AS dvlp_git
+WORKDIR /
 COPY --from=dvlp_skel ./ ./
 USER agl
 RUN sudo rm -rf /var/cache/apt/archives/
