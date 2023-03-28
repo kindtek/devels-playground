@@ -370,7 +370,7 @@ function import_docker_tar {
     wsl.exe --unregister $distro
     Write-Host "DONE"
 
-    $image_save_path=$save_location/$distro.tar
+    $image_save_path="$save_location/$distro.tar"
     Write-Host "`r`nimporting $distro.tar to $install_location as $distro..."
     Write-Host "wsl.exe --import $distro $install_location $image_save_path --version $wsl_version"
     wsl.exe --import $distro $install_location $image_save_path --version $wsl_version
