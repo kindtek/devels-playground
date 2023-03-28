@@ -6,7 +6,7 @@ groupname=halo
 
 if [ -z $backup_mnt_location ]
 then 
-    export backup_mnt_location=/mnt/data
+    export backup_mnt_location=/mnt/data/bak
 fi
 if [ -z $WSL_DISTRO_NAME ] 
 then
