@@ -212,16 +212,34 @@ USER dvl
 
 FROM dvlp_python-lite AS dvlp_python
 WORKDIR / 
-COPY --from=dvlp_python-lite ./usr/sbin ./usr/sbin
-# USER agl
-# # RUN \
-# #     --mount=type=cache,target=/var/cache/pip \
-# #     pip3 install cdir --user
+# COPY --from=dvlp_python-lite ./var/debconf ./var/debconf
+# COPY --from=dvlp_python-lite ./var/ldconfig ./var/ldconfig
+# COPY --from=dvlp_python-lite ./var/lib/apt ./var/lib/apt
+# COPY --from=dvlp_python-lite ./var/lib/dpkg ./var/lib/dpkg
+# COPY --from=dvlp_python-lite ./var/lib/ucf ./var/lib/ucf 
+# COPY --from=dvlp_python-lite ./lib/apt ./lib/apt
+# COPY --from=dvlp_python-lite ./run/sudo ./run/sudo
+# COPY --from=dvlp_python-lite ./usr/lib ./usr/lib 
+# COPY --from=dvlp_python-lite ./usr/share ./usr/share 
+# COPY --from=dvlp_python-lite ./var/log ./var/log 
+# COPY --from=dvlp_python-lite ./etc/ld.so.cache ./etc/ld.so.cache
+COPY ./ ./
+USER god
+RUN rm -rf /cache/apt/archives/
 # RUN pip3 install cdir --user
-# USER god
+RUN \
+    --mount=type=cache,target=/var/cache/pip \
+    pip3 install cdir --user
+USER agl
+RUN \
+    --mount=type=cache,target=/var/cache/pip \
+    pip3 install cdir --user
 # RUN pip3 install cdir --user
 USER dvl
-RUN pip3 install cdir --user
+# RUN pip3 install cdir --user
+RUN \
+    --mount=type=cache,target=/var/cache/pip \
+    pip3 install cdir --user
 WORKDIR /hel
 
 
