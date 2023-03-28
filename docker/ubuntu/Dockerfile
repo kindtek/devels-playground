@@ -346,7 +346,7 @@ FROM dvlp_dind-lite AS dvlp_kernel-lite
 ARG mnt_data=${mnt_data:-/mnt/data}
 USER agl
 WORKDIR /
-COPY --from=dvlp_kernel-plus ./home/dvl/dvlw/dvlp/kernels ./home/dvl/dvlw/dvlp/kernels
+# COPY --from=dvlp_kernel-plus ./hel/dvlw/dvlp/kernels ./hel/dvlw/dvlp/kernels
 # RUN sudo apt-get clean all && \
 #     sudo apt-get autoremove --purge
 WORKDIR /hel
