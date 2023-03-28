@@ -453,29 +453,7 @@ RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg a
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get update && \
-    sudo apt-get install -y locales 
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get update && \
-    sudo apt-get install -y brave-browser 
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get install -y gimp 
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get install -y gedit 
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get install -y nautilus 
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get install -y vlc 
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get install -y x11-apps 
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get install -y xfce4
+    sudo apt-get install -y brave-browser gimp gedit locales nautilus vlc x11-apps xfce4
     # sudo apt-get install -y locales brave-browser gimp gedit nautilus vlc x11-apps xfce4
 RUN sudo update-locale && \
     echo "LANG=en_US.UTF-8" | sudo tee -a /etc/locale.gen && \
@@ -513,6 +491,7 @@ FROM dvlp_kernel-builder AS dvlp_gui-plus
 WORKDIR /
 USER agl
 COPY --from=dvlp_gui ./ ./
+RUN sudo rm -rf /var/cache/apt/archives/
 WORKDIR /hel
 USER dvl
 
