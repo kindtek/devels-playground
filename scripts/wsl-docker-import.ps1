@@ -302,7 +302,7 @@ function docker_container_start {
     $WSL_DOCKER_CONTAINER_ID=$WSL_DOCKER_CONTAINER_ID.Substring(0, 8)
     Write-Host "containerid: `"$WSL_DOCKER_CONTAINER_ID`""
 
-    $new_install_path=$install_path-$WSL_DOCKER_CONTAINER_ID
+    $new_install_path="$install_path-$WSL_DOCKER_CONTAINER_ID"
     $old_install_path=$install_path
 
     Move-Item -LiteralPath $old_install_path -Destination $new_install_path
