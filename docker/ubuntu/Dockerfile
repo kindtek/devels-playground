@@ -439,42 +439,33 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /
 COPY --from=dvlp_kernel-build ./ ./
 WORKDIR /hel
+RUN \
+    --mount=type=cache,target=/var/cache/curl,sharing=locked \
+    sudo apt-get -y install curl
+# for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
+RUN \
+    sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
+RUN \
+    --mount=type=cache,target=/var/cache/curl \
+    sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg 
+RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+RUN \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    sudo apt-get update && \
+    sudo apt-get install -y locales brave-browser gimp gedit nautilus vlc x11-apps xfce4
 # RUN \
-#     --mount=type=cache,target=/var/cache/curl,sharing=locked \
-#     sudo apt-get -y install curl
-# RUN \
-#     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
-#     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
-# RUN \
-#     --mount=type=cache,target=/var/cache/curl \
-#     # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
-#     sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg 
-# RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
-# # RUN \
-# #     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-# #     sudo apt-get install -y 
-# # RUN \
-# #     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-# #     sudo apt-get update
-# RUN \
-#     --mount=type=cache,target=/var/cache/curl,sharing=locked \
-#      sudo apt-get install -y brave-browser
-#     RUN sudo apt-get install -y locales
-#     RUN sudo apt-get install -y gimp  
-#     RUN sudo apt-get install -y gedit 
-#     RUN sudo apt-get install -y nautilus 
-#     RUN sudo apt-get install -y vlc 
-#     RUN sudo apt-get install -y x11-apps  
-#     RUN sudo apt-get install -y xfce4 
-#     # sudo apt-get install -y locales brave-browser gimp gedit nautilus vlc x11-apps xfce4
-# RUN sudo update-locale && \
-#     echo "LANG=en_US.UTF-8" | sudo tee -a /etc/locale.gen && \
-#     sudo locale-gen && \
-#     sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
-#     # change last line of this file - fix for brave-browser displaying empty windows
-#     head -n -1 /opt/brave.com/brave/brave-browser.old | sudo tee /opt/brave.com/brave/brave-browser > /dev/null && \
-#     # now no longeer need to add --disable-gpu flag everytime
-#     echo '"$HERE/brave" "$@" " --disable-gpu " || true' | sudo tee --append /opt/brave.com/brave/brave-browser > /dev/null
+#     --mount=type=cache,target=/var/cache/apt,sharing=locked \
+#     sudo apt-get install -y xfce4
+    # sudo apt-get install -y locales brave-browser gimp gedit nautilus vlc x11-apps xfce4
+RUN sudo update-locale && \
+    echo "LANG=en_US.UTF-8" | sudo tee -a /etc/locale.gen && \
+    sudo locale-gen && \
+    sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
+    # change last line of this file - fix for brave-browser displaying empty windows
+    head -n -1 /opt/brave.com/brave/brave-browser.old | sudo tee /opt/brave.com/brave/brave-browser > /dev/null && \
+    # now no longeer need to add --disable-gpu flag everytime
+    echo '"$HERE/brave" "$@" " --disable-gpu " || true' | sudo tee --append /opt/brave.com/brave/brave-browser > /dev/null
 # # # this is a better way to do this but needs work
 # # # cd /opt/brave.com/brave && \
 # # # brave_old_line='\"\$HERE\/brave\"\s\"\$\@\"\s\|\|\strue' && \
