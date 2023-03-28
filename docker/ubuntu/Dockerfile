@@ -459,22 +459,22 @@ WORKDIR /hel
 # RUN \
 #     --mount=type=cache,target=/var/cache/curl,sharing=locked \
 #      sudo apt-get install -y brave-browser
-    RUN sudo apt-get install -y locales
-    RUN sudo apt-get install -y gimp  
-    RUN sudo apt-get install -y gedit 
-    RUN sudo apt-get install -y nautilus 
-    RUN sudo apt-get install -y vlc 
-    RUN sudo apt-get install -y x11-apps  
-    RUN sudo apt-get install -y xfce4 
-    # sudo apt-get install -y locales brave-browser gimp gedit nautilus vlc x11-apps xfce4
-RUN sudo update-locale && \
-    echo "LANG=en_US.UTF-8" | sudo tee -a /etc/locale.gen && \
-    sudo locale-gen && \
-    sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
-    # change last line of this file - fix for brave-browser displaying empty windows
-    head -n -1 /opt/brave.com/brave/brave-browser.old | sudo tee /opt/brave.com/brave/brave-browser > /dev/null && \
-    # now no longeer need to add --disable-gpu flag everytime
-    echo '"$HERE/brave" "$@" " --disable-gpu " || true' | sudo tee --append /opt/brave.com/brave/brave-browser > /dev/null
+#     RUN sudo apt-get install -y locales
+#     RUN sudo apt-get install -y gimp  
+#     RUN sudo apt-get install -y gedit 
+#     RUN sudo apt-get install -y nautilus 
+#     RUN sudo apt-get install -y vlc 
+#     RUN sudo apt-get install -y x11-apps  
+#     RUN sudo apt-get install -y xfce4 
+#     # sudo apt-get install -y locales brave-browser gimp gedit nautilus vlc x11-apps xfce4
+# RUN sudo update-locale && \
+#     echo "LANG=en_US.UTF-8" | sudo tee -a /etc/locale.gen && \
+#     sudo locale-gen && \
+#     sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
+#     # change last line of this file - fix for brave-browser displaying empty windows
+#     head -n -1 /opt/brave.com/brave/brave-browser.old | sudo tee /opt/brave.com/brave/brave-browser > /dev/null && \
+#     # now no longeer need to add --disable-gpu flag everytime
+#     echo '"$HERE/brave" "$@" " --disable-gpu " || true' | sudo tee --append /opt/brave.com/brave/brave-browser > /dev/null
 # # # this is a better way to do this but needs work
 # # # cd /opt/brave.com/brave && \
 # # # brave_old_line='\"\$HERE\/brave\"\s\"\$\@\"\s\|\|\strue' && \
