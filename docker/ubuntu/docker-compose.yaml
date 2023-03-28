@@ -1,10 +1,10 @@
 version: "3.9"
 name: dvl-playg-ubuntu
 services:
-  init:
+  base:
     build:
       context: .
-      target: dvlp_init
+      target: dvlp_base
       # args: 
       #   - _AGL_USR=$_AGL
       #   - _DVL_USR=$_DVL
@@ -20,7 +20,7 @@ services:
     # - mkdir -p /mnt/data
     # - ln -sf /mnt/data /tmp/data
     # command: echo something
-  init-god:
+  base-god:
     # Need a user priviliged enough to chown
     user: root
     # Specify the wings in question
@@ -32,12 +32,12 @@ services:
       context: .
       target: dvlp_god
     depends_on:
-      init:
+      base:
         condition: service_completed_successfully
     # volumes:
     #   - god-data:/root:ro
     #   - gdi-data:/home/god
-  init-agl:
+  base-angel:
     # Need a user priviliged enough to chown
     user: agl
     # Specify the wings in question
@@ -47,11 +47,11 @@ services:
       context: .
       target: dvlp_agl
     depends_on:
-      init:
+      base:
         condition: service_completed_successfully
     # volumes:
     #   - hell-data:/home/agl
-  init-dvl:
+  base-devel:
     user: dvl
     group_add:
       - hell
@@ -59,16 +59,16 @@ services:
       context: .
       target: dvlp_dvl
     depends_on:
-      init:
+      base:
         # Wait for groups to be added
         condition: service_completed_successfully
     # volumes:
     #   - hell-data:/home/dvl
     init: true
   # alias(es) for agl
-  # init-ausr:
+  # base-ausr:
   #   user: _AGL_USR
-  #   extends: init-agl
+  #   extends: base-angel
   #   build:
   #     context: .
   #     target: dvlp_agl
@@ -78,7 +78,7 @@ services:
   #     - halo-data:/home/${_AGL_USR}
   #   init: true
   # # alias(es) for dvl
-  # init-daus:
+  # base-daus:
   #   user: _DVL_USR
   #   extends: init-dvl
   #   build:
@@ -99,19 +99,19 @@ services:
       init:
         # Wait for the ownership to change
         condition: service_completed_successfully
-      init-god:
+      base-god:
         # Wait for the ownership to change
         condition: service_completed_successfully
-      init-agl:
+      base-angel:
         # Wait for the ownership to change
         condition: service_completed_successfully
-      init-dvl:
+      base-devel:
         # Wait for the ownership to change
         condition: service_completed_successfully
     # # init: true
     # volumes_from:
-    #   - init-agl
-    #   - init-dvl
+    #   - base-angel
+    #   - base-devel
     volumes:
       - god-data:/root:ro
       - gdi-data:/home/god:rw

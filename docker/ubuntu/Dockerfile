@@ -3,7 +3,7 @@
 # docker compose build   ( ... don't try docker run - permissions built with docker compose are needed )
 ARG DEBIAN_FRONTEND=noninteractive
 
-FROM ubuntu:latest AS dvlp_init
+FROM ubuntu:latest AS dvlp_base
 ARG _AGL_USR=${_AGL_USR:-agl}
 ARG _DVL_USR=${_DVL_USR:-dvl}
 ARG _HALO=halo
@@ -46,14 +46,14 @@ RUN \
     rm -rf /var/cache/apt/archives/*.deb
 
 # god permissions/volume builder
-FROM dvlp_init AS dvlp_god
+FROM dvlp_base AS dvlp_god
 USER root
 ARG mnt_data=${mnt_data:-/mnt/data}
 RUN ln -fs /home/god /rootg
 # && \
 #     ln -sv /home/god/bak /mnt/data/bak 
 # agl permissions/volume builder
-FROM dvlp_init AS dvlp_agl
+FROM dvlp_base AS dvlp_agl
 USER root
 ARG mnt_data=${mnt_data:-/mnt/data}
 RUN ln -fs /home/agl /hal && \
@@ -61,7 +61,7 @@ RUN ln -fs /home/agl /hal && \
     ln -sv /mnt/data/bak/agl /home/agl/bak
 
 # dvl permissions/volume builder
-FROM dvlp_init AS dvlp_dvl
+FROM dvlp_base AS dvlp_dvl
 USER root
 WORKDIR /home/dvl
 ARG mnt_data=${mnt_data:-/mnt/data}
@@ -84,7 +84,7 @@ USER dvl
 # FROM dvlp_dvl AS dvlp_duser
 
 # DATA helper
-FROM dvlp_init AS dvlp_data
+FROM dvlp_base AS dvlp_data
 ARG mnt_data=${mnt_data:-/mnt/data}
 USER root
 WORKDIR /
@@ -145,7 +145,7 @@ USER dvl
 WORKDIR /home/dvl
 
 # SKELETON framework
-FROM dvlp_init AS dvlp_skel-lite
+FROM dvlp_base AS dvlp_skel-lite
 ENV DEBIAN_FRONTEND=noninteractive
 ARG mnt_data=${mnt_data:-/mnt/data}
 COPY --from=dvlp_data --chown=dvl:hell ./home/dvl ./home/dvl
@@ -188,14 +188,14 @@ WORKDIR /home/dvl
 USER dvl
 
 # GIT
-FROM dvlp_skel-lite AS dvlp_git
+FROM dvlp_base AS dvlp_git
 COPY --from=dvlp_skel ./ ./
 USER agl
 RUN sudo rm -rf /var/cache/apt/archives/
 USER dvl
 
 # PYTHON stuff
-FROM dvlp_init AS dvlp_python-lite
+FROM dvlp_base AS dvlp_python-lite
 USER agl
 RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -240,7 +240,7 @@ WORKDIR /hel
 
 
 # MICROSOFT stuff
-FROM dvlp_init AS dvlp_msdot-lite
+FROM dvlp_base AS dvlp_msdot-lite
 USER agl
 RUN sudo apt-get -y install lsb-release wget
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
@@ -274,7 +274,7 @@ WORKDIR /hel
 USER dvl
 
 # DOCKER IN DOCKER
-FROM dvlp_init AS dvlp_dind-lite
+FROM dvlp_base AS dvlp_dind-lite
 USER root
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
 # RUN \
@@ -314,7 +314,7 @@ USER root
 USER dvl
 
 # KERNEL builder
-FROM dvlp_init AS dvlp_kernel
+FROM dvlp_base AS dvlp_kernel
 USER agl
 # RUN echo exit 0 > /usr/sbin/policy-rc.d 
 RUN \
@@ -362,7 +362,7 @@ WORKDIR /hel
 USER dvl
 
 # GUI - wsl2 required
-FROM dvlp_init AS dvlp_gui
+FROM dvlp_base AS dvlp_gui
 USER root
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /
@@ -440,7 +440,7 @@ RUN sudo rm -rf /var/cache/apt/archives/
 WORKDIR /hel
 USER dvl
 
-FROM dvlp_init AS dvlp_cuda
+FROM dvlp_base AS dvlp_cuda
 USER agl
 # CUDA
 RUN \
