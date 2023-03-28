@@ -130,7 +130,7 @@ function dev_boilerplate {
             $image_repo_image_name=$image_name
         }
         else {
-            $image_repo_image_name=$image_repo_mask/$image_name
+            $image_repo_image_name="$image_repo_mask/$image_name"
         }
 
         # set default var before prompt
