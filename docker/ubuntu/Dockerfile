@@ -447,7 +447,7 @@ USER dvl
 #
 # dvlp_gui-plus
 #
-FROM dvlp_kernel-plus AS dvlp_gui-plus
+FROM dvlp_kernel-builder AS dvlp_gui-plus
 WORKDIR /
 USER agl
 COPY --from=dvlp_gui ./ ./
