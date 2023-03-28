@@ -153,9 +153,9 @@ COPY --from=dvlp_data --chown=agl:halo ./home/agl ./home/agl
 COPY --from=dvlp_data --chown=god:rootg ./home/god ./home/god
 COPY --from=dvlp_data --chown=agl:halo .${mnt_data} .${mnt_data}
 COPY --from=dvlp_data ./home/dvl/dvlw/dvlp/mnt/. .${mnt_data}
-COPY --from=dvlp_data ./home/dvl/dvlw/dvlp/mnt/home/gh-auth-first-time-login.sh ./home/dvl
-COPY --from=dvlp_data ./home/dvl/dvlw/dvlp/mnt/home/gh-auth-first-time-login.sh ./home/agl
-COPY --from=dvlp_data ./home/dvl/dvlw/dvlp/mnt/home/gh-auth-first-time-login.sh ./home/god
+COPY --from=dvlp_data ./home/dvl/dvlw/dvlp/mnt/home/gh-auth-first-time-login.sh /home/dvl/gh-auth-first-time-login.sh
+COPY --from=dvlp_data ./home/dvl/dvlw/dvlp/mnt/home/gh-auth-first-time-login.sh /home/agl/gh-auth-first-time-login.sh
+COPY --from=dvlp_data ./home/dvl/dvlw/dvlp/mnt/home/gh-auth-first-time-login.sh /home/god/gh-auth-first-time-login.sh
 USER root
 RUN chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh
 USER dvl
@@ -225,20 +225,14 @@ WORKDIR /
 COPY --from=dvlp_python-lite ./ ./
 USER god
 RUN rm -rf /cache/apt/archives/
-# RUN pip3 install cdir --user
-RUN \
-    --mount=type=cache,target=/var/cache/pip \
-    pip3 install cdir --user
+RUN pip3 install cdir --user
 USER agl
-RUN \
-    --mount=type=cache,target=/var/cache/pip \
-    pip3 install cdir --user
-# RUN pip3 install cdir --user
+RUN pip3 install cdir --user
 USER dvl
-# RUN pip3 install cdir --user
-RUN \
-    --mount=type=cache,target=/var/cache/pip \
-    pip3 install cdir --user
+RUN pip3 install cdir --user
+# RUN \
+#     --mount=type=cache,target=/var/cache/pip \
+#     pip3 install cdir --user
 WORKDIR /hel
 
 
@@ -333,127 +327,127 @@ USER agl
 WORKDIR /hel
 USER dvl
 
-# # Kernel only
-# FROM dvlp_dind-plus AS dvlp_kernel-plus
-# # ARG _CONFIG_FILE
-# # ARG _AGL
-# WORKDIR /
-# COPY --from=dvlp_kernel ./ ./
-# WORKDIR /hel/dvlp/kernels/ubuntu
+# Kernel only
+FROM dvlp_dind-plus AS dvlp_kernel-plus
+# ARG _CONFIG_FILE
+# ARG _AGL
+WORKDIR /
+COPY --from=dvlp_kernel ./ ./
+WORKDIR /hel/dvlp/kernels/ubuntu
+USER agl
+SHELL ["/bin/bash", "-c"]
+# RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
+# RUN sudo bash build-basic-wsl-kernel.sh ${_CONFIG_FILE} agl
+# RUN echo '# sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/agl/.bashrc
+WORKDIR /hel
+USER dvl
+
+FROM dvlp_dind-lite AS dvlp_kernel-lite
+ARG mnt_data=${mnt_data:-/mnt/data}
+USER agl
+WORKDIR /
+COPY --from=dvlp_kernel-plus ./home/dvl/dvlw/dvlp/kernels ./home/dvl/dvlw/dvlp/kernels
+# RUN sudo apt-get clean all && \
+#     sudo apt-get autoremove --purge
+WORKDIR /hel
+USER dvl
+
+# GUI - wsl2 required
+FROM dvlp_init AS dvlp_gui
+USER root
+ENV DEBIAN_FRONTEND=noninteractive
+WORKDIR /
+COPY --from=dvlp_kernel-lite ./ ./
+# for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
+RUN \
+    sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
+RUN \
+    --mount=type=cache,target=/var/cache/curl \
+    sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg 
+RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+RUN \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    sudo apt-get -y install x11-apps xfce4
+RUN \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    sudo apt-get -y install locales && sudo update-locale locales && \
+    echo "LANG=en_US.UTF-8" | sudo tee -a /etc/locale.gen && \
+    sudo locale-gen
+
+# RUN \
+# --mount=type=cache,target=/var/cache/apt,sharing=locked \
+# sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo apt-get -y install lightdm gnome-session
+# RUN \
+# sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo dpkg-reconfigure lightdm
+# RUN \
+#     --mount=type=cache,target=/var/cache/apt,sharing=locked \
+#     sudo dpkg-reconfigure --frontend noninteractive locales && \
+#     echo "/usr/sbin/lightdm" | sudo tee /etc/X11/default-display-manager 
+# RUN echo "set shared/default-x-display-manager lightdm" | sudo debconf-communicate && \
+#     sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
+RUN \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    sudo apt-get install -y locales && sudo update-locale locales
+# in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
+# in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
+RUN \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    sudo apt-get -yq update&& \
+    sudo apt-get -y install brave-browser
+RUN \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    sudo apt-get -y install  gimp 
+RUN \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    sudo apt-get -y install gedit 
+RUN \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    sudo apt-get -y install nautilus 
+RUN \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    sudo apt-get -y install vlc 
+RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
+    # change last line of this file - fix for brave-browser displaying empty windows
+    head -n -1 /opt/brave.com/brave/brave-browser.old | sudo tee /opt/brave.com/brave/brave-browser > /dev/null && \
+    # now no longeer need to add --disable-gpu flag everytime
+    echo '"$HERE/brave" "$@" " --disable-gpu " || true' | sudo tee --append /opt/brave.com/brave/brave-browser > /dev/null
+# # this is a better way to do this but needs work
+# # cd /opt/brave.com/brave && \
+# # brave_old_line='\"\$HERE\/brave\"\s\"\$\@\"\s\|\|\strue' && \
+# # brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
+# # sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl && \
+# # sudo apt-get clean all && \
+# # sudo apt-get autoremove --purge
+
+
+WORKDIR /hel
+USER dvl
+
+FROM dvlp_kernel-plus AS dvlp_gui-plus
+WORKDIR /
+COPY --from=dvlp_gui ./ ./
+WORKDIR /hel
+USER dvl
+
+# FROM dvlp_init AS dvlp_cuda
 # USER agl
-# SHELL ["/bin/bash", "-c"]
-# # RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
-# # RUN sudo bash build-basic-wsl-kernel.sh ${_CONFIG_FILE} agl
-# # RUN echo '# sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/agl/.bashrc
+# # CUDA
+# RUN \
+# rm -f /etc/apt/apt.conf.d/docker-clean && \
+#     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+# RUN \
+#     rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache \
+#     --mount=type=cache,target=/var/cache/apt8 \
+#     sudo apt-get -y install nvidia-cuda-toolkit 
+# # sudo apt-get clean all && \
+# # sudo apt-get autoremove --purge
 # WORKDIR /hel
 # USER dvl
 
-# FROM dvlp_dind-lite AS dvlp_kernel-lite
-# ARG mnt_data=${mnt_data:-/mnt/data}
-# USER agl
+# FROM dvlp_gui-plus AS dvlp_cuda-plus
 # WORKDIR /
-# COPY --from=dvlp_kernel-plus ./home/dvl/dvlw/dvlp/kernels ./home/dvl/dvlw/dvlp/kernels
-# # RUN sudo apt-get clean all && \
-# #     sudo apt-get autoremove --purge
+# COPY --from=dvlp_cuda ./ ./
 # WORKDIR /hel
 # USER dvl
-
-# # GUI - wsl2 required
-# FROM dvlp_init AS dvlp_gui
-# USER root
-# ENV DEBIAN_FRONTEND=noninteractive
-# WORKDIR /
-# COPY --from=dvlp_kernel-lite ./ ./
-# # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
-# RUN \
-#     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
-#     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
-# RUN \
-#     --mount=type=cache,target=/var/cache/curl \
-#     sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg 
-# RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
-# RUN \
-#     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-#     sudo apt-get -y install x11-apps xfce4
-# RUN \
-#     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-#     sudo apt-get -y install locales && sudo update-locale locales && \
-#     echo "LANG=en_US.UTF-8" | sudo tee -a /etc/locale.gen && \
-#     sudo locale-gen
-
-# # RUN \
-# # --mount=type=cache,target=/var/cache/apt,sharing=locked \
-# # sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo apt-get -y install lightdm gnome-session
-# # RUN \
-# # sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo dpkg-reconfigure lightdm
-# # RUN \
-# #     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-# #     sudo dpkg-reconfigure --frontend noninteractive locales && \
-# #     echo "/usr/sbin/lightdm" | sudo tee /etc/X11/default-display-manager 
-# # RUN echo "set shared/default-x-display-manager lightdm" | sudo debconf-communicate && \
-# #     sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
-# RUN \
-#     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-#     sudo apt-get install -y locales && sudo update-locale locales
-# # in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
-# # in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
-# RUN \
-#     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-#     sudo apt-get -yq update&& \
-#     sudo apt-get -y install brave-browser
-# RUN \
-#     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-#     sudo apt-get -y install  gimp 
-# RUN \
-#     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-#     sudo apt-get -y install gedit 
-# RUN \
-#     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-#     sudo apt-get -y install nautilus 
-# RUN \
-#     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-#     sudo apt-get -y install vlc 
-# RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
-#     # change last line of this file - fix for brave-browser displaying empty windows
-#     head -n -1 /opt/brave.com/brave/brave-browser.old | sudo tee /opt/brave.com/brave/brave-browser > /dev/null && \
-#     # now no longeer need to add --disable-gpu flag everytime
-#     echo '"$HERE/brave" "$@" " --disable-gpu " || true' | sudo tee --append /opt/brave.com/brave/brave-browser > /dev/null
-# # # this is a better way to do this but needs work
-# # # cd /opt/brave.com/brave && \
-# # # brave_old_line='\"\$HERE\/brave\"\s\"\$\@\"\s\|\|\strue' && \
-# # # brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
-# # # sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl && \
-# # # sudo apt-get clean all && \
-# # # sudo apt-get autoremove --purge
-
-
-# WORKDIR /hel
-# USER dvl
-
-# FROM dvlp_kernel-plus AS dvlp_gui-plus
-# WORKDIR /
-# COPY --from=dvlp_gui ./ ./
-# WORKDIR /hel
-# USER dvl
-
-# # FROM dvlp_init AS dvlp_cuda
-# # USER agl
-# # # CUDA
-# # RUN \
-# # rm -f /etc/apt/apt.conf.d/docker-clean && \
-# #     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
-# # RUN \
-# #     rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache \
-# #     --mount=type=cache,target=/var/cache/apt8 \
-# #     sudo apt-get -y install nvidia-cuda-toolkit 
-# # # sudo apt-get clean all && \
-# # # sudo apt-get autoremove --purge
-# # WORKDIR /hel
-# # USER dvl
-
-# # FROM dvlp_gui-plus AS dvlp_cuda-plus
-# # WORKDIR /
-# # COPY --from=dvlp_cuda ./ ./
-# # WORKDIR /hel
-# # USER dvl
 
