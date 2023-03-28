@@ -228,14 +228,6 @@ services:
       target: dvlp_kernel-lite
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
-  kernel:
-    extends: git
-    image: kindtek/dvlp:ubuntu-kernel-lite
-    build:
-      context: .
-      target: dvlp_kernel-lite
-    labels:
-      com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
   kernel-build:
     extends: git
     image: kindtek/dvlp:ubuntu-kernel-build
@@ -244,12 +236,12 @@ services:
       target: dvlp_kernel-build
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
-  kernel-plus:
+  kernel-builder:
     extends: git
-    image: kindtek/dvlp:ubuntu-kernel-plus
+    image: kindtek/dvlp:ubuntu-kernel-builder
     build:
       context: .
-      target: dvlp_kernel-plus
+      target: dvlp_kernel-builder
       args:
         - _AGL_USR=${_AGL:-agl}
         - _CONFIG_FILE=../kernels/ubuntu/x86/generic/.config_wsl0

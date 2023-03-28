@@ -416,7 +416,7 @@ FROM dvlp_dind AS dvlp_kernel-lite
 USER agl
 WORKDIR /
 RUN sudo rm -rf /var/cache/apt/archives/
-COPY --from=dvlp_kernel-plus ./hel/dvlw/dvlp/kernels ./hel/dvlw/dvlp/kernels
+COPY --from=dvlp_kernel-builder ./hel/dvlw/dvlp/kernels ./hel/dvlw/dvlp/kernels
 # RUN sudo apt-get clean all && \
 #     sudo apt-get autoremove --purge
 WORKDIR /hel
