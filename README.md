@@ -47,10 +47,10 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 &nbsp;
 
 #### NEW FEATURES
-Images now include: 
+[ubuntu-kernel-builder](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-kernel-builder/images/sha256-bd756e1775327d2b8ea51590ba471fdd0c4997a7d44e3f437999a60e59105a70?context=repo) image now includes: 
 - pre-built Linux kernel 
 - templates to build your own kernel
-- ZFS (Advanced: Even build/mount your own ZFS partition!])
+- enterprise grade ZFS filesystem and volume manager (Advanced: Even build/mount your own ZFS partition!)
 
 
 ---
