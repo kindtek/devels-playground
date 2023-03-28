@@ -123,7 +123,7 @@ services:
       - halo-data:/home/agl
       - dls-data:/dls
       - mnt-data:/data
-  skel--build:
+  skel-build:
     extends: data
     user: agl
     tty: false
@@ -157,7 +157,7 @@ services:
     labels:
       com.dvlp_skel.description: "-build skeleton"
   skel:
-    extends: skel--build
+    extends: skel-build
     labels:
       com.dvlp_skel.description: "skeleton"    
   git:
@@ -228,12 +228,12 @@ services:
       target: dvlp_kernel
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
-  kernel--build:
+  kernel-build:
     extends: git
-    image: kindtek/dvlp:ubuntu-kernel--build
+    image: kindtek/dvlp:ubuntu-kernel-build
     build:
       context: .
-      target: dvlp_kernel--build
+      target: dvlp_kernel-build
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
   kernel-plus:
