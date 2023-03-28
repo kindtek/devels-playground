@@ -4,7 +4,7 @@
 @REM docker image push kindtek/dvlp
 
 @REM ubuntu
-docker compose -f ../docker/ubuntu/docker-compose.yaml down
+docker compose -f ../docker/ubuntu/docker-compose.yaml down && docker volume rm $(docker volume ls -q)
 @REM alpine
 @REM docker compose -f ../ddocker/alpine/docker-compose.yaml down
 

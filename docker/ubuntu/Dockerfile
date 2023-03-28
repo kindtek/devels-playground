@@ -69,7 +69,7 @@ FROM dvlp_base AS dvlp_base-devel
 USER root
 WORKDIR /home/dvl
 ARG mnt_data=${mnt_data:-/mnt/data}
-RUN ln -sfv /home/dvl /hel && \
+RUN ln -sfv /home/dvl /home/dvl && \
     ln -sv dvlw devels-workshop && \
     ln -sv dvlw/dvlp dvlp && \
     ln -sv dvlw/dvlp/linux linux && \
@@ -113,7 +113,7 @@ WORKDIR /home/dvl
 RUN \
     --mount=type=cache,target=/var/cache/git-dvlw \
     git config --global --add safe.directory /home/dvl && \
-    git config --global --add safe.directory /hel && \
+    git config --global --add safe.directory /home/dvl && \
     git config --global --add safe.directory /home/dvl/dvlp && \
     # clone fresh repos and give dvl ownership
     git clone https://github.com/kindtek/dvl-works --depth=1 --single-branch --progress dvlw
@@ -208,7 +208,7 @@ FROM dvlp_base AS dvlp_git
 WORKDIR /
 COPY --from=dvlp_skel ./ ./
 USER agl
-RUN sudo rm -rf /var/cache/apt/archives/
+# RUN sudo rm -rf /var/cache/apt/archives/
 USER dvl
 
 ################################# PYTHON ########################################
@@ -234,7 +234,7 @@ RUN pip3 install cdir --user
 USER dvl
 RUN pip3 install cdir --user
 # sudo apt-get autoremove --purge
-WORKDIR /hel
+WORKDIR /home/dvl
 
 #
 # dvlp_python
@@ -243,11 +243,11 @@ FROM dvlp_git AS dvlp_python
 WORKDIR / 
 COPY --from=dvlp_python-build ./ ./
 USER agl
-RUN sudo rm -rf /var/cache/apt/archives/
+# RUN sudo rm -rf /var/cache/apt/archives/
 # RUN \
 #     --mount=type=cache,target=/var/cache/pip \
 #     pip3 install cdir --user
-WORKDIR /hel
+WORKDIR /home/dvl
 USER dvl
 
 ############################# POWERHELL #########################################
@@ -276,15 +276,15 @@ RUN sudo rm packages-microsoft-prod.deb
 # RUN sudo apt-get -y remove lsb_release
 # sudo apt-get clean all && \
 # sudo apt-get autoremove --purge
-WORKDIR /hel
+WORKDIR /home/dvl
 USER dvl
 
 FROM dvlp_python AS dvlp_msdot
 WORKDIR /
 COPY --from=dvlp_msdot-build ./ ./
 USER agl
-RUN sudo rm -rf /var/cache/apt/archives/
-WORKDIR /hel
+# RUN sudo rm -rf /var/cache/apt/archives/
+WORKDIR /home/dvl
 USER dvl
 
 ########################## DOCKER IN DOCKER ######################################
@@ -313,7 +313,7 @@ RUN \
 # sudo apt-get remove -y lsb-release && \
 # sudo apt-get clean all && \
 # sudo apt-get autoremove --purge
-WORKDIR /hel
+WORKDIR /home/dvl
 USER dvl
 
 #
@@ -323,8 +323,8 @@ FROM dvlp_msdot AS dvlp_dind
 WORKDIR /
 COPY --from=dvlp_dind-build ./ ./
 USER agl
-RUN sudo rm -rf /var/cache/apt/archives/
-WORKDIR /hel
+# RUN sudo rm -rf /var/cache/apt/archives/
+WORKDIR /home/dvl
 USER dvl
 
 FROM dvlp_dind AS dvlp_dind-plus
@@ -353,7 +353,7 @@ RUN \
 USER agl
 # RUN sudo apt-get clean all && \
 #     sudo apt-get autoremove --purge
-WORKDIR /hel
+WORKDIR /home/dvl
 USER dvl
 
 ############################### KERNEL #########################################
@@ -365,7 +365,7 @@ ARG _CONFIG_FILE
 # ARG _AGL
 WORKDIR /
 COPY --from=dvlp_kernel-build ./ ./
-WORKDIR /hel/dvlp/kernels/linux
+WORKDIR /home/dvl/dvlp/kernels/linux
 USER god
 WORKDIR /home/dvl/dvlw/dvlp/kernels/linux
 SHELL ["/bin/bash", "-c"]
@@ -407,8 +407,8 @@ RUN sudo bash build-basic-wsl-kernel.sh ${_CONFIG_FILE} agl
 #     cp -fv --backup=numbered .config kernels/linux/$cpu_arch/$cpu_vendor/$linux_version_mask/.config_wsl0; \
 #     rm -rf wsl2;
 # RUN echo '# sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/agl/.bashrc
-RUN sudo rm -rf /var/cache/apt/archives/
-WORKDIR /hel
+# RUN sudo rm -rf /var/cache/apt/archives/
+WORKDIR /home/dvl
 USER dvl
 
 #
@@ -418,10 +418,10 @@ FROM dvlp_dind AS dvlp_kernel-lite
 USER agl
 WORKDIR /
 COPY --from=dvlp_kernel-builder ./home/dvl/dvlw/dvlp/kernels ./home/dvl/dvlw/dvlp/kernels
-RUN sudo rm -rf /var/cache/apt/archives/
+# RUN sudo rm -rf /var/cache/apt/archives/
 # RUN sudo apt-get clean all && \
 #     sudo apt-get autoremove --purge
-WORKDIR /hel
+WORKDIR /home/dvl
 USER dvl
 
 #################################### GUI ######################################
@@ -435,7 +435,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NONINTERACTIVE_SEEN=true
 WORKDIR /
 COPY --from=dvlp_kernel-build ./ ./
-WORKDIR /hel
+WORKDIR /home/dvl
 RUN \
     --mount=type=cache,target=/var/cache/curl,sharing=locked \
     sudo apt-get -y install curl
@@ -517,8 +517,8 @@ FROM dvlp_kernel-builder AS dvlp_gui-plus
 WORKDIR /
 USER agl
 COPY --from=dvlp_gui ./ ./
-RUN sudo rm -rf /var/cache/apt/archives/
-WORKDIR /hel
+# RUN sudo rm -rf /var/cache/apt/archives/
+WORKDIR /home/dvl
 USER dvl
 
 ############################## CUDA ###############################
@@ -535,7 +535,7 @@ RUN \
     sudo apt-get -y install nvidia-cuda-toolkit
 # sudo apt-get clean all && \
 # sudo apt-get autoremove --purge
-WORKDIR /hel
+WORKDIR /home/dvl
 USER dvl
 
 #
@@ -545,7 +545,7 @@ FROM dvlp_gui-plus AS dvlp_cuda-plus
 WORKDIR /
 USER agl
 COPY --from=dvlp_cuda ./ ./
-RUN sudo rm -rf /var/cache/apt/archives/
-WORKDIR /hel
+# RUN sudo rm -rf /var/cache/apt/archives/
+WORKDIR /home/dvl
 USER dvl
 
