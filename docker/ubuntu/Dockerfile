@@ -223,7 +223,7 @@ WORKDIR /
 # COPY --from=dvlp_python-lite ./usr/share ./usr/share 
 # COPY --from=dvlp_python-lite ./var/log ./var/log 
 # COPY --from=dvlp_python-lite ./etc/ld.so.cache ./etc/ld.so.cache
-COPY ./ ./
+COPY --from=dvlp_python-lite ./ ./
 USER god
 RUN rm -rf /cache/apt/archives/
 # RUN pip3 install cdir --user
