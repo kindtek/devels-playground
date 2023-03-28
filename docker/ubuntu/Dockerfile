@@ -357,9 +357,9 @@ USER dvl
 
 ############################### KERNEL #########################################
 #
-# dvlp_kernel - KERNEL BUILDER
+# dvlp_kernel-builder - KERNEL BUILDER
 #
-FROM dvlp_dind-build AS dvlp_kernel-builder
+FROM dvlp_dind AS dvlp_kernel-builder
 # ARG _CONFIG_FILE
 # ARG _AGL
 WORKDIR /
@@ -378,11 +378,10 @@ USER dvl
 # dvlp_kernel-lite - kernel only
 #
 FROM dvlp_dind AS dvlp_kernel-lite
-ARG mnt_data=${mnt_data:-/mnt/data}
 USER agl
 WORKDIR /
 RUN sudo rm -rf /var/cache/apt/archives/
-COPY --from=dvlp_kernel-builder ./hel/dvlw/dvlp/kernels ./hel/dvlw/dvlp/kernels
+COPY --from=dvlp_kernel-plus ./hel/dvlw/dvlp/kernels ./hel/dvlw/dvlp/kernels
 # RUN sudo apt-get clean all && \
 #     sudo apt-get autoremove --purge
 WORKDIR /hel
