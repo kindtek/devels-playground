@@ -153,9 +153,9 @@ WORKDIR /home/dvl
 
 # SKELETON framework
 #
-# dvlp_skel-lite
+# dvlp_skel-build
 #
-FROM dvlp_base AS dvlp_skel-lite
+FROM dvlp_base AS dvlp_skel-build
 ENV DEBIAN_FRONTEND=noninteractive
 ARG mnt_data=${mnt_data:-/mnt/data}
 COPY --from=dvlp_data --chown=dvl:hell ./home/dvl ./home/dvl
@@ -174,7 +174,7 @@ WORKDIR /home/dvl
 #
 # dvlp_skel
 # 
-FROM dvlp_skel-lite AS dvlp_skel
+FROM dvlp_skel-build AS dvlp_skel
 # RUN with agl ownership
 USER agl
 # sudo mv -v ${mnt_data}/bak/custom ${mnt_data}/bak/agl/ && \
@@ -210,9 +210,9 @@ USER dvl
 
 ################################# PYTHON ########################################
 #
-# dvlp_python-lite
+# dvlp_python-build
 #
-FROM dvlp_base AS dvlp_python-lite
+FROM dvlp_base AS dvlp_python-build
 USER agl
 RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -233,20 +233,20 @@ WORKDIR /hel
 #
 # dvlp_python
 #
-FROM dvlp_python-lite AS dvlp_python
+FROM dvlp_python-build AS dvlp_python
 WORKDIR / 
-# COPY --from=dvlp_python-lite ./var/debconf ./var/debconf
-# COPY --from=dvlp_python-lite ./var/ldconfig ./var/ldconfig
-# COPY --from=dvlp_python-lite ./var/lib/apt ./var/lib/apt
-# COPY --from=dvlp_python-lite ./var/lib/dpkg ./var/lib/dpkg
-# COPY --from=dvlp_python-lite ./var/lib/ucf ./var/lib/ucf 
-# COPY --from=dvlp_python-lite ./lib/apt ./lib/apt
-# COPY --from=dvlp_python-lite ./run/sudo ./run/sudo
-# COPY --from=dvlp_python-lite ./usr/lib ./usr/lib 
-# COPY --from=dvlp_python-lite ./usr/share ./usr/share 
-# COPY --from=dvlp_python-lite ./var/log ./var/log 
-# COPY --from=dvlp_python-lite ./etc/ld.so.cache ./etc/ld.so.cache
-COPY --from=dvlp_python-lite ./ ./
+# COPY --from=dvlp_python-build ./var/debconf ./var/debconf
+# COPY --from=dvlp_python-build ./var/ldconfig ./var/ldconfig
+# COPY --from=dvlp_python-build ./var/lib/apt ./var/lib/apt
+# COPY --from=dvlp_python-build ./var/lib/dpkg ./var/lib/dpkg
+# COPY --from=dvlp_python-build ./var/lib/ucf ./var/lib/ucf 
+# COPY --from=dvlp_python-build ./lib/apt ./lib/apt
+# COPY --from=dvlp_python-build ./run/sudo ./run/sudo
+# COPY --from=dvlp_python-build ./usr/lib ./usr/lib 
+# COPY --from=dvlp_python-build ./usr/share ./usr/share 
+# COPY --from=dvlp_python-build ./var/log ./var/log 
+# COPY --from=dvlp_python-build ./etc/ld.so.cache ./etc/ld.so.cache
+COPY --from=dvlp_python-build ./ ./
 
 # RUN \
 #     --mount=type=cache,target=/var/cache/pip \
@@ -255,9 +255,9 @@ WORKDIR /hel
 
 ############################# POWERHELL #########################################
 #
-# dvlp_msdot-lite
+# dvlp_msdot-build
 #
-FROM dvlp_base AS dvlp_msdot-lite
+FROM dvlp_base AS dvlp_msdot-build
 USER agl
 RUN sudo apt-get -y install lsb-release wget
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
@@ -284,7 +284,7 @@ USER dvl
 
 FROM dvlp_python AS dvlp_msdot
 WORKDIR /
-COPY --from=dvlp_msdot-lite ./ ./
+COPY --from=dvlp_msdot-build ./ ./
 USER agl
 RUN sudo rm -rf /var/cache/apt/archives/
 WORKDIR /hel
@@ -292,9 +292,9 @@ USER dvl
 
 ########################## DOCKER IN DOCKER ######################################
 #
-# dvlp_dind-lite
+# dvlp_dind-build
 #
-FROM dvlp_base AS dvlp_dind-lite
+FROM dvlp_base AS dvlp_dind-build
 USER root
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
 RUN sudo apt-get -y install lsb-release curl gpg
@@ -321,7 +321,7 @@ USER dvl
 #
 FROM dvlp_msdot AS dvlp_dind
 WORKDIR /
-COPY --from=dvlp_dind-lite ./ ./
+COPY --from=dvlp_dind-build ./ ./
 USER agl
 RUN sudo rm -rf /var/cache/apt/archives/
 WORKDIR /hel
@@ -374,9 +374,9 @@ WORKDIR /hel
 USER dvl
 
 #
-# dvlp_kernel-lite - kernel only
+# dvlp_kernel-build - kernel only
 #
-FROM dvlp_dind-lite AS dvlp_kernel-lite
+FROM dvlp_dind-build AS dvlp_kernel-build
 ARG mnt_data=${mnt_data:-/mnt/data}
 USER agl
 WORKDIR /
@@ -396,7 +396,7 @@ FROM dvlp_base AS dvlp_gui
 USER root
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /
-COPY --from=dvlp_kernel-lite ./ ./
+COPY --from=dvlp_kernel-build ./ ./
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
 RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
