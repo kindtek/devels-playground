@@ -2,24 +2,6 @@
   "folders": [
     {
       "path": "."
-    },
-    {
-      "path": "../dvlw/dvpg"
-    },
-    {
-      "path": "../dvlw/dvpg/docker/ubuntu"
-    },
-    {
-      "path": "../dvlw/dvpg/linux"
-    },
-    {
-      "path": "../dls"
-    },
-    {
-      "path": "../../hel"
-    },
-    {
-      "path": "../dvlw/dvpg/mnt"
     }
   ],
   "settings": {}
