@@ -42,8 +42,9 @@ RUN \
     echo "[user]\ndefault=dvl" >> /etc/wsl.conf && \
     apt-get -y install sudo && \
     usermod -aG sudo agl && \
-    usermod -aG sudo  god && \
-    rm -rf /var/cache
+    usermod -aG sudo  god 
+    # && \
+    # rm -rf /var/cache/apt/archive
 
 # god permissions/volume builder
 FROM dvlp_init AS dvlp_god
