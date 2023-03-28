@@ -454,7 +454,7 @@ RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg a
 #     --mount=type=cache,target=/var/cache/apt,sharing=locked \
 #     sudo apt-get install -y 
 RUN \
-    # --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get update
     RUN sudo apt-get install -y brave-browser
     RUN sudo apt-get install -y locales
