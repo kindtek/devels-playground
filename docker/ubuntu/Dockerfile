@@ -271,12 +271,13 @@ RUN \
     sudo wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
 RUN \
     --mount=type=cache,target=/var/cache/deb \
-    sudo dpkg -i packages-microsoft-prod.deb && \
-    sudo rm packages-microsoft-prod.deb
+    sudo dpkg -i packages-microsoft-prod.deb
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y update && \
-    sudo apt-get -y install powershell dotnet-sdk-7.0
+    sudo apt-get -y install powershell dotnet-sdk-7.0 && \
+    sudo rm packages-microsoft-prod.deb
+
 # RUN sudo apt-get -y remove lsb_release
 # sudo apt-get clean all && \
 # sudo apt-get autoremove --purge
