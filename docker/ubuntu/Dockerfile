@@ -373,7 +373,7 @@ ARG _CONFIG_FILE
 WORKDIR /
 COPY --from=dvlp_kernel-build ./ ./
 WORKDIR /hel/dvlp/kernels/ubuntu
-USER agl
+USER god
 RUN sudo rm -rf /var/cache/apt/archives/
 SHELL ["/bin/bash", "-c"]
 # RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
