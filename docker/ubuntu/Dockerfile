@@ -439,26 +439,26 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /
 COPY --from=dvlp_kernel-build ./ ./
 WORKDIR /hel
-RUN \
-    --mount=type=cache,target=/var/cache/curl,sharing=locked \
-    sudo apt-get -y install curl
-RUN \
-    sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
-RUN \
-    --mount=type=cache,target=/var/cache/curl \
-    # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
-    sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg 
-RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
 # RUN \
-#     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-#     sudo apt-get install -y 
+#     --mount=type=cache,target=/var/cache/curl,sharing=locked \
+#     sudo apt-get -y install curl
 # RUN \
-#     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-#     sudo apt-get update
-RUN \
-    --mount=type=cache,target=/var/cache/curl,sharing=locked \
-     sudo apt-get install -y brave-browser
+#     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
+#     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
+# RUN \
+#     --mount=type=cache,target=/var/cache/curl \
+#     # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
+#     sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg 
+# RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+# # RUN \
+# #     --mount=type=cache,target=/var/cache/apt,sharing=locked \
+# #     sudo apt-get install -y 
+# # RUN \
+# #     --mount=type=cache,target=/var/cache/apt,sharing=locked \
+# #     sudo apt-get update
+# RUN \
+#     --mount=type=cache,target=/var/cache/curl,sharing=locked \
+#      sudo apt-get install -y brave-browser
     RUN sudo apt-get install -y locales
     RUN sudo apt-get install -y gimp  
     RUN sudo apt-get install -y gedit 
