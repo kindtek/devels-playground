@@ -208,9 +208,14 @@ RUN \
     --mount=type=cache,target=/var/cache/pip \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps
+RUN pip3 install cdir --user
+USER god
+# RUN rm -rf /cache/apt/archives/
+RUN pip3 install cdir --user
+USER dvl
+RUN pip3 install cdir --user
 # sudo apt-get autoremove --purge
 WORKDIR /hel
-USER dvl
 
 FROM dvlp_python-lite AS dvlp_python
 WORKDIR / 
@@ -226,13 +231,7 @@ WORKDIR /
 # COPY --from=dvlp_python-lite ./var/log ./var/log 
 # COPY --from=dvlp_python-lite ./etc/ld.so.cache ./etc/ld.so.cache
 COPY --from=dvlp_python-lite ./ ./
-USER god
-# RUN rm -rf /cache/apt/archives/
-RUN pip3 install cdir --user
-USER agl
-RUN pip3 install cdir --user
-USER dvl
-RUN pip3 install cdir --user
+
 # RUN \
 #     --mount=type=cache,target=/var/cache/pip \
 #     pip3 install cdir --user
@@ -254,7 +253,7 @@ RUN \
 RUN \
     --mount=type=cache,target=/var/cache/deb \
     sudo dpkg -i packages-microsoft-prod.deb
-RUN sudo rm packages-microsoft-prod.deb 
+RUN sudo rm packages-microsoft-prod.deb
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y update && \
@@ -446,7 +445,7 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true"' | sudo tee /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -y install nvidia-cuda-toolkit 
+    sudo apt-get -y install nvidia-cuda-toolkit
 # sudo apt-get clean all && \
 # sudo apt-get autoremove --purge
 WORKDIR /hel
@@ -454,7 +453,9 @@ USER dvl
 
 FROM dvlp_gui-plus AS dvlp_cuda-plus
 WORKDIR /
+USER agl
 COPY --from=dvlp_cuda ./ ./
+# RUN sudo rm -rf /var/cache/apt/archives/
 WORKDIR /hel
 USER dvl
 
