@@ -199,7 +199,7 @@ RUN \
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y install apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv
-USER agl
+USER dvl
 RUN \
     --mount=type=cache,target=/var/cache/pip \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
