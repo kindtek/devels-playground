@@ -285,16 +285,16 @@ services:
 #     #       - _AGL_USR=${_AGL:-agl}
 #     #     labels:
 #     #       com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
-# volumes:
-#   hell-data:
-#   halo-data:
-#   mnt-data:
-#   dls-data:
-#   god-data:
-#   gdi-data:
+volumes:
+  hell-data:
+  halo-data:
+  mnt-data:
+  dls-data:
+  god-data:
+  gdi-data:
 
 
-# networks:
-#   "${COMPOSE_PROJECT_NAME}_default":
-#     driver: overlay
-#     attachable: true
+networks:
+  "${COMPOSE_PROJECT_NAME}_default":
+    driver: overlay
+    attachable: true
