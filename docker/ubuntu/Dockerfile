@@ -311,8 +311,8 @@ RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/doc
 # "experimental": "enabled"' | sudo tee --append /home/dvl/.docker/config.json 
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -y update && sudo apt-get -y install docker-compose-plugin docker-ce docker-ce-cli containerd.io 
-# sudo apt-get remove -y lsb-release && \
+    sudo apt-get -y update && sudo apt-get -y install docker-compose-plugin docker-ce docker-ce-cli containerd.io && \
+    sudo apt-get remove -y lsb-release
 # sudo apt-get clean all && \
 # sudo apt-get autoremove --purge
 WORKDIR /hel
