@@ -513,7 +513,6 @@ FROM dvlp_kernel-builder AS dvlp_gui-plus
 WORKDIR /
 USER agl
 COPY --from=dvlp_gui ./ ./
-RUN sudo rm -rf /var/cache/apt/archives/
 WORKDIR /hel
 USER dvl
 
