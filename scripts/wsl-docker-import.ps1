@@ -154,8 +154,8 @@ function dev_boilerplate {
 
         }
 
-        $save_location=${mount_drive}/$save_directory
-        $install_location=$save_location/$install_directory
+        $save_location="${mount_drive}/$save_directory"
+        $install_location="$save_location/$install_directory"
         # special rule for official distro
         if ($image_repo -eq "_") {
             $distro=official-$install_directory
@@ -171,7 +171,7 @@ function dev_boilerplate {
         
         $distro=$distro.Replace('/', '-')
         $distro=$distro.Replace(':', '-')
-        $image_save_path=$save_location/$distro.tar
+        $image_save_path="$save_location/$distro.tar"
         $wsl_version_prompt=Read-Host  "WSL version: (2) $ "
         if ($wsl_version_prompt -ne "") {
             $wsl_version=$wsl_version_prompt
@@ -199,7 +199,7 @@ function dev_boilerplate {
     Write-Host "before-install_location=$install_location"
 
     # now that we have container id, append it to install location and distro
-    $install_location=$install_location-$WSL_DOCKER_CONTAINER_ID
+    $install_location="$install_location-$WSL_DOCKER_CONTAINER_ID"
     Write-Host "after-install_location=$install_location"
 
     Write-Host "distro=$distro"
