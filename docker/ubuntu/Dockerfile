@@ -456,7 +456,14 @@ RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg a
 RUN \
     # --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get update && \
-    sudo apt-get install -y brave-browser locales gimp gedit nautilus vlc x11-apps xfce4 
+    sudo apt-get install -y brave-browser && \
+    sudo apt-get install -y locales  && \
+    sudo apt-get install -y gimp  && \
+    sudo apt-get install -y gedit  && \
+    sudo apt-get install -y nautilus  && \
+    sudo apt-get install -y vlc  && \
+    sudo apt-get install -y x11-apps  && \
+    sudo apt-get install -y xfce4 
     # sudo apt-get install -y locales brave-browser gimp gedit nautilus vlc x11-apps xfce4
 RUN sudo update-locale && \
     echo "LANG=en_US.UTF-8" | sudo tee -a /etc/locale.gen && \
