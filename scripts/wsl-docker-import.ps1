@@ -288,7 +288,7 @@ function docker_container_start {
     Write-Host "this container is running as a local copy of the image $image_repo_image_name"
     Write-Host "`r`n"
     
-    Write-Host "docker run -id --cidfile=$docker_container_id_path --name=$distro-$WSL_DOCKER_IMG_ID --sig-proxy=false $WSL_DOCKER_IMG_ID"
+    Write-Host "docker run -i- d --cidfile=$docker_container_id_path --name=$distro-$WSL_DOCKER_IMG_ID --sig-proxy=false $WSL_DOCKER_IMG_ID"
     docker run -id --cidfile=$docker_container_id_path --name=$distro-$WSL_DOCKER_IMG_ID --sig-proxy=false $WSL_DOCKER_IMG_ID    
 
     # ECHO exporting image (!WSL_DOCKER_IMG_ID!) as container (!WSL_DOCKER_CONTAINER_ID!)...
@@ -320,7 +320,7 @@ function docker_container_start {
         $host.UI.RawUI.ForegroundColor="Cyan"  
         # Write-Host "`r`ndocker attach `"$WSL_DOCKER_CONTAINER_ID`"`r`n`r`n"  
         # docker attach $WSL_DOCKER_CONTAINER_ID
-        Write-Host "`r`n        docker exec -it $WSL_DOCKER_CONTAINER_ID_LONG bash
+        Write-Host "`r`n        docker exec -i -t $WSL_DOCKER_CONTAINER_ID_LONG bash
 "
         docker exec -it $WSL_DOCKER_CONTAINER_ID_LONG bash
     }
