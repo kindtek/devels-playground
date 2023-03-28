@@ -397,6 +397,7 @@ USER root
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /
 COPY --from=dvlp_kernel-build ./ ./
+WORKDIR /hel
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
 RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -410,54 +411,37 @@ RUN \
     sudo apt-get -y install x11-apps xfce4
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -y install locales && sudo update-locale locales && \
+    sudo apt-get -y install locales && sudo update-locale locales
+RUN \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    sudo apt-get install -y locales brave-browser gimp gedit nautilus vlc
+RUN sudo update-locale && \
     echo "LANG=en_US.UTF-8" | sudo tee -a /etc/locale.gen && \
-    sudo locale-gen
-# RUN \
-# --mount=type=cache,target=/var/cache/apt,sharing=locked \
-# sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo apt-get -y install lightdm gnome-session
-# RUN \
-# sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo dpkg-reconfigure lightdm
-# RUN \
-#     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-#     sudo dpkg-reconfigure --frontend noninteractive locales && \
-#     echo "/usr/sbin/lightdm" | sudo tee /etc/X11/default-display-manager 
-# RUN echo "set shared/default-x-display-manager lightdm" | sudo debconf-communicate && \
-#     sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get install -y locales && sudo update-locale locales
-# in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
-# in order to get 'brave-browser' to work you may need to run 'brave-browser --disable-gpu'
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -yq update&& \
-    sudo apt-get -y install brave-browser
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -y install  gimp 
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -y install gedit 
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -y install nautilus 
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -y install vlc 
-RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
+    sudo locale-gen && \
+    sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
     # change last line of this file - fix for brave-browser displaying empty windows
     head -n -1 /opt/brave.com/brave/brave-browser.old | sudo tee /opt/brave.com/brave/brave-browser > /dev/null && \
     # now no longeer need to add --disable-gpu flag everytime
     echo '"$HERE/brave" "$@" " --disable-gpu " || true' | sudo tee --append /opt/brave.com/brave/brave-browser > /dev/null
-# # this is a better way to do this but needs work
-# # cd /opt/brave.com/brave && \
-# # brave_old_line='\"\$HERE\/brave\"\s\"\$\@\"\s\|\|\strue' && \
-# # brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
-# # sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl && \
-# # sudo apt-get clean all && \
-# # sudo apt-get autoremove --purge
-WORKDIR /hel
+    # # # this is a better way to do this but needs work
+    # # # cd /opt/brave.com/brave && \
+    # # # brave_old_line='\"\$HERE\/brave\"\s\"\$\@\"\s\|\|\strue' && \
+    # # # brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
+    # # # sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl && \
+    # # # sudo apt-get clean all && \
+    # # # sudo apt-get autoremove --purge
+    # # stuff to try to make gimp install without interaction
+# # RUN \
+# # --mount=type=cache,target=/var/cache/apt,sharing=locked \
+# # sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo apt-get -y install lightdm gnome-session
+# # RUN \
+# # sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo dpkg-reconfigure lightdm
+# # RUN \
+# #     --mount=type=cache,target=/var/cache/apt,sharing=locked \
+# #     sudo dpkg-reconfigure --frontend noninteractive locales && \
+# #     echo "/usr/sbin/lightdm" | sudo tee /etc/X11/default-display-manager 
+# # RUN echo "set shared/default-x-display-manager lightdm" | sudo debconf-communicate && \
+# #     sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
 USER dvl
 
 #
