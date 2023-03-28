@@ -204,7 +204,7 @@ USER dvl
 FROM dvlp_base AS dvlp_git
 COPY --from=dvlp_skel ./ ./
 USER agl
-# RUN sudo rm -rf /var/cache/apt/archives/
+RUN sudo rm -rf /var/cache/apt/archives/
 USER dvl
 
 ################################# PYTHON ########################################
@@ -222,7 +222,7 @@ RUN pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps
 RUN pip3 install cdir --user
 USER god
-# RUN rm -rf /cache/apt/archives/
+RUN rm -rf /cache/apt/archives/
 RUN pip3 install cdir --user
 USER dvl
 RUN pip3 install cdir --user
@@ -285,7 +285,7 @@ FROM dvlp_python AS dvlp_msdot
 WORKDIR /
 COPY --from=dvlp_msdot-lite ./ ./
 USER agl
-# RUN sudo rm -rf /var/cache/apt/archives/
+RUN sudo rm -rf /var/cache/apt/archives/
 WORKDIR /hel
 USER dvl
 
@@ -327,7 +327,7 @@ FROM dvlp_msdot AS dvlp_dind
 WORKDIR /
 COPY --from=dvlp_dind-lite ./ ./
 USER agl
-# RUN sudo rm -rf /var/cache/apt/archives/
+RUN sudo rm -rf /var/cache/apt/archives/
 WORKDIR /hel
 USER dvl
 
@@ -369,7 +369,7 @@ WORKDIR /
 COPY --from=dvlp_kernel ./ ./
 WORKDIR /hel/dvlp/kernels/ubuntu
 USER agl
-# RUN sudo rm -rf /var/cache/apt/archives/
+RUN sudo rm -rf /var/cache/apt/archives/
 SHELL ["/bin/bash", "-c"]
 # RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
 # RUN sudo bash build-basic-wsl-kernel.sh ${_CONFIG_FILE} agl
@@ -384,7 +384,7 @@ FROM dvlp_dind-lite AS dvlp_kernel-lite
 ARG mnt_data=${mnt_data:-/mnt/data}
 USER agl
 WORKDIR /
-# RUN sudo rm -rf /var/cache/apt/archives/
+RUN sudo rm -rf /var/cache/apt/archives/
 # COPY --from=dvlp_kernel-plus ./hel/dvlw/dvlp/kernels ./hel/dvlw/dvlp/kernels
 # RUN sudo apt-get clean all && \
 #     sudo apt-get autoremove --purge
@@ -471,7 +471,7 @@ FROM dvlp_kernel-plus AS dvlp_gui-plus
 WORKDIR /
 USER agl
 COPY --from=dvlp_gui ./ ./
-# RUN sudo rm -rf /var/cache/apt/archives/
+RUN sudo rm -rf /var/cache/apt/archives/
 WORKDIR /hel
 USER dvl
 
@@ -499,7 +499,7 @@ FROM dvlp_gui-plus AS dvlp_cuda-plus
 WORKDIR /
 USER agl
 COPY --from=dvlp_cuda ./ ./
-# RUN sudo rm -rf /var/cache/apt/archives/
+RUN sudo rm -rf /var/cache/apt/archives/
 WORKDIR /hel
 USER dvl
 
