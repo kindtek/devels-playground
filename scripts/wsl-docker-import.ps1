@@ -204,7 +204,7 @@ function dev_boilerplate {
 
     Write-Host "distro=$distro"
     # update image id and container id path for later ref
-    $distro=$distro-$WSL_DOCKER_CONTAINER_ID
+    $distro="$distro-$WSL_DOCKER_CONTAINER_ID"
     Write-Host "distro=$distro"
 
     export_image $install_location $save_location $distro $WSL_DOCKER_CONTAINER_ID
@@ -325,8 +325,8 @@ function docker_container_start {
         docker exec -it $WSL_DOCKER_CONTAINER_ID_LONG bash
     }
 
-    $docker_img_cont_old_name=$distro-$WSL_DOCKER_IMG_ID
-    $docker_img_cont_new_name=$distro-$WSL_DOCKER_CONTAINER_ID
+    $docker_img_cont_old_name="$distro-$WSL_DOCKER_IMG_ID"
+    $docker_img_cont_new_name="$distro-$WSL_DOCKER_CONTAINER_ID"
     # Write-Host docker rename $docker_img_cont_old_name $docker_img_cont_new_name
     # docker rename $docker_img_cont_old_name $docker_img_cont_new_name
 
@@ -347,7 +347,7 @@ function export_image {
     # ECHO exporting image (!WSL_DOCKER_IMG_ID!) as container (!WSL_DOCKER_CONTAINER_ID!)...
     # ECHO docker export !WSL_DOCKER_CONTAINER_ID! ^> !image_save_path!
     # docker export !WSL_DOCKER_CONTAINER_ID! > !image_save_path!
-    $image_save_path=$save_location/$distro.tar
+    $image_save_path="$save_location/$distro.tar"
     Write-Host "exporting image as container ($WSL_DOCKER_CONTAINER_ID) into .tar file..."
     Write-Host "docker export $WSL_DOCKER_CONTAINER_ID > $image_save_path"
     Write-Host "this may take a while..."
