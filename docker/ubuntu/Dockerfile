@@ -233,7 +233,7 @@ WORKDIR /hel
 #
 # dvlp_python
 #
-FROM dvlp_python-build AS dvlp_python
+FROM dvlp_git AS dvlp_python
 WORKDIR / 
 # COPY --from=dvlp_python-build ./var/debconf ./var/debconf
 # COPY --from=dvlp_python-build ./var/ldconfig ./var/ldconfig
@@ -247,7 +247,8 @@ WORKDIR /
 # COPY --from=dvlp_python-build ./var/log ./var/log 
 # COPY --from=dvlp_python-build ./etc/ld.so.cache ./etc/ld.so.cache
 COPY --from=dvlp_python-build ./ ./
-
+USER agl
+RUN sudo rm -rf /var/cache/apt/archives/
 # RUN \
 #     --mount=type=cache,target=/var/cache/pip \
 #     pip3 install cdir --user
@@ -334,7 +335,7 @@ USER dvl
 #
 # KERNEL
 #
-FROM dvlp_base AS dvlp_kernel
+FROM dvlp_base AS dvlp_kernel-build
 USER agl
 # RUN echo exit 0 > /usr/sbin/policy-rc.d 
 RUN \
@@ -356,13 +357,13 @@ USER dvl
 
 ############################### KERNEL #########################################
 #
-# dvlp_kernel-plus - KERNEL BUILDER
+# dvlp_kernel - KERNEL BUILDER
 #
-FROM dvlp_dind-plus AS dvlp_kernel-plus
+FROM dvlp_dind-build AS dvlp_kernel-builder
 # ARG _CONFIG_FILE
 # ARG _AGL
 WORKDIR /
-COPY --from=dvlp_kernel ./ ./
+COPY --from=dvlp_kernel-build ./ ./
 WORKDIR /hel/dvlp/kernels/ubuntu
 USER agl
 RUN sudo rm -rf /var/cache/apt/archives/
@@ -374,14 +375,14 @@ WORKDIR /hel
 USER dvl
 
 #
-# dvlp_kernel-build - kernel only
+# dvlp_kernel-lite - kernel only
 #
-FROM dvlp_dind-build AS dvlp_kernel-build
+FROM dvlp_dind AS dvlp_kernel-lite
 ARG mnt_data=${mnt_data:-/mnt/data}
 USER agl
 WORKDIR /
 RUN sudo rm -rf /var/cache/apt/archives/
-# COPY --from=dvlp_kernel-plus ./hel/dvlw/dvlp/kernels ./hel/dvlw/dvlp/kernels
+COPY --from=dvlp_kernel-builder ./hel/dvlw/dvlp/kernels ./hel/dvlw/dvlp/kernels
 # RUN sudo apt-get clean all && \
 #     sudo apt-get autoremove --purge
 WORKDIR /hel
