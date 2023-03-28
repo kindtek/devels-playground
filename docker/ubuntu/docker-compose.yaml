@@ -201,7 +201,7 @@ services:
       context: .
       target: dvlp_python
     labels:
-      com.dvl-playg.description: "basics + git + powerhell"
+      com.dvl-playg.description: "basics + git"
 
   msdot:
     extends: git
