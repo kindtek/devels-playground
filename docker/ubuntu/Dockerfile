@@ -443,7 +443,7 @@ USER agl
 # CUDA
 RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true"' > /etc/apt/apt.conf.d/keep-cache
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true"' | sudo tee /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y install nvidia-cuda-toolkit 
