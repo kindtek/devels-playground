@@ -20,13 +20,14 @@ function dev_boilerplate {
     # mask=human readable - ie 'official' not '_'
     # $image_repo_mask="official"
     # $image_name="ubuntu:latest"
-    $image_repo=$image_repo_mask=kindtek
-    $image_name=dvlp:ubuntu-dind
-    $mount_drive_letter=c
-    $unix_mount_drive=/mnt/$mount_drive_letter
+    $image_repo_mask="kindtek"
+    $image_repo=$image_repo_mask
+    $image_name="dvlp:ubuntu-dind"
+    $mount_drive_letter="c"
+    $unix_mount_drive="/mnt/$mount_drive_letter"
     $windows_mount_drive="${mount_drive_letter}:"
     $mount_drive=$unix_mount_drive # default
-    $save_directory=docker2wsl
+    $save_directory="docker2wsl"
     $wsl_version="1"
     Write-Host "$([char]27)[2J"
 
