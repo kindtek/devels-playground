@@ -152,10 +152,10 @@ COPY --from=dvlp_data --chown=dvl:hell ./home/dvl ./home/dvl
 COPY --from=dvlp_data --chown=agl:halo ./home/agl ./home/agl
 COPY --from=dvlp_data --chown=god:rootg ./home/god ./home/god
 COPY --from=dvlp_data --chown=agl:halo .${mnt_data} .${mnt_data}
-COPY --from=dvlp_data ./home/dvl/dvlw/dvlp/mnt/. .${mnt_data}
-COPY --from=dvlp_data ./home/dvl/dvlw/dvlp/mnt/home/gh-auth-first-time-login.sh /home/dvl/gh-auth-first-time-login.sh
-COPY --from=dvlp_data ./home/dvl/dvlw/dvlp/mnt/home/gh-auth-first-time-login.sh /home/agl/gh-auth-first-time-login.sh
-COPY --from=dvlp_data ./home/dvl/dvlw/dvlp/mnt/home/gh-auth-first-time-login.sh /home/god/gh-auth-first-time-login.sh
+COPY --from=dvlp_data /home/dvl/dvlw/dvlp/mnt/. .${mnt_data}
+COPY --from=dvlp_data /home/dvl/dvlw/dvlp/mnt/home/gh-auth-first-time-login.sh /home/dvl/gh-auth-first-time-login.sh
+COPY --from=dvlp_data /home/dvl/dvlw/dvlp/mnt/home/gh-auth-first-time-login.sh /home/agl/gh-auth-first-time-login.sh
+COPY --from=dvlp_data /home/dvl/dvlw/dvlp/mnt/home/gh-auth-first-time-login.sh /home/god/gh-auth-first-time-login.sh
 USER root
 RUN chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh
 USER dvl
@@ -191,7 +191,7 @@ USER dvl
 FROM dvlp_base AS dvlp_git
 COPY --from=dvlp_skel ./ ./
 USER agl
-RUN sudo rm -rf /var/cache/apt/archives/
+# RUN sudo rm -rf /var/cache/apt/archives/
 USER dvl
 
 # PYTHON stuff
@@ -227,7 +227,7 @@ WORKDIR /
 # COPY --from=dvlp_python-lite ./etc/ld.so.cache ./etc/ld.so.cache
 COPY --from=dvlp_python-lite ./ ./
 USER god
-RUN rm -rf /cache/apt/archives/
+# RUN rm -rf /cache/apt/archives/
 RUN pip3 install cdir --user
 USER agl
 RUN pip3 install cdir --user
@@ -269,7 +269,7 @@ FROM dvlp_python AS dvlp_msdot
 WORKDIR /
 COPY --from=dvlp_msdot-lite ./ ./
 USER agl
-RUN sudo rm -rf /var/cache/apt/archives/
+# RUN sudo rm -rf /var/cache/apt/archives/
 WORKDIR /hel
 USER dvl
 
@@ -305,7 +305,7 @@ FROM dvlp_msdot AS dvlp_dind
 WORKDIR /
 COPY --from=dvlp_dind-lite ./ ./
 USER agl
-RUN sudo rm -rf /var/cache/apt/archives/
+# RUN sudo rm -rf /var/cache/apt/archives/
 WORKDIR /hel
 USER dvl
 
@@ -342,7 +342,7 @@ WORKDIR /
 COPY --from=dvlp_kernel ./ ./
 WORKDIR /hel/dvlp/kernels/ubuntu
 USER agl
-RUN sudo rm -rf /var/cache/apt/archives/
+# RUN sudo rm -rf /var/cache/apt/archives/
 SHELL ["/bin/bash", "-c"]
 # RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
 # RUN sudo bash build-basic-wsl-kernel.sh ${_CONFIG_FILE} agl
@@ -354,7 +354,7 @@ FROM dvlp_dind-lite AS dvlp_kernel-lite
 ARG mnt_data=${mnt_data:-/mnt/data}
 USER agl
 WORKDIR /
-RUN sudo rm -rf /var/cache/apt/archives/
+# RUN sudo rm -rf /var/cache/apt/archives/
 # COPY --from=dvlp_kernel-plus ./hel/dvlw/dvlp/kernels ./hel/dvlw/dvlp/kernels
 # RUN sudo apt-get clean all && \
 #     sudo apt-get autoremove --purge
@@ -434,7 +434,7 @@ FROM dvlp_kernel-plus AS dvlp_gui-plus
 WORKDIR /
 USER agl
 COPY --from=dvlp_gui ./ ./
-RUN sudo rm -rf /var/cache/apt/archives/
+# RUN sudo rm -rf /var/cache/apt/archives/
 WORKDIR /hel
 USER dvl
 
