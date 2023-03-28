@@ -73,9 +73,9 @@ RUN ln -sfv /home/dvl /hel && \
     ln -sv dvlw devels-workshop && \
     ln -sv dvlw/dvlp dvlp && \
     ln -sv dvlw/dvlp/linux linux && \
-    ln -sv dvlw/dvlp/docker/ubuntu udocker && \
-    ln -sv dvlw/dvlp/kernels/ubuntu/x86/amd u64amdkernels && \
-    ln -sv dvlw/dvlp/kernels/ubuntu ukernels && \
+    ln -sv dvlw/dvlp/docker/ubuntu dockeru && \
+    ln -sv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
+    ln -sv dvlw/dvlp/kernels kernels && \
     ln -sv dvlw/dvlp/docker docker && \
     mkdir -m 753 -pv ${mnt_data}/bak/dvl && \
     ln -sv ${mnt_data}/bak/dvl /home/dvl/bak
@@ -217,12 +217,13 @@ USER dvl
 #
 FROM dvlp_base AS dvlp_python-build
 USER agl
+RUN sudo apt-get -y install apt-utils libgirepository1.0-dev pkg-config python3-pip
 RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -y install apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv
+    sudo apt-get -y install jq libdbus-1-3 libdbus-1-dev libcairo2-dev  libpython3-dev python3-venv
 USER dvl
 RUN pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps
@@ -247,6 +248,7 @@ RUN sudo rm -rf /var/cache/apt/archives/
 #     --mount=type=cache,target=/var/cache/pip \
 #     pip3 install cdir --user
 WORKDIR /hel
+USER dvl
 
 ############################# POWERHELL #########################################
 #
@@ -326,7 +328,6 @@ WORKDIR /hel
 USER dvl
 
 FROM dvlp_dind AS dvlp_dind-plus
-USER root
 USER dvl
 
 #
@@ -342,9 +343,12 @@ RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y update && \
     sudo apt-get -y upgrade && \
-    sudo apt-get -y install alien autoconf bison build-essential  dbus-user-session daemonize dwarves \ 
-    fakeroot flex fontconfig gawk libblkid-dev libffi-dev lxcfs libudev-dev libssl-dev libaio-dev libattr1-dev libelf-dev \
-    python3 python3-dev python3-setuptools python3-cffi snapd sysvinit-utils uuid-dev
+    sudo apt-get -y install alien autoconf bison dbus-user-session daemonize dwarves \ 
+    fakeroot flex fontconfig gawk libblkid-dev libffi-dev lxcfs libudev-dev libaio-dev libattr1-dev libelf-dev \
+    python3 python3-dev python3-setuptools python3-cffi sysvinit-utils uuid-dev
+RUN \
+    --mount=type=cache,target=/var/cache/snapd,sharing=locked \
+    sudo apt-get -y install snapd
 # RUN sudo apt-get -y install zfsutils-linux zlib1g-dev zfs-dkms zstd zsys zfs-dracut zfs-zed
 USER agl
 # RUN sudo apt-get clean all && \
@@ -361,48 +365,49 @@ ARG _CONFIG_FILE
 # ARG _AGL
 WORKDIR /
 COPY --from=dvlp_kernel-build ./ ./
-WORKDIR /hel/dvlp/kernels/ubuntu
+WORKDIR /hel/dvlp/kernels/linux
 USER god
-RUN sudo rm -rf /var/cache/apt/archives/
+WORKDIR /home/dvl/dvlw/dvlp/kernels/linux
 SHELL ["/bin/bash", "-c"]
 # RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
-# RUN sudo bash build-basic-wsl-kernel.sh ${_CONFIG_FILE} agl
-RUN cpu_vendor=$(grep -Pom 1 '^vendor_id\s*:\s*\K.*' /proc/cpuinfo); \
-    user_name=dvl; \
-    cpu_arch=$(uname -m); \
-    cpu_arch="${cpu_arch%%_*}"; \
-    if ! [ -d /home/$user_name ]; then $user_name=/home/dvl; fi; \
-    if [ $cpu_vendor = AuthenticAMD ]; then cpu_vendor=amd; fi; \
-    if [ $cpu_vendor = GenuineIntel ]; then cpu_vendor=intel; fi; \
-    linux_version_name="5.15.90.1"; \
-    # replace first . with _ and then remove the rest of the .s
-    linux_version_mask=${linux_version_name/\./\_}; \
-    linux_version_mask=${linux_version_mask//[\.-]/}; \
-    linux_mask=linux-$linux_version_mask; \
-    save_name=linux-$linux_version_mask\_w0; \
-    save_location1=/home/dvl/dvlw/dvlp/kernels/ubuntu/$cpu_arch/$cpu_vendor/$linux_version_mask/$save_name; \
-    save_location2=/home/$user_name/$save_name; \
-    # try to pick the best .config file and default to the one provided by microsoft
-    config_file_default=$cpu_arch/$cpu_vendor/$linux_version_mask/.config_wsl0; \
-    if ! [ -f $config_file_default ]; then config_file_default=/home/dvl/dvlw/dvlp/kernels/ubuntu/$cpu_arch/generic/$linux_version_mask/.config_wsl0; fi; \
-    if ! [ -f $config_file_default ]; then config_file_default=wsl2/Microsoft/config-wsl; fi; \
-    if ! [ -f ${config_file} ]; then cp -fv $config_file_default wsl2/.config; config_file=$config_file_default; else cp -fv ${config_file} wsl2/.config; fi; \
-    config_file=${_CONFIG_FILE:-$config_file_default}; \
-    printf '\n======= Kernel Build Info =========================================================================\n\n\tCPU Architecture:\t%s\n\n\tCPU Vendor:\t\t%s\n\n\tConfiguration File:\n\t\t%s\n\n\tSave Locations:\n\t\t%s\n\t\t%s\n\n===================================================================================================\n' $cpu_arch $cpu_vendor $config_file $save_location1 $save_location2; \
-    git clone https://github.com/microsoft/WSL2-Linux-Kernel.git --progress --depth=1 --single-branch --branch linux-msft-wsl-5.15.90.1; \
-    mv -uv WSL2-Linux-Kernel wsl2; \
-    cd wsl2; \
-    yes "" | make oldconfig && yes "" | make prepare; \
-    yes "" | make -j $(expr $(nproc) - 1); \
-    make modules_install ; \
-    mkdir -pv /home/$user_name/kernels; \
-    mkdir -pv ../$cpu_arch/$cpu_vendor/$save_name; \
-    cp -fv --backup=numbered arch/x86/boot/bzImage /home/$user_name/$save_name; \
-    cp -fv --backup=numbered arch/x86/boot/bzImage /home/dvl/$save_name; \
-    cp -fv --backup=numbered arch/x86/boot/bzImage kernels/ubuntu/$cpu_arch/$cpu_vendor/$linux_version_mask/$save_name ; \
-    cp -fv --backup=numbered .config kernels/ubuntu/$cpu_arch/$cpu_vendor/$linux_version_mask/.config_wsl0; \
-    rm -rf wsl2;
+RUN sudo bash build-basic-wsl-kernel.sh ${_CONFIG_FILE} agl
+# RUN cpu_vendor=$(grep -Pom 1 '^vendor_id\s*:\s*\K.*' /proc/cpuinfo); \
+#     user_name=dvl; \
+#     cpu_arch=$(uname -m); \
+#     cpu_arch="${cpu_arch%%_*}"; \
+#     if ! [ -d /home/$user_name ]; then $user_name=/home/dvl; fi; \
+#     if [ $cpu_vendor = AuthenticAMD ]; then cpu_vendor=amd; fi; \
+#     if [ $cpu_vendor = GenuineIntel ]; then cpu_vendor=intel; fi; \
+#     linux_version_name="5.15.90.1"; \
+#     # replace first . with _ and then remove the rest of the .s
+#     linux_version_mask=${linux_version_name/\./\_}; \
+#     linux_version_mask=${linux_version_mask//[\.-]/}; \
+#     linux_mask=linux-$linux_version_mask; \
+#     save_name=linux-$linux_version_mask\_w0; \
+#     save_location1=/home/dvl/dvlw/dvlp/kernels/linux/$cpu_arch/$cpu_vendor/$linux_version_mask/$save_name; \
+#     save_location2=/home/$user_name/$save_name; \
+#     # try to pick the best .config file and default to the one provided by microsoft
+#     config_file_default=$cpu_arch/$cpu_vendor/$linux_version_mask/.config_wsl0; \
+#     if ! [ -f $config_file_default ]; then config_file_default=/home/dvl/dvlw/dvlp/kernels/linux/$cpu_arch/generic/$linux_version_mask/.config_wsl0; fi; \
+#     if ! [ -f $config_file_default ]; then config_file_default=wsl2/Microsoft/config-wsl; fi; \
+#     if ! [ -f ${config_file} ]; then cp -fv $config_file_default wsl2/.config; config_file=$config_file_default; else cp -fv ${config_file} wsl2/.config; fi; \
+#     config_file=${_CONFIG_FILE:-$config_file_default}; \
+#     printf '\n======= Kernel Build Info =========================================================================\n\n\tCPU Architecture:\t%s\n\n\tCPU Vendor:\t\t%s\n\n\tConfiguration File:\n\t\t%s\n\n\tSave Locations:\n\t\t%s\n\t\t%s\n\n===================================================================================================\n' $cpu_arch $cpu_vendor $config_file $save_location1 $save_location2; \
+#     git clone https://github.com/microsoft/WSL2-Linux-Kernel.git --progress --depth=1 --single-branch --branch linux-msft-wsl-5.15.90.1; \
+#     mv -uv WSL2-Linux-Kernel wsl2; \
+#     cd wsl2; \
+#     yes "" | make oldconfig && yes "" | make prepare; \
+#     yes "" | make -j $(expr $(nproc) - 1); \
+#     make modules_install ; \
+#     mkdir -pv /home/$user_name/kernels; \
+#     mkdir -pv ../$cpu_arch/$cpu_vendor/$save_name; \
+#     cp -fv --backup=numbered arch/x86/boot/bzImage /home/$user_name/$save_name; \
+#     cp -fv --backup=numbered arch/x86/boot/bzImage /home/dvl/$save_name; \
+#     cp -fv --backup=numbered arch/x86/boot/bzImage kernels/linux/$cpu_arch/$cpu_vendor/$linux_version_mask/$save_name ; \
+#     cp -fv --backup=numbered .config kernels/linux/$cpu_arch/$cpu_vendor/$linux_version_mask/.config_wsl0; \
+#     rm -rf wsl2;
 # RUN echo '# sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/agl/.bashrc
+RUN sudo rm -rf /var/cache/apt/archives/
 WORKDIR /hel
 USER dvl
 
@@ -412,8 +417,8 @@ USER dvl
 FROM dvlp_dind AS dvlp_kernel-lite
 USER agl
 WORKDIR /
+COPY --from=dvlp_kernel-builder ./home/dvl/dvlw/dvlp/kernels ./home/dvl/dvlw/dvlp/kernels
 RUN sudo rm -rf /var/cache/apt/archives/
-COPY --from=dvlp_kernel-builder ./hel/dvlw/dvlp/kernels ./hel/dvlw/dvlp/kernels
 # RUN sudo apt-get clean all && \
 #     sudo apt-get autoremove --purge
 WORKDIR /hel
@@ -427,6 +432,7 @@ USER dvl
 FROM dvlp_base AS dvlp_gui
 USER root
 ENV DEBIAN_FRONTEND=noninteractive
+ENV DEBCONF_NONINTERACTIVE_SEEN=true
 WORKDIR /
 COPY --from=dvlp_kernel-build ./ ./
 WORKDIR /hel
@@ -440,18 +446,12 @@ RUN \
 RUN \
     --mount=type=cache,target=/var/cache/curl \
     sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg 
-RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get update && \
-    sudo apt-get install -y locales  
+RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list 
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get update && \
     sudo apt-get install -y brave-browser
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get update && \
+RUN sudo apt-get update && \
     sudo apt-get install -y locales
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
@@ -473,14 +473,14 @@ RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get update && \
     sudo apt-get install -y x11-apps  
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get update && \
-    sudo apt-get install -y xfce4
+# RUN sudo apt-get update && \
+#     export DEBIAN_FRONTEND=noninteractive && \
+#     export DEBCONF_NONINTERACTIVE_SEEN=true && \
+#     sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo apt-get install -y xfce4
 # RUN \
 #     --mount=type=cache,target=/var/cache/apt,sharing=locked \
 #     sudo apt-get install -y xfce4
-    # sudo apt-get install -y locales brave-browser gimp gedit nautilus vlc x11-apps xfce4
+# sudo apt-get install -y locales brave-browser gimp gedit nautilus vlc x11-apps xfce4
 RUN sudo update-locale && \
     echo "LANG=en_US.UTF-8" | sudo tee -a /etc/locale.gen && \
     sudo locale-gen && \

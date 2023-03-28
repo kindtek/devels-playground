@@ -244,7 +244,7 @@ services:
       target: dvlp_kernel-builder
       args:
         - _AGL_USR=${_AGL:-agl}
-        - _CONFIG_FILE=../kernels/ubuntu/x86/generic/.config_wsl0
+        - _CONFIG_FILE=../kernels/linux/x86/generic/.config_wsl0
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
   gui:
