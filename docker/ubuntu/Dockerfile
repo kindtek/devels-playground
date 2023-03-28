@@ -275,9 +275,8 @@ RUN \
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y update && \
-    sudo apt-get -y install powershell dotnet-sdk-7.0 && \
-    sudo rm packages-microsoft-prod.deb
-
+    sudo apt-get -y install powershell dotnet-sdk-7.0 
+RUN sudo rm packages-microsoft-prod.deb
 # RUN sudo apt-get -y remove lsb_release
 # sudo apt-get clean all && \
 # sudo apt-get autoremove --purge
