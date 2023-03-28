@@ -41,7 +41,9 @@ RUN \
     # make dvl default wsl user 
     echo "[user]\ndefault=dvl" >> /etc/wsl.conf && \
     apt-get -y install sudo && \
-    usermod -aG sudo agl god 
+    usermod -aG sudo agl && \
+    usermod -aG sudo  god && \
+    rm -rf /var/cache
 
 # god permissions/volume builder
 FROM dvlp_init AS dvlp_god
