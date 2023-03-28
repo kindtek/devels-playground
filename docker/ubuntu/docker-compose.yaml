@@ -96,7 +96,7 @@ services:
       context: .
       target: dvlp_data
     depends_on:
-      init:
+      base:
         # Wait for the ownership to change
         condition: service_completed_successfully
       base-god:
