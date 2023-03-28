@@ -389,11 +389,11 @@ RUN cpu_vendor=$(grep -Pom 1 '^vendor_id\s*:\s*\K.*' /proc/cpuinfo); \
     linux_version_mask=${linux_version_mask//[\.-]/}; \
     linux_mask=linux-$linux_version_mask; \
     save_name=linux-$linux_version_mask\_w0; \
-    save_location1=/home/dvl/dvl-works/dvlp/kernels/ubuntu/$cpu_arch/$cpu_vendor/$linux_version_mask/$save_name; \
+    save_location1=/home/dvl/dvlw/dvlp/kernels/ubuntu/$cpu_arch/$cpu_vendor/$linux_version_mask/$save_name; \
     save_location2=/home/$user_name/$save_name; \
     # try to pick the best .config file and default to the one provided by microsoft
     config_file_default=$cpu_arch/$cpu_vendor/$linux_version_mask/.config_wsl0; \
-    if ! [ -f $config_file_default ]; then config_file_default=/home/dvl/dvl-works/dvlp/kernels/ubuntu/$cpu_arch/generic/$linux_version_mask/.config_wsl0; fi; \
+    if ! [ -f $config_file_default ]; then config_file_default=/home/dvl/dvlw/dvlp/kernels/ubuntu/$cpu_arch/generic/$linux_version_mask/.config_wsl0; fi; \
     if ! [ -f $config_file_default ]; then config_file_default=wsl2/Microsoft/config-wsl; fi; \
     if ! [ -f ${config_file} ]; then cp -fv $config_file_default wsl2/.config; config_file=$config_file_default; else cp -fv ${config_file} wsl2/.config; fi; \
     config_file=${_CONFIG_FILE:-$config_file_default}; \
