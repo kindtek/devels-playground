@@ -240,17 +240,6 @@ WORKDIR /hel
 #
 FROM dvlp_git AS dvlp_python
 WORKDIR / 
-# COPY --from=dvlp_python-build ./var/debconf ./var/debconf
-# COPY --from=dvlp_python-build ./var/ldconfig ./var/ldconfig
-# COPY --from=dvlp_python-build ./var/lib/apt ./var/lib/apt
-# COPY --from=dvlp_python-build ./var/lib/dpkg ./var/lib/dpkg
-# COPY --from=dvlp_python-build ./var/lib/ucf ./var/lib/ucf 
-# COPY --from=dvlp_python-build ./lib/apt ./lib/apt
-# COPY --from=dvlp_python-build ./run/sudo ./run/sudo
-# COPY --from=dvlp_python-build ./usr/lib ./usr/lib 
-# COPY --from=dvlp_python-build ./usr/share ./usr/share 
-# COPY --from=dvlp_python-build ./var/log ./var/log 
-# COPY --from=dvlp_python-build ./etc/ld.so.cache ./etc/ld.so.cache
 COPY --from=dvlp_python-build ./ ./
 USER agl
 RUN sudo rm -rf /var/cache/apt/archives/
@@ -455,7 +444,39 @@ RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg a
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get update && \
-    sudo apt-get install -y locales brave-browser gimp gedit nautilus vlc x11-apps xfce4
+    sudo apt-get install -y locales  
+RUN \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    sudo apt-get update && \
+    sudo apt-get install -y brave-browser
+RUN \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    sudo apt-get update && \
+    sudo apt-get install -y locales
+RUN \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    sudo apt-get update && \
+    sudo apt-get install -y  gimp  
+RUN \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    sudo apt-get update && \
+    sudo apt-get install -y gedit 
+RUN \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    sudo apt-get update && \
+    sudo apt-get install -y nautilus  
+RUN \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    sudo apt-get update && \
+    sudo apt-get install -y vlc 
+RUN \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    sudo apt-get update && \
+    sudo apt-get install -y x11-apps  
+RUN \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    sudo apt-get update && \
+    sudo apt-get install -y xfce4
 # RUN \
 #     --mount=type=cache,target=/var/cache/apt,sharing=locked \
 #     sudo apt-get install -y xfce4
