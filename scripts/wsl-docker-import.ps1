@@ -24,7 +24,7 @@ function dev_boilerplate {
     $image_name=dvlp:ubuntu-dind
     $mount_drive_letter=c
     $unix_mount_drive=/mnt/$mount_drive_letter
-    $windows_mount_drive=${mount_drive_letter}:
+    $windows_mount_drive="${mount_drive_letter}:"
     $mount_drive=$unix_mount_drive # default
     $save_directory=docker2wsl
     $wsl_version="1"
@@ -48,7 +48,7 @@ function dev_boilerplate {
                 write-host "checking if wsl.exe is recognized"
                 $wsl=@(wsl.exe -l -v)
                 Write-Host "WSL detected"
-                $mount_drive=${unix_mount_drive}/${unix_mount_drive}
+                $mount_drive="/${mount_drive_letter}/${unix_mount_drive}/"
             }
             catch { 
                 Write-Host "WSL NOT detected"
@@ -69,7 +69,7 @@ function dev_boilerplate {
                 write-host "checking if wsl.exe is recognized"
                 $wsl=@(wsl.exe -l -v)
                 Write-Host "WSL detected"
-                $mount_drive=${mount_drive_letter}:${unix_mount_drive}
+                $mount_drive="${mount_drive_letter}:${unix_mount_drive}/"
             }
             catch { 
                 Write-Host "WSL NOT detected"
