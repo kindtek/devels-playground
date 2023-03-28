@@ -273,8 +273,8 @@ function docker_container_start {
     # get single id returned from docker images command
     $WSL_DOCKER_IMG_ID=@(docker images -aq $image_repo_image_name)
     $WSL_DOCKER_IMG_ID=$WSL_DOCKER_IMG_ID[0]
-    $docker_image_id_path=$install_path/.image_id
-    $docker_container_id_path=$install_path/.container_id
+    $docker_image_id_path="$install_path/.image_id"
+    $docker_container_id_path="$install_path/.container_id"
     New-Item -ItemType File -Name .image_id -Value $WSL_DOCKER_IMG_ID -Path $install_path
     # Write-Host $WSL_DOCKER_IMG_ID | Out-File -FilePath $docker_image_id_path
     # ^^^^^^^ image_id saved here ^^^^^^
@@ -305,8 +305,8 @@ function docker_container_start {
     $old_install_path=$install_path
 
     Move-Item -LiteralPath $old_install_path -Destination $new_install_path
-    $docker_image_id_path=$new_install_path/.image_id
-    $docker_container_id_path=$new_install_path/.container_id
+    $docker_image_id_path="$new_install_path/.image_id"
+    $docker_container_id_path="$new_install_path/.container_id"
 
     if ($config -eq "config") {
         
