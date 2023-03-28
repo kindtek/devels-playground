@@ -360,7 +360,7 @@ USER dvl
 # dvlp_kernel-builder - KERNEL BUILDER
 #
 FROM dvlp_dind AS dvlp_kernel-builder
-# ARG _CONFIG_FILE
+ARG _CONFIG_FILE
 # ARG _AGL
 WORKDIR /
 COPY --from=dvlp_kernel-build ./ ./
@@ -371,7 +371,7 @@ SHELL ["/bin/bash", "-c"]
 # RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
 # RUN sudo bash build-basic-wsl-kernel.sh ${_CONFIG_FILE} agl
 RUN cpu_vendor=$(grep -Pom 1 '^vendor_id\s*:\s*\K.*' /proc/cpuinfo); \
-user_name=${2:-dvl}; \
+user_name=dvl; \
 cpu_arch=$(uname -m); \
 cpu_arch="${cpu_arch%%_*}"; \
 if ! [ -d /home/$user_name ]; then $user_name=/home/dvl; fi; \
@@ -390,7 +390,7 @@ config_file_default=$cpu_arch/$cpu_vendor/$linux_version_mask/.config_wsl0; \
 if ! [ -f $config_file_default ]; then config_file_default=/home/dvl/dvl-works/dvlp/kernels/ubuntu/$cpu_arch/generic/$linux_version_mask/.config_wsl0; fi; \
 if ! [ -f $config_file_default ]; then config_file_default=wsl2/Microsoft/config-wsl; fi; \
 if ! [ -f ${config_file} ]; then cp -fv $config_file_default wsl2/.config; config_file=$config_file_default; else cp -fv ${config_file} wsl2/.config; fi; \
-config_file=${1:-$config_file_default}; \
+config_file=${_CONFIG_FILE:-$config_file_default}; \
 printf '\n======= Kernel Build Info =========================================================================\n\n\tCPU Architecture:\t%s\n\n\tCPU Vendor:\t\t%s\n\n\tConfiguration File:\n\t\t%s\n\n\tSave Locations:\n\t\t%s\n\t\t%s\n\n===================================================================================================\n' $cpu_arch $cpu_vendor $config_file $save_location1 $save_location2; \
 git clone https://github.com/microsoft/WSL2-Linux-Kernel.git --progress --depth=1 --single-branch --branch linux-msft-wsl-5.15.90.1; \
 mv -uv WSL2-Linux-Kernel wsl2; \

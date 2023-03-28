@@ -159,7 +159,7 @@ services:
   skel:
     extends: skel-build
     labels:
-      com.dvlp_skel.description: "skeleton"    
+      com.dvlp_skel.description: "skeleton"
   git:
     # owner/group becomes owner of hell-data volume
     extends: skel
@@ -226,14 +226,6 @@ services:
     build:
       context: .
       target: dvlp_kernel-lite
-    labels:
-      com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
-  kernel:
-    extends: git
-    image: kindtek/dvlp:ubuntu-kernel
-    build:
-      context: .
-      target: dvlp_kernel
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
   kernel-build:
