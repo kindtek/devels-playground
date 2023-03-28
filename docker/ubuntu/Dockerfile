@@ -208,18 +208,18 @@ USER dvl
 
 FROM dvlp_python-lite AS dvlp_python
 WORKDIR / 
-USER agl
 # COPY --from=dvlp_python-lite ./usr/sbin ./usr/sbin
+USER agl
 # RUN \
 #     --mount=type=cache,target=/var/cache/pip \
 #     pip3 install cdir --user
 RUN pip3 install cdir --user
-USER dvl
-RUN pip3 install cdir --user
 USER god
 RUN pip3 install cdir --user
-WORKDIR /hel
 USER dvl
+RUN pip3 install cdir --user
+WORKDIR /hel
+
 
 # MICROSOFT stuff
 FROM dvlp_init AS dvlp_msdot-lite
