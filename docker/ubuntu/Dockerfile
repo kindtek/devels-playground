@@ -3,6 +3,10 @@
 # docker compose build   ( ... don't try docker run - permissions built with docker compose are needed )
 ARG DEBIAN_FRONTEND=noninteractive
 
+############################## BASE ####################################
+#
+# dvlp_base
+#
 FROM ubuntu:latest AS dvlp_base
 ARG _AGL_USR=${_AGL_USR:-agl}
 ARG _DVL_USR=${_DVL_USR:-dvl}
@@ -83,7 +87,10 @@ USER dvl
 
 # FROM dvlp_dvl AS dvlp_duser
 
-# DATA helper
+################################### DATA ####################################
+#
+# dvlp_data
+#
 FROM dvlp_base AS dvlp_data
 ARG mnt_data=${mnt_data:-/mnt/data}
 USER root
@@ -145,6 +152,9 @@ USER dvl
 WORKDIR /home/dvl
 
 # SKELETON framework
+#
+# dvlp_skel-lite
+#
 FROM dvlp_base AS dvlp_skel-lite
 ENV DEBIAN_FRONTEND=noninteractive
 ARG mnt_data=${mnt_data:-/mnt/data}
@@ -161,6 +171,9 @@ RUN chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl
 USER dvl
 WORKDIR /home/dvl
 
+#
+# dvlp_skel
+# 
 FROM dvlp_skel-lite AS dvlp_skel
 # RUN with agl ownership
 USER agl
@@ -194,7 +207,10 @@ USER agl
 # RUN sudo rm -rf /var/cache/apt/archives/
 USER dvl
 
-# PYTHON stuff
+################################# PYTHON ########################################
+#
+# dvlp_python-lite
+#
 FROM dvlp_base AS dvlp_python-lite
 USER agl
 RUN \
@@ -213,6 +229,9 @@ RUN pip3 install cdir --user
 # sudo apt-get autoremove --purge
 WORKDIR /hel
 
+#
+# dvlp_python
+#
 FROM dvlp_python-lite AS dvlp_python
 WORKDIR / 
 # COPY --from=dvlp_python-lite ./var/debconf ./var/debconf
@@ -233,8 +252,10 @@ COPY --from=dvlp_python-lite ./ ./
 #     pip3 install cdir --user
 WORKDIR /hel
 
-
-# MICROSOFT stuff
+############################# POWERHELL #########################################
+#
+# dvlp_msdot-lite
+#
 FROM dvlp_base AS dvlp_msdot-lite
 USER agl
 RUN sudo apt-get -y install lsb-release wget
@@ -268,14 +289,17 @@ USER agl
 WORKDIR /hel
 USER dvl
 
-# DOCKER IN DOCKER
+########################## DOCKER IN DOCKER ######################################
+#
+# dvlp_dind-lite
+#
 FROM dvlp_base AS dvlp_dind-lite
 USER root
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
-# RUN \
-# --mount=type=cache,target=/var/cache/apt,sharing=locked \
-#     sudo apt-get -y install lsb-release curl gpg
-RUN sudo apt-get -y install lsb-release curl gpg
+RUN \
+--mount=type=cache,target=/var/cache/apt,sharing=locked \
+    sudo apt-get -y install gpg
+# RUN sudo apt-get -y install lsb-release curl gpg
 # sudo apt-get clean all && \
 RUN sudo mkdir -pv /etc/apt/keyrings
 RUN \
@@ -296,6 +320,9 @@ RUN \
 WORKDIR /hel
 USER dvl
 
+#
+# dvlp_dind
+#
 FROM dvlp_msdot AS dvlp_dind
 WORKDIR /
 COPY --from=dvlp_dind-lite ./ ./
@@ -308,7 +335,9 @@ FROM dvlp_dind AS dvlp_dind-plus
 USER root
 USER dvl
 
-# KERNEL builder
+#
+# KERNEL
+#
 FROM dvlp_base AS dvlp_kernel
 USER agl
 # RUN echo exit 0 > /usr/sbin/policy-rc.d 
@@ -329,7 +358,10 @@ USER agl
 WORKDIR /hel
 USER dvl
 
-# Kernel only
+############################### KERNEL #########################################
+#
+# dvlp_kernel-plus - KERNEL BUILDER
+#
 FROM dvlp_dind-plus AS dvlp_kernel-plus
 # ARG _CONFIG_FILE
 # ARG _AGL
@@ -345,6 +377,9 @@ SHELL ["/bin/bash", "-c"]
 WORKDIR /hel
 USER dvl
 
+#
+# dvlp_kernel-lite - kernel only
+#
 FROM dvlp_dind-lite AS dvlp_kernel-lite
 ARG mnt_data=${mnt_data:-/mnt/data}
 USER agl
@@ -356,7 +391,11 @@ WORKDIR /
 WORKDIR /hel
 USER dvl
 
-# GUI - wsl2 required
+#################################### GUI ######################################
+#
+# dvlp_gui 
+#
+# wsl2 required
 FROM dvlp_base AS dvlp_gui
 USER root
 ENV DEBIAN_FRONTEND=noninteractive
@@ -425,6 +464,9 @@ RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browse
 WORKDIR /hel
 USER dvl
 
+#
+# dvlp_gui-plus
+#
 FROM dvlp_kernel-plus AS dvlp_gui-plus
 WORKDIR /
 USER agl
@@ -433,9 +475,12 @@ COPY --from=dvlp_gui ./ ./
 WORKDIR /hel
 USER dvl
 
+############################## CUDA ###############################
+#
+# dvlp_cuda
+#
 FROM dvlp_base AS dvlp_cuda
 USER agl
-# CUDA
 RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
@@ -447,6 +492,9 @@ RUN \
 WORKDIR /hel
 USER dvl
 
+#
+# dvlp_gui-plus
+#
 FROM dvlp_gui-plus AS dvlp_cuda-plus
 WORKDIR /
 USER agl
