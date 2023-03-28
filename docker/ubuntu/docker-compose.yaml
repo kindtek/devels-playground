@@ -30,7 +30,7 @@ services:
       - hell
     build:
       context: .
-      target: dvlp_god
+      target: dvlp_base-god
     depends_on:
       base:
         condition: service_completed_successfully
@@ -45,7 +45,7 @@ services:
       - halo
     build:
       context: .
-      target: dvlp_agl
+      target: dvlp_base-angel
     depends_on:
       base:
         condition: service_completed_successfully
@@ -57,7 +57,7 @@ services:
       - hell
     build:
       context: .
-      target: dvlp_dvl
+      target: dvlp_base-devel
     depends_on:
       base:
         # Wait for groups to be added
@@ -71,7 +71,7 @@ services:
   #   extends: base-angel
   #   build:
   #     context: .
-  #     target: dvlp_agl
+  #     target: dvlp_base-angel
   #     args:
   #       - _AGL_USR=${_AGL:-angel}
   #   volumes:
@@ -83,7 +83,7 @@ services:
   #   extends: init-dvl
   #   build:
   #     context: .
-  #     target: dvlp_dvl
+  #     target: dvlp_base-devel
   #     args:
   #       - _DVL_USR=${_DVL-:devel}
   #   volumes:

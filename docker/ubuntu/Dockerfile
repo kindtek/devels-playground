@@ -50,14 +50,14 @@ RUN \
     rm -rf /var/cache/apt/archives/*.deb
 
 # god permissions/volume builder
-FROM dvlp_base AS dvlp_god
+FROM dvlp_base AS dvlp_base-god
 USER root
 ARG mnt_data=${mnt_data:-/mnt/data}
 RUN ln -fs /home/god /rootg
 # && \
 #     ln -sv /home/god/bak /mnt/data/bak 
 # agl permissions/volume builder
-FROM dvlp_base AS dvlp_agl
+FROM dvlp_base AS dvlp_base-angel
 USER root
 ARG mnt_data=${mnt_data:-/mnt/data}
 RUN ln -fs /home/agl /hal && \
@@ -65,7 +65,7 @@ RUN ln -fs /home/agl /hal && \
     ln -sv /mnt/data/bak/agl /home/agl/bak
 
 # dvl permissions/volume builder
-FROM dvlp_base AS dvlp_dvl
+FROM dvlp_base AS dvlp_base-devel
 USER root
 WORKDIR /home/dvl
 ARG mnt_data=${mnt_data:-/mnt/data}
@@ -83,9 +83,9 @@ RUN ln -sfv /home/dvl /hel && \
 USER dvl
 
 # build aliases
-# FROM dvlp_agl AS dvlp_auser
+# FROM dvlp_base-angel AS dvlp_auser
 
-# FROM dvlp_dvl AS dvlp_duser
+# FROM dvlp_base-devel AS dvlp_duser
 
 ################################### DATA ####################################
 #
@@ -95,11 +95,11 @@ FROM dvlp_base AS dvlp_data
 ARG mnt_data=${mnt_data:-/mnt/data}
 USER root
 WORKDIR /
-COPY --from=dvlp_dvl --chown=dvl:hell ./home/dvl ./home/dvl
-COPY --from=dvlp_agl --chown=agl:halo ./home/agl ./home/agl
-COPY --from=dvlp_god --chown=god:rootg ./home/god ./home/god
-COPY --from=dvlp_dvl --chown=agl:halo .${mnt_data} .${mnt_data}
-COPY --from=dvlp_agl --chown=agl:halo .${mnt_data} .${mnt_data}
+COPY --from=dvlp_base-devel --chown=dvl:hell ./home/dvl ./home/dvl
+COPY --from=dvlp_base-angel --chown=agl:halo ./home/agl ./home/agl
+COPY --from=dvlp_base-god --chown=god:rootg ./home/god ./home/god
+COPY --from=dvlp_base-devel --chown=agl:halo .${mnt_data} .${mnt_data}
+COPY --from=dvlp_base-angel --chown=agl:halo .${mnt_data} .${mnt_data}
 # copy skel files to dvl
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -127,7 +127,7 @@ RUN \
     chmod -R +x dvlp/mnt/bak
 USER root
 RUN cat dvlp/mnt/home/.bashrc | sudo tee --append /home/god/.bashrc /home/dvl/.bashrc /home/agl/.bashrc /etc/skel/.bashrc && \
-# # add warning for the backup drive
+    # # add warning for the backup drive
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/README_ASAP && \
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/dvl/README_ASAP 
 # if [ -d "${mnt_data}/bak/dvl" ]; then \
@@ -371,40 +371,40 @@ SHELL ["/bin/bash", "-c"]
 # RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
 # RUN sudo bash build-basic-wsl-kernel.sh ${_CONFIG_FILE} agl
 RUN cpu_vendor=$(grep -Pom 1 '^vendor_id\s*:\s*\K.*' /proc/cpuinfo); \
-user_name=dvl; \
-cpu_arch=$(uname -m); \
-cpu_arch="${cpu_arch%%_*}"; \
-if ! [ -d /home/$user_name ]; then $user_name=/home/dvl; fi; \
-if [ $cpu_vendor = AuthenticAMD ]; then cpu_vendor=amd; fi; \
-if [ $cpu_vendor = GenuineIntel ]; then cpu_vendor=intel; fi; \
-linux_version_name="5.15.90.1"; \
-# replace first . with _ and then remove the rest of the .s
-linux_version_mask=${linux_version_name/\./\_}; \
-linux_version_mask=${linux_version_mask//[\.-]/}; \
-linux_mask=linux-$linux_version_mask; \
-save_name=linux-$linux_version_mask\_w0; \
-save_location1=/home/dvl/dvl-works/dvlp/kernels/ubuntu/$cpu_arch/$cpu_vendor/$linux_version_mask/$save_name; \
-save_location2=/home/$user_name/$save_name; \
-# try to pick the best .config file and default to the one provided by microsoft
-config_file_default=$cpu_arch/$cpu_vendor/$linux_version_mask/.config_wsl0; \
-if ! [ -f $config_file_default ]; then config_file_default=/home/dvl/dvl-works/dvlp/kernels/ubuntu/$cpu_arch/generic/$linux_version_mask/.config_wsl0; fi; \
-if ! [ -f $config_file_default ]; then config_file_default=wsl2/Microsoft/config-wsl; fi; \
-if ! [ -f ${config_file} ]; then cp -fv $config_file_default wsl2/.config; config_file=$config_file_default; else cp -fv ${config_file} wsl2/.config; fi; \
-config_file=${_CONFIG_FILE:-$config_file_default}; \
-printf '\n======= Kernel Build Info =========================================================================\n\n\tCPU Architecture:\t%s\n\n\tCPU Vendor:\t\t%s\n\n\tConfiguration File:\n\t\t%s\n\n\tSave Locations:\n\t\t%s\n\t\t%s\n\n===================================================================================================\n' $cpu_arch $cpu_vendor $config_file $save_location1 $save_location2; \
-git clone https://github.com/microsoft/WSL2-Linux-Kernel.git --progress --depth=1 --single-branch --branch linux-msft-wsl-5.15.90.1; \
-mv -uv WSL2-Linux-Kernel wsl2; \
-cd wsl2; \
-yes "" | make oldconfig && yes "" | make prepare; \
-yes "" | make -j $(expr $(nproc) - 1); \
-make modules_install ; \
-mkdir -pv /home/$user_name/kernels; \
-mkdir -pv ../$cpu_arch/$cpu_vendor/$save_name; \
-cp -fv --backup=numbered arch/x86/boot/bzImage /home/$user_name/$save_name; \
-cp -fv --backup=numbered arch/x86/boot/bzImage /home/dvl/$save_name; \
-cp -fv --backup=numbered arch/x86/boot/bzImage kernels/ubuntu/$cpu_arch/$cpu_vendor/$linux_version_mask/$save_name ; \
-cp -fv --backup=numbered .config kernels/ubuntu/$cpu_arch/$cpu_vendor/$linux_version_mask/.config_wsl0; \
-rm -rf wsl2;
+    user_name=dvl; \
+    cpu_arch=$(uname -m); \
+    cpu_arch="${cpu_arch%%_*}"; \
+    if ! [ -d /home/$user_name ]; then $user_name=/home/dvl; fi; \
+    if [ $cpu_vendor = AuthenticAMD ]; then cpu_vendor=amd; fi; \
+    if [ $cpu_vendor = GenuineIntel ]; then cpu_vendor=intel; fi; \
+    linux_version_name="5.15.90.1"; \
+    # replace first . with _ and then remove the rest of the .s
+    linux_version_mask=${linux_version_name/\./\_}; \
+    linux_version_mask=${linux_version_mask//[\.-]/}; \
+    linux_mask=linux-$linux_version_mask; \
+    save_name=linux-$linux_version_mask\_w0; \
+    save_location1=/home/dvl/dvl-works/dvlp/kernels/ubuntu/$cpu_arch/$cpu_vendor/$linux_version_mask/$save_name; \
+    save_location2=/home/$user_name/$save_name; \
+    # try to pick the best .config file and default to the one provided by microsoft
+    config_file_default=$cpu_arch/$cpu_vendor/$linux_version_mask/.config_wsl0; \
+    if ! [ -f $config_file_default ]; then config_file_default=/home/dvl/dvl-works/dvlp/kernels/ubuntu/$cpu_arch/generic/$linux_version_mask/.config_wsl0; fi; \
+    if ! [ -f $config_file_default ]; then config_file_default=wsl2/Microsoft/config-wsl; fi; \
+    if ! [ -f ${config_file} ]; then cp -fv $config_file_default wsl2/.config; config_file=$config_file_default; else cp -fv ${config_file} wsl2/.config; fi; \
+    config_file=${_CONFIG_FILE:-$config_file_default}; \
+    printf '\n======= Kernel Build Info =========================================================================\n\n\tCPU Architecture:\t%s\n\n\tCPU Vendor:\t\t%s\n\n\tConfiguration File:\n\t\t%s\n\n\tSave Locations:\n\t\t%s\n\t\t%s\n\n===================================================================================================\n' $cpu_arch $cpu_vendor $config_file $save_location1 $save_location2; \
+    git clone https://github.com/microsoft/WSL2-Linux-Kernel.git --progress --depth=1 --single-branch --branch linux-msft-wsl-5.15.90.1; \
+    mv -uv WSL2-Linux-Kernel wsl2; \
+    cd wsl2; \
+    yes "" | make oldconfig && yes "" | make prepare; \
+    yes "" | make -j $(expr $(nproc) - 1); \
+    make modules_install ; \
+    mkdir -pv /home/$user_name/kernels; \
+    mkdir -pv ../$cpu_arch/$cpu_vendor/$save_name; \
+    cp -fv --backup=numbered arch/x86/boot/bzImage /home/$user_name/$save_name; \
+    cp -fv --backup=numbered arch/x86/boot/bzImage /home/dvl/$save_name; \
+    cp -fv --backup=numbered arch/x86/boot/bzImage kernels/ubuntu/$cpu_arch/$cpu_vendor/$linux_version_mask/$save_name ; \
+    cp -fv --backup=numbered .config kernels/ubuntu/$cpu_arch/$cpu_vendor/$linux_version_mask/.config_wsl0; \
+    rm -rf wsl2;
 # RUN echo '# sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/agl/.bashrc
 WORKDIR /hel
 USER dvl
@@ -458,14 +458,14 @@ RUN sudo update-locale && \
     head -n -1 /opt/brave.com/brave/brave-browser.old | sudo tee /opt/brave.com/brave/brave-browser > /dev/null && \
     # now no longeer need to add --disable-gpu flag everytime
     echo '"$HERE/brave" "$@" " --disable-gpu " || true' | sudo tee --append /opt/brave.com/brave/brave-browser > /dev/null
-    # # # this is a better way to do this but needs work
-    # # # cd /opt/brave.com/brave && \
-    # # # brave_old_line='\"\$HERE\/brave\"\s\"\$\@\"\s\|\|\strue' && \
-    # # # brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
-    # # # sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl && \
-    # # # sudo apt-get clean all && \
-    # # # sudo apt-get autoremove --purge
-    # # stuff to try to make gimp install without interaction
+# # # this is a better way to do this but needs work
+# # # cd /opt/brave.com/brave && \
+# # # brave_old_line='\"\$HERE\/brave\"\s\"\$\@\"\s\|\|\strue' && \
+# # # brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
+# # # sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl && \
+# # # sudo apt-get clean all && \
+# # # sudo apt-get autoremove --purge
+# # stuff to try to make gimp install without interaction
 # # RUN \
 # # --mount=type=cache,target=/var/cache/apt,sharing=locked \
 # # sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo apt-get -y install lightdm gnome-session
