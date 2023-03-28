@@ -34,6 +34,7 @@ services:
     depends_on:
       base:
         condition: service_completed_successfully
+    init: true
     # volumes:
     #   - god-data:/root:ro
     #   - gdi-data:/home/god
@@ -49,6 +50,8 @@ services:
     depends_on:
       base:
         condition: service_completed_successfully
+    init: true
+
     # volumes:
     #   - hell-data:/home/agl
   base-devel:
@@ -230,6 +233,7 @@ services:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
   kernel-build:
     extends: git
+    init: true
     image: kindtek/dvlp:ubuntu-kernel-build
     build:
       context: .
@@ -265,7 +269,7 @@ services:
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
   cuda:
-    extends: gui
+    extends: git
     image: kindtek/dvlp:ubuntu-cuda
     build:
       context: .
@@ -276,7 +280,7 @@ services:
         com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 
   cuda-plus:
-    extends: gui
+    extends: git
     image: kindtek/dvlp:ubuntu-cuda-plus
     build:
       context: .

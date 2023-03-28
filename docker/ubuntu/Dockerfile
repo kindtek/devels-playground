@@ -62,7 +62,7 @@ USER root
 ARG mnt_data=${mnt_data:-/mnt/data}
 RUN ln -fs /home/agl /hal && \
     mkdir -m 753 -pv ${mnt_data}/bak/agl && \
-    ln -sv /mnt/data/bak/agl /home/agl/bak
+    ln -sv ${mnt_data}/bak/agl /home/agl/bak
 
 # dvl permissions/volume builder
 FROM dvlp_base AS dvlp_base-devel
@@ -126,7 +126,10 @@ RUN \
     chmod +x dvlp/mnt/home/gh-auth-first-time-login.sh && \
     chmod -R +x dvlp/mnt/bak
 USER root
-RUN cat dvlp/mnt/home/.bashrc | sudo tee --append /home/god/.bashrc /home/dvl/.bashrc /home/agl/.bashrc /etc/skel/.bashrc && \
+RUN cat dvlp/mnt/home/.bashrc | sudo tee --append /home/god/.bashrc && \
+    cat dvlp/mnt/home/.bashrc | sudo tee --append /home/dvl/.bashrc && \
+    cat dvlp/mnt/home/.bashrc | sudo tee --append /home/agl/.bashrc && \
+    cat dvlp/mnt/home/.bashrc | sudo tee --append /etc/skel/.bashrc && \
     # # add warning for the backup drive
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/README_ASAP && \
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/dvl/README_ASAP 
@@ -415,29 +418,7 @@ RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg a
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get update && \
-    sudo apt-get install -y brave-browser
-RUN sudo apt-get update && \
-    sudo apt-get install -y locales
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get update && \
-    sudo apt-get install -y  gimp  
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get update && \
-    sudo apt-get install -y gedit 
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get update && \
-    sudo apt-get install -y nautilus  
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get update && \
-    sudo apt-get install -y vlc 
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get update && \
-    sudo apt-get install -y x11-apps  
+    sudo apt-get install -y brave-browser locales gimp gedit nautilus vlc x11-apps  
 # RUN sudo apt-get update && \
 #     export DEBIAN_FRONTEND=noninteractive && \
 #     export DEBCONF_NONINTERACTIVE_SEEN=true && \
