@@ -439,24 +439,24 @@ RUN sudo rm -rf /var/cache/apt/archives/
 WORKDIR /hel
 USER dvl
 
-# FROM dvlp_init AS dvlp_cuda
-# USER agl
-# # CUDA
-# RUN \
-# rm -f /etc/apt/apt.conf.d/docker-clean && \
-#     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
-# RUN \
-#     rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache \
-#     --mount=type=cache,target=/var/cache/apt8 \
-#     sudo apt-get -y install nvidia-cuda-toolkit 
-# # sudo apt-get clean all && \
-# # sudo apt-get autoremove --purge
-# WORKDIR /hel
-# USER dvl
+FROM dvlp_init AS dvlp_cuda
+USER agl
+# CUDA
+RUN \
+rm -f /etc/apt/apt.conf.d/docker-clean && \
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+RUN \
+    rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache \
+    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    sudo apt-get -y install nvidia-cuda-toolkit 
+# sudo apt-get clean all && \
+# sudo apt-get autoremove --purge
+WORKDIR /hel
+USER dvl
 
-# FROM dvlp_gui-plus AS dvlp_cuda-plus
-# WORKDIR /
-# COPY --from=dvlp_cuda ./ ./
-# WORKDIR /hel
-# USER dvl
+FROM dvlp_gui-plus AS dvlp_cuda-plus
+WORKDIR /
+COPY --from=dvlp_cuda ./ ./
+WORKDIR /hel
+USER dvl
 

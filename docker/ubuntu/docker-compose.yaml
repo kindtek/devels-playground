@@ -264,27 +264,27 @@ services:
       target: dvlp_gui-plus
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
-    # cuda:
-    #   extends: gui
-    #   image: kindtek/dvlp:ubuntu-cuda
-    #   build:
-    #     context: .
-    #     target: dvlp_cuda
-    #     args:
-    #       - _AGL_USR=${_AGL:-agl}
-    #     labels:
-    #       com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
+  cuda:
+    extends: gui
+    image: kindtek/dvlp:ubuntu-cuda
+    build:
+      context: .
+      target: dvlp_cuda
+      args:
+        - _AGL_USR=${_AGL:-agl}
+      labels:
+        com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 
-    # cuda-plus:
-    #   extends: gui
-    #   image: kindtek/dvlp:ubuntu-cuda-plus
-    #   build:
-    #     context: .
-    #     target: dvlp_cuda-plus
-    #     args:
-    #       - _AGL_USR=${_AGL:-agl}
-    #     labels:
-    #       com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
+  cuda-plus:
+    extends: gui
+    image: kindtek/dvlp:ubuntu-cuda-plus
+    build:
+      context: .
+      target: dvlp_cuda-plus
+      args:
+        - _AGL_USR=${_AGL:-agl}
+      labels:
+        com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 volumes:
   hell-data:
   halo-data:
