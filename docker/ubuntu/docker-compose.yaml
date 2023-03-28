@@ -34,9 +34,9 @@ services:
     depends_on:
       init:
         condition: service_completed_successfully
-    volumes:
-      - god-data:/root:ro
-      - gdi-data:/home/god
+    # volumes:
+    #   - god-data:/root:ro
+    #   - gdi-data:/home/god
   init-agl:
     # Need a user priviliged enough to chown
     user: agl
