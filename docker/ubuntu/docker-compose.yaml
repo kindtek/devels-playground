@@ -220,81 +220,81 @@ services:
       target: dvlp_dind
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker"
-  kernel:
-    extends: git
-    image: kindtek/dvlp:ubuntu-kernel
-    build:
-      context: .
-      target: dvlp_kernel
-    labels:
-      com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
-  kernel-lite:
-    extends: git
-    image: kindtek/dvlp:ubuntu-kernel-lite
-    build:
-      context: .
-      target: dvlp_kernel-lite
-    labels:
-      com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
-  kernel-plus:
-    extends: git
-    image: kindtek/dvlp:ubuntu-kernel-plus
-    build:
-      context: .
-      target: dvlp_kernel-plus
-      args:
-        - _AGL_USR=${_AGL:-agl}
-        - _CONFIG_FILE=../kernels/ubuntu/x86/generic/.config_wsl0
-    labels:
-      com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
-  gui:
-    extends: git
-    image: kindtek/dvlp:ubuntu-gui
-    build:
-      context: .
-      target: dvlp_gui
-    labels:
-      com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
+#   kernel:
+#     extends: git
+#     image: kindtek/dvlp:ubuntu-kernel
+#     build:
+#       context: .
+#       target: dvlp_kernel
+#     labels:
+#       com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
+#   kernel-lite:
+#     extends: git
+#     image: kindtek/dvlp:ubuntu-kernel-lite
+#     build:
+#       context: .
+#       target: dvlp_kernel-lite
+#     labels:
+#       com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
+#   kernel-plus:
+#     extends: git
+#     image: kindtek/dvlp:ubuntu-kernel-plus
+#     build:
+#       context: .
+#       target: dvlp_kernel-plus
+#       args:
+#         - _AGL_USR=${_AGL:-agl}
+#         - _CONFIG_FILE=../kernels/ubuntu/x86/generic/.config_wsl0
+#     labels:
+#       com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
+#   gui:
+#     extends: git
+#     image: kindtek/dvlp:ubuntu-gui
+#     build:
+#       context: .
+#       target: dvlp_gui
+#     labels:
+#       com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
 
-  gui-plus:
-    extends: git
-    image: kindtek/dvlp:ubuntu-gui-plus
-    build:
-      context: .
-      target: dvlp_gui-plus
-    labels:
-      com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
-    # cuda:
-    #   extends: gui
-    #   image: kindtek/dvlp:ubuntu-cuda
-    #   build:
-    #     context: .
-    #     target: dvlp_cuda
-    #     args:
-    #       - _AGL_USR=${_AGL:-agl}
-    #     labels:
-    #       com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
+#   gui-plus:
+#     extends: git
+#     image: kindtek/dvlp:ubuntu-gui-plus
+#     build:
+#       context: .
+#       target: dvlp_gui-plus
+#     labels:
+#       com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
+#     # cuda:
+#     #   extends: gui
+#     #   image: kindtek/dvlp:ubuntu-cuda
+#     #   build:
+#     #     context: .
+#     #     target: dvlp_cuda
+#     #     args:
+#     #       - _AGL_USR=${_AGL:-agl}
+#     #     labels:
+#     #       com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 
-    # cuda-plus:
-    #   extends: gui
-    #   image: kindtek/dvlp:ubuntu-cuda-plus
-    #   build:
-    #     context: .
-    #     target: dvlp_cuda-plus
-    #     args:
-    #       - _AGL_USR=${_AGL:-agl}
-    #     labels:
-    #       com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
-volumes:
-  hell-data:
-  halo-data:
-  mnt-data:
-  dls-data:
-  god-data:
-  gdi-data:
+#     # cuda-plus:
+#     #   extends: gui
+#     #   image: kindtek/dvlp:ubuntu-cuda-plus
+#     #   build:
+#     #     context: .
+#     #     target: dvlp_cuda-plus
+#     #     args:
+#     #       - _AGL_USR=${_AGL:-agl}
+#     #     labels:
+#     #       com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
+# volumes:
+#   hell-data:
+#   halo-data:
+#   mnt-data:
+#   dls-data:
+#   god-data:
+#   gdi-data:
 
 
-networks:
-  "${COMPOSE_PROJECT_NAME}_default":
-    driver: overlay
-    attachable: true
+# networks:
+#   "${COMPOSE_PROJECT_NAME}_default":
+#     driver: overlay
+#     attachable: true
