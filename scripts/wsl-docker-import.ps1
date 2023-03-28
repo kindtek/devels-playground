@@ -79,20 +79,20 @@ function dev_boilerplate {
     }
     catch {}
 
-    $install_directory=$image_repo_mask-$image_name
+    $install_directory="$image_repo_mask-$image_name"
     $install_directory=$install_directory.replace(':', '-')
     $install_directory=$install_directory.replace('/', '-')
 
-    $save_location=${mount_drive}/$save_directory
+    $save_location="${mount_drive}/$save_directory"
     # Write-Host "save location: $save_location"
-    $install_location=$save_location/$install_directory
+    $install_location="$save_location/$install_directory"
     # Write-Host "install location: $install_location"
 
     # distro - meaning local distro
     $distro=$install_directory
-    $image_save_path=$save_location/$distro.tar
-    $install_location=$save_location/$install_directory
-    $image_repo_image_name=$image_repo/$image_name
+    $image_save_path="$save_location/$distro.tar"
+    $install_location="$save_location/$install_directory"
+    $image_repo_image_name="$image_repo/$image_name"
     # special rule for official distros on docker hub
     # replaces '_' with 'official' for printing
     if ( $image_repo -eq "_") {
