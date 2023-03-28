@@ -123,7 +123,7 @@ services:
       - halo-data:/home/agl
       - dls-data:/dls
       - mnt-data:/data
-  skel-slim:
+  skel-lite:
     extends: data
     user: agl
     tty: false
@@ -155,9 +155,9 @@ services:
       # - gdi-data:/home/god
 
     labels:
-      com.dvlp_skel.description: "slim skeleton"
+      com.dvlp_skel.description: "lite skeleton"
   skel:
-    extends: skel-slim
+    extends: skel-lite
     labels:
       com.dvlp_skel.description: "skeleton"    
   git:
