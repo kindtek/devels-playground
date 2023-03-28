@@ -49,7 +49,7 @@ function dev_boilerplate {
                 write-host "checking if wsl.exe is recognized"
                 $wsl=@(wsl.exe -l -v)
                 Write-Host "WSL detected"
-                $mount_drive="/${mount_drive_letter}/${unix_mount_drive}/"
+                $mount_drive="/${mount_drive_letter}/${unix_mount_drive}"
             }
             catch { 
                 Write-Host "WSL NOT detected"
@@ -70,7 +70,7 @@ function dev_boilerplate {
                 write-host "checking if wsl.exe is recognized"
                 $wsl=@(wsl.exe -l -v)
                 Write-Host "WSL detected"
-                $mount_drive="${mount_drive_letter}:${unix_mount_drive}/"
+                $mount_drive="${mount_drive_letter}:${unix_mount_drive}"
             }
             catch { 
                 Write-Host "WSL NOT detected"
@@ -141,7 +141,7 @@ function dev_boilerplate {
         $save_directory=$save_directory.replace('/', '-')
         $save_directory=$save_directory.replace(':', '-')
         
-        $install_directory=$image_repo_mask-$image_name
+        $install_directory="$image_repo_mask-$image_name"
         $install_directory=$install_directory.replace('/', '-')
         $install_directory=$install_directory.replace(':', '-')
 
