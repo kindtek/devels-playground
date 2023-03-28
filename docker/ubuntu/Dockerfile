@@ -427,8 +427,6 @@ RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browse
 # # sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl && \
 # # sudo apt-get clean all && \
 # # sudo apt-get autoremove --purge
-
-
 WORKDIR /hel
 USER dvl
 
@@ -444,10 +442,9 @@ FROM dvlp_base AS dvlp_cuda
 USER agl
 # CUDA
 RUN \
-rm -f /etc/apt/apt.conf.d/docker-clean && \
+    sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 RUN \
-    rm -f /etc/apt/apt.conf.d/docker-clean; echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y install nvidia-cuda-toolkit 
 # sudo apt-get clean all && \
