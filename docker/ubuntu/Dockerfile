@@ -297,10 +297,7 @@ USER dvl
 FROM dvlp_base AS dvlp_dind-lite
 USER root
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
-RUN \
---mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -y install gpg
-# RUN sudo apt-get -y install lsb-release curl gpg
+RUN sudo apt-get -y install lsb-release curl gpg
 # sudo apt-get clean all && \
 RUN sudo mkdir -pv /etc/apt/keyrings
 RUN \
