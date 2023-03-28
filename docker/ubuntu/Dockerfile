@@ -194,8 +194,11 @@ RUN \
     # # sudo apt-get upgrade -y libsnmp40 && \
     # sudo apt-get -y install apt-fast aria2 
     sudo apt-get -y install apt-transport-https gh wget
+RUN \
+    --mount=type=cache,target=/var/cache/curl,sharing=locked \
+    sudo apt-get -y install curl
 # cant cache these ..
-RUN sudo apt-get -y install build-essential ca-certificates curl git gnupg2 libssl-dev nvi wslu
+RUN sudo apt-get -y install build-essential ca-certificates git gnupg2 libssl-dev nvi wslu
 
 WORKDIR /home/dvl
 USER dvl
@@ -298,14 +301,17 @@ USER dvl
 FROM dvlp_base AS dvlp_dind-build
 USER root
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
-RUN sudo apt-get -y install lsb-release curl gpg
+RUN \
+    --mount=type=cache,target=/var/cache/curl,sharing=locked \
+    sudo apt-get -y install curl
+RUN sudo apt-get -y install lsb-release gpg
 # sudo apt-get clean all && \
 RUN sudo mkdir -pv /etc/apt/keyrings
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 RUN \
-    --mount=type=cache,target=/var/cache/curl \
+    --mount=type=cache,target=/var/cache/curl,sharing=locked \
     sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 RUN \
@@ -433,6 +439,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /
 COPY --from=dvlp_kernel-build ./ ./
 WORKDIR /hel
+RUN \
+    --mount=type=cache,target=/var/cache/curl,sharing=locked \
+    sudo apt-get -y install curl
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
 RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
