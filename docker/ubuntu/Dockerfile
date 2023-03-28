@@ -192,6 +192,7 @@ FROM dvlp_skel-lite AS dvlp_git
 COPY --from=dvlp_skel ./ ./
 USER agl
 RUN sudo rm -rf /var/cache/apt/archives/
+USER dvl
 
 # PYTHON stuff
 FROM dvlp_init AS dvlp_python-lite
