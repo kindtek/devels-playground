@@ -186,11 +186,10 @@ RUN sudo apt-get -y install  build-essential ca-certificates curl git gnupg2 lib
 
 WORKDIR /home/dvl
 USER dvl
-COPY --from=dvlp_skel-lite ./usr/sbin ./usr
 
 # GIT
 FROM dvlp_skel-lite AS dvlp_git
-COPY --from=dvlp_skel ./usr/sbin ./usr/sbin
+COPY --from=dvlp_skel ./ ./
 
 # PYTHON stuff
 FROM dvlp_init AS dvlp_python-lite
