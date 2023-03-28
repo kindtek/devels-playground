@@ -211,8 +211,8 @@ WORKDIR /hel
 USER dvl
 
 FROM dvlp_python-lite AS dvlp_python
-# WORKDIR / 
-# # COPY --from=dvlp_python-lite ./usr/sbin ./usr/sbin
+WORKDIR / 
+COPY --from=dvlp_python-lite ./usr/sbin ./usr/sbin
 # USER agl
 # # RUN \
 # #     --mount=type=cache,target=/var/cache/pip \
