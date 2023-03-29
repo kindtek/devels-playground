@@ -1,6 +1,6 @@
 # Idle Hands are the **Developer's Workshop**
 
-## Import a Linux Docker image from the [Docker Hub](https://hub.docker.com/search?q=&image_filter=official) into WSL virtually without lifting a finger
+## Import a Linux Docker image from the [Docker Hub](https://hub.docker.com/search?q=&image_filter=official) into WSL *virtually* without lifting a finger
 
 ---
 
