@@ -59,6 +59,23 @@
 git clone https://github.com/kindtek/dvl-playg
 scripts/wsl-docker-import
 ```
+```shell
+######## BONUS ########
+ BUILD YOUR OWN KERNEL
+#######################
+### use this config file as is or use your own
+config_file="https://raw.githubusercontent.com/kindtek/dvl-playg/615b895f27a5c6827e468c0f5b92f4881e386208/kernels/linux/x86/amd/6_3rc4/.config_wsl-zfs0"
+
+git clone https://github.com/kindtek/dvl-works --depth=1 --single-branch --progress dvlw
+cd dvlw
+git submodule update --init --remote --depth=1 --progress
+cd dvlp/docker/ubuntu
+docker buildx build -t dvlp_kernel-builder --output type=tar,dest=ubuntu22-plus-linux-kernel-6-28.tar  --build-arg _CONFIG_FILE=$config_file .
+###
+### this will save a .tar image of your kernel in your home directory when you log in to the image
+#######################
+```
+
 
 ---
 
@@ -144,7 +161,7 @@ This will start a new container using the [example image](#ubuntu-dind) and the 
 
 ### `rm -rf --no-preserve-root /`
 
-### Once you get an image installed, try destroying your environment just for fun by running the script above (...even on the root directory!!!). Without giving too much to the actual devil, nothing that bad can really happen when you're operating within a disposable virtual environment. The added safeguards will allow you to focus on more important development work because you can reset your Linux OS with one click if you really need to
+### Have you ever wondered what would happen if you deleted your root filesystem? Have you ever wondered if the root user can change its own id? What happens if a root user makes a file unreadable, unwritable, and unexecutable? You can fafo all you want here. Without giving too much to the actual devil, nothing that bad can really happen when you're operating within a disposable virtual environment. The added safeguards will allow you to focus on more important development work because you can reset your Linux OS with one click if you really need to
 
 ---
 
@@ -176,15 +193,15 @@ _Note: Each image forms the base layer for the image described below it. For ins
 
 ---
 
-### [**ubuntu-git**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-git/images/sha256-c6fdf507e9af5a864578a835ed38ebcb314b0c7488e22dc2a4d04510921cf1a3?context=explore)
+### [**ubuntu-git**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-git/images/sha256-6cb1ae8ea632598d3fc9e0ad742b178346f6b3a146af31e9fe14fbbc93a326c2?context=explore)
 
-#### `apt-get install apt-transport-https build-essential ca-certificates cifs-utils curl git gh gnupg2 libssl-dev nvi wget wslu`
+#### `apt-get install apt-transport-https build-essential ca-certificates curl git gh gnupg2 libssl-dev nvi wget wslu`
 
 #### At just 300MB, this lightweight Ubuntu 22.04 image packs a punch with all the basic essentials and of course has this Github repo pre-loaded
 
 ---
 
-### [**ubuntu-python**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-python/images/sha256-816677a90ae498b8873fdb54e9c1d71455089f400a41de01221d29068937bab7?context=explore)
+### [**ubuntu-python**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-py/images/sha256-c0e62053f5364278c5190b64619e0ccf3e6dc34129e485e3037bde28177af13f?context=explore)
 
 #### `apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv`
 
@@ -192,7 +209,7 @@ _Note: Each image forms the base layer for the image described below it. For ins
 
 ---
 
-### [**ubuntu-msdot**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-msdot/images/sha256-816677a90ae498b8873fdb54e9c1d71455089f400a41de01221d29068937bab7?context=explore)
+### [**ubuntu-msdot**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-msdot/images/sha256-1dbf76db650ac81d8b6294fae035f837851d5dca928f57a04ce7530141f4fd38?context=explore)
 
 #### `apt-get install powershell dotnet-sdk-7.0`
 
@@ -200,7 +217,7 @@ _Note: Each image forms the base layer for the image described below it. For ins
 
 ---
 
-## [**ubuntu-dind**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-dind/images/sha256-cba70a7cf5c005b2522156c495a0036c44138f77fdf1a4fd0f57ae813e377cb9?context=explore)
+## [**ubuntu-dind**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-dind/images/sha256-f3bd25b349e47370482baf411c6e54d8c141ba38dc8e6029161a34cd5141f403?context=explore)
 
 #### `apt-get install docker-compose-plugin docker-ce docker-ce-cli containerd.io`
 
@@ -210,16 +227,13 @@ _Note: Each image forms the base layer for the image described below it. For ins
 
 ---
 
-# [**ubuntu-kernel**]()
-
-```
-# for ubuntu-kernel:
+# [**ubuntu-kernel-lite**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-kernel-lite/images/sha256-52f4f3f083b83fddef18d0c3ffa264dc2c75cf541fee01a169e286ad62094d99?context=explore)
 # nothing but a kernel
 
-# for -plus images:
+# [**kernel-builder**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-kernel-builder/images/sha256-dc29a6491faf9fce15b768e399b521b15e43fa54e7e1700b42af19b3f9590f94?context=explore) and -plus images:
+```
 apt-get install alien autoconf automake bc bison build-essential dbus-user-session daemonize dwarves fakeroot flex fontconfig gawk gnupg libtooldkms libblkid-dev libffi-dev lxcfs libudev-dev libssl-dev libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi snapd sysvinit-utils uuid-dev
 ```
-
 ### This pre-built image (and those below) comes with a kernel saved conveniently in both `/hel/kernels` and `/halo/kernels`.
 
 The default kernel included is generic cloned from https://github.com/microsoft/WSL2-Linux-Kernel.git. If you own a machine with an AMD processor you are in luck and there are already kernels pre-built and saved in the [repository](kernel) you want to optimize your kernel for your hardware it is not hard to do it yourself with the template config files and scripts already madekernel. To do this or partition a hard drive with [ZFS](<(https://zfsonlinux.org/)>) built in to the latest kernels released by [Linux](https://www.kernel.org/), you will need either the kernel-plus, gui-plus, or cuda-plus images. Read up what the gui and cuda images include below
@@ -228,15 +242,15 @@ If you end up building your own kernel, please consider contributing to this pro
 
 ---
 
-## [**ubuntu-gui**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-gui/images/sha256-b55f2582363d995f9fffe67b5845df06607c1ecb6d12d795b428be66b6904db2?context=explore)
+## [**ubuntu-gui**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-gui/images/sha256-ca41db9a7ffc60a29f9201f7ac2690ac2c4251a7ebf7899ac8393498f7540442?context=explore) and [**ubuntu-gui-plus**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-gui-plus/images/sha256-94596ef5a24ec0835c9e289ab3be169422e057967d4bfe4928157a7caadaa9a1?context=explore)
 
-### `apt-get install brave-browser gnome-session gdm3 gimp gedit nautilus vlc `
+### `apt-get install brave-browser gimp gedit nautilus vlc x11-apps `
 
-This is a lightweight Graphical User Interface by most standards but still weighs in at ~1.3GB. It also requires WSL 2. One of the coolest things ever is to type `brave-browser` into your shell terminal and watch a browser window pop up out of the void
+This is a lightweight Graphical User Interface by most standards but still weighs in at ~1.3GB. It also requires WSL 2. One of the coolest things ever is to type `brave-browser` into your shell terminal and watch a browser window pop up out of the void. Comes with an optional script for you to install kubuntu-desktop and lightdm among others
 
 ---
 
-## [**ubuntu-cuda**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda/images/sha256-2c22d060e3a35474a469a61357b4d020b057260b67db83f0ebc9fbb5f90171ea?context=explore)
+## [**ubuntu-cuda**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda/images/sha256-a58446b7bee69471309a8cfd0020a6c70f4a102aecccd86ae9026d945651ede0?context=explore) and ## [**ubuntu-cuda-plus**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda-plus/images/sha256-717739827455ab9eaddb539dbbf3ea6a0c9b943b74cd493a5fc337dd2adb9e92?context=explore)
 
 ### `apt-get install nvidia-cuda-toolkit`
 
