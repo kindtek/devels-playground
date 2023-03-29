@@ -151,7 +151,7 @@ function test_repo_path {
         # cmd /c start powershell.exe "$git_path/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle Hidden
         if (Test-Path -Path "$parent_path/$repo_src_name") {
             Push-Location "$parent_path/$repo_src_name"
-            # if git status works and finds dvl-works repo, assume the install has been successfull and this script was ran once before
+            # if git status works and finds devels-workshop repo, assume the install has been successfull and this script was ran once before
             $git_status = git remote show origin 
             # determine if git status works by checking output for LICENSE - see typical output of git status here: https://amitd.co/code/shell/git-status-porcelain
             if ($git_status.NotContains("github.com/$repo_src_owner/$repo_src_name")) {
@@ -262,7 +262,7 @@ function install_repo {
 
 # $user_input = (Read-Host "`r`nopen Docker Dev environment? [y]/n")
 # if ( $user_input -ine "n" ) {
-#     Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/dvl-works@main" -WindowStyle "Hidden"
+#     Start-Process "https://open.docker.com/dashboard/dev-envs?url=https://github.com/kindtek/devels-workshop@main" -WindowStyle "Hidden"
 # } 
 
 function require_docker_online {
@@ -383,7 +383,7 @@ workflow start_installer_daemon {
     param ([string]$temp_repo_scripts_path)
 
     $repo_src_owner = 'kindtek'
-    $repo_src_name = 'dvl-works'
+    $repo_src_name = 'devels-workshop'
     $repo_src_branch = 'main'
     $git_path = $temp_repo_scripts_path.Replace("\scripts", "")
     $git_path = $git_path.Replace("/scripts", "")
@@ -422,8 +422,8 @@ workflow start_installer_daemon {
     }
     else {
         InlineScript { Write-Host "Failed to launch docker. Not able to start Devel's Playground. Please restart and run the script again:" }
-        InlineScript { Write-Host "cmd `"$git_path/kindtek/dvl-works/dvpg/scripts/wsl-docker-import`"" }
-        InlineScript { Write-Host "powershell.exe ./kindtek/dvl-works/dvpg/scripts/wsl-docker-import.ps1" }
+        InlineScript { Write-Host "cmd `"$git_path/kindtek/devels-workshop/dvpg/scripts/wsl-docker-import`"" }
+        InlineScript { Write-Host "powershell.exe ./kindtek/devels-workshop/dvpg/scripts/wsl-docker-import.ps1" }
     }
 
     # }
