@@ -383,13 +383,9 @@ USER dvl
 # dvlp_kernel-lite - kernel only
 #
 FROM dvlp_dind AS dvlp_kernel-lite
-USER agl
-WORKDIR /
-COPY --from=dvlp_kernel-builder ./home/dvl/dvlw/dvlp/kernels ./home/dvl/dvlw/dvlp/kernels
-# RUN sudo rm -rf /var/cache/apt/archives/
-# RUN sudo apt-get clean all && \
-#     sudo apt-get autoremove --purge
 WORKDIR /home/dvl
+COPY --from=dvlp_kernel-builder dvlw/dvlp/kernels kernels/
+COPY --from=dvlp_kernel-builder linux* ./
 USER dvl
 
 #################################### GUI ######################################
