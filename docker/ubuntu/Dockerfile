@@ -384,7 +384,7 @@ USER dvl
 #
 FROM dvlp_dind AS dvlp_kernel-lite
 WORKDIR /home/dvl
-COPY --from=dvlp_kernel-builder dvlw/dvlp/kernels kernels/
+# COPY --from=dvlp_kernel-builder dvlw/dvlp/kernels kernels/
 COPY --from=dvlp_kernel-builder linux* ./
 USER dvl
 
