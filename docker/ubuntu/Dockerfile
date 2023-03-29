@@ -126,10 +126,10 @@ RUN \
     chmod +x dvlp/mnt/home/gh-auth-first-time-login.sh && \
     chmod -R +x dvlp/mnt/bak
 USER root
-RUN cat dvlp/mnt/home/.bashrc | sudo tee --append /home/god/.bashrc && \
-    cat dvlp/mnt/home/.bashrc | sudo tee --append /home/dvl/.bashrc && \
-    cat dvlp/mnt/home/.bashrc | sudo tee --append /home/agl/.bashrc && \
-    cat dvlp/mnt/home/.bashrc | sudo tee --append /etc/skel/.bashrc && \
+RUN cat dvlp/mnt/home/.bashrc | sudo tee /home/god/.bashrc && \
+    cat dvlp/mnt/home/.bashrc | sudo tee /home/dvl/.bashrc && \
+    cat dvlp/mnt/home/.bashrc | sudo tee /home/agl/.bashrc && \
+    cat dvlp/mnt/home/.bashrc | sudo tee /etc/skel/.bashrc && \
     # # add warning for the backup drive
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/README_ASAP && \
     echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/dvl/README_ASAP 
