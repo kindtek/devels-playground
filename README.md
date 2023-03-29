@@ -66,7 +66,7 @@ scripts/wsl-docker-import
 ### use this config file as is or use your own
 config_file="https://raw.githubusercontent.com/kindtek/dvl-playg/615b895f27a5c6827e468c0f5b92f4881e386208/kernels/linux/x86/amd/6_3rc4/.config_wsl-zfs0"
 
-git clone https://github.com/kindtek/dvl-works --depth=1 --single-branch --progress dvlw
+git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress dvlw
 cd dvlw
 git submodule update --init --remote --depth=1 --progress
 cd dvlp/docker/ubuntu
@@ -96,7 +96,7 @@ Paste one line into a command prompt ([CMD or Powershell](https://www.wikihow.co
 powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell/dvl-works/download-everything-and-install.ps1 -OutFile install-kindtek-dvl-works.ps1; powershell.exe -executionpolicy remotesigned -File install-kindtek-dvl-works.ps1"
 ```
 
-[More details here](https://github.com/kindtek/dvl-works#idle-hands-are-the-developers-workshop)
+[More details here](https://github.com/kindtek/devels-workshop#idle-hands-are-the-developers-workshop)
 
 ---
 

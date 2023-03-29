@@ -116,7 +116,7 @@ RUN \
     git config --global --add safe.directory /home/dvl && \
     git config --global --add safe.directory /home/dvl/dvlp && \
     # clone fresh repos and give dvl ownership
-    git clone https://github.com/kindtek/dvl-works --depth=1 --single-branch --progress dvlw
+    git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress dvlw
 # RUN git clone https://github.com/kindtek/dvlw --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
 # --filter=combine:tree:depth:1+blob:limit=10240000  --recurse-submodules --remote-submodules  --single-branch  --no-tags --filter=blob:limit=1024000 --single-branch --branch main
 WORKDIR /home/dvl/dvlw
