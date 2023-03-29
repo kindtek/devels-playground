@@ -2,7 +2,7 @@
 sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg 
 echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list 
 sudo apt-get update && \
-sudo apt-get install -y brave-browser kubuntu-desktop lightdm egimp gedit nautilus vlc x11-apps xfce4
+sudo apt-get install -y brave-browser kubuntu-desktop lightdm gimp gedit nautilus vlc x11-apps xfce4
 
 sudo update-locale 
 # echo "LANG=en_US.UTF-8" | sudo tee -a /etc/locale.gen && \
