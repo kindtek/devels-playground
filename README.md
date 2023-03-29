@@ -3,7 +3,7 @@
 
 # Idle Minds are the **Developer's Playground**
 
-## Import a Linux environment into WSL from the [Docker Hub](https://hub.docker.com/search?q=&image_filter=official) virtually without thinking
+## Import a Linux environment into WSL from the [Docker Hub](https://hub.docker.com/search?q=&image_filter=official) *virtually* without thinking
 
 ### NEW FEATURE
 
