@@ -9,9 +9,9 @@ ARG DEBIAN_FRONTEND=noninteractive
 ARG fresh_repo=${fresh_repo:-no}
 
 ############################## BASE ####################################
-#
-# dvlp_base
-#
+#############
+# dvlp_base #
+#############
 FROM ubuntu:latest AS dvlp_base
 ARG _AGL_USR=${_AGL_USR:-agl}
 ARG _DVL_USR=${_DVL_USR:-dvl}
@@ -90,11 +90,11 @@ USER dvl
 
 # FROM dvlp_base-devel AS dvlp_duser
 
-################################### DATA ####################################
-#
-# dvlp_data
-#
-FROM dvlp_base AS dvlp_data
+################################### REPO ####################################
+#############
+# dvlp_repo #
+#############
+FROM dvlp_base AS dvlp_repo
 ARG mnt_data=${mnt_data:-/mnt/data}
 ARG fresh_repo=${fresh_repo:-no}
 USER root
@@ -102,8 +102,8 @@ WORKDIR /
 COPY --from=dvlp_base-devel --chown=dvl:hell ./home/dvl ./home/dvl
 COPY --from=dvlp_base-angel --chown=agl:halo ./home/agl ./home/agl
 COPY --from=dvlp_base-god --chown=god:rootg ./home/god ./home/god
-COPY --from=dvlp_base-devel --chown=agl:halo .${mnt_data} .${mnt_data}
-COPY --from=dvlp_base-angel --chown=agl:halo .${mnt_data} .${mnt_data}
+# COPY --from=dvlp_base-devel --chown=agl:halo .${mnt_data} .${mnt_data}
+# COPY --from=dvlp_base-angel --chown=agl:halo .${mnt_data} .${mnt_data}
 # copy skel files to dvl
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -145,32 +145,40 @@ USER dvl
 WORKDIR /home/dvl
 
 ############################## SKELETON ###################################
-#
-# dvlp_skel-build
-#
+###################
+# dvlp_skel-build #
+###################
 FROM dvlp_base AS dvlp_skel-build
-ARG fresh_repo=${fresh_repo:-no}
+ARG refresh_repo=${refresh_repo:-no}
 ENV DEBIAN_FRONTEND=noninteractive
 ARG mnt_data=${mnt_data:-/mnt/data}
-COPY --from=dvlp_data --chown=dvl:hell ./home/dvl ./home/dvl
-COPY --from=dvlp_data --chown=agl:halo ./home/agl ./home/agl
-COPY --from=dvlp_data --chown=god:rootg ./home/god ./home/god
-COPY --from=dvlp_data --chown=god:rootg /home/dvl/dvlw/dvlp/mnt/. .${mnt_data}
-COPY --from=dvlp_data --chown=agl:halo .${mnt_data} .${mnt_data}
-# COPY --from=dvlp_data /home/dvl/dvlw/dvlp/mnt/home/ /home/dvl/dvlw/dvlp/mnt/home/ 
-COPY --from=dvlp_data --chown=dvl:hell /home/dvl/dvlw/dvlp/mnt/home/* /home/dvl/
-COPY --from=dvlp_data --chown=agl:halo /home/dvl/dvlw/dvlp/mnt/home/* /home/agl/
-COPY --from=dvlp_data --chown=god:rootg /home/dvl/dvlw/dvlp/mnt/home/* /home/god/
+WORKDIR /
+# COPY --from=dvlp_repo --chown=dvl:hell ./home/dvl ./home/dvl
+# COPY --from=dvlp_repo --chown=agl:halo ./home/agl ./home/agl
+# COPY --from=dvlp_repo --chown=god:rootg ./home/god ./home/god
+COPY --from=dvlp_repo --chown=dvl:hell ./home/dvl/dvlw/dvlp/mnt/home/ ./home/dvl/
+COPY --from=dvlp_repo --chown=agl:halo ./home/dvl/dvlw/dvlp/mnt/home/ ./home/agl/
+COPY --from=dvlp_repo --chown=god:rootg ./home/dvl/dvlw/dvlp/mnt/home/ ./home/god/
+COPY --from=dvlp_base-devel --chown=dvl:hell ./home/dvl ./home/dvl
+COPY --from=dvlp_base-angel --chown=agl:halo ./home/agl ./home/agl
+COPY --from=dvlp_base-god --chown=god:rootg ./home/god ./home/god
+COPY --from=dvlp_base-devel --chown=agl:halo .${mnt_data} .${mnt_data}
+COPY --from=dvlp_base-angel --chown=agl:halo .${mnt_data} .${mnt_data}
+COPY --from=dvlp_repo --chown=god:halo /home/dvl/dvlw/dvlp/mnt/. .${mnt_data}
+# COPY --from=dvlp_repo --chown=agl:halo .${mnt_data} .${mnt_data}
+
+
+
 # USER root
 # RUN chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh
 USER dvl
 WORKDIR /home/dvl
 
-#
-# dvlp_skel
-# 
+#############
+# dvlp_skel #
+#############
 FROM dvlp_skel-build AS dvlp_skel
-ARG fresh_repo=${fresh_repo:-no}
+ARG refresh_repo=${refresh_repo:-no}
 # RUN with agl ownership
 USER agl
 # sudo mv -v ${mnt_data}/bak/custom ${mnt_data}/bak/agl/ && \
@@ -196,10 +204,30 @@ RUN \
 # cant cache these ..
 RUN sudo apt-get -y install git gnupg2 libssl-dev nvi wslu
 
+################################## BARE #########################################
+############
+# dvlp_bare #
+############
+FROM dvlp_base AS dvlp_bare
+ARG refresh_repo=${refresh_repo:-yes}
+WORKDIR /
 WORKDIR /home/dvl
 USER dvl
 
 ################################### GIT #########################################
+#################
+# dvlp_git_lite #
+#################
+FROM dvlp_base AS dvlp_git-lite
+ARG refresh_repo=${refresh_repo:-yes}
+WORKDIR /
+COPY --from=dvlp_skel-build ./ ./
+WORKDIR /home/dvl
+USER dvl
+
+############
+# dvlp_git #
+############
 FROM dvlp_base AS dvlp_git
 ARG fresh_repo=${fresh_repo:-no}
 WORKDIR /
@@ -208,9 +236,9 @@ WORKDIR /home/dvl
 USER dvl
 
 ################################# PYTHON ########################################
-#
-# dvlp_python-build
-#
+#####################
+# dvlp_python-build #
+#####################
 FROM dvlp_base AS dvlp_python-build
 USER agl
 RUN sudo apt-get -y install apt-utils libgirepository1.0-dev pkg-config python3-pip
@@ -218,35 +246,62 @@ RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -y install jq libdbus-1-dev libcairo2-dev  libpython3-dev python3-venv
-USER dvl
-RUN pip3 install pip --upgrade --no-warn-script-location --no-deps && \
-    python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps
-RUN pip3 install cdir --user
+##########################
+# dvlp_python-build-lite #
+##########################
+FROM dvlp_base AS dvlp_python-build-lite
+RUN \
+    sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
+RUN \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    sudo apt-get -y install jq python3-pip python3-venv
+WORKDIR /home/agl
+USER agl
+RUN \
+    --mount=type=cache,target=/var/cache/pip,sharing=locked \
+    pip3 install pip --upgrade --no-warn-script-location --no-deps && \
+    pip3 install cdir --user
+WORKDIR /home/god
 USER god
-RUN pip3 install cdir --user
-USER dvl
-RUN pip3 install cdir --user
-# sudo apt-get autoremove --purge
+RUN \
+    --mount=type=cache,target=/var/cache/pip,sharing=locked \
+    pip3 install pip --upgrade --no-warn-script-location --no-deps && \
+    pip3 install cdir --user
 WORKDIR /home/dvl
+USER dvl
+RUN \
+    --mount=type=cache,target=/var/cache/pip,sharing=locked \
+    pip3 install pip --upgrade --no-warn-script-location --no-deps && \
+    pip3 install cdir --user
 
-#
-# dvlp_python
-#
+####################
+# dvlp_python-lite #
+####################
+FROM dvlp_git AS dvlp_python-lite
+WORKDIR / 
+COPY --from=dvlp_skel ./ ./
+COPY --from=dvlp_python-build-lite ./ ./
+WORKDIR /home/dvl
+USER dvl
+
+###############
+# dvlp_python #
+###############
 FROM dvlp_git AS dvlp_python
 WORKDIR / 
+COPY --from=dvlp_skel ./ ./
 COPY --from=dvlp_python-build ./ ./
+COPY --from=dvlp_python-build-lite ./ ./
 WORKDIR /home/dvl
 USER dvl
 
 ############################# POWERHELL #########################################
-#
-# dvlp_msdot-build
-#
-FROM dvlp_base AS dvlp_msdot-build
-USER agl
-RUN sudo apt-get -y install lsb-release wget
+#########################
+# dvlp_msdot-build-lite #
+#########################
+FROM dvlp_base AS dvlp_msdot-build-lite
+USER root
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
 RUN \
@@ -271,16 +326,41 @@ RUN \
 WORKDIR /home/dvl
 USER dvl
 
-FROM dvlp_python AS dvlp_msdot
+####################
+# dvlp_msdot-build #
+####################
+FROM dvlp_msdot-build-lite AS dvlp_msdot-build
+USER root
+RUN sudo apt-get -y update && \
+    sudo apt-get -y install dotnet-sdk-7.0 
+USER dvl
+
+###################
+# dvlp_msdot-lite #
+###################
+FROM dvlp_base AS dvlp_msdot-lite
 WORKDIR /
+COPY --from=dvlp_skel ./ ./
+COPY --from=dvlp_python-build-lite ./ ./
+COPY --from=dvlp_msdot-build-lite ./ ./
+WORKDIR /home/dvl
+USER dvl
+
+##############
+# dvlp_msdot #
+##############
+FROM dvlp_base AS dvlp_msdot
+WORKDIR /
+COPY --from=dvlp_skel ./ ./
+COPY --from=dvlp_python-build ./ ./
 COPY --from=dvlp_msdot-build ./ ./
 WORKDIR /home/dvl
 USER dvl
 
 ########################## DOCKER IN DOCKER ######################################
-#
-# dvlp_dind-build
-#
+###################
+# dvlp_dind-build #
+###################
 FROM dvlp_base AS dvlp_dind-build
 USER root
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
@@ -305,21 +385,32 @@ RUN \
 WORKDIR /home/dvl
 USER dvl
 
-#
-# dvlp_dind
-#
-FROM dvlp_msdot AS dvlp_dind
+##################
+# dvlp_dind-lite #
+##################
+FROM dvlp_base AS dvlp_dind-lite
 WORKDIR /
+COPY --from=dvlp_skel ./ ./
+COPY --from=dvlp_python-build-lite ./ ./
+COPY --from=dvlp_msdot-build-lite ./ ./
 COPY --from=dvlp_dind-build ./ ./
 WORKDIR /home/dvl
 USER dvl
 
-FROM dvlp_dind AS dvlp_dind-plus
+#############
+# dvlp_dind #
+#############
+FROM dvlp_base AS dvlp_dind
+COPY --from=dvlp_skel ./ ./
+COPY --from=dvlp_python-build ./ ./
+COPY --from=dvlp_msdot-build ./ ./
+COPY --from=dvlp_dind-build ./ ./
 USER dvl
 
-#
-# KERNEL
-#
+############################### KERNEL #########################################
+#####################
+# dvlp_kernel-build #
+#####################
 FROM dvlp_base AS dvlp_kernel-build
 USER agl
 # RUN echo exit 0 > /usr/sbin/policy-rc.d 
@@ -343,14 +434,17 @@ USER agl
 WORKDIR /home/dvl
 USER dvl
 
-############################### KERNEL #########################################
-#
-# dvlp_kernel-builder - KERNEL BUILDER
-#
-FROM dvlp_dind AS dvlp_kernel-builder
+##############################################
+###  dvlp_kernel-builder - KERNEL BUILDER  ###
+##############################################
+FROM dvlp_base AS dvlp_kernel-builder
 ARG _CONFIG_FILE
 # ARG _AGL
 WORKDIR /
+COPY --from=dvlp_skel ./ ./
+COPY --from=dvlp_python-build-lite ./ ./
+COPY --from=dvlp_msdot-build-lite ./ ./
+COPY --from=dvlp_dind-build ./ ./
 COPY --from=dvlp_kernel-build ./ ./
 USER god
 WORKDIR /home/dvl/dvlw/dvlp/kernels/linux
@@ -361,31 +455,31 @@ RUN sudo bash build-basic-wsl-kernel.sh ${_CONFIG_FILE} agl
 WORKDIR /home/dvl
 USER dvl
 
-#
-# dvlp_kernel-lite - kernel only
-#
-FROM dvlp_dind AS dvlp_kernel-lite
+##################################
+# dvlp_kernel-lite - kernel only #
+##################################
+FROM dvlp_dind-lite AS dvlp_kernel-lite
 WORKDIR /home/dvl
 # COPY --from=dvlp_kernel-builder dvlw/dvlp/kernels kernels/
-COPY --from=dvlp_kernel-builder linux* ./
+COPY --from=dvlp_kernel-builder linux-* ./
 USER dvl
 
 #################################### GUI ######################################
-#
-# dvlp_gui-lite
-#
+#################
+# dvlp_gui-lite #
+#################
 # wsl2 required
 FROM dvlp_base AS dvlp_gui-lite
 USER root
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NONINTERACTIVE_SEEN=true
+ARG refresh_repo=${refresh_repo:-yes}
 WORKDIR /
+COPY --from=dvlp_skel ./ ./
+COPY --from=dvlp_python-build-lite ./ ./
+COPY --from=dvlp_msdot-build-lite ./ ./
 COPY --from=dvlp_dind-build ./ ./
 WORKDIR /home/dvl
-RUN \
-    --mount=type=cache,target=/var/cache/curl,sharing=locked \
-    sudo apt-get -y install curl
-# for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
 RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
@@ -469,11 +563,16 @@ WORKDIR /home/dvl
 USER dvl
 
 ############################## CUDA ###############################
-#
-# dvlp_cuda
-#
+#############
+# dvlp_cuda #
+#############
 FROM dvlp_base AS dvlp_cuda
-USER agl
+COPY --from=dvlp_skel ./ ./
+COPY --from=dvlp_python-build-lite ./ ./
+COPY --from=dvlp_msdot-build-lite ./ ./
+COPY --from=dvlp_dind-build ./ ./
+COPY --from=dvlp_kernel-build ./ ./
+# COPY --from=dvlp_kernel-lite ./ ./
 RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
@@ -485,12 +584,20 @@ RUN \
 WORKDIR /home/dvl
 USER dvl
 
-#
-# dvlp_gui-plus
-#
-FROM dvlp_gui-plus AS dvlp_cuda-plus
+##################
+# dvlp_cuda-plus #
+##################
+FROM dvlp_base AS dvlp_cuda-plus
 WORKDIR /
+COPY --from=dvlp_skel ./ ./
+COPY --from=dvlp_python-build ./ ./
+COPY --from=dvlp_msdot-build ./ ./
+COPY --from=dvlp_dind-build ./ ./
+COPY --from=dvlp_kernel-builder ./ ./
 COPY --from=dvlp_cuda ./ ./
+RUN \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    sudo apt-get -y install nvidia-cuda-toolkit
 WORKDIR /home/dvl
 USER dvl
 

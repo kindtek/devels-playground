@@ -91,13 +91,13 @@ services:
   #       - _DVL_USR=${_DVL-:devel}
   #   volumes:
   #     - hell-data:/home/$_DVL_USR
-  data:
+  repo:
     user: agl
     group_add:
       - halo
     build:
       context: .
-      target: dvlp_data
+      target: dvlp_repo
     depends_on:
       base:
         # Wait for the ownership to change
@@ -115,55 +115,69 @@ services:
     # volumes_from:
     #   - base-angel
     #   - base-devel
-    volumes:
-      - god-data:/root:ro
-      - gdi-data:/home/god:rw
-      - hell-data:/home/dvl
-      # - hell-data:/home/devel
-      # - hell-data:/home/${_DVL_USR:-dvl}
-      # - halo-data:/home/${_AGL_USR:-agl}
-      # - halo-data:/home/angel
-      - halo-data:/home/agl
-      - dls-data:/dls
-      - mnt-data:/data
+    # volumes:
+    #   - god-data:/root:ro
+    #   - gdi-data:/home/god:rw
+    #   - hell-data:/home/dvl
+    #   # - hell-data:/home/devel
+    #   # - hell-data:/home/${_DVL_USR:-dvl}
+    #   # - halo-data:/home/${_AGL_USR:-agl}
+    #   # - halo-data:/home/angel
+    #   - halo-data:/home/agl
+    #   - dls-data:/dls
+    #   - mnt-data:/data
   skel-build:
-    extends: data
+    extends: repo
     user: agl
     tty: false
+    build:
+      context: .
+      args:
+        - _AGL=agl
+        - _HALO=halo
+      # network: ${COMPOSE_PROJECT_NAME}_default
+
+    # init: true
+    # volumes:
+    #   - hell-data:/home/dvl
+    #   - halo-data:/home/${_AGL:-agl}
+    #   - mnt-data:/mnt/data
+    depends_on:
+      repo:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
+    # volumes:
+    #   - mnt-data:/data
+    #   # - hell-data:/home/${_DVL_USR:-dvl}
+    #   - hell-data:/hel
+    #   # - halo-data:/home/${_AGL_USR:-agl}
+    #   - halo-data:/hal
+    #   - gdi-data:/rootg
+
+    labels:
+      com.dvlp_skel.description: "-build skeleton"
+  skel:
+    extends: skel-build
     entrypoint:
       - sleep
       - infinity
     build:
       context: .
       target: dvlp_skel
-      args:
-        - _AGL=agl
-        - _HALO=halo
-      # network: ${COMPOSE_PROJECT_NAME}_default
-    init: true
-    # volumes:
-    #   - hell-data:/home/dvl
-    #   - halo-data:/home/${_AGL:-agl}
-    #   - mnt-data:/mnt/data
     depends_on:
-      data:
+      skel-build:
         # Wait for the ownership to change
         condition: service_completed_successfully
     volumes:
-      # - mnt-data:/data
+      - mnt-data:/mnt/data
       # - hell-data:/home/${_DVL_USR:-dvl}
       - hell-data:/home/dvl
       # - halo-data:/home/${_AGL_USR:-agl}
       - halo-data:/home/agl
-      # - gdi-data:/home/god
-
-    labels:
-      com.dvlp_skel.description: "-build skeleton"
-  skel:
-    extends: skel-build
+      - god-data:/home/god        
     labels:
       com.dvlp_skel.description: "skeleton"
-  git:
+  bare:
     # owner/group becomes owner of hell-data volume
     extends: skel
     restart: on-failure
@@ -174,17 +188,17 @@ services:
     user: dvl
     working_dir: /home/dvl
     privileged: true
-    image: kindtek/dvlp:ubuntu-git
+    image: kindtek/dvlp:ubuntu-bare
     # extends: skel
     build:
       context: .
-      target: dvlp_git
+      target: dvlp_git-bare
       args:
         - _AGL_USR=${_AGL:-agl}
         - mnt_data=${mnt_data:-/mnt/data}
         - _CONFIG_FILE
     depends_on:
-      data:
+      repo:
         # Wait for the ownership to change
         condition: service_completed_successfully
     init: true
@@ -195,29 +209,89 @@ services:
       - gdi-data:/rootg
       - mnt-data:/mnt/data
       - dls-data:/mnt/data/dls
-
+    labels:
+      com.dvl-playg.description: "basics + git"
+  git-lite:
+    # owner/group becomes owner of hell-data volume
+    extends: bare
+    image: kindtek/dvlp:ubuntu-git-lite
+    # extends: skel
+    build:
+      context: .
+      target: dvlp_git-lite
+    labels:
+      com.dvl-playg.description: "basics + git"
+  
+  git:
+    # owner/group becomes owner of hell-data volume
+    extends: bare
+    image: kindtek/dvlp:ubuntu-git
+    # extends: skel
+    build:
+      context: .
+      target: dvlp_git
+    labels:
+      com.dvl-playg.description: "basics + git"
+  python-build:
+    extends: bare
+    build:
+      context: .
+      target: dvlp_python-build
+    labels:
+      com.dvl-playg.description: "basics + git"
+  python-build-lite:
+    extends: bare
+    build:
+      context: .
+      target: dvlp_python-build-lite
+    depends_on:
+      python-build:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
+    labels:
+      com.dvl-playg.description: "basics + git"
+  python-lite:
+    extends: bare
+    image: kindtek/dvlp:ubuntu-py-lite
+    build:
+      context: .
+      target: dvlp_python-lite
+    depends_on:
+      python-build:
+        # Wait for the ownership to change
+        condition: service_started
     labels:
       com.dvl-playg.description: "basics + git"
   python:
-    extends: git
+    extends: bare
     image: kindtek/dvlp:ubuntu-py
     build:
       context: .
       target: dvlp_python
+    depends_on:
+      python-build:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
     labels:
       com.dvl-playg.description: "basics + git"
-
+  msdot-lite:
+    extends: bare
+    image: kindtek/dvlp:ubuntu-msdot-lite
+    build:
+      context: .
+      target: dvlp_msdot-lite
+    labels:
+      com.dvl-playg.description: "basics + git + powerhell"
   msdot:
-    extends: git
+    extends: bare
     image: kindtek/dvlp:ubuntu-msdot
     build:
       context: .
       target: dvlp_msdot
     labels:
       com.dvl-playg.description: "basics + git + powerhell"
-
   dind:
-    extends: git
+    extends: bare
     image: kindtek/dvlp:ubuntu-dind
     build:
       context: .
@@ -225,7 +299,7 @@ services:
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker"
   kernel-lite:
-    extends: git
+    extends: bare
     image: kindtek/dvlp:ubuntu-kernel-lite
     build:
       context: .
@@ -233,7 +307,7 @@ services:
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
   kernel-builder:
-    extends: git
+    extends: bare
     image: kindtek/dvlp:ubuntu-kernel-builder
     build:
       context: .
@@ -243,28 +317,27 @@ services:
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
   gui-lite:
-    extends: git
+    extends: bare
+    # entrypoint: 
+    #   - /bin/bash
+    #   - -c
+    #   - /home/dvl/start-kde.sh
     image: kindtek/dvlp:ubuntu-gui
     build:
       context: .
-      target: dvlp_gui
+      target: dvlp_gui-lite
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
   gui:
-    extends: git
-    entrypoint: 
-      - /bin/bash
-      - c
-      - /home/dvl/start-kde.sh
+    extends: gui-lite
     image: kindtek/dvlp:ubuntu-gui
     build:
       context: .
       target: dvlp_gui
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
-
   gui-plus:
-    extends: git
+    extends: gui-lite
     image: kindtek/dvlp:ubuntu-gui-plus
     build:
       context: .
@@ -272,7 +345,7 @@ services:
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
   cuda:
-    extends: git
+    extends: gui-lite
     image: kindtek/dvlp:ubuntu-cuda
     build:
       context: .
@@ -283,7 +356,7 @@ services:
         com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 
   cuda-plus:
-    extends: git
+    extends: gui-lite
     image: kindtek/dvlp:ubuntu-cuda-plus
     build:
       context: .
