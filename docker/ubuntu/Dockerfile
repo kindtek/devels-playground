@@ -16,9 +16,6 @@ ARG _DVL_USR=${_DVL_USR:-dvl}
 # dvlp_base #
 #############
 FROM ubuntu:latest AS dvlp_base
-ARG _AGL_USR=${_AGL_USR:-agl}
-ARG _DVL_USR=${_DVL_USR:-dvl}
-ARG _HALO=halo
 ARG _CONFIG_FILE
 ARG DEBIAN_FRONTEND=noninteractive
 RUN echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
