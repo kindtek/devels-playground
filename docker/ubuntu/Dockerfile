@@ -1,6 +1,10 @@
 # syntax=docker/dockerfile:experimental
-# to build, run: 
-# docker compose build   ( ... don't try docker run - permissions built with docker compose are needed )
+# to build and run an individual service (ie gui):
+## `docker compose build gui && docker compose up gui`
+# to build everything:
+## `docker compose build && docker compose up`
+# to remove all volumes:
+## docker volume rm $(docker volume ls -q)
 ARG DEBIAN_FRONTEND=noninteractive
 ARG fresh_pull=${fresh_pull:-cached}
 
