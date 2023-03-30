@@ -123,8 +123,9 @@ RUN \
     git config --global --add safe.directory /home/dvl && \
     git config --global --add safe.directory /hel && \
     git config --global --add safe.directory /tmp/git/cache && \
+    if [ $fresh_repo != no ]; then rm -rf /tmp/git/cache/dvlw; fi && \
     # clone fresh repos and give dvl ownership
-    git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress /tmp/git/cache/dvlw/ && \
+    git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress /tmp/git/cache/dvlw && \
     cd /tmp/git/cache/dvlw && git pull && cp -rv --remove-destination . /home/dvl/dvlw
     # git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress dvlw
 # RUN git clone https://github.com/kindtek/dvlw --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
