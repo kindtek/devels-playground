@@ -205,8 +205,8 @@ services:
     volumes:
       - hell-data:/hel
       - halo-data:/hal
-      - god-data:/root:ro
-      - gdi-data:/rootg
+      - gdi-data:/root:ro
+      - god-data:/rootg
       - mnt-data:/mnt/data
       - dls-data:/mnt/data/dls
     labels:
