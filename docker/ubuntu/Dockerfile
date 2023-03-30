@@ -5,8 +5,11 @@
 ## `docker compose build && docker compose up`
 # to remove all volumes:
 ## docker compose down && docker volume rm $(docker volume ls -q)
+ARG _CONFIG_FILE=${_CONFIG_FILE}
 ARG DEBIAN_FRONTEND=noninteractive
-ARG fresh_repo=${fresh_repo:-no}
+ARG refresh_repo=${refresh_repo:-no}
+ARG _AGL_USR=${_AGL_USR:-agl}
+ARG _DVL_USR=${_DVL_USR:-dvl}
 
 ############################## BASE ####################################
 #############
@@ -96,7 +99,7 @@ USER dvl
 #############
 FROM dvlp_base AS dvlp_repo
 ARG mnt_data=${mnt_data:-/mnt/data}
-ARG fresh_repo=${fresh_repo:-no}
+ARG refresh_repo=${refresh_repo:-no}
 USER root
 WORKDIR /
 COPY --from=dvlp_base-devel --chown=dvl:hell ./home/dvl ./home/dvl
@@ -507,10 +510,11 @@ USER dvl
 #
 # wsl2 required
 FROM dvlp_gui-lite AS dvlp_gui
+ARG refresh_repo=${refresh_repo:-yes}
+ARG DEBIAN_FRONTEND=noninteractive
+ARG DEBCONF_NONINTERACTIVE_SEEN=true
 USER root
-RUN sudo apt-get update && \
-    export DEBIAN_FRONTEND=noninteractive && \
-    export DEBCONF_NONINTERACTIVE_SEEN=true && \
+RUN sudo apt-get -y update && sudo apt-get -y upgrade && \
     update-locale LANGUAGE="C" && \
     update-locale LANG="C" && \
     update-locale LC_ALL="C" && \
