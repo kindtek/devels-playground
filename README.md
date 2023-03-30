@@ -56,7 +56,7 @@
   - Docker
 
 ```bat
-git clone https://github.com/kindtek/dvl-playg
+git clone https://github.com/kindtek/devels-playground
 scripts/wsl-docker-import
 ```
 ```shell
@@ -64,7 +64,7 @@ scripts/wsl-docker-import
  BUILD YOUR OWN KERNEL
 #######################
 ### use this config file as is or use your own
-config_file="https://raw.githubusercontent.com/kindtek/dvl-playg/615b895f27a5c6827e468c0f5b92f4881e386208/kernels/linux/x86/amd/6_3rc4/.config_wsl-zfs0"
+config_file="https://raw.githubusercontent.com/kindtek/devels-playground/615b895f27a5c6827e468c0f5b92f4881e386208/kernels/linux/x86/amd/6_3rc4/.config_wsl-zfs0"
 
 git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress dvlw
 cd dvlw

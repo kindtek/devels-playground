@@ -1,5 +1,5 @@
 version: "3.9"
-name: dvl-playg-ubuntu
+name: devels-playground-ubuntu
 services:
   base:
     build:
@@ -51,7 +51,6 @@ services:
       base:
         condition: service_completed_successfully
     init: true
-
     # volumes:
     #   - hell-data:/home/agl
   base-devel:
@@ -137,11 +136,11 @@ services:
         - _HALO=halo
       # network: ${COMPOSE_PROJECT_NAME}_default
 
-    # init: true
-    # volumes:
-    #   - hell-data:/home/dvl
-    #   - halo-data:/home/${_AGL:-agl}
-    #   - mnt-data:/mnt/data
+      # init: true
+      # volumes:
+      #   - hell-data:/home/dvl
+      #   - halo-data:/home/${_AGL:-agl}
+      #   - mnt-data:/mnt/data
     depends_on:
       repo:
         # Wait for the ownership to change
@@ -174,7 +173,7 @@ services:
       - hell-data:/home/dvl
       # - halo-data:/home/${_AGL_USR:-agl}
       - halo-data:/home/agl
-      - god-data:/home/god        
+      - god-data:/home/god
     labels:
       com.dvlp_skel.description: "skeleton"
   bare:
@@ -210,7 +209,7 @@ services:
       - mnt-data:/mnt/data
       - dls-data:/mnt/data/dls
     labels:
-      com.dvl-playg.description: "basics + git"
+      com.devels-playground.description: "basics + git"
   git-lite:
     # owner/group becomes owner of hell-data volume
     extends: bare
@@ -220,8 +219,8 @@ services:
       context: .
       target: dvlp_git-lite
     labels:
-      com.dvl-playg.description: "basics + git"
-  
+      com.devels-playground.description: "basics + git"
+
   git:
     # owner/group becomes owner of hell-data volume
     extends: bare
@@ -231,14 +230,14 @@ services:
       context: .
       target: dvlp_git
     labels:
-      com.dvl-playg.description: "basics + git"
+      com.devels-playground.description: "basics + git"
   python-build:
     extends: bare
     build:
       context: .
       target: dvlp_python-build
     labels:
-      com.dvl-playg.description: "basics + git"
+      com.devels-playground.description: "basics + git"
   python-build-lite:
     extends: bare
     build:
@@ -249,7 +248,7 @@ services:
         # Wait for the ownership to change
         condition: service_completed_successfully
     labels:
-      com.dvl-playg.description: "basics + git"
+      com.devels-playground.description: "basics + git"
   python-lite:
     extends: bare
     image: kindtek/dvlp:ubuntu-py-lite
@@ -261,7 +260,7 @@ services:
         # Wait for the ownership to change
         condition: service_started
     labels:
-      com.dvl-playg.description: "basics + git"
+      com.devels-playground.description: "basics + git"
   python:
     extends: bare
     image: kindtek/dvlp:ubuntu-py
@@ -273,7 +272,7 @@ services:
         # Wait for the ownership to change
         condition: service_completed_successfully
     labels:
-      com.dvl-playg.description: "basics + git"
+      com.devels-playground.description: "basics + git"
   msdot-lite:
     extends: bare
     image: kindtek/dvlp:ubuntu-msdot-lite
@@ -281,7 +280,7 @@ services:
       context: .
       target: dvlp_msdot-lite
     labels:
-      com.dvl-playg.description: "basics + git + powerhell"
+      com.devels-playground.description: "basics + git + powerhell"
   msdot:
     extends: bare
     image: kindtek/dvlp:ubuntu-msdot
@@ -289,7 +288,7 @@ services:
       context: .
       target: dvlp_msdot
     labels:
-      com.dvl-playg.description: "basics + git + powerhell"
+      com.devels-playground.description: "basics + git + powerhell"
   dind:
     extends: bare
     image: kindtek/dvlp:ubuntu-dind
@@ -297,7 +296,7 @@ services:
       context: .
       target: dvlp_dind
     labels:
-      com.dvl-playg.description: "basics + git + powerhell + docker"
+      com.devels-playground.description: "basics + git + powerhell + docker"
   kernel-lite:
     extends: bare
     image: kindtek/dvlp:ubuntu-kernel-lite
@@ -305,7 +304,7 @@ services:
       context: .
       target: dvlp_kernel-lite
     labels:
-      com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
+      com.devels-playground.description: "basics + git + powerhell + docker + kernel"
   kernel-builder:
     extends: bare
     image: kindtek/dvlp:ubuntu-kernel-builder
@@ -315,7 +314,7 @@ services:
       args:
         - _CONFIG_FILE=${CONFIG_FILE:-dvlw/dvlp/kernels/linux/x86/generic/.config_wsl0}
     labels:
-      com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
+      com.devels-playground.description: "basics + git + powerhell + docker + kernel"
   gui-lite:
     extends: bare
     # entrypoint: 
@@ -327,7 +326,7 @@ services:
       context: .
       target: dvlp_gui-lite
     labels:
-      com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
+      com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   gui:
     extends: gui-lite
     image: kindtek/dvlp:ubuntu-gui
@@ -335,7 +334,7 @@ services:
       context: .
       target: dvlp_gui
     labels:
-      com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
+      com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   gui-plus:
     extends: gui-lite
     image: kindtek/dvlp:ubuntu-gui-plus
@@ -343,7 +342,7 @@ services:
       context: .
       target: dvlp_gui-plus
     labels:
-      com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
+      com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   cuda:
     extends: gui-lite
     image: kindtek/dvlp:ubuntu-cuda
