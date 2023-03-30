@@ -432,7 +432,9 @@ RUN sudo apt-get update && \
 RUN sudo apt-get install -y xrdp xfce4 xfce4-goodies
 RUN sudo apt-get install -y lightdm
 RUN echo "set shared/default-x-display-manager lightdm" | sudo debconf-communicate  
-RUN sudo apt-get install --no-install-recommends -y kubuntu-desktop
+# override  with custom configs
+COPY --from=dvlp_data --chown=god:rootg /home/dvl/dvlw/dvlp/mnt/etc/* /etc/
+COPY --from=dvlp_data --chown=god:rootg /home/dvl/dvlw/dvlp/mnt/opt/* /opt/
 # RUN sudo aptitude safe-upgrade
 # RUN \
 #     --mount=type=cache,target=/var/cache/apt,sharing=locked \
