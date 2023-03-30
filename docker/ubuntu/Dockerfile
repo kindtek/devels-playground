@@ -139,8 +139,7 @@ RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
     git submodule update --init --remote --depth=1 --progress || git pull \
     # (cd /tmp/git/cache/dvlw/dvlp && git pull && cp -rv --remove-destination . /home/dvl/dvlw/dvlp)
-    chmod +x dvlp/mnt/home/ssh-keygen.sh && \
-    chmod +x dvlp/mnt/home/start-kde.sh && \
+    chmod +x dvlp/mnt/home/**.sh && \
     chmod -R +x dvlp/mnt/bak
 # WORKDIR /home/dvl/dvlw/dvlp
 # RUN if [ "$refresh_repo" != no ]; then git pull; fi    
