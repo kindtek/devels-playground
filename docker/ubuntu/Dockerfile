@@ -195,8 +195,7 @@ FROM dvlp_base AS dvlp_git
 ARG fresh_repo=${fresh_repo:-no}
 WORKDIR /
 COPY --from=dvlp_skel ./ ./
-USER agl
-# RUN sudo rm -rf /var/cache/apt/archives/
+WORKDIR /home/dvl
 USER dvl
 
 ################################# PYTHON ########################################
@@ -217,7 +216,6 @@ RUN pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps
 RUN pip3 install cdir --user
 USER god
-RUN rm -rf /cache/apt/archives/
 RUN pip3 install cdir --user
 USER dvl
 RUN pip3 install cdir --user
@@ -230,11 +228,6 @@ WORKDIR /home/dvl
 FROM dvlp_git AS dvlp_python
 WORKDIR / 
 COPY --from=dvlp_python-build ./ ./
-USER agl
-# RUN sudo rm -rf /var/cache/apt/archives/
-# RUN \
-#     --mount=type=cache,target=/var/cache/pip \
-#     pip3 install cdir --user
 WORKDIR /home/dvl
 USER dvl
 
@@ -272,8 +265,6 @@ USER dvl
 FROM dvlp_python AS dvlp_msdot
 WORKDIR /
 COPY --from=dvlp_msdot-build ./ ./
-USER agl
-# RUN sudo rm -rf /var/cache/apt/archives/
 WORKDIR /home/dvl
 USER dvl
 
@@ -311,8 +302,6 @@ USER dvl
 FROM dvlp_msdot AS dvlp_dind
 WORKDIR /
 COPY --from=dvlp_dind-build ./ ./
-USER agl
-# RUN sudo rm -rf /var/cache/apt/archives/
 WORKDIR /home/dvl
 USER dvl
 
@@ -360,7 +349,6 @@ SHELL ["/bin/bash", "-c"]
 # RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
 RUN sudo bash build-basic-wsl-kernel.sh ${_CONFIG_FILE} agl
 # RUN echo '# sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/agl/.bashrc
-# RUN sudo rm -rf /var/cache/apt/archives/
 WORKDIR /home/dvl
 USER dvl
 
@@ -464,10 +452,8 @@ USER dvl
 #
 FROM dvlp_kernel-builder AS dvlp_gui-plus
 WORKDIR /
-USER agl
 COPY --from=dvlp_kernel-builder ./ ./
 COPY --from=dvlp_gui ./ ./
-# RUN sudo rm -rf /var/cache/apt/archives/
 WORKDIR /home/dvl
 USER dvl
 
@@ -493,9 +479,7 @@ USER dvl
 #
 FROM dvlp_gui-plus AS dvlp_cuda-plus
 WORKDIR /
-USER agl
 COPY --from=dvlp_cuda ./ ./
-# RUN sudo rm -rf /var/cache/apt/archives/
 WORKDIR /home/dvl
 USER dvl
 
