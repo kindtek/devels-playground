@@ -109,29 +109,37 @@ RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 RUN \
-    # --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    apt-get -y install git
-USER dvl
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    apt-get -y update && apt-get -y upgrade && apt-get -y install git 
+# USER dvl
 WORKDIR /home/dvl
+# add git cache directory
+RUN mkdir -p /tmp/git/cache && \
+    chown -R dvl:hell /tmp/git/cache && \
+    rm -rf /tmp/git/cache
 # add safe directories
 RUN \
-    --mount=type=cache,target=/var/cache/git-dvlw \
+    --mount=type=cache,target=/tmp/git/cache \
     git config --global --add safe.directory /home/dvl && \
-    git config --global --add safe.directory /home/dvl && \
-    git config --global --add safe.directory /home/dvl/dvlp && \
+    git config --global --add safe.directory /hel && \
+    git config --global --add safe.directory /tmp/git/cache && \
     # clone fresh repos and give dvl ownership
-    git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress dvlw
-RUN if [ $fresh_repo != no ]; then git pull; fi    
+    git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress /tmp/git/cache/dvlw/ && \
+    cd /tmp/git/cache/dvlw && git pull && cp -rv --remove-destination . /home/dvl/dvlw
+    # git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress dvlw
 # RUN git clone https://github.com/kindtek/dvlw --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
 # --filter=combine:tree:depth:1+blob:limit=10240000  --recurse-submodules --remote-submodules  --single-branch  --no-tags --filter=blob:limit=1024000 --single-branch --branch main
 WORKDIR /home/dvl/dvlw
-RUN \
-    --mount=type=cache,target=/var/cache/git-dvlw/dvlp \
-    git submodule update --init --remote --depth=1 --progress && \
-    chmod +x dvlp/mnt/home/ssh-keygen.sh && \
-    chmod +x dvlp/mnt/home/start-kde.sh && \
-    chmod -R +x dvlp/mnt/bak
 RUN if [ $fresh_repo != no ]; then git pull; fi    
+RUN \
+    --mount=type=cache,target=/tmp/git/cache,sharing=locked \
+    git submodule update --init --remote --depth=1 --progress && \
+    cd /tmp/git/cache/dvlw/dvlp && git pull && cp -rv --remove-destination . /home/dvl/dvlw/dvlp 
+    # chmod +x dvlp/mnt/home/ssh-keygen.sh && \
+    # chmod +x dvlp/mnt/home/start-kde.sh && \
+RUN chmod -R +x dvlp/mnt/bak 
+WORKDIR /home/dvl/dvlw/dvlp
+RUN if [ $fresh_repo != no ]; then ls -al; git pull; fi    
 USER dvl
 WORKDIR /home/dvl
 
