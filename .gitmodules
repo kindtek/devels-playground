@@ -12,11 +12,11 @@
 	url = https://github.com/kindtek/powerhell.git
 	branch = dvl-works
 	recurse = false
-[submodule "dvl-playg"]
+[submodule "devels-playground"]
 	active = true
 	path = dvlp
 	shallow = false
-	url = https://github.com/kindtek/dvl-playg.git
+	url = https://github.com/kindtek/devels-playground.git
 	branch = dvl-works
 	recurse = false
 [submodule "cdir"]
