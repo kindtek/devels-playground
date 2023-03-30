@@ -497,9 +497,10 @@ RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browse
 # # # brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
 # # # sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl && \
 USER dvl
-#
-# dvlp_gui
-#
+
+############
+# dvlp_gui #
+############
 # wsl2 required
 FROM dvlp_gui-lite AS dvlp_gui
 ARG refresh_repo=${refresh_repo:-yes}
@@ -554,10 +555,11 @@ COPY --from=dvlp_repo --chown=god:rootg /home/dvl/dvlw/dvlp/mnt/etc/* /etc/
 # # RUN echo "set shared/default-x-display-manager lightdm" | sudo debconf-communicate && \
 USER dvl
 
-#
-# dvlp_gui-plus
-#
+#################
+# dvlp_gui-plus #
+#################
 FROM dvlp_kernel-builder AS dvlp_gui-plus
+ARG refresh_repo=${refresh_repo:-yes}
 WORKDIR /
 COPY --from=dvlp_kernel-builder ./ ./
 COPY --from=dvlp_gui ./ ./
