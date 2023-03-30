@@ -317,10 +317,12 @@ services:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel"
   gui-lite:
     extends: bare
-    # entrypoint: 
-    #   - /bin/bash
-    #   - -c
-    #   - /home/dvl/start-kde.sh
+    user: agl
+    entrypoint: 
+      - /bin/bash
+      - -c
+      - sudo
+      - /home/dvl/start-kde.sh
     image: kindtek/dvlp:ubuntu-gui
     build:
       context: .
