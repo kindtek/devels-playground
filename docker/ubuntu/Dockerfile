@@ -525,7 +525,7 @@ RUN sudo apt-get -y update && sudo apt-get -y upgrade && \
 #     echo "/usr/sbin/lightdm" | sudo tee /etc/X11/default-display-manager && \
 #     sudo locale-gen && sudo update-locale 
 RUN \
-    --mount=type=cache,target=/var/cache/apt/archives \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     sudo apt-get -y update && sudo apt-get -y upgrade && \
     sudo apt-get install -y xrdp xfce4 xfce4-goodies && \
     # MUST install this separately and AFTER xfce or xfce prompting to choose default dm will hang/break build
