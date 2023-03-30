@@ -238,8 +238,7 @@ USER dvl
 # dvlp_python-build #
 #####################
 FROM dvlp_base AS dvlp_python-build
-USER agl
-RUN sudo apt-get -y install apt-utils libgirepository1.0-dev pkg-config python3-pip
+USER root
 RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
