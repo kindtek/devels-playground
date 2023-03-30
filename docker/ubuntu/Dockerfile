@@ -122,33 +122,9 @@ RUN \
     --mount=type=cache,target=/var/cache/git-dvlw/dvlp \
     git submodule update --init --remote --depth=1 --progress && \
     chmod +x dvlp/mnt/home/gh-auth-first-time-login.sh && \
+    chmod +x dvlp/mnt/home/start-kde.sh && \
     chmod -R +x dvlp/mnt/bak
-USER root
-RUN cat dvlp/mnt/home/.bashrc | sudo tee /home/god/.bashrc && \
-    cat dvlp/mnt/home/.bashrc | sudo tee /home/dvl/.bashrc && \
-    cat dvlp/mnt/home/.bashrc | sudo tee /home/agl/.bashrc && \
-    cat dvlp/mnt/home/.bashrc | sudo tee /etc/skel/.bashrc && \
-    # # add warning for the backup drive
-    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/README_ASAP && \
-    echo "!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!\n\nThe devel can/will delete your files if you save them in this directory. Keep files out of the devels grasp and in the *agl* sub-directory.\n\n!!!!!!!!!!!!!!!!DO NOT SAVE YOUR FILES IN THIS DIRECTORY!!!!!!!!!!!!!!!!" | sudo tee ${mnt_data}/bak/dvl/README_ASAP 
-# if [ -d "${mnt_data}/bak/dvl" ]; then \
-# if [ ! -fv "${mnt_data}/bak/dvl/backup-docker.sh" ]; then \
-# echo "#!/bin/bash" > dvl/backup-docker.sh; \
-# fi \
-# fi && \
-# # RUN if [ -d "${mnt_data}/bak/agl" ]; then \
-# #         if [ ! -fv "${mnt_data}/bak/agl/backup-docker.sh" ]; then \
-# #             echo "#!/bin/bash" >> agl/backup-docker.sh; \
-# #         fi \
-# #     fi \
-# #     if [ -d "${mnt_data}/bak/agl" ]; then \
-# #         if [ ! -fv "${mnt_data}/bak/agl/backup-docker.sh" ]; then \
-# #             echo "#!/bin/bash" >> agl/backup-docker.sh; \
-# #         fi \
-# #     fi
-# chown -Rv dvl:hell /home/dvl && chown -Rv agl:halo /home/agl
-# RUN echo "# # # # Docker # # # # " >> ${mnt_data}/bak/agl/backup-docker.sh
-# RUN sudo .${mnt_data}/bak/agl/backup-docker.sh
+RUN if [ $fresh_pull != cached ]; then git pull; fi    
 USER dvl
 WORKDIR /home/dvl
 
@@ -164,11 +140,12 @@ COPY --from=dvlp_data --chown=agl:halo ./home/agl ./home/agl
 COPY --from=dvlp_data --chown=god:rootg ./home/god ./home/god
 COPY --from=dvlp_data --chown=agl:halo .${mnt_data} .${mnt_data}
 COPY --from=dvlp_data /home/dvl/dvlw/dvlp/mnt/. .${mnt_data}
-COPY --from=dvlp_data /home/dvl/dvlw/dvlp/mnt/home/gh-auth-first-time-login.sh /home/dvl/gh-auth-first-time-login.sh
-COPY --from=dvlp_data /home/dvl/dvlw/dvlp/mnt/home/gh-auth-first-time-login.sh /home/agl/gh-auth-first-time-login.sh
-COPY --from=dvlp_data /home/dvl/dvlw/dvlp/mnt/home/gh-auth-first-time-login.sh /home/god/gh-auth-first-time-login.sh
-USER root
-RUN chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh
+# COPY --from=dvlp_data /home/dvl/dvlw/dvlp/mnt/home/ /home/dvl/dvlw/dvlp/mnt/home/ 
+COPY --from=dvlp_data --chown=dvl:hell /home/dvl/dvlw/dvlp/mnt/home/* /home/dvl/
+COPY --from=dvlp_data --chown=agl:halo /home/dvl/dvlw/dvlp/mnt/home/* /home/agl/
+COPY --from=dvlp_data --chown=god:rootg /home/dvl/dvlw/dvlp/mnt/home/* /home/god/
+# USER root
+# RUN chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh
 USER dvl
 WORKDIR /home/dvl
 
