@@ -4,7 +4,7 @@
 # to build everything:
 ## `docker compose build && docker compose up`
 # to remove all volumes:
-## docker volume rm $(docker volume ls -q)
+## docker compose down && docker volume rm $(docker volume ls -q)
 ARG DEBIAN_FRONTEND=noninteractive
 ARG fresh_repo=${fresh_repo:-no}
 
