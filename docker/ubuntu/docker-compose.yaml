@@ -192,7 +192,7 @@ services:
     # extends: skel
     build:
       context: .
-      target: dvlp_git-bare
+      target: dvlp_bare
       args:
         - _AGL_USR=${_AGL:-agl}
         - mnt_data=${mnt_data:-/mnt/data}

@@ -168,6 +168,7 @@ COPY --from=dvlp_base-god --chown=god:rootg ./home/god ./home/god
 COPY --from=dvlp_base-devel --chown=agl:halo .${mnt_data} .${mnt_data}
 COPY --from=dvlp_base-angel --chown=agl:halo .${mnt_data} .${mnt_data}
 COPY --from=dvlp_repo --chown=god:halo /home/dvl/dvlw/dvlp/mnt/. .${mnt_data}
+COPY --from=dvlp_repo --chown=dvl:hell ./home/dvl ./home/dvl
 # COPY --from=dvlp_repo --chown=agl:halo .${mnt_data} .${mnt_data}
 
 
