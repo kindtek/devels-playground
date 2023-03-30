@@ -84,9 +84,9 @@ RUN ln -sfv /home/dvl /home/dvl && \
     ln -sv dvlw/dvlp/kernels kernels && \
     ln -sv dvlw/dvlp/docker docker && \
     mkdir -m 753 -pv ${mnt_data}/bak/dvl && \
-    ln -sv ${mnt_data}/bak/dvl /home/dvl/bak
-
-USER dvl
+    ln -sv ${mnt_data}/bak/dvl /home/dvl/bak && \
+    rm -rf /home/dvl/.bash* /home/dvl/.pro*
+WORKDIR /
 
 # build aliases
 # FROM dvlp_base-angel AS dvlp_auser
