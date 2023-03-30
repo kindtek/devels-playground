@@ -520,12 +520,7 @@ RUN sudo apt-get -y update && sudo apt-get -y upgrade && \
     update-locale LANGUAGE="C" && \
     update-locale LANG="C" && \
     update-locale LC_ALL="C" && \
-    sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
-    sudo dpkg-reconfigure debconf -f noninteractive -p critical && \
-    # sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo debconf -f noninteractive -p critical xfce4 && \
-    # sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo debconf -f noninteractive -p critical kubuntu-desktop && \
-    # sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo debconf -f noninteractive -p critical xfce4 && \
-    echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections 
+    sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime  
 # RUN sudo apt-get install -y locales && \
 #     sudo dpkg-reconfigure --frontend noninteractive locales && \
 #     echo "/usr/sbin/lightdm" | sudo tee /etc/X11/default-display-manager && \
