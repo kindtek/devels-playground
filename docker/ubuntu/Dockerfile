@@ -6,7 +6,7 @@
 # to remove all volumes:
 ## docker volume rm $(docker volume ls -q)
 ARG DEBIAN_FRONTEND=noninteractive
-ARG fresh_pull=${fresh_pull:-cached}
+ARG fresh_repo=${fresh_repo:-no}
 
 ############################## BASE ####################################
 #
@@ -96,7 +96,7 @@ USER dvl
 #
 FROM dvlp_base AS dvlp_data
 ARG mnt_data=${mnt_data:-/mnt/data}
-ARG fresh_pull=${fresh_pull:-cached}
+ARG fresh_repo=${fresh_repo:-no}
 USER root
 WORKDIR /
 COPY --from=dvlp_base-devel --chown=dvl:hell ./home/dvl ./home/dvl
@@ -121,7 +121,7 @@ RUN \
     git config --global --add safe.directory /home/dvl/dvlp && \
     # clone fresh repos and give dvl ownership
     git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress dvlw
-RUN if [ $fresh_pull != cached ]; then git pull; fi    
+RUN if [ $fresh_repo != no ]; then git pull; fi    
 # RUN git clone https://github.com/kindtek/dvlw --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
 # --filter=combine:tree:depth:1+blob:limit=10240000  --recurse-submodules --remote-submodules  --single-branch  --no-tags --filter=blob:limit=1024000 --single-branch --branch main
 WORKDIR /home/dvl/dvlw
@@ -131,7 +131,7 @@ RUN \
     chmod +x dvlp/mnt/home/gh-auth-first-time-login.sh && \
     chmod +x dvlp/mnt/home/start-kde.sh && \
     chmod -R +x dvlp/mnt/bak
-RUN if [ $fresh_pull != cached ]; then git pull; fi    
+RUN if [ $fresh_repo != no ]; then git pull; fi    
 USER dvl
 WORKDIR /home/dvl
 
@@ -140,6 +140,7 @@ WORKDIR /home/dvl
 # dvlp_skel-build
 #
 FROM dvlp_base AS dvlp_skel-build
+ARG fresh_repo=${fresh_repo:-no}
 ENV DEBIAN_FRONTEND=noninteractive
 ARG mnt_data=${mnt_data:-/mnt/data}
 COPY --from=dvlp_data --chown=dvl:hell ./home/dvl ./home/dvl
@@ -160,6 +161,7 @@ WORKDIR /home/dvl
 # dvlp_skel
 # 
 FROM dvlp_skel-build AS dvlp_skel
+ARG fresh_repo=${fresh_repo:-no}
 # RUN with agl ownership
 USER agl
 # sudo mv -v ${mnt_data}/bak/custom ${mnt_data}/bak/agl/ && \
@@ -190,6 +192,7 @@ USER dvl
 
 ################################### GIT #########################################
 FROM dvlp_base AS dvlp_git
+ARG fresh_repo=${fresh_repo:-no}
 WORKDIR /
 COPY --from=dvlp_skel ./ ./
 USER agl
