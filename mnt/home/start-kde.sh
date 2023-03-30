@@ -1,2 +1,2 @@
 #!/bin/bash
-pwsh -Command mstsc.exe default.rdp /v:localhost:3390 /admin /f /multimon
+pwsh -Command /mnt/c/Windows/system32/mstsc.exe default.rdp /v:localhost:3390 /admin /f /multimon
