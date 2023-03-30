@@ -154,8 +154,8 @@ ARG mnt_data=${mnt_data:-/mnt/data}
 COPY --from=dvlp_data --chown=dvl:hell ./home/dvl ./home/dvl
 COPY --from=dvlp_data --chown=agl:halo ./home/agl ./home/agl
 COPY --from=dvlp_data --chown=god:rootg ./home/god ./home/god
+COPY --from=dvlp_data --chown=god:rootg /home/dvl/dvlw/dvlp/mnt/. .${mnt_data}
 COPY --from=dvlp_data --chown=agl:halo .${mnt_data} .${mnt_data}
-COPY --from=dvlp_data /home/dvl/dvlw/dvlp/mnt/. .${mnt_data}
 # COPY --from=dvlp_data /home/dvl/dvlw/dvlp/mnt/home/ /home/dvl/dvlw/dvlp/mnt/home/ 
 COPY --from=dvlp_data --chown=dvl:hell /home/dvl/dvlw/dvlp/mnt/home/* /home/dvl/
 COPY --from=dvlp_data --chown=agl:halo /home/dvl/dvlw/dvlp/mnt/home/* /home/agl/
