@@ -128,7 +128,7 @@ WORKDIR /home/dvl/dvlw
 RUN \
     --mount=type=cache,target=/var/cache/git-dvlw/dvlp \
     git submodule update --init --remote --depth=1 --progress && \
-    chmod +x dvlp/mnt/home/gh-auth-first-time-login.sh && \
+    chmod +x dvlp/mnt/home/ssh-keygen.sh && \
     chmod +x dvlp/mnt/home/start-kde.sh && \
     chmod -R +x dvlp/mnt/bak
 RUN if [ $fresh_repo != no ]; then git pull; fi    
