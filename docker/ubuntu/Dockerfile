@@ -52,20 +52,23 @@ RUN \
     apt-get -y install sudo && \
     usermod -aG sudo agl && \
     usermod -aG sudo god 
+
 # god permissions/volume builder
 FROM dvlp_base AS dvlp_base-god
 USER root
 ARG mnt_data=${mnt_data:-/mnt/data}
-RUN ln -fs /home/god /rootg
+RUN ln -fs /home/god /rootg && \
+    rm -rf /home/god/.bash* /home/god/.pro*
 # && \
 #     ln -sv /home/god/bak /mnt/data/bak 
+
 # agl permissions/volume builder
 FROM dvlp_base AS dvlp_base-angel
-USER root
 ARG mnt_data=${mnt_data:-/mnt/data}
 RUN ln -fs /home/agl /hal && \
     mkdir -m 753 -pv ${mnt_data}/bak/agl && \
-    ln -sv ${mnt_data}/bak/agl /home/agl/bak
+    ln -sv ${mnt_data}/bak/agl /home/agl/bak && \
+    rm -rf /home/agl/.bash* /home/agl/.pro*
 
 # dvl permissions/volume builder
 FROM dvlp_base AS dvlp_base-devel
