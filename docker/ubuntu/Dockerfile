@@ -23,7 +23,6 @@ RUN \
     # sudo add-apt-repository ppa:apt-fast/stable && \
     apt-get update -y && \
     apt-get upgrade -y && \
-    # non-root will need to use sudo from now on
     #   apt-get -y install sudo apt-fast
     addgroup --gid 4321 rootg && \
     addgroup --gid 777 halo && \
@@ -44,11 +43,10 @@ RUN \
     passwd -l root && \
     # make dvl default wsl user 
     echo "[user]\ndefault=dvl" >> /etc/wsl.conf && \
+    # non-root will need to use sudo from now on
     apt-get -y install sudo && \
     usermod -aG sudo agl && \
-    usermod -aG sudo  god  && \
-    rm -rf /var/cache/apt/archives/*.deb
-
+    usermod -aG sudo god 
 # god permissions/volume builder
 FROM dvlp_base AS dvlp_base-god
 USER root
@@ -154,7 +152,7 @@ RUN cat dvlp/mnt/home/.bashrc | sudo tee /home/god/.bashrc && \
 USER dvl
 WORKDIR /home/dvl
 
-# SKELETON framework
+############################## SKELETON ###################################
 #
 # dvlp_skel-build
 #
@@ -201,12 +199,12 @@ RUN \
     --mount=type=cache,target=/var/cache/curl,sharing=locked \
     sudo apt-get -y install curl
 # cant cache these ..
-RUN sudo apt-get -y install build-essential ca-certificates git gnupg2 libssl-dev nvi wslu
+RUN sudo apt-get -y install git gnupg2 libssl-dev nvi wslu
 
 WORKDIR /home/dvl
 USER dvl
 
-# GIT
+################################### GIT #########################################
 FROM dvlp_base AS dvlp_git
 WORKDIR /
 COPY --from=dvlp_skel ./ ./
@@ -226,7 +224,7 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -y install jq libdbus-1-3 libdbus-1-dev libcairo2-dev  libpython3-dev python3-venv
+    sudo apt-get -y install jq libdbus-1-dev libcairo2-dev  libpython3-dev python3-venv
 USER dvl
 RUN pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps
@@ -301,7 +299,6 @@ RUN \
     --mount=type=cache,target=/var/cache/curl,sharing=locked \
     sudo apt-get -y install curl
 RUN sudo apt-get -y install lsb-release gpg
-# sudo apt-get clean all && \
 RUN sudo mkdir -pv /etc/apt/keyrings
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -346,9 +343,9 @@ RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get -y update && \
     sudo apt-get -y upgrade && \
-    sudo apt-get -y install alien autoconf bison dbus-user-session daemonize dwarves \ 
+    sudo apt-get -y install alien autoconf bison build-essential dbus-user-session daemonize dwarves \ 
     fakeroot flex fontconfig gawk libblkid-dev libffi-dev lxcfs libudev-dev libaio-dev libattr1-dev libelf-dev \
-    python3 python3-dev python3-setuptools python3-cffi sysvinit-utils uuid-dev
+    python3-dev python3-setuptools python3-cffi net-tools systemd-sysv sysvinit-utils uuid-dev
 RUN \
     --mount=type=cache,target=/var/cache/snapd,sharing=locked \
     sudo apt-get -y install snapd
@@ -368,7 +365,6 @@ ARG _CONFIG_FILE
 # ARG _AGL
 WORKDIR /
 COPY --from=dvlp_kernel-build ./ ./
-WORKDIR /home/dvl/dvlp/kernels/linux
 USER god
 WORKDIR /home/dvl/dvlw/dvlp/kernels/linux
 SHELL ["/bin/bash", "-c"]
@@ -390,15 +386,15 @@ USER dvl
 
 #################################### GUI ######################################
 #
-# dvlp_gui 
+# dvlp_gui-lite
 #
 # wsl2 required
-FROM dvlp_base AS dvlp_gui
+FROM dvlp_base AS dvlp_gui-lite
 USER root
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NONINTERACTIVE_SEEN=true
 WORKDIR /
-COPY --from=dvlp_kernel-build ./ ./
+COPY --from=dvlp_dind-build ./ ./
 WORKDIR /home/dvl
 RUN \
     --mount=type=cache,target=/var/cache/curl,sharing=locked \
@@ -414,20 +410,9 @@ RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg a
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
     sudo apt-get update && \
-    sudo apt-get install -y brave-browser locales gimp gedit nautilus vlc x11-apps  
-# RUN sudo apt-get update && \
-#     export DEBIAN_FRONTEND=noninteractive && \
-#     export DEBCONF_NONINTERACTIVE_SEEN=true && \
-#     sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo apt-get install -y xfce4
-# RUN \
-#     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-#     sudo apt-get install -y xfce4
-# sudo apt-get install -y locales brave-browser gimp gedit nautilus vlc x11-apps xfce4
-RUN sudo update-locale && \
-    echo "LANG=en_US.UTF-8" | sudo tee -a /etc/locale.gen && \
-    sudo locale-gen && \
-    sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
-    # change last line of this file - fix for brave-browser displaying empty windows
+    sudo apt-get install -y brave-browser nautilus vlc x11-apps  
+# change last line of this file - fix for brave-browser displaying empty windows
+RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
     head -n -1 /opt/brave.com/brave/brave-browser.old | sudo tee /opt/brave.com/brave/brave-browser > /dev/null && \
     # now no longeer need to add --disable-gpu flag everytime
     echo '"$HERE/brave" "$@" " --disable-gpu " || true' | sudo tee --append /opt/brave.com/brave/brave-browser > /dev/null
@@ -436,9 +421,43 @@ RUN sudo update-locale && \
 # # # brave_old_line='\"\$HERE\/brave\"\s\"\$\@\"\s\|\|\strue' && \
 # # # brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
 # # # sudo sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/dvl && \
+USER dvl
+#
+# dvlp_gui
+#
+# wsl2 required
+FROM dvlp_gui-lite AS dvlp_gui
+USER root
+RUN sudo apt-get update && \
+    export DEBIAN_FRONTEND=noninteractive && \
+    export DEBCONF_NONINTERACTIVE_SEEN=true && \
+    update-locale LANGUAGE="C" && \
+    update-locale LANG="C" && \
+    update-locale LC_ALL="C" && \
+    sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
+    sudo dpkg-reconfigure debconf -f noninteractive -p critical && \
+    # sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo debconf -f noninteractive -p critical xfce4 && \
+    # sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo debconf -f noninteractive -p critical kubuntu-desktop && \
+    # sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo debconf -f noninteractive -p critical xfce4 && \
+    echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections 
+# RUN sudo apt-get install -y locales && \
+#     sudo dpkg-reconfigure --frontend noninteractive locales && \
+#     echo "/usr/sbin/lightdm" | sudo tee /etc/X11/default-display-manager && \
+#     sudo locale-gen && sudo update-locale 
+RUN sudo apt-get install -y xrdp xfce4 xfce4-goodies
+RUN sudo apt-get install -y lightdm
+RUN echo "set shared/default-x-display-manager lightdm" | sudo debconf-communicate  
+RUN sudo apt-get install --no-install-recommends -y kubuntu-desktop
+# RUN sudo aptitude safe-upgrade
+# RUN \
+#     --mount=type=cache,target=/var/cache/apt,sharing=locked \
+#     sudo apt-get install -y xfce4
+# sudo apt-get install -y locales brave-browser gimp gedit nautilus vlc x11-apps xfce4
+# RUN sudo update-locale && \
+#     echo "LANG=en_US.UTF-8" | sudo tee -a /etc/locale.gen && \
+#     sudo locale-gen && \
 # # # sudo apt-get clean all && \
 # # # sudo apt-get autoremove --purge
-# # stuff to try to make gimp install without interaction
 # # RUN \
 # # --mount=type=cache,target=/var/cache/apt,sharing=locked \
 # # sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo apt-get -y install lightdm gnome-session
@@ -449,7 +468,6 @@ RUN sudo update-locale && \
 # #     sudo dpkg-reconfigure --frontend noninteractive locales && \
 # #     echo "/usr/sbin/lightdm" | sudo tee /etc/X11/default-display-manager 
 # # RUN echo "set shared/default-x-display-manager lightdm" | sudo debconf-communicate && \
-# #     sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime
 USER dvl
 
 #
@@ -458,6 +476,7 @@ USER dvl
 FROM dvlp_kernel-builder AS dvlp_gui-plus
 WORKDIR /
 USER agl
+COPY --from=dvlp_kernel-builder ./ ./
 COPY --from=dvlp_gui ./ ./
 # RUN sudo rm -rf /var/cache/apt/archives/
 WORKDIR /home/dvl
@@ -474,7 +493,7 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -y install nvidia-cuda-toolkit
+    sudo apt-get -y --no-install-recommends install nvidia-cuda-toolkit
 # sudo apt-get clean all && \
 # sudo apt-get autoremove --purge
 WORKDIR /home/dvl
