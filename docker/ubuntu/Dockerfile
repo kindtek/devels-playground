@@ -227,7 +227,7 @@ USER dvl
 # dvlp_git #
 ############
 FROM dvlp_base AS dvlp_git
-ARG fresh_repo=${fresh_repo:-no}
+ARG refresh_repo=${refresh_repo:-yes}
 WORKDIR /
 COPY --from=dvlp_skel ./ ./
 WORKDIR /home/dvl
