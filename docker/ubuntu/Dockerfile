@@ -2,6 +2,7 @@
 # to build, run: 
 # docker compose build   ( ... don't try docker run - permissions built with docker compose are needed )
 ARG DEBIAN_FRONTEND=noninteractive
+ARG fresh_pull=${fresh_pull:-cached}
 
 ############################## BASE ####################################
 #
@@ -91,6 +92,7 @@ USER dvl
 #
 FROM dvlp_base AS dvlp_data
 ARG mnt_data=${mnt_data:-/mnt/data}
+ARG fresh_pull=${fresh_pull:-cached}
 USER root
 WORKDIR /
 COPY --from=dvlp_base-devel --chown=dvl:hell ./home/dvl ./home/dvl
@@ -115,6 +117,7 @@ RUN \
     git config --global --add safe.directory /home/dvl/dvlp && \
     # clone fresh repos and give dvl ownership
     git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress dvlw
+RUN if [ $fresh_pull != cached ]; then git pull; fi    
 # RUN git clone https://github.com/kindtek/dvlw --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
 # --filter=combine:tree:depth:1+blob:limit=10240000  --recurse-submodules --remote-submodules  --single-branch  --no-tags --filter=blob:limit=1024000 --single-branch --branch main
 WORKDIR /home/dvl/dvlw
