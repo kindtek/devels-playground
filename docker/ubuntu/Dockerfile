@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:experimental
 # to build and run an individual service with args (ie git):
-## `docker compose build git --build-arg fresh_repo=true && docker compose up git`
+## `docker compose build git --build-arg refresh_repo=true && docker compose up git`
 # to build everything:
 ## `docker compose build && docker compose up`
 # to remove all volumes:
@@ -18,6 +18,7 @@ ARG _DVL_USR=${_DVL_USR:-dvl}
 FROM ubuntu:latest AS dvlp_base
 ARG _CONFIG_FILE
 ARG DEBIAN_FRONTEND=noninteractive
+WORKDIR /
 RUN echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
     echo 'tzdata tzdata/Zones/America select Los Angeles' | debconf-set-selections
 RUN \
@@ -72,7 +73,6 @@ RUN ln -fs /home/agl /hal && \
 
 # dvl permissions/volume builder
 FROM dvlp_base AS dvlp_base-devel
-USER root
 WORKDIR /home/dvl
 ARG mnt_data=${mnt_data:-/mnt/data}
 RUN ln -sfv /home/dvl /home/dvl && \
@@ -145,7 +145,7 @@ RUN \
 # WORKDIR /home/dvl/dvlw/dvlp
 # RUN if [ "$refresh_repo" != no ]; then git pull; fi    
 USER dvl
-WORKDIR /home/dvl
+WORKDIR /
 
 ############################## SKELETON ###################################
 ###################
@@ -426,8 +426,6 @@ RUN \
     python3-dev python3-setuptools python3-cffi net-tools snapd systemd-sysv sysvinit-utils uuid-dev
 # RUN sudo apt-get -y install zfsutils-linux zlib1g-dev zfs-dkms zstd zsys zfs-dracut zfs-zed
 USER agl
-# RUN sudo apt-get clean all && \
-#     sudo apt-get autoremove --purge
 WORKDIR /home/dvl
 USER dvl
 
