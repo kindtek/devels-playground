@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:experimental
-# to build and run an individual service (ie gui):
-## `docker compose build gui && docker compose up gui`
+# to build and run an individual service with args (ie git):
+## `docker compose build git --build-arg fresh_repo=true && docker compose up git`
 # to build everything:
 ## `docker compose build && docker compose up`
 # to remove all volumes:
