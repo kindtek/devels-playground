@@ -172,6 +172,7 @@ services:
     #   - sleep
     #   - infinity
     user: dvl
+    working_dir: /home/dvl
     privileged: true
     image: kindtek/dvlp:ubuntu-git
     # extends: skel
@@ -231,15 +232,6 @@ services:
       target: dvlp_kernel-lite
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
-  kernel-build:
-    extends: git
-    init: true
-    image: kindtek/dvlp:ubuntu-kernel-build
-    build:
-      context: .
-      target: dvlp_kernel-build
-    labels:
-      com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
   kernel-builder:
     extends: git
     image: kindtek/dvlp:ubuntu-kernel-builder
@@ -247,12 +239,23 @@ services:
       context: .
       target: dvlp_kernel-builder
       args:
-        - _AGL_USR=${_AGL:-agl}
-        - _CONFIG_FILE=../kernels/linux/x86/generic/.config_wsl0
+        - _CONFIG_FILE=${CONFIG_FILE:-dvlw/dvlp/kernels/linux/x86/generic/.config_wsl0}
     labels:
       com.dvl-playg.description: "basics + git + powerhell + docker + kernel"
+  gui-lite:
+    extends: git
+    image: kindtek/dvlp:ubuntu-gui
+    build:
+      context: .
+      target: dvlp_gui
+    labels:
+      com.dvl-playg.description: "basics + git + powerhell + docker + kernel + gui"
   gui:
     extends: git
+    entrypoint: 
+      - /bin/bash
+      - c
+      - /home/dvl/start-kde.sh
     image: kindtek/dvlp:ubuntu-gui
     build:
       context: .
