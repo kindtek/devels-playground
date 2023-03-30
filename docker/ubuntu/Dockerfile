@@ -27,7 +27,7 @@ RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     # sudo add-apt-repository ppa:apt-fast/stable && \
     apt-get update -y && \
     apt-get upgrade -y && \
@@ -118,32 +118,32 @@ RUN \
 WORKDIR /home/dvl
 # add git cache directory
 RUN mkdir -p /tmp/git/cache && \
-    chown -R dvl:hell /tmp/git/cache && \
-    rm -rf /tmp/git/cache
+    chown -R dvl:hell /tmp/git/cache
 # add safe directories
 RUN \
     --mount=type=cache,target=/tmp/git/cache \
+    # if [ "$fresh_repo" != no ]; then rm -rf /tmp/git/cache/dvlw; fi && \
     git config --global --add safe.directory /home/dvl && \
     git config --global --add safe.directory /hel && \
     git config --global --add safe.directory /tmp/git/cache && \
-    if [ $fresh_repo != no ]; then rm -rf /tmp/git/cache/dvlw; fi && \
     # clone fresh repos and give dvl ownership
-    git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress /tmp/git/cache/dvlw && \
-    cd /tmp/git/cache/dvlw && git pull && cp -rv --remove-destination . /home/dvl/dvlw
+    # git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress /tmp/git/cache/dvlw  \
+    git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress dvlw || (cd dvlw && git pull) 
+    # (cd /tmp/git/cache/dvlw && git pull && cp -rv --remove-destination . /home/dvl/dvlw)
     # git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress dvlw
 # RUN git clone https://github.com/kindtek/dvlw --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
 # --filter=combine:tree:depth:1+blob:limit=10240000  --recurse-submodules --remote-submodules  --single-branch  --no-tags --filter=blob:limit=1024000 --single-branch --branch main
 WORKDIR /home/dvl/dvlw
-RUN if [ $fresh_repo != no ]; then git pull; fi    
+# RUN if [ $refresh_repo != no ]; then git pull; fi    
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
-    git submodule update --init --remote --depth=1 --progress && \
-    cd /tmp/git/cache/dvlw/dvlp && git pull && cp -rv --remove-destination . /home/dvl/dvlw/dvlp 
-    # chmod +x dvlp/mnt/home/ssh-keygen.sh && \
-    # chmod +x dvlp/mnt/home/start-kde.sh && \
-RUN chmod -R +x dvlp/mnt/bak 
-WORKDIR /home/dvl/dvlw/dvlp
-RUN if [ $fresh_repo != no ]; then ls -al; git pull; fi    
+    git submodule update --init --remote --depth=1 --progress || git pull \
+    # (cd /tmp/git/cache/dvlw/dvlp && git pull && cp -rv --remove-destination . /home/dvl/dvlw/dvlp)
+    chmod +x dvlp/mnt/home/ssh-keygen.sh && \
+    chmod +x dvlp/mnt/home/start-kde.sh && \
+    chmod -R +x dvlp/mnt/bak
+# WORKDIR /home/dvl/dvlw/dvlp
+# RUN if [ "$refresh_repo" != no ]; then git pull; fi    
 USER dvl
 WORKDIR /home/dvl
 
@@ -190,22 +190,17 @@ USER agl
 # sudo chmod 751 ${mnt_data}/bak/agl && \
 # sudo chmod 751 ${mnt_data}/bak/agl && sudo chmod 751 ${mnt_data}/bak/dvl && \
 # sudo chmod 754 -Rv ${mnt_data}/bak/dvl && \
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -y update && \
+# RUN \
+#     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+#     sudo apt-get -y update && \
     # sudo add-apt-repository ppa:saiarcot895/myppa && \
-    # sudo ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime && \
-    # sudo apt-get install -y tzdata && \
-    # sudo dpkg-reconfigure --frontend noninteractive tzdata && \
-    # sudo dpkg --configure -a && \
-    # # sudo apt-get upgrade -y libsnmp40 && \
     # sudo apt-get -y install apt-fast aria2 
-    sudo apt-get -y install apt-transport-https gh wget
 RUN \
-    --mount=type=cache,target=/var/cache/curl,sharing=locked \
-    sudo apt-get -y install curl
-# cant cache these ..
-RUN sudo apt-get -y install git gnupg2 libssl-dev nvi wslu
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    sudo apt-get -y update && sudo apt-get -y upgrade && \
+    sudo apt-get -y install apt-transport-https curl gh git gnupg2 libssl-dev nvi wget
+WORKDIR /home/dvl
+USER dvl
 
 ################################## BARE #########################################
 ############
@@ -249,6 +244,13 @@ RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    sudo apt-get -y update && sudo apt-get -y upgrade && \
+    sudo apt-get -y install apt-utils jq libdbus-1-dev libcairo2-dev libgirepository1.0-dev  libpython3-dev pkg-config python3-pip python3-venv
+RUN \
+    --mount=type=cache,target=/var/cache/pip,sharing=locked \
+    pip3 install pip --upgrade --no-warn-script-location --no-deps && \
+    python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps 
 ##########################
 # dvlp_python-build-lite #
 ##########################
@@ -311,17 +313,14 @@ RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
-    --mount=type=cache,target=/var/cache/wget \
-    sudo wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
-RUN \
-    --mount=type=cache,target=/var/cache/deb \
-    # now lives with rest of archived apt packages
-    mv packages-microsoft-prod.deb /var/cache/apt/archive/packages-microsoft-prod.deb && \
-    sudo dpkg -i /var/cache/apt/archive/packages-microsoft-prod.deb
-RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/cache/apt/archives \
+    sudo apt-get -y update && sudo apt-get -y upgrade && \
+    sudo apt-get -y install lsb-release wget && \
+    sudo wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb" && \
+    sudo mv packages-microsoft-prod.deb /var/cache/apt/archives && \
+    sudo dpkg -i /var/cache/apt/archives/packages-microsoft-prod.deb && \
     sudo apt-get -y update && \
-    sudo apt-get -y install powershell dotnet-sdk-7.0 
+    sudo apt-get -y install powershell wslu
     # now lives with other apt archives
 # RUN sudo apt-get -y remove lsb_release
 # sudo apt-get clean all && \
@@ -368,9 +367,9 @@ FROM dvlp_base AS dvlp_dind-build
 USER root
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
 RUN \
-    --mount=type=cache,target=/var/cache/curl,sharing=locked \
-    sudo apt-get -y install curl
-RUN sudo apt-get -y install lsb-release gpg
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    sudo apt-get -y update && sudo apt-get -y upgrade && \
+    sudo apt-get -y install curl lsb-release gpg
 RUN sudo mkdir -pv /etc/apt/keyrings
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -380,7 +379,7 @@ RUN \
     sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
 RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
 RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     sudo apt-get -y update && sudo apt-get -y install docker-compose-plugin docker-ce docker-ce-cli containerd.io 
 # sudo apt-get remove -y lsb-release && \
 # sudo apt-get clean all && \
@@ -421,15 +420,11 @@ RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get -y update && \
-    sudo apt-get -y upgrade && \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    sudo apt-get -y update && sudo apt-get -y upgrade && \
     sudo apt-get -y install alien autoconf bison build-essential dbus-user-session daemonize dwarves \ 
     fakeroot flex fontconfig gawk libblkid-dev libffi-dev lxcfs libudev-dev libaio-dev libattr1-dev libelf-dev \
-    python3-dev python3-setuptools python3-cffi net-tools systemd-sysv sysvinit-utils uuid-dev
-RUN \
-    --mount=type=cache,target=/var/cache/snapd,sharing=locked \
-    sudo apt-get -y install snapd
+    python3-dev python3-setuptools python3-cffi net-tools snapd systemd-sysv sysvinit-utils uuid-dev
 # RUN sudo apt-get -y install zfsutils-linux zlib1g-dev zfs-dkms zstd zsys zfs-dracut zfs-zed
 USER agl
 # RUN sudo apt-get clean all && \
@@ -491,8 +486,8 @@ RUN \
     sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg 
 RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list 
 RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
-    sudo apt-get update && \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    sudo apt-get -y update && sudo apt-get -y upgrade && \
     sudo apt-get install -y brave-browser nautilus vlc x11-apps  
 # change last line of this file - fix for brave-browser displaying empty windows
 RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
@@ -528,15 +523,21 @@ RUN sudo apt-get -y update && sudo apt-get -y upgrade && \
 #     sudo dpkg-reconfigure --frontend noninteractive locales && \
 #     echo "/usr/sbin/lightdm" | sudo tee /etc/X11/default-display-manager && \
 #     sudo locale-gen && sudo update-locale 
-RUN sudo apt-get install -y xrdp xfce4 xfce4-goodies
-RUN sudo apt-get install -y lightdm
-RUN echo "set shared/default-x-display-manager lightdm" | sudo debconf-communicate  
-# override  with custom configs
-COPY --from=dvlp_data --chown=god:rootg /home/dvl/dvlw/dvlp/mnt/etc/* /etc/
-COPY --from=dvlp_data --chown=god:rootg /home/dvl/dvlw/dvlp/mnt/opt/* /opt/
+RUN \
+    --mount=type=cache,target=/var/cache/apt/archives \
+    sudo apt-get -y update && sudo apt-get -y upgrade && \
+    sudo apt-get install -y xrdp xfce4 xfce4-goodies && \
+    # MUST install this separately and AFTER xfce or xfce prompting to choose default dm will hang/break build
+    sudo apt-get install -y lightdm
+RUN \
+     --mount=type=cache,target=/var/cache/debconf \
+    # echo "set shared/default-x-display-manager lightdm" | sudo debconf-communicate && \
+    sudo apt-get install --no-install-recommends -y kubuntu-desktop
+COPY --from=dvlp_repo --chown=god:rootg /home/dvl/dvlw/dvlp/mnt/etc/* /etc/
+
 # RUN sudo aptitude safe-upgrade
 # RUN \
-#     --mount=type=cache,target=/var/cache/apt,sharing=locked \
+#     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
 #     sudo apt-get install -y xfce4
 # sudo apt-get install -y locales brave-browser gimp gedit nautilus vlc x11-apps xfce4
 # RUN sudo update-locale && \
@@ -545,12 +546,12 @@ COPY --from=dvlp_data --chown=god:rootg /home/dvl/dvlw/dvlp/mnt/opt/* /opt/
 # # # sudo apt-get clean all && \
 # # # sudo apt-get autoremove --purge
 # # RUN \
-# # --mount=type=cache,target=/var/cache/apt,sharing=locked \
+# # --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
 # # sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo apt-get -y install lightdm gnome-session
 # # RUN \
 # # sudo DEBIAN_FRONTEND=noninteractive sudo DEBCONF_NONINTERACTIVE_SEEN=true sudo dpkg-reconfigure lightdm
 # # RUN \
-# #     --mount=type=cache,target=/var/cache/apt,sharing=locked \
+# #     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
 # #     sudo dpkg-reconfigure --frontend noninteractive locales && \
 # #     echo "/usr/sbin/lightdm" | sudo tee /etc/X11/default-display-manager 
 # # RUN echo "set shared/default-x-display-manager lightdm" | sudo debconf-communicate && \
@@ -581,7 +582,7 @@ RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
-    --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     sudo apt-get -y --no-install-recommends install nvidia-cuda-toolkit
 # sudo apt-get clean all && \
 # sudo apt-get autoremove --purge
