@@ -45,7 +45,7 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 ## Now time for the fun stuff
 
-# Import your Linux Docker image
+# Import one of thousands of Linux Docker images into WSL
 
 
 ## **Instructions for importing images from [hub.docker.com](https://hub.docker.com/search?q=&image_filter=official) and the official [kindtek devel's playground docker hub repo](https://hub.docker.com/r/kindtek/dvlp/tags) into WSL with the Devel's Playground are [found here](https://github.com/kindtek/devels-playground#idle-minds-are-the-developers-playground)**
