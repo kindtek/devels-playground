@@ -622,10 +622,10 @@ USER dvl
 #################
 # dvlp_gui-plus #
 #################
-FROM dvlp_kernel-builder AS dvlp_gui-plus
+FROM dvlp_basic-wsl-kernel-builder AS dvlp_gui-plus
 ARG refresh_repo=${refresh_repo:-yes}
 WORKDIR /
-COPY --from=dvlp_kernel-builder ./ ./
+COPY --from=dvlp_basic-wsl-kernel-builder ./ ./
 COPY --from=dvlp_gui ./ ./
 WORKDIR /home/dvl
 USER dvl
@@ -661,7 +661,7 @@ COPY --from=dvlp_skel ./ ./
 COPY --from=dvlp_python-build ./ ./
 COPY --from=dvlp_msdot-build ./ ./
 COPY --from=dvlp_dind-build ./ ./
-COPY --from=dvlp_kernel-builder ./ ./
+COPY --from=dvlp_basic-wsl-kernel-builder ./ ./
 COPY --from=dvlp_cuda ./ ./
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
