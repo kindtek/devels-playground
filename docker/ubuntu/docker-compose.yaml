@@ -297,22 +297,52 @@ services:
       target: dvlp_dind
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker"
-  kernel-lite:
+  dind-lite:
     extends: bare
-    image: kindtek/dvlp:ubuntu-kernel-lite
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-dind-lite
     build:
       context: .
-      target: dvlp_kernel-lite
+      target: dvlp_dind-lite
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel"
-  kernel-builder:
+  basic-wsl-kernel-builder:
     extends: bare
-    image: kindtek/dvlp:ubuntu-kernel-builder
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-kernel-builder
     build:
       context: .
-      target: dvlp_kernel-builder
+      target: dvlp_basic-wsl-kernel-builder
       args:
-        - _CONFIG_FILE=${CONFIG_FILE:-dvlw/dvlp/kernels/linux/x86/generic/.config_wsl0}
+        - CONFIG_FILE=${CONFIG_FILE:-dvlw/dvlp/kernels/linux/x86/generic/.config_wsl0}
+    labels:
+      com.devels-playground.description: "basics + git + powerhell + docker + kernel"
+  basic-wsl-zfs-kernel-builder:
+    extends: bare
+    image: kindtek/${HUB_REPO:-devels-playground}:basic-wsl-zfs-kernel-builder
+    build:
+      context: .
+      target: dvlp_basic-wsl-zfs-kernel-builder
+      args:
+        - CONFIG_FILE=${CONFIG_FILE:-dvlw/dvlp/kernels/linux/x86/generic/.config_wsl0}
+    labels:
+      com.devels-playground.description: "basics + git + powerhell + docker + kernel"
+  stable-wsl-zfs-kernel-builder:
+    extends: bare
+    image: kindtek/${HUB_REPO:-devels-playground}:stable-wsl-zfs-kernel-builder
+    build:
+      context: .
+      target: dvlp_stable-wsl-zfs-kernel-builder
+      args:
+        - CONFIG_FILE=${CONFIG_FILE:-dvlw/dvlp/kernels/linux/x86/generic/.config_wsl0}
+    labels:
+      com.devels-playground.description: "basics + git + powerhell + docker + kernel"
+  latest-rc-wsl-zfs-kernel-builder:
+    extends: bare
+    image: kindtek/${HUB_REPO:-devels-playground}:latest-rc-wsl-zfs-kernel-builder
+    build:
+      context: .
+      target: dvlp_latest-rc-wsl-zfs-kernel-builder
+      args:
+        - CONFIG_FILE=${CONFIG_FILE:-dvlw/dvlp/kernels/linux/x86/generic/.config_wsl0}
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel"
   gui-lite:

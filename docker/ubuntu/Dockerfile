@@ -429,10 +429,10 @@ USER agl
 WORKDIR /home/dvl
 USER dvl
 
-##############################################
-###  dvlp_kernel-builder - KERNEL BUILDER  ###
-##############################################
-FROM dvlp_base AS dvlp_kernel-builder
+########################################################
+###  dvlp_basic-wsl-kernel-builder - KERNEL BUILDER  ###
+########################################################
+FROM dvlp_base AS dvlp_basic-wsl-kernel-builder
 ARG _CONFIG_FILE
 # ARG _AGL
 WORKDIR /
@@ -450,14 +450,76 @@ RUN sudo bash build-basic-wsl-kernel.sh ${_CONFIG_FILE} agl
 WORKDIR /home/dvl
 USER dvl
 
-##################################
-# dvlp_kernel-lite - kernel only #
-##################################
-FROM dvlp_dind-lite AS dvlp_kernel-lite
+############################################################
+###  dvlp_basic-wsl-zfs-kernel-builder - KERNEL BUILDER  ###
+############################################################
+FROM dvlp_base AS dvlp_basic-wsl-zfs-kernel-builder
+ARG CONFIG_FILE
+# ARG _AGL
+WORKDIR /
+COPY --from=dvlp_skel ./ ./
+COPY --from=dvlp_python-build-lite ./ ./
+COPY --from=dvlp_msdot-build-lite ./ ./
+COPY --from=dvlp_dind-build ./ ./
+COPY --from=dvlp_kernel-build ./ ./
+USER god
+WORKDIR /home/dvl/dvlw/dvlp/kernels/linux
+SHELL ["/bin/bash", "-c"]
+# RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
+RUN sudo bash build-basic-wsl-zfs-kernel.sh ${CONFIG_FILE} agl
+# RUN echo '# sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/agl/.bashrc
 WORKDIR /home/dvl
-# COPY --from=dvlp_kernel-builder dvlw/dvlp/kernels kernels/
-COPY --from=dvlp_kernel-builder linux-* ./
 USER dvl
+
+########################################################
+###  dvlp_stable-wsl-zfs-kernel-builder - KERNEL BUILDER  ###
+########################################################
+FROM dvlp_base AS dvlp_stable-wsl-zfs-kernel-builder
+ARG CONFIG_FILE
+# ARG _AGL
+WORKDIR /
+COPY --from=dvlp_skel ./ ./
+COPY --from=dvlp_python-build-lite ./ ./
+COPY --from=dvlp_msdot-build-lite ./ ./
+COPY --from=dvlp_dind-build ./ ./
+COPY --from=dvlp_kernel-build ./ ./
+USER god
+WORKDIR /home/dvl/dvlw/dvlp/kernels/linux
+SHELL ["/bin/bash", "-c"]
+# RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
+RUN sudo bash build-stable-wsl-zfs-kernel.sh ${CONFIG_FILE} agl
+# RUN echo '# sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/agl/.bashrc
+WORKDIR /home/dvl
+USER dvl
+
+###########################################################
+###  latest-rc-wsl-zfs-kernel-builder - KERNEL BUILDER  ###
+###########################################################
+FROM dvlp_base AS dvlp_latest-rc-wsl-zfs-kernel-builder
+ARG CONFIG_FILE
+# ARG _AGL
+WORKDIR /
+COPY --from=dvlp_skel ./ ./
+COPY --from=dvlp_python-build-lite ./ ./
+COPY --from=dvlp_msdot-build-lite ./ ./
+COPY --from=dvlp_dind-build ./ ./
+COPY --from=dvlp_kernel-build ./ ./
+USER god
+WORKDIR /home/dvl/dvlw/dvlp/kernels/linux
+SHELL ["/bin/bash", "-c"]
+# RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
+RUN sudo bash build-latest-rc-wsl-zfs-kernel.sh ${CONFIG_FILE} agl
+# RUN echo '# sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/agl/.bashrc
+WORKDIR /home/dvl
+USER dvl
+# ##################################
+# # dvlp_kernel-lite - kernel only #
+# ##################################
+# FROM dvlp_dind-lite AS dvlp_kernel-lite
+# WORKDIR /home/dvl
+# # COPY --from=dvlp_basic-wsl-kernel-builder dvlw/dvlp/kernels kernels/
+# COPY --from=dvlp_basic-wsl-kernel-builder linux-* ./
+# USER dvl
 
 #################################### GUI ######################################
 #################
@@ -607,3 +669,33 @@ RUN \
 WORKDIR /home/dvl
 USER dvl
 
+########################### OUTPUT ################################
+#################
+# KERNEL OUTPUT #
+#################
+
+FROM scratch AS basic-wsl-kernel
+WORKDIR /
+COPY --from=dvlp_basic-wsl-kernel-builder ./home/dvl/built-kernels ./built-kernel
+RUN zip -qr built-kernel *  && \
+    rm -rf /built-kernel
+
+FROM scratch AS basic-wsl-zfs-kernel
+WORKDIR /
+COPY --from=dvlp_basic-wsl-zfs-kernel ./home/dvl/built-kernels ./built-kernel
+RUN zip -qr built-kernel *  && \
+    rm -rf /built-kernel
+
+FROM scratch AS stable-wsl-zfs-kernel
+WORKDIR /
+COPY --from=dvlp_stable-wsl-zfs-kernel-builder ./home/dvl/built-kernels ./built-kernel
+RUN zip -qr built-kernel *  && \
+    rm -rf /built-kernel
+
+FROM scratch AS latest-rc-wsl-zfs-kernel
+WORKDIR /
+COPY --from=dvlp_stable-wsl-zfs-kernel-builder ./home/dvl/built-kernels ./built-kernel
+RUN zip -qr built-kernel *  && \
+    rm -rf /built-kernel
+
+# docker buildx build --target=built-kernels --output type=local,dest=$(pwd)/out/ .
