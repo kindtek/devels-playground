@@ -307,7 +307,7 @@ services:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel"
   basic-wsl-kernel-builder:
     extends: bare
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-kernel-builder
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-basic-wsl-kernel-builder
     build:
       context: .
       target: dvlp_basic-wsl-kernel-builder
