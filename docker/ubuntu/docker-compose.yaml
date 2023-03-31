@@ -187,7 +187,7 @@ services:
     user: dvl
     working_dir: /home/dvl
     privileged: true
-    image: kindtek/dvlp:ubuntu-bare
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-bare
     # extends: skel
     build:
       context: .
@@ -195,7 +195,7 @@ services:
       args:
         - _AGL_USR=${_AGL:-agl}
         - mnt_data=${mnt_data:-/mnt/data}
-        - _CONFIG_FILE
+        - CONFIG_FILE
     depends_on:
       repo:
         # Wait for the ownership to change
@@ -213,7 +213,7 @@ services:
   git-lite:
     # owner/group becomes owner of hell-data volume
     extends: bare
-    image: kindtek/dvlp:ubuntu-git-lite
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-git-lite
     # extends: skel
     build:
       context: .
@@ -224,7 +224,7 @@ services:
   git:
     # owner/group becomes owner of hell-data volume
     extends: bare
-    image: kindtek/dvlp:ubuntu-git
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-git
     # extends: skel
     build:
       context: .
@@ -251,7 +251,7 @@ services:
       com.devels-playground.description: "basics + git"
   python-lite:
     extends: bare
-    image: kindtek/dvlp:ubuntu-py-lite
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-py-lite
     build:
       context: .
       target: dvlp_python-lite
@@ -263,7 +263,7 @@ services:
       com.devels-playground.description: "basics + git"
   python:
     extends: bare
-    image: kindtek/dvlp:ubuntu-py
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-py
     build:
       context: .
       target: dvlp_python
@@ -275,7 +275,7 @@ services:
       com.devels-playground.description: "basics + git"
   msdot-lite:
     extends: bare
-    image: kindtek/dvlp:ubuntu-msdot-lite
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-msdot-lite
     build:
       context: .
       target: dvlp_msdot-lite
@@ -283,7 +283,7 @@ services:
       com.devels-playground.description: "basics + git + powerhell"
   msdot:
     extends: bare
-    image: kindtek/dvlp:ubuntu-msdot
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-msdot
     build:
       context: .
       target: dvlp_msdot
@@ -291,7 +291,7 @@ services:
       com.devels-playground.description: "basics + git + powerhell"
   dind:
     extends: bare
-    image: kindtek/dvlp:ubuntu-dind
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-dind
     build:
       context: .
       target: dvlp_dind
@@ -348,12 +348,12 @@ services:
   gui-lite:
     extends: bare
     user: agl
-    entrypoint: 
+    entrypoint:
       - /bin/bash
       - -c
       - sudo
       - /home/dvl/start-kde.sh
-    image: kindtek/dvlp:ubuntu-gui
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-gui
     build:
       context: .
       target: dvlp_gui-lite
@@ -361,7 +361,7 @@ services:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   gui:
     extends: gui-lite
-    image: kindtek/dvlp:ubuntu-gui
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-gui
     build:
       context: .
       target: dvlp_gui
@@ -369,7 +369,7 @@ services:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   gui-plus:
     extends: gui-lite
-    image: kindtek/dvlp:ubuntu-gui-plus
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-gui-plus
     build:
       context: .
       target: dvlp_gui-plus
@@ -377,7 +377,7 @@ services:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   cuda:
     extends: gui-lite
-    image: kindtek/dvlp:ubuntu-cuda
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-cuda
     build:
       context: .
       target: dvlp_cuda
@@ -388,7 +388,7 @@ services:
 
   cuda-plus:
     extends: gui-lite
-    image: kindtek/dvlp:ubuntu-cuda-plus
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-cuda-plus
     build:
       context: .
       target: dvlp_cuda-plus

@@ -5,7 +5,7 @@
 ## `docker compose build && docker compose up`
 # to remove all volumes:
 ## docker compose down && docker volume rm $(docker volume ls -q)
-ARG _CONFIG_FILE=${_CONFIG_FILE}
+ARG CONFIG_FILE=${CONFIG_FILE}
 ARG DEBIAN_FRONTEND=noninteractive
 ARG refresh_repo=${refresh_repo:-no}
 ARG _AGL_USR=${_AGL_USR:-agl}
@@ -16,7 +16,7 @@ ARG _DVL_USR=${_DVL_USR:-dvl}
 # dvlp_base #
 #############
 FROM ubuntu:latest AS dvlp_base
-ARG _CONFIG_FILE
+ARG CONFIG_FILE
 ARG DEBIAN_FRONTEND=noninteractive
 WORKDIR /
 RUN echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
@@ -433,7 +433,7 @@ USER dvl
 ###  dvlp_basic-wsl-kernel-builder - KERNEL BUILDER  ###
 ########################################################
 FROM dvlp_base AS dvlp_basic-wsl-kernel-builder
-ARG _CONFIG_FILE
+ARG CONFIG_FILE
 # ARG _AGL
 WORKDIR /
 COPY --from=dvlp_skel ./ ./
@@ -445,7 +445,7 @@ USER god
 WORKDIR /home/dvl/dvlw/dvlp/kernels/linux
 SHELL ["/bin/bash", "-c"]
 # RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
-RUN sudo bash build-basic-wsl-kernel.sh ${_CONFIG_FILE} agl
+RUN sudo bash build-basic-wsl-kernel.sh ${CONFIG_FILE} agl
 # RUN echo '# sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/agl/.bashrc
 WORKDIR /home/dvl
 USER dvl
