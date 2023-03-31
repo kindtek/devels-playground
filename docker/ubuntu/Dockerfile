@@ -592,7 +592,7 @@ RUN \
     # MUST install this separately and AFTER xfce or xfce prompting to choose default dm will hang/break build
     sudo apt-get install -y lightdm
 RUN \
-     --mount=type=cache,target=/var/cache/debconf \
+    --mount=type=cache,target=/var/cache/debconf \
     # echo "set shared/default-x-display-manager lightdm" | sudo debconf-communicate && \
     sudo apt-get install --no-install-recommends -y kubuntu-desktop
 COPY --from=dvlp_repo --chown=god:rootg /home/dvl/dvlw/dvlp/mnt/etc/* /etc/
