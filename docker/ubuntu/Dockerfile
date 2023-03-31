@@ -312,7 +312,7 @@ RUN \
     sudo rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | sudo tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
-    --mount=type=cache,target=/var/cache/apt/archives \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     sudo apt-get -y update && sudo apt-get -y upgrade && \
     sudo apt-get -y install lsb-release wget && \
     sudo wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb" && \
