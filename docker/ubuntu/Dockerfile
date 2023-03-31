@@ -680,29 +680,23 @@ USER dvl
 FROM scratch AS dvlp_basic-wsl-kernel
 ARG CONFIG_FILE
 WORKDIR /
-COPY --from=dvlp_basic-wsl-kernel-builder ./home/agl/built-kernels ./built-kernel
-RUN zip -qr built-kernel built-kernel/*  && \
-    rm -rf /built-kernel
+COPY --from=dvlp_basic-wsl-kernel-builder ./built-kernel.zip ./built-kernel.zip
 
 FROM scratch AS dvlp_basic-wsl-zfs-kernel
 ARG CONFIG_FILE
 WORKDIR /
-COPY --from=dvlp_basic-wsl-zfs-kernel-builder ./home/agl/built-kernels ./built-kernel
-RUN zip -qr built-kernel built-kernel/*  && \
-    rm -rf /built-kernel
+COPY --from=dvlp_basic-wsl-zfs-kernel-builder ./built-kernel.zip ./built-kernel.zip
 
 FROM scratch AS dvlp_stable-wsl-zfs-kernel
 ARG CONFIG_FILE
 WORKDIR /
-COPY --from=dvlp_stable-wsl-zfs-kernel-builder ./home/agl/built-kernels ./built-kernel
-RUN zip -qr built-kernel built-kernel/*  && \
-    rm -rf /built-kernel
+COPY --from=dvlp_stable-wsl-zfs-kernel-builder ./built-kernel.zip ./built-kernel.zip
 
 FROM scratch AS dvlp_latest-rc-wsl-zfs-kernel
 ARG CONFIG_FILE
 WORKDIR /
-COPY --from=dvlp_latest-rc-wsl-zfs-kernel-builder ./home/agl/built-kernels ./built-kernel
-RUN zip -qr built-kernel built-kernel/*  && \
-    rm -rf /built-kernel
+COPY --from=dvlp_latest-rc-wsl-zfs-kernel-builder ./built-kernel.zip ./built-kernel.zip
+
 
 # docker buildx build --target=built-kernels --output type=local,dest=$(pwd)/out/ .
+# docker buildx build -t dvlp_latest-rc-wsl-zfs-kernel-builder --output type=tar,dest=kubuntu22-plus-wsl-zfs-linux-kernel-6-28.tar  --build-arg CONFIG_FILE="https://raw.githubusercontent.com/kindtek/devels-playground/615b895f27a5c6827e468c0f5b92f4881e386208/kernels/linux/x86/amd/6_3rc4/.config_wsl-zfs0" .  2>&1 | tee latest-rc-wsl-zfs-kernel-builder-"$(date)".log
