@@ -129,8 +129,8 @@ RUN \
     # clone fresh repos and give dvl ownership
     # git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress /tmp/git/cache/dvlw  \
     git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress dvlw || (cd dvlw && git pull) 
-    # (cd /tmp/git/cache/dvlw && git pull && cp -rv --remove-destination . /home/dvl/dvlw)
-    # git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress dvlw
+# (cd /tmp/git/cache/dvlw && git pull && cp -rv --remove-destination . /home/dvl/dvlw)
+# git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress dvlw
 # RUN git clone https://github.com/kindtek/dvlw --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
 # --filter=combine:tree:depth:1+blob:limit=10240000  --recurse-submodules --remote-submodules  --single-branch  --no-tags --filter=blob:limit=1024000 --single-branch --branch main
 WORKDIR /home/dvl/dvlw
@@ -193,8 +193,8 @@ USER agl
 # RUN \
 #     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
 #     sudo apt-get -y update && \
-    # sudo add-apt-repository ppa:saiarcot895/myppa && \
-    # sudo apt-get -y install apt-fast aria2 
+# sudo add-apt-repository ppa:saiarcot895/myppa && \
+# sudo apt-get -y install apt-fast aria2 
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     sudo apt-get -y update && sudo apt-get -y upgrade && \
@@ -320,7 +320,7 @@ RUN \
     sudo dpkg -i /var/cache/apt/archives/packages-microsoft-prod.deb && \
     sudo apt-get -y update && \
     sudo apt-get -y install powershell wslu
-    # now lives with other apt archives
+# now lives with other apt archives
 # RUN sudo apt-get -y remove lsb_release
 # sudo apt-get clean all && \
 # sudo apt-get autoremove --purge

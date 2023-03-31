@@ -17,7 +17,7 @@ services:
     # Specify the group in question
     group_add:
       - hel
-    image: kindtek/dvlp:ubuntu-skel
+    image: kindtek/devels-playground:ubuntu-skel
     build:
       context: .
       target: dvlp_skel
@@ -37,7 +37,7 @@ services:
     entrypoint:
       - sleep
       - infinity
-    image: kindtek/dvlp:ubuntu-git
+    image: kindtek/devels-playground:ubuntu-git
     # extends: skel
     build:
       context: .
@@ -53,7 +53,7 @@ services:
       - hel-data:/home/dvl
   msdot:
     extends: git
-    image: kindtek/dvlp:ubuntu-msdot
+    image: kindtek/devels-playground:ubuntu-msdot
     build:
       context: .
       target: dvlp_msdot
@@ -62,7 +62,7 @@ services:
       dockerfile: dockerfile.ubuntu.yaml
   dind:
     extends: msdot
-    image: kindtek/dvlp:ubuntu-dind
+    image: kindtek/devels-playground:ubuntu-dind
     build:
       context: .
       target: dvlp_dind
@@ -72,7 +72,7 @@ services:
 
   gui:
     extends: dind
-    image: kindtek/dvlp:ubuntu-gui
+    image: kindtek/devels-playground:ubuntu-gui
     build:
       context: .
       target: dvlp_gui
@@ -81,7 +81,7 @@ services:
       dockerfile: dockerfile.ubuntu.yaml
   cuda:
     extends: gui
-    image: kindtek/dvlp:ubuntu-cuda
+    image: kindtek/devels-playground:ubuntu-cuda
     build:
       context: .
       target: dvlp_cuda
