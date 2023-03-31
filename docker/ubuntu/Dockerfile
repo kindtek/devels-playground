@@ -421,8 +421,8 @@ RUN \
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     sudo apt-get -y update && sudo apt-get -y upgrade && \
-    sudo apt-get -y install alien autoconf bison build-essential dbus-user-session daemonize dwarves \ 
-    fakeroot flex fontconfig gawk libblkid-dev libffi-dev lxcfs libudev-dev libaio-dev libattr1-dev libelf-dev \
+    sudo apt-get -y install alien autoconf bison build-essential dbus-user-session daemonize dwarves fakeroot \ 
+    flex fontconfig gawk kmod libblkid-dev libffi-dev lxcfs libudev-dev libaio-dev libattr1-dev libelf-dev \
     python3-dev python3-setuptools python3-cffi net-tools snapd systemd-sysv sysvinit-utils uuid-dev
 # RUN sudo apt-get -y install zfsutils-linux zlib1g-dev zfs-dkms zstd zsys zfs-dracut zfs-zed
 USER agl
@@ -463,6 +463,7 @@ COPY --from=dvlp_msdot-build-lite ./ ./
 COPY --from=dvlp_dind-build ./ ./
 COPY --from=dvlp_kernel-build ./ ./
 USER god
+RUN sudo apt-get install zstd 
 WORKDIR /home/dvl/dvlw/dvlp/kernels/linux
 SHELL ["/bin/bash", "-c"]
 # RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
@@ -484,6 +485,7 @@ COPY --from=dvlp_msdot-build-lite ./ ./
 COPY --from=dvlp_dind-build ./ ./
 COPY --from=dvlp_kernel-build ./ ./
 USER god
+RUN sudo apt-get install zstd 
 WORKDIR /home/dvl/dvlw/dvlp/kernels/linux
 SHELL ["/bin/bash", "-c"]
 # RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
@@ -505,6 +507,7 @@ COPY --from=dvlp_msdot-build-lite ./ ./
 COPY --from=dvlp_dind-build ./ ./
 COPY --from=dvlp_kernel-build ./ ./
 USER god
+RUN sudo apt-get install zstd 
 WORKDIR /home/dvl/dvlw/dvlp/kernels/linux
 SHELL ["/bin/bash", "-c"]
 # RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
@@ -674,28 +677,32 @@ USER dvl
 # KERNEL OUTPUT #
 #################
 
-FROM scratch AS basic-wsl-kernel
+FROM scratch AS dvlp_basic-wsl-kernel
+ARG CONFIG_FILE
 WORKDIR /
-COPY --from=dvlp_basic-wsl-kernel-builder ./home/dvl/built-kernels ./built-kernel
-RUN zip -qr built-kernel *  && \
+COPY --from=dvlp_basic-wsl-kernel-builder ./home/agl/built-kernels ./built-kernel
+RUN zip -qr built-kernel built-kernel/*  && \
     rm -rf /built-kernel
 
-FROM scratch AS basic-wsl-zfs-kernel
+FROM scratch AS dvlp_basic-wsl-zfs-kernel
+ARG CONFIG_FILE
 WORKDIR /
-COPY --from=dvlp_basic-wsl-zfs-kernel ./home/dvl/built-kernels ./built-kernel
-RUN zip -qr built-kernel *  && \
+COPY --from=dvlp_basic-wsl-zfs-kernel-builder ./home/agl/built-kernels ./built-kernel
+RUN zip -qr built-kernel built-kernel/*  && \
     rm -rf /built-kernel
 
-FROM scratch AS stable-wsl-zfs-kernel
+FROM scratch AS dvlp_stable-wsl-zfs-kernel
+ARG CONFIG_FILE
 WORKDIR /
-COPY --from=dvlp_stable-wsl-zfs-kernel-builder ./home/dvl/built-kernels ./built-kernel
-RUN zip -qr built-kernel *  && \
+COPY --from=dvlp_stable-wsl-zfs-kernel-builder ./home/agl/built-kernels ./built-kernel
+RUN zip -qr built-kernel built-kernel/*  && \
     rm -rf /built-kernel
 
-FROM scratch AS latest-rc-wsl-zfs-kernel
+FROM scratch AS dvlp_latest-rc-wsl-zfs-kernel
+ARG CONFIG_FILE
 WORKDIR /
-COPY --from=dvlp_stable-wsl-zfs-kernel-builder ./home/dvl/built-kernels ./built-kernel
-RUN zip -qr built-kernel *  && \
+COPY --from=dvlp_latest-rc-wsl-zfs-kernel-builder ./home/agl/built-kernels ./built-kernel
+RUN zip -qr built-kernel built-kernel/*  && \
     rm -rf /built-kernel
 
 # docker buildx build --target=built-kernels --output type=local,dest=$(pwd)/out/ .
