@@ -14,7 +14,7 @@
 ( No setup necessary. Kubuntu GUI also included with [ubuntu-gui](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-gui/images/sha256-266c029b305ea1d9553aacb7cf2ecc8ebd8830841945a2427374b8e0c9b478aa?context=repo), [ubuntu-cuda](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda/images/sha256-96fa98d5d82f0991218fd9501f56dae9341955a8b3c49a19d99d7d7e59c41b84?context=repo), and [ubuntu-cuda-plus](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda-plus/images/sha256-717739827455ab9eaddb539dbbf3ea6a0c9b943b74cd493a5fc337dd2adb9e92?context=repo) ) 
 
 ### Build and customize your own kernel
-#### [ubuntu-kernel-builder](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-kernel-builder/images/sha256-bd756e1775327d2b8ea51590ba471fdd0c4997a7d44e3f437999a60e59105a70?context=repo) and all "-plus" named images include:
+#### [ubuntu-basic-wsl-kernel-builder](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-basic-wsl-kernel-builder/images/sha256-bd756e1775327d2b8ea51590ba471fdd0c4997a7d44e3f437999a60e59105a70?context=repo) and all "-plus" named images include:
 
 - Linux kernel - use a generic prebuilt kernel or use ...
 - .config templates to optimize your kernel ([example](kernels/linux/x86/amd/5_15901/.config_wsl0))
@@ -244,7 +244,7 @@ _Note: Each image forms the base layer for the image described below it. For ins
 
 ---
 
-# [**kernel-builder**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-kernel-builder/images/sha256-dc29a6491faf9fce15b768e399b521b15e43fa54e7e1700b42af19b3f9590f94?context=explore) and -plus images:
+# [**kernel-builder**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-basic-wsl-kernel-builder/images/sha256-dc29a6491faf9fce15b768e399b521b15e43fa54e7e1700b42af19b3f9590f94?context=explore) and -plus images:
 
 ## `apt-get install alien autoconf automake bc bison build-essential dbus-user-session daemonize dwarves fakeroot flex fontconfig gawk gnupg libtooldkms libblkid-dev libffi-dev lxcfs libudev-dev libssl-dev libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi snapd sysvinit-utils uuid-dev`
 ### This pre-built image (and those below) comes with a kernel saved conveniently in both `/hel/kernels` and `/halo/kernels`.
