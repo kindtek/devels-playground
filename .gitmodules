@@ -1,4 +1,4 @@
-[submodule "zfs"]
+[submodule "linux_module_zfs"]
 	path = kernels/linux/modules/zfs
 	url = https://github.com/kindtek/zfs
 	branch = zfs-2.1-release
@@ -9,8 +9,8 @@
 	update = checkout
 [submodule "linux_rc"]
 	path = kernels/linux/rc
-	url = https://github.com/kindtek/linux_torvalds.git
-	branch = v6.2
+	url = https://github.com/kindtek/linux_torvalds
+	branch = master
 	active = true
 	shallow = true
 	recurse = false
@@ -36,4 +36,12 @@
 	update = checkout
 [submodule "linux_msft"]
 	path = kernels/linux/msft
-	url = https://github.com/kindtek/WSL2-Linux-Kernel.git
+	url = https://github.com/kindtek/WSL2-Linux-Kernel
+	active = true
+	shallow = true
+	recurse = false
+	ignore = dirty
+	update = checkout
+
+[submodule "."]
+	branch = linux-rolling-stable
