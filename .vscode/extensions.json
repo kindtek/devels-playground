@@ -34,6 +34,7 @@
     "ms-vscode.makefile-tools",
     "christian-kohler.path-intellisense",
     "ms-vscode.powershell",
-    "jeff-hykin.code-eol"
+    "jeff-hykin.code-eol",
+    "donjayamanne.git-extension-pack"
   ]
 }
