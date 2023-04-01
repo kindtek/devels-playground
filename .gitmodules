@@ -8,9 +8,27 @@
 	ignore = dirty
 	update = checkout
 [submodule "linux"]
-	path = linux
+	path = linux_rc
 	url = https://github.com/kindtek/linux.git
 	branch = v6.2
+	active = true
+	shallow = true
+	recurse = false
+	ignore = dirty
+	update = checkout
+[submodule "linux_stable"]
+	path = linux_latest-stable
+	url = https://github.com/kindtek/linux_gregkh
+	branch = linux-rolling-stable
+	active = true
+	shallow = true
+	recurse = false
+	ignore = dirty
+	update = checkout
+[submodule "linux_lts"]
+	path = linux_latest-stable-lts
+	url = https://github.com/kindtek/linux_gregkh
+	branch = linux-rolling-lts
 	active = true
 	shallow = true
 	recurse = false
