@@ -9,7 +9,7 @@
 	update = checkout
 [submodule "linux_rc"]
 	path = kernels/linux/rc
-	url = https://github.com/kindtek/linux.git
+	url = https://github.com/kindtek/linux_torvalds.git
 	branch = v6.2
 	active = true
 	shallow = true
