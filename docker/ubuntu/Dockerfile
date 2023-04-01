@@ -1,13 +1,15 @@
 # syntax=docker/dockerfile:experimental
 # to build and run an individual service with args (ie git):
-## `docker compose build git --build-arg refresh_repo=true && docker compose up git`
+## `docker compose build git --build-arg REFRESH_REPO=true && docker compose up git`
 # to build everything:
 ## `docker compose build && docker compose up`
 # to remove all volumes:
 ## docker compose down && docker volume rm $(docker volume ls -q)
 ARG CONFIG_FILE=${CONFIG_FILE}
+ARG KERNEL_TYPE=${KERNEL_TYPE:-basic-wsl}
 ARG DEBIAN_FRONTEND=noninteractive
-ARG refresh_repo=${refresh_repo:-no}
+ARG REFRESH_REPO=${REFRESH_REPO:-no}
+ARG DOCKER_BUILDKIT=1
 ARG _AGL_USR=${_AGL_USR:-agl}
 ARG _DVL_USR=${_DVL_USR:-dvl}
 
@@ -99,7 +101,7 @@ WORKDIR /
 #############
 FROM dvlp_base AS dvlp_repo
 ARG mnt_data=${mnt_data:-/mnt/data}
-ARG refresh_repo=${refresh_repo:-no}
+ARG REFRESH_REPO=${REFRESH_REPO:-no}
 USER root
 WORKDIR /
 COPY --from=dvlp_base-devel --chown=dvl:hell ./home/dvl ./home/dvl
@@ -134,7 +136,7 @@ RUN \
 # RUN git clone https://github.com/kindtek/dvlw --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
 # --filter=combine:tree:depth:1+blob:limit=10240000  --recurse-submodules --remote-submodules  --single-branch  --no-tags --filter=blob:limit=1024000 --single-branch --branch main
 WORKDIR /home/dvl/dvlw
-# RUN if [ $refresh_repo != no ]; then git pull; fi    
+# RUN if [ $REFRESH_REPO != no ]; then git pull; fi    
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
     git submodule update --init --remote --depth=1 --progress || git pull \
@@ -142,7 +144,7 @@ RUN \
     chmod +x dvlp/mnt/home/**.sh && \
     chmod -R +x dvlp/mnt/bak
 # WORKDIR /home/dvl/dvlw/dvlp
-# RUN if [ "$refresh_repo" != no ]; then git pull; fi    
+# RUN if [ "$REFRESH_REPO" != no ]; then git pull; fi    
 USER dvl
 WORKDIR /
 
@@ -151,7 +153,7 @@ WORKDIR /
 # dvlp_skel-build #
 ###################
 FROM dvlp_base AS dvlp_skel-build
-ARG refresh_repo=${refresh_repo:-no}
+ARG REFRESH_REPO=${REFRESH_REPO:-no}
 ENV DEBIAN_FRONTEND=noninteractive
 ARG mnt_data=${mnt_data:-/mnt/data}
 WORKDIR /
@@ -181,7 +183,7 @@ WORKDIR /home/dvl
 # dvlp_skel #
 #############
 FROM dvlp_skel-build AS dvlp_skel
-ARG refresh_repo=${refresh_repo:-no}
+ARG REFRESH_REPO=${REFRESH_REPO:-no}
 # RUN with agl ownership
 USER agl
 # sudo mv -v ${mnt_data}/bak/custom ${mnt_data}/bak/agl/ && \
@@ -207,7 +209,7 @@ USER dvl
 # dvlp_bare #
 ############
 FROM dvlp_base AS dvlp_bare
-ARG refresh_repo=${refresh_repo:-yes}
+ARG REFRESH_REPO=${REFRESH_REPO:-yes}
 WORKDIR /
 WORKDIR /home/dvl
 USER dvl
@@ -217,7 +219,7 @@ USER dvl
 # dvlp_git_lite #
 #################
 FROM dvlp_base AS dvlp_git-lite
-ARG refresh_repo=${refresh_repo:-yes}
+ARG REFRESH_REPO=${REFRESH_REPO:-yes}
 WORKDIR /
 COPY --from=dvlp_skel-build ./ ./
 WORKDIR /home/dvl
@@ -227,7 +229,7 @@ USER dvl
 # dvlp_git #
 ############
 FROM dvlp_base AS dvlp_git
-ARG refresh_repo=${refresh_repo:-yes}
+ARG REFRESH_REPO=${REFRESH_REPO:-yes}
 WORKDIR /
 COPY --from=dvlp_skel ./ ./
 WORKDIR /home/dvl
@@ -432,97 +434,35 @@ USER dvl
 ########################################################
 ###  dvlp_basic-wsl-kernel-builder - KERNEL BUILDER  ###
 ########################################################
-FROM dvlp_base AS dvlp_basic-wsl-kernel-builder
-ARG CONFIG_FILE
-# ARG _AGL
+FROM dvlp_base AS dvlp_kernel-builder
+ARG CONFIG_FILE=${CONFIG_FILE}
+ARG KERNEL_TYPE=${KERNEL_TYPE:-basic-wsl}
 WORKDIR /
 COPY --from=dvlp_skel ./ ./
 COPY --from=dvlp_python-build-lite ./ ./
 COPY --from=dvlp_msdot-build-lite ./ ./
 COPY --from=dvlp_dind-build ./ ./
 COPY --from=dvlp_kernel-build ./ ./
-USER god
-WORKDIR /home/dvl/dvlw/dvlp/kernels/linux
-SHELL ["/bin/bash", "-c"]
-# RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
-RUN sudo bash build-basic-wsl-kernel.sh ${CONFIG_FILE} agl
-# RUN echo '# sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/agl/.bashrc
-WORKDIR /home/dvl
-USER dvl
-
-############################################################
-###  dvlp_basic-wsl-zfs-kernel-builder - KERNEL BUILDER  ###
-############################################################
-FROM dvlp_base AS dvlp_basic-wsl-zfs-kernel-builder
-ARG CONFIG_FILE
-# ARG _AGL
-WORKDIR /
-COPY --from=dvlp_skel ./ ./
-COPY --from=dvlp_python-build-lite ./ ./
-COPY --from=dvlp_msdot-build-lite ./ ./
-COPY --from=dvlp_dind-build ./ ./
-COPY --from=dvlp_kernel-build ./ ./
-USER god
-RUN sudo apt-get install -y zstd
-WORKDIR /home/dvl/dvlw/dvlp/kernels/linux
-SHELL ["/bin/bash", "-c"]
-# RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
-RUN sudo bash build-basic-wsl-zfs-kernel.sh ${CONFIG_FILE} agl
 # RUN echo '# sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/agl/.bashrc
 WORKDIR /home/dvl
 USER dvl
 
 ########################################################
-###  dvlp_stable-wsl-zfs-kernel-builder - KERNEL BUILDER  ###
+###  dvlp_basic-wsl-kernel-builder - KERNEL BUILDER  ###
 ########################################################
-FROM dvlp_base AS dvlp_stable-wsl-zfs-kernel-builder
-ARG CONFIG_FILE
-# ARG _AGL
+FROM dvlp_base AS dvlp_kernel-make
+ARG CONFIG_FILE=${CONFIG_FILE}
+ARG KERNEL_TYPE=${KERNEL_TYPE:-basic-wsl}
 WORKDIR /
-COPY --from=dvlp_skel ./ ./
-COPY --from=dvlp_python-build-lite ./ ./
-COPY --from=dvlp_msdot-build-lite ./ ./
-COPY --from=dvlp_dind-build ./ ./
 COPY --from=dvlp_kernel-build ./ ./
 USER god
-RUN sudo apt-get install -y zstd
 WORKDIR /home/dvl/dvlw/dvlp/kernels/linux
 SHELL ["/bin/bash", "-c"]
 # RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
-RUN sudo bash build-stable-wsl-zfs-kernel.sh ${CONFIG_FILE} agl
+RUN sudo bash build-kernel.sh ${KERNEL_TYPE} ${CONFIG_FILE} agl
 # RUN echo '# sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/agl/.bashrc
 WORKDIR /home/dvl
 USER dvl
-
-###########################################################
-###  latest-rc-wsl-zfs-kernel-builder - KERNEL BUILDER  ###
-###########################################################
-FROM dvlp_base AS dvlp_latest-rc-wsl-zfs-kernel-builder
-ARG CONFIG_FILE
-# ARG _AGL
-WORKDIR /
-COPY --from=dvlp_skel ./ ./
-COPY --from=dvlp_python-build-lite ./ ./
-COPY --from=dvlp_msdot-build-lite ./ ./
-COPY --from=dvlp_dind-build ./ ./
-COPY --from=dvlp_kernel-build ./ ./
-USER god
-RUN sudo apt-get install -y zstd
-WORKDIR /home/dvl/dvlw/dvlp/kernels/linux
-SHELL ["/bin/bash", "-c"]
-# RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
-RUN sudo bash build-latest-rc-wsl-zfs-kernel.sh ${CONFIG_FILE} agl
-# RUN echo '# sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/agl/.bashrc
-WORKDIR /home/dvl
-USER dvl
-# ##################################
-# # dvlp_kernel-lite - kernel only #
-# ##################################
-# FROM dvlp_dind-lite AS dvlp_kernel-lite
-# WORKDIR /home/dvl
-# # COPY --from=dvlp_basic-wsl-kernel-builder dvlw/dvlp/kernels kernels/
-# COPY --from=dvlp_basic-wsl-kernel-builder linux-* ./
-# USER dvl
 
 #################################### GUI ######################################
 #################
@@ -533,7 +473,7 @@ FROM dvlp_base AS dvlp_gui-lite
 USER root
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NONINTERACTIVE_SEEN=true
-ARG refresh_repo=${refresh_repo:-yes}
+ARG REFRESH_REPO=${REFRESH_REPO:-yes}
 WORKDIR /
 COPY --from=dvlp_skel ./ ./
 COPY --from=dvlp_python-build-lite ./ ./
@@ -555,7 +495,7 @@ RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg a
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     sudo apt-get -y update && sudo apt-get -y upgrade && \
-    sudo apt-get install -y brave-browser nautilus vlc x11-apps  
+    sudo apt-get install -y brave-browser dolphin vlc x11-apps  
 # change last line of this file - fix for brave-browser displaying empty windows
 RUN sudo cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
     head -n -1 /opt/brave.com/brave/brave-browser.old | sudo tee /opt/brave.com/brave/brave-browser > /dev/null && \
@@ -575,7 +515,7 @@ USER dvl
 ############
 # wsl2 required
 FROM dvlp_gui-lite AS dvlp_gui
-ARG refresh_repo=${refresh_repo:-yes}
+ARG REFRESH_REPO=${REFRESH_REPO:-yes}
 ARG DEBIAN_FRONTEND=noninteractive
 ARG DEBCONF_NONINTERACTIVE_SEEN=true
 USER root
@@ -626,7 +566,7 @@ USER dvl
 # dvlp_gui-plus #
 #################
 FROM dvlp_basic-wsl-kernel-builder AS dvlp_gui-plus
-ARG refresh_repo=${refresh_repo:-yes}
+ARG REFRESH_REPO=${REFRESH_REPO:-yes}
 WORKDIR /
 COPY --from=dvlp_basic-wsl-kernel-builder ./ ./
 COPY --from=dvlp_gui ./ ./
@@ -677,10 +617,10 @@ USER dvl
 # KERNEL OUTPUT #
 #################
 
-FROM scratch AS dvlp_basic-wsl-kernel
+FROM scratch AS dvlp_kernel
 ARG CONFIG_FILE
 WORKDIR /
-COPY --from=dvlp_basic-wsl-zfs-kernel-builder ./built-kernel.tar.gz ./built-kernel.tar.gz
+COPY --from=dvlp_kernel-builder ./built-kernel.tar.gz ./built-kernel.tar.gz
 
 
 # docker buildx build --target=built-kernels --output type=local,dest=$(pwd)/out/ .

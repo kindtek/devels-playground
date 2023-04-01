@@ -311,8 +311,8 @@ services:
     build:
       context: .
       target: dvlp_basic-wsl-kernel-builder
-      args:
-        - CONFIG_FILE=${CONFIG_FILE:-dvlw/dvlp/kernels/linux/x86/generic/.config_wsl0}
+      # args:
+      #   - CONFIG_FILE=${CONFIG_FILE:-dvlw/dvlp/kernels/linux/x86/generic/.config_wsl0}
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel"
   basic-wsl-zfs-kernel-builder:
@@ -321,8 +321,8 @@ services:
     build:
       context: .
       target: dvlp_basic-wsl-zfs-kernel-builder
-      args:
-        - CONFIG_FILE=${CONFIG_FILE:-dvlw/dvlp/kernels/linux/x86/generic/.config_wsl0}
+      # args:
+      #   - CONFIG_FILE=${CONFIG_FILE:-dvlw/dvlp/kernels/linux/x86/generic/.config_wsl0}
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel"
   stable-wsl-zfs-kernel-builder:
@@ -330,9 +330,9 @@ services:
     image: kindtek/${HUB_REPO:-devels-playground}:stable-wsl-zfs-kernel-builder
     build:
       context: .
-      target: dvlp_stable-wsl-zfs-kernel-builder
-      args:
-        - CONFIG_FILE=${CONFIG_FILE:-dvlw/dvlp/kernels/linux/x86/generic/.config_wsl0}
+      # target: dvlp_stable-wsl-zfs-kernel-builder
+      # args:
+      #   - CONFIG_FILE=${CONFIG_FILE:-dvlw/dvlp/kernels/linux/x86/generic/.config_wsl0}
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel"
   latest-rc-wsl-zfs-kernel-builder:
@@ -341,8 +341,8 @@ services:
     build:
       context: .
       target: dvlp_latest-rc-wsl-zfs-kernel-builder
-      args:
-        - CONFIG_FILE=${CONFIG_FILE:-dvlw/dvlp/kernels/linux/x86/generic/.config_wsl0}
+      # args:
+      #   - CONFIG_FILE=${CONFIG_FILE:-dvlw/dvlp/kernels/linux/x86/generic/.config_wsl0}
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel"
   gui-lite:
