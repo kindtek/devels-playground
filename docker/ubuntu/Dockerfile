@@ -459,7 +459,7 @@ USER god
 WORKDIR /home/dvl/dvlw/dvlp/kernels/linux
 SHELL ["/bin/bash", "-c"]
 # RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
-RUN sudo bash build-kernel.sh ${KERNEL_TYPE} ${CONFIG_FILE} agl
+RUN sudo bash make-kernel.sh ${KERNEL_TYPE} ${CONFIG_FILE} agl
 # RUN echo '# sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/agl/.bashrc
 WORKDIR /home/dvl
 USER dvl
@@ -617,10 +617,10 @@ USER dvl
 # KERNEL OUTPUT #
 #################
 
-FROM scratch AS dvlp_kernel
+FROM scratch AS dvlp_kernel-output
 ARG CONFIG_FILE
 WORKDIR /
-COPY --from=dvlp_kernel-builder ./built-kernel.tar.gz ./built-kernel.tar.gz
+COPY --from=dvlp_kernel-make ./built-kernel.tar.gz ./built-kernel.tar.gz
 
 
 # docker buildx build --target=built-kernels --output type=local,dest=$(pwd)/out/ .
