@@ -463,7 +463,7 @@ COPY --from=dvlp_msdot-build-lite ./ ./
 COPY --from=dvlp_dind-build ./ ./
 COPY --from=dvlp_kernel-build ./ ./
 USER god
-RUN sudo apt-get install zstd 
+RUN sudo apt-get install -y zstd
 WORKDIR /home/dvl/dvlw/dvlp/kernels/linux
 SHELL ["/bin/bash", "-c"]
 # RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
@@ -485,7 +485,7 @@ COPY --from=dvlp_msdot-build-lite ./ ./
 COPY --from=dvlp_dind-build ./ ./
 COPY --from=dvlp_kernel-build ./ ./
 USER god
-RUN sudo apt-get install zstd 
+RUN sudo apt-get install -y zstd
 WORKDIR /home/dvl/dvlw/dvlp/kernels/linux
 SHELL ["/bin/bash", "-c"]
 # RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
@@ -507,7 +507,7 @@ COPY --from=dvlp_msdot-build-lite ./ ./
 COPY --from=dvlp_dind-build ./ ./
 COPY --from=dvlp_kernel-build ./ ./
 USER god
-RUN sudo apt-get install zstd 
+RUN sudo apt-get install -y zstd
 WORKDIR /home/dvl/dvlw/dvlp/kernels/linux
 SHELL ["/bin/bash", "-c"]
 # RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
@@ -680,22 +680,7 @@ USER dvl
 FROM scratch AS dvlp_basic-wsl-kernel
 ARG CONFIG_FILE
 WORKDIR /
-COPY --from=dvlp_basic-wsl-kernel-builder ./built-kernel.zip ./built-kernel.zip
-
-FROM scratch AS dvlp_basic-wsl-zfs-kernel
-ARG CONFIG_FILE
-WORKDIR /
-COPY --from=dvlp_basic-wsl-zfs-kernel-builder ./built-kernel.zip ./built-kernel.zip
-
-FROM scratch AS dvlp_stable-wsl-zfs-kernel
-ARG CONFIG_FILE
-WORKDIR /
-COPY --from=dvlp_stable-wsl-zfs-kernel-builder ./built-kernel.zip ./built-kernel.zip
-
-FROM scratch AS dvlp_latest-rc-wsl-zfs-kernel
-ARG CONFIG_FILE
-WORKDIR /
-COPY --from=dvlp_latest-rc-wsl-zfs-kernel-builder ./built-kernel.zip ./built-kernel.zip
+COPY --from=dvlp_basic-wsl-zfs-kernel-builder ./built-kernel.tar.gz ./built-kernel.tar.gz
 
 
 # docker buildx build --target=built-kernels --output type=local,dest=$(pwd)/out/ .
