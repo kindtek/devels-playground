@@ -26,6 +26,7 @@
 	url = https://github.com/kindtek/cdir.git
 	branch = master
 	recurse = false
+	ignore = all
 [submodule "choco"]
 	active = false
 	path = choco
@@ -33,4 +34,5 @@
 	url = https://github.com/kindtek/choco.git
 	branch = stable
 	recurse = false
+	ignore = all
 
