@@ -35,6 +35,7 @@
     "christian-kohler.path-intellisense",
     "ms-vscode.powershell",
     "jeff-hykin.code-eol",
-    "donjayamanne.git-extension-pack"
+    "donjayamanne.git-extension-pack",
+    "ivanhofer.git-assistant"
   ]
 }
