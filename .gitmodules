@@ -22,14 +22,14 @@
 [submodule "cdir"]
 	active = true
 	path = cdir
-	shallow = false
+	shallow = true
 	url = https://github.com/kindtek/cdir.git
 	branch = master
 	recurse = false
 [submodule "choco"]
 	active = true
 	path = choco
-	shallow = false
+	shallow = true
 	url = https://github.com/kindtek/choco.git
 	branch = stable
 	recurse = false
