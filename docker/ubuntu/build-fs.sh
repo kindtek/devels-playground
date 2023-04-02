@@ -5,17 +5,17 @@ user_name=$(wslvar USERNAME)
 
 docker_vols=$(docker volume ls -q)
 sudo tee $filename.sh >/dev/null <<'TXT'
-#           ___________________________________________________         #
-#           ||||               Executing ...               ||||         #
-#            -------------------------------------------------          #
+#               ___________________________________________________                 #
+#               ||||               Executing ...               ||||                 #
+#               -------------------------------------------------                   #
                     docker compose down                                 
                     docker volume rm $docker_vols 
-                    # docker compose build bare git-lite                                        
-                    docker compose build --no-cache bare git-lite                  
-                    docker compose up bare git-lite                     
-#            -----------------------------------------------            #
-#           |||||||||||||||||||||||||||||||||||||||||||||||||           #
-#           __________________________________________________          #
+                    docker compose build bare git-lite                                        
+                    # docker compose build --no-cache bare git-lite                  
+                    docker compose up bare git-lite                       
+#                -----------------------------------------------                    #
+#               |||||||||||||||||||||||||||||||||||||||||||||||||                   #
+#               __________________________________________________                  #
 TXT
 # copy the command to the log first
 cat $filename.sh 2>&1 | sudo tee --append $filename.log
