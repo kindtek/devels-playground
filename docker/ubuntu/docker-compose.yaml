@@ -160,10 +160,15 @@ services:
     labels:
       com.dvlp_skel.description: "-build skeleton"
   skel:
+    user: root
     extends: skel-build
-    entrypoint:
-      - sleep
-      - infinity
+    entrypoint: /bin/bash -c
+    # entrypoint: ["sudo chown -R agl:halo /home/agl/dvlw"]
+    # command:
+    #   - sudo chown -R agl:halo /halo/hal/dvlw
+    #   - sudo chown -R dvl:hell /hell
+    #   # - sudo chown -R dvl:hell /hell
+    #   - sleep infinity
     build:
       context: .
       target: dvlp_skel
@@ -186,12 +191,12 @@ services:
   bare:
     # owner/group becomes owner of dvl-data volume
     extends: skel
+    user: root
     restart: on-failure
     tty: true
-    entrypoint:
-      - sleep
-      - infinity
-    user: dvl
+    # entrypoint:
+    #   - sleep
+    #   - infinity
     working_dir: /home/dvl
     privileged: true
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-bare
@@ -208,9 +213,23 @@ services:
         # Wait for the ownership to change
         condition: service_completed_successfully
     init: true
+    # entrypoint: ["sudo chown -R agl:halo /home/agl/dvlw"]
+    entrypoint: /bin/bash -c
+    # entrypoint: ["sudo chown -R agl:halo /home/agl/dvlw"]
+    command:
+      # - sudo chown -R agl:halo /halo/hal/dvlw
+      # - sudo chown -R dvl:hell /hell
+      # - sudo chown -R dvl:hell /hell
+      - sleep infinity
+      # - -c
+      # - sudo
+      # - chown 
+      # - -R 
+      # - agl:halo 
+      # - /halo/hal/dvlw
     volumes:
-      # - dvlw-data:/halo/hal/dvlw
-      # - dvlw-data:/root/root/dvlw
+      - dvlw-data:/halo/hal/dvlw
+      - dvlw-data:/root/root/dvlw
       - fs-data:/root
       - good-data:/root/root
       - fs-data:/hell
