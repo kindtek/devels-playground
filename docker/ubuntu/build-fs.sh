@@ -10,9 +10,9 @@ sudo tee $filename.sh >/dev/null <<'TXT'
 #               -------------------------------------------------                   #
                     docker compose down                                 
                     docker volume rm $docker_vols 
-                    # docker compose build bare git-lite                                        
-                    docker compose build --no-cache bare git-lite                  
-                    docker compose up bare git-lite                       
+                    docker compose build gui-plus                                        
+                    # docker compose build --no-cache gui-plus                  
+                    # docker compose up gui-plus                      
 #                -----------------------------------------------                    #
 #               |||||||||||||||||||||||||||||||||||||||||||||||||                   #
 #               __________________________________________________                  #
