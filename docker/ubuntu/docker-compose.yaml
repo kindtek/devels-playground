@@ -136,7 +136,11 @@ services:
         - _AGL=agl
         - _HALO=halo
       # network: ${COMPOSE_PROJECT_NAME}_default
-
+    # entrypoint: /bin/bash -c
+    # # entrypoint: ["sudo chown -R agl:halo /home/agl/dvlw"]
+    # command:
+    #   # - sudo chown -R agl:halo /halo/hal/dvlw
+    #   - chown -R dvl:hell 
       # init: true
       # volumes:
       #   - dvl-data:/home/dvl
@@ -148,6 +152,7 @@ services:
     #     condition: service_started
     volumes:
       - fs-data:/fs
+      # - fs-data:/hell
       - good-data:/home/good
       # - hell-data:/fs
       # - halo-data:/fs
@@ -218,7 +223,7 @@ services:
     # entrypoint: ["sudo chown -R agl:halo /home/agl/dvlw"]
     command:
       # - sudo chown -R agl:halo /halo/hal/dvlw
-      # - sudo chown -R dvl:hell /hell
+      # - chown -R dvl:hell 
       # - sudo chown -R dvl:hell /hell
       - sleep infinity
       # - -c
