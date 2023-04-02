@@ -172,7 +172,7 @@ RUN \
     git config --global --add safe.directory /tmp/git/cache && \
     # clone fresh repos and give dvl ownership
     # git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress /tmp/git/cache/dvlw  \
-    git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress dvlw || (cd dvlw && git pull) 
+    git clone https://github.com/kindtek/devels-workshop --filter=blob:limit=1024000 --depth=1 --single-branch --progress dvlw || (cd dvlw && git pull) 
 # (cd /tmp/git/cache/dvlw && git pull && cp -rv --remove-destination . /home/dvl/dvlw)
 # git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress dvlw
 # RUN git clone https://github.com/kindtek/dvlw --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
@@ -202,7 +202,9 @@ ARG REFRESH_REPO=${REFRESH_REPO:-no}
 ENV DEBIAN_FRONTEND=noninteractive
 ARG mnt_data=${mnt_data:-/mnt/data}
 WORKDIR /
-COPY --from=dvlp_base-fs ./ ./
+COPY --from=dvlp_base-fs ./etc/passwd ./etc/passwd
+COPY --from=dvlp_base-fs ./etc/group ./etc/group
+# COPY --from=dvlp_base-fs ./lib/x86_64-linux-gnu ./lib/x86_64-linux-gnu
 COPY --from=dvlp_base-fs_devel-lite  --chown=dvl:hell    ./home/dvl/     ./home/dvl/
 COPY --from=dvlp_base-fs_angel-lite  --chown=agl:halo    ./home/agl/     ./home/agl/
 COPY --from=dvlp_base-fs_good-lite   --chown=good:rootg  ./home/good/    ./home/good/
@@ -235,7 +237,10 @@ ARG REFRESH_REPO=${REFRESH_REPO:-no}
 ENV DEBIAN_FRONTEND=noninteractive
 ARG mnt_data=${mnt_data:-/mnt/data}
 WORKDIR /
-COPY --from=dvlp_base-fs ./ ./
+COPY --from=dvlp_base-fs ./etc/passwd ./etc/passwd
+COPY --from=dvlp_base-fs ./etc/group ./etc/group
+# COPY --from=dvlp_base-fs ./lib/x86_64-linux-gnu ./lib/x86_64-linux-gnu
+
 # COPY --from=dvlp_base-fs_devel  --chown=dvl:hell    ./home/dvl/     ./home/dvl/
 # COPY --from=dvlp_base-fs_angel  --chown=agl:halo    ./home/agl/     ./home/agl/
 # COPY --from=dvlp_base-fs_good   --chown=good:rootg  ./home/good/    ./home/good/
@@ -264,61 +269,81 @@ WORKDIR /home/dvl
 #############
 # dvlp_skel #
 #############
-FROM dvlp_skel-build AS dvlp_skel-install
+FROM scratch AS dvlp_skel-install
 ARG REFRESH_REPO=${REFRESH_REPO:-no}
 WORKDIR /
 # RUN with agl ownership
-USER agl
-# sudo mv -v ${mnt_data}/bak/custom ${mnt_data}/bak/agl/ && \
-# make rwx for owner and rw for group - x/rx for others
-# sudo chmod 754 -Rv ${mnt_data}/bak/agl && \
-# sudo chmod 751 ${mnt_data}/bak/agl && \
-# sudo chmod 751 ${mnt_data}/bak/agl && sudo chmod 751 ${mnt_data}/bak/dvl && \
-# sudo chmod 754 -Rv ${mnt_data}/bak/dvl && \
+USER root
+COPY --from=dvlp_base-fs ./ ./
+# # COPY --from=dvlp_base-fs ./etc/passwd/ ./etc/passwd/
+# # COPY --from=dvlp_base-fs ./etc/group/ ./etc/group/
+# # COPY --from=dvlp_base-fs ./etc/apt/ ./etc/apt/
+# COPY --from=dvlp_base-fs ./etc/ ./etc/
+# COPY --from=dvlp_base-fs ./lib/ ./lib/
+# COPY --from=dvlp_base-fs ./lib64/ ./lib64/
+# COPY --from=dvlp_base-fs ./lib/x86_64-linux-gnu ./lib/x86_64-linux-gnu
+# COPY --from=dvlp_base-fs ./bin/ ./bin/
+# COPY --from=dvlp_base-fs ./sbin/ ./sbin/
+# COPY --from=dvlp_base-fs ./usr/ ./usr/
+# COPY --from=dvlp_base-fs ./var/lib/ ./var/lib/
+RUN \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    apt-get -y update && apt-get -y upgrade && \
+    apt-get -y install apt-transport-https curl gh git gnupg2 libssl-dev nvi wget
 # RUN \
 #     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
 #     sudo apt-get -y update && \
 # sudo add-apt-repository ppa:saiarcot895/myppa && \
 # sudo apt-get -y install apt-fast aria2 
-RUN \
-    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    sudo apt-get -y update && sudo apt-get -y upgrade && \
-    sudo apt-get -y install apt-transport-https curl gh git gnupg2 libssl-dev nvi wget
-WORKDIR /home/dvl
-USER dvl
+
+
 
 FROM scratch AS dvlp_skel-lite
 ARG REFRESH_REPO=${REFRESH_REPO:-no}
 WORKDIR /
-COPY --from=dvlp_skel-build-lite                    ./ ./
+# COPY --from=dvlp_base-fs ./etc/passwd ./etc/passwd
+# COPY --from=dvlp_base-fs ./etc/group ./etc/group
+# COPY --from=dvlp_base-fs ./etc/ ./etc/
+# COPY --from=dvlp_base-fs ./lib/ ./lib/
+# COPY --from=dvlp_base-fs ./lib64/ ./lib64/
+# COPY --from=dvlp_base-fs ./lib/x86_64-linux-gnu ./lib/x86_64-linux-gnu
+# COPY --from=dvlp_base-fs ./bin/ ./bin/
+# COPY --from=dvlp_base-fs ./sbin/ ./sbin/
+# COPY --from=dvlp_base-fs ./usr/ ./usr/
+# COPY --from=dvlp_base-fs ./var/lib/ ./var/lib/
+# COPY --from=dvlp_base-fs ./lib/x86_64-linux-gnu ./lib/x86_64-linux-gnu
+COPY --from=dvlp_base-fs ./ ./
+COPY --from=dvlp_skel-build-lite  ./ ./
 # COPY --from=dvlp_skel-build-lite --chown=good:rootg ./ ./fs/
-RUN usermod -d /hel dvl && usermod -d /hal agl && usermod -d /root/root good
-# RUN chown -R good:rootg /root
-USER good
-WORKDIR /root
-
+# USER agl
+WORKDIR /halo
+RUN chown good:rootg /halo 
+WORKDIR /hal
+RUN usermod -d /hal agl && chown -R agl:halo /hal 
+WORKDIR /hell
+RUN usermod -d /hel dvl && chown -R dvl:hell /hell
+WORKDIR /root/root
+RUN usermod -d /root/root good && chown -R good:rootg /root/root
 # lock down volumes, permissions
-FROM scratch AS dvlp_skel
+FROM dvlp_skel-install AS dvlp_skel
 ARG REFRESH_REPO=${REFRESH_REPO:-no}
 WORKDIR /
 # COPY --from=dvlp_skel-build                       ./            ./
 COPY --from=dvlp_skel-install                     ./            ./
-COPY --from=dvlp_skel-build    --chown=good:rootg ./            ./fs/
+# COPY --from=dvlp_skel-build    --chown=good:rootg ./            ./fs/
 COPY --from=dvlp_skel-install  --chown=good:rootg ./            ./fs/
 # COPY --from=dvlp_base-fs_devel --chown=dvl:hell   ./home/dvl/   ./home/dvl/
 # COPY --from=dvlp_base-fs_angel --chown=agl:halo   ./home/agl/   ./home/agl/
 # COPY --from=dvlp_base-fs_good  --chown=good:rootg ./home/good/  ./home/good/
-RUN usermod -d /hel dvl && usermod -d /hal agl && usermod -d /root/root good
-USER good
-WORKDIR /root
-# RUN chown -R good:rootg /root 
-# && \
-#     chown -R agl:halo /hal &&\
-#     chown -R dvl:hell /hel /hell
-
-# COPY --from=dvlp_skel-build --chown=good:rootg ./ ./root
-# COPY --from=dvlp_skel --chown=agl:halo ./ ./halo
-# COPY --from=dvlp_skel-build --chown=dvl:hell ./ ./hell
+# USER agl
+WORKDIR /halo
+RUN chown good:rootg /halo 
+WORKDIR /hal
+RUN usermod -d /hal agl && chown -R agl:halo /hal 
+WORKDIR /hell
+RUN usermod -d /hel dvl && chown -R dvl:hell /hell
+WORKDIR /root/root
+RUN usermod -d /root/root good && chown -R good:rootg /root/root
 
 ################################## BARE #########################################
 ############
@@ -327,7 +352,9 @@ WORKDIR /root
 FROM scratch AS dvlp_bare
 ARG REFRESH_REPO=${REFRESH_REPO:-yes}
 WORKDIR /
+COPY --from=dvlp_base-fs ./ ./
 COPY --from=dvlp_skel-lite ./ ./
+COPY --from=dvlp_repo --chown=dvl:hell  ./home/dvl/dvlw/ ./home/dvl/dvlw/
 WORKDIR /home/dvl
 USER dvl
 
@@ -338,10 +365,8 @@ USER dvl
 FROM scratch AS dvlp_git-lite
 ARG REFRESH_REPO=${REFRESH_REPO:-yes}
 WORKDIR /
+COPY --from=dvlp_base-fs ./ ./
 COPY --from=dvlp_skel ./ ./
-# COPY --from=dvlp_skel-build --chown=good:rootg ./fs/ ./root/
-COPY --from=dvlp_repo --chown=good:root ./home/dvl/dvlw/ ./home/good/dvlw/
-COPY --from=dvlp_repo --chown=agl:halo  ./home/dvl/dvlw/ ./home/agl/dvlw/
 COPY --from=dvlp_repo --chown=dvl:hell  ./home/dvl/dvlw/ ./home/dvl/dvlw/
 
 # RUN chown -R good:rootg /root
