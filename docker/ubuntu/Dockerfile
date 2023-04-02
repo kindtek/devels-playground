@@ -236,24 +236,24 @@ ENV DEBIAN_FRONTEND=noninteractive
 ARG mnt_data=${mnt_data:-/mnt/data}
 WORKDIR /
 COPY --from=dvlp_base-fs ./ ./
-COPY --from=dvlp_base-fs_devel  --chown=dvl:hell    ./home/dvl/     ./home/dvl/
-COPY --from=dvlp_base-fs_angel  --chown=agl:halo    ./home/agl/     ./home/agl/
-COPY --from=dvlp_base-fs_good   --chown=good:rootg  ./home/good/    ./home/good/
-COPY --from=dvlp_base-fs_devel --chown=agl:halo   .${mnt_data}    .${mnt_data}
+# COPY --from=dvlp_base-fs_devel  --chown=dvl:hell    ./home/dvl/     ./home/dvl/
+# COPY --from=dvlp_base-fs_angel  --chown=agl:halo    ./home/agl/     ./home/agl/
+# COPY --from=dvlp_base-fs_good   --chown=good:rootg  ./home/good/    ./home/good/
+COPY --from=dvlp_base-fs_devel --chown=dvl:hell   .${mnt_data}    .${mnt_data}
 COPY --from=dvlp_base-fs_angel --chown=agl:halo   .${mnt_data}    .${mnt_data}
 COPY --from=dvlp_repo           --chown=dvl:hell    ./home/dvl/dvlw/dvlp/mnt/home/  ./home/dvl/
 COPY --from=dvlp_repo           --chown=agl:halo    ./home/dvl/dvlw/dvlp/mnt/home/  ./home/agl/
 COPY --from=dvlp_repo           --chown=good:rootg  ./home/dvl/dvlw/dvlp/mnt/home/  ./home/good/
-COPY --from=dvlp_base-fs_devel  --chown=agl:halo    .${mnt_data}/                   .${mnt_data}/
-COPY --from=dvlp_base-fs_angel  --chown=agl:halo    .${mnt_data}/                   .${mnt_data}/
+# COPY --from=dvlp_base-fs_devel  --chown=agl:halo    .${mnt_data}/                   .${mnt_data}/
+# COPY --from=dvlp_base-fs_angel  --chown=agl:halo    .${mnt_data}/                   .${mnt_data}/
 COPY --from=dvlp_repo           --chown=good:halo   ./home/dvl/dvlw/dvlp/mnt/       .${mnt_data}/
 # COPY --from=dvlp_repo           --chown=agl:halo    .${mnt_data}                    .${mnt_data}
 COPY --from=dvlp_base-fs_devel --chown=good:rootg   ./ ./fs/
 COPY --from=dvlp_base-fs_devel  --chown=dvl:hell    ./home/dvl/                     ./home/dvl/
 COPY --from=dvlp_base-fs_angel  --chown=agl:halo    ./home/agl/                     ./home/agl/
-# COPY --from=dvlp_base-fs_devel --chown=agl:halo   ./home/dvl/                     ./home/agl/
 COPY --from=dvlp_base-fs_good   --chown=good:rootg  ./home/good/                    ./home/good/
 # COPY --from=dvlp_base-fs_devel --chown=good:rootg ./home/dvl/                     ./home/good/
+# COPY --from=dvlp_base-fs_devel --chown=agl:halo   ./home/dvl/                     ./home/agl/
 USER root
 WORKDIR /hell
 # SHELL ["/bin/bash", "-c"]
@@ -305,9 +305,9 @@ WORKDIR /
 COPY --from=dvlp_skel-install                     ./            ./
 COPY --from=dvlp_skel-build    --chown=good:rootg ./            ./fs/
 COPY --from=dvlp_skel-install  --chown=good:rootg ./            ./fs/
-COPY --from=dvlp_base-fs_devel --chown=dvl:hell   ./home/dvl/   ./home/dvl/
-COPY --from=dvlp_base-fs_angel --chown=agl:halo   ./home/agl/   ./home/agl/
-COPY --from=dvlp_base-fs_good  --chown=good:rootg ./home/good/  ./home/good/
+# COPY --from=dvlp_base-fs_devel --chown=dvl:hell   ./home/dvl/   ./home/dvl/
+# COPY --from=dvlp_base-fs_angel --chown=agl:halo   ./home/agl/   ./home/agl/
+# COPY --from=dvlp_base-fs_good  --chown=good:rootg ./home/good/  ./home/good/
 RUN usermod -d /hel dvl && usermod -d /hal agl && usermod -d /root/root good
 USER good
 WORKDIR /root
@@ -340,9 +340,10 @@ ARG REFRESH_REPO=${REFRESH_REPO:-yes}
 WORKDIR /
 COPY --from=dvlp_skel ./ ./
 # COPY --from=dvlp_skel-build --chown=good:rootg ./fs/ ./root/
-COPY --from=dvlp_repo --chown=good:root ./home/dvl/ ./home/good/
-COPY --from=dvlp_repo --chown=dvl:hell  ./home/dvl/ ./home/dvl/
-COPY --from=dvlp_repo --chown=agl:halo  ./home/dvl/ ./home/agl/
+COPY --from=dvlp_repo --chown=good:root ./home/dvl/dvlw/ ./home/good/dvlw/
+COPY --from=dvlp_repo --chown=agl:halo  ./home/dvl/dvlw/ ./home/agl/dvlw/
+COPY --from=dvlp_repo --chown=dvl:hell  ./home/dvl/dvlw/ ./home/dvl/dvlw/
+
 # RUN chown -R good:rootg /root
 
 WORKDIR /home/dvl

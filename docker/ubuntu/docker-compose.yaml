@@ -51,8 +51,8 @@ services:
       base:
         condition: service_completed_successfully
     init: true
-    volumes:
-      - agl-data:/hal
+    # volumes:
+    #   - agl-data:/hal
   base-devel:
     user: dvl
     group_add:
@@ -64,8 +64,8 @@ services:
       base:
         # Wait for groups to be added
         condition: service_completed_successfully
-    volumes:
-      - dvl-data:/home/hel
+    # volumes:
+    #   - dvl-data:/home/hel
     init: true
   # alias(es) for agl
   # base-ausr:
@@ -114,8 +114,8 @@ services:
     # volumes_from:
     #   - base-angel
     #   - base-devel
-    volumes:
-      - fs-data:/hell
+    # volumes:
+    #   - fs-data:/hell
     #   - good-data:/root:ro
     #   - fs-data:/home/good:rw
     #   - dvl-data:/home/dvl
@@ -137,11 +137,11 @@ services:
         - _AGL=agl
         - _HALO=halo
       # network: ${COMPOSE_PROJECT_NAME}_default
-    entrypoint: /bin/bash -c
-    # entrypoint: ["sudo chown -R agl:halo /home/agl/dvlw"]
-    command:
-      - sudo chown -R agl:halo /hal
-      - chown -R dvl:hell /hell
+    # entrypoint: /bin/bash -c
+    # # entrypoint: ["sudo chown -R agl:halo /home/agl/dvlw"]
+    # command:
+    #   - sudo chown -R agl:halo /hal
+    #   - chown -R dvl:hell /hell
       # init: true
       # volumes:
       #   - dvl-data:/home/dvl
@@ -201,7 +201,7 @@ services:
   bare:
     # owner/group becomes owner of dvl-data volume
     extends: skel
-    user: good
+    user: dvl
     restart: on-failure
     tty: true
     # entrypoint:
