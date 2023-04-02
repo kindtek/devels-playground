@@ -54,14 +54,18 @@ RUN \
     # non-root will need to use sudo from now on
     apt-get -y install sudo && \
     usermod -aG sudo agl && \
-    usermod -aG sudo good 
+    usermod -aG sudo good && \
+    chown -R good:rootg /root
 
 # good permissions/volume builder
 FROM dvlp_base-fs AS dvlp_base-fs_good
 USER root
 ARG mnt_data=${mnt_data:-/mnt/data}
 RUN ln -fs /home/good /root && \
-    rm -rf /home/good/.bash* /home/good/.pro*
+    rm -rf /home/good/.bash* /home/good/.pro* && \
+    install -d -o good -g rootg dls && \
+    install -d -o agl -g halo halo && \
+    install -d -o dvl -g hell hell
 # && \
 #     ln -sv /home/good/bak /mnt/data/bak 
 
@@ -224,7 +228,11 @@ FROM scratch AS dvlp_bare
 ARG REFRESH_REPO=${REFRESH_REPO:-yes}
 WORKDIR /
 COPY --from=dvlp_skel ./ ./
-
+COPY --from=dvlp_skel-build --chown=good:rootg ./fs/ ./root/
+COPY --from=dvlp_skel-build --chown=good:rootg ./home/good/ ./root/
+# RUN chown -R dvl:hell /hell && \
+# RUN chown -R dvl:hell /fs
+RUN chown -R good:rootg /root
 WORKDIR /home/dvl
 USER dvl
 

@@ -155,6 +155,7 @@ services:
       - dvl-data:/home/dvl
       # # - agl-data:/home/${_AGL_USR:-agl}
       - agl-data:/home/agl
+      - dvlw-data:/home/dvl/dvlw
 
     labels:
       com.dvlp_skel.description: "-build skeleton"
@@ -208,20 +209,22 @@ services:
         condition: service_completed_successfully
     init: true
     volumes:
-      - fs-data:/hell
-      # - dvl-data:/hel
-      - dvl-data:/hell/hel
-      - fs-data:/halo
-      # - agl-data:/hal
-      - agl-data:/halo/hal
+      # - dvlw-data:/halo/hal/dvlw
+      # - dvlw-data:/root/root/dvlw
       - fs-data:/root
       - good-data:/root/root
+      - fs-data:/hell
+      - dvl-data:/hel
+      - dvl-data:/hell/hel
+      - fs-data:/halo
+      - agl-data:/hal
+      - agl-data:/halo/hal
       - mnt-data:/mnt/data
       - dls-data:/mnt/data/dls
       - dls-data:/dls
-      - dls-data:/root/dls
-      - dls-data:/hal/dls
-      - dls-data:/hel/dls
+      - dls-data:/home/good/dls
+      - dls-data:/home/agl/dls
+      - dls-data:/home/dvl/dls
     labels:
       com.devels-playground.description: "basics + git"
   git-lite:
@@ -420,6 +423,7 @@ volumes:
   rootg-data:
   hell-data:
   halo-data:
+  dvlw-data:
 
 
 networks:
