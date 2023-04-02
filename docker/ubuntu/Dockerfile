@@ -455,11 +455,12 @@ ARG CONFIG_FILE=${CONFIG_FILE}
 ARG KERNEL_TYPE=${KERNEL_TYPE:-basic-wsl}
 WORKDIR /
 COPY --from=dvlp_kernel-build ./ ./
+COPY --from=dvlp_repo ./ ./
 USER god
 WORKDIR /home/dvl/dvlw/dvlp/kernels/linux
 SHELL ["/bin/bash", "-c"]
 # RUN sudo ln -al && sudo chmod +x build-basic-wsl-kernel.sh
-RUN sudo bash make-kernel.sh ${KERNEL_TYPE} ${CONFIG_FILE} agl
+RUN sudo bash make-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" agl
 # RUN echo '# sudo daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec sudo nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/agl/.bashrc
 WORKDIR /home/dvl
 USER dvl

@@ -2,3 +2,4 @@
 /.history*
 docker/ubuntu/ubuntu22-plus-linux-kernel-6-28.tar
 docker/ubuntu/ubuntu22-plus-linux-kernel-6-28_1.tar
+*.log
