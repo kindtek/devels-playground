@@ -29,6 +29,7 @@ RUN \
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     # sudo add-apt-repository ppa:apt-fast/stable && \
+    rm -rf /etc/skel && \
     apt-get update -y && \
     apt-get upgrade -y && \
     #   apt-get -y install sudo apt-fast
@@ -36,9 +37,15 @@ RUN \
     addgroup --gid 777 halo && \
     addgroup --gid 666 hell && \
     # add just good and agl for now 
-    adduser --home /home/good --ingroup root --shell /bin/bash --uid 4321 --disabled-password --gecos GECOS good && \
-    adduser --home /home/agl --ingroup halo --shell /bin/bash --uid 777 --disabled-password --gecos GECOS agl && \
-    adduser --home /home/dvl --ingroup hell --shell /bin/bash --uid 666 --disabled-password --gecos GECOS dvl && \
+    # adduser --home /home/good --ingroup root --shell /bin/bash --uid 4321 --disabled-password --gecos GECOS good && \
+    # adduser --home /home/agl --ingroup halo --shell /bin/bash --uid 777 --disabled-password --gecos GECOS agl && \
+    # adduser --home /home/dvl --ingroup hell --shell /bin/bash --uid 666 --disabled-password --gecos GECOS dvl && \
+    adduser --ingroup root --shell /bin/bash --uid 4321 --disabled-password --gecos GECOS --no-create-home good && \
+    adduser --ingroup halo --shell /bin/bash --uid 777  --disabled-password --gecos GECOS --no-create-home agl && \
+    adduser --ingroup hell --shell /bin/bash --uid 666  --disabled-password --gecos GECOS --no-create-home dvl && \
+    rm -rf /root && \
+    # rm -rf /home/good* && rm -rf /root/* && \
+    # rm -rf /home/dvl/* && rm -rf /home/agl/* && \
     # add good and agl to the sudo list
     usermod -aG rootg good && \
     # add good to both groups
@@ -50,53 +57,85 @@ RUN \
     passwd -d dvl && \
     passwd -l root && \
     # make dvl default wsl user 
-    echo "[user]\ndefault=dvl" >> /etc/wsl.conf && \
+    echo "[user] \
+    default=dvl" >> /etc/wsl.conf && \
     # non-root will need to use sudo from now on
     apt-get -y install sudo && \
+    # apt-get -y install sudo debootstrap && \
+    # sudo debootstrap sid chroot && \
     usermod -aG sudo agl && \
-    usermod -aG sudo good && \
-    chown -R good:rootg /root
+    usermod -aG sudo good
 
 # good permissions/volume builder
-FROM dvlp_base-fs AS dvlp_base-fs_good
+FROM dvlp_base-fs AS dvlp_base-fs_good-lite
 USER root
+WORKDIR /
 ARG mnt_data=${mnt_data:-/mnt/data}
-RUN ln -fsv /home/good /root && \
-    rm -rf /home/good/.bash* /home/good/.pro* && \
-    install -d -o good -g rootg dls 
-    # && \
-    # install -d -o agl -g halo halo && \
-    # install -d -o dvl -g hell hell
+RUN install --verbose -o good -g rootg -d /root && \
+    install --verbose -o good -g rootg -d /home/good && \
+    install --verbose -o good -g rootg -d /rootg && \
+    install --verbose -o good -g rootg -d /dls 
+# && \
+# install -o agl -g halo -d halo && \
+# install -o dvl -g hell -d hell 
 # && \
 #     ln -sv /home/good/bak /mnt/data/bak 
-
-# agl permissions/volume builder
-FROM dvlp_base-fs AS dvlp_base-fs_angel
-ARG mnt_data=${mnt_data:-/mnt/data}
-RUN ln -fsv /home/agl /hal && \
-    ln -fsv /home/agl /halo && \
-    ln -fsv /home/agl /halo && \
-    mkdir -m 753 -pv ${mnt_data}/bak/agl && \
-    ln -sv ${mnt_data}/bak/agl /home/agl/bak && \
-    rm -rfv /home/agl/.bash* /home/agl/.pro*
-
-# dvl permissions/volume builder
-FROM dvlp_base-fs AS dvlp_base-fs_devel
-WORKDIR /home/dvl
-ARG mnt_data=${mnt_data:-/mnt/data}
-RUN ln -fsv /home/dvl /hel && \
-    # ln -fsv /home/dvl /hell && \
-    # ln -sfv /home/dvl /home/dvl && \
-    ln -fsv dvlw devels-workshop && \
+FROM dvlp_base-fs_good-lite AS dvlp_base-fs_good
+WORKDIR /home/good
+RUN ln -fsv dvlw devels-workshop && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
     ln -fsv dvlw/dvlp/docker/ubuntu dockeru && \
     ln -fsv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
     ln -fsv dvlw/dvlp/kernels kernels && \
-    ln -fsv dvlw/dvlp/docker docker && \
-    mkdir -m 753 -pv ${mnt_data}/bak/dvl && \
-    ln -fsv ${mnt_data}/bak/dvl /home/dvl/bak && \
-    rm -rf /home/dvl/.bash* /home/dvl/.pro*
+    ln -fsv dvlw/dvlp/docker docker
+WORKDIR /
+
+# agl permissions/volume builder
+FROM dvlp_base-fs AS dvlp_base-fs_angel-lite
+ARG mnt_data=${mnt_data:-/mnt/data}
+WORKDIR /home/agl
+RUN install --verbose -o agl -g halo -d /home/agl && \
+    install --verbose -o agl -g halo -d /hal/halo  && \
+    install --verbose -o agl -g halo -m 753 -d ${mnt_data}/bak/agl && \
+    ln -fsv ${mnt_data}/bak/agl /home/agl/bak
+
+FROM dvlp_base-fs_angel-lite AS dvlp_base-fs_angel
+RUN ln -fsv dvlw devels-workshop && \
+    ln -fsv dvlw/dvlp dvlp && \
+    ln -fsv dvlw/dvlp/kernels/linux linux && \
+    ln -fsv dvlw/dvlp/docker/ubuntu dockeru && \
+    ln -fsv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
+    ln -fsv dvlw/dvlp/kernels kernels && \
+    ln -fsv dvlw/dvlp/docker docker
+WORKDIR /
+# ln -fsv /home/agl /halo && \
+
+# dvl permissions/volume builder
+FROM dvlp_base-fs AS dvlp_base-fs_devel-lite
+ARG mnt_data=${mnt_data:-/mnt/data}
+WORKDIR /home/dvl
+RUN install --verbose -o dvl -g hell -d /home/dvl && \
+    install --verbose -o dvl -g hell -d /hel && \
+    install --verbose -o dvl -g hell -d /hell && \
+    install --verbose -o dvl -g hell -m 753 -d ${mnt_data}/bak/dvl && \
+    ln -fsv ${mnt_data}/bak/dvl /home/dvl/bak 
+WORKDIR /
+
+FROM dvlp_base-fs_devel-lite AS dvlp_base-fs_devel
+ARG mnt_data=${mnt_data:-/mnt/data}
+WORKDIR /home/dvl
+# RUN install -o dvl -g hell -d /home/dvl /hel /hell && \
+# ln -fsv /home/dvl /hel && \
+# ln -fsv /home/dvl /hell && \
+# ln -sfv /home/dvl /home/dvl && \
+RUN ln -fsv dvlw devels-workshop && \
+    ln -fsv dvlw/dvlp dvlp && \
+    ln -fsv dvlw/dvlp/kernels/linux linux && \
+    ln -fsv dvlw/dvlp/docker/ubuntu dockeru && \
+    ln -fsv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
+    ln -fsv dvlw/dvlp/kernels kernels && \
+    ln -fsv dvlw/dvlp/docker docker
 WORKDIR /
 
 # build aliases
@@ -112,13 +151,7 @@ FROM dvlp_base-fs AS dvlp_repo-build
 ARG mnt_data=${mnt_data:-/mnt/data}
 ARG REFRESH_REPO=${REFRESH_REPO:-no}
 USER root
-WORKDIR /
-COPY --from=dvlp_base-fs_devel --chown=dvl:hell ./home/dvl/ ./home/dvl/
-COPY --from=dvlp_base-fs_angel --chown=agl:halo ./home/agl/ ./home/agl/
-COPY --from=dvlp_base-fs_good --chown=good:rootg ./home/good/ ./home/good/
-# COPY --from=dvlp_base-fs_devel --chown=agl:halo .${mnt_data} .${mnt_data}
-# COPY --from=dvlp_base-fs_angel --chown=agl:halo .${mnt_data} .${mnt_data}
-# copy skel files to dvl
+WORKDIR /root
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
@@ -161,6 +194,39 @@ FROM scratch AS dvlp_repo
 COPY --from=dvlp_repo-build ./home/dvl/dvlw/ ./home/dvl/dvlw/
 
 ############################## SKELETON ###################################
+########################
+# dvlp_skel-build-lite #
+########################
+FROM scratch AS dvlp_skel-build-lite
+ARG REFRESH_REPO=${REFRESH_REPO:-no}
+ENV DEBIAN_FRONTEND=noninteractive
+ARG mnt_data=${mnt_data:-/mnt/data}
+WORKDIR /
+COPY --from=dvlp_base-fs ./ ./
+COPY --from=dvlp_base-fs_devel-lite  --chown=dvl:hell    ./home/dvl/     ./home/dvl/
+COPY --from=dvlp_base-fs_angel-lite  --chown=agl:halo    ./home/agl/     ./home/agl/
+COPY --from=dvlp_base-fs_good-lite   --chown=good:rootg  ./home/good/    ./home/good/
+COPY --from=dvlp_base-fs_devel-lite --chown=agl:halo   .${mnt_data}    .${mnt_data}
+COPY --from=dvlp_base-fs_angel-lite --chown=agl:halo   .${mnt_data}    .${mnt_data}
+COPY --from=dvlp_repo               --chown=dvl:hell    ./home/dvl/dvlw/dvlp/mnt/home/  ./home/dvl/
+COPY --from=dvlp_repo               --chown=agl:halo    ./home/dvl/dvlw/dvlp/mnt/home/  ./home/agl/
+COPY --from=dvlp_repo               --chown=good:rootg  ./home/dvl/dvlw/dvlp/mnt/home/  ./home/good/
+# COPY --from=dvlp_base-fs_devel      --chown=agl:halo    .${mnt_data}/                   .${mnt_data}/
+# COPY --from=dvlp_base-fs_angel      --chown=agl:halo    .${mnt_data}/                   .${mnt_data}/
+COPY --from=dvlp_repo               --chown=good:halo   ./home/dvl/dvlw/dvlp/mnt/       .${mnt_data}/
+# COPY --from=dvlp_repo               --chown=agl:halo    .${mnt_data}/                   .${mnt_data}/
+# COPY --from=dvlp_base-fs_devel      --chown=good:rootg   ./ ./fs/
+COPY --from=dvlp_base-fs_devel      --chown=dvl:hell    ./home/dvl/                     ./home/dvl/
+COPY --from=dvlp_base-fs_angel      --chown=agl:halo    ./home/agl/                     ./home/agl/
+# COPY --from=dvlp_base-fs_devel    --chown=agl:halo     ./home/dvl/                     ./home/agl/
+COPY --from=dvlp_base-fs_good       --chown=good:rootg  ./home/good/                    ./home/good/
+# COPY --from=dvlp_base-fs_devel    --chown=good:rootg  ./home/dvl/                     ./home/good/
+USER root
+WORKDIR /hell
+# SHELL ["/bin/bash", "-c"]
+# RUN chroot --userspec=dvl:hell /hell
+USER dvl
+WORKDIR /home/dvl
 ###################
 # dvlp_skel-build #
 ###################
@@ -169,27 +235,29 @@ ARG REFRESH_REPO=${REFRESH_REPO:-no}
 ENV DEBIAN_FRONTEND=noninteractive
 ARG mnt_data=${mnt_data:-/mnt/data}
 WORKDIR /
-COPY --from=dvlp_base-fs_devel ./ ./
-COPY --from=dvlp_base-fs_devel --chown=good:rootg ./ ./fs/
-COPY --from=dvlp_repo --chown=dvl:hell ./home/dvl/dvlw/dvlp/mnt/home/ ./home/dvl/
-COPY --from=dvlp_repo --chown=agl:halo ./home/dvl/dvlw/dvlp/mnt/home/ ./home/agl/
-COPY --from=dvlp_repo --chown=good:rootg ./home/dvl/dvlw/dvlp/mnt/home/ ./home/good/
-COPY --from=dvlp_base-fs_devel --chown=dvl:hell ./home/dvl/ ./home/dvl/
-COPY --from=dvlp_base-fs_angel --chown=agl:halo ./home/agl/ ./home/agl/
-COPY --from=dvlp_base-fs_devel --chown=agl:halo ./home/dvl/ ./home/agl/
-COPY --from=dvlp_base-fs_good --chown=good:rootg ./home/good/ ./home/good/
-COPY --from=dvlp_base-fs_devel --chown=good:rootg ./home/dvl/ ./home/good/
-COPY --from=dvlp_base-fs_devel --chown=agl:halo .${mnt_data}/ .${mnt_data}/
-COPY --from=dvlp_base-fs_angel --chown=agl:halo .${mnt_data}/ .${mnt_data}/
-COPY --from=dvlp_repo --chown=good:halo ./home/dvl/dvlw/dvlp/mnt/ .${mnt_data}/
-COPY --from=dvlp_repo --chown=good:root ./home/dvl/ ./home/good/
-COPY --from=dvlp_repo --chown=dvl:hell ./home/dvl/ ./home/dvl/
-COPY --from=dvlp_repo --chown=agl:halo ./home/dvl/ ./home/agl/
-
-# COPY --from=dvlp_repo --chown=agl:halo .${mnt_data} .${mnt_data}
-
-# USER root
-# RUN chown -v agl:halo ${mnt_data}/bak/README_ASAP ${mnt_data}/bak/agl/backup-agl.sh
+COPY --from=dvlp_base-fs ./ ./
+COPY --from=dvlp_base-fs_devel  --chown=dvl:hell    ./home/dvl/     ./home/dvl/
+COPY --from=dvlp_base-fs_angel  --chown=agl:halo    ./home/agl/     ./home/agl/
+COPY --from=dvlp_base-fs_good   --chown=good:rootg  ./home/good/    ./home/good/
+COPY --from=dvlp_base-fs_devel --chown=agl:halo   .${mnt_data}    .${mnt_data}
+COPY --from=dvlp_base-fs_angel --chown=agl:halo   .${mnt_data}    .${mnt_data}
+COPY --from=dvlp_repo           --chown=dvl:hell    ./home/dvl/dvlw/dvlp/mnt/home/  ./home/dvl/
+COPY --from=dvlp_repo           --chown=agl:halo    ./home/dvl/dvlw/dvlp/mnt/home/  ./home/agl/
+COPY --from=dvlp_repo           --chown=good:rootg  ./home/dvl/dvlw/dvlp/mnt/home/  ./home/good/
+COPY --from=dvlp_base-fs_devel  --chown=agl:halo    .${mnt_data}/                   .${mnt_data}/
+COPY --from=dvlp_base-fs_angel  --chown=agl:halo    .${mnt_data}/                   .${mnt_data}/
+COPY --from=dvlp_repo           --chown=good:halo   ./home/dvl/dvlw/dvlp/mnt/       .${mnt_data}/
+# COPY --from=dvlp_repo           --chown=agl:halo    .${mnt_data}                    .${mnt_data}
+COPY --from=dvlp_base-fs_devel --chown=good:rootg   ./ ./fs/
+COPY --from=dvlp_base-fs_devel  --chown=dvl:hell    ./home/dvl/                     ./home/dvl/
+COPY --from=dvlp_base-fs_angel  --chown=agl:halo    ./home/agl/                     ./home/agl/
+# COPY --from=dvlp_base-fs_devel --chown=agl:halo   ./home/dvl/                     ./home/agl/
+COPY --from=dvlp_base-fs_good   --chown=good:rootg  ./home/good/                    ./home/good/
+# COPY --from=dvlp_base-fs_devel --chown=good:rootg ./home/dvl/                     ./home/good/
+USER root
+WORKDIR /hell
+# SHELL ["/bin/bash", "-c"]
+# RUN chroot --userspec=dvl:hell /hell
 USER dvl
 WORKDIR /home/dvl
 
@@ -198,6 +266,7 @@ WORKDIR /home/dvl
 #############
 FROM dvlp_skel-build AS dvlp_skel-install
 ARG REFRESH_REPO=${REFRESH_REPO:-no}
+WORKDIR /
 # RUN with agl ownership
 USER agl
 # sudo mv -v ${mnt_data}/bak/custom ${mnt_data}/bak/agl/ && \
@@ -218,14 +287,38 @@ RUN \
 WORKDIR /home/dvl
 USER dvl
 
+FROM scratch AS dvlp_skel-lite
+ARG REFRESH_REPO=${REFRESH_REPO:-no}
+WORKDIR /
+COPY --from=dvlp_skel-build-lite                    ./ ./
+# COPY --from=dvlp_skel-build-lite --chown=good:rootg ./ ./fs/
+RUN usermod -d /hel dvl && usermod -d /hal agl && usermod -d /root/root good
+# RUN chown -R good:rootg /root
+USER good
+WORKDIR /root
+
 # lock down volumes, permissions
 FROM scratch AS dvlp_skel
 ARG REFRESH_REPO=${REFRESH_REPO:-no}
-COPY --from=dvlp_skel-build ./ ./
-COPY --from=dvlp_skel-install ./ ./
-# COPY --from=dvlp_skel --chown=good:rootg ./ ./root
+WORKDIR /
+# COPY --from=dvlp_skel-build                       ./            ./
+COPY --from=dvlp_skel-install                     ./            ./
+COPY --from=dvlp_skel-build    --chown=good:rootg ./            ./fs/
+COPY --from=dvlp_skel-install  --chown=good:rootg ./            ./fs/
+COPY --from=dvlp_base-fs_devel --chown=dvl:hell   ./home/dvl/   ./home/dvl/
+COPY --from=dvlp_base-fs_angel --chown=agl:halo   ./home/agl/   ./home/agl/
+COPY --from=dvlp_base-fs_good  --chown=good:rootg ./home/good/  ./home/good/
+RUN usermod -d /hel dvl && usermod -d /hal agl && usermod -d /root/root good
+USER good
+WORKDIR /root
+# RUN chown -R good:rootg /root 
+# && \
+#     chown -R agl:halo /hal &&\
+#     chown -R dvl:hell /hel /hell
+
+# COPY --from=dvlp_skel-build --chown=good:rootg ./ ./root
 # COPY --from=dvlp_skel --chown=agl:halo ./ ./halo
-# COPY --from=dvlp_skel --chown=dvl:hell ./ ./hell
+# COPY --from=dvlp_skel-build --chown=dvl:hell ./ ./hell
 
 ################################## BARE #########################################
 ############
@@ -234,11 +327,7 @@ COPY --from=dvlp_skel-install ./ ./
 FROM scratch AS dvlp_bare
 ARG REFRESH_REPO=${REFRESH_REPO:-yes}
 WORKDIR /
-COPY --from=dvlp_skel ./ ./
-COPY --from=dvlp_skel-build --chown=dvl:hell ./fs/ ./root/
-RUN chown -R dvl:hell /home/dvl/dvlw
-RUN chown -R agl:halo /home/agl/dvlw
-RUN chown -R good:rootg /root
+COPY --from=dvlp_skel-lite ./ ./
 WORKDIR /home/dvl
 USER dvl
 
@@ -246,20 +335,26 @@ USER dvl
 #################
 # dvlp_git_lite #
 #################
-FROM dvlp_base-fs AS dvlp_git-lite
+FROM scratch AS dvlp_git-lite
 ARG REFRESH_REPO=${REFRESH_REPO:-yes}
 WORKDIR /
-COPY --from=dvlp_skel-build ./ ./
+COPY --from=dvlp_skel ./ ./
+# COPY --from=dvlp_skel-build --chown=good:rootg ./fs/ ./root/
+COPY --from=dvlp_repo --chown=good:root ./home/dvl/ ./home/good/
+COPY --from=dvlp_repo --chown=dvl:hell  ./home/dvl/ ./home/dvl/
+COPY --from=dvlp_repo --chown=agl:halo  ./home/dvl/ ./home/agl/
+# RUN chown -R good:rootg /root
+
 WORKDIR /home/dvl
 USER dvl
 
 ############
 # dvlp_git #
 ############
-FROM dvlp_base-fs AS dvlp_git
+FROM dvlp_git-lite AS dvlp_git
 ARG REFRESH_REPO=${REFRESH_REPO:-yes}
 WORKDIR /
-COPY --from=dvlp_skel ./ ./
+COPY --from=dvlp_skel-install ./ ./
 WORKDIR /home/dvl
 USER dvl
 
@@ -432,6 +527,7 @@ USER dvl
 # dvlp_dind #
 #############
 FROM dvlp_base-fs AS dvlp_dind
+WORKDIR /
 COPY --from=dvlp_skel ./ ./
 COPY --from=dvlp_python-build ./ ./
 COPY --from=dvlp_msdot-build ./ ./

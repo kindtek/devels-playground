@@ -22,7 +22,7 @@ services:
     # command: echo something
   base-good:
     # Need a user priviliged enough to chown
-    user: root
+    user: good
     # Specify the wings in question
     group_add:
       - rootg
@@ -35,8 +35,8 @@ services:
       base:
         condition: service_completed_successfully
     init: true
-    # volumes:
-    #   - good-data:/root:ro
+    volumes:
+      - fs-data:/fs
     #   - fs-data:/home/good
   base-angel:
     # Need a user priviliged enough to chown
@@ -51,8 +51,8 @@ services:
       base:
         condition: service_completed_successfully
     init: true
-    # volumes:
-    #   - dvl-data:/home/agl
+    volumes:
+      - agl-data:/hal
   base-devel:
     user: dvl
     group_add:
@@ -64,8 +64,8 @@ services:
       base:
         # Wait for groups to be added
         condition: service_completed_successfully
-    # volumes:
-    #   - dvl-data:/home/dvl
+    volumes:
+      - dvl-data:/home/hel
     init: true
   # alias(es) for agl
   # base-ausr:
@@ -91,9 +91,9 @@ services:
   #   volumes:
   #     - dvl-data:/home/$_DVL_USR
   repo:
-    user: agl
+    user: dvl
     group_add:
-      - halo
+      - hell
     build:
       context: .
       target: dvlp_repo
@@ -114,7 +114,8 @@ services:
     # volumes_from:
     #   - base-angel
     #   - base-devel
-    # volumes:
+    volumes:
+      - fs-data:/hell
     #   - good-data:/root:ro
     #   - fs-data:/home/good:rw
     #   - dvl-data:/home/dvl
@@ -125,7 +126,7 @@ services:
     #   - agl-data:/home/agl
     #   - dls-data:/dls
     #   - mnt-data:/data
-  skel-build:
+  skel-build-lite:
     extends: repo
     user: agl
     tty: false
@@ -136,11 +137,11 @@ services:
         - _AGL=agl
         - _HALO=halo
       # network: ${COMPOSE_PROJECT_NAME}_default
-    # entrypoint: /bin/bash -c
-    # # entrypoint: ["sudo chown -R agl:halo /home/agl/dvlw"]
-    # command:
-    #   # - sudo chown -R agl:halo /halo/hal/dvlw
-    #   - chown -R dvl:hell 
+    entrypoint: /bin/bash -c
+    # entrypoint: ["sudo chown -R agl:halo /home/agl/dvlw"]
+    command:
+      - sudo chown -R agl:halo /hal
+      - chown -R dvl:hell /hell
       # init: true
       # volumes:
       #   - dvl-data:/home/dvl
@@ -161,7 +162,11 @@ services:
       # # - agl-data:/home/${_AGL_USR:-agl}
       - agl-data:/home/agl
       - dvlw-data:/home/dvl/dvlw
-
+  skel-build:
+    extends: skel-build-lite
+    volumes:
+      - dvlw-data:/home/agl/dvlw
+      - dvlw-data:/home/good/dvlw
     labels:
       com.dvlp_skel.description: "-build skeleton"
   skel:
@@ -196,13 +201,13 @@ services:
   bare:
     # owner/group becomes owner of dvl-data volume
     extends: skel
-    user: root
+    user: good
     restart: on-failure
     tty: true
     # entrypoint:
     #   - sleep
     #   - infinity
-    working_dir: /home/dvl
+    working_dir: /hell
     privileged: true
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-bare
     # extends: skel
@@ -234,7 +239,13 @@ services:
       # - /halo/hal/dvlw
     volumes:
       - dvlw-data:/halo/hal/dvlw
+      - dvlw-data:/halo/dvlw
+      - dvlw-data:/hal/dvlw
+      - dvlw-data:/hell/hel/dvlw
+      - dvlw-data:/hel/dvlw
+      - dvlw-data:/hell/dvlw
       - dvlw-data:/root/root/dvlw
+      - dvlw-data:/root/dvlw
       - fs-data:/root
       - good-data:/root/root
       - fs-data:/hell
