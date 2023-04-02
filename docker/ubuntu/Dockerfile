@@ -181,7 +181,7 @@ WORKDIR /home/dvl/dvlw
 # RUN if [ $REFRESH_REPO != no ]; then git pull; fi    
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
-    git submodule update --init --remote --depth=1 --progress || git pull \
+    git submodule update --init --filter=blob:limit=1024000 --remote --depth=1 --progress || git pull \
     # (cd /tmp/git/cache/dvlw/dvlp && git pull && cp -rv --remove-destination . /home/dvl/dvlw/dvlp)
     chmod +x dvlp/mnt/home/**.sh && \
     chmod -R +x dvlp/mnt/bak
