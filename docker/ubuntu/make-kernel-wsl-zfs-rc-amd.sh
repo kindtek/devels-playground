@@ -8,9 +8,10 @@ command_string=sudo docker buildx build \
 --build-arg KERNEL_TYPE=latest-rc-wsl-zfs \
 --build-arg REFRESH_REPO=yes \
 --build-arg CONFIG_FILE= \
- . 2>&1 | sudo tee $filename
-echo $command_string | sudo tee $filename
-echo $($command_string)
+ . 2>&1 | sudo tee --append $filename
+cd /home/dvl/dvlw/dvlp/docker/ubuntu
+echo $($command_string) | sudo tee --append $filename
+echo $command_string | sudo tee --append $filename
 
  
 # | sudo tee rc-wsl-zfs-kernel-builder"$timestamp".log 
