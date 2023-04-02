@@ -324,6 +324,7 @@ WORKDIR /hell
 RUN usermod -d /hel dvl && chown -R dvl:hell /hell
 WORKDIR /root/root
 RUN usermod -d /root/root good && chown -R good:rootg /root/root
+
 # lock down volumes, permissions
 FROM dvlp_skel-install AS dvlp_skel
 ARG REFRESH_REPO=${REFRESH_REPO:-no}
@@ -604,7 +605,8 @@ FROM dvlp_base-fs AS dvlp_kernel-make
 ARG CONFIG_FILE=${CONFIG_FILE}
 ARG KERNEL_TYPE=${KERNEL_TYPE:-basic-wsl}
 WORKDIR /
-COPY --from=dvlp_kernel-build ./ ./
+# COPY --from=dvlp_base-fs ./ ./
+COPY --from=dvlp_skel-install ./ ./
 COPY --from=dvlp_repo ./ ./
 USER good
 WORKDIR /home/dvl/dvlw/dvlp/kernels/linux
@@ -626,7 +628,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NONINTERACTIVE_SEEN=true
 ARG REFRESH_REPO=${REFRESH_REPO:-yes}
 WORKDIR /
-COPY --from=dvlp_skel ./ ./
+COPY --from=dvlp_skel-install ./ ./
 COPY --from=dvlp_python-build-lite ./ ./
 COPY --from=dvlp_msdot-build-lite ./ ./
 COPY --from=dvlp_dind-build ./ ./
