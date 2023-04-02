@@ -20,14 +20,14 @@
 	branch = dvl-works
 	recurse = false
 [submodule "cdir"]
-	active = true
+	active = false
 	path = cdir
 	shallow = true
 	url = https://github.com/kindtek/cdir.git
 	branch = master
 	recurse = false
 [submodule "choco"]
-	active = true
+	active = false
 	path = choco
 	shallow = true
 	url = https://github.com/kindtek/choco.git
