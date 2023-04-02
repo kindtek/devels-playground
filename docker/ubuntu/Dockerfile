@@ -61,7 +61,7 @@ RUN \
 FROM dvlp_base-fs AS dvlp_base-fs_good
 USER root
 ARG mnt_data=${mnt_data:-/mnt/data}
-RUN ln -fs /home/good /root && \
+RUN ln -fsv /home/good /root && \
     rm -rf /home/good/.bash* /home/good/.pro* && \
     install -d -o good -g rootg dls 
     # && \
@@ -73,25 +73,29 @@ RUN ln -fs /home/good /root && \
 # agl permissions/volume builder
 FROM dvlp_base-fs AS dvlp_base-fs_angel
 ARG mnt_data=${mnt_data:-/mnt/data}
-RUN ln -fs /home/agl /hal && \
+RUN ln -fsv /home/agl /hal && \
+    ln -fsv /home/agl /halo && \
+    ln -fsv /home/agl /halo && \
     mkdir -m 753 -pv ${mnt_data}/bak/agl && \
     ln -sv ${mnt_data}/bak/agl /home/agl/bak && \
-    rm -rf /home/agl/.bash* /home/agl/.pro*
+    rm -rfv /home/agl/.bash* /home/agl/.pro*
 
 # dvl permissions/volume builder
 FROM dvlp_base-fs AS dvlp_base-fs_devel
 WORKDIR /home/dvl
 ARG mnt_data=${mnt_data:-/mnt/data}
-RUN ln -sfv /home/dvl /home/dvl && \
-    ln -sv dvlw devels-workshop && \
-    ln -sv dvlw/dvlp dvlp && \
-    ln -sv dvlw/dvlp/kernels/linux linux && \
-    ln -sv dvlw/dvlp/docker/ubuntu dockeru && \
-    ln -sv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
-    ln -sv dvlw/dvlp/kernels kernels && \
-    ln -sv dvlw/dvlp/docker docker && \
+RUN ln -fsv /home/dvl /hel && \
+    # ln -fsv /home/dvl /hell && \
+    # ln -sfv /home/dvl /home/dvl && \
+    ln -fsv dvlw devels-workshop && \
+    ln -fsv dvlw/dvlp dvlp && \
+    ln -fsv dvlw/dvlp/kernels/linux linux && \
+    ln -fsv dvlw/dvlp/docker/ubuntu dockeru && \
+    ln -fsv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
+    ln -fsv dvlw/dvlp/kernels kernels && \
+    ln -fsv dvlw/dvlp/docker docker && \
     mkdir -m 753 -pv ${mnt_data}/bak/dvl && \
-    ln -sv ${mnt_data}/bak/dvl /home/dvl/bak && \
+    ln -fsv ${mnt_data}/bak/dvl /home/dvl/bak && \
     rm -rf /home/dvl/.bash* /home/dvl/.pro*
 WORKDIR /
 
@@ -232,10 +236,8 @@ ARG REFRESH_REPO=${REFRESH_REPO:-yes}
 WORKDIR /
 COPY --from=dvlp_skel ./ ./
 COPY --from=dvlp_skel-build --chown=dvl:hell ./fs/ ./root/
-# COPY --from=dvlp_skel-build --chown=good:rootg ./home/good/ ./root/
 RUN chown -R dvl:hell /home/dvl/dvlw
 RUN chown -R agl:halo /home/agl/dvlw
-# RUN install -o agl -g halo -d /halo/hal/dvlw
 RUN chown -R good:rootg /root
 WORKDIR /home/dvl
 USER dvl
