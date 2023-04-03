@@ -37,7 +37,7 @@ services:
     init: true
     volumes:
       - fs-data:/fs
-    #   - fs-data:/home/good
+      - fs-data:/root/root
   base-angel:
     # Need a user priviliged enough to chown
     user: agl
@@ -51,8 +51,8 @@ services:
       base:
         condition: service_completed_successfully
     init: true
-    # volumes:
-    #   - agl-data:/hal
+    volumes:
+      - agl-data:/hal
   base-devel:
     user: dvl
     group_add:
@@ -67,6 +67,8 @@ services:
     # volumes:
     #   - dvl-data:/home/hel
     init: true
+    volumes:
+      - dvl-data:/hel
   # alias(es) for agl
   # base-ausr:
   #   user: _AGL_USR
@@ -130,7 +132,7 @@ services:
     extends: repo
     # user: agl
     tty: false
-
+    user: devel
     build:
       context: .
       args:
@@ -163,6 +165,7 @@ services:
       - agl-data:/home/agl
       - dvlw-data:/home/dvl/dvlw
   skel-build:
+    user: agl
     extends: skel-build-lite
     volumes:
       - dvlw-data:/home/agl/dvlw
@@ -170,14 +173,16 @@ services:
     labels:
       com.dvlp_skel.description: "-build skeleton"
   skel:
-    user: root
+    user: good
     extends: skel-build
-    entrypoint: /bin/bash -c
+    entrypoint:
+      - sleep
+      - infinity
     # entrypoint: ["sudo chown -R agl:halo /home/agl/dvlw"]
     # command:
-    #   - sudo chown -R agl:halo /halo/hal/dvlw
-    #   - sudo chown -R dvl:hell /hell
-    #   # - sudo chown -R dvl:hell /hell
+    # #   - sudo chown -R agl:halo /halo/hal/dvlw
+    # #   - sudo chown -R dvl:hell /hell
+    # #   # - sudo chown -R dvl:hell /hell
     #   - sleep infinity
     build:
       context: .
@@ -201,12 +206,12 @@ services:
   bare:
     # owner/group becomes owner of dvl-data volume
     extends: skel
-    # user: dvl
+    user: dvl
     restart: on-failure
     tty: true
-    # entrypoint:
-    #   - sleep
-    #   - infinity
+    entrypoint:
+      - sleep
+      - infinity
     working_dir: /hell
     privileged: true
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-bare
@@ -224,19 +229,19 @@ services:
         condition: service_completed_successfully
     init: true
     # entrypoint: ["sudo chown -R agl:halo /home/agl/dvlw"]
-    entrypoint: /bin/bash -c
-    # entrypoint: ["sudo chown -R agl:halo /home/agl/dvlw"]
-    command:
-      # - sudo chown -R agl:halo /halo/hal/dvlw
-      # - chown -R dvl:hell 
-      # - sudo chown -R dvl:hell /hell
-      - sleep infinity
-      # - -c
-      # - sudo
-      # - chown 
-      # - -R 
-      # - agl:halo 
-      # - /halo/hal/dvlw
+    # entrypoint: /bin/bash -c
+    # # entrypoint: ["sudo chown -R agl:halo /home/agl/dvlw"]
+    # # command:
+    # #   # - sudo chown -R agl:halo /halo/hal/dvlw
+    # #   # - chown -R dvl:hell 
+    # #   # - sudo chown -R dvl:hell /hell
+    # #   - sleep infinity
+    # #   # - -c
+    # #   # - sudo
+    # #   # - chown 
+    # #   # - -R 
+    # #   # - agl:halo 
+    # #   # - /halo/hal/dvlw
     volumes:
       - dvlw-data:/halo/hal/dvlw
       - dvlw-data:/halo/dvlw
@@ -399,12 +404,6 @@ services:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel"
   gui-lite:
     extends: bare
-    user: agl
-    entrypoint:
-      - /bin/bash
-      - -c
-      - sudo
-      - /home/dvl/start-kde.sh
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-gui
     build:
       context: .
@@ -412,8 +411,13 @@ services:
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   gui:
-    extends: gui-lite
+    extends: bare
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-gui
+    user: agl
+    entrypoint:
+      - /bin/bash
+      - -c
+      - bash /home/dvl/start-kde.sh
     build:
       context: .
       target: dvlp_gui
