@@ -91,9 +91,9 @@ services:
   #   volumes:
   #     - dvl-data:/home/$_DVL_USR
   repo:
-    user: dvl
-    group_add:
-      - hell
+    # user: dvl
+    # group_add:
+    #   - hell
     build:
       context: .
       target: dvlp_repo
@@ -128,7 +128,7 @@ services:
     #   - mnt-data:/data
   skel-build-lite:
     extends: repo
-    user: agl
+    # user: agl
     tty: false
 
     build:
@@ -201,7 +201,7 @@ services:
   bare:
     # owner/group becomes owner of dvl-data volume
     extends: skel
-    user: dvl
+    # user: dvl
     restart: on-failure
     tty: true
     # entrypoint:
