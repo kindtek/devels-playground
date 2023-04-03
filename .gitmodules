@@ -5,7 +5,7 @@
 	active = false
 	shallow = true
 	recurse = false
-	ignore = dirty
+	ignore = all
 	update = rebase
 	ignore = all
 [submodule "linux_rc"]
@@ -15,7 +15,7 @@
 	active = false
 	shallow = true
 	recurse = false
-	ignore = dirty
+	ignore = all
 	update = rebase
 	ignore = all	
 [submodule "linux_stable"]
@@ -25,7 +25,7 @@
 	active = false
 	shallow = true
 	recurse = false
-	ignore = dirty
+	ignore = all
 	update = rebase
 	ignore = all
 [submodule "linux_lts"]
@@ -35,7 +35,7 @@
 	active = false
 	shallow = true
 	recurse = false
-	ignore = dirty
+	ignore = all
 	update = rebase
 	ignore = all
 [submodule "linux_msft"]
@@ -44,6 +44,6 @@
 	active = false
 	shallow = true
 	recurse = false
-	ignore = dirty
+	ignore = all
 	update = rebase
 	ignore = all
