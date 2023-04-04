@@ -2,6 +2,7 @@ version: "3.9"
 name: devels-playground-ubuntu
 services:
   base:
+    # user: good
     build:
       context: .
       target: dvlp_base-fs
@@ -9,25 +10,42 @@ services:
       #   - _AGL_USR=$_AGL
       #   - _DVL_USR=$_DVL
     init: true
-    # command:
-    # - /bin/bash
-    # - -c
-    # - export _AGL=agl
-    # - export _HALO=${_HALO:-halo}
-    # - sleep
-    # - infinity
-    # - ln -sf /home /mnt
-    # - mkdir -p /mnt/data
-    # - ln -sf /mnt/data /tmp/data
-    # command: echo something
+    volumes:
+      # shared volumes but assign ownership
+      # - repo_agl:/dvlw
+      # - repo_dvl:/dvlw
+      # - repo_good:/dvlw
+      - root:/fs
+      # - repo:/dvlw
+      # - root_good:/fs
+      # - root_agl:/fs
+      # - root_dvl:/fs
+      - dls:/dls
+      - repo:/dvlw
+      - home_agl:/hal
+      - home_dvl:/hel
+      - home_good:/root/root
+      # - dls:/dls
+
+      # command:
+      # - /bin/bash
+      # - -c
+      # - export _AGL=agl
+      # - export _HALO=${_HALO:-halo}
+      # - sleep
+      # - infinity
+      # - ln -sf /home /mnt
+      # - mkdir -p /mnt/data
+      # - ln -sf /mnt/data /tmp/data
+      # command: echo something
   base-good:
     # Need a user priviliged enough to chown
-    user: good
+    # user: good
     # Specify the wings in question
-    group_add:
-      - rootg
-      - halo
-      - hell
+    # group_add:
+    #   - rootg
+    #   - halo
+    #   - hell
     build:
       context: .
       target: dvlp_base-fs_good
@@ -35,15 +53,15 @@ services:
       base:
         condition: service_completed_successfully
     init: true
-    volumes:
-      - fs-data:/fs
-      - fs-data:/root/root
+    # volumes:
+      # - repo:/dvlw
+    #   - root:/root/root
   base-angel:
     # Need a user priviliged enough to chown
-    user: agl
+    # user: agl
     # Specify the wings in question
-    group_add:
-      - halo
+    # group_add:
+    #   - halo
     build:
       context: .
       target: dvlp_base-fs_angel
@@ -51,12 +69,12 @@ services:
       base:
         condition: service_completed_successfully
     init: true
-    volumes:
-      - agl-data:/hal
+    # volumes:
+    #   - home_agl:/hal
   base-devel:
-    user: dvl
-    group_add:
-      - hell
+    # user: dvl
+    # group_add:
+    #   - hell
     build:
       context: .
       target: dvlp_base-fs_devel
@@ -65,40 +83,47 @@ services:
         # Wait for groups to be added
         condition: service_completed_successfully
     # volumes:
-    #   - dvl-data:/home/hel
+    #   - home_dvl:/home/hel
     init: true
-    volumes:
-      - dvl-data:/hel
-  # alias(es) for agl
-  # base-ausr:
-  #   user: _AGL_USR
-  #   extends: base-angel
-  #   build:
-  #     context: .
-  #     target: dvlp_base-fs_angel
-  #     args:
-  #       - _AGL_USR=${_AGL:-angel}
-  #   volumes:
-  #     - agl-data:/home/${_AGL_USR}
-  #   init: true
-  # # alias(es) for dvl
-  # base-daus:
-  #   user: _DVL_USR
-  #   extends: init-dvl
-  #   build:
-  #     context: .
-  #     target: dvlp_base-fs_devel
-  #     args:
-  #       - _DVL_USR=${_DVL-:devel}
-  #   volumes:
-  #     - dvl-data:/home/$_DVL_USR
+    # volumes:
+    #   - home_dvl:/hel
+    # alias(es) for agl
+    # base-ausr:
+    #   user: _AGL_USR
+    #   extends: base-angel
+    #   build:
+    #     context: .
+    #     target: dvlp_base-fs_angel
+    #     args:
+    #       - _AGL_USR=${_AGL:-angel}
+    #   volumes:
+    #     - home_agl:/home/${_AGL_USR}
+    #   init: true
+    # # alias(es) for dvl
+    # base-daus:
+    #   user: _DVL_USR
+    #   extends: init-dvl
+    #   build:
+    #     context: .
+    #     target: dvlp_base-fs_devel
+    #     args:
+    #       - _DVL_USR=${_DVL-:devel}
+    #   volumes:
+    #     - home_dvl:/home/$_DVL_USR
   repo:
-    # user: dvl
+    # user: good
     # group_add:
     #   - hell
     build:
       context: .
-      target: dvlp_repo
+      target: dvlp_repo_build
+    volumes:
+      - repo:/dvlw
+      # - root:/fs
+      # - root_good:/fs
+      # - root_agl:/fs
+      # - root_dvl:/fs
+      # - dls:/mnt/data/dls
     depends_on:
       base:
         # Wait for the ownership to change
@@ -112,64 +137,62 @@ services:
       base-devel:
         # Wait for the ownership to change
         condition: service_completed_successfully
-    # # init: true
-    # volumes_from:
-    #   - base-angel
-    #   - base-devel
-    # volumes:
-    #   - fs-data:/hell
-    #   - good-data:/root:ro
-    #   - fs-data:/home/good:rw
-    #   - dvl-data:/home/dvl
-    #   # - dvl-data:/home/devel
-    #   # - dvl-data:/home/${_DVL_USR:-dvl}
-    #   # - agl-data:/home/${_AGL_USR:-agl}
-    #   # - agl-data:/home/angel
-    #   - agl-data:/home/agl
-    #   - dls-data:/dls
-    #   - mnt-data:/data
+      # # init: true
+      # volumes_from:
+      #   - base-angel
+      #   - base-devel
+      # - repo_dvl:/hel/dvlw
+      #   - root:/hell
+      #   - home_good:/root:ro
+      #   - root:/home/good:rw
+      #   - home_dvl:/home/dvl
+      #   # - home_dvl:/home/devel
+      #   # - home_dvl:/home/${_DVL_USR:-dvl}
+      #   # - home_agl:/home/${_AGL_USR:-agl}
+      #   # - home_agl:/home/angel
+      #   - home_agl:/home/agl
+      # - dls:/dls
+      #   - mnt-data:/data
   skel-build-lite:
     extends: repo
     # user: agl
     tty: false
-    user: devel
     build:
       context: .
       args:
         - _AGL=agl
         - _HALO=halo
       # network: ${COMPOSE_PROJECT_NAME}_default
-    # entrypoint: /bin/bash -c
-    # # entrypoint: ["sudo chown -R agl:halo /home/agl/dvlw"]
-    # command:
-    #   - sudo chown -R agl:halo /hal
-    #   - chown -R dvl:hell /hell
+      # entrypoint: /bin/bash -c
+      # # entrypoint: ["sudo chown -R agl:halo /home/agl/dvlw"]
+      # command:
+      #   - sudo chown -R agl:halo /hal
+      #   - chown -R dvl:hell /hell
       # init: true
       # volumes:
-      #   - dvl-data:/home/dvl
-      #   - agl-data:/home/${_AGL:-agl}
+      #   - home_dvl:/home/dvl
+      #   - home_agl:/home/${_AGL:-agl}
       #   - mnt-data:/mnt/data
-    # depends_on:
-    #   skel:
-    #     # Wait for the ownership to change
-    #     condition: service_started
-    volumes:
-      - fs-data:/fs
-      # - fs-data:/hell
-      - good-data:/home/good
-      # - hell-data:/fs
-      # - halo-data:/fs
-      # # - dvl-data:/home/${_DVL_USR:-dvl}
-      - dvl-data:/home/dvl
-      # # - agl-data:/home/${_AGL_USR:-agl}
-      - agl-data:/home/agl
-      - dvlw-data:/home/dvl/dvlw
+      # depends_on:
+      #   skel:
+      #     # Wait for the ownership to change
+      #     condition: service_started
+      # volumes:
+      #   - root:/fs
+      #   # - root:/hell
+      #   - home_good:/home/good
+      #   # - hell-data:/fs
+      #   # - halo-data:/fs
+      #   # # - home_dvl:/home/${_DVL_USR:-dvl}
+      #   - home_dvl:/home/dvl
+      #   # # - home_agl:/home/${_AGL_USR:-agl}
+      #   - home_agl:/home/agl
+      #   - repo_dvl:/home/dvl/dvlw
   skel-build:
-    user: agl
     extends: skel-build-lite
-    volumes:
-      - dvlw-data:/home/agl/dvlw
-      - dvlw-data:/home/good/dvlw
+    # volumes:
+    #   - repo_agl:/home/agl/dvlw
+    #   - repo_good:/home/good/dvlw
     labels:
       com.dvlp_skel.description: "-build skeleton"
   skel:
@@ -187,32 +210,31 @@ services:
     build:
       context: .
       target: dvlp_skel
-    # depends_on:
+      # depends_on:
       # bare:
       #   # Wait for the ownership to change
       #   condition: service_started
-    # volumes:
-    #   - rootg-data:/rootg
-    #   - hell-data:/hell
-    #   - halo-data:/halo
-    #   - mnt-data:/mnt/data
-    #   # - dvl-data:/home/${_DVL_USR:-dvl}
-    #   - dvl-data:/home/dvl
-    #   # - agl-data:/home/${_AGL_USR:-agl}
-    #   - agl-data:/home/agl
-    #   - good-data:/home/good
+      # volumes:
+      #   - hell-data:/hell
+      #   - halo-data:/halo
+      #   - mnt-data:/mnt/data
+      #   # - home_dvl:/home/${_DVL_USR:-dvl}
+      #   - home_dvl:/home/dvl
+      #   # - home_agl:/home/${_AGL_USR:-agl}
+      #   - home_agl:/home/agl
+      #   - home_good:/home/good
     labels:
       com.dvlp_skel.description: "skeleton"
   bare:
-    # owner/group becomes owner of dvl-data volume
+    # owner/group becomes owner of home_dvl volume
+    user: good
     extends: skel
-    user: dvl
     restart: on-failure
     tty: true
     entrypoint:
       - sleep
       - infinity
-    working_dir: /hell
+    working_dir: /hel
     privileged: true
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-bare
     # extends: skel
@@ -243,32 +265,58 @@ services:
     # #   # - agl:halo 
     # #   # - /halo/hal/dvlw
     volumes:
-      - dvlw-data:/halo/hal/dvlw
-      - dvlw-data:/halo/dvlw
-      - dvlw-data:/hal/dvlw
-      - dvlw-data:/hell/hel/dvlw
-      - dvlw-data:/hel/dvlw
-      - dvlw-data:/hell/dvlw
-      - dvlw-data:/root/root/dvlw
-      - dvlw-data:/root/dvlw
-      - fs-data:/root
-      - good-data:/root/root
-      - fs-data:/hell
-      - dvl-data:/hel
-      - dvl-data:/hell/hel
-      - fs-data:/halo
-      - agl-data:/hal
-      - agl-data:/halo/hal
+      - repo:/root/dvlw
+      - repo_agl:/halo/hal/dvlw
+      - repo_agl:/halo/dvlw
+      - repo_agl:/hal/dvlw
+      - repo_agl:/home/agl/dvlw
+
+      - repo_dvl:/hell/hel/dvlw
+      - repo_dvl:/hell/dvlw
+      - repo_dvl:/hel/dvlw
+      - repo_dvl:/home/dvl/dvlw
+
+      - repo:/root/root/dvlw
+      - repo_good:/dvlw
+      - repo:/home/good/dvlw
+
+      - root:/root
+      - root_good:/fs
+      - home_good:/root/root
+      - home_good:/home/good
+
+      - root_dvl:/hell
+      - home_dvl:/hel
+      - home_dvl:/hell/hel
+      - home_dvl:/home/dvl
+
+      - root_agl:/halo
+      - home_agl:/hal
+      - home_agl:/halo/hal
+      - home_agl:/home/agl
+
       - mnt-data:/mnt/data
-      - dls-data:/mnt/data/dls
-      - dls-data:/dls
-      - dls-data:/home/good/dls
-      - dls-data:/home/agl/dls
-      - dls-data:/home/dvl/dls
+
+      - dls:/mnt/data/dls
+
+      - dls_good:/dls
+      - dls_good:/root/dls
+      - dls_good:/root/root/dls
+      - dls_good:/home/good/dls
+
+      - dls_agl:/hal/dls
+      - dls_agl:/halo/dls
+      - dls_agl:/halo/hal/dls
+      - dls_agl:/home/agl/dls
+
+      - dls_dvl:/hel/dls
+      - dls_dvl:/hell/dls
+      - dls_dvl:/hell/hel/dls
+      - dls_dvl:/home/dvl/dls
     labels:
       com.devels-playground.description: "basics + git"
   git-lite:
-    # owner/group becomes owner of dvl-data volume
+    # owner/group becomes owner of home_dvl volume
     extends: bare
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-git-lite
     # extends: skel
@@ -279,7 +327,7 @@ services:
       com.devels-playground.description: "basics + git"
 
   git:
-    # owner/group becomes owner of dvl-data volume
+    # owner/group becomes owner of home_dvl volume
     extends: bare
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-git
     # extends: skel
@@ -453,16 +501,26 @@ services:
       labels:
         com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 volumes:
-  fs-data:
+  root:
+  root_dvl:
+  root_agl:
+  root_good:
+
   mnt-data:
-  dls-data:
-  dvl-data:
-  agl-data:
-  good-data:
-  rootg-data:
-  hell-data:
-  halo-data:
-  dvlw-data:
+
+  dls:
+  dls_dvl:
+  dls_agl:
+  dls_good:
+
+  home_dvl:
+  home_agl:
+  home_good:
+
+  repo:
+  repo_agl:
+  repo_dvl:
+  repo_good:
 
 
 networks:
