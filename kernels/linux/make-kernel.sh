@@ -322,23 +322,22 @@ printf '\n======= Kernel Build Info ============================================
 cd $kernel_src
 echo "cd $kernel_src"
 
-yes "" | sudo sudo make oldconfig
-yes "" | sudo make prepare scripts
+yes "" | make prepare scripts
 if ! [ "$kernel_mod" = none ]; then
     # ls -al ../modules/$kernel_mod
     cd ../modules/$kernel_mod
     sh autogen.sh
     sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=../../$kernel_src --with-linux-obj=../../$kernel_src
     sh copy-builtin ../../$kernel_src
-    yes "" | sudo make install
+    yes "" | make install
     cd ../../$kernel_src
     sed -i 's/\# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config
     # sed -i "s/\# CONFIG_ZFS is not set/CONFIG_ZFS=y/g" .config
     # sed -i "s/\# CONFIG_$(echo $kernel_mod | tr '[:lower:]' '[:upper:]') is not set/CONFIG_$(echo $kernel_mod | tr '[:lower:]' '[:upper:]')=y/g" .config
 fi
 
-yes "" | sudo make -j $(expr $(nproc) - 1)
-if ! [ "$kernel_mod" = none ]; then sudo make modules_install; fi
+yes "" | make -j $(expr $(nproc) - 1)
+if ! [ "$kernel_mod" = none ]; then make modules_install; fi
 
 mkdir -pv ../$cpu_arch/$cpu_vendor/$linux_version_mask
 mkdir -pv /home/$user_name/built-kernels

@@ -6,7 +6,7 @@ cpu_arch=$(uname -m)
 cpu_arch="${cpu_arch%%_*}"
 config_suffix=_wsl-zfs0
 
-linux_version_name=6.1
+linux_version_name=5.15.9.0.1
 # replace first . with _ and then remove the rest of the .'s
 linux_version_mask=${linux_version_name/./_}
 linux_version_mask=${linux_version_mask//[.-]/}
@@ -51,19 +51,17 @@ mv zfs-$zfs_version_name $zfs_mask
 mv WSL2-Linux-Kernel wsl2
 cd wsl2
 
-sudo make clean
-yes "" | sudo make oldconfig
-yes "" | sudo make prepare scripts
-cd ../$zfs_mask && sudo sh autogen.sh
-sudo sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=../wsl2 --with-linux-obj=../wsl2
-sudo sh copy-builtin ../wsl2
-yes "" | sudo make install 
+yes "" | make oldconfig
+yes "" | make prepare scripts
+cd ../$zfs_mask && sh autogen.sh
+sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=../wsl2 --with-linux-obj=../wsl2
+sh copy-builtin ../wsl2
+yes "" | make install 
 
 cd ../wsl2/
-sudo sed -i 's/\# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config
-sudo make clean
-yes "" | sudo make -j $(expr $(nproc) - 1)
-sudo make modules_install
+sed -i 's/\# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config
+yes "" | make -j $(expr $(nproc) - 1)
+make modules_install
 
 mkdir -pv ../$cpu_arch/$cpu_vendor/$linux_version_mask
 mkdir -pv /home/$user_name/built-kernels

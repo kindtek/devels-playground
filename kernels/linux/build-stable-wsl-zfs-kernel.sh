@@ -49,19 +49,19 @@ mv -v linux-$linux_version_name $linux_mask
 cp -fv ${config_file} $linux_mask/.config;
 
 cd $linux_mask
-sudo make clean
-yes "" | sudo sudo make oldconfig
-yes "" | sudo make prepare scripts
+
+sleep 7
+
+yes "" | make prepare scripts
 cd ../$zfs_mask && sh autogen.sh
-sudo sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=../$linux_mask --with-linux-obj=../$linux_mask
-sudo sh copy-builtin ../$linux_mask
-yes "" | sudo make install 
+sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=../$linux_mask --with-linux-obj=../$linux_mask
+sh copy-builtin ../$linux_mask
+yes "" | make install 
 
 cd ../$linux_mask/
 sed -i 's/\# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config
-sudo make clean
-yes "" | sudo make -j $(expr $(nproc) - 1)
-sudo make modules_install
+yes "" | make -j $(expr $(nproc) - 1)
+make modules_install
 
 mkdir -pv ../$cpu_arch/$cpu_vendor/$linux_version_mask
 mkdir -pv /home/$user_name/built-kernels
@@ -74,11 +74,11 @@ if [ -d "/mnt/c/users/$wsl_username" ]; then cp -fv --backup=numbered  arch/$cpu
 if [ -d "/mnt/c/users/$wsl_username" ]; then cp -fv --backup=numbered  arch/$cpu_arch/boot/bzImage /mnt/c/users/$wsl_username/$save_name; fi
 
 
-# cd ..
-# rm -rf $linux_mask
-# rm -rf linux-$linux_version_name.tar.xz
-# rm -rf zfs-$zfs_version_name.tar.gz
-# rm -rf zfs-$zfs_mask
+cd ..
+rm -rf $linux_mask
+rm -rf linux-$linux_version_name.tar.xz
+rm -rf zfs-$zfs_version_name.tar.gz
+rm -rf zfs-$zfs_mask
 
-# cd /
+cd /
 tar -czvf built-kernel.tar.gz /home/$user_name/built-kernels/*
