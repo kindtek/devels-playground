@@ -3,3 +3,7 @@
 docker/ubuntu/ubuntu22-plus-linux-kernel-6-28.tar
 docker/ubuntu/ubuntu22-plus-linux-kernel-6-28_1.tar
 *.log
+kernels/linux/zfs-*
+kernels/linux/linux-*
+kernels/linux/wsl2/*
+kernels/linux/WSLS2/*
