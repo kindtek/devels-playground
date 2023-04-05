@@ -22,6 +22,7 @@ services:
       # - root_dvl:/fs
       - dls:/fs/dls
       - repo:/fs/dvlw
+      - root:/fs/fs
       # - home_agl:/fs/hal
       # - home_dvl:/fs/hel
       # - home_god:/fs/root/root
@@ -219,7 +220,7 @@ services:
       - sleep
       - infinity
     volumes:
-      - root:/fs/fs
+      # - root:/fs/fs
       - home_agl:/fs/hal
       - home_dvl:/fs/hel
       - home_god:/fs/root/root
