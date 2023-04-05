@@ -2,36 +2,37 @@ version: "3.9"
 name: devels-playground-ubuntu
 services:
   base:
-    # user: god
+    user: r00t
     build:
       context: .
       target: dvlp_base-fs
-      # args: 
-      #   - _AGL_USR=$_AGL
-      #   - _DVL_USR=$_DVL
+      args: 
+        - _AGL_USR=${_AGL:-angel}
+        - _DVL_USR=${_DVL:-devel}
+
     init: true
     volumes:
       # shared volumes but assign ownership
       # - repo_agl:/dvlw
       # - repo_dvl:/dvlw
-      # - repo_god:/dvlw
-      # - root:/fs/fs
-      # - repo:/fs/dvlw
-      # - root_god:/fs
-      # - root_agl:/fs
-      # - root_dvl:/fs
-      - dls:/fs/dls
-      - repo:/fs/dvlw
-      - root:/fs/fs
-      # - home_agl:/fs/hal
-      # - home_dvl:/fs/hel
-      # - home_god:/fs/root/root
-      # - dls:/fs/dls
+      # - repo_r00t:/dvlw
+      # - root:
+      # - repo:/dvlw
+      # - root_r00t:
+      # - root_agl:
+      # - root_dvl:
+      - dls:/dls
+      - repo:/dvlw
+      # - root:
+      # - home_agl:/hal
+      # - home_dvl:/hel
+      # - home_r00t:/root/r00t
+      # - dls:/dls
 
       # command:
       # - /bin/bash
       # - -c
-      # - export _AGL=agl
+      # - export _AGL=angel
       # - export _HALO=${_HALO:-halo}
       # - sleep
       # - infinity
@@ -39,9 +40,9 @@ services:
       # - mkdir -p /mnt/data
       # - ln -sf /mnt/data /tmp/data
       # command: echo something
-  base-god:
+  base-r00t:
     # Need a user priviliged enough to chown
-    # user: god
+    # user: r00t
     # Specify the wings in question
     # group_add:
     #   - rootg
@@ -49,14 +50,14 @@ services:
     #   - hell
     build:
       context: .
-      target: dvlp_base-fs_god
+      target: dvlp_base-fs_r00t
     depends_on:
       base:
         condition: service_completed_successfully
     init: true
     # volumes:
-      # - repo:/fs/dvlw
-    #   - root:/fs/root/root
+      # - repo:/dvlw
+    #   - root:/root/r00t
   base-angel:
     # Need a user priviliged enough to chown
     # user: agl
@@ -71,7 +72,7 @@ services:
         condition: service_completed_successfully
     init: true
     # volumes:
-    #   - home_agl:/fs/hal
+    #   - home_agl:/hal
   base-devel:
     # user: dvl
     # group_add:
@@ -84,10 +85,10 @@ services:
         # Wait for groups to be added
         condition: service_completed_successfully
     # volumes:
-    #   - home_dvl:/fs/home/hel
+    #   - home_dvl:/home/hel
     init: true
     # volumes:
-    #   - home_dvl:/fs/hel
+    #   - home_dvl:/hel
     # alias(es) for agl
     # base-ausr:
     #   user: _AGL_USR
@@ -98,7 +99,7 @@ services:
     #     args:
     #       - _AGL_USR=${_AGL:-angel}
     #   volumes:
-    #     - home_agl:/fs/home/${_AGL_USR}
+    #     - home_agl:/home/${_AGL_USR}
     #   init: true
     # # alias(es) for dvl
     # base-daus:
@@ -110,28 +111,28 @@ services:
     #     args:
     #       - _DVL_USR=${_DVL-:devel}
     #   volumes:
-    #     - home_dvl:/fs/home/$_DVL_USR
+    #     - home_dvl:/home/$_DVL_USR
   repo-lite:
     extends: base
-    # user: god
+    # user: r00t
     # group_add:
     #   - hell
     build:
       context: .
       target: dvlp_repo-lite
     volumes:
-      # - repo:/fs/dvlw
-      - repo-lite:/fs/dvlw
-      # - root:/fs/fs
-      # - root_god:/fs
-      # - root_agl:/fs
-      # - root_dvl:/fs
-      # - dls:/fs/mnt/data/dls
+      # - repo:/dvlw
+      - repo-lite:/dvlw
+      # - root:/
+      # - root_r00t:/
+      # - root_agl:/
+      # - root_dvl:/
+      # - dls://mnt/data/dls
     depends_on:
       base:
         # Wait for the ownership to change
         condition: service_completed_successfully
-      base-god:
+      base-r00t:
         # Wait for the ownership to change
         condition: service_completed_successfully
       base-angel:
@@ -147,84 +148,81 @@ services:
       context: .
       target: dvlp_repo
     volumes: 
-      - repo:/fs/dvlw
+      - repo:/dvlw
       # # init: true
       # volumes_from:
       #   - base-angel
       #   - base-devel
       # - repo_dvl:/hel/dvlw
-      #   - root:/fs/hell
-      #   - home_god:/fs/root:/fsro
-      #   - root:/fs/home/god:rw
-      #   - home_dvl:/fs/home/dvl
-      #   # - home_dvl:/fs/home/devel
-      #   # - home_dvl:/fs/home/${_DVL_USR:-dvl}
-      #   # - home_agl:/fs/home/${_AGL_USR:-agl}
-      #   # - home_agl:/fs/home/angel
-      #   - home_agl:/fs/home/agl
-      # - dls:/fs/dls
-      #   - mnt-data:/fs/data
+      #   - root:/hell
+      #   - home_r00t:/root:/fsro
+      #   - root:/home/r00t:rw
+      #   - home_dvl:/home/dvl
+      #   # - home_dvl:/home/devel
+      #   # - home_dvl:/home/${_DVL_USR:-dvl}
+      #   # - home_agl:/home/${_AGL_USR:-agl}
+      #   # - home_agl:/home/angel
+      #   - home_agl:/home/${_AGL}
+      # - dls:/dls
+      #   - mnt-data:/data
   skel-build-lite:
     extends: repo-lite
     # user: agl
     tty: false
     build:
       context: .
-      args:
-        - _AGL=agl
-        - _HALO=halo
       # network: ${COMPOSE_PROJECT_NAME}_default
       # entrypoint: /bin/bash -c
-      # # entrypoint: ["sudo chown -R agl:halo /home/agl/dvlw"]
+      # # entrypoint: ["sudo chown -R agl:halo /home/${_AGL}/dvlw"]
       # command:
-      #   - sudo chown -R agl:halo /hal
+      #   - sudo chown -R ${_AGL}:halo /hal
       #   - chown -R dvl:hell /hell
       # init: true
     volumes:
-      - home_agl:/fs/hal
-      - home_dvl:/fs/hel
-      - home_god:/fs/root/root
-      #   - home_dvl:/fs/home/dvl
-      #   - home_agl:/fs/home/${_AGL:-agl}
-      #   - mnt-data:/fs/mnt/data
+      - home_agl:/hal
+      - home_dvl:/hel
+      - home_r00t:/root/r00t
+      #   - home_dvl:/home/dvl
+      #   - home_agl:/home/${_AGL:-agl}
+      #   - mnt-data:/mnt/data
       # depends_on:
       #   skel:
       #     # Wait for the ownership to change
       #     condition: service_started
       # volumes:
-      #   - root:/fs/fs
-      #   # - root:/fs/hell
-      #   - home_god:/fs/home/god
-      #   # - hell-data:/fs
-      #   # - halo-data:/fs
-      #   # # - home_dvl:/fs/home/${_DVL_USR:-dvl}
-      #   - home_dvl:/fs/home/dvl
-      #   # # - home_agl:/fs/home/${_AGL_USR:-agl}
-      #   - home_agl:/fs/home/agl
+      #   - root:/
+      #   # - root:/hell
+      #   - home_r00t:/home/r00t
+      #   # - hell-data:
+      #   # - halo-data:
+      #   # # - home_dvl:/home/${_DVL_USR:-dvl}
+      #   - home_dvl:/home/dvl
+      #   # # - home_agl:/home/${_AGL_USR:-agl}
+      #   - home_agl:/home/${_AGL}
       #   - repo_dvl:/home/dvl/dvlw
   skel-build:
     extends: repo
     volumes:
-      - home_agl:/fs/hal
-      - home_dvl:/fs/hel
-      - home_god:/fs/root/root
+      - home_agl:/hal
+      - home_dvl:/hel
+      - home_r00t:/root/r00t
     # volumes:
-    #   - repo_agl:/home/agl/dvlw
-    #   - repo_god:/home/god/dvlw
+    #   - repo_agl:/home/${_AGL}/dvlw
+    #   - repo_r00t:/home/r00t/dvlw
     labels:
       com.dvlp_skel.description: "-build skeleton"
   skel:
-    user: god
+    user: r00t
     extends: repo
     entrypoint:
       - sleep
       - infinity
     volumes:
-      # - root:/fs/fs
-      - home_agl:/fs/hal
-      - home_dvl:/fs/hel
-      - home_god:/fs/root/root
-    # entrypoint: ["sudo chown -R agl:halo /home/agl/dvlw"]
+      # - root:/
+      - home_agl:/hal
+      - home_dvl:/hel
+      - home_r00t:/root/r00t
+    # entrypoint: ["sudo chown -R agl:halo /home/${_AGL}/dvlw"]
     # command:
     # #   - sudo chown -R agl:halo /halo/hal/dvlw
     # #   - sudo chown -R dvl:hell /hell
@@ -239,12 +237,12 @@ services:
       #   condition: service_started
     # volumes:
       #   - halo-data:/halo
-      #   - mnt-data:/fs/mnt/data
-      #   # - home_dvl:/fs/home/${_DVL_USR:-dvl}
-      #   - home_dvl:/fs/home/dvl
-      #   # - home_agl:/fs/home/${_AGL_USR:-agl}
-      #   - home_agl:/fs/home/agl
-      #   - home_god:/fs/home/god
+      #   - mnt-data:/mnt/data
+      #   # - home_dvl:/home/${_DVL_USR:-dvl}
+      #   - home_dvl:/home/dvl
+      #   # - home_agl:/home/${_AGL_USR:-agl}
+      #   - home_agl:/home/${_AGL}
+      #   - home_r00t:/home/r00t
     labels:
       com.dvlp_skel.description: "skeleton"
   bare:
@@ -255,9 +253,9 @@ services:
     tty: true
     working_dir: /hel
     # entrypoint: /bin/bash -c
-    entrypoint: ["/bin/bash", "-l", "-c"]
-    # # entrypoint: ["bash -i chroot --userspec=dvl:dvl /fs"]
-    command: ["-it", "chroot --userspec=dvl:dvl /fs"]
+    # entrypoint: ["/bin/bash", "-l", "-c"]
+    # # # entrypoint: ["bash -i chroot --userspec=dvl:dvl /fs"]
+    # command: ["-it", "chroot --userspec=dvl:dvl /fs"]
     # command:  ["bash -i chroot --userspec=dvl:dvl /fs"]
     cap_add:
         - SYS_CHROOT
@@ -276,9 +274,9 @@ services:
         # Wait for the ownership to change
         condition: service_completed_successfully
     init: true
-    # entrypoint: ["sudo chown -R agl:halo /home/agl/dvlw"]
+    # entrypoint: ["sudo chown -R agl:halo /home/${_AGL}/dvlw"]
     # entrypoint: /bin/bash -c
-    # # entrypoint: ["sudo chown -R agl:halo /home/agl/dvlw"]
+    # # entrypoint: ["sudo chown -R agl:halo /home/${_AGL}/dvlw"]
     # # command:
     # #   # - sudo chown -R agl:halo /halo/hal/dvlw
     # #   # - chown -R dvl:hell 
@@ -291,54 +289,54 @@ services:
     # #   # - agl:halo 
     # #   # - /halo/hal/dvlw
     volumes:
-      - repo-lite:/fs/dvlw
-      - repo-lite:/fs/halo/hal/dvlw
-      - repo-lite:/fs/halo/dvlw
-      - repo-lite:/fs/hal/dvlw
-      - repo-lite:/fs/home/agl/dvlw
+      - repo-lite:/dvlw
+      - repo-lite:/halo/hal/dvlw
+      - repo-lite:/halo/dvlw
+      - repo-lite:/hal/dvlw
+      - repo-lite:/home/${_AGL}/dvlw
 
-      - repo-lite:/fs/hell/hel/dvlw
-      - repo-lite:/fs/hell/dvlw
-      - repo-lite:/fs/hel/dvlw
-      - repo-lite:/fs/home/dvl/dvlw
+      - repo-lite:/hell/hel/dvlw
+      - repo-lite:/hell/dvlw
+      - repo-lite:/hel/dvlw
+      - repo-lite:/home/dvl/dvlw
 
-      - repo-lite:/fs/root/root/dvlw
-      - repo-lite:/fs/root/dvlw
-      - repo-lite:/fs/home/god/dvlw
+      - repo-lite:/root/r00t/dvlw
+      - repo-lite:/root/dvlw
+      - repo-lite:/home/r00t/dvlw
 
-      - root:/fs/fs
-      - root:/fs/root
-      - home_god:/fs/root/root
-      - home_god:/fs/home/god
+      # - root:/
+      - root:/root
+      - home_r00t:/root/r00t
+      - home_r00t:/home/r00t
 
-      - root:/fs/hell
-      - home_dvl:/fs/hel
-      - home_dvl:/fs/hell/hel
-      - home_dvl:/fs/home/dvl
+      - root:/hell
+      - home_dvl:/hel
+      - home_dvl:/hell/hel
+      - home_dvl:/home/dvl
 
-      - root:/fs/halo
-      - home_agl:/fs/hal
-      - home_agl:/fs/halo/hal
-      - home_agl:/fs/home/agl
+      - root:/halo
+      - home_agl:/hal
+      - home_agl:/halo/hal
+      - home_agl:/home/${_AGL}
 
-      - mnt-data:/fs/mnt/data
+      - mnt-data:/mnt/data
 
-      - dls:/fs/mnt/data/dls
+      - dls:/mnt/data/dls
 
-      - dls_god:/fs/dls
-      - dls_god:/fs/root/dls
-      - dls_god:/fs/root/root/dls
-      - dls_god:/fs/home/god/dls
+      - dls_r00t:/dls
+      - dls_r00t:/root/dls
+      - dls_r00t:/root/r00t/dls
+      - dls_r00t:/home/r00t/dls
 
-      - dls_agl:/fs/hal/dls
-      - dls_agl:/fs/halo/dls
-      - dls_agl:/fs/halo/hal/dls
-      - dls_agl:/fs/home/agl/dls
+      - dls_agl:/hal/dls
+      - dls_agl:/halo/dls
+      - dls_agl:/halo/hal/dls
+      - dls_agl:/home/${_AGL}/dls
 
-      - dls_dvl:/fs/hel/dls
-      - dls_dvl:/fs/hell/dls
-      - dls_dvl:/fs/hell/hel/dls
-      - dls_dvl:/fs/home/dvl/dls
+      - dls_dvl:/hel/dls
+      - dls_dvl:/hell/dls
+      - dls_dvl:/hell/hel/dls
+      - dls_dvl:/home/dvl/dls
     labels:
       com.devels-playground.description: "basics + git"
   git-lite:
@@ -351,20 +349,20 @@ services:
       context: .
       target: dvlp_git-lite
     # volumes:
-    #   - repo-lite:/fs/dvlw
-    #   - repo-lite:/fs/halo/hal/dvlw
-    #   - repo-lite:/fs/halo/dvlw
-    #   - repo-lite:/fs/hal/dvlw
-    #   - repo-lite:/fs/home/agl/dvlw
+    #   - repo-lite:/dvlw
+    #   - repo-lite:/halo/hal/dvlw
+    #   - repo-lite:/halo/dvlw
+    #   - repo-lite:/hal/dvlw
+    #   - repo-lite:/home/${_AGL}/dvlw
 
-    #   - repo-lite:/fs/hell/hel/dvlw
-    #   - repo-lite:/fs/hell/dvlw
-    #   - repo-lite:/fs/hel/dvlw
-    #   - repo-lite:/fs/home/dvl/dvlw
+    #   - repo-lite:/hell/hel/dvlw
+    #   - repo-lite:/hell/dvlw
+    #   - repo-lite:/hel/dvlw
+    #   - repo-lite:/home/dvl/dvlw
 
-    #   - repo-lite:/fs/root/root/dvlw
-    #   - repo-lite:/fs/root/dvlw
-    #   - repo-lite:/fs/home/god/dvlw
+    #   - repo-lite:/root/r00t/dvlw
+    #   - repo-lite:/root/dvlw
+    #   - repo-lite:/home/r00t/dvlw
     labels:
       com.devels-playground.description: "basics + git"
 
@@ -377,20 +375,20 @@ services:
       context: .
       target: dvlp_git
     volumes:
-      - repo:/fs/dvlw
-      - repo:/fs/halo/hal/dvlw
-      - repo:/fs/halo/dvlw
-      - repo:/fs/hal/dvlw
-      - repo:/fs/home/agl/dvlw
+      - repo:/dvlw
+      - repo:/halo/hal/dvlw
+      - repo:/halo/dvlw
+      - repo:/hal/dvlw
+      - repo:/home/${_AGL}/dvlw
 
-      - repo:/fs/hell/hel/dvlw
-      - repo:/fs/hell/dvlw
-      - repo:/fs/hel/dvlw
-      - repo:/fs/home/dvl/dvlw
+      - repo:/hell/hel/dvlw
+      - repo:/hell/dvlw
+      - repo:/hel/dvlw
+      - repo:/home/dvl/dvlw
 
-      - repo:/fs/root/root/dvlw
-      - repo:/fs/root/dvlw
-      - repo:/fs/home/god/dvlw
+      - repo:/root/r00t/dvlw
+      - repo:/root/dvlw
+      - repo:/home/r00t/dvlw
     labels:
       com.devels-playground.description: "basics + git"
 
@@ -468,46 +466,46 @@ services:
       target: dvlp_dind-lite
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel"
-  basic-wsl-kernel-builder:
+  kernel-builder:
     extends: bare
     image: kindtek/${HUB_repo:-devels-playground}:ubuntu-basic-wsl-kernel-builder
     build:
       context: .
-      target: dvlp_basic-wsl-kernel-builder
+      target: dvlp_kernel-builder
       # args:
       #   - CONFIG_FILE=${CONFIG_FILE:-dvlw/dvlp/kernels/linux/x86/generic/.config_wsl0}
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel"
-  basic-wsl-zfs-kernel-builder:
-    extends: bare
-    image: kindtek/${HUB_repo:-devels-playground}:basic-wsl-zfs-kernel-builder
-    build:
-      context: .
-      target: dvlp_basic-wsl-zfs-kernel-builder
-      # args:
-      #   - CONFIG_FILE=${CONFIG_FILE:-dvlw/dvlp/kernels/linux/x86/generic/.config_wsl0}
-    labels:
-      com.devels-playground.description: "basics + git + powerhell + docker + kernel"
-  stable-wsl-zfs-kernel-builder:
-    extends: bare
-    image: kindtek/${HUB_repo:-devels-playground}:stable-wsl-zfs-kernel-builder
-    build:
-      context: .
-      # target: dvlp_stable-wsl-zfs-kernel-builder
-      # args:
-      #   - CONFIG_FILE=${CONFIG_FILE:-dvlw/dvlp/kernels/linux/x86/generic/.config_wsl0}
-    labels:
-      com.devels-playground.description: "basics + git + powerhell + docker + kernel"
-  latest-rc-wsl-zfs-kernel-builder:
-    extends: bare
-    image: kindtek/${HUB_repo:-devels-playground}:latest-rc-wsl-zfs-kernel-builder
-    build:
-      context: .
-      target: dvlp_latest-rc-wsl-zfs-kernel-builder
-      # args:
-      #   - CONFIG_FILE=${CONFIG_FILE:-dvlw/dvlp/kernels/linux/x86/generic/.config_wsl0}
-    labels:
-      com.devels-playground.description: "basics + git + powerhell + docker + kernel"
+  # basic-wsl-zfs-kernel-builder:
+  #   extends: bare
+  #   image: kindtek/${HUB_repo:-devels-playground}:basic-wsl-zfs-kernel-builder
+  #   build:
+  #     context: .
+  #     target: dvlp_basic-wsl-zfs-kernel-builder
+  #     # args:
+  #     #   - CONFIG_FILE=${CONFIG_FILE:-dvlw/dvlp/kernels/linux/x86/generic/.config_wsl0}
+  #   labels:
+  #     com.devels-playground.description: "basics + git + powerhell + docker + kernel"
+  # stable-wsl-zfs-kernel-builder:
+  #   extends: bare
+  #   image: kindtek/${HUB_repo:-devels-playground}:stable-wsl-zfs-kernel-builder
+  #   build:
+  #     context: .
+  #     # target: dvlp_stable-wsl-zfs-kernel-builder
+  #     # args:
+  #     #   - CONFIG_FILE=${CONFIG_FILE:-dvlw/dvlp/kernels/linux/x86/generic/.config_wsl0}
+  #   labels:
+  #     com.devels-playground.description: "basics + git + powerhell + docker + kernel"
+  # latest-rc-wsl-zfs-kernel-builder:
+  #   extends: bare
+  #   image: kindtek/${HUB_repo:-devels-playground}:latest-rc-wsl-zfs-kernel-builder
+  #   build:
+  #     context: .
+  #     target: dvlp_latest-rc-wsl-zfs-kernel-builder
+  #     # args:
+  #     #   - CONFIG_FILE=${CONFIG_FILE:-dvlw/dvlp/kernels/linux/x86/generic/.config_wsl0}
+  #   labels:
+  #     com.devels-playground.description: "basics + git + powerhell + docker + kernel"
   gui-lite:
     extends: bare
     image: kindtek/${HUB_repo:-devels-playground}:ubuntu-gui
@@ -562,24 +560,24 @@ volumes:
   root:
   root_dvl:
   root_agl:
-  root_god:
+  root_r00t:
 
   mnt-data:
 
   dls:
   dls_dvl:
   dls_agl:
-  dls_god:
+  dls_r00t:
 
   home_dvl:
   home_agl:
-  home_god:
+  home_r00t:
 
   repo:
   repo-lite:
   repo_agl:
   repo_dvl:
-  repo_god:
+  repo_r00t:
 
 
 networks:
