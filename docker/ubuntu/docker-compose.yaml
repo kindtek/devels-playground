@@ -253,10 +253,11 @@ services:
     restart: on-failure
     tty: true
     working_dir: /hel
-    entrypoint: /bin/bash -c
-    # entrypoint: ["sudo chown -R agl:halo /home/agl/dvlw"]
-    command:
-      - chroot /fs || chroot /fs 
+    # entrypoint: /bin/bash -c
+    entrypoint: ["/bin/bash", "-l", "-c"]
+    # # entrypoint: ["bash -i chroot --userspec=dvl:dvl /fs"]
+    command: ["-it", "chroot --userspec=dvl:dvl /fs"]
+    # command:  ["bash -i chroot --userspec=dvl:dvl /fs"]
     cap_add:
         - SYS_CHROOT
     privileged: true

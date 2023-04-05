@@ -253,7 +253,7 @@ COPY --from=dvlp_base-fs_angel-lite --chown=agl:agl ./mnt/ ./fs/mnt/
 ##############################################################
 COPY --from=dvlp_base-fs_god-lite --chown=r00t:r00t ./root/root/ ./fs/root/root/
 COPY --from=dvlp_base-fs_god-lite --chown=r00t:r00t ./home/ ./fs/home/
-COPY --from=dvlp_base-fs_god-lite --chown=r00t:r00t ./fs/ ./fs/
+COPY --from=dvlp_base-fs_god-lite --chown=r00t:r00t ./fs/ ./fs/fs/
 COPY --from=dvlp_base-fs_god-lite --chown=r00t:r00t ./mnt/ ./fs/mnt/
 ##############################################################
 
@@ -283,12 +283,12 @@ COPY --from=dvlp_base-fs_devel --chown=dvl:dvl ./mnt/ ./fs/mnt/
 
 COPY --from=dvlp_base-fs_angel --chown=agl:agl ./hal/ ./fs/hal/
 # COPY --from=dvlp_base-fs_angel --chown=agl:agl ./halo/ ./fs/halo/
-COPY --from=dvlp_base-fs_angel --chown=agl:agl ./home/ ./fs/fs/home/
+COPY --from=dvlp_base-fs_angel --chown=agl:agl ./home/ ./fs/home/
 COPY --from=dvlp_base-fs_angel --chown=agl:agl ./mnt/ ./fs/mnt/
 
 COPY --from=dvlp_base-fs_god --chown=god:r00t ./root/root/ ./fs/root/root/
 COPY --from=dvlp_base-fs_god --chown=god:r00t ./home/ ./fs/home/
-# COPY --from=dvlp_base-fs_god --chown=god:r00t ./fs/ ./fs/
+# COPY --from=dvlp_base-fs_god --chown=god:r00t ./fs/ ./fs/fs/
 
 ################################### REPO ####################################
 #############
