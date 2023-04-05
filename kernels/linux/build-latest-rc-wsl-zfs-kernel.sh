@@ -52,16 +52,18 @@ mv $linux_version_name $linux_mask
 cp -fv ${config_file} $linux_mask/.config;
 cd $linux_mask
 
-yes "" | make prepare scripts
-cd ../$zfs_mask && sh autogen.sh
-sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=../$linux_mask --with-linux-obj=../$linux_mask
-sh copy-builtin ../$linux_mask
-yes "" | make install 
+yes "" | sudo make oldconfig
+yes "" | sudo make prepare scripts
+cd ../$zfs_mask && sudo sh autogen.sh
+sudo sh configure --prefix=/ --libdir=/lib --includedir=/usr/include --datarootdir=/usr/share --enable-linux-builtin=yes --with-linux=../$linux_mask --with-linux-obj=../$linux_mask
+sudo sh copy-builtin ../$linux_mask
+yes "" | sudo make install 
 
 cd ../$linux_mask
 sed -i 's/\# CONFIG_ZFS is not set/CONFIG_ZFS=y/g' .config
-yes "" | make -j $(expr $(nproc) - 1)
-yes "" | make modules_install
+sudo make clean
+yes "" | sudo make -j $(expr $(nproc) - 1)
+yes "" | sudo make modules_install
 
 mkdir -pv ../$cpu_arch/$cpu_vendor/$linux_version_mask
 mkdir -pv /home/$user_name/built-kernels

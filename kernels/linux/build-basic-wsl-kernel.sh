@@ -22,19 +22,22 @@ default_config_file=$cpu_arch/$cpu_vendor/$linux_version_mask/.config_wsl0
 config_file=${1:-$default_config_file}
 if ! [ -f $config_file ]; then config_file=$cpu_arch/generic/$linux_version_mask/.config_wsl0; fi
 if ! [ -f $config_file ]; then config_file=wsl2/Microsoft/config-wsl; fi
-if ! [ -f ${config_file} ]; then config_file=$default_config_file; else mkdir -pv $cpu_arch/$cpu_vendor/$linux_version_mask; cp -bv $config_file $cpu_arch/$cpu_vendor/$linux_version_mask/.config_wsl0; fi
+if ! [ -f ${config_file} ]; then config_file=$default_config_file; else
+    mkdir -pv $cpu_arch/$cpu_vendor/$linux_version_mask
+    cp -bv $config_file $cpu_arch/$cpu_vendor/$linux_version_mask/.config_wsl0
+fi
 
 printf '\n======= Kernel Build Info =========================================================================\n\n\tCPU Architecture:\t%s\n\n\tCPU Vendor:\t\t%s\n\n\tConfiguration File:\n\t\t%s\n\n\tSave Locations:\n\t\t%s\n\t\t%s\n\n===================================================================================================\n' $cpu_arch $cpu_vendor $config_file $save_location1 $save_location2
 
-
 git clone https://github.com/microsoft/WSL2-Linux-Kernel.git wsl2 --progress --depth=1 --single-branch --branch linux-msft-wsl-5.15.90.1
 
-cp -fv ${config_file} wsl2/.config;
+cp -fv ${config_file} wsl2/.config
 cd wsl2
 
-yes "" | make oldconfig && yes "" | make prepare
-yes "" | make -j $(expr $(nproc) - 1)
-make modules_install 
+sudo make clean
+yes "" | sudo make oldconfig && yes "" | sudo make prepare
+yes "" | sudo make -j $(expr $(nproc) - 1)
+sudo make modules_install
 mkdir -pv ../$cpu_arch/$cpu_vendor/$linux_version_mask
 mkdir -pv /home/$user_name/built-kernels
 cp -fv --backup=numbered arch/$cpu_arch/boot/bzImage ../$save_location1
