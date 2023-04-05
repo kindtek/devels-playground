@@ -7,8 +7,10 @@ services:
       context: .
       target: dvlp_base-fs
       args: 
-        - _AGL_USR=${_AGL:-angel}
+        - _AGL_USR=${_AGL:-$_AGL_USR}
         - _DVL_USR=${_DVL:-devel}
+    env_file:
+      - .env
 
     init: true
     volumes:
@@ -97,7 +99,7 @@ services:
     #     context: .
     #     target: dvlp_base-fs_angel
     #     args:
-    #       - _AGL_USR=${_AGL:-angel}
+    #       - _AGL_USR=${_AGL:-$_AGL_USR}
     #   volumes:
     #     - home_agl:/home/${_AGL_USR}
     #   init: true
@@ -157,7 +159,7 @@ services:
       #   - root:/hell
       #   - home_r00t:/root:/fsro
       #   - root:/home/r00t:rw
-      #   - home_dvl:/home/dvl
+      #   - home_dvl:/home/${_DVL}
       #   # - home_dvl:/home/devel
       #   # - home_dvl:/home/${_DVL_USR:-dvl}
       #   # - home_agl:/home/${_AGL_USR:-agl}
@@ -182,7 +184,7 @@ services:
       - home_agl:/hal
       - home_dvl:/hel
       - home_r00t:/root/r00t
-      #   - home_dvl:/home/dvl
+      #   - home_dvl:/home/${_DVL}
       #   - home_agl:/home/${_AGL:-agl}
       #   - mnt-data:/mnt/data
       # depends_on:
@@ -196,10 +198,10 @@ services:
       #   # - hell-data:
       #   # - halo-data:
       #   # # - home_dvl:/home/${_DVL_USR:-dvl}
-      #   - home_dvl:/home/dvl
+      #   - home_dvl:/home/${_DVL}
       #   # # - home_agl:/home/${_AGL_USR:-agl}
       #   - home_agl:/home/${_AGL}
-      #   - repo_dvl:/home/dvl/dvlw
+      #   - repo_dvl:/home/${_DVL}/dvlw
   skel-build:
     extends: repo
     volumes:
@@ -239,7 +241,7 @@ services:
       #   - halo-data:/halo
       #   - mnt-data:/mnt/data
       #   # - home_dvl:/home/${_DVL_USR:-dvl}
-      #   - home_dvl:/home/dvl
+      #   - home_dvl:/home/${_DVL}
       #   # - home_agl:/home/${_AGL_USR:-agl}
       #   - home_agl:/home/${_AGL}
       #   - home_r00t:/home/r00t
@@ -266,7 +268,8 @@ services:
       context: .
       target: dvlp_bare
       args:
-        - _AGL_USR=${_AGL:-agl}
+        - _AGL_USR=${_AGL:-$_AGL_USR}
+        - _DVL_USR=${_DVL:-$_DVL_USR}
         - mnt_data=${mnt_data:-/mnt/data}
         - CONFIG_FILE
     depends_on:
@@ -293,12 +296,12 @@ services:
       - repo-lite:/halo/hal/dvlw
       - repo-lite:/halo/dvlw
       - repo-lite:/hal/dvlw
-      - repo-lite:/home/${_AGL}/dvlw
+      - repo-lite:/home/${_AGL:-$_AGL_USR}/dvlw
 
       - repo-lite:/hell/hel/dvlw
       - repo-lite:/hell/dvlw
       - repo-lite:/hel/dvlw
-      - repo-lite:/home/dvl/dvlw
+      - repo-lite:/home/${_DVL:-$_DVL_USR}/dvlw
 
       - repo-lite:/root/r00t/dvlw
       - repo-lite:/root/dvlw
@@ -312,12 +315,12 @@ services:
       - root:/hell
       - home_dvl:/hel
       - home_dvl:/hell/hel
-      - home_dvl:/home/dvl
+      - home_dvl:/home/${_DVL:-$_DVL_USR}
 
       - root:/halo
       - home_agl:/hal
       - home_agl:/halo/hal
-      - home_agl:/home/${_AGL}
+      - home_agl:/home/${_AGL:-$_AGL_USR}
 
       - mnt-data:/mnt/data
 
@@ -331,12 +334,12 @@ services:
       - dls_agl:/hal/dls
       - dls_agl:/halo/dls
       - dls_agl:/halo/hal/dls
-      - dls_agl:/home/${_AGL}/dls
+      - dls_agl:/home/${_AGL:-$_AGL_USR}/dls
 
       - dls_dvl:/hel/dls
       - dls_dvl:/hell/dls
       - dls_dvl:/hell/hel/dls
-      - dls_dvl:/home/dvl/dls
+      - dls_dvl:/home/${_DVL:-$_DVL_USR}/dls
     labels:
       com.devels-playground.description: "basics + git"
   git-lite:
@@ -358,7 +361,7 @@ services:
     #   - repo-lite:/hell/hel/dvlw
     #   - repo-lite:/hell/dvlw
     #   - repo-lite:/hel/dvlw
-    #   - repo-lite:/home/dvl/dvlw
+    #   - repo-lite:/home/${_DVL}/dvlw
 
     #   - repo-lite:/root/r00t/dvlw
     #   - repo-lite:/root/dvlw
@@ -379,12 +382,12 @@ services:
       - repo:/halo/hal/dvlw
       - repo:/halo/dvlw
       - repo:/hal/dvlw
-      - repo:/home/${_AGL}/dvlw
+      - repo:/home/${_AGL:-$_AGL_USR}/dvlw
 
       - repo:/hell/hel/dvlw
       - repo:/hell/dvlw
       - repo:/hel/dvlw
-      - repo:/home/dvl/dvlw
+      - repo:/home/${_DVL:-$_DVL_USR}/dvlw
 
       - repo:/root/r00t/dvlw
       - repo:/root/dvlw
@@ -423,7 +426,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git"
   python:
-    extends: bare
+    extends: git
     image: kindtek/${HUB_repo:-devels-playground}:ubuntu-py
     build:
       context: .
@@ -435,7 +438,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git"
   msdot-lite:
-    extends: bare
+    extends: git
     image: kindtek/${HUB_repo:-devels-playground}:ubuntu-msdot-lite
     build:
       context: .
@@ -443,7 +446,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git + powerhell"
   msdot:
-    extends: bare
+    extends: git
     image: kindtek/${HUB_repo:-devels-playground}:ubuntu-msdot
     build:
       context: .
@@ -451,7 +454,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git + powerhell"
   dind:
-    extends: bare
+    extends: git
     image: kindtek/${HUB_repo:-devels-playground}:ubuntu-dind
     build:
       context: .
@@ -459,7 +462,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker"
   dind-lite:
-    extends: bare
+    extends: git
     image: kindtek/${HUB_repo:-devels-playground}:ubuntu-dind-lite
     build:
       context: .
@@ -467,7 +470,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel"
   kernel-builder:
-    extends: bare
+    extends: git
     image: kindtek/${HUB_repo:-devels-playground}:ubuntu-basic-wsl-kernel-builder
     build:
       context: .
@@ -507,7 +510,7 @@ services:
   #   labels:
   #     com.devels-playground.description: "basics + git + powerhell + docker + kernel"
   gui-lite:
-    extends: bare
+    extends: git
     image: kindtek/${HUB_repo:-devels-playground}:ubuntu-gui
     build:
       context: .
@@ -515,20 +518,20 @@ services:
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   gui:
-    extends: bare
+    extends: git
     image: kindtek/${HUB_repo:-devels-playground}:ubuntu-gui
     user: agl
     entrypoint:
       - /bin/bash
       - -c
-      - bash /home/dvl/start-kde.sh
+      - bash /home/${_DVL}/start-kde.sh
     build:
       context: .
       target: dvlp_gui
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   gui-plus:
-    extends: gui-lite
+    extends: gui
     image: kindtek/${HUB_repo:-devels-playground}:ubuntu-gui-plus
     build:
       context: .
@@ -536,24 +539,26 @@ services:
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   cuda:
-    extends: gui-lite
+    extends: gui
     image: kindtek/${HUB_repo:-devels-playground}:ubuntu-cuda
     build:
       context: .
       target: dvlp_cuda
       args:
-        - _AGL_USR=${_AGL:-agl}
+        - _AGL_USR=${_AGL:-$_AGL_USR}
+        - _DVL_USR=${_DVL:-$_DVL_USR}
       labels:
         com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 
   cuda-plus:
-    extends: gui-lite
+    extends: gui
     image: kindtek/${HUB_repo:-devels-playground}:ubuntu-cuda-plus
     build:
       context: .
       target: dvlp_cuda-plus
       args:
-        - _AGL_USR=${_AGL:-agl}
+        - _AGL_USR=${_AGL:-$_AGL_USR}
+        - _DVL_USR=${_DVL:-$_DVL_USR}
       labels:
         com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 volumes:
