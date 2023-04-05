@@ -4,5 +4,5 @@
 	shallow = true
 	url = https://github.com/kindtek/kernels
 	branch = dvlw
-	recurse=false
+	recurse = false
 	ignore = all
