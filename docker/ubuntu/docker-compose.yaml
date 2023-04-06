@@ -214,8 +214,9 @@ services:
     labels:
       com.dvlp_skel.description: "-build skeleton"
   skel:
-    user: r00t
+    user: devel
     extends: repo
+    working_dir: /hel
     entrypoint:
       - sleep
       - infinity
@@ -249,18 +250,18 @@ services:
       com.dvlp_skel.description: "skeleton"
   bare:
     # owner/group becomes owner of home_dvl volume
-    user: r00t
+    user: devel
     extends: skel
+    working_dir: /hel
     restart: on-failure
     tty: true
-    working_dir: /hel
     # entrypoint: /bin/bash -c
     # entrypoint: ["/bin/bash", "-l", "-c"]
     # # # entrypoint: ["bash -i chroot --userspec=dvl:dvl /fs"]
     # command: ["-it", "chroot --userspec=dvl:dvl /fs"]
     # command:  ["bash -i chroot --userspec=dvl:dvl /fs"]
-    cap_add:
-        - SYS_CHROOT
+    # cap_add:
+    #     - SYS_CHROOT
     privileged: true
     image: kindtek/${HUB_repo:-devels-playground}:ubuntu-bare
     # extends: skel
@@ -520,11 +521,13 @@ services:
   gui:
     extends: git
     image: kindtek/${HUB_repo:-devels-playground}:ubuntu-gui
-    user: agl
-    entrypoint:
-      - /bin/bash
-      - -c
-      - bash /home/${_DVL}/start-kde.sh
+    user: ${_AGL}
+    # entrypoint:
+    #   - /bin/bash
+    #   - -c
+    #   - bash /home/${_DVL}/start-kde.sh
+    entrypoint: /bin/bash -c
+    command: bash /home/${_AGL}/start-kde.sh
     build:
       context: .
       target: dvlp_gui
