@@ -228,27 +228,23 @@ RUN \
 #   apt-get -y install apt-fast
 
 # adduser --home /home/r00t --ingroup root --shell /bin/bash --uid 4321 --disabled-password --gecos GECOS r00t && \
-RUN addgroup --gid 4321 --force-badname r00t  && \
+RUN addgroup --gid 4321 r00t && \
     addgroup --gid 777 ${_AGL} && \
-    addgroup --gid 666 ${_DVL} && \
-    useradd -s /bin/bash  -u 0 -o -g root -G r00t,${_AGL},${_DVL} -d /root/r00t r00t && \
-    useradd -s /bin/bash  -u 0 -o -g root -G angel,devel -d /test test && \
-    rm -rf /root && mkdir -pv /root/r00t && \
+    addgroup --gid 666 ${_DVL} 
+RUN useradd -s /bin/bash  -u 0 -o -g root -G $_AGL,$_DVL,r00t -d /root/r00t r00t
+RUN rm -rf /root && mkdir -pv /root/r00t && \
+    # exit && \
     # usermod -aG r00t r00t  && \
     # usermod -g 0 -u 0 -o r00t  && \
-    chown -R r00t:r00t /root  && \
+    chown -R r00t:r00t /root && \
     # usermod -g 0 -u 0 -o r00t  && \
     # usermod -d /root/r00t r00t && \
     passwd -d r00t && \
-    # passwd -d ${_AGL} && \
-    # passwd -d ${_DVL} && \
     passwd -l r00t && \
     passwd -d root && \
-    passwd -l test && \
-    passwd -d test && \
+    passwd -l root && \
     # passwd -d ${_AGL} && \
     # passwd -d ${_DVL} && \
-    passwd -l root  && \
     echo "[user] \
     default=${_DVL}" >> /etc/wsl.conf 
 USER r00t

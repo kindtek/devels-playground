@@ -294,13 +294,13 @@ services:
     # #   # - /halo/hal/dvlw
     volumes:
       - repo-lite:/dvlw
-      - repo-lite:/halo/hal/dvlw
-      - repo-lite:/halo/dvlw
+      # - repo-lite:/halo/hal/dvlw
+      # - repo-lite:/halo/dvlw
       - repo-lite:/hal/dvlw
       - repo-lite:/home/${_AGL:-$_AGL_USR}/dvlw
 
-      - repo-lite:/hell/hel/dvlw
-      - repo-lite:/hell/dvlw
+      # - repo-lite:/hell/hel/dvlw
+      # - repo-lite:/hell/dvlw
       - repo-lite:/hel/dvlw
       - repo-lite:/home/${_DVL:-$_DVL_USR}/dvlw
 
@@ -310,17 +310,17 @@ services:
 
       # - root:/
       - root:/root
-      - home_r00t:/root/r00t
+      # - home_r00t:/root/r00t
       - home_r00t:/home/r00t
 
-      - root:/hell
+      # - root:/hell
       - home_dvl:/hel
-      - home_dvl:/hell/hel
+      # - home_dvl:/hell/hel
       - home_dvl:/home/${_DVL:-$_DVL_USR}
 
-      - root:/halo
+      # - root:/halo
       - home_agl:/hal
-      - home_agl:/halo/hal
+      # - home_agl:/halo/hal
       - home_agl:/home/${_AGL:-$_AGL_USR}
 
       - mnt-data:/mnt/data
@@ -328,18 +328,18 @@ services:
       - dls:/mnt/data/dls
 
       - dls_r00t:/dls
-      - dls_r00t:/root/dls
+      # - dls_r00t:/root/dls
       - dls_r00t:/root/r00t/dls
       - dls_r00t:/home/r00t/dls
 
       - dls_agl:/hal/dls
-      - dls_agl:/halo/dls
-      - dls_agl:/halo/hal/dls
+      # - dls_agl:/halo/dls
+      # - dls_agl:/halo/hal/dls
       - dls_agl:/home/${_AGL:-$_AGL_USR}/dls
 
       - dls_dvl:/hel/dls
-      - dls_dvl:/hell/dls
-      - dls_dvl:/hell/hel/dls
+      # - dls_dvl:/hell/dls
+      # - dls_dvl:/hell/hel/dls
       - dls_dvl:/home/${_DVL:-$_DVL_USR}/dls
     labels:
       com.devels-playground.description: "basics + git"
@@ -380,18 +380,18 @@ services:
       target: dvlp_git
     volumes:
       - repo:/dvlw
-      - repo:/halo/hal/dvlw
-      - repo:/halo/dvlw
+      # - repo:/halo/hal/dvlw
+      # - repo:/halo/dvlw
       - repo:/hal/dvlw
       - repo:/home/${_AGL:-$_AGL_USR}/dvlw
 
-      - repo:/hell/hel/dvlw
-      - repo:/hell/dvlw
+      # - repo:/hell/hel/dvlw
+      # - repo:/hell/dvlw
       - repo:/hel/dvlw
       - repo:/home/${_DVL:-$_DVL_USR}/dvlw
 
-      - repo:/root/r00t/dvlw
-      - repo:/root/dvlw
+      # - repo:/root/r00t/dvlw
+      # - repo:/root/dvlw
       - repo:/home/r00t/dvlw
     labels:
       com.devels-playground.description: "basics + git"
