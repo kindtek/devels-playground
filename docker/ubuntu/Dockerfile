@@ -13,8 +13,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 ARG DOCKER_BUILDKIT=1
 ARG KERNEL_TYPE=${KERNEL_TYPE:-basic-wsl}
 ARG REFRESH_REPO=${REFRESH_REPO:-no}
-ARG _AGL_USR=${_AGL:-angel}
-ARG _DVL_USR=${_DVL:-devel}
+ARG _AGL_USR=${_AGL:-agl}
+ARG _DVL_USR=${_DVL:-dvl}
 ARG _MNT=${_MNT:-/mnt/data}
 ARG WORLDS=gui
 
@@ -548,7 +548,7 @@ COPY --from=dvlp_repo                                          ./dvlw/          
 # USER r00t
 # WORKDIR /hell
 # # SHELL ["/bin/bash", "-c"]
-# USER devel
+# USER ${_DVL}
 # WORKDIR /hell
 # # # FROM dvlp_base-fs AS dvlp_base-fs2
 # # # COPY --from=dvlp_skel-build --chown=r00t:r00t   ./ ./
@@ -654,7 +654,7 @@ ARG REFRESH_REPO
 # COPY --from=dvlp_skel-build-lite ./ ./
 # COPY --from=dvlp_repo --chown=${_DVL}:${_DVL}  ./dvlw/ ./home/${_DVL}/dvlw/
 WORKDIR /hel
-USER devel
+USER ${_DVL}
 
 ################################### GIT #########################################
 #################
@@ -669,7 +669,7 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
 WORKDIR /hel
-USER devel
+USER ${_DVL}
 
 ############
 # dvlp_git #
@@ -683,7 +683,7 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
 WORKDIR /hel
-USER devel
+USER ${_DVL}
 
 ################################# PYTHON ########################################
 #####################
@@ -743,7 +743,7 @@ USER r00t
 WORKDIR / 
 COPY --from=dvlp_python-build-lite ./ ./
 WORKDIR /hel
-USER devel
+USER ${_DVL}
 
 ###############
 # dvlp_python #
@@ -760,7 +760,7 @@ WORKDIR /
 COPY --from=dvlp_python-build ./ ./
 COPY --from=dvlp_python-build-lite ./ ./
 WORKDIR /hel
-USER devel
+USER ${_DVL}
 
 ############################# POWERHELL #########################################
 #########################
@@ -787,7 +787,7 @@ RUN \
 # apt-get clean all && \
 # apt-get autoremove --purge
 WORKDIR /hel
-USER devel
+USER ${_DVL}
 
 ####################
 # dvlp_msdot-build #
@@ -797,7 +797,7 @@ USER r00t
 RUN apt-get -y update && \
     apt-get -y install dotnet-sdk-7.0 
 WORKDIR /hel
-USER devel
+USER ${_DVL}
 
 ###################
 # dvlp_msdot-lite #
@@ -814,7 +814,7 @@ WORKDIR /
 COPY --from=dvlp_python-build-lite ./ ./
 COPY --from=dvlp_msdot-build-lite ./ ./
 WORKDIR /hel
-USER devel
+USER ${_DVL}
 
 ##############
 # dvlp_msdot #
@@ -831,7 +831,7 @@ WORKDIR /
 COPY --from=dvlp_python-build ./ ./
 COPY --from=dvlp_msdot-build ./ ./
 WORKDIR /hel
-USER devel
+USER ${_DVL}
 
 ########################## DOCKER IN DOCKER ######################################
 ###################
@@ -856,7 +856,7 @@ RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get -y update && apt-get -y install docker-compose-plugin docker-ce docker-ce-cli containerd.io 
 WORKDIR /hel
-USER devel
+USER ${_DVL}
 
 ##################
 # dvlp_dind-lite #
@@ -868,7 +868,7 @@ COPY --from=dvlp_python-build-lite ./ ./
 COPY --from=dvlp_msdot-build-lite ./ ./
 COPY --from=dvlp_dind-build ./ ./
 WORKDIR /hel
-USER devel
+USER ${_DVL}
 
 #############
 # dvlp_dind #
@@ -886,7 +886,7 @@ COPY --from=dvlp_python-build ./ ./
 COPY --from=dvlp_msdot-build ./ ./
 COPY --from=dvlp_dind-build ./ ./
 WORKDIR /hel
-USER devel
+USER ${_DVL}
 
 ############################### KERNEL #########################################
 #####################
@@ -906,7 +906,7 @@ RUN \
     python3-dev python3-setuptools python3-cffi net-tools snapd systemd-sysv sysvinit-utils uuid-dev
 # RUN apt-get -y install zfsutils-linux zlib1g-dev zfs-dkms zstd zsys zfs-dracut zfs-zed
 WORKDIR /hel
-USER devel
+USER ${_DVL}
 
 ########################################################
 ###  dvlp_kernel-builder - KERNEL BUILDER  ###
@@ -922,7 +922,7 @@ COPY --from=dvlp_dind-build ./ ./
 COPY --from=dvlp_kernel-build ./ ./
 # RUN echo '# daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/${_AGL}/.bashrc
 WORKDIR /hel
-USER devel
+USER ${_DVL}
 
 ########################################################
 ###  dvlp_kernel-builder - KERNEL BUILDER  ###
@@ -940,7 +940,7 @@ RUN bash build-${KERNEL_TYPE}-kernel.sh
 # RUN bash make-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" ${_AGL}
 # RUN echo '# daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/${_AGL}/.bashrc
 WORKDIR /hel
-USER devel
+USER ${_DVL}
 
 #################################### GUI ######################################
 #################
@@ -992,7 +992,7 @@ COPY --from=dvlp_repo --chown=r00t:r00t /dvlw/dvlp/mnt/opt/* /opt/
 # # # brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
 # # # sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/${_DVL} && \
 WORKDIR /hel
-USER devel
+USER ${_DVL}
 
 ############
 # dvlp_gui #
@@ -1051,7 +1051,7 @@ COPY --from=dvlp_repo --chown=r00t:r00t /dvlw/dvlp/mnt/etc/* /etc/
 # #     dpkg-reconfigure --frontend noninteractive locales && \
 # #     echo "/usr/sbin/lightdm" | tee /etc/X11/default-display-manager 
 # # RUN echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
-USER devel
+USER ${_DVL}
 
 #################
 # dvlp_gui-plus #
@@ -1067,7 +1067,7 @@ ARG REFRESH_REPO
 WORKDIR /
 COPY --from=dvlp_gui ./ ./
 WORKDIR /hel
-USER devel
+USER ${_DVL}
 
 ############################## CUDA ###############################
 #############
@@ -1095,7 +1095,7 @@ RUN \
 # apt-get clean all && \
 # apt-get autoremove --purge
 WORKDIR /hel
-USER devel
+USER ${_DVL}
 
 ##################
 # dvlp_cuda-plus #
@@ -1118,7 +1118,7 @@ RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get -y install nvidia-cuda-toolkit
 WORKDIR /hel
-USER devel
+USER ${_DVL}
 
 ########################### OUTPUT ################################
 #################
