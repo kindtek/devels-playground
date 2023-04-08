@@ -184,7 +184,7 @@ WORKDIR /hel
 # ln -sfv /home/${_DVL} /home/${_DVL} && \
 RUN mkdir -pv /hel && \
     mkdir -pv /hel/built-kernels && \
-    mkdir -pv /home/devel/built-kernels && \
+    mkdir -pv /home/${_DVL}}/built-kernels && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
     ln -fsv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
@@ -227,7 +227,7 @@ ARG _AGL
 WORKDIR /hal
 COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./
 RUN mkdir -pv built-kernels && \
-    mkdir -pv /home/angel/built-kernels && \
+    mkdir -pv /home/${_AGL}/built-kernels && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
     ln -fsv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
