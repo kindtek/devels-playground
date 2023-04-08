@@ -119,9 +119,9 @@ services:
       - repo:/r00t/dvlw
       - repo:/home/r00t/dvlw
       - repo:/hal/dvlw
-      - repo:/home/agl/dvlw
+      - repo:/home/{${_AGL}/dvlw
       - repo:/hel/dvlw
-      - repo:/home/dvl/dvlw
+      - repo:/home/${_DVL}/dvlw
     depends_on:
       skel-build:
         # Wait for the ownership to change
@@ -439,14 +439,14 @@ services:
     build:
       context: .
       target: dvlp_gui
+      args:
+        - _AGL=${_AGL_USR:-$_AGL}
+        - _DVL=${_DVL_USR:-$_DVL}
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   gui-plus:
     extends: gui
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-gui-plus
-    build:
-      context: .
-      target: dvlp_gui-plus
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   cuda:
@@ -455,9 +455,6 @@ services:
     build:
       context: .
       target: dvlp_cuda
-      args:
-        - _AGL=${_AGL_USR:-$_AGL}
-        - _DVL=${_DVL_USR:-$_DVL}
       labels:
         com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
 
@@ -467,9 +464,6 @@ services:
     build:
       context: .
       target: dvlp_cuda-plus
-      args:
-        - _AGL=${_AGL_USR:-$_AGL}
-        - _DVL=${_DVL_USR:-$_DVL}
       labels:
         com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
   world:
