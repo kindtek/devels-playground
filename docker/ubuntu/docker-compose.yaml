@@ -5,7 +5,7 @@ services:
     build:
       target: dvlp_repo-lite
     volumes:
-      - repo-lite:/dvlw-lite
+      - repo-lite:/dvlw
   repo:
     build:
       target: dvlp_repo
@@ -73,14 +73,14 @@ services:
     tty: false
     build:
       target: dvlp_skel-build-lite
-    # volumes:
-    #   # - repo:/dvlw
-    #   # - home_agl:/hal
-    #   # - home_agl:/home/${_AGL}
-    #   # - home_dvl:/hel
-    #   # - home_dvl:/home/${_DVL}
-    #   # - home_r00t:/r00t
-    #   # - home_r00t:/home/r00t
+    volumes:
+      - repo-lite:/dvlw
+      - home_agl:/hal
+      - home_agl:/home/${_AGL}
+      - home_dvl:/hel
+      - home_dvl:/home/${_DVL}
+      - home_r00t:/r00t
+      - home_r00t:/home/r00t
     depends_on:
         base:
             # Wait for the ownership to change
@@ -93,14 +93,14 @@ services:
     tty: false
     build:
       target: dvlp_skel-build
-    # volumes:
-    #   # - repo:/dvlw
-    #   # - home_agl:/hal
-    #   # - home_agl:/home/${_AGL}
-    #   # - home_dvl:/hel
-    #   # - home_dvl:/home/${_DVL}
-    #   # - home_r00t:/r00t
-    #   # - home_r00t:/home/r00t
+    volumes:
+      - repo:/dvlw
+      - home_agl:/hal
+      - home_agl:/home/${_AGL}
+      - home_dvl:/hel
+      - home_dvl:/home/${_DVL}
+      - home_r00t:/r00t
+      - home_r00t:/home/r00t
     depends_on:
         base:
             # Wait for the ownership to change
@@ -114,6 +114,14 @@ services:
     working_dir: /hel
     build:
       target: dvlp_skel
+    volumes:
+      - repo:/dvlw
+      - repo:/r00t/dvlw
+      - repo:/home/r00t/dvlw
+      - repo:/hal/dvlw
+      - repo:/home/agl/dvlw
+      - repo:/hel/dvlw
+      - repo:/home/dvl/dvlw
     depends_on:
       skel-build:
         # Wait for the ownership to change
@@ -137,7 +145,7 @@ services:
     # cap_add:
     #     - SYS_CHROOT
     privileged: true
-    image: kindtek/${HUB_repo:-devels-playground}:ubuntu-bare
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-bare
     # extends: skel
     build:
       context: .
@@ -222,12 +230,12 @@ services:
     extends: bare
     #   # - sudo cp -rf /lib /usr /mnt /bin /opt /lib64 /tmp /home /sbin /media /etc /root /boot /var /fs
     #   - git config --global --add safe.directory /dvlw && (git submodule update --init --progress dvlp  ||     git submodule update --init --progress --force --rebase --  dvlp/kernels)
-    # image: kindtek/${HUB_repo:-devels-playground}:ubuntu-git-lite
+    # image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-git-lite
     # extends: skel
     build:
       context: .
       target: dvlp_git-lite
-    image: kindtek/${HUB_repo:-devels-playground}:ubuntu-git-lite
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-git-lite
     # volumes:
     #   - repo-lite:/dvlw
     #   - repo:/dvlw
@@ -258,7 +266,7 @@ services:
     command:
       - sleep infinity
     # user: devel
-    extends: skel-build-lite
+    extends: skel-build
     working_dir: /hel
     restart: on-failure
     tty: true
@@ -270,7 +278,7 @@ services:
     # cap_add:
     #     - SYS_CHROOT
     privileged: true
-    image: kindtek/${HUB_repo:-devels-playground}:ubuntu-git
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-git
     # extends: skel
     build:
       context: .
@@ -281,25 +289,18 @@ services:
         condition: service_completed_successfully
     # volumes:
     #   - repo:/dvlw
-    #   - home_agl:/hal
-    #   - home_agl:/home/${_AGL}
-    #   - home_dvl:/hel
-    #   - home_dvl:/home/${_DVL}
-    #   - home_r00t:/r00t
-    #   - home_r00t:/home/r00t
-    # #   # - repo:/halo/hal/dvlw
-    # #   # - repo:/halo/dvlw
-    # #   - repo:/hal/dvlw
-    # #   - repo:/home/${_AGL:-$_AGL_USR}/dvlw
-
-    # #   # - repo:/hell/hel/dvlw
-    # #   # - repo:/hell/dvlw
-    # #   - repo:/hel/dvlw
-    # #   - repo:/home/${_DVL:-$_DVL_USR}/dvlw
-
-    # #   - repo:/r00t/dvlw
-    # #   # - repo:/root/dvlw
-    # #   - repo:/home/r00t/dvlw
+      # - home_agl:/hal
+      # - home_agl:/home/${_AGL}
+      # - home_dvl:/hel
+      # - home_dvl:/home/${_DVL}
+      # - home_r00t:/r00t
+      # - home_r00t:/home/r00t
+      # - repo:/hal/dvlw
+      # - repo:/home/${_AGL:-$_AGL_USR}/dvlw
+      # - repo:/hel/dvlw
+      # - repo:/home/${_DVL:-$_DVL_USR}/dvlw
+      # - repo:/r00t/dvlw
+      # - repo:/home/r00t/dvlw
     labels:
       com.devels-playground.description: "basics + git"
 
@@ -323,7 +324,7 @@ services:
       com.devels-playground.description: "basics + git"
   python-lite:
     extends: git-lite
-    image: kindtek/${HUB_repo:-devels-playground}:ubuntu-py-lite
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-py-lite
     build:
       context: .
       target: dvlp_python-lite
@@ -335,7 +336,7 @@ services:
       com.devels-playground.description: "basics + git"
   python:
     extends: git
-    image: kindtek/${HUB_repo:-devels-playground}:ubuntu-py
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-py
     build:
       context: .
       target: dvlp_python
@@ -347,7 +348,7 @@ services:
       com.devels-playground.description: "basics + git"
   msdot-lite:
     extends: git
-    image: kindtek/${HUB_repo:-devels-playground}:ubuntu-msdot-lite
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-msdot-lite
     build:
       context: .
       target: dvlp_msdot-lite
@@ -355,7 +356,7 @@ services:
       com.devels-playground.description: "basics + git + powerhell"
   msdot:
     extends: git
-    image: kindtek/${HUB_repo:-devels-playground}:ubuntu-msdot
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-msdot
     build:
       context: .
       target: dvlp_msdot
@@ -363,7 +364,7 @@ services:
       com.devels-playground.description: "basics + git + powerhell"
   dind:
     extends: git
-    image: kindtek/${HUB_repo:-devels-playground}:ubuntu-dind
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-dind
     build:
       context: .
       target: dvlp_dind
@@ -371,7 +372,7 @@ services:
       com.devels-playground.description: "basics + git + powerhell + docker"
   dind-lite:
     extends: git
-    image: kindtek/${HUB_repo:-devels-playground}:ubuntu-dind-lite
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-dind-lite
     build:
       context: .
       target: dvlp_dind-lite
@@ -379,7 +380,7 @@ services:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel"
   kernel-builder:
     extends: git
-    image: kindtek/${HUB_repo:-devels-playground}:ubuntu-basic-wsl-kernel-builder
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-basic-wsl-kernel-builder
     build:
       context: .
       target: dvlp_kernel-builder
@@ -389,7 +390,7 @@ services:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel"
   # basic-wsl-zfs-kernel-builder:
   #   extends: bare
-  #   image: kindtek/${HUB_repo:-devels-playground}:basic-wsl-zfs-kernel-builder
+  #   image: kindtek/${HUB_REPO:-devels-playground}:basic-wsl-zfs-kernel-builder
   #   build:
   #     context: .
   #     target: dvlp_basic-wsl-zfs-kernel-builder
@@ -399,7 +400,7 @@ services:
   #     com.devels-playground.description: "basics + git + powerhell + docker + kernel"
   # stable-wsl-zfs-kernel-builder:
   #   extends: bare
-  #   image: kindtek/${HUB_repo:-devels-playground}:stable-wsl-zfs-kernel-builder
+  #   image: kindtek/${HUB_REPO:-devels-playground}:stable-wsl-zfs-kernel-builder
   #   build:
   #     context: .
   #     # target: dvlp_stable-wsl-zfs-kernel-builder
@@ -409,7 +410,7 @@ services:
   #     com.devels-playground.description: "basics + git + powerhell + docker + kernel"
   # latest-rc-wsl-zfs-kernel-builder:
   #   extends: bare
-  #   image: kindtek/${HUB_repo:-devels-playground}:latest-rc-wsl-zfs-kernel-builder
+  #   image: kindtek/${HUB_REPO:-devels-playground}:latest-rc-wsl-zfs-kernel-builder
   #   build:
   #     context: .
   #     target: dvlp_latest-rc-wsl-zfs-kernel-builder
@@ -419,7 +420,7 @@ services:
   #     com.devels-playground.description: "basics + git + powerhell + docker + kernel"
   gui-lite:
     extends: git
-    image: kindtek/${HUB_repo:-devels-playground}:ubuntu-gui
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-gui
     build:
       context: .
       target: dvlp_gui-lite
@@ -427,7 +428,7 @@ services:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   gui:
     extends: git
-    image: kindtek/${HUB_repo:-devels-playground}:ubuntu-gui
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-gui
     user: ${_AGL}
     # entrypoint:
     #   - /bin/bash
@@ -442,7 +443,7 @@ services:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   gui-plus:
     extends: gui
-    image: kindtek/${HUB_repo:-devels-playground}:ubuntu-gui-plus
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-gui-plus
     build:
       context: .
       target: dvlp_gui-plus
@@ -450,7 +451,7 @@ services:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   cuda:
     extends: gui
-    image: kindtek/${HUB_repo:-devels-playground}:ubuntu-cuda
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-cuda
     build:
       context: .
       target: dvlp_cuda
@@ -462,7 +463,7 @@ services:
 
   cuda-plus:
     extends: gui
-    image: kindtek/${HUB_repo:-devels-playground}:ubuntu-cuda-plus
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-cuda-plus
     build:
       context: .
       target: dvlp_cuda-plus
@@ -485,18 +486,24 @@ services:
       - world_agl:/g0d/r00t/halo
       # - world_r00t:/g0d/r00t/halo
       # - world_g0d:/g0d/r00t/halo
-  universe:
-    image: kindtek/${HUB_repo:-devels-playground}:ubuntu-universe
+  world-bare:
+    extends: world
+    build:
+      
+      target: dvlp_world-bare
 
+  worlds:
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-worlds
     entrypoint: /bin/bash -c
     command:
       - sleep infinity
     build:
       context: .
-      target: dvlp_universe
+      target: dvlp_worlds
       args:
         - _AGL=${_AGL_USR:-$_AGL}
         - _DVL=${_DVL_USR:-$_DVL}
+        - WORLDS=gui
       labels:
         com.dvlp_cuda.description: "hello worlds"
     volumes:
@@ -507,11 +514,25 @@ services:
     depends_on:
       world:
         condition: service_completed_successfully
-  universe-bare:
-    extends: universe
-    image: kindtek/${HUB_repo:-devels-playground}:ubuntu-universe-bare
+  worlds-gui-plus:
+    extends: worlds
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-world-gui
     build:
-      target: dvlp_universe-bare
+      target: dvlp_worlds
+      args:
+        - WORLDS=gui-plus
+  worlds-bare:
+    extends: worlds
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-worlds-bare
+    build:
+      args:
+        - WORLDS=bare
+  worlds-gui-lite:
+    extends: worlds
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-worlds-gui-lite
+    build:
+      args:
+        - WORLDS=gui-lite
 volumes:
   root:
   root_dvl:

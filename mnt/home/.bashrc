@@ -131,11 +131,6 @@ alias vi="vi -c 'set verbose showmode'"
 alias goto_hell='chroot --userspec=$_DVL:_DVL /g0d/r00t/hell bash'
 alias goto_halo='chroot --userspec=$_AGL:_AGL /g0d/r00t/hell bash'
 
-alias su_${_AGL_USR:_AGL_USR}='chroot --userspec=$_AGL_USR:_AGL_USR /g0d/r00t bash'
 alias su_r00t='chroot --userspec=r00t:r00t /g0d/r00t bash'
 
 alias su_g0d='chroot --userspec=g0d:g0d /g0d bash'
-alias su_g0d='chroot --userspec=$_AGL_USR:$_AGL_USR /g0d bash'
-
-alias su_G0D='chroot --userspec=$_AGL_USR:$_AGL_USR / bash'
-
