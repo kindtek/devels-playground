@@ -887,10 +887,7 @@ WORKDIR /
 USER root
 COPY --from=dvlp_base-r00t-dirs                     ./admin/    ./g0d/
 COPY --from=dvlp_base-r00t-dirs                     ./admin/    ./r00t/
-RUN chmod -R -x /etc/skel
-RUN echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
-    echo 'tzdata tzdata/Zones/America select Los Angeles' | debconf-set-selections && \
-    groupadd            r00t && \        
+RUN groupadd            r00t && \        
     # && \
     # groupadd: cannot lock /etc/group; try again later.
     # RUN groupadd            r00t   --root /r00t 
@@ -912,7 +909,9 @@ RUN echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
     passwd -l root 
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache & \
+    echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
+    echo 'tzdata tzdata/Zones/America select Los Angeles' | debconf-set-selections
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     # add-apt-repository ppa:apt-fast/stable && \
