@@ -552,7 +552,7 @@ services:
     # user: g0d
     working_dir: /r00t/halo/hal
     extends: worlds
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-world-gui-plus
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-gui-plus
     # command: bash start-kde.sh
     build:
       target: dvlp_gui-plus
