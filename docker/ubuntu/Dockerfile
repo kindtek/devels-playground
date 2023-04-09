@@ -132,8 +132,6 @@ ENV _DVL=$_DVL_USR
 WORKDIR /hel
 RUN mkdir -pv dvlw && \
     mkdir -pv dls && \
-    mkdir -pv ${_MNT}/bak/${_DVL} && \
-    chmod 753 ${_MNT}/bak/${_DVL} && \
     ln -fsv dvlw devels-workshop && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/docker/ubuntu dockeru && \
@@ -141,10 +139,8 @@ RUN mkdir -pv dvlw && \
     mkdir -pv /home/${_DVL} && \
     cp -rv * /home/${_DVL}
 WORKDIR ${_MNT}
-RUN mkdir -pv bak/${_DVL} && \
-    chmod 753 bak/${_DVL} && \
-    ln -fsv bak/${_DVL} /home/${_DVL}/bak && \
-    ln -fsv bak/${_DVL} /hel/bak 
+RUN ln -fsv ${_MNT}/bak/${_DVL} bak
+# ln -fsv ${_MNT}/bak/${_DVL} /home/${_DVL}/bak 
 WORKDIR /
 
 ################################
@@ -875,6 +871,8 @@ RUN groupadd            r00t && \
     passwd -l root 
 COPY --from=dvlp_base-r00t-dirs                     ./admin/    ./g0d/
 COPY --from=dvlp_base-r00t-dirs                     ./admin/    ./r00t/
+COPY --from=dvlp_base-devel-dirs                     ./hel/      ./hel/
+COPY --from=dvlp_base-angel-dirs                     ./hal/      ./hal/
 RUN chroot --userspec=g0d:g0d /halo usermod -aG sudo ${_AGL} 
 WORKDIR /
 
@@ -886,6 +884,10 @@ ARG _AGL
 COPY --from=dvlp_base-skel	            	            ./	        ./
 COPY --from=dvlp_base-skel	            	            ./	        ./halo/
 COPY --from=dvlp_base-skel	            	            ./	        ./hell/
+COPY --from=dvlp_base-devel-kernel-dirs                     ./hel/      ./hel/
+COPY --from=dvlp_base-angel-kernel-dirs                     ./hal/      ./hal/
+COPY --from=dvlp_base-r00t-kernel-dirs                     ./admin/    ./g0d/
+COPY --from=dvlp_base-r00t-kernel-dirs                     ./admin/    ./r00t/
 USER g0d
 WORKDIR /
 
@@ -913,7 +915,7 @@ COPY --from=dvlp_worlds-plus                            ./          ./
 ########################
 # dvlp_gui-plus #
 ########################
-FROM dvlp_worlds-skel AS dvlp_gui-plus
+FROM dvlp_worlds-skel-lite AS dvlp_gui-plus
 COPY --from=dvlp_base-gui-plus                          ./          ./
 COPY --from=dvlp_base-gui-plus	            	        ./	        ./halo/
 COPY --from=dvlp_base-gui-plus	            	        ./	        ./hell/

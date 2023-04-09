@@ -226,7 +226,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git"
   base-python:
-    extends: base-git
+    extends: base-git-lite
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-py
     build:
       context: .
@@ -238,7 +238,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git"
   base-msdot-lite:
-    extends: base-git
+    extends: base-git-lite
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-msdot-lite
     build:
       context: .
@@ -246,7 +246,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git + powerhell"
   base-msdot:
-    extends: base-git
+    extends: base-git-lite
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-msdot
     build:
       context: .
@@ -254,7 +254,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git + powerhell"
   base-dind:
-    extends: base-git
+    extends: base-git-lite
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-dind
     build:
       context: .
@@ -262,7 +262,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker"
   base-dind-lite:
-    extends: base-git
+    extends: base-git-lite
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-dind-lite
     build:
       context: .
@@ -310,7 +310,7 @@ services:
   #   labels:
   #     com.devels-playground.description: "basics + git + powerhell + docker + kernel"
   base-gui-lite:
-    extends: base-git
+    extends: base-git-lite
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-gui
     build:
       context: .
@@ -318,7 +318,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   base-gui:
-    extends: base-git
+    extends: base-git-lite
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-gui
     # user: ${_AGL}
     # entrypoint:
@@ -336,7 +336,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   base-gui-plus:
-    extends: base-gui
+    extends: base-git
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-gui-plus
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
@@ -349,7 +349,7 @@ services:
       labels:
         com.devels-playground.description: "basics + git + powerhell + docker + gui + cuda"
   base-cuda-plus:
-    extends: base-gui
+    extends: base-gui-plus
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-cuda-plus
     build:
       context: .
@@ -359,7 +359,7 @@ services:
   worlds-skel:
     build:
       context: .
-      target: dvlp_worlds-skel
+      target: dvlp_worlds-skel-lite
       args:
         - _AGL=${_AGL_USR:-$_AGL}
         - _DVL=${_DVL_USR:-$_DVL}
@@ -368,16 +368,11 @@ services:
     volumes:
       - world_hell:/hell
       - world_halo:/halo
-      # - world_r00t:/g0d/r00t/halo
-      # - world_g0d:/g0d/r00t/halo
-      # bare:
-      #   extends: world
-      #   build:
 
       #     target: dvlp_worlds-bare
   worlds:
     user: g0d
-    working_dir: /r00t/halo/hal
+    working_dir: /halo/hal
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-${WORLDS:-bare}
     entrypoint: /bin/bash -c
     command:
@@ -404,10 +399,16 @@ services:
       - repo:/g0d/hell/hel/dvlw
       - repo:/g0d/halo/hal/dvlw
       - repo:/r00t/dvlw
+      - repo:/r00t/hell/dvlw
+      - repo:/r00t/hell/hel/dvlw
+      - repo:/r00t/halo/dvlw
+      - repo:/r00t/halo/hal/dvlw
       - repo:/hell/dvlw
       - repo:/halo/dvlw
       - repo:/hell/hel/dvlw
       - repo:/halo/hal/dvlw
+      - repo:/hel/dvlw
+      - repo:/hal/dvlw
       - mnt-data:/mnt/data
       - mnt-data:/hell/mnt/data
       - mnt-data:/halo/mnt/data
@@ -418,6 +419,12 @@ services:
       - world_old_r00t:/g0d/zzz.r00t
       - world_old_hell:/r00t/zzz.hell
       - world_old_halo:/r00t/zzz.halo
+      - home_agl:/halo/hal
+      - home_dvl:/hell/hel
+      - home_agl:/hal
+      - home_agl:/home/${_AGL}
+      - home_dvl:/hel
+      - home_dvl:/home/${_DVL}
     depends_on:
       worlds-skel:
         condition: service_completed_successfully
@@ -456,10 +463,10 @@ services:
     extends: worlds
     entrypoint: /bin/bash -c
     # command: 
-      # - sleep infinity
+    # - sleep infinity
     # command: "if [ -f 'start-kde.sh'' ]; then bash start.sh; fi; && sleep infinity;"
-      # - "if [ -f \"start-kde.sh\" ]; then bash start.sh; mv -vf start-kde.sh start.sh; else bash start.sh; fi; && sleep infinity;"
-      # - ["if [ -f \"start-kde.sh\" ]; then bash start.sh; mv -vf start-kde.sh start.sh; else bash start.sh; fi;", "sleep infinity"]
+    # - "if [ -f \"start-kde.sh\" ]; then bash start.sh; mv -vf start-kde.sh start.sh; else bash start.sh; fi; && sleep infinity;"
+    # - ["if [ -f \"start-kde.sh\" ]; then bash start.sh; mv -vf start-kde.sh start.sh; else bash start.sh; fi;", "sleep infinity"]
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-git
     build:
       target: dvlp_git
@@ -508,7 +515,7 @@ services:
       args:
         - WORLDS=gui
     volumes_from:
-        - worlds-lite
+      - worlds-lite
 
 volumes:
   root:
