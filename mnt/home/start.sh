@@ -1,3 +1,4 @@
+pip install cdir --user
 git_user_email=$GH_REPO_OWNER_EMAIL;
 git_user_name=kindtek@github.com;
 ssh_dir=/home/${1:-dvl}/.ssh;
