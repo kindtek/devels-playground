@@ -518,7 +518,7 @@ services:
     build:
       target: dvlp_git
       args:
-        - WORLDS=gui-git
+        - WORLDS=git
   python-lite:
     extends: worlds-lite
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-python-lite
