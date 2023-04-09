@@ -733,6 +733,7 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    apt-get -y update && apt-get -y upgrade && \
     apt-get -y --no-install-recommends install nvidia-cuda-toolkit
 # apt-get clean all && \
 # apt-get autoremove --purge
