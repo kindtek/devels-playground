@@ -173,9 +173,9 @@ RUN mkdir -pv bak/${_AGL} && \
 WORKDIR /
 
 ################################
-#  dvlp_base-angel-dirs-kernel #
+#  dvlp_base-angel-kernel-dirs #
 ################################
-FROM dvlp_base-angel-dirs AS dvlp_base-angel-dirs-kernel
+FROM dvlp_base-angel-dirs AS dvlp_base-angel-kernel-dirs
 ARG _MNT
 ARG _AGL
 WORKDIR /hal
@@ -221,7 +221,7 @@ WORKDIR /
 ###############################
 #  dvlp_base-r00t-dirs-kernel #
 ###############################
-FROM dvlp_base-r00t-dirs AS dvlp_base-r00t-dirs-kernel
+FROM dvlp_base-r00t-dirs AS dvlp_base-r00t-kernel-dirs
 ARG _MNT
 ARG _ADMIN
 WORKDIR /admin
