@@ -533,6 +533,13 @@ services:
       target: dvlp_dind-lite
       args:
         - WORLDS=dind-lite
+  msdot-lite:
+    extends: worlds-lite
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-msdot-lite
+    build:
+      target: dvlp_msdot-lite
+      args:
+        - WORLDS=msdot-lite
   gui-lite:
     extends: worlds-lite
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-gui-lite
