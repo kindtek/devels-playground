@@ -16,7 +16,7 @@ ARG REFRESH_REPO=${REFRESH_REPO:-no}
 ARG _AGL_USR=${_AGL:-agl}
 ARG _DVL_USR=${_DVL:-dvl}
 ARG _MNT=${_MNT:-/mnt/data}
-ARG WORLDS=gui
+ARG WORLDS=bare
 
 ################################### REPO ####################################
 #############
@@ -38,7 +38,7 @@ RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
-    # --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get -y update && apt-get -y upgrade && apt-get -y install git 
 # add git cache directory
 
@@ -359,6 +359,8 @@ RUN \
     apt-get -y update && apt-get -y upgrade && \
     apt-get -y install apt-transport-https curl gh git gnupg2 libssl-dev nvi wget
 
+FROM dvlp_skel-build-lite AS dvlp_skel-lite
+
 ################################## BARE #########################################
 ############
 # dvlp_bare #
@@ -378,7 +380,7 @@ USER ${_DVL}
 #################
 # dvlp_git_lite #
 #################
-FROM dvlp_skel-build AS dvlp_git-lite
+FROM dvlp_skel-build-lite AS dvlp_git-lite
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -412,7 +414,7 @@ ARG _AGL_USR
 ARG _DVL_USR
 ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
-USER r00t
+USER root
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
@@ -428,37 +430,40 @@ RUN \
 # dvlp_python-build-lite #
 ##########################
 FROM dvlp_skel-build-lite AS dvlp_python-build-lite
-USER r00t
+USER root
+ARG angel_exists=true
+ARG devel_exists=true
+ARG r00t_exists=true
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    angel_exists=true && devel_exists=true && r00t_exists=true
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    apt-get -y update && apt-get -y upgrade && \
     apt-get -y install jq python3-pip python3-venv
-RUN  ( angel_exists && (chown -R ${_AGL}:${_AGL} /hal || chown -R ${_AGL}:${_AGL} /hel/.local )) || angel_exists=false
-USER ${_AGL}
+RUN  ( $angel_exists && (chown -R ${_AGL}:${_AGL} /hal || chown -R ${_AGL}:${_AGL} /hel/.local || angel_exists=false )) 
+# USER ${_AGL}
 RUN \
     --mount=type=cache,target=/var/cache/pip,sharing=private \
-    ( angel_exists && pip3 install pip --upgrade --no-warn-script-location --no-deps && \
-    pip3 install cdir --user ) || no_angel=false
-USER r00t
-RUN \
-    --mount=type=cache,target=/var/cache/pip,sharing=private \
-    ( r00t_exists && pip3 install pip --upgrade --no-warn-script-location --no-deps && \
-    pip3 install cdir --user ) || r00t_exists=false
-RUN ( devel_exists && (chown -R ${_DVL}:${_DVL} /hel || chown -R ${_DVL}:${_DVL} /hel/.local )) || devel_exists=false
+    pip3 install pip --upgrade --no-warn-script-location --no-deps || angel_exists=false
+#     pip3 install cdir --user || angel_exists=false
+# USER r00t
+# RUN \
+#     --mount=type=cache,target=/var/cache/pip,sharing=private \
+#     $r00t_exists && pip3 install pip --upgrade --no-warn-script-location --no-deps && \
+#     pip3 install cdir --user || r00t_exists=false
+RUN ( $devel_exists && (chown -R ${_DVL}:${_DVL} /hel || chown -R ${_DVL}:${_DVL} /hel/.local || devel_exists=false )) 
 USER ${_DVL}
-RUN \
-    --mount=type=cache,target=/var/cache/pip,sharing=private \
-    ( devel_exists && pip3 install pip --upgrade --no-warn-script-location --no-deps && \
-    pip3 install cdir --user _) || devel_exists=false
+# RUN \
+#     --mount=type=cache,target=/var/cache/pip,sharing=private \
+#     $devel_exists && pip3 install pip --upgrade --no-warn-script-location --no-deps && \
+#     pip3 install cdir --user || devel_exists=false
 
 ####################
 # dvlp_python-lite #
 ####################
 FROM dvlp_git-lite AS dvlp_python-lite
-USER r00t
+USER root
 WORKDIR / 
 COPY --from=dvlp_python-build-lite ./ ./
 WORKDIR /hel
@@ -474,7 +479,7 @@ ARG _ADM_USR
 ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
-USER r00t
+USER root
 WORKDIR / 
 COPY --from=dvlp_python-build ./ ./
 COPY --from=dvlp_python-build-lite ./ ./
@@ -486,7 +491,7 @@ USER ${_DVL}
 # dvlp_msdot-build-lite #
 #########################
 FROM dvlp_base-fs AS dvlp_msdot-build-lite
-USER r00t
+USER root
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
 RUN \
@@ -512,7 +517,7 @@ USER ${_DVL}
 # dvlp_msdot-build #
 ####################
 FROM dvlp_msdot-build-lite AS dvlp_msdot-build
-USER r00t
+USER root
 RUN apt-get -y update && \
     apt-get -y install dotnet-sdk-7.0 
 WORKDIR /hel
@@ -528,7 +533,7 @@ ARG _ADM_USR
 ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
-USER r00t
+USER root
 WORKDIR /
 COPY --from=dvlp_python-build-lite ./ ./
 COPY --from=dvlp_msdot-build-lite ./ ./
@@ -545,7 +550,7 @@ ARG _ADM_USR
 ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
-USER r00t
+USER root
 WORKDIR /
 COPY --from=dvlp_python-build ./ ./
 COPY --from=dvlp_msdot-build ./ ./
@@ -557,7 +562,7 @@ USER ${_DVL}
 # dvlp_dind-build #
 ###################
 FROM dvlp_base-fs AS dvlp_dind-build
-USER r00t
+USER root
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
@@ -581,7 +586,7 @@ USER ${_DVL}
 # dvlp_dind-lite #
 ##################
 FROM dvlp_git-lite AS dvlp_dind-lite
-USER r00t
+USER root
 WORKDIR /
 COPY --from=dvlp_python-build-lite ./ ./
 COPY --from=dvlp_msdot-build-lite ./ ./
@@ -599,7 +604,7 @@ ARG _ADM_USR
 ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
-USER r00t
+USER root
 WORKDIR /
 COPY --from=dvlp_python-build ./ ./
 COPY --from=dvlp_msdot-build ./ ./
@@ -612,7 +617,7 @@ USER ${_DVL}
 # dvlp_kernel-build #
 #####################
 FROM dvlp_base-fs AS dvlp_kernel-build
-USER r00t
+USER root
 # RUN echo exit 0 > /usr/sbin/policy-rc.d 
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -633,7 +638,7 @@ USER ${_DVL}
 FROM dvlp_git AS dvlp_kernel-builder
 ARG CONFIG_FILE
 ARG KERNEL_TYPE
-USER r00t
+USER root
 WORKDIR /
 COPY --from=dvlp_python-build-lite ./ ./
 COPY --from=dvlp_msdot-build-lite ./ ./
@@ -649,7 +654,7 @@ USER ${_DVL}
 FROM dvlp_kernel-builder AS dvlp_kernel-make
 ARG CONFIG_FILE
 ARG KERNEL_TYPE
-USER r00t
+USER root
 WORKDIR /
 # COPY --from=dvlp_base-fs ./ ./
 WORKDIR /hel/dvlw/dvlp/kernels/linux
@@ -673,7 +678,7 @@ ARG _ADM_USR
 ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
-USER r00t
+USER root
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NONINTERACTIVE_SEEN=true
 ARG REFRESH_REPO=${REFRESH_REPO:-yes}
@@ -727,7 +732,7 @@ ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
-USER r00t
+USER root
 RUN apt-get -y update && apt-get -y upgrade && \
     apt-get install -y locales && \    
     update-locale LANGUAGE="C" && \
@@ -779,7 +784,7 @@ ARG _ADM_USR
 ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
-USER r00t
+USER root
 COPY --from=dvlp_python-build-lite ./ ./
 COPY --from=dvlp_msdot-build-lite ./ ./
 COPY --from=dvlp_dind-build ./ ./
@@ -806,7 +811,7 @@ ARG _ADM_USR
 ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
-USER r00t
+USER root
 WORKDIR /
 COPY --from=dvlp_python-build ./ ./
 COPY --from=dvlp_msdot-build ./ ./
@@ -835,11 +840,11 @@ ARG CONFIG_FILE
 WORKDIR /
 COPY --from=dvlp_kernel-make ./built-kernel.tar.gz ./built-kernel.tar.gz
 
-
-
-
-
-FROM ubuntu:latest AS dvlp_worlds-skel
+########################### WORLDS ################################
+#########################
+# dvlp_worlds-skel-lite #
+#########################
+FROM ubuntu:latest AS dvlp_worlds-skel-lite
 ARG _MNT
 ARG _AGL_USR
 ARG _DVL_USR
@@ -859,13 +864,14 @@ COPY --from=dvlp_base-r00t-dirs                     ./admin/    ./halo/r00t/
 COPY --from=dvlp_base-angel-dirs                    ./hal/      ./halo/hal/
 COPY --from=dvlp_base-r00t-dirs                     ./mnt/      ./halo/${_MNT}/
 
-COPY --from=dvlp_skel	            	            ./	        ./
-COPY --from=dvlp_skel	            	            ./	        ./halo/
-COPY --from=dvlp_skel	            	            ./	        ./hell/
+COPY --from=dvlp_skel-lite	            	        ./	        ./
+COPY --from=dvlp_skel-lite	            	        ./	        ./halo/
+COPY --from=dvlp_skel-lite	            	        ./	        ./hell/
 
-
-
-FROM dvlp_worlds-skel AS dvlp_worlds
+###############
+# dvlp_worlds #
+###############
+FROM dvlp_worlds-skel-lite AS dvlp_worlds
 ARG _MNT
 ARG WORLDS
 ARG _AGL_USR
@@ -876,77 +882,145 @@ ARG DEBIAN_FRONTEND=noninteractive
 ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
-
 WORKDIR /
 # COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./etc/skel/
-# 
+USER root
 COPY --from=dvlp_base-r00t-dirs                     ./admin/    ./g0d/
 COPY --from=dvlp_base-r00t-dirs                     ./admin/    ./r00t/
-
 RUN chmod -R -x /etc/skel
 RUN echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
-    echo 'tzdata tzdata/Zones/America select Los Angeles' | debconf-set-selections
+    echo 'tzdata tzdata/Zones/America select Los Angeles' | debconf-set-selections && \
+    groupadd            r00t && \        
+    # && \
+    # groupadd: cannot lock /etc/group; try again later.
+    # RUN groupadd            r00t   --root /r00t 
+    # && \
+    groupadd            r00t   --root /halo && \
+    groupadd            r00t   --root /hell && \
+    groupadd            w0rld               && \
+    groupadd            w0rld  --root /hell && \
+    groupadd            w0rld  --root /halo && \
+    groupadd            hell   --root /hell && \
+    groupadd            halo   --root /halo && \
+    groupadd --gid 4325 g0d                 && \
+    useradd -s /bin/bash    -u 0   -o  -g root -G g0d,r00t,w0rld  -d /g0d                          g0d && \
+    useradd -s /bin/bash    -u 0   -o  -g root -G r00t,w0rld      -d /r00t         --root /halo    r00t && \
+    useradd -s /bin/bash    -u 0   -o  -g root -G hell,w0rld      -d /hell/hel     --root /hell    ${_DVL} && \
+    useradd -s /bin/bash               -g halo -G w0rld           -d /halo/hal     --root /halo    ${_AGL} && \
+    passwd -d g0d && \
+    passwd -d root && \
+    passwd -l root 
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
-
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     # add-apt-repository ppa:apt-fast/stable && \
-    apt-get update -y && \
-    apt-get upgrade -y && \
-    apt-get -y install sudo && \
-# adduser --home /home/g0d --ingroup root --shell /bin/bash --uid 4321 --disabled-password --gecos GECOS r00t && \
-    addgroup --gid 4325 g0d && \
-    addgroup r00t && \
-    addgroup w0rld && \
-    useradd -s /bin/bash  -u 0 -o -g root -G g0d,r00t,w0rld -d /g0d g0d && \
-    passwd -d g0d && \
-    passwd -d root && \
-    passwd -l root && \
-    groupadd hell --root /hell && \
-    groupadd halo --root /halo && \
-    groupadd w0rld --root /hell && \
-    groupadd w0rld --root /halo && \
-    seradd -s /bin/bash -u 0 -o -g root -G hell,w0rld -d /hell/hel --root /hell ${_DVL} && \
-    useradd -s /bin/bash -g halo -G w0rld -d /halo/hal --root /halo ${_AGL} && \
-    chroot --userspec=g0d:g0d /halo usermod -aG sudo ${_AGL}
+    apt-get update -y && apt-get upgrade -y && \
+    apt-get -y install sudo
+RUN chroot --userspec=g0d:g0d /halo usermod -aG sudo ${_AGL} 
+WORKDIR /
+
+###############
+# dvlp_worlds #
+###############
+FROM dvlp_worlds AS dvlp_worlds-kernel
+ARG _AGL
+COPY --from=dvlp_skel	            	            ./	        ./
+COPY --from=dvlp_skel	            	            ./	        ./halo/
+COPY --from=dvlp_skel	            	            ./	        ./hell/
+USER g0d
+WORKDIR /
+
+FROM dvlp_worlds AS dvlp_worlds-plus
+# COPY --from=dvlp_python-build-lite                  ./          ./
+# COPY --from=dvlp_python-build-lite                  ./          ./halo/
+# COPY --from=dvlp_python-build-lite                  ./          ./hell/
+# RUN chroot --userspec=${_AGL}:halo  /halo pip install cdir 
+# RUN chroot --userspec=r00t:r00t     /halo pip install cdir
+# RUN chroot --userspec=${_DVL}:hell  /hell pip install cdir
+
+FROM dvlp_worlds-kernel AS dvlp_worlds-kernel-plus
+COPY --from=dvlp_python-build-lite                  ./          ./
+COPY --from=dvlp_python-build-lite                  ./          ./halo/
+COPY --from=dvlp_python-build-lite                  ./          ./hell/
+# COPY --from=dvlp_worlds-plus                        ./          ./
+RUN chroot --userspec=${_AGL}:halo  /halo pip install cdir && \
+    chroot --userspec=r00t:r00t     /halo pip install cdir && \
+    chroot --userspec=${_DVl}:hell  /hell pip install cdir
+
+########################
+# dvlp_worlds-gui-plus #
+########################
+FROM dvlp_worlds-skel AS dvlp_worlds-gui-plus
+COPY --from=dvlp_gui-plus                           ./          ./
+COPY --from=dvlp_gui-plus	            	        ./	        ./halo/
+COPY --from=dvlp_gui-plus	            	        ./	        ./hell/
+COPY --from=dvlp_worlds-kernel-plus                 ./          ./
+USER g0d
 
 WORKDIR /
 
-
-FROM dvlp_worlds-skel AS dvlp-worlds-gui
+###################
+# dvlp_worlds-gui #
+###################
+FROM dvlp_worlds-skel-lite AS dvlp_worlds-gui
 COPY --from=dvlp_gui                                ./          ./
 COPY --from=dvlp_gui	            	            ./	        ./halo/
 COPY --from=dvlp_gui	            	            ./	        ./hell/
-COPY --from=dvlp_worlds                             ./          ./
+COPY --from=dvlp_worlds-plus                        ./          ./
+USER g0d
+WORKDIR /
 
-FROM dvlp_worlds-skel AS dvlp-worlds-dind-lite
+#########################
+# dvlp_worlds-dind-lite #
+#########################
+FROM dvlp_worlds-skel-lite AS dvlp_worlds-dind-lite
 COPY --from=dvlp_dind-lite                          ./          ./
 COPY --from=dvlp_dind-lite	            	        ./	        ./halo/
 COPY --from=dvlp_dind-lite	            	        ./	        ./hell/
-COPY --from=dvlp_worlds                             ./          ./
+COPY --from=dvlp_worlds-plus                        ./          ./
+WORKDIR /
 
-FROM dvlp_worlds-skel AS dvlp-worlds-git
+###################
+# dvlp_worlds-git #
+###################
+FROM dvlp_worlds-skel-lite AS dvlp_worlds-git
 COPY --from=dvlp_git                                ./          ./
 COPY --from=dvlp_git	            	            ./	        ./halo/
 COPY --from=dvlp_git	            	            ./	        ./hell/
-COPY --from=dvlp_worlds                             ./          ./
-
-FROM dvlp_worlds-skel AS dvlp-worlds-git-lite
-COPY --from=dvlp_git-lite                            ./          ./
+COPY --from=dvlp_worlds-plus                        ./          ./
+USER g0d
+WORKDIR /
+########################
+# dvlp_worlds-git-lite #
+########################
+FROM dvlp_worlds-skel-lite AS dvlp_worlds-git-lite
+COPY --from=dvlp_git-lite                           ./          ./
 COPY --from=dvlp_git-lite	            	        ./	        ./halo/
 COPY --from=dvlp_git-lite	            	        ./	        ./hell/
-COPY --from=dvlp_worlds                             ./          ./
+COPY --from=dvlp_worlds-plus                        ./          ./
+USER g0d
+WORKDIR /
 
-FROM dvlp_worlds-skel AS dvlp-worlds-python-lite
+###########################
+# dvlp_worlds-python-lite #
+###########################
+FROM dvlp_worlds-skel-lite AS dvlp_worlds-python-lite
 COPY --from=dvlp_python-lite                        ./          ./
 COPY --from=dvlp_python-lite	            	    ./	        ./halo/
 COPY --from=dvlp_python-lite	            	    ./	        ./hell/
-COPY --from=dvlp_worlds                             ./          ./
+COPY --from=dvlp_worlds-plus                        ./          ./
+USER g0d
+WORKDIR /
 
-FROM dvlp_worlds-skel AS dvlp-worlds-bare
+####################
+# dvlp_worlds-bare #
+####################
+FROM dvlp_worlds-skel-lite AS dvlp_worlds-bare
 COPY --from=dvlp_bare                               ./          ./
 COPY --from=dvlp_bare	            	            ./	        ./halo/
 COPY --from=dvlp_bare	            	            ./	        ./hell/
-COPY --from=dvlp_worlds                             ./          ./
+COPY --from=dvlp_worlds-lite                        ./          ./
+USER g0d
+WORKDIR /
