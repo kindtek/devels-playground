@@ -894,7 +894,7 @@ COPY --from=dvlp_worlds                                 ./          ./
 # RUN chroot --userspec=r00t:r00t     /hell pip install cdir --user
 # RUN chroot --userspec=${_DVL}:hell  /hell pip install cdir --user
 
-FROM dvlp_kernel AS dvlp_kernel-dirs-plus
+FROM dvlp_kernel-dirs AS dvlp_kernel-dirs-plus
 # COPY --from=dvlp_base-python-build-lite                  ./          ./
 # COPY --from=dvlp_base-python-build-lite                  ./          ./halo/
 # COPY --from=dvlp_base-python-build-lite                  ./          ./hell/
