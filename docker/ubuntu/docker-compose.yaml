@@ -579,7 +579,7 @@ services:
     volumes_from:
       - worlds-lite
   cuda-plus:
-    extends: cuda-plus
+    extends: cuda
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-cuda-plus
     # command: bash start-kde.sh
     build:
