@@ -129,7 +129,7 @@ RUN ln -fsv ${_MNT}/bak/${_DVL} bak
 WORKDIR /
 
 ################################
-#  dvlp_base-devel-dirs-kernel #
+#  dvlp_base-devel-kernel-dirs #
 ################################
 FROM dvlp_base-devel-dirs AS dvlp_base-devel-kernel-dirs
 ARG _MNT
@@ -219,7 +219,7 @@ RUN mkdir -pv dls && \
 WORKDIR /
 
 ###############################
-#  dvlp_base-r00t-dirs-kernel #
+#  dvlp_base-r00t-kernel-dirs #
 ###############################
 FROM dvlp_base-r00t-dirs AS dvlp_base-r00t-kernel-dirs
 ARG _MNT
@@ -269,9 +269,9 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /
-COPY --from=dvlp_base-r00t-dirs-kernel  --chown=r00t:r00t           ./admin/                ./r00t/ 
-COPY --from=dvlp_base-r00t-dirs-kernel                              ./admin/                ./home/r00t/
-COPY --from=dvlp_base-r00t-dirs-kernel                              ./mnt/                  ./${_MNT}/
+COPY --from=dvlp_base-r00t-kernel-dirs  --chown=r00t:r00t           ./admin/                ./r00t/ 
+COPY --from=dvlp_base-r00t-kernel-dirs                              ./admin/                ./home/r00t/
+COPY --from=dvlp_base-r00t-kernel-dirs                              ./mnt/                  ./${_MNT}/
 COPY --from=dvlp_repo                   --chown=${_DVL}:${_DVL}     ./dvlw/dvlp/mnt/home/   ./hel/
 COPY --from=dvlp_repo                   --chown=${_AGL}:${_AGL}     ./dvlw/dvlp/mnt/home/   ./hal/
 COPY --from=dvlp_repo                   --chown=r00t:r00t           ./dvlw/dvlp/mnt/home/   ./r00t/
