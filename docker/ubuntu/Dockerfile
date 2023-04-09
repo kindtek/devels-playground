@@ -792,19 +792,20 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 WORKDIR /
 
-COPY --from=dvlp_base-r00t-dirs                     ./admin/    ./hell/g0d/
-COPY --from=dvlp_base-r00t-dirs                     ./admin/    ./hell/r00t/
-COPY --from=dvlp_base-devel-dirs                    ./hel/      ./hell/hel/
-COPY --from=dvlp_base-r00t-dirs                     ./mnt/      ./hell/${_MNT}/
+COPY --from=dvlp_base-r00t-dirs                         ./admin/    ./hell/g0d/
+COPY --from=dvlp_base-r00t-dirs                         ./admin/    ./hell/r00t/
+COPY --from=dvlp_base-devel-dirs                        ./hel/      ./hell/hel/
+COPY --from=dvlp_base-r00t-dirs                         ./mnt/      ./hell/${_MNT}/
 ####
-COPY --from=dvlp_base-r00t-dirs                     ./admin/    ./halo/g0d/
-COPY --from=dvlp_base-r00t-dirs                     ./admin/    ./halo/r00t/
-COPY --from=dvlp_base-angel-dirs                    ./hal/      ./halo/hal/
-COPY --from=dvlp_base-r00t-dirs                     ./mnt/      ./halo/${_MNT}/
+COPY --from=dvlp_base-r00t-dirs                         ./admin/    ./halo/g0d/
+COPY --from=dvlp_base-r00t-dirs                         ./admin/    ./halo/r00t/
+# COPY --from=dvlp_base-angel-dirs --chown=${_AGL}:halo  ./hal/      ./halo/hal/
+COPY --from=dvlp_base-r00t-dirs                         ./mnt/      ./halo/${_MNT}/
 
-COPY --from=dvlp_skel-lite	            	        ./	        ./
-COPY --from=dvlp_skel-lite	            	        ./	        ./halo/
-COPY --from=dvlp_skel-lite	            	        ./	        ./hell/
+COPY --from=dvlp_skel-lite	            	            ./	        ./
+COPY --from=dvlp_skel-lite              	            ./	        ./halo/
+COPY --from=dvlp_base-angel-dirs --chown=${_AGL}:halo   ./hal/      ./halo/hal/
+COPY --from=dvlp_skel-lite	            	            ./	        ./hell/
 
 ###############
 # dvlp_worlds #
@@ -967,6 +968,18 @@ COPY --from=dvlp_base-git-lite	            	        ./	        ./hell/
 COPY --from=dvlp_worlds-plus                            ./          ./
 USER g0d
 WORKDIR /
+
+####################
+# dvlp_ms-dot-lite #
+####################
+FROM dvlp_worlds-skel-lite AS dvlp_msdot-lite
+COPY --from=dvlp_base-msdot-lite                       ./          ./
+COPY --from=dvlp_base-msdot-lite	            	    ./	        ./halo/
+COPY --from=dvlp_base-msdot-lite	            	    ./	        ./hell/
+COPY --from=dvlp_worlds-plus                            ./          ./
+USER g0d
+WORKDIR /
+
 
 ####################
 # dvlp_python-lite #
