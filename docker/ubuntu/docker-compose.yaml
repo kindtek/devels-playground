@@ -37,11 +37,11 @@ services:
   base-angel:
     extends: base
     build:
-      target: dvlp_base-fs_angel
+      target: dvlp_base-angel-dirs
   base-devel:
     extends: base
     build:
-      target: dvlp_base-fs_devel
+      target: dvlp_base-devel-dirs
 
     # alias(es) for agl
     # base-ausr:
@@ -49,7 +49,7 @@ services:
     #   extends: base-angel
     #   build:
     #     context: .
-    #     target: dvlp_base-fs_angel
+    #     target: dvlp_base-angel-dirs
     #     args:
     #       - _AGL=${_AGL_USR:-$_AGL}
     #   volumes:
@@ -61,7 +61,7 @@ services:
     #   extends: init-dvl
     #   build:
     #     context: .
-    #     target: dvlp_base-fs_devel
+    #     target: dvlp_base-devel-dirs
     #     args:
     #       - _DVL_USR=${_DVL-:devel}
     #   volumes:
@@ -466,25 +466,25 @@ services:
       target: dvlp_cuda-plus
       labels:
         com.dvlp_cuda.description: "basics + git + powerhell + docker + gui + cuda"
-  world:
+  worlds-skel:
     build:
       context: .
-      target: dvlp_world
+      target: dvlp_worlds-skel
       args:
         - _AGL=${_AGL_USR:-$_AGL}
         - _DVL=${_DVL_USR:-$_DVL}
       labels:
-        com.dvlp_cuda.description: "hello world"
+        com.dvlp_world.description: "hello world"
     volumes:
-      - world_dvl:/g0d/r00t/hell
-      - world_agl:/g0d/r00t/halo
+      - world_hell:/hell
+      - world_halo:/halo
       # - world_r00t:/g0d/r00t/halo
       # - world_g0d:/g0d/r00t/halo
-  world-bare:
-    extends: world
-    build:
+  # worlds-bare:
+  #   extends: world
+  #   build:
       
-      target: dvlp_world-bare
+  #     target: dvlp_worlds-bare
 
   worlds:
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-worlds
@@ -495,19 +495,25 @@ services:
       context: .
       target: dvlp_worlds
       args:
+        - WORLDS=gui
         - _AGL=${_AGL_USR:-$_AGL}
         - _DVL=${_DVL_USR:-$_DVL}
-        - WORLDS=gui
       labels:
-        com.dvlp_cuda.description: "hello worlds"
+        com.dvlp_worlds.description: "hello worlds"
     volumes:
-      - world_dvl:/g0d/r00t/hell
-      - world_agl:/g0d/r00t/halo
-      - world_agl:/g0d/r00t
-      - world_agl:/g0d
+      - world_hell:/g0d/hell
+      - world_halo:/g0d/halo
+      - world_g0d:/g0d/r00t
+      - world_hell:/r00t/hell
+      - world_halo:/r00t/halo
+      - repo:/dvlw
+      - repo:/g0d/dvlw
+      - repo:/r00t/dvlw
     depends_on:
-      world:
+      worlds-skel:
         condition: service_completed_successfully
+  # worlds:
+  #   extends: worlds-build
   worlds-gui-plus:
     extends: worlds
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-world-gui
@@ -550,8 +556,8 @@ volumes:
   repo_dvl:
   repo_r00t:
 
-  world_dvl:
-  world_agl:
+  world_hell:
+  world_halo:
   world_r00t:
   world_g0d:
 

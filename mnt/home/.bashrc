@@ -128,9 +128,14 @@ alias grep='grep --color=auto'
 alias powershell=pwsh
 alias vi="vi -c 'set verbose showmode'"
 
-alias goto_hell='chroot --userspec=$_DVL:_DVL /g0d/r00t/hell bash'
-alias goto_halo='chroot --userspec=$_AGL:_AGL /g0d/r00t/hell bash'
+alias goto_hell='chroot --userspec=$_DVL:_DVL /hell bash'
+alias dvl_run='chroot --userspec=$_DVL:_DVL /hell'
 
-alias su_r00t='chroot --userspec=r00t:r00t /g0d/r00t bash'
+alias goto_halo='chroot --userspec=$_AGL:_AGL /halo bash'
+alias agl_run='chroot --userspec=$_AGL:_AGL /halo'
+
+alias su_r00t='chroot --userspec=r00t:r00t /r00t bash'
+alias r00t_run='chroot --userspec=r00t:r00t /r00t bash'
 
 alias su_g0d='chroot --userspec=g0d:g0d /g0d bash'
+alias g0d_run='chroot --userspec=g0d:g0d /g0d bash'

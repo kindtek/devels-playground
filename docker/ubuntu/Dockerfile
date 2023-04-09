@@ -60,7 +60,7 @@ RUN \
 
 FROM dvlp_repo-build-prep AS dvlp_repo-build-lite
 WORKDIR /
-# COPY --from=dvlp_base-fs_devel --chown=${_DVL}:${_DVL} ./hell/ ./hell/
+# COPY --from=dvlp_base-devel-dirs --chown=${_DVL}:${_DVL} ./hell/ ./hell/
 
 # clone fresh repos and give ${_DVL} ownership
 # git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress /tmp/git/cache/dvlw  \
@@ -120,27 +120,16 @@ COPY --from=dvlp_repo-build ./dvlw/ ./dvlw/
 
 ################################### BASE ####################################
 #############
-# dvlp_base-fs_devel-lite #
+# dvlp_base-devel-dirs-lite #
 #############
 # ${_DVL} permissions/volume builder
-FROM ubuntu:latest AS dvlp_base-fs_devel-lite
+FROM ubuntu:latest AS dvlp_base-devel-dirs-lite
 ARG _MNT
 ARG _DVL_USR
 ENV _DVL=$_DVL_USR
 WORKDIR /hel
 RUN mkdir -pv dvlw && \
     mkdir -pv dls && \
-    # mkdir -pv /fs && \
-    mkdir -pv /hel && \
-    # mkdir -pv /hell && \
-    # mkdir -pv /hell/hel && \
-    mkdir -pv /hel/dvlw && \
-    # mkdir -pv /hell/dvlw && \
-    mkdir -pv /hel/dls && \
-    # mkdir -pv /hell/dls && \
-    # mkdir -pv /hell/hal && \
-    # mkdir -pv /hell/hel/dls && \
-    # mkdir -pv /hell/hel/dvlw && \
     mkdir -pv ${_MNT}/bak/${_DVL} && \
     chmod 753 ${_MNT}/bak/${_DVL} && \
     ln -fsv dvlw devels-workshop && \
@@ -156,32 +145,11 @@ RUN mkdir -pv bak/${_DVL} && \
     ln -fsv bak/${_DVL} /hel/bak 
 WORKDIR /
 
-# RUN install --verbose -d /home/${_AGL} && \
-#     install --verbose -d /halo  && \
-#     install --verbose -d /halo/hal  && \
-#     install --verbose -m 753 -d ${_MNT}/bak/${_AGL} && \
-#     ln -fsv ${_MNT}/bak/${_AGL} /home/${_AGL}/bak
-
-
-# RUN install --verbose -d /root && \
-#     install --verbose -d /home/r00t && \
-#     install --verbose -d /root && \
-#     install --verbose -d /dls && \
-#     install --verbose -d /fs
-# && \
-# install -o ${_AGL} -g halo -d halo && \
-# install -o ${_DVL} -g hell -d hell 
-# && \
-#     ln -sv /home/r00t/bak /mnt/data/bak 
-
-FROM dvlp_base-fs_devel-lite AS dvlp_base-fs_devel
+FROM dvlp_base-devel-dirs-lite AS dvlp_base-devel-dirs
 ARG _MNT
 ARG _DVL
 WORKDIR /hel
-# RUN install -o ${_DVL} -g hell -d /home/${_DVL} /hel /hell && \
-# ln -fsv /home/${_DVL} /hel && \
-# ln -fsv /home/${_DVL} /hell && \
-# ln -sfv /home/${_DVL} /home/${_DVL} && \
+COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./
 RUN mkdir -pv /hel && \
     mkdir -pv /hel/built-kernels && \
     mkdir -pv /home/${_DVL}}/built-kernels && \
@@ -196,14 +164,8 @@ RUN ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels kernels
 WORKDIR /
 
-# RUN install --verbose  -d /home/${_DVL} && \
-# install --verbose  -d /hel && \
-# install --verbose  -d /hell && \
-# install --verbose  -m 753 -d ${_MNT}/bak/${_DVL} && \
-# ln -fsv ${_MNT}/bak/${_DVL} /home/${_DVL}/bak 
-
 # agl permissions/volume builder
-FROM ubuntu:latest AS dvlp_base-fs_angel-lite
+FROM ubuntu:latest AS dvlp_base-angel-dirs-lite
 ARG _MNT
 ARG _AGL_USR
 ENV _AGL=${_AGL_USR:-agl}
@@ -221,7 +183,7 @@ RUN mkdir -pv bak/${_AGL} && \
     chmod 753 bak/${_AGL}
 WORKDIR /
 
-FROM dvlp_base-fs_angel-lite AS dvlp_base-fs_angel
+FROM dvlp_base-angel-dirs-lite AS dvlp_base-angel-dirs
 ARG _MNT
 ARG _AGL
 WORKDIR /hal
@@ -243,7 +205,7 @@ WORKDIR /
 FROM ubuntu:latest AS dvlp_base-fs_r00t-lite
 ARG _MNT
 WORKDIR /r00t
-COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./
+COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/    ./
 RUN mkdir -pv dvlw && \
     mkdir -pv dls && \
     ln -fsv dvlw devels-workshop && \
@@ -263,7 +225,7 @@ WORKDIR /
 FROM dvlp_base-fs_r00t-lite AS dvlp_base-fs_r00t
 ARG _MNT
 WORKDIR /r00t
-COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./
+COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/    ./
 RUN mkdir -pv built-kernels && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
@@ -274,11 +236,13 @@ RUN mkdir -pv built-kernels && \
 WORKDIR /
 
 # r00t permissions/volume builder
-FROM ubuntu:latest AS dvlp_base-admin-dirs
+FROM ubuntu:latest AS dvlp_base-r00t-dirs
 ARG _MNT
 ARG _ADMIN
 WORKDIR /admin
-COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./
+COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/    ./
+COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/         ./mnt/
+
 RUN mkdir -pv dvlw && \
     mkdir -pv dls && \
     ln -fsv dvlw devels-workshop && \
@@ -293,7 +257,7 @@ RUN mkdir -pv dls && \
     mkdir -pv opt
 WORKDIR /
 
-FROM dvlp_base-admin-dirs AS dvlp_base-admin-dirs-kernel
+FROM dvlp_base-r00t-dirs AS dvlp_base-r00t-dirs-kernel
 ARG _MNT
 ARG _ADMIN
 WORKDIR /admin
@@ -307,15 +271,15 @@ WORKDIR /
 
 
 # FROM scratch AS dvlp_base-fs_permissions
-# #COPY --from=dvlp_base-fs_devel --chown=${_DVL}:${_DVL} ./hel ./hel
-# COPY --from=dvlp_base-fs_devel --chown=${_DVL}:${_DVL} ./hell ./hell
-# COPY --from=dvlp_base-fs_devel --chown=${_DVL}:${_DVL} ./home ./home
-# COPY --from=dvlp_base-fs_devel --chown=${_AGL}:${_DVL} ./mnt ./mnt
+# #COPY --from=dvlp_base-devel-dirs --chown=${_DVL}:${_DVL} ./hel ./hel
+# COPY --from=dvlp_base-devel-dirs --chown=${_DVL}:${_DVL} ./hell ./hell
+# COPY --from=dvlp_base-devel-dirs --chown=${_DVL}:${_DVL} ./home ./home
+# COPY --from=dvlp_base-devel-dirs --chown=${_AGL}:${_DVL} ./mnt ./mnt
 
-# COPY --from=dvlp_base-fs_angel --chown=${_AGL}:${_AGL} ./hal ./hal
-# COPY --from=dvlp_base-fs_angel --chown=${_AGL}:${_AGL} ./halo ./halo
-# COPY --from=dvlp_base-fs_angel --chown=${_AGL}:${_AGL} ./home ./home
-# COPY --from=dvlp_base-fs_angel --chown=${_AGL}:${_AGL} ./mnt ./mnt
+# COPY --from=dvlp_base-angel-dirs --chown=${_AGL}:${_AGL} ./hal ./hal
+# COPY --from=dvlp_base-angel-dirs --chown=${_AGL}:${_AGL} ./halo ./halo
+# COPY --from=dvlp_base-angel-dirs --chown=${_AGL}:${_AGL} ./home ./home
+# COPY --from=dvlp_base-angel-dirs --chown=${_AGL}:${_AGL} ./mnt ./mnt
 
 # COPY --from=dvlp_base-fs_r00t --chown=r00t:r00t ./home ./home
 # # COPY --from=dvlp_base-fs_r00t --chown=r00t:r00t ./r00t ./r00t
@@ -323,15 +287,15 @@ WORKDIR /
 # COPY --from=dvlp_base-fs_r00t --chown=r00t:r00t ./fs ./fs
 
 # FROM scratch AS dvlp_base-fs_permissions-lite
-# COPY --from=dvlp_base-fs_devel-lite --chown=${_DVL}:${_DVL} ./hel ./hel
-# # COPY --from=dvlp_base-fs_devel-lite --chown=${_DVL}:${_DVL} ./hell ./hell
-# COPY --from=dvlp_base-fs_devel-lite --chown=${_DVL}:${_DVL} ./home ./home
-# COPY --from=dvlp_base-fs_devel-lite --chown=${_AGL}:${_DVL} ./mnt ./mnt
+# COPY --from=dvlp_base-devel-dirs-lite --chown=${_DVL}:${_DVL} ./hel ./hel
+# # COPY --from=dvlp_base-devel-dirs-lite --chown=${_DVL}:${_DVL} ./hell ./hell
+# COPY --from=dvlp_base-devel-dirs-lite --chown=${_DVL}:${_DVL} ./home ./home
+# COPY --from=dvlp_base-devel-dirs-lite --chown=${_AGL}:${_DVL} ./mnt ./mnt
 
-# COPY --from=dvlp_base-fs_angel-lite --chown=${_AGL}:${_AGL} ./hal ./hal
-# # COPY --from=dvlp_base-fs_angel-lite --chown=${_AGL}:${_AGL} ./halo ./halo
-# COPY --from=dvlp_base-fs_angel-lite --chown=${_AGL}:${_AGL} ./home ./home
-# COPY --from=dvlp_base-fs_angel-lite --chown=${_AGL}:${_AGL} ./mnt ./mnt
+# COPY --from=dvlp_base-angel-dirs-lite --chown=${_AGL}:${_AGL} ./hal ./hal
+# # COPY --from=dvlp_base-angel-dirs-lite --chown=${_AGL}:${_AGL} ./halo ./halo
+# COPY --from=dvlp_base-angel-dirs-lite --chown=${_AGL}:${_AGL} ./home ./home
+# COPY --from=dvlp_base-angel-dirs-lite --chown=${_AGL}:${_AGL} ./mnt ./mnt
 
 # COPY --from=dvlp_base-fs_r00t-lite --chown=r00t:r00t ./home ./home
 # # COPY --from=dvlp_base-fs_r00t-lite --chown=r00t:r00t ./r00t ./r00t
@@ -391,72 +355,58 @@ RUN chown -R r00t:r00t /root && \
     rm -rf /hal/* && \
     rm -rf /home/dvl/* && \
     rm -rf /hel/* 
-COPY --from=dvlp_base-admin-dirs-kernel ./admin/ ./r00t/ 
-COPY --from=dvlp_base-admin-dirs-kernel ./admin/ ./home/r00t/
-COPY --from=dvlp_base-admin-dirs-kernel ./mnt/ ./${_MNT}/
-# COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./home/r00t/
-COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./hal/
-COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./home/${_AGL}/
-COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./hel/
-COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./home/${_DVL}/
 USER r00t
+# COPY --from=dvlp_base-devel-dirs-lite --chown=${_DVL}:${_DVL}     ./hel/                  ./hel/
+# COPY --from=dvlp_base-devel-dirs-lite --chown=${_DVL}:${_DVL}     ./home/${_DVL}/         ./home/${_DVL}/
+# ##############################################################
+# COPY --from=dvlp_base-angel-dirs-lite --chown=${_AGL}:${_AGL}     ./hal/                  ./hal/
+# COPY --from=dvlp_base-angel-dirs-lite --chown=${_AGL}:${_AGL}     ./home/${_AGL}/         ./home/${_AGL}/
+# COPY --from=dvlp_base-angel-dirs-lite --chown=${_AGL}:${_AGL}     .${_MNT}/bak/           .${_MNT}/bak/
+# ##############################################################
+# COPY --from=dvlp_base-fs_r00t-lite  --chown=r00t:r00t           ./root/                 ./root/
+# COPY --from=dvlp_base-fs_r00t-lite  --chown=r00t:r00t           ./home/r00t/            ./home/r00t/
+# COPY --from=dvlp_base-fs_r00t-lite  --chown=r00t:r00t           ./mnt/                  ./mnt/
+# COPY --from=dvlp_base-fs_r00t-lite  --chown=r00t:r00t           .${_MNT}/etc/           .${_MNT}/etc/
+# COPY --from=dvlp_base-fs_r00t-lite  --chown=r00t:r00t           .${_MNT}/home/          .${_MNT}/home/
+# COPY --from=dvlp_base-fs_r00t-lite  --chown=r00t:r00t           .${_MNT}/opt/           .${_MNT}/opt/
+##############################################################
+#############
 WORKDIR /
-COPY --from=dvlp_base-fs_devel-lite --chown=${_DVL}:${_DVL} ./hel/      ./hel/
-# COPY --from=dvlp_base-fs_devel-lite --chown=${_DVL}:${_DVL} ./hell/     ./hell/
-COPY --from=dvlp_base-fs_devel-lite --chown=${_DVL}:${_DVL} ./home/${_DVL}/ ./home/${_DVL}/
+# COPY --from=dvlp_base-fs_r00t-lite      --chown=r00t:r00t           ./root/                 ./root/
+# COPY --from=dvlp_base-fs_r00t-lite      --chown=r00t:r00t           ./home/r00t/            ./home/r00t/
+COPY --from=dvlp_base-devel-dirs-lite     --chown=${_DVL}:${_DVL}     ./hel/                  ./hel/
+COPY --from=dvlp_base-devel-dirs-lite     --chown=${_DVL}:${_DVL}     ./home/${_DVL}/         ./home/${_DVL}/
+COPY --from=dvlp_base-devel-dirs-lite     --chown=${_DVL}:${_DVL}     ./mnt/                  ./mnt/
+COPY --from=dvlp_base-angel-dirs-lite     --chown=${_AGL}:${_AGL}     ./hal/                  ./hal/
+COPY --from=dvlp_base-angel-dirs-lite     --chown=${_AGL}:${_AGL}     ./home/${_AGL}/         ./home/${_AGL}/ 
+COPY --from=dvlp_base-angel-dirs-lite     --chown=${_AGL}:${_AGL}     ./mnt/                  ./mnt/
+COPY --from=dvlp_base-fs_r00t-lite      --chown=r00t:r00t           ./r00t/                 ./r00t/
+COPY --from=dvlp_base-fs_r00t-lite      --chown=r00t:r00t           ./home/r00t/            ./home/r00t/
+COPY --from=dvlp_base-fs_r00t-lite      --chown=r00t:r00t           ./mnt/                  ./mnt/
+# COPY --from=dvlp_base-fs_r00t-lite      --chown=r00t:r00t           ./mnt/dls/              ./mnt/dls/
+# COPY --from=dvlp_base-fs_r00t-lite      --chown=r00t:r00t           .${_MNT}/etc/           .${_MNT}/etc/
+# COPY --from=dvlp_base-fs_r00t-lite      --chown=r00t:r00t           .${_MNT}/home/          .${_MNT}/home/
+# COPY --from=dvlp_base-fs_r00t-lite      --chown=r00t:r00t           .${_MNT}/opt/           .${_MNT}/opt/
 ##############################################################
-COPY --from=dvlp_base-fs_angel-lite --chown=${_AGL}:${_AGL} ./hal/      ./hal/
-# COPY --from=dvlp_base-fs_angel-lite --chown=${_AGL}:${_AGL} ./halo/     ./halo/
-COPY --from=dvlp_base-fs_angel-lite --chown=${_AGL}:${_AGL} ./home/${_AGL}/ ./home/${_AGL}/
-COPY --from=dvlp_base-fs_angel-lite --chown=${_AGL}:${_AGL} .${_MNT}/bak/   .${_MNT}/bak/
-##############################################################
-COPY --from=dvlp_base-fs_r00t-lite --chown=r00t:r00t        ./root/     ./root/
-COPY --from=dvlp_base-fs_r00t-lite --chown=r00t:r00t        ./home/r00t/     ./home/r00t/
-COPY --from=dvlp_base-fs_r00t-lite --chown=r00t:r00t        ./mnt/      ./mnt/
-# COPY --from=dvlp_base-fs_r00t-lite --chown=r00t:r00t ./ ./
-# COPY --from=dvlp_base-fs_r00t-lite --chown=r00t:r00t        ./mnt/dls/   ./mnt/dls/
-COPY --from=dvlp_base-fs_r00t-lite --chown=r00t:r00t        .${_MNT}/etc/   .${_MNT}/etc/
-COPY --from=dvlp_base-fs_r00t-lite --chown=r00t:r00t        .${_MNT}/home/  .${_MNT}/home/
-COPY --from=dvlp_base-fs_r00t-lite --chown=r00t:r00t        .${_MNT}/opt/   .${_MNT}/opt/
-##############################################################
-
+# COPY --from=dvlp_base-r00t-dirs-kernel  --chown=r00t:r00t           ./admin/                ./r00t/ 
+# COPY --from=dvlp_base-r00t-dirs-kernel                              ./admin/                ./home/r00t/
+# COPY --from=dvlp_base-r00t-dirs-kernel                              ./mnt/                  ./${_MNT}/
+# COPY --from=dvlp_repo-lite                                       ./dvlw/dvlp/mnt/home/    ./home/r00t/
+# COPY --from=dvlp_repo-lite                                          ./dvlw/dvlp/mnt/home/   ./hal/
+# COPY --from=dvlp_repo-lite                                          ./dvlw/dvlp/mnt/home/   ./home/${_AGL}/
+# COPY --from=dvlp_repo-lite                                          ./dvlw/dvlp/mnt/home/   ./hel/
+# COPY --from=dvlp_repo-lite                                          ./dvlw/dvlp/mnt/home/   ./home/${_DVL}/
 RUN passwd -d ${_AGL}  && \
     passwd -d ${_DVL} 
 RUN apt-get -y install sudo && \
-    usermod -aG sudo ${_AGL}  
-
-#############
-
-WORKDIR /
-# COPY --from=dvlp_base-fs_devel-lite --chown=${_DVL}:${_DVL} ./hel/      ./hel/
-# # COPY --from=dvlp_base-fs_devel-lite --chown=${_DVL}:${_DVL} ./hell/     ./hell/
-# COPY --from=dvlp_base-fs_devel-lite --chown=${_DVL}:${_DVL} ./home/${_DVL}/ ./home/${_DVL}/
-# ##############################################################
-# COPY --from=dvlp_base-fs_angel-lite --chown=${_AGL}:${_AGL} ./hal/      ./hal/
-# # COPY --from=dvlp_base-fs_angel-lite --chown=${_AGL}:${_AGL} ./halo/     ./halo/
-# COPY --from=dvlp_base-fs_angel-lite --chown=${_AGL}:${_AGL} ./home/${_AGL}/ ./home/${_AGL}/
-# COPY --from=dvlp_base-fs_angel-lite --chown=${_AGL}:${_AGL} .${_MNT}/bak/   .${_MNT}/bak/
-##############################################################
-COPY --from=dvlp_base-fs_r00t-lite --chown=r00t:r00t        ./root/     ./root/
-COPY --from=dvlp_base-fs_r00t-lite --chown=r00t:r00t        ./home/r00t/ ./home/r00t/
-COPY --from=dvlp_base-fs_r00t-lite --chown=r00t:r00t        ./mnt/      ./mnt/
-# COPY --from=dvlp_base-fs_r00t-lite --chown=r00t:r00t ./ ./
-# COPY --from=dvlp_base-fs_r00t-lite --chown=r00t:r00t        ./mnt/dls/   ./mnt/dls/
-COPY --from=dvlp_base-fs_r00t-lite --chown=r00t:r00t        .${_MNT}/etc/   .${_MNT}/etc/
-COPY --from=dvlp_base-fs_r00t-lite --chown=r00t:r00t        .${_MNT}/home/  .${_MNT}/home/
-COPY --from=dvlp_base-fs_r00t-lite --chown=r00t:r00t        .${_MNT}/opt/   .${_MNT}/opt/
-##############################################################
-
-# RUN passwd -d ${_AGL}  && \
-#     passwd -d ${_DVL} 
-# RUN apt-get -y install sudo && \
-#     usermod -aG sudo ${_AGL}  
+    usermod -aG sudo ${_AGL} 
+    # cp /hal/.sudo_as_admin_successful /home/hal/.sudo_as_admin_successful 
 
 ############################## SKELETON ###################################
 ########################
 # dvlp_skel-build-lite #
 ########################
-FROM dvlp_base-fs AS dvlp_skel-build-lite
+FROM ubuntu:latest AS dvlp_skel-build-lite
 ARG REFRESH_REPO
 ARG _MNT
 ARG _AGL_USR
@@ -467,23 +417,23 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /
-COPY --from=dvlp_repo-lite               --chown=${_DVL}:${_DVL}    ./dvlw/dvlp/mnt/home/  ./hel/
-COPY --from=dvlp_repo-lite               --chown=${_AGL}:${_AGL}    ./dvlw/dvlp/mnt/home/  ./hal/
-COPY --from=dvlp_repo-lite               --chown=r00t:r00t          ./dvlw/dvlp/mnt/home/  ./r00t/
-COPY --from=dvlp_repo-lite               --chown=r00t:${_AGL}       ./dvlw/dvlp/mnt/       .${_MNT}/
-COPY --from=dvlp_repo-lite                                          ./dvlw/                 ./dvlw/
-COPY --from=dvlp_repo-lite                                          ./dvlw/                 ./home/r00t/dvlw/
-COPY --from=dvlp_repo-lite                                          ./dvlw/                 ./r00t/dvlw/
-COPY --from=dvlp_repo-lite                                          ./dvlw/                 ./home/agl/dvlw/
-COPY --from=dvlp_repo-lite                                          ./dvlw/                 ./hal/dvlw/
-COPY --from=dvlp_repo-lite                                          ./dvlw/                 ./home/dvl/dvlw/
-COPY --from=dvlp_repo-lite                                          ./dvlw/                 ./hel/dvlw/
+COPY --from=dvlp_repo-lite          --chown=${_DVL}:${_DVL}     ./dvlw/dvlp/mnt/home/    ./hel/
+COPY --from=dvlp_repo-lite          --chown=${_AGL}:${_AGL}     ./dvlw/dvlp/mnt/home/    ./hal/
+COPY --from=dvlp_repo-lite          --chown=r00t:r00t           ./dvlw/dvlp/mnt/home/    ./r00t/
+COPY --from=dvlp_repo-lite          --chown=r00t:${_AGL}        ./dvlw/dvlp/mnt/         .${_MNT}/
+COPY --from=dvlp_repo-lite                                      ./dvlw/                  ./dvlw/
+# COPY --from=dvlp_repo-lite                                      ./dvlw/                  ./home/r00t/dvlw/
+# COPY --from=dvlp_repo-lite                                      ./dvlw/                  ./r00t/dvlw/
+# COPY --from=dvlp_repo-lite                                      ./dvlw/                  ./home/agl/dvlw/
+# COPY --from=dvlp_repo-lite                                      ./dvlw/                  ./hal/dvlw/
+# COPY --from=dvlp_repo-lite                                      ./dvlw/                  ./home/dvl/dvlw/
+# COPY --from=dvlp_repo-lite                                      ./dvlw/                  ./hel/dvlw/
 
 ## WORKDIR /hell
 ###################
 # dvlp_skel-build #
 ###################
-FROM dvlp_base-fs AS dvlp_skel-build
+FROM ubuntu:latest AS dvlp_skel-build
 ARG REFRESH_REPO
 ARG _MNT
 ARG _AGL_USR
@@ -494,64 +444,24 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /
-COPY --from=dvlp_repo               --chown=${_DVL}:${_DVL}     ./dvlw/dvlp/mnt/home/  ./hel/
-COPY --from=dvlp_repo               --chown=${_AGL}:${_AGL}     ./dvlw/dvlp/mnt/home/  ./hal/
-COPY --from=dvlp_repo               --chown=r00t:r00t           ./dvlw/dvlp/mnt/home/  ./r00t/
-COPY --from=dvlp_repo               --chown=r00t:${_AGL}        ./dvlw/dvlp/mnt/       .${_MNT}/
-COPY --from=dvlp_base-fs_devel      --chown=${_DVL}:${_DVL}     ./hel/ ./hel/
-# COPY --from=dvlp_base-fs_devel --chown=${_DVL}:${_DVL} ./hell/ ./hell/
-# COPY --from=dvlp_base-fs_devel --chown=${_DVL}:${_DVL} ./home/${_DVL}/ ./home/${_DVL}/
-# COPY --from=dvlp_base-fs_devel --chown=${_DVL}:${_DVL} ./mnt/bak/dvl/ ./mnt/bak/dvl/
-COPY --from=dvlp_base-fs_angel --chown=${_AGL}:${_AGL} ./hal/ ./hal/
-# COPY --from=dvlp_base-fs_angel --chown=${_AGL}:${_AGL} ./halo/ ./halo/
-# COPY --from=dvlp_base-fs_angel --chown=${_AGL}:${_AGL} ./home/${_AGL}/ ./home/${_AGL}/
-# COPY --from=dvlp_base-fs_angel --chown=${_AGL}:${_AGL} .${_MNT}/bak/   .${_MNT}/bak/
-COPY --from=dvlp_base-fs_r00t --chown=r00t:r00t        ./root/          ./root/
-# COPY --from=dvlp_base-fs_r00t --chown=r00t:r00t        ./home/r00t/     ./home/r00t/
-# COPY --from=dvlp_base-fs_r00t --chown=r00t:r00t ./ ./
-# COPY --from=dvlp_base-fs_r00t --chown=r00t:r00t        .${_MNT}/dls/   .${_MNT}/dls/
-# COPY --from=dvlp_base-fs_r00t --chown=r00t:r00t        .${_MNT}/etc/   .${_MNT}/etc/
-# COPY --from=dvlp_base-fs_r00t --chown=r00t:r00t        .${_MNT}/home/  .${_MNT}/home/
-# COPY --from=dvlp_base-fs_r00t --chown=r00t:r00t        .${_MNT}/opt/   .${_MNT}/opt/
-# COPY --from=dvlp_skel-build-lite --chown=r00t:${_AGL}      .${_MNT}/   .${_MNT}/
-# COPY --from=dvlp_skel-build-lite --chown=${_AGL}:${_AGL}      .${_MNT}/bak .${_MNT}/bak
-# COPY --from=dvlp_skel-build-lite --chown=${_DVL}:${_DVL}       ./hel/          ./hel/
-# COPY --from=dvlp_skel-build-lite --chown=${_AGL}:${_AGL}       ./hal/          ./hal/
-# COPY --from=dvlp_skel-build-lite --chown=r00t:r00t     ./r00t/    ./r00t/
-COPY --from=dvlp_repo                                          ./dvlw/                 ./dvlw/
-COPY --from=dvlp_repo                                          ./dvlw/                 ./home/r00t/dvlw/
-COPY --from=dvlp_repo                                          ./dvlw/                 ./r00t/dvlw/
-COPY --from=dvlp_repo                                          ./dvlw/                 ./home/agl/dvlw/
-COPY --from=dvlp_repo                                          ./dvlw/                 ./hal/dvlw/
-COPY --from=dvlp_repo                                          ./dvlw/                 ./home/dvl/dvlw/
-COPY --from=dvlp_repo                                          ./dvlw/                 ./hel/dvlw/
-# COPY --from=dvlp_base-fs ./etc/passwd ./etc/passwd
-# COPY --from=dvlp_base-fs ./etc/group ./etc/group
-# # COPY --from=dvlp_base-fs ./lib/x86_64-linux-gnu ./lib/x86_64-linux-gnu
-# # COPY --from=dvlp_base-fs_devel  --chown=${_DVL}:${_DVL}    ./home/${_DVL}/     ./home/${_DVL}/
-# # COPY --from=dvlp_base-fs_angel  --chown=${_AGL}:${_AGL}    ./home/${_AGL}/     ./home/${_AGL}/
-# # COPY --from=dvlp_base-fs_r00t   --chown=r00t:r00t  ./home/r00t/    ./home/r00t/
-# # # COPY --from=dvlp_base-fs_devel --chown=${_DVL}:${_DVL}   .${_MNT}    .${_MNT}
-# # # COPY --from=dvlp_base-fs_angel --chown=${_AGL}:${_AGL}   .${_MNT}    .${_MNT}
-# COPY --from=dvlp_repo           --chown=${_DVL}:${_DVL}    ./home/${_DVL}/dvlw/dvlp/mnt/home/  ./home/${_DVL}/
-# COPY --from=dvlp_repo           --chown=${_AGL}:${_AGL}    ./home/${_DVL}/dvlw/dvlp/mnt/home/  ./home/${_AGL}/
-# COPY --from=dvlp_repo           --chown=r00t:r00t  ./home/${_DVL}/dvlw/dvlp/mnt/home/  ./home/r00t/
-# # COPY --from=dvlp_base-fs_devel  --chown=${_AGL}:${_AGL}    .${_MNT}/                   .${_MNT}/
-# # COPY --from=dvlp_base-fs_angel  --chown=${_AGL}:${_AGL}    .${_MNT}/                   .${_MNT}/
-# COPY --from=dvlp_repo           --chown=r00t:${_AGL}   ./home/${_DVL}/dvlw/dvlp/mnt/       .${_MNT}/
-# # COPY --from=dvlp_repo           --chown=${_AGL}:${_AGL}    .${_MNT}                    .${_MNT}
-# COPY --from=dvlp_base-fs_devel  --chown=${_DVL}:${_DVL}    ./home/${_DVL}/                     ./home/${_DVL}/
-# COPY --from=dvlp_base-fs_angel  --chown=${_AGL}:${_AGL}    ./home/${_AGL}/                     ./home/${_AGL}/
-# COPY --from=dvlp_base-fs_r00t   --chown=r00t:r00t  ./home/r00t/                    ./home/r00t/
-# COPY --from=dvlp_base-fs_devel --chown=r00t:r00t ./home/${_DVL}/                     ./home/r00t/
-# COPY --from=dvlp_base-fs_devel --chown=${_AGL}:${_AGL}   ./home/${_DVL}/                     ./home/${_AGL}/
-# USER r00t
-# WORKDIR /hell
-# # SHELL ["/bin/bash", "-c"]
-# USER ${_DVL}
-# WORKDIR /hell
-# # # FROM dvlp_base-fs AS dvlp_base-fs2
-# # # COPY --from=dvlp_skel-build --chown=r00t:r00t   ./ ./
+COPY --from=dvlp_base-r00t-dirs-kernel  --chown=r00t:r00t           ./admin/                ./r00t/ 
+COPY --from=dvlp_base-r00t-dirs-kernel                              ./admin/                ./home/r00t/
+COPY --from=dvlp_base-r00t-dirs-kernel                              ./mnt/                  ./${_MNT}/
+COPY --from=dvlp_repo                   --chown=${_DVL}:${_DVL}     ./dvlw/dvlp/mnt/home/   ./hel/
+COPY --from=dvlp_repo                   --chown=${_AGL}:${_AGL}     ./dvlw/dvlp/mnt/home/   ./hal/
+COPY --from=dvlp_repo                   --chown=r00t:r00t           ./dvlw/dvlp/mnt/home/   ./r00t/
+COPY --from=dvlp_repo                   --chown=r00t:${_AGL}        ./dvlw/dvlp/mnt/        .${_MNT}/
+# COPY --from=dvlp_base-devel-dirs      --chown=${_DVL}:${_DVL}     ./hel/                  ./hel/
+# COPY --from=dvlp_base-angel-dirs      --chown=${_AGL}:${_AGL}     ./hal/                  ./hal/
+# COPY --from=dvlp_base-fs_r00t       --chown=r00t:r00t           ./root/                 ./root/
+COPY --from=dvlp_repo                                               ./dvlw/                 ./dvlw/
+# COPY --from=dvlp_repo                                           ./dvlw/                 ./home/r00t/dvlw/
+# COPY --from=dvlp_repo                                           ./dvlw/                 ./r00t/dvlw/
+# COPY --from=dvlp_repo                                           ./dvlw/                 ./home/agl/dvlw/
+# COPY --from=dvlp_repo                                           ./dvlw/                 ./hal/dvlw/
+# COPY --from=dvlp_repo                                           ./dvlw/                 ./home/dvl/dvlw/
+# COPY --from=dvlp_repo                                           ./dvlw/                 ./hel/dvlw/
+
 #############
 # dvlp_skel #
 #############
@@ -566,76 +476,6 @@ RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get -y update && apt-get -y upgrade && \
     apt-get -y install apt-transport-https curl gh git gnupg2 libssl-dev nvi wget
-
-# FROM dvlp_skel-prep AS dvlp_skel2
-# # # RUN  cp -r /lib /usr /mnt /bin /opt /lib64 /tmp /home /sbin /media /etc /root /boot /var /fs
-# COPY --from=dvlp_skel-build --chown=r00t:r00t ./lib/ ./lib/
-# COPY --from=dvlp_skel-build --chown=r00t:r00t ./usr/ ./usr/
-# COPY --from=dvlp_skel-build --chown=r00t:r00t ./mnt/ ./mnt/
-# COPY --from=dvlp_skel-build --chown=r00t:r00t ./bin/ ./bin/
-# COPY --from=dvlp_skel-build --chown=r00t:r00t ./opt/ ./opt/
-# COPY --from=dvlp_skel-build --chown=r00t:r00t ./lib64/ ./tmp/
-# COPY --from=dvlp_skel-build --chown=r00t:r00t ./home/ ./home/
-# COPY --from=dvlp_skel-build --chown=r00t:r00t ./sbin/ ./sbin/
-# COPY --from=dvlp_skel-build --chown=r00t:r00t ./media/ ./media/
-# COPY --from=dvlp_skel-build --chown=r00t:r00t ./etc/ ./etc/
-# COPY --from=dvlp_skel-build --chown=r00t:r00t ./root/ ./root/
-# COPY --from=dvlp_skel-build --chown=r00t:r00t ./boot/ ./boot/
-# COPY --from=dvlp_skel-build --chown=r00t:r00t ./var/ ./var/
-
-# RUN \
-#     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-#     apt-get -y update && \
-# add-apt-repository ppa:saiarcot895/myppa && \
-# apt-get -y install apt-fast aria2 
-
-# FROM dvlp_skel-build-lite AS dvlp_skel-lite
-# ARG REFRESH_REPO=${REFRESH_REPO:-no}
-# WORKDIR /
-# # COPY --from=dvlp_base-fs ./etc/passwd ./etc/passwd
-# # COPY --from=dvlp_base-fs ./etc/group ./etc/group
-# # COPY --from=dvlp_base-fs ./etc/ ./etc/
-# # COPY --from=dvlp_base-fs ./lib/ ./lib/
-# # COPY --from=dvlp_base-fs ./lib64/ ./lib64/
-# # COPY --from=dvlp_base-fs ./lib/x86_64-linux-gnu ./lib/x86_64-linux-gnu
-# # COPY --from=dvlp_base-fs ./bin/ ./bin/
-# # COPY --from=dvlp_base-fs ./sbin/ ./sbin/
-# # COPY --from=dvlp_base-fs ./usr/ ./usr/
-# # COPY --from=dvlp_base-fs ./var/lib/ ./var/lib/
-# # COPY --from=dvlp_base-fs ./lib/x86_64-linux-gnu ./lib/x86_64-linux-gnu
-# # COPY --from=dvlp_base-fs ./ ./
-# # COPY --from=dvlp_skel-build-lite  ./ ./
-# # COPY --from=dvlp_skel-build-lite --chown=r00t:r00t ./ ./
-# # USER r00t
-# # WORKDIR /halo
-# # RUN chown r00t:r00t /halo 
-# # WORKDIR /hal
-# # RUN usermod -d /hal ${_AGL} && chown -R ${_AGL}:${_AGL} /hal 
-# # WORKDIR /hell
-# # RUN usermod -d /hel ${_DVL} && chown -R ${_DVL}:${_DVL} /hell
-# # WORKDIR /r00t
-# # RUN usermod -d /r00t r00t && chown -R r00t:r00t /r00t
-
-# # lock down volumes, permissions
-# FROM dvlp_skel-install AS dvlp_skel
-# ARG REFRESH_REPO=${REFRESH_REPO:-no}
-# WORKDIR /
-# # COPY --from=dvlp_skel-build                       ./            ./
-# COPY --from=dvlp_skel-install                     ./            ./
-# # COPY --from=dvlp_skel-build    --chown=r00t:r00t ./            ./
-# COPY --from=dvlp_skel-install  --chown=r00t:r00t ./            ./
-# # COPY --from=dvlp_base-fs_devel --chown=${_DVL}:${_DVL}   ./home/${_DVL}/   ./home/${_DVL}/
-# # COPY --from=dvlp_base-fs_angel --chown=${_AGL}:${_AGL}   ./home/${_AGL}/   ./home/${_AGL}/
-# # COPY --from=dvlp_base-fs_r00t  --chown=r00t:r00t ./home/r00t/  ./home/r00t/
-# # USER r00t
-# # WORKDIR /halo
-# # RUN chown r00t:r00t /halo 
-# # WORKDIR /hal
-# # RUN usermod -d /hal ${_AGL} && chown -R ${_AGL}:${_AGL} /hal 
-# # WORKDIR /hell
-# # RUN usermod -d /hel ${_DVL} && chown -R ${_DVL}:${_DVL} /hell && chown -R ${_DVL}:${_DVL} /hell 
-# # WORKDIR /r00t
-# # RUN usermod -d /r00t r00t && chown -R r00t:r00t /r00t
 
 ################################## BARE #########################################
 ############
@@ -1172,28 +1012,28 @@ COPY --from=dvlp_kernel-make ./built-kernel.tar.gz ./built-kernel.tar.gz
 #     useradd -s /bin/bash -u 0 -o -g root -G g0d,r00t,w0rld -d /g0d g0d
 # # USER g0d
 # COPY --from=dvlp_bare --chown=g0d:g0d               ./	        ./g0d/
-# COPY --from=dvlp_base-admin-dirs-kernel             ./admin/    ./g0d/g0d/
-# COPY --from=dvlp_base-admin-dirs-kernel             ./admin/    ./g0d/r00t/
-# COPY --from=dvlp_base-admin-dirs-kernel             ./admin/    ./g0d/hel/
-# COPY --from=dvlp_base-admin-dirs-kernel             ./admin/    ./g0d/hal/
+# COPY --from=dvlp_base-r00t-dirs-kernel             ./admin/    ./g0d/g0d/
+# COPY --from=dvlp_base-r00t-dirs-kernel             ./admin/    ./g0d/r00t/
+# COPY --from=dvlp_base-r00t-dirs-kernel             ./admin/    ./g0d/hel/
+# COPY --from=dvlp_base-r00t-dirs-kernel             ./admin/    ./g0d/hal/
 
 # COPY --from=dvlp_bare --chown=r00t:r00t             ./	        ./r00t/
-# COPY --from=dvlp_base-admin-dirs-kernel             ./admin/    ./r00t/g0d/
-# COPY --from=dvlp_base-admin-dirs-kernel             ./admin/    ./r00t/r00t/
-# COPY --from=dvlp_base-admin-dirs-kernel             ./admin/    ./r00t/hel/
-# COPY --from=dvlp_base-admin-dirs-kernel             ./admin/    ./r00t/hal/
+# COPY --from=dvlp_base-r00t-dirs-kernel             ./admin/    ./r00t/g0d/
+# COPY --from=dvlp_base-r00t-dirs-kernel             ./admin/    ./r00t/r00t/
+# COPY --from=dvlp_base-r00t-dirs-kernel             ./admin/    ./r00t/hel/
+# COPY --from=dvlp_base-r00t-dirs-kernel             ./admin/    ./r00t/hal/
 # ####
 # COPY --from=dvlp_bare --chown=${_DVL}:${_DVL}	    ./	        ./${_DVL}/
-# COPY --from=dvlp_base-admin-dirs-kernel             ./admin/    ./${_DVL}/g0d/
-# COPY --from=dvlp_base-admin-dirs-kernel             ./admin/    ./${_DVL}/r00t/
-# COPY --from=dvlp_base-admin-dirs-kernel             ./admin/    ./${_DVL}/hel/
-# COPY --from=dvlp_base-admin-dirs-kernel             ./admin/    ./${_DVL}/hal/
+# COPY --from=dvlp_base-r00t-dirs-kernel             ./admin/    ./${_DVL}/g0d/
+# COPY --from=dvlp_base-r00t-dirs-kernel             ./admin/    ./${_DVL}/r00t/
+# COPY --from=dvlp_base-r00t-dirs-kernel             ./admin/    ./${_DVL}/hel/
+# COPY --from=dvlp_base-r00t-dirs-kernel             ./admin/    ./${_DVL}/hal/
 # ####
 # COPY --from=dvlp_bare	--chown=${_AGL}:${_AGL}	    ./	        ./${_AGL}/
-# COPY --from=dvlp_base-admin-dirs-kernel             ./admin/    ./${_AGL}/g0d/
-# COPY --from=dvlp_base-admin-dirs-kernel             ./admin/    ./${_AGL}/r00t/
-# COPY --from=dvlp_base-admin-dirs-kernel             ./admin/    ./${_AGL}/hel/
-# COPY --from=dvlp_base-admin-dirs-kernel             ./admin/    ./${_AGL}/hal/
+# COPY --from=dvlp_base-r00t-dirs-kernel             ./admin/    ./${_AGL}/g0d/
+# COPY --from=dvlp_base-r00t-dirs-kernel             ./admin/    ./${_AGL}/r00t/
+# COPY --from=dvlp_base-r00t-dirs-kernel             ./admin/    ./${_AGL}/hel/
+# COPY --from=dvlp_base-r00t-dirs-kernel             ./admin/    ./${_AGL}/hal/
 # # RUN mkdir -p /g0d/r00t/hell && \
 # #     mkdir -p /g0d/r00t/halo && \
 # #     mkdir -p /g0d/g0d/r00t/hell && \
@@ -1275,89 +1115,64 @@ COPY --from=dvlp_kernel-make ./built-kernel.tar.gz ./built-kernel.tar.gz
 # # RUN chown g0d:g0d /g0d && \
 # #     chown g0d:g0d /g0d *
 
-FROM ubuntu:latest AS dvlp_world-bare
+FROM ubuntu:latest AS dvlp_worlds-skel
+ARG _MNT
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
 ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
-# COPY from=dvlp_bare	--chown=r00t:r00t       ./	./g0d/r00t/halo/
-# RUN \
-    # super super root user
-    # addgroup --gid 4323 --force-badname g0d && \
-    # usermod -l g0d root && \
-    # useradd -s /bin/bash -u 0 -o -g root -G g0d,r00t,w0rld -d / g0d && \
-    # useradd -s /bin/bash -u 0 -o -g root -G g0d,g0d,r00t,w0rld -d /g0d g0d && \
-    # useradd -s /bin/bash -u 0 -o -g root -G g0d,r00t,w0rld -d /g0d g0d
-# USER g0d
-COPY --from=dvlp_bare --chown=g0d:g0d               ./	        ./g0d/
-COPY --from=dvlp_base-admin-dirs             ./admin/    ./g0d/g0d/
-COPY --from=dvlp_base-admin-dirs             ./admin/    ./g0d/r00t/
-COPY --from=dvlp_base-admin-dirs             ./admin/    ./g0d/hel/
-COPY --from=dvlp_base-admin-dirs             ./admin/    ./g0d/hal/
+WORKDIR /
+# COPY --from=dvlp_bare --chown=g0d:g0d               ./	        ./g0d/
+# COPY --from=dvlp_base-r00t-dirs             ./admin/    ./g0d/g0d/
+# COPY --from=dvlp_base-r00t-dirs             ./admin/    ./g0d/r00t/
+# COPY --from=dvlp_base-r00t-dirs             ./admin/    ./g0d/hel/
+# COPY --from=dvlp_base-r00t-dirs             ./admin/    ./g0d/hal/
 
-COPY --from=dvlp_bare --chown=r00t:r00t             ./	        ./r00t/
-COPY --from=dvlp_base-admin-dirs             ./admin/    ./r00t/g0d/
-COPY --from=dvlp_base-admin-dirs             ./admin/    ./r00t/r00t/
-COPY --from=dvlp_base-admin-dirs             ./admin/    ./r00t/hel/
-COPY --from=dvlp_base-admin-dirs             ./admin/    ./r00t/hal/
+# COPY --from=dvlp_bare --chown=r00t:r00t             ./	        ./r00t/
+# COPY --from=dvlp_base-r00t-dirs             ./admin/    ./r00t/g0d/
+# COPY --from=dvlp_base-r00t-dirs             ./admin/    ./r00t/r00t/
+# COPY --from=dvlp_base-r00t-dirs             ./admin/    ./r00t/hel/
+# COPY --from=dvlp_base-r00t-dirs             ./admin/    ./r00t/hal/
 ####
-COPY --from=dvlp_bare --chown=${_DVL}:${_DVL}	    ./	        ./${_DVL}/
-COPY --from=dvlp_base-admin-dirs             ./admin/    ./${_DVL}/g0d/
-COPY --from=dvlp_base-admin-dirs             ./admin/    ./${_DVL}/r00t/
-COPY --from=dvlp_base-admin-dirs             ./admin/    ./${_DVL}/hel/
-COPY --from=dvlp_base-admin-dirs             ./admin/    ./${_DVL}/hal/
+COPY --from=dvlp_base-r00t-dirs                     ./admin/    ./hell/g0d/
+COPY --from=dvlp_base-r00t-dirs                     ./admin/    ./hell/r00t/
+COPY --from=dvlp_base-devel-dirs                    ./hel/      ./hell/hel/
+COPY --from=dvlp_base-r00t-dirs                     ./mnt/      ./hell/${_MNT}/
 ####
-COPY --from=dvlp_bare	--chown=${_AGL}:${_AGL}	    ./	        ./${_AGL}/
-COPY --from=dvlp_base-admin-dirs             ./admin/    ./${_AGL}/g0d/
-COPY --from=dvlp_base-admin-dirs             ./admin/    ./${_AGL}/r00t/
-COPY --from=dvlp_base-admin-dirs             ./admin/    ./${_AGL}/hel/
-COPY --from=dvlp_base-admin-dirs             ./admin/    ./${_AGL}/hal/
-# RUN mkdir -p /g0d/r00t/hell && \
-#     mkdir -p /g0d/r00t/halo && \
-#     mkdir -p /g0d/g0d/r00t/hell && \
-#     mkdir -p /g0d/g0d/r00t/halo && \
-#     mkdir -p /g0d/r00t/g0d/r00t/hell && \
-#     mkdir -p /g0d/r00t/g0d/r00t/halo && \
-#     mkdir -p /g0d/r00t/halo/g0d/r00t/hell && \
-#     mkdir -p /g0d/r00t/halo/g0d/r00t/halo && \
-#     mkdir -p /g0d/g0d/r00t/hell/g0d/r00t/hell && \
-#     mkdir -p /g0d/g0d/r00t/hell/g0d/r00t/halo && \
-# RUN chown g0d:g0d /g0d && \
-#     chown r00t:r00t /r00t && \
-# RUN   chown ${_DVL}:${_DVL} /${_DVL}
-# chown ${_AGL}:${_AGL} /g0d/r00t/halo
-# RUN \
-#     # super root user
-#     # useradd -s /bin/bash -u 0 -o -g root -G g0d,r00t,w0rld -d --root /g0d g0d && \
-#     # useradd -s /bin/bash -G root,r00t -d -U --root /g0d r00t
-# usermod -l g0d r00t && \
-# usermod -aG r00t,w0rld r00t
+COPY --from=dvlp_base-r00t-dirs                     ./admin/    ./halo/g0d/
+COPY --from=dvlp_base-r00t-dirs                     ./admin/    ./halo/r00t/
+COPY --from=dvlp_base-angel-dirs                    ./hal/      ./halo/hal/
+COPY --from=dvlp_base-r00t-dirs                     ./mnt/      ./halo/${_MNT}/
 
-FROM ubuntu:latest AS dvlp_worlds
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
-ENV _AGL=$_AGL_USR
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
+FROM dvlp_worlds-skel AS dvlp_worlds
 ARG _MNT
 ARG WORLDS
-# ARG _AGL_USR
-# ARG _DVL_USR
-# ARG _ADM_USR
-# ENV _AGL=$_AGL_USR
-# ENV _DVL=$_DVL_USR
-# ENV _ADM=$_ADM_USR
+ARG _AGL_USR
+ARG _DVL_USR
+ARG _ADM_USR
 ARG CONFIG_FILE
 ARG DEBIAN_FRONTEND=noninteractive
+ENV _AGL=$_AGL_USR
+ENV _DVL=$_DVL_USR
+ENV _ADM=$_ADM_USR
+# copy over features
+COPY --from=dvlp_bare	            	            ./	        ./halo/
+COPY --from=dvlp_bare	            	            ./	        ./hell/
+# COPY --from=dvlp_worlds-skel 	    ./	        ./hell/
+# COPY --from=dvlp_worlds-skel 	    ./	        ./halo/\
+# RUN passwd -l g0d root
+# USER g0d
 WORKDIR /
 COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./etc/skel/
-COPY --from=dvlp_base-admin-dirs-kernel ./admin/ ./g0d/ 
-COPY --from=dvlp_base-admin-dirs-kernel ./admin/ ./home/g0d/
-COPY --from=dvlp_base-admin-dirs-kernel ./mnt/ ./${_MNT}/
+# COPY --from=dvlp_base-r00t-dirs ./admin/ ./g0d/ 
+# COPY --from=dvlp_base-r00t-dirs ./admin/ ./home/g0d/
+# COPY --from=dvlp_base-r00t-dirs ./mnt/ ./${_MNT}/
 # 
+COPY --from=dvlp_base-r00t-dirs                     ./admin/    ./g0d/
+COPY --from=dvlp_base-r00t-dirs                     ./admin/    ./r00t/
+
 RUN chmod -R -x /etc/skel
 RUN echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
     echo 'tzdata tzdata/Zones/America select Los Angeles' | debconf-set-selections
@@ -1368,60 +1183,62 @@ RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     # add-apt-repository ppa:apt-fast/stable && \
     apt-get update -y && \
-    apt-get upgrade -y 
-#   apt-get -y install apt-fast
+    apt-get upgrade -y && \
+    apt-get -y install sudo
 # adduser --home /home/g0d --ingroup root --shell /bin/bash --uid 4321 --disabled-password --gecos GECOS r00t && \
-RUN addgroup --gid 4325 g0d
-RUN useradd -s /bin/bash  -u 0 -o -g root -G g0d -d /g0d g0d
+RUN addgroup --gid 4325 g0d && \
+    addgroup r00t && \
+    addgroup w0rld
+RUN useradd -s /bin/bash  -u 0 -o -g root -G g0d,r00t,w0rld -d /g0d g0d && \
+# RUN useradd -s /bin/bash  -g r00t -G w0rld -d /r00t r00t && \
+#     usermod -aG sudo r00t && \
 # RUN useradd -s /bin/bash  -u 666 -g ${_DVL} -d /hel ${_DVL} 
 # RUN useradd -s /bin/bash  -u 777 -g ${_AGL} -d /hal ${_AGL}  
-RUN chown -R g0d:g0d /root && \
+# RUN chown -R g0d:g0d /root && \
     # usermod -g 0 -u 0 -o r00t  && \
     # usermod -d /r00t r00t && \
     passwd -d g0d && \
     passwd -d root && \
     passwd -l root && \
-    addgroup --gid 4322 --force-badname r00t && \
-    addgroup --gid 4320 --force-badname w0rld && \
-    usermod -aG r00t,w0rld g0d
+    groupadd devel --root /hell && \
+    groupadd angel --root /halo && \
+    groupadd w0rld --root /hell && \
+    groupadd w0rld --root /halo
+
+
 # # passwd -d ${_AGL} && \
 # # passwd -d ${_DVL} && \
 # echo "[user] \
 # default=${_DVL}" >> /etc/wsl.conf 
 # USER g0d
+# add devel w/ root permissions in hell and angel w/ sudo
+# RUN userdel --root /hell ${_DVL}
+RUN useradd -s /bin/bash -u 0 -o -g root -G devel,w0rld -d /hell/hel --root /hell ${_DVL}
+# RUN userdel --root /halo ${_AGL}
+RUN useradd -s /bin/bash -g angel -G w0rld -d /halo/hal --root /halo ${_AGL} && \
+    chroot --userspec=g0d:g0d /halo usermod -aG sudo ${_AGL}
+
+
 # RUN useradd -s /bin/bash -G g0d,r00t,w0rld -d /g0d g0d
-# RUN useradd -s /bin/bash -G g0d,r00t,w0rld -d /g0d g0d
-COPY --from=dvlp_world-bare --chown=g0d:g0d	                ./r00t/	            ./
-COPY --from=dvlp_world-bare	--chown=${_AGL}:${_AGL}	        ./${_AGL}/	        ./g0d/r00t/halo/
-COPY --from=dvlp_world-bare	--chown=${_DVL}:${_DVL}	        ./${_DVL}/	        ./g0d/r00t/hell/
-COPY --from=dvlp_world-bare	--chown=r00t:r00t	            ./r00t/     	    ./g0d/r00t/
-COPY --from=dvlp_world-bare	--chown=g0d:g0d 	            ./r00t/	            ./g0d/
+# # # COPY --from=dvlp_world-bare --chown=g0d:g0d	                ./r00t/	            ./
+# COPY --from=dvlp_world-bare                                 ./halo/	        ./g0d/r00t/halo/
+# # COPY --from=dvlp_world-bare	--chown=${_AGL}:${_AGL}	        ./${_AGL}/	        ./g0d/r00t/halo/
+# COPY --from=dvlp_world-bare	--chown=${_DVL}:${_DVL}	        ./hell/	        ./g0d/r00t/hell/
+# # # COPY --from=dvlp_world-bare	--chown=r00t:r00t	            ./r00t/     	    ./g0d/r00t/
+# # # COPY --from=dvlp_world-bare	--chown=g0d:g0d 	            ./r00t/	            ./g0d/
 #temp
 
-# RUN chown -R r00t:r00t /g0d/r00t
-
-# RUN passwd -l g0d root
-RUN \
-    chroot --userspec=root:root /g0d addgroup --gid 4323 --force-badname g0d 
 # RUN \
-#     chroot --userspec=root:root /g0d addgroup --gid 4322 --force-badname r00t 
-RUN \
-    chroot --userspec=root:root /g0d addgroup --gid 4320 --force-badname w0rld
+#     chroot --userspec=g0d:g0d /g0d addgroup --gid 4320 --force-badname w0rld
 
-RUN \
-    chroot --userspec=root:root /g0d/r00t addgroup --gid 4323 --force-badname g0d && \
-    # chroot --userspec=root:root /g0d/r00t addgroup --gid 4322 --force-badname r00t && \
-    chroot --userspec=root:root /g0d/r00t addgroup --gid 4320 --force-badname w0rld && \
-    # useradd -s /bin/bash -u 0 -o -g r00t -G w0rld -d /g0d/r00t --root /g0d/r00t r00t && \
-    # useradd -s /bin/bash -G r00t,w0rld -m --root /g0d/r00t --root /g0d/r00t r00T && \
-    chroot --userspec=root:root /g0d/r00t usermod -aG sudo ${_AGL}
+# RUN \
+#     chroot --userspec=g0d:g0d /g0d/r00t addgroup --gid 4323 --force-badname g0d && \
+#     # chroot --userspec=g0d:g0d /g0d/r00t addgroup --gid 4322 --force-badname r00t && \
+#     chroot --userspec=g0d:g0d /g0d/r00t addgroup --gid 4320 --force-badname w0rld && \
+#     # useradd -s /bin/bash -u 0 -o -g r00t -G w0rld -d /g0d/r00t --root /g0d/r00t r00t && \
+#     # useradd -s /bin/bash -G r00t,w0rld -m --root /g0d/r00t --root /g0d/r00t r00T && \
+#     chroot --userspec=g0d:g0d /g0d/r00t usermod -aG sudo ${_AGL}
 
-# usermod -aG r00t,w0rld r00t
-RUN chroot --userspec=root:root /g0d/r00t/hell addgroup --gid 4320 --force-badname w0rld && \
-    # useradd -s /bin/bash -G w0rld -d /g0d/r00t/hell/hel --root /g0d/r00t/hell ${_DVL} && \
-    chroot --userspec=root:root /g0d/r00t/hell usermod -aG sudo ${_AGL_USR:-agl} && \
-    chroot --userspec=root:root /g0d/r00t/halo addgroup --gid 4323 --force-badname g0d && \
-    chroot --userspec=root:root /g0d/r00t/halo addgroup --gid 4320 --force-badname w0rld && \
-    # useradd -s /bin/bash -G w0rld -d /g0d/r00t/halo/hal --root /g0d/r00t/halo ${_AGL} && \
-    chroot --userspec=root:root /g0d/r00t/halo usermod -aG sudo ${_AGL_USR:-agl}  
-WORKDIR /g0d/r00t/hell
+# RUN ln -s /r00t/hell /g0d/r00t/hell && \
+#     ln -s /r00t/halo /g0d/r00t/halo
+WORKDIR /
