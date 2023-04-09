@@ -863,9 +863,9 @@ COPY --from=dvlp_base-angel-dirs                     ./hal/      ./hal/
 RUN chroot --userspec=g0d:g0d /halo usermod -aG sudo ${_AGL} 
 WORKDIR /
 
-###############
-# dvlp_worlds #
-###############
+####################
+# dvlp_kernel-dirs #
+####################
 FROM dvlp_worlds AS dvlp_kernel-dirs
 ARG _AGL
 COPY --from=dvlp_skel-build	            	            ./	        ./
@@ -886,16 +886,15 @@ FROM ubuntu:latest AS dvlp_worlds-plus
 # COPY --from=dvlp_base-python-build-lite                 ./          ./
 # COPY --from=dvlp_base-python-build-lite                 ./          ./halo/
 # COPY --from=dvlp_base-python-build-lite                 ./          ./hell/
-
-###############
-# dvlp_worlds #
-###############
 COPY --from=dvlp_worlds                                 ./          ./
 # RUN chroot --userspec=${_AGL}:halo  /halo pip install cdir --user
 # RUN chroot --userspec=r00t:r00t     /halo pip install cdir --user
 # RUN chroot --userspec=r00t:r00t     /hell pip install cdir --user
 # RUN chroot --userspec=${_DVL}:hell  /hell pip install cdir --user
 
+#########################
+# dvlp_kernel-dirs-plus #
+#########################
 FROM dvlp_kernel-dirs AS dvlp_kernel-dirs-plus
 # COPY --from=dvlp_base-python-build-lite                  ./          ./
 # COPY --from=dvlp_base-python-build-lite                  ./          ./halo/
@@ -1002,5 +1001,27 @@ COPY --from=dvlp_base-bare                              ./          ./
 COPY --from=dvlp_base-bare	            	            ./	        ./halo/
 COPY --from=dvlp_base-bare	            	            ./	        ./hell/
 COPY --from=dvlp_worlds                                 ./          ./
+USER g0d
+WORKDIR /
+
+#############
+# dvlp_cuda #
+#############
+FROM dvlp_worlds-skel-lite AS dvlp_cuda
+COPY --from=dvlp_base-cuda                          ./          ./
+COPY --from=dvlp_base-cuda	            	        ./	        ./halo/
+COPY --from=dvlp_base-cuda	            	        ./	        ./hell/
+COPY --from=dvlp_worlds-plus                             ./          ./
+USER g0d
+WORKDIR /
+
+##################
+# dvlp_cuda-plus #
+##################
+FROM dvlp_worlds-skel-lite AS dvlp_cuda-plus
+COPY --from=dvlp_base-cuda-plus                          ./          ./
+COPY --from=dvlp_base-cuda-plus	            	        ./	        ./halo/
+COPY --from=dvlp_base-cuda-plus	            	        ./	        ./hell/
+COPY --from=dvlp_worlds-plus                             ./          ./
 USER g0d
 WORKDIR /
