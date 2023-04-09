@@ -1200,8 +1200,8 @@ RUN useradd -s /bin/bash  -u 0 -o -g root -G g0d,r00t,w0rld -d /g0d g0d && \
     passwd -d g0d && \
     passwd -d root && \
     passwd -l root && \
-    groupadd devel --root /hell && \
-    groupadd angel --root /halo && \
+    groupadd hell --root /hell && \
+    groupadd halo --root /halo && \
     groupadd w0rld --root /hell && \
     groupadd w0rld --root /halo
 
@@ -1213,9 +1213,9 @@ RUN useradd -s /bin/bash  -u 0 -o -g root -G g0d,r00t,w0rld -d /g0d g0d && \
 # USER g0d
 # add devel w/ root permissions in hell and angel w/ sudo
 # RUN userdel --root /hell ${_DVL}
-RUN useradd -s /bin/bash -u 0 -o -g root -G devel,w0rld -d /hell/hel --root /hell ${_DVL}
+RUN useradd -s /bin/bash -u 0 -o -g root -G hell,w0rld -d /hell/hel --root /hell ${_DVL}
 # RUN userdel --root /halo ${_AGL}
-RUN useradd -s /bin/bash -g angel -G w0rld -d /halo/hal --root /halo ${_AGL} && \
+RUN useradd -s /bin/bash -g halo -G w0rld -d /halo/hal --root /halo ${_AGL} && \
     chroot --userspec=g0d:g0d /halo usermod -aG sudo ${_AGL}
 
 
