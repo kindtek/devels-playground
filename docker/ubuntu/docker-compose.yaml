@@ -495,7 +495,7 @@ services:
   gui-lite:
     extends: worlds-lite
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-gui-lite
-    command: ${_AGL}/cdir.sh
+    # command: bash start.sh && mv -fv start-kde.sh || export FIRST_LOGIN=false
     build:
       target: dvlp_gui-lite
       args:
@@ -506,7 +506,7 @@ services:
     extends: worlds
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-world-gui-plus
     entrypoint: /bin/bash -c
-    command: bash ${_AGL}/start-kde.sh
+    command: bash start-kde.sh
     build:
       target: dvlp_gui-plus
       args:
@@ -515,7 +515,7 @@ services:
     extends: gui-plus
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-gui
     entrypoint: /bin/bash -c
-    command: bash /home/${_AGL}/start-kde.sh
+    command: bash start-kde.sh
     build:
       target: dvlp_gui
       args:
