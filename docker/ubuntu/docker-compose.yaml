@@ -71,6 +71,18 @@ services:
     tty: false
     build:
       target: dvlp_skel-build-lite
+      args:
+       - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
+       - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
+       - win_bind_tgt_user_dir_r00t=${USERNAME:+/r00t/host_win}
+       - win_bind_tgt_user_dir_g0d=${USERNAME:+/g0d/host_win}
+       - win_bind_tgt_user_dir_agl=${USERNAME:+/halo/host_win}
+       - win_bind_tgt_user_dir_dvl=${USERNAME:+/hell/host_win}:ro
+       - nix_bind_tgt_user_dir_r00t=${LOGNAME:+/r00t/host_nix}
+       - nix_bind_tgt_user_dir_g0d=${LOGNAME:+/g0d/host_nix}
+       - nix_bind_tgt_user_dir_agl=${LOGNAME:+/halo/host_nix}
+       - nix_bind_tgt_user_dir_dvl=${LOGNAME:+/hell/host_nix}:ro 
+      #  - bind_src_dir=${bind_win_src_user_dir:-/dev/null}
     volumes:
       - repo-lite:/dvlw
       - repo-lite:/r00t/dvlw
@@ -86,6 +98,15 @@ services:
       - home_dvl:/home/${_DVL}
       - home_r00t:/r00t
       - home_r00t:/home/r00t
+      - ${nix_bind_win_src_user_dir:-/dev/foo1/null}:${win_bind_tgt_user_dir_r00t:-/dev/bar1/null}
+      - ${nix_bind_win_src_user_dir:-/dev/foo2/null}:${win_bind_tgt_user_dir_g0d:-/dev/bar2/null}
+      - ${nix_bind_win_src_user_dir:-/dev/foo3/null}:${win_bind_tgt_user_dir_agl:-/dev/bar3/null}
+      - ${nix_bind_win_src_user_dir:-/dev/foo4/null}:${win_bind_tgt_user_dir_dvl:-/dev/bar4/null}
+      - ${nix_bind_nix_src_user_dir:-/dev/foo5/null}:${nix_bind_tgt_user_dir_r00t:-/dev/bar5/null}
+      - ${nix_bind_nix_src_user_dir:-/dev/foo6/null}:${nix_bind_tgt_user_dir_g0d:-/dev/bar6/null}
+      - ${nix_bind_nix_src_user_dir:-/dev/foo7/null}:${nix_bind_tgt_user_dir_agl:-/dev/bar7/null}
+      - ${nix_bind_nix_src_user_dir:-/dev/foo8/null}:${nix_bind_tgt_user_dir_dvl:-/dev/bar8/null}
+
     depends_on:
       base:
         # Wait for the ownership to change
@@ -98,6 +119,19 @@ services:
     tty: false
     build:
       target: dvlp_skel-build
+      args:
+       - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
+       - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
+       - win_bind_tgt_user_dir_r00t=${USERNAME:+/r00t/host_win}
+       - win_bind_tgt_user_dir_g0d=${USERNAME:+/g0d/host_win}
+       - win_bind_tgt_user_dir_agl=${USERNAME:+/halo/host_win}
+       - win_bind_tgt_user_dir_dvl=${USERNAME:+/hell/host_win}:ro
+       - nix_bind_tgt_user_dir_r00t=${LOGNAME:+/r00t/host_nix}
+       - nix_bind_tgt_user_dir_g0d=${LOGNAME:+/g0d/host_nix}
+       - nix_bind_tgt_user_dir_agl=${LOGNAME:+/halo/host_nix}
+       - nix_bind_tgt_user_dir_dvl=${LOGNAME:+/hell/host_nix}:ro 
+      #  - bind_src_dir=${bind_win_src_user_dir:-/dev/null}
+      
     volumes:
       - repo:/dvlw
       - repo:/r00t/dvlw
@@ -113,7 +147,14 @@ services:
       - home_dvl:/home/${_DVL}
       - home_r00t:/r00t
       - home_r00t:/home/r00t
-      
+      - ${nix_bind_win_src_user_dir:-/dev/foo1/null}:${win_bind_tgt_user_dir_r00t:-/dev/bar1/null}
+      - ${nix_bind_win_src_user_dir:-/dev/foo2/null}:${win_bind_tgt_user_dir_g0d:-/dev/bar2/null}
+      - ${nix_bind_win_src_user_dir:-/dev/foo3/null}:${win_bind_tgt_user_dir_agl:-/dev/bar3/null}
+      - ${nix_bind_win_src_user_dir:-/dev/foo4/null}:${win_bind_tgt_user_dir_dvl:-/dev/bar4/null}
+      - ${nix_bind_nix_src_user_dir:-/dev/foo5/null}:${nix_bind_tgt_user_dir_r00t:-/dev/bar5/null}
+      - ${nix_bind_nix_src_user_dir:-/dev/foo6/null}:${nix_bind_tgt_user_dir_g0d:-/dev/bar6/null}
+      - ${nix_bind_nix_src_user_dir:-/dev/foo7/null}:${nix_bind_tgt_user_dir_agl:-/dev/bar7/null}
+      - ${nix_bind_nix_src_user_dir:-/dev/foo8/null}:${nix_bind_tgt_user_dir_dvl:-/dev/bar8/null}
     depends_on:
       base:
         # Wait for the ownership to change
@@ -554,6 +595,9 @@ volumes:
   world_old_halo:
   world_old_r00t:
 
+  host_win:
+  host_nix:
+  # host_mac:
 
 networks:
   "${COMPOSE_PROJECT_NAME}_default":
