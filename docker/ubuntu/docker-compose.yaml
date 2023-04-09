@@ -568,6 +568,27 @@ services:
         - WORLDS=gui
     volumes_from:
       - worlds-lite
+  cuda:
+    extends: cuda
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-cuda
+    # command: bash start-kde.sh
+    build:
+      target: dvlp_cuda
+      args:
+        - WORLDS=cuda
+    volumes_from:
+      - worlds-lite
+  cuda-plus:
+    extends: cuda-plus
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-cuda-plus
+    # command: bash start-kde.sh
+    build:
+      target: dvlp_cuda-plus
+      args:
+        - WORLDS=cuda-plus
+    volumes_from:
+      - worlds
+
 
 volumes:
   root:
