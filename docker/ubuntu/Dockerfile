@@ -114,6 +114,7 @@ ARG _MNT
 ARG _DVL_USR
 ENV _DVL=$_DVL_USR
 WORKDIR /hel
+COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./
 RUN mkdir -pv dvlw && \
     mkdir -pv dls && \
     ln -fsv dvlw devels-workshop && \
@@ -130,7 +131,7 @@ WORKDIR /
 ################################
 #  dvlp_base-devel-dirs-kernel #
 ################################
-FROM dvlp_base-devel-dirs AS dvlp_base-devel-dirs-kernel
+FROM dvlp_base-devel-dirs AS dvlp_base-devel-kernel-dirs
 ARG _MNT
 ARG _DVL
 WORKDIR /hel
@@ -157,6 +158,7 @@ ARG _MNT
 ARG _AGL_USR
 ENV _AGL=${_AGL_USR:-agl}
 WORKDIR /hal
+COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./
 RUN mkdir -pv dvlw && \
     mkdir -pv dls && \
     ln -fsv dvlw devels-workshop && \
