@@ -546,8 +546,7 @@ services:
     working_dir: /r00t/halo/hal
     extends: worlds
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-world-gui-plus
-    entrypoint: /bin/bash -c
-    command: bash start-kde.sh
+    # command: bash start-kde.sh
     build:
       target: dvlp_gui-plus
       args:
@@ -555,8 +554,7 @@ services:
   gui:
     extends: gui-plus
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-gui
-    entrypoint: /bin/bash -c
-    command: bash start-kde.sh
+    # command: bash start-kde.sh
     build:
       target: dvlp_gui
       args:
