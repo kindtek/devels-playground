@@ -73,6 +73,13 @@ services:
       target: dvlp_skel-build-lite
     volumes:
       - repo-lite:/dvlw
+      - repo-lite:/r00t/dvlw
+      - repo-lite:/home/r00t/dvlw
+      - repo-lite:/hal/dvlw
+      - repo-lite:/home/{${_AGL}/dvlw
+      - repo-lite:/hel/dvlw
+      - repo-lite:/home/${_DVL}/dvlw
+      - mnt-data:/mnt/data
       - home_agl:/hal
       - home_agl:/home/${_AGL}
       - home_dvl:/hel
@@ -93,12 +100,20 @@ services:
       target: dvlp_skel-build
     volumes:
       - repo:/dvlw
+      - repo:/r00t/dvlw
+      - repo:/home/r00t/dvlw
+      - repo:/hal/dvlw
+      - repo:/home/{${_AGL}/dvlw
+      - repo:/hel/dvlw
+      - repo:/home/${_DVL}/dvlw
+      - mnt-data:/mnt/data
       - home_agl:/hal
       - home_agl:/home/${_AGL}
       - home_dvl:/hel
       - home_dvl:/home/${_DVL}
       - home_r00t:/r00t
       - home_r00t:/home/r00t
+      
     depends_on:
       base:
         # Wait for the ownership to change
@@ -112,15 +127,6 @@ services:
     working_dir: /hel
     build:
       target: dvlp_skel
-    volumes:
-      - repo:/dvlw
-      - repo:/r00t/dvlw
-      - repo:/home/r00t/dvlw
-      - repo:/hal/dvlw
-      - repo:/home/{${_AGL}/dvlw
-      - repo:/hel/dvlw
-      - repo:/home/${_DVL}/dvlw
-      - mnt-data:/mnt/data
     depends_on:
       skel-build:
         # Wait for the ownership to change
@@ -196,7 +202,7 @@ services:
       com.devels-playground.description: "basics + git"
 
   base-python-build:
-    extends: skel-build
+    extends: skel-build-lite
     build:
       context: .
       target: dvlp_base-python-build

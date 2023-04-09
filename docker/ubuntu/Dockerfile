@@ -19,9 +19,9 @@ ARG _MNT=${_MNT:-/mnt/data}
 ARG WORLDS=bare
 
 ################################### GITHUB REPO #####################################
-#############
-# dvlp_repo #
-#############
+########################
+# dvlp_repo-build-prep #
+########################
 FROM ubuntu:latest AS dvlp_repo-build-prep
 ARG _MNT
 ARG REFRESH_REPO
@@ -59,19 +59,14 @@ RUN \
     git config --global --add safe.directory /dvlw/ && \
     git config --global --add safe.directory /tmp/git/cache
 
+########################
+# dvlp_repo-build-lite #
+#######################
 FROM dvlp_repo-build-prep AS dvlp_repo-build-lite
 WORKDIR /
-# COPY --from=dvlp_base-devel-dirs-kernel --chown=${_DVL}:${_DVL} ./hell/ ./hell/
-
-# clone fresh repos and give ${_DVL} ownership
-# git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress /tmp/git/cache/dvlw  \
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked  \
     git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --filter=blob:limit=12400 --progress dvlw-lite || (cd dvlw && git pull) 
-# (cd /tmp/git/cache/dvlw && git pull && cp -rv --remove-destination . /home/${_DVL}/dvlw)
-# git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress dvlw
-# RUN git clone https://github.com/kindtek/dvlw --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
-# --filter=combine:tree:depth:1+blob:limit=10240000  --recurse-submodules --remote-submodules  --single-branch  --no-tags --filter=blob:limit=1024000 --single-branch --branch main
 WORKDIR /dvlw-lite
 # RUN if [ $REFRESH_REPO != no ]; then git pull; fi    
 RUN \
@@ -81,39 +76,30 @@ RUN \
     chmod -R +x dvlp/mnt/home && \
     chmod -R +x dvlp/mnt/bak
 
+###################
+# dvlp_repo-build #
+###################
 FROM dvlp_repo-build-lite AS dvlp_repo-build
 WORKDIR /
-# # # COPY --from=dvlp_skel-build ./home/ ./home/
-# # # COPY --from=dvlp_skel-build ./mnt/ ./mnt/
-# # # COPY --from=dvlp_skel-build ./hel/ ./hel/
-# # # COPY --from=dvlp_skel-build ./hal/ ./hal/
-# # # COPY --from=dvlp_skel-build ./r00t/ ./r00t/
-# clone fresh repos and give ${_DVL} ownership
-# git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress /tmp/git/cache/dvlw  \
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
     git clone https://github.com/kindtek/devels-workshop --progress dvlw || (cd dvlw && git pull) 
-# (cd /tmp/git/cache/dvlw && git pull && cp -rv --remove-destination . /home/${_DVL}/dvlw)
-# git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress dvlw
-# RUN git clone https://github.com/kindtek/dvlw --verbose --progress --recurse-submodules --remote-submodules --shallow-submodules --no-tags --filter=blob:limit=102400 depth=1
-# --filter=combine:tree:depth:1+blob:limit=10240000  --recurse-submodules --remote-submodules  --single-branch  --no-tags --filter=blob:limit=1024000 --single-branch --branch main
 WORKDIR /dvlw
-# RUN if [ $REFRESH_REPO != no ]; then git pull; fi    
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
     git submodule update --init --remote --progress -- dvlp || git pull && \
     chmod -R +x dvlp/mnt/home && \
     chmod -R +x dvlp/mnt/bak
 WORKDIR /dvlw/dvlp
-# # RUN if [ $REFRESH_REPO != no ]; then git pull; fi    
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
     ( git submodule update --init --progress || git submodule update --init --progress --force --rebase -- kernels ) 
 # (cd /tmp/git/cache/dvlw/dvlp && git pull && cp -rv --remove-destination . /home/${_DVL}/dvlw/dvlp)
 
 
-# RUN if [ "$REFRESH_REPO" != no ]; then git pull; fi    
-
+########################
+# dvlp_repo-build-lite #
+#######################
 FROM scratch AS dvlp_repo-lite
 COPY --from=dvlp_repo-build-lite ./dvlw-lite/ ./dvlw/
 FROM scratch AS dvlp_repo
@@ -123,8 +109,6 @@ COPY --from=dvlp_repo-build ./dvlw/ ./dvlw/
 ########################
 # dvlp_base-devel-dirs #
 ########################
-#  dvlp_base-devel-dirs-lite #
-# ${_DVL} permissions/volume builder
 FROM ubuntu:latest AS dvlp_base-devel-dirs
 ARG _MNT
 ARG _DVL_USR
@@ -295,7 +279,7 @@ COPY --from=dvlp_repo                                               ./dvlw/     
 #############
 # dvlp_skel #
 #############
-FROM dvlp_skel-build AS dvlp_skel
+FROM dvlp_skel-build-lite AS dvlp_skel
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -361,7 +345,7 @@ USER ${_DVL}
 #####################
 # dvlp_base-python-build #
 #####################
-FROM dvlp_skel-build AS dvlp_base-python-build
+FROM dvlp_skel-build-lite AS dvlp_base-python-build
 ARG _AGL_USR
 ARG _DVL_USR
 ENV _AGL=$_AGL_USR
@@ -442,7 +426,7 @@ USER ${_DVL}
 ##############################
 # dvlp_base-msdot-build-lite #
 #############################
-FROM dvlp_skel-build AS dvlp_base-msdot-build-lite
+FROM dvlp_skel-build-lite AS dvlp_base-msdot-build-lite
 USER root
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
@@ -513,7 +497,7 @@ USER ${_DVL}
 ########################
 # dvlp_base-dind-build #
 ########################
-FROM dvlp_skel-build AS dvlp_base-dind-build
+FROM dvlp_skel-build-lite AS dvlp_base-dind-build
 USER root
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
 RUN \
@@ -660,7 +644,7 @@ RUN cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old
     head -n -1 /opt/brave.com/brave/brave-browser.old | tee /opt/brave.com/brave/brave-browser > /dev/null && \
     # now no longeer need to add --disable-gpu flag everytime
     echo '"$HERE/brave" "$@" " --disable-gpu " || true' | tee --append /opt/brave.com/brave/brave-browser > /dev/null
-COPY --from=dvlp_repo --chown=r00t:r00t /dvlw/dvlp/mnt/opt/* /opt/
+COPY --from=dvlp_repo-lite --chown=r00t:r00t /dvlw/dvlp/mnt/opt/* /opt/
 
 # # # this is a better way to do this but needs work
 # # # cd /opt/brave.com/brave && \
@@ -705,7 +689,7 @@ RUN \
     --mount=type=cache,target=/var/cache/debconf \
     # echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
     apt-get install --no-install-recommends -y kubuntu-desktop
-COPY --from=dvlp_repo --chown=r00t:r00t /dvlw/dvlp/mnt/etc/* /etc/
+COPY --from=dvlp_repo-lite --chown=r00t:r00t /dvlw/dvlp/mnt/etc/* /etc/
 
 USER ${_DVL}
 
@@ -891,11 +875,18 @@ COPY --from=dvlp_base-r00t-kernel-dirs                     ./admin/    ./r00t/
 USER g0d
 WORKDIR /
 
+####################
+# dvlp_worlds-plus #
+###################
 FROM ubuntu:latest AS dvlp_worlds-plus
 # COPY --from=dvlp_worlds                                 ./          ./
 # COPY --from=dvlp_base-python-build-lite                 ./          ./
 # COPY --from=dvlp_base-python-build-lite                 ./          ./halo/
 # COPY --from=dvlp_base-python-build-lite                 ./          ./hell/
+
+###############
+# dvlp_worlds #
+###############
 COPY --from=dvlp_worlds                                 ./          ./
 # RUN chroot --userspec=${_AGL}:halo  /halo pip install cdir --user
 # RUN chroot --userspec=r00t:r00t     /halo pip install cdir --user
@@ -912,9 +903,9 @@ COPY --from=dvlp_worlds-plus                            ./          ./
 #     chroot --userspec=r00t:r00t     /halo pip install cdir && \
 #     chroot --userspec=${_DVl}:hell  /hell pip install cdir
 
-########################
+#################
 # dvlp_gui-plus #
-########################
+#################
 FROM dvlp_worlds-skel-lite AS dvlp_gui-plus
 COPY --from=dvlp_base-gui-plus                          ./          ./
 COPY --from=dvlp_base-gui-plus	            	        ./	        ./halo/
@@ -924,9 +915,9 @@ USER g0d
 
 WORKDIR /
 
-###################
+############
 # dvlp_gui #
-###################
+############
 FROM dvlp_worlds-skel-lite AS dvlp_gui
 COPY --from=dvlp_base-gui                               ./          ./
 COPY --from=dvlp_base-gui	            	            ./	        ./halo/
@@ -935,9 +926,20 @@ COPY --from=dvlp_worlds-plus                            ./          ./
 USER g0d
 WORKDIR /
 
-#########################
+#################
+# dvlp_gui-lite #
+#################
+FROM dvlp_worlds-skel-lite AS dvlp_gui-lite
+COPY --from=dvlp_base-gui-lite                               ./          ./
+COPY --from=dvlp_base-gui-lite	            	            ./	        ./halo/
+COPY --from=dvlp_base-gui-lite	            	            ./	        ./hell/
+COPY --from=dvlp_worlds-plus                            ./          ./
+USER g0d
+WORKDIR /
+
+###################
 # dvlp_dind-lite #
-#########################
+##################
 FROM dvlp_worlds-skel-lite AS dvlp_dind-lite
 COPY --from=dvlp_base-dind-lite                         ./          ./
 COPY --from=dvlp_base-dind-lite	            	        ./	        ./halo/
@@ -945,9 +947,9 @@ COPY --from=dvlp_base-dind-lite	            	        ./	        ./hell/
 COPY --from=dvlp_worlds-plus                            ./          ./
 WORKDIR /
 
-###################
+############
 # dvlp_git #
-###################
+############
 FROM dvlp_worlds-skel-lite AS dvlp_git
 COPY --from=dvlp_base-git                               ./          ./
 COPY --from=dvlp_base-git	            	            ./	        ./halo/
@@ -966,9 +968,9 @@ COPY --from=dvlp_worlds-plus                            ./          ./
 USER g0d
 WORKDIR /
 
-###########################
+####################
 # dvlp_python-lite #
-###########################
+####################
 FROM dvlp_worlds-skel-lite AS dvlp_python-lite
 COPY --from=dvlp_base-python-lite                       ./          ./
 COPY --from=dvlp_base-python-lite	            	    ./	        ./halo/
@@ -977,9 +979,9 @@ COPY --from=dvlp_worlds-plus                            ./          ./
 USER g0d
 WORKDIR /
 
-####################
+#############
 # dvlp_bare #
-####################
+#############
 FROM dvlp_worlds-skel-lite AS dvlp_bare
 COPY --from=dvlp_base-bare                              ./          ./
 COPY --from=dvlp_base-bare	            	            ./	        ./halo/
