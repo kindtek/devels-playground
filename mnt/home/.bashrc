@@ -135,7 +135,7 @@ alias goto_halo='chroot --userspec=$_AGL:halo /halo bash'
 alias agl_run='chroot --userspec=$_AGL:halo /halo'
 
 alias su_r00t='chroot --userspec=r00t:r00t /r00t bash'
-alias r00t_run='chroot --userspec=r00t:r00t /r00t bash'
+alias r00t_run='chroot --userspec=r00t:r00t /r00t'
 
 alias su_g0d='chroot --userspec=g0d:g0d /g0d bash'
-alias g0d_run='chroot --userspec=g0d:g0d /g0d bash'
+alias g0d_run='chroot --userspec=g0d:g0d /g0d'
