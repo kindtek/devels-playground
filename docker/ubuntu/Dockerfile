@@ -868,9 +868,9 @@ WORKDIR /
 ###############
 FROM dvlp_worlds AS dvlp_kernel-dirs
 ARG _AGL
-COPY --from=dvlp_build-skel	            	            ./	        ./
-COPY --from=dvlp_build-skel	            	            ./	        ./halo/
-COPY --from=dvlp_build-skel	            	            ./	        ./hell/
+COPY --from=dvlp_skel-build	            	            ./	        ./
+COPY --from=dvlp_skel-build	            	            ./	        ./halo/
+COPY --from=dvlp_skel-build	            	            ./	        ./hell/
 COPY --from=dvlp_base-devel-kernel-dirs                     ./hel/      ./hel/
 COPY --from=dvlp_base-angel-kernel-dirs                     ./hal/      ./hal/
 COPY --from=dvlp_base-r00t-kernel-dirs                     ./admin/    ./g0d/
