@@ -406,7 +406,7 @@ services:
   worlds-skel:
     build:
       context: .
-      target: dvlp_worlds-skel-lite
+      target: dvlp_worlds-skel
       args:
         - _AGL=${_AGL_USR:-$_AGL}
         - _DVL=${_DVL_USR:-$_DVL}
@@ -434,6 +434,8 @@ services:
       labels:
         com.devels-playground.description: "hello worlds"
     volumes:
+      - world_hell:/hell
+      - world_halo:/halo
       - world_hell:/g0d/hell
       - world_halo:/g0d/halo
       - world_g0d:/g0d/r00t
@@ -485,10 +487,16 @@ services:
       - repo-lite:/g0d/hell/hel/dvlw
       - repo-lite:/g0d/halo/hal/dvlw
       - repo-lite:/r00t/dvlw
+      - repo-lite:/r00t/hell/dvlw
+      - repo-lite:/r00t/hell/hel/dvlw
+      - repo-lite:/r00t/halo/dvlw
+      - repo-lite:/r00t/halo/hal/dvlw
       - repo-lite:/hell/dvlw
       - repo-lite:/halo/dvlw
       - repo-lite:/hell/hel/dvlw
       - repo-lite:/halo/hal/dvlw
+      - repo-lite:/hel/dvlw
+      - repo-lite:/hal/dvlw
   bare:
     extends: worlds-lite
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-bare

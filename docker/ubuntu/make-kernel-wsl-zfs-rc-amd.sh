@@ -8,8 +8,8 @@ sudo tee $filename.sh >/dev/null <<'TXT'
 #               ___________________________________________________                 #
 #               ||||               Executing ...               ||||                 #
 #               -------------------------------------------------                   #
-# sudo docker buildx build --target dvlp_kernel-output --output type=local,dest=/mnt/c/users/${user_name:-default}/$filename.tar --build-arg KERNEL_TYPE=latest-rc-wsl-zfs --build-arg REFRESH_REPO=yes --build-arg CONFIG_FILE= .
-sudo docker buildx build --target dvlp_kernel-output --no-cache --output type=local,dest=/mnt/c/users/${user_name:-default}/$filename.tar --build-arg KERNEL_TYPE=latest-rc-wsl-zfs --build-arg REFRESH_REPO=y --build-arg CONFIG_FILE= .
+# sudo docker buildx build --target dvlp_kernel-output --output type=local,dest=/mnt/c/users/${user_name:-default}/$filename.tar --build-arg KERNEL_TYPE=stable-wsl-zfs --build-arg REFRESH_REPO=yes --build-arg CONFIG_FILE= .
+sudo docker buildx build --target dvlp_kernel-output --no-cache --output type=local,dest=/mnt/c/users/${user_name:-default}/$filename.tar --build-arg KERNEL_TYPE=stable-wsl-zfs --build-arg REFRESH_REPO=y --build-arg CONFIG_FILE= .
 
 #                -----------------------------------------------                    #
 #               |||||||||||||||||||||||||||||||||||||||||||||||||                   #

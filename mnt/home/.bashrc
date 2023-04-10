@@ -117,7 +117,7 @@ if ! shopt -oq posix; then
   fi
 fi
 
-export PATH=$PATH:/home/$LOGNAME/.local/bin:/hel/dvlw/scripts:/home/dvl/dvlw/dvlp/scripts:WSL_DISTRO_NAME=$WSL_DISTRO_NAME:_AGL=${_AGL:-agl}
+export PATH=$PATH:/home/$LOGNAME/.local/bin:/hel/dvlw/scripts:/home/dvl/dvlw/dvlp/scripts:WSL_DISTRO_NAME=$WSL_DISTRO_NAME:_AGL=${_AGL:-agl}:/root/.local/bin
 export DOCKER_BUILDKIT=1
 export COMPOSE_DOCKER_CLI_BUILD=1
 export DOCKER_CLI_EXPERIMENTAL=enabled
@@ -134,8 +134,8 @@ alias dvl_run='chroot --userspec=$_DVL:hell /hell'
 alias goto_halo='chroot --userspec=$_AGL:halo /halo bash'
 alias agl_run='chroot --userspec=$_AGL:halo /halo'
 
-alias su_r00t='chroot --userspec=r00t:r00t /r00t bash'
-alias r00t_run='chroot --userspec=r00t:r00t /r00t'
+alias su_r00t='chroot --userspec=r00t:r00t /halo bash'
+alias r00t_run='chroot --userspec=r00t:r00t /halo'
 
-alias su_g0d='chroot --userspec=g0d:g0d /g0d bash'
-alias g0d_run='chroot --userspec=g0d:g0d /g0d'
+alias su_g0d='chroot --userspec=g0d:g0d /halo bash'
+alias g0d_run='chroot --userspec=g0d:g0d /halo'
