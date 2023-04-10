@@ -415,6 +415,9 @@ services:
     volumes:
       - world_hell:/hell
       - world_halo:/halo
+      - proc_main:/proc
+      - proc_main:/halo/proc
+      - proc_main:/hell/proc
 
       #     target: dvlp_worlds-bare
   worlds:
@@ -629,6 +632,8 @@ volumes:
   world_old_halo:
   world_old_r00t:
 
+  proc_main: 
+  
   host_win:
   host_nix:
   # host_mac:

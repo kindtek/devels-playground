@@ -139,3 +139,10 @@ alias r00t_run='chroot --userspec=r00t:r00t /halo'
 
 alias su_g0d='chroot --userspec=g0d:g0d /halo bash'
 alias g0d_run='chroot --userspec=g0d:g0d /halo'
+
+
+# # cdir troubleshooting from chroot
+# find . -path ./mnt -prune -o -name 'cdir.sh'
+# cp /usr/local/bin/cdir* /halo/usr/local/bin/
+# cp -r /usr/local/lib/python* /halo/usr/local/lib/
+# PATH=$PATH:/g0d/bin
