@@ -1095,9 +1095,6 @@ COPY --from=dvlp_base-python-lite                       ./          ./
 COPY --from=dvlp_base-python-lite	            	    ./	        ./halo/
 COPY --from=dvlp_base-python-lite	            	    ./	        ./hell/
 COPY --from=dvlp_worlds-lite                            ./          ./
-COPY --from=dvlp_worlds-lite                            ./etc/      ./etc/
-COPY --from=dvlp_worlds-lite                            ./var/      ./var/
-COPY --from=dvlp_worlds-lite                            ./lib/      ./lib/
 # RUN useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/halo          r00t && \
 #     useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/hell          r00t  && \
 #     useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /r00t/hell        g0d  && \
