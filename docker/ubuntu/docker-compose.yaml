@@ -220,7 +220,7 @@ services:
     command:
       - sleep infinity
     # user: devel
-    extends: skel-build
+    extends: skel
     working_dir: /hel
     restart: on-failure
     tty: true
