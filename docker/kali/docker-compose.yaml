@@ -1,5 +1,5 @@
 version: "3.9"
-name: devels-playground-ubuntu
+name: devels-playground-kali
 services:
   repo-lite:
     build:
@@ -13,7 +13,7 @@ services:
       - repo:/dvlw
   base:
     build:
-      # target: dvlp_worlds
+      target: dvlp_base
       context: .
       args:
         - _AGL=${_AGL_USR:-$_AGL}
@@ -67,7 +67,6 @@ services:
 
   skel-build-lite:
     extends: base
-    # user: agl
     tty: false
     cap_add:
         - AUDIT_WRITE
@@ -89,11 +88,11 @@ services:
        - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
        - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
        - win_bind_tgt_user_dir_r00t=${USERNAME:+/r00t/host_win}
-       - win_bind_tgt_user_dir_g0d=${USERNAME:+/g0d/host_win}
+      #  - win_bind_tgt_user_dir_g0d=${USERNAME:+/g0d/host_win}
        - win_bind_tgt_user_dir_agl=${USERNAME:+/halo/host_win}
        - win_bind_tgt_user_dir_dvl=${USERNAME:+/hell/host_win}:ro
        - nix_bind_tgt_user_dir_r00t=${LOGNAME:+/r00t/host_nix}
-       - nix_bind_tgt_user_dir_g0d=${LOGNAME:+/g0d/host_nix}
+      #  - nix_bind_tgt_user_dir_g0d=${LOGNAME:+/g0d/host_nix}
        - nix_bind_tgt_user_dir_agl=${LOGNAME:+/halo/host_nix}
        - nix_bind_tgt_user_dir_dvl=${LOGNAME:+/hell/host_nix}:ro 
       #  - bind_src_dir=${bind_win_src_user_dir:-/dev/null}
@@ -102,7 +101,7 @@ services:
       - repo-lite:/r00t/dvlw
       - repo-lite:/home/r00t/dvlw
       - repo-lite:/hal/dvlw
-      - repo-lite:/home/{${_AGL}/dvlw
+      - repo-lite:/home/${_AGL}/dvlw
       - repo-lite:/hel/dvlw
       - repo-lite:/home/${_DVL}/dvlw
       - mnt-data:/mnt/data
@@ -113,11 +112,11 @@ services:
       - home_r00t:/r00t
       - home_r00t:/home/r00t
       - ${nix_bind_win_src_user_dir:-/dev/foo1/null}:${win_bind_tgt_user_dir_r00t:-/dev/bar1/null}
-      - ${nix_bind_win_src_user_dir:-/dev/foo2/null}:${win_bind_tgt_user_dir_g0d:-/dev/bar2/null}
+      # - ${nix_bind_win_src_user_dir:-/dev/foo2/null}:${win_bind_tgt_user_dir_g0d:-/dev/bar2/null}
       - ${nix_bind_win_src_user_dir:-/dev/foo3/null}:${win_bind_tgt_user_dir_agl:-/dev/bar3/null}
       - ${nix_bind_win_src_user_dir:-/dev/foo4/null}:${win_bind_tgt_user_dir_dvl:-/dev/bar4/null}
       - ${nix_bind_nix_src_user_dir:-/dev/foo5/null}:${nix_bind_tgt_user_dir_r00t:-/dev/bar5/null}
-      - ${nix_bind_nix_src_user_dir:-/dev/foo6/null}:${nix_bind_tgt_user_dir_g0d:-/dev/bar6/null}
+      # - ${nix_bind_nix_src_user_dir:-/dev/foo6/null}:${nix_bind_tgt_user_dir_g0d:-/dev/bar6/null}
       - ${nix_bind_nix_src_user_dir:-/dev/foo7/null}:${nix_bind_tgt_user_dir_agl:-/dev/bar7/null}
       - ${nix_bind_nix_src_user_dir:-/dev/foo8/null}:${nix_bind_tgt_user_dir_dvl:-/dev/bar8/null}
 
@@ -151,11 +150,11 @@ services:
        - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
        - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
        - win_bind_tgt_user_dir_r00t=${USERNAME:+/r00t/host_win}
-       - win_bind_tgt_user_dir_g0d=${USERNAME:+/g0d/host_win}
+      #  - win_bind_tgt_user_dir_g0d=${USERNAME:+/g0d/host_win}
        - win_bind_tgt_user_dir_agl=${USERNAME:+/halo/host_win}
        - win_bind_tgt_user_dir_dvl=${USERNAME:+/hell/host_win}:ro
        - nix_bind_tgt_user_dir_r00t=${LOGNAME:+/r00t/host_nix}
-       - nix_bind_tgt_user_dir_g0d=${LOGNAME:+/g0d/host_nix}
+      #  - nix_bind_tgt_user_dir_g0d=${LOGNAME:+/g0d/host_nix}
        - nix_bind_tgt_user_dir_agl=${LOGNAME:+/halo/host_nix}
        - nix_bind_tgt_user_dir_dvl=${LOGNAME:+/hell/host_nix}:ro 
       #  - bind_src_dir=${bind_win_src_user_dir:-/dev/null}
@@ -165,7 +164,7 @@ services:
       - repo:/r00t/dvlw
       - repo:/home/r00t/dvlw
       - repo:/hal/dvlw
-      - repo:/home/{${_AGL}/dvlw
+      - repo:/home/${_AGL}/dvlw
       - repo:/hel/dvlw
       - repo:/home/${_DVL}/dvlw
       - mnt-data:/mnt/data
@@ -176,11 +175,11 @@ services:
       - home_r00t:/r00t
       - home_r00t:/home/r00t
       - ${nix_bind_win_src_user_dir:-/dev/foo1/null}:${win_bind_tgt_user_dir_r00t:-/dev/bar1/null}
-      - ${nix_bind_win_src_user_dir:-/dev/foo2/null}:${win_bind_tgt_user_dir_g0d:-/dev/bar2/null}
+      # - ${nix_bind_win_src_user_dir:-/dev/foo2/null}:${win_bind_tgt_user_dir_g0d:-/dev/bar2/null}
       - ${nix_bind_win_src_user_dir:-/dev/foo3/null}:${win_bind_tgt_user_dir_agl:-/dev/bar3/null}
       - ${nix_bind_win_src_user_dir:-/dev/foo4/null}:${win_bind_tgt_user_dir_dvl:-/dev/bar4/null}
       - ${nix_bind_nix_src_user_dir:-/dev/foo5/null}:${nix_bind_tgt_user_dir_r00t:-/dev/bar5/null}
-      - ${nix_bind_nix_src_user_dir:-/dev/foo6/null}:${nix_bind_tgt_user_dir_g0d:-/dev/bar6/null}
+      # - ${nix_bind_nix_src_user_dir:-/dev/foo6/null}:${nix_bind_tgt_user_dir_g0d:-/dev/bar6/null}
       - ${nix_bind_nix_src_user_dir:-/dev/foo7/null}:${nix_bind_tgt_user_dir_agl:-/dev/bar7/null}
       - ${nix_bind_nix_src_user_dir:-/dev/foo8/null}:${nix_bind_tgt_user_dir_dvl:-/dev/bar8/null}
     depends_on:
@@ -191,7 +190,7 @@ services:
     labels:
       com.dvlp_skel.description: "-build skeleton"
   skel:
-    # user: devel
+    user: devel
     extends: skel-build
     working_dir: /hel
     build:
@@ -202,6 +201,20 @@ services:
         condition: service_completed_successfully
     labels:
       com.dvlp_skel.description: "skeleton"
+
+  skel-lite:
+    user: devel
+    extends: skel-build
+    working_dir: /hel
+    build:
+      target: dvlp_skel-lite
+    depends_on:
+      skel-build-lite:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
+    labels:
+      com.dvlp_skel.description: "skeleton"
+
   base-bare:
     entrypoint: /bin/bash -c
     command:
@@ -217,7 +230,7 @@ services:
     # command: ["-it", "chroot --userspec=dvl:dvl /fs"]
     # command:  ["bash -i chroot --userspec=dvl:dvl /fs"]
     privileged: true
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-bare
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-base-bare
     # extends: skel
     build:
       context: .
@@ -227,7 +240,6 @@ services:
         # Wait for the ownership to change
         condition: service_completed_successfully
     init: true
-
     labels:
       com.devels-playground.description: "basics + git"
   base-git-lite:
@@ -235,7 +247,7 @@ services:
     build:
       context: .
       target: dvlp_base-git-lite
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-git-lite
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-base-git-lite
     labels:
       com.devels-playground.description: "basics + git"
 
@@ -256,7 +268,7 @@ services:
     # cap_add:
     #     - SYS_CHROOT
     privileged: true
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-git
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-base-git
     # extends: skel
     build:
       context: .
@@ -288,7 +300,7 @@ services:
       com.devels-playground.description: "basics + git"
   base-python-lite:
     extends: base-git-lite
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-py-lite
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-base-py-lite
     build:
       context: .
       target: dvlp_base-python-lite
@@ -300,7 +312,7 @@ services:
       com.devels-playground.description: "basics + git"
   base-python:
     extends: base-git-lite
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-py
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-base-py
     build:
       context: .
       target: dvlp_base-python
@@ -312,7 +324,7 @@ services:
       com.devels-playground.description: "basics + git"
   base-msdot-lite:
     extends: base-git-lite
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-msdot-lite
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-base-msdot-lite
     build:
       context: .
       target: dvlp_base-msdot-lite
@@ -320,7 +332,7 @@ services:
       com.devels-playground.description: "basics + git + powerhell"
   base-msdot:
     extends: base-git-lite
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-msdot
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-base-msdot
     build:
       context: .
       target: dvlp_base-msdot
@@ -328,7 +340,7 @@ services:
       com.devels-playground.description: "basics + git + powerhell"
   base-dind:
     extends: base-git-lite
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-dind
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-base-dind
     build:
       context: .
       target: dvlp_base-dind
@@ -336,7 +348,7 @@ services:
       com.devels-playground.description: "basics + git + powerhell + docker"
   base-dind-lite:
     extends: base-git-lite
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-dind-lite
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-base-dind-lite
     build:
       context: .
       target: dvlp_base-dind-lite
@@ -384,7 +396,7 @@ services:
   #     com.devels-playground.description: "basics + git + powerhell + docker + kernel"
   base-gui-lite:
     extends: base-git-lite
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-gui
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-base-gui
     build:
       context: .
       target: dvlp_base-gui-lite
@@ -392,7 +404,7 @@ services:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   base-gui:
     extends: base-git-lite
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-gui
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-base-gui
     # user: ${_AGL}
     # entrypoint:
     #   - /bin/bash
@@ -410,12 +422,12 @@ services:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   base-gui-plus:
     extends: base-git
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-gui-plus
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-base-gui-plus
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   base-cuda:
     extends: base-gui
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-cuda
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-base-cuda
     build:
       context: .
       target: dvlp_base-cuda
@@ -423,7 +435,7 @@ services:
         com.devels-playground.description: "basics + git + powerhell + docker + gui + cuda"
   base-cuda-plus:
     extends: base-gui-plus
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-cuda-plus
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-base-cuda-plus
     build:
       context: .
       target: dvlp_base-cuda-plus
@@ -438,15 +450,14 @@ services:
         - _DVL=${_DVL_USR:-$_DVL}
       labels:
         com.devels-playground.description: "hello world"
-    volumes:
-      - world_hell:/hell
-      - world_halo:/halo
+    # volumes:
+    #   - world_hell:/hell
+    #   - world_halo:/halo
 
       #     target: dvlp_worlds-bare
   worlds:
-    user: g0d
     working_dir: /halo/hal
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-${WORLDS:-bare}
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-${WORLDS:-bare}
     entrypoint: /bin/bash -c
     command:
       - sleep infinity
@@ -460,42 +471,42 @@ services:
       labels:
         com.devels-playground.description: "hello worlds"
     volumes:
-      - world_hell:/hell
-      - world_halo:/halo
-      - world_hell:/g0d/hell
-      - world_halo:/g0d/halo
-      - world_g0d:/g0d/r00t
-      - world_hell:/r00t/hell
-      - world_halo:/r00t/halo
-      - world_halo:/g0d/r00t/halo
-      - world_hell:/g0d/r00t/hell
+      # - world_hell:/hell
+      # - world_halo:/halo
+      # - world_hell:/g0d/hell
+      # - world_halo:/g0d/halo
+      # - world_g0d:/g0d/r00t
+      # - world_hell:/r00t/hell
+      # - world_halo:/r00t/halo
+      # - world_halo:/g0d/r00t/halo
+      # - world_hell:/g0d/r00t/hell
       - repo:/dvlw
-      - repo:/g0d/dvlw
-      - repo:/g0d/hell/hel/dvlw
-      - repo:/g0d/halo/hal/dvlw
+      # - repo:/g0d/dvlw
+      # - repo:/g0d/hell/hel/dvlw
+      # - repo:/g0d/halo/hal/dvlw
       - repo:/r00t/dvlw
-      - repo:/r00t/hell/dvlw
-      - repo:/r00t/hell/hel/dvlw
-      - repo:/r00t/halo/dvlw
-      - repo:/r00t/halo/hal/dvlw
-      - repo:/hell/dvlw
-      - repo:/halo/dvlw
-      - repo:/hell/hel/dvlw
-      - repo:/halo/hal/dvlw
+      # - repo:/r00t/hell/dvlw
+      # - repo:/r00t/hell/hel/dvlw
+      # - repo:/r00t/halo/dvlw
+      # - repo:/r00t/halo/hal/dvlw
+      # - repo:/hell/dvlw
+      # - repo:/halo/dvlw
+      # - repo:/hell/hel/dvlw
+      # - repo:/halo/hal/dvlw
       - repo:/hel/dvlw
       - repo:/hal/dvlw
       - mnt-data:/mnt/data
-      - mnt-data:/hell/mnt/data
-      - mnt-data:/halo/mnt/data
-      - mnt-data:/g0d/mnt/data
+      # - mnt-data:/hell/mnt/data
+      # - mnt-data:/halo/mnt/data
+      # - mnt-data:/g0d/mnt/data
       - mnt-data:/r00t/mnt/data
-      - world_old_hell:/g0d/zzz.hell
-      - world_old_halo:/g0d/zzz.halo
-      - world_old_r00t:/g0d/zzz.r00t
-      - world_old_hell:/r00t/zzz.hell
-      - world_old_halo:/r00t/zzz.halo
-      - home_agl:/halo/hal
-      - home_dvl:/hell/hel
+      # - world_old_hell:/g0d/zzz.hell
+      # - world_old_halo:/g0d/zzz.halo
+      # - world_old_r00t:/g0d/zzz.r00t
+      # - world_old_hell:/r00t/zzz.hell
+      # - world_old_halo:/r00t/zzz.halo
+      # - home_agl:/halo/hal
+      # - home_dvl:/hell/hel
       - home_agl:/hal
       - home_agl:/home/${_AGL}
       - home_dvl:/hel
@@ -504,28 +515,31 @@ services:
       worlds-skel:
         condition: service_completed_successfully
   worlds-lite:
-    user: g0d
-    working_dir: /r00t/halo/hal
+    working_dir: /hal
     extends: worlds
     volumes:
       - repo-lite:/dvlw
-      - repo-lite:/g0d/dvlw
-      - repo-lite:/g0d/hell/hel/dvlw
-      - repo-lite:/g0d/halo/hal/dvlw
       - repo-lite:/r00t/dvlw
-      - repo-lite:/r00t/hell/dvlw
-      - repo-lite:/r00t/hell/hel/dvlw
-      - repo-lite:/r00t/halo/dvlw
-      - repo-lite:/r00t/halo/hal/dvlw
-      - repo-lite:/hell/dvlw
-      - repo-lite:/halo/dvlw
-      - repo-lite:/hell/hel/dvlw
-      - repo-lite:/halo/hal/dvlw
-      - repo-lite:/hel/dvlw
+      - repo-lite:/home/r00t/dvlw
       - repo-lite:/hal/dvlw
+      - repo-lite:/home/${_AGL}/dvlw
+      - repo-lite:/hel/dvlw
+      - repo-lite:/home/${_DVL}/dvlw
+      # - repo-lite:/g0d/dvlw
+      # - repo-lite:/g0d/hell/hel/dvlw
+      # - repo-lite:/g0d/halo/hal/dvlw
+      # - repo-lite:/r00t/hell/dvlw
+      # - repo-lite:/r00t/hell/hel/dvlw
+      # - repo-lite:/r00t/halo/dvlw
+      # - repo-lite:/r00t/halo/hal/dvlw
+      # - repo-lite:/hell/dvlw
+      # - repo-lite:/halo/dvlw
+      # - repo-lite:/hell/hel/dvlw
+      # - repo-lite:/halo/hal/dvlw
+
   bare:
     extends: worlds-lite
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-bare
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-bare
     build:
       target: dvlp_bare
       args:
@@ -535,7 +549,7 @@ services:
     working_dir: /r00t/halo/hal
     # entrypoint: /bin/bash -c
     # command: "if [ -f \"start-kde.sh\" ]; then bash start.sh; fi; && sleep infinity;"
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-git-lite
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-git-lite
     build:
       target: dvlp_git-lite
       args:
@@ -548,45 +562,44 @@ services:
     # command: "if [ -f 'start-kde.sh'' ]; then bash start.sh; fi; && sleep infinity;"
     # - "if [ -f \"start-kde.sh\" ]; then bash start.sh; mv -vf start-kde.sh start.sh; else bash start.sh; fi; && sleep infinity;"
     # - ["if [ -f \"start-kde.sh\" ]; then bash start.sh; mv -vf start-kde.sh start.sh; else bash start.sh; fi;", "sleep infinity"]
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-git
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-git
     build:
       target: dvlp_git
       args:
         - WORLDS=git
   python-lite:
     extends: worlds-lite
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-python-lite
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-python-lite
     build:
       target: dvlp_python-lite
       args:
         - WORLDS=python-lite
   dind-lite:
     extends: worlds-lite
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-dind-lite
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-dind-lite
     build:
       target: dvlp_dind-lite
       args:
         - WORLDS=dind-lite
   msdot-lite:
     extends: worlds-lite
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-msdot-lite
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-msdot-lite
     build:
       target: dvlp_msdot-lite
       args:
         - WORLDS=msdot-lite
   gui-lite:
     extends: worlds-lite
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-gui-lite
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-gui-lite
     # command: bash start.sh && mv -fv start-kde.sh || export FIRST_LOGIN=false
     build:
       target: dvlp_gui-lite
       args:
         - WORLDS=gui-lite
   gui-plus:
-    # user: g0d
     working_dir: /r00t/halo/hal
     extends: worlds
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-gui-plus
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-gui-plus
     # command: bash start-kde.sh
     build:
       target: dvlp_gui-plus
@@ -594,7 +607,7 @@ services:
         - WORLDS=gui-plus
   gui:
     extends: gui-plus
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-gui
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-gui
     # command: bash start-kde.sh
     build:
       target: dvlp_gui
@@ -604,7 +617,7 @@ services:
       - worlds-lite
   cuda:
     extends: gui-plus
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-cuda
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-cuda
     # command: bash start-kde.sh
     build:
       target: dvlp_cuda
@@ -614,7 +627,7 @@ services:
       - worlds-lite
   cuda-plus:
     extends: cuda
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-cuda-plus
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-cuda-plus
     # command: bash start-kde.sh
     build:
       target: dvlp_cuda-plus
@@ -650,7 +663,6 @@ volumes:
   world_hell:
   world_halo:
   world_r00t:
-  world_g0d:
   world_old_hell:
   world_old_halo:
   world_old_r00t:
