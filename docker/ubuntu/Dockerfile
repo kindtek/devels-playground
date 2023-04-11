@@ -57,7 +57,9 @@ RUN \
     git config --global --add safe.directory /root && \
     git config --global --add safe.directory /r00t && \
     git config --global --add safe.directory /dvlw/ && \
-    git config --global --add safe.directory /tmp/git/cache
+    git config --global --add safe.directory /tmp/git/cache && \
+    git config --global user.name 'Snail Mail' && \
+    git config --global user.email '<>'
 
 ########################
 # dvlp_repo-build-lite #
