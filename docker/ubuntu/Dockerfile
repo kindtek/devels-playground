@@ -952,8 +952,8 @@ COPY --from=dvlp_worlds-kernel-skel                     ./          ./
 #################
 # dvlp_gui-plus #
 #################
-FROM ubuntu:latest AS dvlp_gui-plus
-COPY --from=dvlp_base-gui-plus                          ./          ./
+FROM dvlp_base-gui-plus AS dvlp_gui-plus
+# COPY --from=dvlp_base-gui-plus                          ./          ./
 COPY --from=dvlp_base-gui-plus	            	        ./	        ./halo/
 COPY --from=dvlp_base-gui-plus	            	        ./	        ./hell/
 COPY --from=dvlp_worlds-plus                            ./          ./
@@ -972,8 +972,8 @@ WORKDIR /
 ############
 # dvlp_gui #
 ############
-FROM ubuntu:latest AS dvlp_gui
-COPY --from=dvlp_base-gui                               ./          ./
+FROM dvlp_base-gui AS dvlp_gui
+# COPY --from=dvlp_base-gui                               ./          ./
 COPY --from=dvlp_base-gui	            	            ./	        ./halo/
 COPY --from=dvlp_base-gui	            	            ./	        ./hell/
 COPY --from=dvlp_worlds-lite                            ./          ./
@@ -991,9 +991,9 @@ WORKDIR /
 #################
 # dvlp_gui-lite #
 #################
-FROM ubuntu:latest AS dvlp_gui-lite
+FROM dvlp_base-gui-lite AS dvlp_gui-lite
 # COPY --from=dvlp_worlds-plus                            ./          ./
-COPY --from=dvlp_base-gui-lite                          ./          ./
+# COPY --from=dvlp_base-gui-lite                          ./          ./
 COPY --from=dvlp_base-gui-lite	            	        ./	        ./halo/
 COPY --from=dvlp_base-gui-lite	            	        ./	        ./hell/
 COPY --from=dvlp_worlds-lite                            ./          ./
@@ -1011,9 +1011,9 @@ WORKDIR /
 ###################
 # dvlp_dind-lite #
 ##################
-FROM ubuntu:latest AS dvlp_dind-lite
+FROM dvlp_base-dind-lite AS dvlp_dind-lite
 # COPY --from=dvlp_worlds-plus                            ./          ./
-COPY --from=dvlp_base-dind-lite                         ./          ./
+# COPY --from=dvlp_base-dind-lite                         ./          ./
 COPY --from=dvlp_base-dind-lite	            	        ./	        ./halo/
 COPY --from=dvlp_base-dind-lite	            	        ./	        ./hell/
 COPY --from=dvlp_worlds-lite                            ./          ./
@@ -1030,9 +1030,9 @@ WORKDIR /
 ############
 # dvlp_git #
 ############
-FROM ubuntu:latest AS dvlp_git
+FROM dvlp_base-git AS dvlp_git
 # COPY --from=dvlp_worlds-plus                            ./          ./
-COPY --from=dvlp_base-git                               ./          ./
+# COPY --from=dvlp_base-git                               ./          ./
 COPY --from=dvlp_base-git	            	            ./	        ./halo/
 COPY --from=dvlp_base-git	            	            ./	        ./hell/
 COPY --from=dvlp_worlds                                 ./          ./
@@ -1049,9 +1049,9 @@ WORKDIR /
 ########################
 # dvlp_git-lite #
 ########################
-FROM ubuntu:latest AS dvlp_git-lite
+FROM dvlp_base-git-lite AS dvlp_git-lite
 # COPY --from=dvlp_worlds-plus                            ./          ./
-COPY --from=dvlp_base-git-lite                          ./          ./
+# COPY --from=dvlp_base-git-lite                          ./          ./
 COPY --from=dvlp_base-git-lite	            	        ./	        ./halo/
 COPY --from=dvlp_base-git-lite	            	        ./	        ./hell/
 COPY --from=dvlp_worlds-lite                            ./          ./
@@ -1069,9 +1069,9 @@ WORKDIR /
 ####################
 # dvlp_ms-dot-lite #
 ####################
-FROM ubuntu:latest AS dvlp_msdot-lite
+FROM dvlp_base-msdot-lite AS dvlp_msdot-lite
 # COPY --from=dvlp_worlds-plus                            ./          ./
-COPY --from=dvlp_base-msdot-lite                        ./          ./
+# COPY --from=dvlp_base-msdot-lite                        ./          ./
 COPY --from=dvlp_base-msdot-lite	            	    ./	        ./halo/
 COPY --from=dvlp_base-msdot-lite	            	    ./	        ./hell/
 COPY --from=dvlp_worlds-lite                            ./          ./
