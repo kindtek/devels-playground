@@ -69,6 +69,8 @@ services:
     extends: base
     # user: agl
     tty: false
+    cap_add:
+        - SYS_CHROOT
     build:
       target: dvlp_skel-build-lite
       args:
@@ -117,6 +119,8 @@ services:
   skel-build:
     extends: base
     tty: false
+    cap_add:
+        - SYS_CHROOT
     build:
       target: dvlp_skel-build
       args:
@@ -188,8 +192,6 @@ services:
     # # # entrypoint: ["bash -i chroot --userspec=dvl:dvl /fs"]
     # command: ["-it", "chroot --userspec=dvl:dvl /fs"]
     # command:  ["bash -i chroot --userspec=dvl:dvl /fs"]
-    # cap_add:
-    #     - SYS_CHROOT
     privileged: true
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-bare
     # extends: skel
