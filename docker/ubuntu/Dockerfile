@@ -793,7 +793,7 @@ COPY --from=dvlp_kernel-make ./built-kernel.tar.gz ./built-kernel.tar.gz
 #########################
 # dvlp_worlds-skel #
 #########################
-FROM dvlp_skel-build AS dvlp_worlds-skel
+FROM ubuntu:latest AS dvlp_worlds-skel
 ARG _MNT
 ARG _AGL_USR
 ARG _DVL_USR
@@ -811,7 +811,7 @@ COPY --from=dvlp_base-r00t-dirs  --chown=g0d:g0d        ./admin/    ./halo/g0d/
 COPY --from=dvlp_base-r00t-dirs  --chown=r00t:r00t      ./admin/    ./halo/r00t/
 COPY --from=dvlp_base-r00t-dirs  --chown=g0d:g0d        ./mnt/      ./halo/${_MNT}/
 
-# COPY --from=dvlp_skel-lite	            	            ./	        ./
+COPY --from=dvlp_skel-lite	            	            ./	        ./
 COPY --from=dvlp_skel-lite              	            ./	        ./halo/
 COPY --from=dvlp_skel-lite	            	            ./	        ./hell/
 
@@ -830,7 +830,7 @@ COPY --from=dvlp_base-devel-kernel-dirs                 ./hel/      ./hel/
 COPY --from=dvlp_base-angel-kernel-dirs                 ./hal/      ./hal/
 COPY --from=dvlp_base-r00t-kernel-dirs                  ./admin/    ./g0d/
 COPY --from=dvlp_base-r00t-kernel-dirs                  ./admin/    ./r00t/
-# COPY --from=dvlp_skel-build	            	            ./	        ./
+COPY --from=dvlp_skel-build	            	            ./	        ./
 COPY --from=dvlp_skel-build	            	            ./	        ./halo/
 COPY --from=dvlp_skel-build	            	            ./	        ./hell/
 
@@ -851,32 +851,13 @@ ENV _ADM=$_ADM_USR
 WORKDIR /
 # COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./etc/skel/
 USER root
-RUN CHROOT_DRIVE=/dev/sda2  && \ 
-    # or /tmp/recovery # to have it auto cleanup on reboot
-    #  CHROOT_PATH=/mnt/recovery  && \
-    CHROOT_PATH=/hell  && \
-    mkdir -p "${CHROOT_PATH}"  && \
-    mount "${CHROOT_DRIVE}" "${CHROOT_PATH}"  && \
-    mount -t sysfs none "${CHROOT_PATH}/sys" && \
-    mount -t proc none "${CHROOT_PATH}/proc" && \
-    mount --bind /dev/ "${CHROOT_PATH}/dev" && \
-    mount --bind /dev/pts "${CHROOT_PATH}/dev/pts"  && \
-    mount -o bind /etc/resolv.conf "${CHROOT_PATH}/etc/resolv.conf" && \
-    CHROOT_PATH=/halo  && \
-    mkdir -p "${CHROOT_PATH}"  && \
-    mount "${CHROOT_DRIVE}" "${CHROOT_PATH}"  && \
-    mount -t sysfs none "${CHROOT_PATH}/sys" && \
-    mount -t proc none "${CHROOT_PATH}/proc" && \
-    mount --bind /dev/ "${CHROOT_PATH}/dev" && \
-    mount --bind /dev/pts "${CHROOT_PATH}/dev/pts"  && \
-    mount -o bind /etc/resolv.conf "${CHROOT_PATH}/etc/resolv.conf"
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/tmp/cache/useradd,sharing=private \
-    # groupadd            r00t    && \
-    # groupadd            w0rld               && \
+    groupadd            r00t    && \
+    groupadd            w0rld               && \
     groupadd            w0rld  --root /hell && \
     groupadd            w0rld  --root /halo && \
     groupadd            hell   --root /hell && \
@@ -895,23 +876,23 @@ RUN \
     passwd -d root && \
     passwd -l root 
 RUN     groupadd            r00t   --root /halo && \
-    groupadd            r00t   --root /hell && \
+    groupadd            r00t   --root /hell 
     # groupadd            g0d    --root /hell && \
     # groupadd            g0d    --root /halo && \
-    useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /halo          r00t && \
-    useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /hell          r00t 
-# && \
-# useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /hell        g0d  && \
-# useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /r00t/halo        g0d 
+    # useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /halo          r00t && \
+    # useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /hell          r00t 
+    # && \
+    # useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /hell        g0d  && \
+    # useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /r00t/halo        g0d 
 # RUN chroot --userspec=g0d:g0d /halo usermod -aG sudo ${_AGL}
 
-# RUN \
-#     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-#     echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
-#     echo 'tzdata tzdata/Zones/America select Los Angeles' | debconf-set-selections  && \
-#     # add-apt-repository ppa:apt-fast/stable && \
-#     apt-get update -y && apt-get upgrade -y && \
-#     apt-get -y install sudo 
+RUN \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
+    echo 'tzdata tzdata/Zones/America select Los Angeles' | debconf-set-selections  && \
+    # add-apt-repository ppa:apt-fast/stable && \
+    apt-get update -y && apt-get upgrade -y
+    # apt-get -y install sudo 
 COPY --from=dvlp_base-r00t-dirs                     ./admin/    ./g0d/
 COPY --from=dvlp_base-r00t-dirs                     ./admin/    ./r00t/
 COPY --from=dvlp_base-devel-dirs                     ./hel/      ./hel/
@@ -919,31 +900,30 @@ COPY --from=dvlp_base-angel-dirs                     ./hal/      ./hal/
 #  && \
 #     groupadd            g0d   --root /hell && \
 #     groupadd            r00t   --root /halo 
-# or /dev/mmcblk1p2
 WORKDIR /
 
-FROM dvlp_worlds-build AS dvlp_worlds-lite
+FROM ubuntu:latest AS dvlp_worlds-lite
 # COPY --from=dvlp_worlds-skel          ./    ./
-# COPY --from=dvlp_worlds-build         ./    ./
+COPY --from=dvlp_worlds-build         ./    ./
 USER g0d
 WORKDIR /
 
-FROM dvlp_worlds-build AS dvlp_worlds
+FROM ubuntu:latest AS dvlp_worlds
 COPY --from=dvlp_worlds-kernel-skel   ./    ./
-# COPY --from=dvlp_worlds-build         ./    ./
+COPY --from=dvlp_worlds-build         ./    ./
 USER g0d
 WORKDIR /
 
 ####################
 # dvlp_worlds-plus #
 ###################
-FROM dvlp_worlds-build AS dvlp_worlds-plus
+FROM ubuntu:latest AS dvlp_worlds-plus
 # COPY --from=dvlp_worlds                                 ./          ./
 # COPY --from=dvlp_base-python-build-lite                 ./          ./
 # COPY --from=dvlp_base-python-build-lite                 ./          ./halo/
 # COPY --from=dvlp_base-python-build-lite                 ./          ./hell/
 
-# COPY --from=dvlp_worlds-build         ./    ./
+COPY --from=dvlp_worlds-build         ./    ./
 COPY --from=dvlp_worlds-kernel-skel   ./    ./
 
 # RUN chroot --userspec=${_AGL}:halo  /halo pip install cdir --user
@@ -970,8 +950,8 @@ COPY --from=dvlp_worlds-kernel-skel                     ./          ./
 #################
 # dvlp_gui-plus #
 #################
-FROM dvlp_base-gui-plus AS dvlp_gui-plus
-# COPY --from=dvlp_base-gui-plus                          ./          ./
+FROM ubuntu:latest AS dvlp_gui-plus
+COPY --from=dvlp_base-gui-plus                          ./          ./
 COPY --from=dvlp_base-gui-plus	            	        ./	        ./halo/
 COPY --from=dvlp_base-gui-plus	            	        ./	        ./hell/
 COPY --from=dvlp_worlds-plus                            ./          ./
@@ -990,8 +970,8 @@ WORKDIR /
 ############
 # dvlp_gui #
 ############
-FROM dvlp_base-gui AS dvlp_gui
-# COPY --from=dvlp_base-gui                               ./          ./
+FROM ubuntu:latest AS dvlp_gui
+COPY --from=dvlp_base-gui                               ./          ./
 COPY --from=dvlp_base-gui	            	            ./	        ./halo/
 COPY --from=dvlp_base-gui	            	            ./	        ./hell/
 COPY --from=dvlp_worlds-lite                            ./          ./
@@ -1009,9 +989,9 @@ WORKDIR /
 #################
 # dvlp_gui-lite #
 #################
-FROM dvlp_base-gui-lite AS dvlp_gui-lite
+FROM ubuntu:latest AS dvlp_gui-lite
 # COPY --from=dvlp_worlds-plus                            ./          ./
-# COPY --from=dvlp_base-gui-lite                          ./          ./
+COPY --from=dvlp_base-gui-lite                          ./          ./
 COPY --from=dvlp_base-gui-lite	            	        ./	        ./halo/
 COPY --from=dvlp_base-gui-lite	            	        ./	        ./hell/
 COPY --from=dvlp_worlds-lite                            ./          ./
@@ -1029,9 +1009,9 @@ WORKDIR /
 ###################
 # dvlp_dind-lite #
 ##################
-FROM dvlp_base-dind-lite AS dvlp_dind-lite
+FROM ubuntu:latest AS dvlp_dind-lite
 # COPY --from=dvlp_worlds-plus                            ./          ./
-# COPY --from=dvlp_base-dind-lite                         ./          ./
+COPY --from=dvlp_base-dind-lite                         ./          ./
 COPY --from=dvlp_base-dind-lite	            	        ./	        ./halo/
 COPY --from=dvlp_base-dind-lite	            	        ./	        ./hell/
 COPY --from=dvlp_worlds-lite                            ./          ./
@@ -1048,9 +1028,9 @@ WORKDIR /
 ############
 # dvlp_git #
 ############
-FROM dvlp_base-git AS dvlp_git
+FROM ubuntu:latest AS dvlp_git
 # COPY --from=dvlp_worlds-plus                            ./          ./
-# COPY --from=dvlp_base-git                               ./          ./
+COPY --from=dvlp_base-git                               ./          ./
 COPY --from=dvlp_base-git	            	            ./	        ./halo/
 COPY --from=dvlp_base-git	            	            ./	        ./hell/
 COPY --from=dvlp_worlds                                 ./          ./
@@ -1067,9 +1047,9 @@ WORKDIR /
 ########################
 # dvlp_git-lite #
 ########################
-FROM dvlp_base-git-lite AS dvlp_git-lite
+FROM ubuntu:latest AS dvlp_git-lite
 # COPY --from=dvlp_worlds-plus                            ./          ./
-# COPY --from=dvlp_base-git-lite                          ./          ./
+COPY --from=dvlp_base-git-lite                          ./          ./
 COPY --from=dvlp_base-git-lite	            	        ./	        ./halo/
 COPY --from=dvlp_base-git-lite	            	        ./	        ./hell/
 COPY --from=dvlp_worlds-lite                            ./          ./
@@ -1087,9 +1067,9 @@ WORKDIR /
 ####################
 # dvlp_ms-dot-lite #
 ####################
-FROM dvlp_base-msdot-lite  AS dvlp_msdot-lite
+FROM ubuntu:latest AS dvlp_msdot-lite
 # COPY --from=dvlp_worlds-plus                            ./          ./
-# COPY --from=dvlp_base-msdot-lite                        ./          ./
+COPY --from=dvlp_base-msdot-lite                        ./          ./
 COPY --from=dvlp_base-msdot-lite	            	    ./	        ./halo/
 COPY --from=dvlp_base-msdot-lite	            	    ./	        ./hell/
 COPY --from=dvlp_worlds-lite                            ./          ./
@@ -1108,10 +1088,10 @@ WORKDIR /
 ####################
 # dvlp_python-lite #
 ####################
-FROM dvlp_base-python-lite AS dvlp_python-lite
+FROM ubuntu:latest AS dvlp_python-lite
 ARG _AGL
 ARG _DVL
-# COPY --from=dvlp_base-python-lite                       ./          ./
+COPY --from=dvlp_base-python-lite                       ./          ./
 COPY --from=dvlp_base-python-lite	            	    ./	        ./halo/
 COPY --from=dvlp_base-python-lite	            	    ./	        ./hell/
 COPY --from=dvlp_worlds-lite                            ./          ./
@@ -1145,50 +1125,49 @@ WORKDIR /
 #############
 # dvlp_bare #
 #############
-FROM dvlp_base-bare AS dvlp_bare
+FROM dvlp_worlds-lite AS dvlp_bare
 # COPY --from=dvlp_worlds                                 ./          ./
-# COPY --from=dvlp_base-bare                              ./          ./
+COPY --from=dvlp_base-bare                              ./          ./
 COPY --from=dvlp_base-bare	            	            ./	        ./halo/
 COPY --from=dvlp_base-bare	            	            ./	        ./hell/
 COPY --from=dvlp_worlds-lite                            ./          ./
-USER g0d
-# RUN useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /halo          r00t && \
-#     useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /hell          r00t  && \
-#     useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /hell        g0d  && \
-#     useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /halo        g0d && \
-#     groupadd            r00t   --root /halo && \
-#     groupadd            r00t   --root /hell && \
-#     groupadd            g0d    --root /hell && \
-#     groupadd            g0d    --root /halo 
+# RUN useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/halo          r00t && \
+#     useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/hell          r00t  && \
+#     useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /r00t/hell        g0d  && \
+#     useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /r00t/halo        g0d && \
+#     groupadd            r00t   --root /r00t/halo && \
+#     groupadd            r00t   --root /r00t/hell && \
+#     groupadd            g0d    --root /r00t/hell && \
+#     groupadd            g0d    --root /r00t/halo 
 USER g0d
 WORKDIR /
 
 #############
 # dvlp_cuda #
 #############
-FROM dvlp_base-cuda AS dvlp_cuda
+FROM dvlp_worlds-lite AS dvlp_cuda
 # COPY --from=dvlp_worlds-plus                            ./          ./
-# COPY --from=dvlp_base-cuda                              ./          ./
+COPY --from=dvlp_base-cuda                              ./          ./
 COPY --from=dvlp_base-cuda	            	            ./	        ./halo/
 COPY --from=dvlp_base-cuda	            	            ./	        ./hell/
 COPY --from=dvlp_worlds-lite                            ./          ./
-RUN useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/halo          r00t && \
-    useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/hell          r00t  && \
-    useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /r00t/hell        g0d  && \
-    useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /r00t/halo        g0d && \
-    groupadd            r00t   --root /r00t/halo && \
-    groupadd            r00t   --root /r00t/hell && \
-    groupadd            g0d    --root /r00t/hell && \
-    groupadd            g0d    --root /r00t/halo 
+# RUN useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/halo          r00t && \
+#     useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/hell          r00t  && \
+#     useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /r00t/hell        g0d  && \
+#     useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /r00t/halo        g0d && \
+#     groupadd            r00t   --root /r00t/halo && \
+#     groupadd            r00t   --root /r00t/hell && \
+#     groupadd            g0d    --root /r00t/hell && \
+#     groupadd            g0d    --root /r00t/halo 
 USER g0d
 WORKDIR /
 
 ##################
 # dvlp_cuda-plus #
 ##################
-FROM dvlp_base-cuda-plus AS dvlp_cuda-plus
+FROM dvlp_worlds-lite AS dvlp_cuda-plus
 # COPY --from=dvlp_worlds-plus                            ./          ./
-# COPY --from=dvlp_base-cuda-plus                         ./          ./
+COPY --from=dvlp_base-cuda-plus                         ./          ./
 COPY --from=dvlp_base-cuda-plus	            	        ./	        ./halo/
 COPY --from=dvlp_base-cuda-plus	            	        ./	        ./hell/
 COPY --from=dvlp_worlds-plus                            ./          ./
