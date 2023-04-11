@@ -70,7 +70,19 @@ services:
     # user: agl
     tty: false
     cap_add:
+        - AUDIT_WRITE
         - SYS_CHROOT
+        - CHOWN
+        - DAC_OVERRIDE
+        - FSETID
+        - FOWNER
+        - MKNOD
+        - NET_RAW
+        - SETGID
+        - SETUID
+        - SETFCAP
+        - SETPCAP
+        - NET_BIND_SERVICE
     build:
       target: dvlp_skel-build-lite
       args:
@@ -120,7 +132,19 @@ services:
     extends: base
     tty: false
     cap_add:
+        - AUDIT_WRITE
         - SYS_CHROOT
+        - CHOWN
+        - DAC_OVERRIDE
+        - FSETID
+        - FOWNER
+        - MKNOD
+        - NET_RAW
+        - SETGID
+        - SETUID
+        - SETFCAP
+        - SETPCAP
+        - NET_BIND_SERVICE
     build:
       target: dvlp_skel-build
       args:
