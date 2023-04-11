@@ -257,7 +257,7 @@ COPY --from=dvlp_repo-lite          --chown=${_AGL}:halo     ./dvlw/dvlp/mnt/hom
 COPY --from=dvlp_repo-lite          --chown=r00t:r00t           ./dvlw/dvlp/mnt/home/    ./r00t/
 COPY --from=dvlp_repo-lite          --chown=r00t:halo        ./dvlw/dvlp/mnt/         .${_MNT}/
 COPY --from=dvlp_repo-lite                                      ./dvlw/                  ./dvlw/
-
+COPY --from=dvlp_repo-lite              --chown=r00t:r00t            /dvlw/dvlp/mnt/etc/*   /etc/
 
 ## WORKDIR /hell
 ###################
@@ -286,6 +286,7 @@ COPY --from=dvlp_repo                   --chown=${_AGL}:${_AGL}     ./dvlw/dvlp/
 COPY --from=dvlp_repo                   --chown=r00t:r00t           ./dvlw/dvlp/mnt/home/   ./r00t/
 COPY --from=dvlp_repo                   --chown=r00t:${_AGL}        ./dvlw/dvlp/mnt/        .${_MNT}/
 COPY --from=dvlp_repo                                               ./dvlw/                 ./dvlw/
+COPY --from=dvlp_repo                   --chown=r00t:r00t            /dvlw/dvlp/mnt/etc/*   /etc/
 #############
 # dvlp_skel #
 #############
