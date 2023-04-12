@@ -28,7 +28,6 @@
 	branch = stable
 	recurse = false
 	ignore = all
-
 [submodule "dvlp"]
 	branch = kali-devel
 	active = true
