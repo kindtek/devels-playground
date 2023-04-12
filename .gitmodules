@@ -12,13 +12,6 @@
 	url = https://github.com/kindtek/powerhell.git
 	branch = dvl-works
 	recurse = false
-[submodule "devels-playground"]
-	active = true
-	path = dvlp
-	shallow = false
-	url = https://github.com/kindtek/devels-playground.git
-	branch = kali-devel
-	recurse = false
 [submodule "cdir"]
 	active = false
 	path = cdir
@@ -36,3 +29,11 @@
 	recurse = false
 	ignore = all
 
+[submodule "dvlp"]
+	branch = kali-devel
+	active = true
+	path = dvlp
+	shallow = false
+	url = https://github.com/kindtek/devels-playground.git
+	branch = kali-devel
+	recurse = false
