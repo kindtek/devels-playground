@@ -4,13 +4,13 @@ services:
   repo-lite:
     build:
       target: dvlp_repo-lite
-    volumes:
-      - repo-lite:/dvlw
+    # volumes:
+    #   - repo-lite:/dvlw
   repo:
     build:
       target: dvlp_repo
-    volumes:
-      - repo:/dvlw
+    # volumes:
+    #   - repo:/dvlw
   base:
     build:
       target: dvlp_base
@@ -68,57 +68,57 @@ services:
   skel-build-lite:
     extends: base
     tty: false
-    cap_add:
-        - AUDIT_WRITE
-        - SYS_CHROOT
-        - CHOWN
-        - DAC_OVERRIDE
-        - FSETID
-        - FOWNER
-        - MKNOD
-        - NET_RAW
-        - SETGID
-        - SETUID
-        - SETFCAP
-        - SETPCAP
-        - NET_BIND_SERVICE
+    # cap_add:
+    #     - AUDIT_WRITE
+    #     - SYS_CHROOT
+    #     - CHOWN
+    #     - DAC_OVERRIDE
+    #     - FSETID
+    #     - FOWNER
+    #     - MKNOD
+    #     - NET_RAW
+    #     - SETGID
+    #     - SETUID
+    #     - SETFCAP
+    #     - SETPCAP
+    #     - NET_BIND_SERVICE
     build:
       target: dvlp_skel-build-lite
-      args:
-       - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
-       - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
-       - win_bind_tgt_user_dir_r00t=${USERNAME:+/r00t/host_win}
-      #  - win_bind_tgt_user_dir_g0d=${USERNAME:+/g0d/host_win}
-       - win_bind_tgt_user_dir_agl=${USERNAME:+/halo/host_win}
-       - win_bind_tgt_user_dir_dvl=${USERNAME:+/hell/host_win}:ro
-       - nix_bind_tgt_user_dir_r00t=${LOGNAME:+/r00t/host_nix}
-      #  - nix_bind_tgt_user_dir_g0d=${LOGNAME:+/g0d/host_nix}
-       - nix_bind_tgt_user_dir_agl=${LOGNAME:+/halo/host_nix}
-       - nix_bind_tgt_user_dir_dvl=${LOGNAME:+/hell/host_nix}:ro 
-      #  - bind_src_dir=${bind_win_src_user_dir:-/dev/null}
-    volumes:
-      - repo-lite:/dvlw
-      - repo-lite:/r00t/dvlw
-      - repo-lite:/home/r00t/dvlw
-      - repo-lite:/hal/dvlw
-      - repo-lite:/home/${_AGL}/dvlw
-      - repo-lite:/hel/dvlw
-      - repo-lite:/home/${_DVL}/dvlw
-      - mnt-data:/mnt/data
-      - home_agl:/hal
-      - home_agl:/home/${_AGL}
-      - home_dvl:/hel
-      - home_dvl:/home/${_DVL}
-      - home_r00t:/r00t
-      - home_r00t:/home/r00t
-      - ${nix_bind_win_src_user_dir:-/dev/foo1/null}:${win_bind_tgt_user_dir_r00t:-/dev/bar1/null}
-      # - ${nix_bind_win_src_user_dir:-/dev/foo2/null}:${win_bind_tgt_user_dir_g0d:-/dev/bar2/null}
-      - ${nix_bind_win_src_user_dir:-/dev/foo3/null}:${win_bind_tgt_user_dir_agl:-/dev/bar3/null}
-      - ${nix_bind_win_src_user_dir:-/dev/foo4/null}:${win_bind_tgt_user_dir_dvl:-/dev/bar4/null}
-      - ${nix_bind_nix_src_user_dir:-/dev/foo5/null}:${nix_bind_tgt_user_dir_r00t:-/dev/bar5/null}
-      # - ${nix_bind_nix_src_user_dir:-/dev/foo6/null}:${nix_bind_tgt_user_dir_g0d:-/dev/bar6/null}
-      - ${nix_bind_nix_src_user_dir:-/dev/foo7/null}:${nix_bind_tgt_user_dir_agl:-/dev/bar7/null}
-      - ${nix_bind_nix_src_user_dir:-/dev/foo8/null}:${nix_bind_tgt_user_dir_dvl:-/dev/bar8/null}
+    #   args:
+    #    - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
+    #    - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
+    #    - win_bind_tgt_user_dir_r00t=${USERNAME:+/r00t/host_win}
+    #   #  - win_bind_tgt_user_dir_g0d=${USERNAME:+/g0d/host_win}
+    #    - win_bind_tgt_user_dir_agl=${USERNAME:+/halo/host_win}
+    #    - win_bind_tgt_user_dir_dvl=${USERNAME:+/hell/host_win}:ro
+    #    - nix_bind_tgt_user_dir_r00t=${LOGNAME:+/r00t/host_nix}
+    #   #  - nix_bind_tgt_user_dir_g0d=${LOGNAME:+/g0d/host_nix}
+    #    - nix_bind_tgt_user_dir_agl=${LOGNAME:+/halo/host_nix}
+    #    - nix_bind_tgt_user_dir_dvl=${LOGNAME:+/hell/host_nix}:ro 
+    #   #  - bind_src_dir=${bind_win_src_user_dir:-/dev/null}
+    # volumes:
+    #   - repo-lite:/dvlw
+    #   - repo-lite:/r00t/dvlw
+    #   - repo-lite:/home/r00t/dvlw
+    #   - repo-lite:/hal/dvlw
+    #   - repo-lite:/home/${_AGL}/dvlw
+    #   - repo-lite:/hel/dvlw
+    #   - repo-lite:/home/${_DVL}/dvlw
+    #   - mnt-data:/mnt/data
+    #   - home_agl:/hal
+    #   - home_agl:/home/${_AGL}
+    #   - home_dvl:/hel
+    #   - home_dvl:/home/${_DVL}
+    #   - home_r00t:/r00t
+    #   - home_r00t:/home/r00t
+    #   - ${nix_bind_win_src_user_dir:-/dev/foo1/null}:${win_bind_tgt_user_dir_r00t:-/dev/bar1/null}
+    #   # - ${nix_bind_win_src_user_dir:-/dev/foo2/null}:${win_bind_tgt_user_dir_g0d:-/dev/bar2/null}
+    #   - ${nix_bind_win_src_user_dir:-/dev/foo3/null}:${win_bind_tgt_user_dir_agl:-/dev/bar3/null}
+    #   - ${nix_bind_win_src_user_dir:-/dev/foo4/null}:${win_bind_tgt_user_dir_dvl:-/dev/bar4/null}
+    #   - ${nix_bind_nix_src_user_dir:-/dev/foo5/null}:${nix_bind_tgt_user_dir_r00t:-/dev/bar5/null}
+    #   # - ${nix_bind_nix_src_user_dir:-/dev/foo6/null}:${nix_bind_tgt_user_dir_g0d:-/dev/bar6/null}
+    #   - ${nix_bind_nix_src_user_dir:-/dev/foo7/null}:${nix_bind_tgt_user_dir_agl:-/dev/bar7/null}
+    #   - ${nix_bind_nix_src_user_dir:-/dev/foo8/null}:${nix_bind_tgt_user_dir_dvl:-/dev/bar8/null}
 
     depends_on:
       base:
@@ -130,6 +130,69 @@ services:
   skel-build:
     extends: base
     tty: false
+    # cap_add:
+    #     - AUDIT_WRITE
+    #     - SYS_CHROOT
+    #     - CHOWN
+    #     - DAC_OVERRIDE
+    #     - FSETID
+    #     - FOWNER
+    #     - MKNOD
+    #     - NET_RAW
+    #     - SETGID
+    #     - SETUID
+    #     - SETFCAP
+    #     - SETPCAP
+    #     - NET_BIND_SERVICE
+    build:
+      target: dvlp_skel-build
+    #   args:
+    #    - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
+    #    - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
+    #    - win_bind_tgt_user_dir_r00t=${USERNAME:+/r00t/host_win}
+    #   #  - win_bind_tgt_user_dir_g0d=${USERNAME:+/g0d/host_win}
+    #    - win_bind_tgt_user_dir_agl=${USERNAME:+/halo/host_win}
+    #    - win_bind_tgt_user_dir_dvl=${USERNAME:+/hell/host_win}:ro
+    #    - nix_bind_tgt_user_dir_r00t=${LOGNAME:+/r00t/host_nix}
+    #   #  - nix_bind_tgt_user_dir_g0d=${LOGNAME:+/g0d/host_nix}
+    #    - nix_bind_tgt_user_dir_agl=${LOGNAME:+/halo/host_nix}
+    #    - nix_bind_tgt_user_dir_dvl=${LOGNAME:+/hell/host_nix}:ro 
+    #   #  - bind_src_dir=${bind_win_src_user_dir:-/dev/null}
+      
+    # volumes:
+    #   - repo:/dvlw
+    #   - repo:/r00t/dvlw
+    #   - repo:/home/r00t/dvlw
+    #   - repo:/hal/dvlw
+    #   - repo:/home/${_AGL}/dvlw
+    #   - repo:/hel/dvlw
+    #   - repo:/home/${_DVL}/dvlw
+    #   - mnt-data:/mnt/data
+    #   - home_agl:/hal
+    #   - home_agl:/home/${_AGL}
+    #   - home_dvl:/hel
+    #   - home_dvl:/home/${_DVL}
+    #   - home_r00t:/r00t
+    #   - home_r00t:/home/r00t
+    #   - ${nix_bind_win_src_user_dir:-/dev/foo1/null}:${win_bind_tgt_user_dir_r00t:-/dev/bar1/null}
+    #   # - ${nix_bind_win_src_user_dir:-/dev/foo2/null}:${win_bind_tgt_user_dir_g0d:-/dev/bar2/null}
+    #   - ${nix_bind_win_src_user_dir:-/dev/foo3/null}:${win_bind_tgt_user_dir_agl:-/dev/bar3/null}
+    #   - ${nix_bind_win_src_user_dir:-/dev/foo4/null}:${win_bind_tgt_user_dir_dvl:-/dev/bar4/null}
+    #   - ${nix_bind_nix_src_user_dir:-/dev/foo5/null}:${nix_bind_tgt_user_dir_r00t:-/dev/bar5/null}
+    #   # - ${nix_bind_nix_src_user_dir:-/dev/foo6/null}:${nix_bind_tgt_user_dir_g0d:-/dev/bar6/null}
+    #   - ${nix_bind_nix_src_user_dir:-/dev/foo7/null}:${nix_bind_tgt_user_dir_agl:-/dev/bar7/null}
+    #   - ${nix_bind_nix_src_user_dir:-/dev/foo8/null}:${nix_bind_tgt_user_dir_dvl:-/dev/bar8/null}
+    depends_on:
+      base:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
+
+    labels:
+      com.dvlp_skel.description: "-build skeleton"
+  skel:
+    user: devel
+    extends: skel-build
+    working_dir: /hel
     cap_add:
         - AUDIT_WRITE
         - SYS_CHROOT
@@ -145,7 +208,7 @@ services:
         - SETPCAP
         - NET_BIND_SERVICE
     build:
-      target: dvlp_skel-build
+      target: dvlp_skel
       args:
        - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
        - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
@@ -160,13 +223,13 @@ services:
       #  - bind_src_dir=${bind_win_src_user_dir:-/dev/null}
       
     volumes:
-      - repo:/dvlw
-      - repo:/r00t/dvlw
-      - repo:/home/r00t/dvlw
-      - repo:/hal/dvlw
-      - repo:/home/${_AGL}/dvlw
-      - repo:/hel/dvlw
-      - repo:/home/${_DVL}/dvlw
+      - repo_agl:/dvlw
+      - repo_agl:/r00t/dvlw
+      - repo_agl:/home/r00t/dvlw
+      - repo_agl:/hal/dvlw
+      - repo_agl:/home/${_AGL}/dvlw
+      - repo_dvl:/hel/dvlw
+      - repo_dvl:/home/${_DVL}/dvlw
       - mnt-data:/mnt/data
       - home_agl:/hal
       - home_agl:/home/${_AGL}
@@ -174,6 +237,7 @@ services:
       - home_dvl:/home/${_DVL}
       - home_r00t:/r00t
       - home_r00t:/home/r00t
+      - dls:/dls
       - ${nix_bind_win_src_user_dir:-/dev/foo1/null}:${win_bind_tgt_user_dir_r00t:-/dev/bar1/null}
       # - ${nix_bind_win_src_user_dir:-/dev/foo2/null}:${win_bind_tgt_user_dir_g0d:-/dev/bar2/null}
       - ${nix_bind_win_src_user_dir:-/dev/foo3/null}:${win_bind_tgt_user_dir_agl:-/dev/bar3/null}
@@ -183,19 +247,6 @@ services:
       - ${nix_bind_nix_src_user_dir:-/dev/foo7/null}:${nix_bind_tgt_user_dir_agl:-/dev/bar7/null}
       - ${nix_bind_nix_src_user_dir:-/dev/foo8/null}:${nix_bind_tgt_user_dir_dvl:-/dev/bar8/null}
     depends_on:
-      base:
-        # Wait for the ownership to change
-        condition: service_completed_successfully
-
-    labels:
-      com.dvlp_skel.description: "-build skeleton"
-  skel:
-    user: devel
-    extends: skel-build
-    working_dir: /hel
-    build:
-      target: dvlp_skel
-    depends_on:
       skel-build:
         # Wait for the ownership to change
         condition: service_completed_successfully
@@ -204,10 +255,60 @@ services:
 
   skel-lite:
     user: devel
-    extends: skel-build
+    extends: skel-build-lite
     working_dir: /hel
+    cap_add:
+        - AUDIT_WRITE
+        - SYS_CHROOT
+        - CHOWN
+        - DAC_OVERRIDE
+        - FSETID
+        - FOWNER
+        - MKNOD
+        - NET_RAW
+        - SETGID
+        - SETUID
+        - SETFCAP
+        - SETPCAP
+        - NET_BIND_SERVICE
     build:
       target: dvlp_skel-lite
+      args:
+       - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
+       - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
+       - win_bind_tgt_user_dir_r00t=${USERNAME:+/r00t/host_win}
+      #  - win_bind_tgt_user_dir_g0d=${USERNAME:+/g0d/host_win}
+       - win_bind_tgt_user_dir_agl=${USERNAME:+/halo/host_win}
+       - win_bind_tgt_user_dir_dvl=${USERNAME:+/hell/host_win}:ro
+       - nix_bind_tgt_user_dir_r00t=${LOGNAME:+/r00t/host_nix}
+      #  - nix_bind_tgt_user_dir_g0d=${LOGNAME:+/g0d/host_nix}
+       - nix_bind_tgt_user_dir_agl=${LOGNAME:+/halo/host_nix}
+       - nix_bind_tgt_user_dir_dvl=${LOGNAME:+/hell/host_nix}:ro 
+      #  - bind_src_dir=${bind_win_src_user_dir:-/dev/null}
+    volumes:
+      - repo_agl-lite:/dvlw
+      - repo_agl-lite:/r00t/dvlw
+      - repo_agl-lite:/home/r00t/dvlw
+      - repo_agl-lite:/hal/dvlw
+      - repo_agl-lite:/home/${_AGL}/dvlw
+      - repo_dvl-lite:/hel/dvlw
+      - repo_dvl-lite:/home/${_DVL}/dvlw
+      - mnt-data:/mnt/data
+      - home_agl:/hal
+      - home_agl:/home/${_AGL}
+      - home_dvl:/hel
+      - home_dvl:/home/${_DVL}
+      - home_r00t:/r00t
+      - home_r00t:/home/r00t
+      - dls:/dls
+      - ${nix_bind_win_src_user_dir:-/dev/foo1/null}:${win_bind_tgt_user_dir_r00t:-/dev/bar1/null}
+      # - ${nix_bind_win_src_user_dir:-/dev/foo2/null}:${win_bind_tgt_user_dir_g0d:-/dev/bar2/null}
+      - ${nix_bind_win_src_user_dir:-/dev/foo3/null}:${win_bind_tgt_user_dir_agl:-/dev/bar3/null}
+      - ${nix_bind_win_src_user_dir:-/dev/foo4/null}:${win_bind_tgt_user_dir_dvl:-/dev/bar4/null}
+      - ${nix_bind_nix_src_user_dir:-/dev/foo5/null}:${nix_bind_tgt_user_dir_r00t:-/dev/bar5/null}
+      # - ${nix_bind_nix_src_user_dir:-/dev/foo6/null}:${nix_bind_tgt_user_dir_g0d:-/dev/bar6/null}
+      - ${nix_bind_nix_src_user_dir:-/dev/foo7/null}:${nix_bind_tgt_user_dir_agl:-/dev/bar7/null}
+      - ${nix_bind_nix_src_user_dir:-/dev/foo8/null}:${nix_bind_tgt_user_dir_dvl:-/dev/bar8/null}
     depends_on:
       skel-build-lite:
         # Wait for the ownership to change
@@ -441,22 +542,22 @@ services:
       target: dvlp_base-cuda-plus
       labels:
         com.devels-playground.description: "basics + git + powerhell + docker + gui + cuda"
-  worlds-skel:
-    build:
-      context: .
-      target: dvlp_worlds-skel
-      args:
-        - _AGL=${_AGL_USR:-$_AGL}
-        - _DVL=${_DVL_USR:-$_DVL}
-      labels:
-        com.devels-playground.description: "hello world"
-    # volumes:
-    #   - world_hell:/hell
-    #   - world_halo:/halo
+  # worlds-skel:
+  #   build:
+  #     context: .
+  #     target: dvlp_worlds-skel
+  #     args:
+  #       - _AGL=${_AGL_USR:-$_AGL}
+  #       - _DVL=${_DVL_USR:-$_DVL}
+  #     labels:
+  #       com.devels-playground.description: "hello world"
+  #   # volumes:
+  #   #   - world_hell:/hell
+  #   #   - world_halo:/halo
 
       #     target: dvlp_worlds-bare
   worlds:
-    working_dir: /halo/hal
+    working_dir: /hal
     image: kindtek/${HUB_REPO:-devels-playground}:kali-${WORLDS:-bare}
     entrypoint: /bin/bash -c
     command:
@@ -468,6 +569,7 @@ services:
         - WORLDS=bare
         - _AGL=${_AGL_USR:-$_AGL}
         - _DVL=${_DVL_USR:-$_DVL}
+        - _MNT=${_MNT_USR:-$_MNT}
       labels:
         com.devels-playground.description: "hello worlds"
     volumes:
@@ -480,11 +582,11 @@ services:
       # - world_halo:/r00t/halo
       # - world_halo:/g0d/r00t/halo
       # - world_hell:/g0d/r00t/hell
-      - repo:/dvlw
+      - repo_agl:/dvlw
       # - repo:/g0d/dvlw
       # - repo:/g0d/hell/hel/dvlw
       # - repo:/g0d/halo/hal/dvlw
-      - repo:/r00t/dvlw
+      - repo_agl:/r00t/dvlw
       # - repo:/r00t/hell/dvlw
       # - repo:/r00t/hell/hel/dvlw
       # - repo:/r00t/halo/dvlw
@@ -493,13 +595,13 @@ services:
       # - repo:/halo/dvlw
       # - repo:/hell/hel/dvlw
       # - repo:/halo/hal/dvlw
-      - repo:/hel/dvlw
-      - repo:/hal/dvlw
-      - mnt-data:/mnt/data
+      - repo_dvl:/hel/dvlw
+      - repo_agl:/hal/dvlw
+      - mnt-data:${_MNT}
       # - mnt-data:/hell/mnt/data
       # - mnt-data:/halo/mnt/data
       # - mnt-data:/g0d/mnt/data
-      - mnt-data:/r00t/mnt/data
+      # - mnt-data:/r00t/mnt/data
       # - world_old_hell:/g0d/zzz.hell
       # - world_old_halo:/g0d/zzz.halo
       # - world_old_r00t:/g0d/zzz.r00t
@@ -507,24 +609,29 @@ services:
       # - world_old_halo:/r00t/zzz.halo
       # - home_agl:/halo/hal
       # - home_dvl:/hell/hel
+      - home_r00t:/r00t
+      - home_r00t:/home/r00t
       - home_agl:/hal
       - home_agl:/home/${_AGL}
       - home_dvl:/hel
       - home_dvl:/home/${_DVL}
-    depends_on:
-      worlds-skel:
-        condition: service_completed_successfully
+      - dls:/dls
+    # depends_on:
+    #   worlds-skel:
+    #     condition: service_completed_successfully
   worlds-lite:
-    working_dir: /hal
+    user: ${_DVL}
+    working_dir: /hel
     extends: worlds
     volumes:
-      - repo-lite:/dvlw
-      - repo-lite:/r00t/dvlw
-      - repo-lite:/home/r00t/dvlw
-      - repo-lite:/hal/dvlw
-      - repo-lite:/home/${_AGL}/dvlw
-      - repo-lite:/hel/dvlw
-      - repo-lite:/home/${_DVL}/dvlw
+      - repo_agl-lite:/dvlw
+      - repo_agl-lite:/r00t/dvlw
+      - repo_agl-lite:/home/r00t/dvlw
+      - repo_agl-lite:/hal/dvlw
+      - repo_agl-lite:/home/${_AGL}/dvlw
+      - repo_dvl-lite:/hel/dvlw
+      - repo_dvl-lite:/home/${_DVL}/dvlw
+      - mnt-data:${_MNT}
       # - repo-lite:/g0d/dvlw
       # - repo-lite:/g0d/hell/hel/dvlw
       # - repo-lite:/g0d/halo/hal/dvlw
@@ -536,6 +643,13 @@ services:
       # - repo-lite:/halo/dvlw
       # - repo-lite:/hell/hel/dvlw
       # - repo-lite:/halo/hal/dvlw
+      - home_r00t:/r00t
+      - home_r00t:/home/r00t
+      - home_agl:/hal
+      - home_agl:/home/${_AGL}
+      - home_dvl:/hel
+      - home_dvl:/home/${_DVL}
+      - dls:/dls
 
   bare:
     extends: worlds-lite
@@ -546,7 +660,8 @@ services:
         - WORLDS=bare
   git-lite:
     extends: worlds-lite
-    working_dir: /r00t/halo/hal
+    user: r00t
+    working_dir: /r00t
     # entrypoint: /bin/bash -c
     # command: "if [ -f \"start-kde.sh\" ]; then bash start.sh; fi; && sleep infinity;"
     image: kindtek/${HUB_REPO:-devels-playground}:kali-git-lite
@@ -597,7 +712,7 @@ services:
       args:
         - WORLDS=gui-lite
   gui-plus:
-    working_dir: /r00t/halo/hal
+    working_dir: /r00t
     extends: worlds
     image: kindtek/${HUB_REPO:-devels-playground}:kali-gui-plus
     # command: bash start-kde.sh
@@ -646,9 +761,9 @@ volumes:
   mnt-data:
 
   dls:
-  dls_dvl:
-  dls_agl:
-  dls_r00t:
+  # dls_dvl:
+  # dls_agl:
+  # dls_r00t:
 
   home_dvl:
   home_agl:
@@ -657,7 +772,9 @@ volumes:
   repo:
   repo-lite:
   repo_agl:
+  repo_agl-lite:
   repo_dvl:
+  repo_dvl-lite:
   repo_r00t:
 
   world_hell:

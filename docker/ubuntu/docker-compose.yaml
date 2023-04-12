@@ -67,8 +67,8 @@ services:
 
   skel-build-lite:
     extends: base
-    # user: agl
     tty: false
+    privileged: true
     cap_add:
         - AUDIT_WRITE
         - DAC_OVERRIDE
@@ -131,6 +131,7 @@ services:
   skel-build:
     extends: base
     tty: false
+    privileged: true
     cap_add:
         - AUDIT_WRITE
         - DAC_OVERRIDE
@@ -211,14 +212,7 @@ services:
     working_dir: /hel
     restart: on-failure
     tty: true
-    # entrypoint: /bin/bash -c
-    # entrypoint: ["/bin/bash", "-l", "-c"]
-    # # # entrypoint: ["bash -i chroot --userspec=dvl:dvl /fs"]
-    # command: ["-it", "chroot --userspec=dvl:dvl /fs"]
-    # command:  ["bash -i chroot --userspec=dvl:dvl /fs"]
-    privileged: true
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-bare
-    # extends: skel
     build:
       context: .
       target: dvlp_base-bare
@@ -248,14 +242,6 @@ services:
     working_dir: /hel
     restart: on-failure
     tty: true
-    # entrypoint: /bin/bash -c
-    # entrypoint: ["/bin/bash", "-l", "-c"]
-    # # # entrypoint: ["bash -i chroot --userspec=dvl:dvl /fs"]
-    # command: ["-it", "chroot --userspec=dvl:dvl /fs"]
-    # command:  ["bash -i chroot --userspec=dvl:dvl /fs"]
-    # cap_add:
-    #     - SYS_CHROOT
-    privileged: true
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-git
     # extends: skel
     build:

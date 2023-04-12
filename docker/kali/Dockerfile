@@ -40,7 +40,11 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get -y update && apt-get -y upgrade && apt-get -y install git 
+    apt-get update -y && apt-get autoremove -y && \
+    apt-get install --no-install-recommends -y git && \
+    apt-get --reinstall -y install ca-certificates && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb 
 # add git cache directory
 
 # add safe directories
@@ -56,7 +60,7 @@ RUN \
     git config --global --add safe.directory / && \
     git config --global --add safe.directory /root && \
     git config --global --add safe.directory /r00t && \
-    git config --global --add safe.directory /dvlw/ && \
+    git config --global --add safe.directory /dvlw && \
     git config --global --add safe.directory /tmp/git/cache && \
     git config --global user.name 'Snail Mail' && \
     git config --global user.email '<>'
@@ -68,15 +72,15 @@ FROM dvlp_repo-build-prep AS dvlp_repo-build-lite
 WORKDIR /
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked  \
-    git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --filter=blob:limit=12400 --progress dvlw-lite || (cd dvlw && git pull) 
+    git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --filter=blob:limit=12400 --progress dvlw-lite || (cd dvlw-lite && git pull https://github.com/kindtek/devels-workshop) 
 WORKDIR /dvlw-lite
 # RUN if [ $REFRESH_REPO != no ]; then git pull; fi    
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
-    ((git submodule init -- dvlp && git submodule update --init --remote --depth=1 --progress -- dvlp )|| git pull dvlp) && \
+    ((git submodule init -- dvlp && git submodule update --init --remote --depth=1 --progress -- dvlp ) || (git pull https://github.com/kindtek/devels-playground)) && \
     # (cd /tmp/git/cache/dvlw/dvlp && git pull && cp -rv --remove-destination . /home/${_DVL}/dvlw/dvlp)
-    chmod -R +x dvlp/mnt/home && \
-    chmod -R +x dvlp/mnt/bak
+    chmod -R 1770 dvlp/mnt/home && \
+    chmod -R 1770 dvlp/mnt/bak
 
 ###################
 # dvlp_repo-build #
@@ -85,13 +89,13 @@ FROM dvlp_repo-build-lite AS dvlp_repo-build
 WORKDIR /
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
-    git clone https://github.com/kindtek/devels-workshop --progress dvlw || (cd dvlw && git pull) 
+    git clone https://github.com/kindtek/devels-workshop --progress dvlw || (cd dvlw && git pull https://github.com/kindtek/devels-workshop) 
 WORKDIR /dvlw
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
-    git submodule update --init --remote --progress -- dvlp || git pull && \
-    chmod -R +x dvlp/mnt/home && \
-    chmod -R +x dvlp/mnt/bak
+    git submodule update --init --remote --progress -- dvlp || git pull https://github.com/kindtek/devels-playground && \
+    chmod -R 1770 dvlp/mnt/home && \
+    chmod -R 1770 dvlp/mnt/bak
 WORKDIR /dvlw/dvlp
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
@@ -120,12 +124,14 @@ RUN mkdir -pv dvlw && \
     mkdir -pv dls && \
     ln -fsv dvlw devels-workshop && \
     ln -fsv dvlw/dvlp dvlp && \
-    ln -fsv dvlw/dvlp/docker/kali dockerk && \
+    ln -fsv dvlw/dvlp/docker/kali kdock && \
     ln -fsv dvlw/dvlp/docker docker && \
     mkdir -pv /home/${_DVL} && \
-    cp -rv * /home/${_DVL}
+    chmod -R 1770 /hel && \
+    cp -prv * /home/${_DVL}
 WORKDIR ${_MNT}
-RUN ln -fsv ${_MNT}/bak/${_DVL} bak
+RUN ln -fsv ${_MNT}/bak/${_DVL} bak && \
+    chmod -R 1770 /hel
 # ln -fsv ${_MNT}/bak/${_DVL} /home/${_DVL}/bak 
 WORKDIR /
 
@@ -139,16 +145,18 @@ WORKDIR /hel
 COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./
 RUN mkdir -pv /hel && \
     mkdir -pv /hel/built-kernels && \
-    mkdir -pv /home/${_DVL}}/built-kernels && \
+    mkdir -pv /home/${_DVL}/built-kernels && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
     ln -fsv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
-    ln -fsv dvlw/dvlp/kernels kernels
-WORKDIR /home/${_DVL}
-RUN ln -fsv dvlw/dvlp dvlp && \
-    ln -fsv dvlw/dvlp/kernels/linux linux && \
-    ln -fsv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
-    ln -fsv dvlw/dvlp/kernels kernels
+    ln -fsv dvlw/dvlp/kernels kernels && \
+    chmod -R 1770 /hel && \
+    cp -prv * /home/${_DVL}
+# WORKDIR /home/${_DVL}
+# RUN ln -fsv dvlw/dvlp dvlp && \
+#     ln -fsv dvlw/dvlp/kernels/linux linux && \
+#     ln -fsv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
+#     ln -fsv dvlw/dvlp/kernels kernels && \
 WORKDIR /
 
 #########################
@@ -164,13 +172,14 @@ RUN mkdir -pv dvlw && \
     mkdir -pv dls && \
     ln -fsv dvlw devels-workshop && \
     ln -fsv dvlw/dvlp dvlp && \
-    ln -fsv dvlw/dvlp/docker/kali dockerk && \
+    ln -fsv dvlw/dvlp/docker/kali kdock && \
     ln -fsv dvlw/dvlp/docker docker && \
     mkdir -pv /home/${_AGL} && \
-    cp -rv * /home/${_AGL} 
+    chmod -R 1770 /hal && \
+    cp -prv * /home/${_AGL} 
 WORKDIR ${_MNT}
 RUN mkdir -pv bak/${_AGL} && \
-    chmod 753 bak/${_AGL}
+    chmod -R 1770 bak/${_AGL}
 WORKDIR /
 
 ################################
@@ -181,17 +190,20 @@ ARG _MNT
 ARG _AGL
 WORKDIR /hal
 COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./
+COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/      ./mnt/
 RUN mkdir -pv built-kernels && \
     mkdir -pv /home/${_AGL}/built-kernels && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
     ln -fsv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
-    ln -fsv dvlw/dvlp/kernels kernels 
-WORKDIR /home/${_AGL}
-RUN ln -fsv dvlw/dvlp dvlp && \
-    ln -fsv dvlw/dvlp/kernels/linux linux && \
-    ln -fsv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
-    ln -fsv dvlw/dvlp/kernels kernels
+    ln -fsv dvlw/dvlp/kernels kernels  && \
+    chmod -R 1770 /hel && \
+    cp -prv * /home/${_AGL} 
+# WORKDIR /home/${_AGL}
+# RUN ln -fsv dvlw/dvlp dvlp && \
+#     ln -fsv dvlw/dvlp/kernels/linux linux && \
+#     ln -fsv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
+#     ln -fsv dvlw/dvlp/kernels kernels
 WORKDIR /
 
 ########################
@@ -208,7 +220,7 @@ RUN mkdir -pv dvlw && \
     mkdir -pv dls && \
     ln -fsv dvlw devels-workshop && \
     ln -fsv dvlw/dvlp dvlp && \
-    ln -fsv dvlw/dvlp/docker/kali dockerk && \
+    ln -fsv dvlw/dvlp/docker/kali kdock && \
     ln -fsv dvlw/dvlp/docker docker 
 WORKDIR /mnt
 RUN mkdir -pv dls && \
@@ -225,7 +237,7 @@ FROM dvlp_base-r00t-dirs AS dvlp_base-r00t-kernel-dirs
 ARG _MNT
 ARG _ADMIN
 WORKDIR /admin
-COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./
+COPY --from=dvlp_repo-lite chown=r00t:r00t ./dvlw/dvlp/mnt/home/ ./
 RUN mkdir -pv built-kernels && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
@@ -251,9 +263,6 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 WORKDIR /
 # COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./etc/skel/
-COPY --from=dvlp_base-r00t-dirs                     ./admin/    ./r00t/
-COPY --from=dvlp_base-devel-dirs                     ./hel/      ./hel/
-COPY --from=dvlp_base-angel-dirs                     ./hal/      ./hal/
 USER root
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -272,7 +281,7 @@ RUN \
     passwd -d r00t && \
     passwd -d root && \
     passwd -l root 
-    # 
+
 RUN \
     --mount=type=cache,target=/var/cache/debconf,sharing=locked \
     echo 'tzdata tzdata/Areas select America' | debconf-set-selections && \
@@ -302,12 +311,19 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /
-COPY --from=dvlp_repo-lite          --chown=${_DVL}:hell        ./dvlw/dvlp/mnt/home/       ./hel/
-COPY --from=dvlp_repo-lite          --chown=${_AGL}:halo        ./dvlw/dvlp/mnt/home/       ./hal/
-COPY --from=dvlp_repo-lite          --chown=r00t:r00t           ./dvlw/dvlp/mnt/home/       ./r00t/
-COPY --from=dvlp_repo-lite          --chown=r00t:halo           ./dvlw/dvlp/mnt/            .${_MNT}/
-COPY --from=dvlp_repo-lite                                      ./dvlw/                     ./dvlw/
-COPY --from=dvlp_repo-lite          --chown=r00t:r00t            /dvlw/dvlp/mnt/etc/*       /etc/
+COPY --from=dvlp_base-r00t-dirs     --chown=r00t:r00t       --chmod=1770    ./admin/                    ./r00t/
+COPY --from=dvlp_base-devel-dirs    --chown=${_DVL}:hell    --chmod=1770    ./hel/                      ./hel/
+COPY --from=dvlp_base-angel-dirs    --chown=${_AGL}:halo    --chmod=1770    ./hal/                      ./hal/
+COPY --from=dvlp_repo-lite          --chown=${_DVL}:hell    --chmod=1770    ./dvlw/dvlp/mnt/home/       ./hel/
+COPY --from=dvlp_repo-lite          --chown=${_AGL}:halo    --chmod=1770    ./dvlw/dvlp/mnt/home/       ./hal/
+COPY --from=dvlp_repo-lite          --chown=r00t:r00t       --chmod=1770    ./dvlw/dvlp/mnt/home/       ./r00t/
+COPY --from=dvlp_repo-lite          --chown=${_AGL}:halo    --chmod=1770    ./dvlw/                     ./dvlw/
+COPY --from=dvlp_repo-lite          --chown=${_DVL}:hell    --chmod=1770    ./dvlw/                     ./hel/dvlw/
+COPY --from=dvlp_repo-lite          --chown=${_AGL}:halo    --chmod=1770    ./dvlw/                     ./hal/dvlw/
+COPY --from=dvlp_repo-lite          --chown=r00t:r00t       --chmod=1770    ./dvlw/                     ./r00t/dvlw/
+COPY --from=dvlp_repo-lite          --chown=r00t:r00t       --chmod=1770    /dvlw/dvlp/mnt/etc/*        /etc/
+COPY --from=dvlp_repo-lite          --chown=r00t:halo       --chmod=1770    ./dvlw/dvlp/mnt/            .${_MNT}/
+
 
 ## WORKDIR /hell
 ###################
@@ -324,21 +340,23 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /
-COPY --from=dvlp_base-r00t-kernel-dirs  --chown=r00t:r00t           ./admin/                ./r00t/ 
-# COPY --from=dvlp_base-r00t-kernel-dirs                              ./admin/                ./home/r00t/
-COPY --from=dvlp_base-r00t-kernel-dirs                              ./mnt/                  ./${_MNT}/
-COPY --from=dvlp_base-devel-kernel-dirs  --chown=${_DVL}:hell       ./hel/                  ./hel/ 
-# COPY --from=dvlp_base-devel-kernel-dirs                           ./hel/                  ./home/dvl/
-COPY --from=dvlp_base-devel-kernel-dirs                             ./mnt/                  ./${_MNT}/
-COPY --from=dvlp_base-angel-kernel-dirs  --chown=r00t:r00t          ./hal/                  ./hal/ 
-# COPY --from=dvlp_base-angel-kernel-dirs                             ./hal/                  ./home/agl/
-COPY --from=dvlp_base-angel-kernel-dirs                             ./mnt/                  ./${_MNT}/
-COPY --from=dvlp_repo                   --chown=${_DVL}:hell        ./dvlw/dvlp/mnt/home/   ./hel/
-COPY --from=dvlp_repo                   --chown=${_AGL}:halo        ./dvlw/dvlp/mnt/home/   ./hal/
-COPY --from=dvlp_repo                   --chown=r00t:r00t           ./dvlw/dvlp/mnt/home/   ./r00t/
-COPY --from=dvlp_repo                   --chown=r00t:halo           ./dvlw/dvlp/mnt/        .${_MNT}/
-COPY --from=dvlp_repo                                               ./dvlw/                 ./dvlw/
-COPY --from=dvlp_repo                   --chown=r00t:r00t            /dvlw/dvlp/mnt/etc/*   /etc/
+COPY --from=dvlp_base-r00t-kernel-dirs  --chown=r00t:r00t    --chmod=1770    ./admin/                ./r00t/ 
+COPY --from=dvlp_base-devel-kernel-dirs --chown=${_DVL}:hell --chmod=1770    ./hel/                  ./hel/ 
+COPY --from=dvlp_base-angel-kernel-dirs --chown=${_AGL}:halo --chmod=1770    ./hal/                  ./hal/ 
+COPY --from=dvlp_repo                   --chown=${_DVL}:hell --chmod=1770    ./dvlw/dvlp/mnt/home/   ./hel/
+COPY --from=dvlp_repo                   --chown=${_AGL}:halo --chmod=1770    ./dvlw/dvlp/mnt/home/   ./hal/
+COPY --from=dvlp_repo                   --chown=r00t:r00t    --chmod=1770    ./dvlw/dvlp/mnt/home/   ./r00t/
+COPY --from=dvlp_repo                   --chown=${_AGL}:halo --chmod=1770    ./dvlw/                 ./dvlw/
+COPY --from=dvlp_base-angel-kernel-dirs --chown=${_AGL}:halo --chmod=1770    ./hal/                  ./dvlw/ 
+COPY --from=dvlp_repo                   --chown=${_DVL}:hell --chmod=1770    ./dvlw/                 ./hel/dvlw/
+COPY --from=dvlp_repo                   --chown=${_AGL}:halo --chmod=1770    ./dvlw/                 ./hal/dvlw/
+COPY --from=dvlp_repo                   --chown=r00t:r00t    --chmod=1770    ./dvlw/                 ./r00t/dvlw/
+COPY --from=dvlp_repo                   --chown=r00t:r00t    --chmod=1770    /dvlw/dvlp/mnt/etc/*    /etc/
+WORKDIR ${_MNT}
+COPY --from=dvlp_base-r00t-kernel-dirs  --chown=r00t:r00t    --chmod=1770    ./mnt/                  ./
+COPY --from=dvlp_base-devel-kernel-dirs --chown=r00t:r00t    --chmod=1770    ./mnt/                  ./
+COPY --from=dvlp_repo                   --chown=r00t:halo    --chmod=1770    ./dvlw/dvlp/mnt/        ./
+WORKDIR /
 
 #############
 # dvlp_skel #
@@ -357,6 +375,9 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 
+##################
+# dvlp_skel-lite #
+##################
 FROM dvlp_skel-build-lite AS dvlp_skel-lite
 
 #################################################################################
@@ -450,21 +471,25 @@ RUN \
     rm -rf /var/cache/apt/archives/*.deb
 RUN  ( $angel_exists && (chown -R ${_AGL}:halo /hal || chown -R ${_AGL}:halo /hal/.local || angel_exists=false )) 
 USER ${_AGL}
+WORKDIR /hal
 RUN \
     --mount=type=cache,target=/var/cache/pip,sharing=private \
     pip3 install pip --upgrade --no-warn-script-location --no-deps || angel_exists=false 
 USER r00t
+WORKDIR /r00t
 RUN \
     --mount=type=cache,target=/var/cache/pip,sharing=private \
     $r00t_exists && pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     pip3 install cdir --user || r00t_exists=false
 RUN ( $devel_exists && (chown -R ${_DVL}:hell /hel || chown -R ${_DVL}:hell /hel/.local || devel_exists=false )) 
 USER ${_DVL}
+WORKDIR /hel
 RUN \
     --mount=type=cache,target=/var/cache/pip,sharing=private \
     $devel_exists && pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     pip3 install cdir --user || devel_exists=false
 RUN rm -rf /var/cache/pip/*
+WORKDIR /
 
 #########################
 # dvlp_base-python-lite #
@@ -778,10 +803,10 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 RUN \
-    --mount=type=cache,target=/var/cache/debconf \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     # echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
     apt-get update -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y kubuntu-desktop && \
+    apt-get install --no-install-recommends -y kali-defaults kali-root-login desktop-base kde-plasma-desktop && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 COPY --from=dvlp_repo-lite --chown=r00t:r00t /dvlw/dvlp/mnt/etc/* /etc/
@@ -883,71 +908,71 @@ WORKDIR /
 COPY --from=dvlp_kernel-make ./built-kernel.tar.gz ./built-kernel.tar.gz
 
 
-FROM dvlp_base AS dvlp_worlds-lite
-WORKDIR /
-# COPY --from=dvlp_worlds-skel          ./    ./
-# COPY --from=dvlp_base         ./    ./
-WORKDIR /
+# FROM dvlp_base AS dvlp_worlds-lite
+# WORKDIR /
+# # COPY --from=dvlp_worlds-skel          ./    ./
+# # COPY --from=dvlp_base         ./    ./
+# WORKDIR /
 
-FROM dvlp_base AS dvlp_worlds
-WORKDIR /
-# COPY --from=dvlp_worlds-kernel-skel   ./    ./
-# COPY --from=dvlp_base         ./    ./
-WORKDIR /
+# FROM dvlp_base AS dvlp_worlds
+# WORKDIR /
+# # COPY --from=dvlp_worlds-kernel-skel   ./    ./
+# # COPY --from=dvlp_base         ./    ./
+# WORKDIR /
 
-####################
-# dvlp_worlds-plus #
-###################
-FROM dvlp_worlds-kernel-skel AS dvlp_worlds-plus
-WORKDIR /
-# COPY --from=dvlp_worlds                                 ./          ./
-# COPY --from=dvlp_base-python-build-lite                 ./          ./
-# COPY --from=dvlp_base-python-build-lite                 ./          ./halo/
-# COPY --from=dvlp_base-python-build-lite                 ./          ./hell/
+# ####################
+# # dvlp_worlds-plus #
+# ###################
+# FROM dvlp_worlds-kernel-skel AS dvlp_worlds-plus
+# WORKDIR /
+# # COPY --from=dvlp_worlds                                 ./          ./
+# # COPY --from=dvlp_base-python-build-lite                 ./          ./
+# # COPY --from=dvlp_base-python-build-lite                 ./          ./halo/
+# # COPY --from=dvlp_base-python-build-lite                 ./          ./hell/
 
-# COPY --from=dvlp_base-build         ./    ./
-# COPY --from=dvlp_worlds-kernel-skel   ./    ./
+# # COPY --from=dvlp_base-build         ./    ./
+# # COPY --from=dvlp_worlds-kernel-skel   ./    ./
 
-# RUN chroot --userspec=${_AGL}:halo  /halo pip install cdir --user
-# RUN chroot --userspec=r00t:r00t     /halo pip install cdir --user
-# RUN chroot --userspec=r00t:r00t     /hell pip install cdir --user
-# RUN chroot --userspec=${_DVL}:hell  /hell pip install cdir --user
+# # RUN chroot --userspec=${_AGL}:halo  /halo pip install cdir --user
+# # RUN chroot --userspec=r00t:r00t     /halo pip install cdir --user
+# # RUN chroot --userspec=r00t:r00t     /hell pip install cdir --user
+# # RUN chroot --userspec=${_DVL}:hell  /hell pip install cdir --user
 
-#########################
-# dvlp_worlds-kernel-plus #
-#########################
-FROM dvlp_worlds-plus AS dvlp_worlds-kernel-plus
-WORKDIR /
-# COPY --from=dvlp_base-python-build-lite                  ./          ./
-# COPY --from=dvlp_base-python-build-lite                  ./          ./halo/
-# COPY --from=dvlp_base-python-build-lite                  ./          ./hell/
-# COPY --from=dvlp_worlds-plus                            ./          ./
-# COPY --from=dvlp_worlds-kernel-skel                     ./          ./
-# RUN chroot --userspec=${_AGL}:halo  /halo pip install cdir && \
-#     chroot --userspec=r00t:r00t     /halo pip install cdir && \
-#     chroot --userspec=${_DVl}:hell  /hell pip install cdir && \
-#     chroot --userspec=r00t:r00t     /halo pip install cdir && \
-#     chroot --userspec=r00t:r00t     /r00t pip install cdir && \
-#     chroot --userspec=g0d:g0d     /g0d pip install cdir 
+# #########################
+# # dvlp_worlds-kernel-plus #
+# #########################
+# FROM dvlp_worlds-plus AS dvlp_worlds-kernel-plus
+# WORKDIR /
+# # COPY --from=dvlp_base-python-build-lite                  ./          ./
+# # COPY --from=dvlp_base-python-build-lite                  ./          ./halo/
+# # COPY --from=dvlp_base-python-build-lite                  ./          ./hell/
+# # COPY --from=dvlp_worlds-plus                            ./          ./
+# # COPY --from=dvlp_worlds-kernel-skel                     ./          ./
+# # RUN chroot --userspec=${_AGL}:halo  /halo pip install cdir && \
+# #     chroot --userspec=r00t:r00t     /halo pip install cdir && \
+# #     chroot --userspec=${_DVl}:hell  /hell pip install cdir && \
+# #     chroot --userspec=r00t:r00t     /halo pip install cdir && \
+# #     chroot --userspec=r00t:r00t     /r00t pip install cdir && \
+# #     chroot --userspec=g0d:g0d     /g0d pip install cdir 
 
-#################
-# dvlp_gui-plus #
-#################
+# #################
+# # dvlp_gui-plus #
+# #################
 FROM dvlp_base-gui-plus AS dvlp_gui-plus
-WORKDIR /
-# COPY --from=dvlp_base-gui-plus                          ./          ./
-# COPY --from=dvlp_base-gui-plus	            	        ./	        ./halo/
-# COPY --from=dvlp_base-gui-plus	            	        ./	        ./hell/
-COPY --from=dvlp_worlds-plus                            ./          ./
-# RUN useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/halo          r00t && \
-#     useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/hell          r00t  && \
-#     useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /r00t/hell        g0d  && \
-#     useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /r00t/halo        g0d && \
-#     groupadd            r00t   --root /r00t/halo && \
-#     groupadd            r00t   --root /r00t/hell && \
-#     groupadd            g0d    --root /r00t/hell && \
-#     groupadd            g0d    --root /r00t/halo 
-WORKDIR /
+# WORKDIR /
+# # COPY --from=dvlp_base-gui-plus                          ./          ./
+# # COPY --from=dvlp_base-gui-plus	            	        ./	        ./halo/
+# # COPY --from=dvlp_base-gui-plus	            	        ./	        ./hell/
+# COPY --from=dvlp_worlds-plus                            ./          ./
+# # RUN useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/halo          r00t && \
+# #     useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/hell          r00t  && \
+# #     useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /r00t/hell        g0d  && \
+# #     useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /r00t/halo        g0d && \
+# #     groupadd            r00t   --root /r00t/halo && \
+# #     groupadd            r00t   --root /r00t/hell && \
+# #     groupadd            g0d    --root /r00t/hell && \
+# #     groupadd            g0d    --root /r00t/halo 
+# WORKDIR /
 
 ############
 # dvlp_gui #
@@ -957,7 +982,7 @@ WORKDIR /
 # COPY --from=dvlp_base-gui                               ./          ./
 # COPY --from=dvlp_base-gui	            	            ./	        ./halo/
 # COPY --from=dvlp_base-gui	            	            ./	        ./hell/
-COPY --from=dvlp_worlds-lite                            ./          ./
+# COPY --from=dvlp_worlds-lite                            ./          ./
 # RUN useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/halo          r00t && \
 #     useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/hell          r00t  && \
 #     useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /r00t/hell        g0d  && \
@@ -977,7 +1002,7 @@ WORKDIR /
 # COPY --from=dvlp_base-gui-lite                          ./          ./
 # COPY --from=dvlp_base-gui-lite	            	        ./	        ./halo/
 # COPY --from=dvlp_base-gui-lite	            	        ./	        ./hell/
-COPY --from=dvlp_worlds-lite                            ./          ./
+# COPY --from=dvlp_worlds-lite                            ./          ./
 # RUN useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/halo          r00t && \
 #     useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/hell          r00t  && \
 #     useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /r00t/hell        g0d  && \
@@ -997,7 +1022,7 @@ WORKDIR /
 # COPY --from=dvlp_base-dind-lite                         ./          ./
 # COPY --from=dvlp_base-dind-lite	            	        ./	        ./halo/
 # COPY --from=dvlp_base-dind-lite	            	        ./	        ./hell/
-COPY --from=dvlp_worlds-lite                            ./          ./
+# COPY --from=dvlp_worlds-lite                            ./          ./
 # RUN useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/halo          r00t && \
 #     useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/hell          r00t  && \
 #     useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /r00t/hell        g0d  && \
@@ -1017,7 +1042,7 @@ WORKDIR /
 # COPY --from=dvlp_base-git                               ./          ./
 # COPY --from=dvlp_base-git	            	            ./	        ./halo/
 # COPY --from=dvlp_base-git	            	            ./	        ./hell/
-COPY --from=dvlp_worlds                                 ./          ./
+# COPY --from=dvlp_worlds                                 ./          ./
 # RUN useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/halo          r00t && \
 #     useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/hell          r00t  && \
 #     useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /r00t/hell        g0d  && \
@@ -1036,7 +1061,7 @@ WORKDIR /
 # COPY --from=dvlp_base-git-lite                          ./          ./
 # COPY --from=dvlp_base-git-lite	            	        ./	        ./halo/
 # COPY --from=dvlp_base-git-lite	            	        ./	        ./hell/
-COPY --from=dvlp_worlds-lite                            ./          ./
+# COPY --from=dvlp_worlds-lite                            ./          ./
 # RUN useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/halo          r00t && \
 #     useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/hell          r00t  && \
 #     useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /r00t/hell        g0d  && \
@@ -1056,7 +1081,7 @@ WORKDIR /
 # COPY --from=dvlp_base-msdot-lite                        ./          ./
 # COPY --from=dvlp_base-msdot-lite	            	    ./	        ./halo/
 # COPY --from=dvlp_base-msdot-lite	            	    ./	        ./hell/
-COPY --from=dvlp_worlds-lite                            ./          ./
+# COPY --from=dvlp_worlds-lite                            ./          ./
 # RUN useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/halo          r00t && \
 #     useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/hell          r00t  && \
 #     useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /r00t/hell        g0d  && \
@@ -1075,10 +1100,10 @@ FROM dvlp_base-python-lite AS dvlp_python-lite
 ARG _AGL
 ARG _DVL
 WORKDIR /
-COPY --from=dvlp_base-python-lite                       ./          ./
-# COPY --from=dvlp_base-python-lite	            	    ./	        ./halo/
-# COPY --from=dvlp_base-python-lite	            	    ./	        ./hell/
-COPY --from=dvlp_worlds-lite                            ./          ./
+# COPY --from=dvlp_base-python-lite                       ./          ./
+# # COPY --from=dvlp_base-python-lite	            	    ./	        ./halo/
+# # COPY --from=dvlp_base-python-lite	            	    ./	        ./hell/
+# COPY --from=dvlp_worlds-lite                            ./          ./
 # RUN useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/halo          r00t && \
 #     useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/hell          r00t  && \
 #     useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /r00t/hell        g0d  && \
@@ -1137,7 +1162,7 @@ WORKDIR /
 # COPY --from=dvlp_base-cuda                              ./          ./
 # COPY --from=dvlp_base-cuda	            	            ./	        ./halo/
 # COPY --from=dvlp_base-cuda	            	            ./	        ./hell/
-COPY --from=dvlp_worlds-lite                            ./          ./
+# COPY --from=dvlp_worlds-lite                            ./          ./
 # RUN useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/halo          r00t && \
 #     useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/hell          r00t  && \
 #     useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /r00t/hell        g0d  && \
@@ -1157,7 +1182,7 @@ WORKDIR /
 # COPY --from=dvlp_base-cuda-plus                         ./          ./
 # COPY --from=dvlp_base-cuda-plus	            	        ./	        ./halo/
 # COPY --from=dvlp_base-cuda-plus	            	        ./	        ./hell/
-COPY --from=dvlp_worlds-plus                            ./          ./
+# COPY --from=dvlp_worlds-plus                            ./          ./
 # RUN useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/halo          r00t && \
 #     useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /r00t/hell          r00t  && \
 #     useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /r00t/hell        g0d  && \
