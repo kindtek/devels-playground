@@ -1,3 +1,11 @@
+[submodule "dvlp"]
+	branch = kali-devel
+	active = true
+	path = dvlp
+	shallow = false
+	url = https://github.com/kindtek/devels-playground.git
+	branch = kali-devel
+	recurse = false
 [submodule "dvl-adv"]
 	active = true
 	shallow = false
@@ -28,11 +36,3 @@
 	branch = stable
 	recurse = false
 	ignore = all
-[submodule "dvlp"]
-	branch = kali-devel
-	active = true
-	path = dvlp
-	shallow = false
-	url = https://github.com/kindtek/devels-playground.git
-	branch = kali-devel
-	recurse = false
