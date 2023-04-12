@@ -155,7 +155,7 @@ if ! shopt -oq posix; then
   fi
 fi
 
-export PATH=$PATH:/home/$LOGNAME/.local/bin:/hel/dvlw/scripts:/home/dvl/dvlw/dvlp/scripts:WSL_DISTRO_NAME=$WSL_DISTRO_NAME:_AGL=${_AGL:-agl}:/root/.local/bin
+export PATH=$PATH:/home/$LOGNAME/.local/bin:/hel/dvlw/scripts:/home/dvl/dvlw/dvlp/scripts:WSL_DISTRO_NAME=$WSL_DISTRO_NAME:_AGL=${_AGL:-agl}:~/.local/bin
 export DOCKER_BUILDKIT=1
 export COMPOSE_DOCKER_CLI_BUILD=1
 export DOCKER_CLI_EXPERIMENTAL=enabled
