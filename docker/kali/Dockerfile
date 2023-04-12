@@ -72,12 +72,23 @@ FROM dvlp_repo-build-prep AS dvlp_repo-build-lite
 WORKDIR /
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked  \
-    git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --filter=blob:limit=12400 --progress dvlw-lite || (cd dvlw-lite && git pull https://github.com/kindtek/devels-workshop) 
+    ( git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --filter=blob:limit=12400 --progress dvlw-lite || git config pull.rebase false ) || \
+    ( git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --filter=blob:limit=12400 --progress dvlw-lite || git config pull.rebase true ) || \
+    ( git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --filter=blob:limit=12400 --progress dvlw-lite || git config pull.rebase false ) || \
+    ( git clone https://github.com/kindtek/devels-workshop --depth=1 --progress dvlw-lite || git config pull.rebase true ) || \
+    ( git clone https://github.com/kindtek/devels-workshop --depth=1 --progress dvlw-lite || git config pull.rebase false ) || \
+    ( git clone https://github.com/kindtek/devels-workshop --progress dvlw-lite || git config pull.rebase true ) || \
+    ( git clone https://github.com/kindtek/devels-workshop --progress dvlw-lite || git config pull.rebase false ) || \
+    ( cd dvlw-lite && git pull -f https://github.com/kindtek/devels-workshop ) 
 WORKDIR /dvlw-lite
 # RUN if [ $REFRESH_REPO != no ]; then git pull; fi    
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
-    ((git submodule init -- dvlp && git submodule update --init --remote --depth=1 --progress -- dvlp ) || (git pull https://github.com/kindtek/devels-playground)) && \
+    # git submodule init dvlp && \
+    (git pull --progress --depth=1 --prune https://github.com/kindtek/devels-playground ) || \
+    ( git config pull.rebase false && git submodule update  --depth=1 --init --progress -- dvlp )  || \
+    ( git config pull.rebase true &&  git submodule update --init --remote --progress -- dvlp ) || \
+    (git config pull.rebase false && git submodule update --init --remote --progress -- dvlp ) || (git pull --progress --prune https://github.com/kindtek/devels-playground ) && \
     # (cd /tmp/git/cache/dvlw/dvlp && git pull && cp -rv --remove-destination . /home/${_DVL}/dvlw/dvlp)
     chmod -R 1770 dvlp/mnt/home && \
     chmod -R 1770 dvlp/mnt/bak
@@ -172,7 +183,8 @@ ARG _AGL_USR
 ENV _AGL=${_AGL_USR:-agl}
 WORKDIR /hal
 COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./
-RUN mkdir -pv dvlw && \
+RUN mkdir -pv built-kernels && \
+    mkdir -pv dvlw && \
     mkdir -pv dls && \
     ln -fsv dvlw devels-workshop && \
     ln -fsv dvlw/dvlp dvlp && \
@@ -195,13 +207,15 @@ ARG _MNT
 ARG _AGL
 WORKDIR /hal
 COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./
-COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/      ./mnt/
-RUN mkdir -pv built-kernels && \
-    # mkdir -pv /home/${_AGL}/built-kernels && \
+# COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/      ./mnt/
+RUN mkdir -pv dvlw && \
+    mkdir -pv /hal && \
+    mkdir -pv /hal/built-kernels && \
+    mkdir -pv /home/${_AGL}/built-kernels && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
     ln -fsv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
-    ln -fsv dvlw/dvlp/kernels kernels && \
+    ln -fsv dvlw/dvlp/kernels kernels  && \
     chmod -R 1770 /hal && \
     chmod -R 1770 /home/${_AGL} && \
     cp -prv * /home/${_AGL}
@@ -228,8 +242,8 @@ RUN mkdir -pv dvlw && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/docker/kali kdock && \
     ln -fsv dvlw/dvlp/docker docker 
-    # && \
-    # chmod -R 1770 /admin
+# && \
+# chmod -R 1770 /admin
 WORKDIR /mnt
 RUN mkdir -pv dls && \
     mkdir -pv bak && \
@@ -241,7 +255,7 @@ RUN mkdir -pv dls && \
     chmod -R 1770 /mnt 
 
 
-    
+
 WORKDIR /
 
 ###############################
@@ -252,14 +266,14 @@ ARG _MNT
 ARG _ADMIN
 WORKDIR /admin
 COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./
-RUN mkdir -pv built-kernels && \
+RUN mkdir -pv /admin && mkdir -pv built-kernels && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
     ln -fsv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
     ln -fsv dvlw/dvlp/kernels kernels 
-    #  && \
-    # chmod -R 1770 /admin && \
-    # cp -prv * /home/r00t
+#  && \
+# chmod -R 1770 /admin && \
+# cp -prv * /home/r00t
 WORKDIR /
 
 ################################# BASE ### ###################################
@@ -335,7 +349,6 @@ COPY --from=dvlp_repo-lite              --chown=${_DVL}:hell    --chmod=1770    
 COPY --from=dvlp_repo-lite              --chown=${_AGL}:halo    --chmod=1770    ./dvlw/dvlp/mnt/home/       ./hal/
 COPY --from=dvlp_repo-lite              --chown=r00t:r00t       --chmod=1770    ./dvlw/dvlp/mnt/home/       ./r00t/
 COPY --from=dvlp_repo-lite              --chown=${_AGL}:halo    --chmod=1770    ./dvlw/                     ./dvlw/
-# COPY --from=dvlp_base-angel-kernel-dirs --chown=${_AGL}:halo    --chmod=1770    ./hal/                      ./dvlw/ 
 COPY --from=dvlp_repo-lite              --chown=${_DVL}:hell    --chmod=1770    ./dvlw/                     ./hel/dvlw/
 COPY --from=dvlp_repo-lite              --chown=${_AGL}:halo    --chmod=1770    ./dvlw/                     ./hal/dvlw/
 COPY --from=dvlp_repo-lite              --chown=${_AGL}:halo    --chmod=1770    ./dvlw/                     ./r00t/dvlw/
@@ -633,7 +646,7 @@ RUN \
 RUN \
     --mount=type=cache,target=/var/cache/curl,sharing=locked \
     curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg > /dev/null
-    
+
 
 RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bullseye stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 RUN \
@@ -772,7 +785,7 @@ RUN \
     apt-get install --no-install-recommends -y brave-browser dolphin vlc x11-apps  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-    # change last line of this file - fix for brave-browser displaying empty windows
+# change last line of this file - fix for brave-browser displaying empty windows
 RUN cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
     head -n -1 /opt/brave.com/brave/brave-browser.old | tee /opt/brave.com/brave/brave-browser > /dev/null && \
     # now no longeer need to add --disable-gpu flag everytime
