@@ -39,7 +39,7 @@ services:
       target: dvlp_base-devel-dirs
     # alias(es) for agl
     # base-ausr:
-    #   user: _AGL_USR
+    #   user: ${_DVL_USR}
     #   extends: base-angel
     #   build:
     #     context: .
@@ -51,7 +51,7 @@ services:
     #   init: true
     # # alias(es) for dvl
     # base-daus:
-    #   user: _DVL_USR
+    #   user: ${_DVL_USR}
     #   extends: init-dvl
     #   build:
     #     context: .
@@ -87,38 +87,38 @@ services:
     labels:
       com.dvlp_skel.description: "-build skeleton"
   skel:
-    user: devel
+    user: ${_AGL}
     extends: skel-build
-    working_dir: /hel
+    working_dir: /hal
     cap_add:
-        - AUDIT_WRITE
-        - SYS_CHROOT
-        - CHOWN
-        - DAC_OVERRIDE
-        - FSETID
-        - FOWNER
-        - MKNOD
-        - NET_RAW
-        - SETGID
-        - SETUID
-        - SETFCAP
-        - SETPCAP
-        - NET_BIND_SERVICE
+      - AUDIT_WRITE
+      - SYS_CHROOT
+      - CHOWN
+      - DAC_OVERRIDE
+      - FSETID
+      - FOWNER
+      - MKNOD
+      - NET_RAW
+      - SETGID
+      - SETUID
+      - SETFCAP
+      - SETPCAP
+      - NET_BIND_SERVICE
     build:
       target: dvlp_skel
       args:
-       - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
-       - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
-       - win_bind_tgt_user_dir_r00t=${USERNAME:+/r00t/host_win}
-      #  - win_bind_tgt_user_dir_g0d=${USERNAME:+/g0d/host_win}
-       - win_bind_tgt_user_dir_agl=${USERNAME:+/halo/host_win}
-       - win_bind_tgt_user_dir_dvl=${USERNAME:+/hell/host_win}:ro
-       - nix_bind_tgt_user_dir_r00t=${LOGNAME:+/r00t/host_nix}
-      #  - nix_bind_tgt_user_dir_g0d=${LOGNAME:+/g0d/host_nix}
-       - nix_bind_tgt_user_dir_agl=${LOGNAME:+/halo/host_nix}
-       - nix_bind_tgt_user_dir_dvl=${LOGNAME:+/hell/host_nix}:ro 
+        - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
+        - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
+        - win_bind_tgt_user_dir_r00t=${USERNAME:+/r00t/host_win}
+        #  - win_bind_tgt_user_dir_g0d=${USERNAME:+/g0d/host_win}
+        - win_bind_tgt_user_dir_agl=${USERNAME:+/halo/host_win}
+        - win_bind_tgt_user_dir_dvl=${USERNAME:+/hell/host_win}:ro
+        - nix_bind_tgt_user_dir_r00t=${LOGNAME:+/r00t/host_nix}
+        #  - nix_bind_tgt_user_dir_g0d=${LOGNAME:+/g0d/host_nix}
+        - nix_bind_tgt_user_dir_agl=${LOGNAME:+/halo/host_nix}
+        - nix_bind_tgt_user_dir_dvl=${LOGNAME:+/hell/host_nix}:ro
       #  - bind_src_dir=${bind_win_src_user_dir:-/dev/null}
-      
+
     volumes:
       - repo_agl:/dvlw
       - repo_agl:/r00t/dvlw
@@ -151,36 +151,36 @@ services:
       com.dvlp_skel.description: "skeleton"
 
   skel-lite:
-    user: devel
+    user: ${_AGL}
     extends: skel-build-lite
-    working_dir: /hel
+    working_dir: /hal
     cap_add:
-        - AUDIT_WRITE
-        - SYS_CHROOT
-        - CHOWN
-        - DAC_OVERRIDE
-        - FSETID
-        - FOWNER
-        - MKNOD
-        - NET_RAW
-        - SETGID
-        - SETUID
-        - SETFCAP
-        - SETPCAP
-        - NET_BIND_SERVICE
+      - AUDIT_WRITE
+      - SYS_CHROOT
+      - CHOWN
+      - DAC_OVERRIDE
+      - FSETID
+      - FOWNER
+      - MKNOD
+      - NET_RAW
+      - SETGID
+      - SETUID
+      - SETFCAP
+      - SETPCAP
+      - NET_BIND_SERVICE
     build:
       target: dvlp_skel-lite
       args:
-       - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
-       - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
-       - win_bind_tgt_user_dir_r00t=${USERNAME:+/r00t/host_win}
-      #  - win_bind_tgt_user_dir_g0d=${USERNAME:+/g0d/host_win}
-       - win_bind_tgt_user_dir_agl=${USERNAME:+/halo/host_win}
-       - win_bind_tgt_user_dir_dvl=${USERNAME:+/hell/host_win}:ro
-       - nix_bind_tgt_user_dir_r00t=${LOGNAME:+/r00t/host_nix}
-      #  - nix_bind_tgt_user_dir_g0d=${LOGNAME:+/g0d/host_nix}
-       - nix_bind_tgt_user_dir_agl=${LOGNAME:+/halo/host_nix}
-       - nix_bind_tgt_user_dir_dvl=${LOGNAME:+/hell/host_nix}:ro 
+        - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
+        - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
+        - win_bind_tgt_user_dir_r00t=${USERNAME:+/r00t/host_win}
+        #  - win_bind_tgt_user_dir_g0d=${USERNAME:+/g0d/host_win}
+        - win_bind_tgt_user_dir_agl=${USERNAME:+/halo/host_win}
+        - win_bind_tgt_user_dir_dvl=${USERNAME:+/hell/host_win}:ro
+        - nix_bind_tgt_user_dir_r00t=${LOGNAME:+/r00t/host_nix}
+        #  - nix_bind_tgt_user_dir_g0d=${LOGNAME:+/g0d/host_nix}
+        - nix_bind_tgt_user_dir_agl=${LOGNAME:+/halo/host_nix}
+        - nix_bind_tgt_user_dir_dvl=${LOGNAME:+/hell/host_nix}:ro
       #  - bind_src_dir=${bind_win_src_user_dir:-/dev/null}
     volumes:
       - repo_agl-lite:/dvlw
@@ -217,9 +217,9 @@ services:
     entrypoint: /bin/bash -c
     command:
       - sleep infinity
-    # user: devel
+    # user: ${_AGL}
     extends: skel-build-lite
-    working_dir: /hel
+    working_dir: /hal
     restart: on-failure
     tty: true
     # entrypoint: /bin/bash -c
@@ -250,9 +250,9 @@ services:
     entrypoint: /bin/bash -c
     command:
       - sleep infinity
-    # user: devel
+    # user: ${_AGL}
     extends: skel
-    working_dir: /hel
+    working_dir: /hal
     restart: on-failure
     tty: true
     privileged: true
@@ -401,6 +401,7 @@ services:
         com.devels-playground.description: "basics + git + powerhell + docker + gui + cuda"
 
   jacket:
+    user: ${_AGL}
     working_dir: /hal
     image: kindtek/${HUB_REPO:-devels-playground}:kali-${JACKET:-bare}
     entrypoint: /bin/bash -c
@@ -436,8 +437,8 @@ services:
     #   jacket-skel:
     #     condition: service_completed_successfully
   jacket-lite:
-    user: ${_DVL}
-    working_dir: /hel
+    user: ${_AGL}
+    working_dir: /hal
     extends: jacket
     volumes:
       - repo_agl-lite:/dvlw
@@ -465,8 +466,8 @@ services:
         - JACKET=bare
   git-lite:
     extends: jacket-lite
-    user: r00t
-    working_dir: /r00t
+    user: ${_AGL}
+    working_dir: /hal
     # entrypoint: /bin/bash -c
     # command: "if [ -f \"start-kde.sh\" ]; then bash start.sh; fi; && sleep infinity;"
     image: kindtek/${HUB_REPO:-devels-playground}:kali-git-lite
@@ -564,8 +565,8 @@ volumes:
 
   mnt-data:
 
-  dls:
-  # dls_dvl:
+  dls: # dls_dvl:
+
   # dls_agl:
   # dls_r00t:
 
@@ -590,7 +591,7 @@ volumes:
 
   host_win:
   host_nix:
-  # host_mac:
+    # host_mac:
 
 networks:
   "${COMPOSE_PROJECT_NAME}_default":
