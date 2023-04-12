@@ -17,7 +17,7 @@
 	path = dvlp
 	shallow = false
 	url = https://github.com/kindtek/devels-playground.git
-	branch = dvl-works
+	branch = kali-devel
 	recurse = false
 [submodule "cdir"]
 	active = false
