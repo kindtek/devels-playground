@@ -227,8 +227,9 @@ RUN mkdir -pv dvlw && \
     ln -fsv dvlw devels-workshop && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/docker/kali kdock && \
-    ln -fsv dvlw/dvlp/docker docker && \
-    chmod -R 1770 /admin
+    ln -fsv dvlw/dvlp/docker docker 
+    # && \
+    # chmod -R 1770 /admin
 WORKDIR /mnt
 RUN mkdir -pv dls && \
     mkdir -pv bak && \
