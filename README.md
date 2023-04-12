@@ -13,7 +13,7 @@
 1. Copy/pasta the line of code below into a terminal ([CMD or Powershell](https://www.wikihow.com/Open-Terminal-in-Windows))
 2. Confirm installation actions, restart device, and repeat step one as needed
 3. ??
-4. WSL, DOCKER-IN-DOCKER, KERNEL, GUI.
+4. WSL, PYTHON, DOCKER-IN-DOCKER, KERNEL, GUI, KALI, CUDA, ...
 
 ```bat
 powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell/devels-workshop/download-everything-and-install.ps1 -OutFile install-kindtek-devels-workshop.ps1; powershell.exe -executionpolicy remotesigned -File install-kindtek-devels-workshop.ps1"
@@ -21,20 +21,20 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 ---
 
-## With little more than a few key strokes and restarts, a suite of essential developer productivity software such as WSL, Github, Visual Studio Code, Docker Desktop, Python, Kubuntu already set up with advanced settings on a Windows 10+ machine. 
+## With little more than a few key strokes and restarts, a suite of essential developer productivity software will be pushed to your Windows 10+ machine. 
 
-### Set up occurs so smoothly that you will likely feel like you skipped step 3 -- especially if you've been tripped up by any of these tricky procedures *(ie : installing WSL, Github, Docker, seting up SSH logins with Github and Docker, manually adding new app registries, building a kernel, installing a GUI on Linux)* in the past. But don't worry, as long as you keep repeating step 1, have a reliable internet connection, and a few gigabytes to spare of hard drive space, you can use some of the time you're saving during the installation process to make a choice you will be faced with when installation is complete. Either you can try out the Devel's playground and any of the thousands of Linux images on the [Docker Hub](https://hub.docker.com/search?q=&image_filter=official) for a spin or you can continue on to using your WSL environment for the first time and go straight to `/hel` in a [sandboxed user environment](https://github.com/kindtek/devels-playground#line-dance-with-the-devel). There's no wrong choice. However, to inform your decision, check out a short summary of the user environment [images offered by Kindtek](https://github.com/kindtek/devels-playground#image-tags) that you can set as your main WSL environment with the devels-playground
+### Set up occurs so smoothly that you will likely feel like you skipped step 3 -- especially if you've been tripped up by any of these tricky procedures *(ie : installing WSL, Github, Docker, seting up SSH logins with Github and Docker, manually adding new app registries, building a kernel, installing a GUI on Linux)* in the past. But don't worry, as long as you keep repeating step 1, have a reliable internet connection, and a handful of gigabytes to spare of hard drive space there is no technical expertise required. You can use some of the time you're saving during the installation process to make an informed choice between the two options you will have once installation is complete. You can either try out your fresh WSL install and use Kali Linux to go straight to `/hel` in a [sandboxed user environment](https://github.com/kindtek/devels-playground#line-dance-with-the-devel) or use the devel's playground to try out any of the thousands of Docker Linux images on the [Docker Hub](https://hub.docker.com/search?q=&image_filter=official) into your fresh WSL install. There's no wrong choice. Check out this summary of user environments [images offered by Kindtek](https://github.com/kindtek/devels-playground#image-tags) that you can set as your main WSL environment with the devels-playground
 
-### At the end of the installation sequence, your WSL environment will be set up and loaded with a relatively lightweight [image](https://github.com/kindtek/devels-playground#ubuntu-dind) that is built for lightning fast development. You will be able to build your own Docker images in WSL2 from this point on
+## At the end of the installation sequence, your WSL environment will be pushed a ~250MB [image](https://github.com/kindtek/devels-playground#ubuntu-dind) and the capability to contribute to this repository using either Github or Docker immediately. It is one simple `git clone` away from using with any other repo on Github.
 
 ---
 
-### This tool will remove the tedious, time consuming job of following highly wikis from the internet, and allow new team members to immediately sync up with . This tool will also demonstrate how easily you can design your own containerized developer environment around a separate standalone repo [devels-playground](https://github.com/kindtek/devels-playground) included as a submodule (of devels-workshop)
+### This tool will remove the need to scour the internet for how-to guides so you can spend your weekend actually tackling your project instead of wrestling with setting up your machine. The devels-workshop comes with all the tools to configure your system from the GUI right down to the kernel with all of the technical labor eliminated at the lowest level. Fork this repo and see how easy it is to set up your own developer environment that revolves around a github repo.. all by pasting one line of code
 
 
-### The included devels-playground combines the power of all the tools you are installing to allow you to choose from thousands of highly customizable Docker images on the [Docker Hub](https://hub.docker.com/search?q=&image_filter=official) - all of which are free. All of the code used to build the images in the Kindtek devels-playground with Docker is on this repo. Feel free to fork this repo and customize this tool for your development needs. The Docker Linux images [created by Kindtek](https://github.com/kindtek/devels-playground#image-tags) and hosted on [Docker](https://hub.docker.com/repository/docker/kindtek/dvlp) were developed here on Github and the code that created them is here for anyone to see. 
+### The Docker Linux images [created by Kindtek](https://github.com/kindtek/devels-playground#image-tags) and hosted by [Docker](https://hub.docker.com/repository/docker/kindtek/dvlp) on the [Docker Hub](https://hub.docker.com/search?q=&image_filter=official) are available for free. 
 
-### Got an idea, suggestion, need help, or find a bug? Feel free to start a new issue or pull request
+### Got an idea, suggestion, need help, or find a bug? Feel free to start a new issue or pull request. If you have specific configuration needs please
 
 
 ---
@@ -44,9 +44,6 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 ## All in a day's work
 
 ## Now time for the fun stuff
-
-# Import one of thousands Linux Docker images into WSL
-
 
 ## **Instructions for importing images from [hub.docker.com](https://hub.docker.com/search?q=&image_filter=official) and the official [kindtek devel's playground docker hub repo](https://hub.docker.com/r/kindtek/dvlp/tags) into WSL with the Devel's Playground are [found here](https://github.com/kindtek/devels-playground#idle-minds-are-the-developers-playground)**
 
