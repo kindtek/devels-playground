@@ -419,8 +419,11 @@ services:
     volumes:
       - repo_agl:/dvlw
       - repo_agl:/r00t/dvlw
-      - repo_dvl:/hel/dvlw
+      - repo_agl:/home/r00t/dvlw
       - repo_agl:/hal/dvlw
+      - repo_agl:/home/${_AGL}/dvlw
+      - repo_dvl:/hel/dvlw
+      - repo_dvl:/home/${_DVL}/dvlw
       - mnt-data:${_MNT}
       - home_r00t:/r00t
       - home_r00t:/home/r00t
