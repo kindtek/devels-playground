@@ -1,14 +1,165 @@
 #!/bin/bash
-git_user_email=$GH_REPO_OWNER_EMAIL;
-git_user_name=kindtek@github.com;
-ssh_dir=/home/${1:-$LOGNAME}/.ssh;
-if ! [ -d $ssh_dir ]; then $ssh_dir=~/.ssh; fi;
-if [ -d $ssh_dir ]; then echo "----- $ssh_dir directory already exists - remove the directory ( rm -rf $ssh_dir ) and try again -----"; fi;
+git_uname=$1
+git_email=$2
+ssh_dir=$3
+ssh_dir_default=$HOME/.ssh
+confirm="r"
+warning=""
+while [ "$confirm" == "r" ] || [ "$confirm" == "retry" ]; do
+    clear -x
+    echo "
+
+
+     -------------------------------------------------------
+    |    ENTER CREDENTIAL INFO                              |
+     -------------------------------------------------------"
+    while [ -z $git_uname ]; do
+        read -r -p "
+        github username: 
+            " git_uname
+    done
+    git_uname=$git_uname@github.com
+    while [ -z $git_email ]; do
+        read -r -p "
+        email address: 
+            " git_email
+    done
+    if [ -z $ssh_dir ]; then
+        read -r -p "
+        press ENTER to use default save location (${ssh_dir:-$ssh_dir_default})
+        OR enter a custom save directory:
+            " ssh_dir
+        ssh_dir=${ssh_dir:-$ssh_dir_default}
+    fi
+
+    test_dir="$ssh_dir/testing_permissions_123"
+    #test permissions with mkdir
+    echo "
+    helloworld
+    testing write access in $ssh_dir ...
+    attempting to create new directory in $ssh_dir ...
+        "
+    if ! mkdir -pv $test_dir; then
+        warning+="
+
+        WARNING: 
+        insufficient write privileges for $ssh_dir
+    
+    "
+    fi 
+    if [ -r $ssh_dir/id_ed25519 ] || [ -r $ssh_dir/id_ed25519 ]; then
+            warning+="
+
+            !!!!!!!!!!!!!! WARNING !!!!!!!!!!!!!!!!
+
+                keys EXIST and may be LOST
+            
+            !!!!!!!!!!!!!! WARNING !!!!!!!!!!!!!!!!
+
+    an attempt will be made to rename the directory to $ssh_dir.old
+"
+    fi
+    # cleanup test_dir
+    rmdir -v $test_dir
+
+    max_padding=48
+    git_uname_len=${#git_uname}
+    uname_padding_ws_count=$((max_padding - git_uname_len))
+    uname_padding=""
+    if [ $uname_padding_ws_count -lt 0 ]; then 
+        uname_padding_ws_count=0
+        uname_padding=""
+    else
+        for ((i=0;i<$uname_padding_ws_count;i++))
+        do
+            uname_padding+=" "
+        done
+        uname_padding+="|"
+    fi
+
+    # echo uname_padding_ws_count=$uname_padding_ws_count
+
+    git_email_len=${#git_email}
+    email_padding_ws_count=$((max_padding - git_email_len))
+    email_padding=""
+    if [ $email_padding_ws_count -lt 0 ]; then 
+        email_padding_ws_count=0
+        email_padding=""
+    else
+        for ((i=0;i<$email_padding_ws_count;i++))
+        do
+            email_padding+=" "
+        done
+        email_padding+="|"
+    fi
+
+    # echo email_padding_ws_count=$email_padding_ws_count
+  
+    ssh_dir_len=${#ssh_dir}
+    ssh_dir_padding_ws_count=$((max_padding - ssh_dir_len))  
+    ssh_dir_padding=""
+    if [ $ssh_dir_padding_ws_count -lt 0 ]; then
+        ssh_dir_padding_ws_count=0
+        ssh_dir_padding=""
+    else
+        for ((i=0;i<$ssh_dir_padding_ws_count;i++))
+        do
+            ssh_dir_padding+=" "
+        done
+        ssh_dir_padding+="|"
+    fi
+
+    # echo ssh_dir_padding_ws_count=$ssh_dir_padding_ws_count
+
+    clear -x
+    read -r -p "
+
+
+     -------------------------------------------------------
+    |    CONFIRM CREDENTIAL INFO                            |
+     -------------------------------------------------------
+    |                                                       |
+    |   github username:                                    |
+    |       $git_uname$uname_padding
+    |                                                       |
+    |   email address:                                      |
+    |       $git_email$email_padding
+    |                                                       |
+    |   save location:                                      |
+    |       $ssh_dir$ssh_dir_padding
+    |                                                       |
+    |_______________________________________________________|
+        $warning
+
+    press ENTER to confirm and generate credentials
+
+    [r]etry / e[x]it / (continue) " confirm
+    if [ "$confirm" == "exit" ] || [ "$confirm" == "x" ]; then exit; fi
+    if [ ! -z "$confirm" ] && ( [ "$confirm" != "r" ] && [ "$confirm" != "retry" ] ); then exit; fi
+    if [ "$confirm" == "r" ] || [ "$confirm" == "retry" ]; then 
+        echo "
+        retrying ... ";
+        unset ssh_dir git_uname git_email warning;
+    fi
+done
+
+echo "
+    -- use CTRL + C to cancel --
+    "
+sleep 3
+if [ -r $ssh_dir/id_ed25519 ] || [ -r $ssh_dir/id_ed25519 ]; then
+    mv -bv $ssh_dir $ssh_dir.old
+fi
+sleep 3
+
+
+echo "generating keys and saving to $ssh_dir"
+# if [ -d $ssh_dir ]; then echo "----- $ssh_dir directory already exists - remove the directory ( rm -rf $ssh_dir ) and try again -----"; fi;
 # rm -f $ssh_dir/id_ed25519 $ssh_dir/id_ed25519.pub 
-# git config --global user.email $git_user_email;
-# git config --global user.name $git_user_name;
-rm -f $ssh_dir/id_ed25519 $ssh_dir/id_ed25519.pub;
-ssh-keygen -C $git_user_name -f $ssh_dir/id_ed25519 -N "" -t ed25519;
+git config --global user.email $git_email;
+git config --global user.name $git_uname;
+rm -fv $ssh_dir/id_ed25519 $ssh_dir/id_ed25519.pub;
+ssh-keygen -C $git_uname -f $ssh_dir/id_ed25519 -N "" -t ed25519;
 eval "$(ssh-agent -s)";
 ssh-add $ssh_dir/id_ed25519;
 
@@ -32,7 +183,9 @@ if [ "$host_fingerprint_actually_ecdsa" = "$host_fingerprint_expected_ecdsa" ]; 
 if [ "$host_fingerprint_actually_ed25519" = "$host_fingerprint_expected_ed25519" ]; then matching_prints_ed25519=true; fi;
 if [ "$host_fingerprint_actually_ecdsa" = "$host_fingerprint_expected_ecdsa" ]; then matching_prints_ecdsa=true; fi;
 if  [ $matching_prints_rsa ] && [ $matching_prints_ed25519 ] && [ $matching_prints_ecdsa ]; then
-    echo '\n verfied host confirmed \n'
+    echo "
+    github host confirmed and verified
+    "
     if [ -f "$ssh_dir/known_hosts" ]; then ssh-keyscan github.com >> $ssh_dir/known_hosts; else ssh-keyscan github.com > $ssh_dir/known_hosts; fi;
 else
 	echo '
@@ -90,3 +243,4 @@ else
     ';
 fi
 
+echo "operation complete"
