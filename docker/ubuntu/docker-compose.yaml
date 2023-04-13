@@ -43,7 +43,7 @@ services:
       target: dvlp_base-devel-dirs
     # alias(es) for agl
     # base-ausr:
-    #   user: _AGL_USR
+    #   user: ${_AGL_USR}
     #   extends: base-angel
     #   build:
     #     context: .
@@ -55,7 +55,7 @@ services:
     #   init: true
     # # alias(es) for dvl
     # base-daus:
-    #   user: _DVL_USR
+    #   user: ${_DVL_USR}
     #   extends: init-dvl
     #   build:
     #     context: .
@@ -70,32 +70,32 @@ services:
     tty: false
     privileged: true
     cap_add:
-        - AUDIT_WRITE
-        - DAC_OVERRIDE
-        - CHOWN
-        - FSETID
-        - FOWNER
-        - MKNOD
-        - NET_BIND_SERVICE
-        - NET_RAW
-        - SETGID
-        - SETUID
-        - SETFCAP
-        - SETPCAP
-        - SYS_CHROOT
+      - AUDIT_WRITE
+      - DAC_OVERRIDE
+      - CHOWN
+      - FSETID
+      - FOWNER
+      - MKNOD
+      - NET_BIND_SERVICE
+      - NET_RAW
+      - SETGID
+      - SETUID
+      - SETFCAP
+      - SETPCAP
+      - SYS_CHROOT
     build:
       target: dvlp_skel-build-lite
       args:
-       - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
-       - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
-       - win_bind_tgt_user_dir_r00t=${USERNAME:+/r00t/host_win}
-       - win_bind_tgt_user_dir_g0d=${USERNAME:+/g0d/host_win}
-       - win_bind_tgt_user_dir_agl=${USERNAME:+/halo/host_win}
-       - win_bind_tgt_user_dir_dvl=${USERNAME:+/hell/host_win}:ro
-       - nix_bind_tgt_user_dir_r00t=${LOGNAME:+/r00t/host_nix}
-       - nix_bind_tgt_user_dir_g0d=${LOGNAME:+/g0d/host_nix}
-       - nix_bind_tgt_user_dir_agl=${LOGNAME:+/halo/host_nix}
-       - nix_bind_tgt_user_dir_dvl=${LOGNAME:+/hell/host_nix}:ro 
+        - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
+        - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
+        - win_bind_tgt_user_dir_r00t=${USERNAME:+/r00t/host_win}
+        - win_bind_tgt_user_dir_g0d=${USERNAME:+/g0d/host_win}
+        - win_bind_tgt_user_dir_agl=${USERNAME:+/halo/host_win}
+        - win_bind_tgt_user_dir_dvl=${USERNAME:+/hell/host_win}:ro
+        - nix_bind_tgt_user_dir_r00t=${LOGNAME:+/r00t/host_nix}
+        - nix_bind_tgt_user_dir_g0d=${LOGNAME:+/g0d/host_nix}
+        - nix_bind_tgt_user_dir_agl=${LOGNAME:+/halo/host_nix}
+        - nix_bind_tgt_user_dir_dvl=${LOGNAME:+/hell/host_nix}:ro
       #  - bind_src_dir=${bind_win_src_user_dir:-/dev/null}
     volumes:
       - repo-lite:/dvlw
@@ -133,34 +133,34 @@ services:
     tty: false
     privileged: true
     cap_add:
-        - AUDIT_WRITE
-        - DAC_OVERRIDE
-        - CHOWN
-        - FSETID
-        - FOWNER
-        - MKNOD
-        - NET_BIND_SERVICE
-        - NET_RAW
-        - SETGID
-        - SETUID
-        - SETFCAP
-        - SETPCAP
-        - SYS_CHROOT
+      - AUDIT_WRITE
+      - DAC_OVERRIDE
+      - CHOWN
+      - FSETID
+      - FOWNER
+      - MKNOD
+      - NET_BIND_SERVICE
+      - NET_RAW
+      - SETGID
+      - SETUID
+      - SETFCAP
+      - SETPCAP
+      - SYS_CHROOT
     build:
       target: dvlp_skel-build
       args:
-       - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
-       - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
-       - win_bind_tgt_user_dir_r00t=${USERNAME:+/r00t/host_win}
-       - win_bind_tgt_user_dir_g0d=${USERNAME:+/g0d/host_win}
-       - win_bind_tgt_user_dir_agl=${USERNAME:+/halo/host_win}
-       - win_bind_tgt_user_dir_dvl=${USERNAME:+/hell/host_win}:ro
-       - nix_bind_tgt_user_dir_r00t=${LOGNAME:+/r00t/host_nix}
-       - nix_bind_tgt_user_dir_g0d=${LOGNAME:+/g0d/host_nix}
-       - nix_bind_tgt_user_dir_agl=${LOGNAME:+/halo/host_nix}
-       - nix_bind_tgt_user_dir_dvl=${LOGNAME:+/hell/host_nix}:ro 
+        - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
+        - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
+        - win_bind_tgt_user_dir_r00t=${USERNAME:+/r00t/host_win}
+        - win_bind_tgt_user_dir_g0d=${USERNAME:+/g0d/host_win}
+        - win_bind_tgt_user_dir_agl=${USERNAME:+/halo/host_win}
+        - win_bind_tgt_user_dir_dvl=${USERNAME:+/hell/host_win}:ro
+        - nix_bind_tgt_user_dir_r00t=${LOGNAME:+/r00t/host_nix}
+        - nix_bind_tgt_user_dir_g0d=${LOGNAME:+/g0d/host_nix}
+        - nix_bind_tgt_user_dir_agl=${LOGNAME:+/halo/host_nix}
+        - nix_bind_tgt_user_dir_dvl=${LOGNAME:+/hell/host_nix}:ro
       #  - bind_src_dir=${bind_win_src_user_dir:-/dev/null}
-      
+
     volumes:
       - repo:/dvlw
       - repo:/r00t/dvlw
@@ -192,7 +192,7 @@ services:
     labels:
       com.dvlp_skel.description: "-build skeleton"
   skel:
-    # user: devel
+    # user: ${_AGL}
     extends: skel-build
     working_dir: /hel
     build:
@@ -207,7 +207,7 @@ services:
     entrypoint: /bin/bash -c
     command:
       - sleep infinity
-    # user: devel
+    # user: ${_AGL}
     extends: skel-build-lite
     working_dir: /hel
     restart: on-failure
@@ -237,7 +237,7 @@ services:
     entrypoint: /bin/bash -c
     command:
       - sleep infinity
-    # user: devel
+    # user: ${_AGL}
     extends: skel
     working_dir: /hel
     restart: on-failure
@@ -427,10 +427,9 @@ services:
     volumes:
       - world_hell:/hell
       - world_halo:/halo
-
       #     target: dvlp_worlds-bare
   worlds:
-    user: g0d
+    user: ${_AGL}
     working_dir: /halo/hal
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-${WORLDS:-bare}
     entrypoint: /bin/bash -c
@@ -490,7 +489,7 @@ services:
       worlds-skel:
         condition: service_completed_successfully
   worlds-lite:
-    user: g0d
+    user: ${_AGL}
     working_dir: /r00t/halo/hal
     extends: worlds
     volumes:
@@ -569,7 +568,7 @@ services:
       args:
         - WORLDS=gui-lite
   gui-plus:
-    # user: g0d
+    # user: ${_AGL}
     working_dir: /r00t/halo/hal
     extends: worlds
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-gui-plus
@@ -609,7 +608,6 @@ services:
     volumes_from:
       - worlds
 
-
 volumes:
   root:
   root_dvl:
@@ -643,7 +641,7 @@ volumes:
 
   host_win:
   host_nix:
-  # host_mac:
+    # host_mac:
 
 networks:
   "${COMPOSE_PROJECT_NAME}_default":

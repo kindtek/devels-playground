@@ -29,7 +29,7 @@ ARG _AGL_USR
 ARG _DVL_USR
 ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
-USER root
+USER r00t
 WORKDIR /
 # RUN mkdir -pv /tmp/git/cache && \
 # chown -R r00t:r00t /tmp/git/cache && \
@@ -259,7 +259,7 @@ COPY --from=dvlp_repo-lite          --chown=r00t:halo        ./dvlw/dvlp/mnt/   
 COPY --from=dvlp_repo-lite                                      ./dvlw/                  ./dvlw/
 COPY --from=dvlp_repo-lite              --chown=r00t:r00t            /dvlw/dvlp/mnt/etc/*   /etc/
 
-## WORKDIR /hell
+## WORKDIR /hal
 ###################
 # dvlp_skel-build #
 ###################
@@ -320,8 +320,8 @@ ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
-WORKDIR /hel
-USER ${_DVL}
+WORKDIR /hal
+USER ${_AGL}
 
 ################################### GIT #########################################
 #################
@@ -335,8 +335,8 @@ ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
-WORKDIR /hel
-USER ${_DVL}
+WORKDIR /hal
+USER ${_AGL}
 
 ############
 # dvlp_base-git #
@@ -350,8 +350,8 @@ ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
-WORKDIR /hel
-USER ${_DVL}
+WORKDIR /hal
+USER ${_AGL}
 
 ################################# PYTHON ########################################
 #####################
@@ -362,7 +362,7 @@ ARG _AGL_USR
 ARG _DVL_USR
 ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
-USER root
+USER r00t
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
@@ -378,7 +378,7 @@ RUN \
 # dvlp_base-python-build-lite #
 ###############################
 FROM dvlp_skel-build-lite AS dvlp_base-python-build-lite
-USER root
+USER r00t
 ARG angel_exists=true
 ARG devel_exists=true
 ARG r00t_exists=true
@@ -401,7 +401,7 @@ RUN \
 #     $r00t_exists && pip3 install pip --upgrade --no-warn-script-location --no-deps && \
 #     pip3 install cdir --user || r00t_exists=false
 RUN ( $devel_exists && (chown -R ${_DVL}:${_DVL} /hel || chown -R ${_DVL}:${_DVL} /hel/.local || devel_exists=false )) 
-USER ${_DVL}
+USER ${_AGL}
 # RUN \
 #     --mount=type=cache,target=/var/cache/pip,sharing=private \
 #     $devel_exists && pip3 install pip --upgrade --no-warn-script-location --no-deps && \
@@ -411,11 +411,11 @@ USER ${_DVL}
 # dvlp_base-python-lite #
 #########################
 FROM dvlp_base-git-lite AS dvlp_base-python-lite
-USER root
+USER r00t
 WORKDIR / 
 COPY --from=dvlp_base-python-build-lite ./ ./
-WORKDIR /hel
-USER ${_DVL}
+WORKDIR /hal
+USER ${_AGL}
 
 ####################
 # dvlp_base-python #
@@ -427,19 +427,19 @@ ARG _ADM_USR
 ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
-USER root
+USER r00t
 WORKDIR / 
 COPY --from=dvlp_base-python-build ./ ./
 COPY --from=dvlp_base-python-build-lite ./ ./
-WORKDIR /hel
-USER ${_DVL}
+WORKDIR /hal
+USER ${_AGL}
 
 ############################# POWERHELL #########################################
 ##############################
 # dvlp_base-msdot-build-lite #
 #############################
 FROM dvlp_skel-build-lite AS dvlp_base-msdot-build-lite
-USER root
+USER r00t
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
 RUN \
@@ -458,18 +458,18 @@ RUN \
 # RUN apt-get -y remove lsb_release
 # apt-get clean all && \
 # apt-get autoremove --purge
-WORKDIR /hel
-USER ${_DVL}
+WORKDIR /hal
+USER ${_AGL}
 
 #########################
 # dvlp_base-msdot-build #
 #########################
 FROM dvlp_base-msdot-build-lite AS dvlp_base-msdot-build
-USER root
+USER r00t
 RUN apt-get -y update && \
     apt-get -y install dotnet-sdk-7.0 
-WORKDIR /hel
-USER ${_DVL}
+WORKDIR /hal
+USER ${_AGL}
 
 ########################
 # dvlp_base-msdot-lite #
@@ -481,12 +481,12 @@ ARG _ADM_USR
 ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
-USER root
+USER r00t
 WORKDIR /
 COPY --from=dvlp_base-python-build-lite ./ ./
 COPY --from=dvlp_base-msdot-build-lite ./ ./
-WORKDIR /hel
-USER ${_DVL}
+WORKDIR /hal
+USER ${_AGL}
 
 ###################
 # dvlp_base-msdot #
@@ -498,19 +498,19 @@ ARG _ADM_USR
 ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
-USER root
+USER r00t
 WORKDIR /
 COPY --from=dvlp_base-python-build ./ ./
 COPY --from=dvlp_base-msdot-build ./ ./
-WORKDIR /hel
-USER ${_DVL}
+WORKDIR /hal
+USER ${_AGL}
 
 ########################## DOCKER IN DOCKER ######################################
 ########################
 # dvlp_base-dind-build #
 ########################
 FROM dvlp_skel-build-lite AS dvlp_base-dind-build
-USER root
+USER r00t
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
@@ -527,20 +527,20 @@ RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/doc
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get -y update && apt-get -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-WORKDIR /hel
-USER ${_DVL}
+WORKDIR /hal
+USER ${_AGL}
 
 #######################
 # dvlp_base-dind-lite #
 #######################
 FROM dvlp_base-git-lite AS dvlp_base-dind-lite
-USER root
+USER r00t
 WORKDIR /
 COPY --from=dvlp_base-python-build-lite ./ ./
 COPY --from=dvlp_base-msdot-build-lite ./ ./
 COPY --from=dvlp_base-dind-build ./ ./
-WORKDIR /hel
-USER ${_DVL}
+WORKDIR /hal
+USER ${_AGL}
 
 ##################
 # dvlp_base-dind #
@@ -552,20 +552,20 @@ ARG _ADM_USR
 ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
-USER root
+USER r00t
 WORKDIR /
 COPY --from=dvlp_base-python-build ./ ./
 COPY --from=dvlp_base-msdot-build ./ ./
 COPY --from=dvlp_base-dind-build ./ ./
-WORKDIR /hel
-USER ${_DVL}
+WORKDIR /hal
+USER ${_AGL}
 
 ############################### KERNEL #########################################
 ##########################
 # dvlp_base-kernel-build #
 ##########################
 FROM dvlp_skel-build AS dvlp_base-kernel-build
-USER root
+USER r00t
 # RUN echo exit 0 > /usr/sbin/policy-rc.d 
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -577,8 +577,8 @@ RUN \
     flex fontconfig gawk kmod libblkid-dev libffi-dev lxcfs libudev-dev libaio-dev libattr1-dev libelf-dev \
     python3-dev python3-setuptools python3-cffi net-tools snapd systemd-sysv sysvinit-utils uuid-dev
 # RUN apt-get -y install zfsutils-linux zlib1g-dev zfs-dkms zstd zsys zfs-dracut zfs-zed
-WORKDIR /hel
-USER ${_DVL}
+WORKDIR /hal
+USER ${_AGL}
 
 ######################################################################################
 ###################  dvlp_base-kernel-builder - KERNEL BUILDER  ######################
@@ -586,15 +586,15 @@ USER ${_DVL}
 FROM dvlp_base-git AS dvlp_base-kernel-builder
 ARG CONFIG_FILE
 ARG KERNEL_TYPE
-USER root
+USER r00t
 WORKDIR /
 COPY --from=dvlp_base-python-build-lite ./ ./
 COPY --from=dvlp_base-msdot-build-lite ./ ./
 COPY --from=dvlp_base-dind-build ./ ./
 COPY --from=dvlp_base-kernel-build ./ ./
 # RUN echo '# daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/${_AGL}/.bashrc
-WORKDIR /hel
-USER ${_DVL}
+WORKDIR /hal
+USER ${_AGL}
 
 ######################################################################################
 ########################  dvlp_kernel-make - KERNEL COMPILER  ########################
@@ -602,17 +602,17 @@ USER ${_DVL}
 FROM dvlp_base-kernel-builder AS dvlp_kernel-make
 ARG CONFIG_FILE
 ARG KERNEL_TYPE
-USER root
+USER r00t
 WORKDIR /
 # COPY --from=dvlp_skel-build ./ ./
-WORKDIR /hel/dvlw/dvlp/kernels/linux
+WORKDIR /hal/dvlw/dvlp/kernels/linux
 SHELL ["/bin/bash", "-c"]
 # RUN chmod +x build-basic-wsl-kernel.sh
 RUN bash build-${KERNEL_TYPE}-kernel.sh
 # RUN bash make-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" ${_AGL}
 # RUN echo '# daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/${_AGL}/.bashrc
-WORKDIR /hel
-USER ${_DVL}
+WORKDIR /hal
+USER ${_AGL}
 
 #################################### GUI ######################################
 ######################
@@ -626,7 +626,7 @@ ARG _ADM_USR
 ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
-USER root
+USER r00t
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NONINTERACTIVE_SEEN=true
 ARG REFRESH_REPO=${REFRESH_REPO:-yes}
@@ -663,8 +663,8 @@ COPY --from=dvlp_repo-lite /dvlw/dvlp/mnt/opt/* /opt/
 # # # brave_old_line='\"\$HERE\/brave\"\s\"\$\@\"\s\|\|\strue' && \
 # # # brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
 # # # sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/${_DVL} && \
-WORKDIR /hel
-USER ${_DVL}
+WORKDIR /hal
+USER ${_AGL}
 
 #################
 # dvlp_base-gui #
@@ -680,7 +680,7 @@ ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
-USER root
+USER r00t
 RUN apt-get -y update && apt-get -y upgrade && \
     apt-get install -y locales && \    
     update-locale LANGUAGE="C" && \
@@ -703,7 +703,7 @@ RUN \
     apt-get install --no-install-recommends -y kubuntu-desktop
 COPY --from=dvlp_repo-lite --chown=r00t:r00t /dvlw/dvlp/mnt/etc/* /etc/
 
-USER ${_DVL}
+USER ${_AGL}
 
 ######################
 # dvlp_base-gui-plus #
@@ -718,8 +718,8 @@ ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
 WORKDIR /
 COPY --from=dvlp_base-gui ./ ./
-WORKDIR /hel
-USER ${_DVL}
+WORKDIR /hal
+USER ${_AGL}
 
 ############################## CUDA ###############################
 ##################
@@ -732,7 +732,7 @@ ARG _ADM_USR
 ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
-USER root
+USER r00t
 COPY --from=dvlp_base-python-build-lite ./ ./
 COPY --from=dvlp_base-msdot-build-lite ./ ./
 COPY --from=dvlp_base-dind-build ./ ./
@@ -747,8 +747,8 @@ RUN \
     apt-get -y --no-install-recommends install nvidia-cuda-toolkit
 # apt-get clean all && \
 # apt-get autoremove --purge
-WORKDIR /hel
-USER ${_DVL}
+WORKDIR /hal
+USER ${_AGL}
 
 #######################
 # dvlp_base-cuda-plus #
@@ -760,7 +760,7 @@ ARG _ADM_USR
 ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
-USER root
+USER r00t
 WORKDIR /
 COPY --from=dvlp_base-python-build ./ ./
 COPY --from=dvlp_base-msdot-build ./ ./
@@ -771,8 +771,8 @@ RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get -y update && apt-get -y upgrade && \
     apt-get -y install nvidia-cuda-toolkit
-WORKDIR /hel
-USER ${_DVL}
+WORKDIR /hal
+USER ${_AGL}
 
 ###################################################################
 ########################### OUTPUT ################################
@@ -853,7 +853,7 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 WORKDIR /
 # COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./etc/skel/
-USER root
+USER r00t
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
@@ -880,13 +880,13 @@ RUN \
     passwd -l root 
 RUN     groupadd            r00t   --root /halo && \
     groupadd            r00t   --root /hell 
-    # groupadd            g0d    --root /hell && \
-    # groupadd            g0d    --root /halo && \
-    # useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /halo          r00t && \
-    # useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /hell          r00t 
-    # && \
-    # useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /hell        g0d  && \
-    # useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /r00t/halo        g0d 
+# groupadd            g0d    --root /hell && \
+# groupadd            g0d    --root /halo && \
+# useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /halo          r00t && \
+# useradd -s /bin/bash    -u 0   -o  -g r00t  -G root,w0rld          -d /r00t    --root /hell          r00t 
+# && \
+# useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /hell        g0d  && \
+# useradd -s /bin/bash    -u 0   -o  -g g0d  -G g0d,r00t,w0rld       -d /g0d     --root /r00t/halo        g0d 
 # RUN chroot --userspec=g0d:g0d /halo usermod -aG sudo ${_AGL}
 
 RUN \
@@ -895,7 +895,7 @@ RUN \
     echo 'tzdata tzdata/Zones/America select Los Angeles' | debconf-set-selections  && \
     # add-apt-repository ppa:apt-fast/stable && \
     apt-get update -y && apt-get upgrade -y
-    # apt-get -y install sudo 
+# apt-get -y install sudo 
 COPY --from=dvlp_base-r00t-dirs                     ./admin/    ./g0d/
 COPY --from=dvlp_base-r00t-dirs                     ./admin/    ./r00t/
 COPY --from=dvlp_base-devel-dirs                     ./hel/      ./hel/
