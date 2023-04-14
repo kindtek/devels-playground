@@ -2,7 +2,7 @@
 
 # An absolute Windows path to a custom Linux kernel
 # IMPORTANT: use \\ not \ or /
-kernel = C:\\users\\%USERPROFILE%\\linux-6_3rc4_wz0_
+# kernel = C:\\users\\%USERPROFILE%\\linux-6_3rc4_wz0_
 
 # Limits VM memory to use no more than 20 GB, this can be set as whole numbers using GB or MB. Default is 50% of total memory on Windows or 8GB, whichever is less; on builds before 20175: 80% of your total memory on Windows
 memory = 20GB
