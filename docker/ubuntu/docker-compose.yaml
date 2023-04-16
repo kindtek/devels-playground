@@ -126,9 +126,9 @@ services:
         # Wait for the ownership to change
         condition: service_completed_successfully
     labels:
-      com.dvlp_skel.description: "-build skeleton"
+      com.dvlp_skel-kernel.description: "-build skeleton"
 
-  skel-build:
+  skel-build-kernel:
     extends: base
     tty: false
     privileged: true
@@ -147,7 +147,7 @@ services:
       - SETPCAP
       - SYS_CHROOT
     build:
-      target: dvlp_skel-build
+      target: dvlp_skel-build-kernel
       args:
         - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
         - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
@@ -190,19 +190,19 @@ services:
         condition: service_completed_successfully
 
     labels:
-      com.dvlp_skel.description: "-build skeleton"
-  skel:
+      com.dvlp_skel-kernel.description: "-build skeleton"
+  skel-kernel:
     # user: ${_AGL}
-    extends: skel-build
+    extends: skel-build-kernel
     working_dir: /hel
     build:
-      target: dvlp_skel
+      target: dvlp_skel-kernel
     depends_on:
-      skel-build:
+      skel-build-kernel:
         # Wait for the ownership to change
         condition: service_completed_successfully
     labels:
-      com.dvlp_skel.description: "skeleton"
+      com.dvlp_skel-kernel.description: "skeleton"
   base-bare:
     entrypoint: /bin/bash -c
     command:
@@ -238,17 +238,17 @@ services:
     command:
       - sleep infinity
     # user: ${_AGL}
-    extends: skel
+    extends: skel-kernel
     working_dir: /hel
     restart: on-failure
     tty: true
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-git
-    # extends: skel
+    # extends: skel-kernel
     build:
       context: .
       target: dvlp_base-git
     depends_on:
-      skel:
+      skel-kernel:
         # Wait for the ownership to change
         condition: service_completed_successfully
     labels:
@@ -415,10 +415,10 @@ services:
       target: dvlp_base-cuda-plus
       labels:
         com.devels-playground.description: "basics + git + powerhell + docker + gui + cuda"
-  worlds-skel:
+  worlds-skel-kernel:
     build:
       context: .
-      target: dvlp_worlds-skel
+      target: dvlp_worlds-skel-kernel
       args:
         - _AGL=${_AGL_USR:-$_AGL}
         - _DVL=${_DVL_USR:-$_DVL}
@@ -486,7 +486,7 @@ services:
       - home_dvl:/hel
       - home_dvl:/home/${_DVL}
     depends_on:
-      worlds-skel:
+      worlds-skel-kernel:
         condition: service_completed_successfully
   worlds-lite:
     user: ${_AGL}

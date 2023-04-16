@@ -71,13 +71,13 @@ services:
         # Wait for the ownership to change
         condition: service_completed_successfully
     labels:
-      com.dvlp_skel.description: "-build skeleton"
+      com.dvlp_skel-kernel.description: "-build skeleton"
 
-  skel-build:
+  skel-build-kernel:
     extends: base
     tty: false
     build:
-      target: dvlp_skel-build
+      target: dvlp_skel-build-kernel
 
     depends_on:
       base:
@@ -85,10 +85,10 @@ services:
         condition: service_completed_successfully
 
     labels:
-      com.dvlp_skel.description: "-build skeleton"
-  skel:
+      com.dvlp_skel-kernel.description: "-build skeleton"
+  skel-kernel:
     user: ${_AGL}
-    extends: skel-build
+    extends: skel-build-kernel
     working_dir: /hal
     cap_add:
       - AUDIT_WRITE
@@ -105,7 +105,7 @@ services:
       - SETPCAP
       - NET_BIND_SERVICE
     build:
-      target: dvlp_skel
+      target: dvlp_skel-kernel
       args:
         - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
         - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
@@ -144,11 +144,11 @@ services:
       - ${nix_bind_nix_src_user_dir:-/dev/foo7/null}:${nix_bind_tgt_user_dir_agl:-/dev/bar7/null}
       - ${nix_bind_nix_src_user_dir:-/dev/foo8/null}:${nix_bind_tgt_user_dir_dvl:-/dev/bar8/null}
     depends_on:
-      skel-build:
+      skel-build-kernel:
         # Wait for the ownership to change
         condition: service_completed_successfully
     labels:
-      com.dvlp_skel.description: "skeleton"
+      com.dvlp_skel-kernel.description: "skeleton"
 
   skel-lite:
     user: ${_AGL}
@@ -211,7 +211,7 @@ services:
         # Wait for the ownership to change
         condition: service_completed_successfully
     labels:
-      com.dvlp_skel.description: "skeleton"
+      com.dvlp_skel-kernel.description: "skeleton"
 
   base-bare:
     entrypoint: /bin/bash -c
@@ -226,7 +226,7 @@ services:
     # command:  ["bash -i chroot --userspec=dvl:dvl /fs"]
     privileged: true
     image: kindtek/${HUB_REPO:-devels-playground}:kali-base-bare
-    # extends: skel
+    # extends: skel-kernel
     build:
       context: .
       target: dvlp_base-bare
@@ -251,18 +251,18 @@ services:
     command:
       - sleep infinity
     # user: ${_AGL}
-    extends: skel
+    extends: skel-kernel
     working_dir: /hal
     restart: on-failure
     tty: true
     privileged: true
     image: kindtek/${HUB_REPO:-devels-playground}:kali-base-git
-    # extends: skel
+    # extends: skel-kernel
     build:
       context: .
       target: dvlp_base-git
     depends_on:
-      skel:
+      skel-kernel:
         # Wait for the ownership to change
         condition: service_completed_successfully
     labels:
@@ -434,7 +434,7 @@ services:
       - home_dvl:/home/${_DVL}
       - dls:/dls
     # depends_on:
-    #   jacket-skel:
+    #   jacket-skel-kernel:
     #     condition: service_completed_successfully
   jacket-lite:
     user: ${_AGL}

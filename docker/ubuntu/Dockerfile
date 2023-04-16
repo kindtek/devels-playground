@@ -261,9 +261,9 @@ COPY --from=dvlp_repo-lite              --chown=r00t:r00t            /dvlw/dvlp/
 
 ## WORKDIR /hal
 ###################
-# dvlp_skel-build #
+# dvlp_skel-build-kernel #
 ###################
-FROM ubuntu:latest AS dvlp_skel-build
+FROM ubuntu:latest AS dvlp_skel-build-kernel
 ARG REFRESH_REPO
 ARG _MNT
 ARG _AGL_USR
@@ -288,9 +288,9 @@ COPY --from=dvlp_repo                   --chown=r00t:${_AGL}        ./dvlw/dvlp/
 COPY --from=dvlp_repo                                               ./dvlw/                 ./dvlw/
 COPY --from=dvlp_repo                   --chown=r00t:r00t            /dvlw/dvlp/mnt/etc/*   /etc/
 #############
-# dvlp_skel #
+# dvlp_skel-kernel #
 #############
-FROM dvlp_skel-build-lite AS dvlp_skel
+FROM dvlp_skel-build-lite AS dvlp_skel-kernel
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -327,7 +327,7 @@ USER ${_AGL}
 #################
 # dvlp_base-git_lite #
 #################
-FROM dvlp_skel AS dvlp_base-git-lite
+FROM dvlp_skel-kernel AS dvlp_base-git-lite
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -341,8 +341,8 @@ USER ${_AGL}
 ############
 # dvlp_base-git #
 ############
-FROM dvlp_skel AS dvlp_base-git
-COPY --from=dvlp_skel-build         ./      ./
+FROM dvlp_skel-kernel AS dvlp_base-git
+COPY --from=dvlp_skel-build-kernel         ./      ./
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -564,7 +564,7 @@ USER ${_AGL}
 ##########################
 # dvlp_base-kernel-build #
 ##########################
-FROM dvlp_skel-build AS dvlp_base-kernel-build
+FROM dvlp_skel-build-kernel AS dvlp_base-kernel-build
 USER r00t
 # RUN echo exit 0 > /usr/sbin/policy-rc.d 
 RUN \
@@ -604,7 +604,7 @@ ARG CONFIG_FILE
 ARG KERNEL_TYPE
 USER r00t
 WORKDIR /
-# COPY --from=dvlp_skel-build ./ ./
+# COPY --from=dvlp_skel-build-kernel ./ ./
 WORKDIR /hal/dvlw/dvlp/kernels/linux
 SHELL ["/bin/bash", "-c"]
 # RUN chmod +x build-basic-wsl-kernel.sh
@@ -794,9 +794,9 @@ COPY --from=dvlp_kernel-make ./built-kernel.tar.gz ./built-kernel.tar.gz
 
 ########################### WORLDS ################################
 #########################
-# dvlp_worlds-skel #
+# dvlp_worlds-skel-kernel #
 #########################
-FROM ubuntu:latest AS dvlp_worlds-skel
+FROM ubuntu:latest AS dvlp_worlds-skel-kernel
 ARG _MNT
 ARG _AGL_USR
 ARG _DVL_USR
@@ -826,21 +826,21 @@ COPY --from=dvlp_base-r00t-dirs  --chown=r00t:r00t      ./admin/    ./hell/r00t/
 COPY --from=dvlp_base-r00t-dirs  --chown=g0d:g0d        ./mnt/      ./hell/${_MNT}/
 
 # ####################
-# # dvlp_worlds-kernel-skel #
+# # dvlp_worlds-kernel-skel-kernel #
 # ####################
-FROM dvlp_worlds-skel AS dvlp_worlds-kernel-skel
+FROM dvlp_worlds-skel-kernel AS dvlp_worlds-kernel-skel-kernel
 COPY --from=dvlp_base-devel-kernel-dirs                 ./hel/      ./hel/
 COPY --from=dvlp_base-angel-kernel-dirs                 ./hal/      ./hal/
 COPY --from=dvlp_base-r00t-kernel-dirs                  ./admin/    ./g0d/
 COPY --from=dvlp_base-r00t-kernel-dirs                  ./admin/    ./r00t/
-COPY --from=dvlp_skel-build	            	            ./	        ./
-COPY --from=dvlp_skel-build	            	            ./	        ./halo/
-COPY --from=dvlp_skel-build	            	            ./	        ./hell/
+COPY --from=dvlp_skel-build-kernel	            	            ./	        ./
+COPY --from=dvlp_skel-build-kernel	            	            ./	        ./halo/
+COPY --from=dvlp_skel-build-kernel	            	            ./	        ./hell/
 
 ###############
 # dvlp_worlds #
 ###############
-FROM dvlp_worlds-skel AS dvlp_worlds-build
+FROM dvlp_worlds-skel-kernel AS dvlp_worlds-build
 ARG _MNT
 ARG WORLDS
 ARG _AGL_USR
@@ -852,7 +852,7 @@ ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 WORKDIR /
-# COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./etc/skel/
+# COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./etc/skel-kernel/
 USER r00t
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -906,13 +906,13 @@ COPY --from=dvlp_base-angel-dirs                     ./hal/      ./hal/
 WORKDIR /
 
 FROM ubuntu:latest AS dvlp_worlds-lite
-# COPY --from=dvlp_worlds-skel          ./    ./
+# COPY --from=dvlp_worlds-skel-kernel          ./    ./
 COPY --from=dvlp_worlds-build         ./    ./
 USER g0d
 WORKDIR /
 
 FROM ubuntu:latest AS dvlp_worlds
-COPY --from=dvlp_worlds-kernel-skel   ./    ./
+COPY --from=dvlp_worlds-kernel-skel-kernel   ./    ./
 COPY --from=dvlp_worlds-build         ./    ./
 USER g0d
 WORKDIR /
@@ -927,7 +927,7 @@ FROM ubuntu:latest AS dvlp_worlds-plus
 # COPY --from=dvlp_base-python-build-lite                 ./          ./hell/
 
 COPY --from=dvlp_worlds-build         ./    ./
-COPY --from=dvlp_worlds-kernel-skel   ./    ./
+COPY --from=dvlp_worlds-kernel-skel-kernel   ./    ./
 
 # RUN chroot --userspec=${_AGL}:halo  /halo pip install cdir --user
 # RUN chroot --userspec=r00t:r00t     /halo pip install cdir --user
@@ -937,12 +937,12 @@ COPY --from=dvlp_worlds-kernel-skel   ./    ./
 #########################
 # dvlp_worlds-kernel-plus #
 #########################
-FROM dvlp_worlds-kernel-skel AS dvlp_worlds-kernel-plus
+FROM dvlp_worlds-kernel-skel-kernel AS dvlp_worlds-kernel-plus
 # COPY --from=dvlp_base-python-build-lite                  ./          ./
 # COPY --from=dvlp_base-python-build-lite                  ./          ./halo/
 # COPY --from=dvlp_base-python-build-lite                  ./          ./hell/
 COPY --from=dvlp_worlds-plus                            ./          ./
-COPY --from=dvlp_worlds-kernel-skel                     ./          ./
+COPY --from=dvlp_worlds-kernel-skel-kernel                     ./          ./
 # RUN chroot --userspec=${_AGL}:halo  /halo pip install cdir && \
 #     chroot --userspec=r00t:r00t     /halo pip install cdir && \
 #     chroot --userspec=${_DVl}:hell  /hell pip install cdir && \

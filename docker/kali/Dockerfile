@@ -293,7 +293,7 @@ ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 WORKDIR /
-# COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./etc/skel/
+# COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./etc/skel-kernel/
 USER r00t
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -358,9 +358,9 @@ COPY --from=dvlp_repo-lite              --chown=r00t:halo       --chmod=1770    
 
 ## WORKDIR /hall
 ###################
-# dvlp_skel-build #
+# dvlp_skel-build-kernel #
 ###################
-FROM dvlp_base AS dvlp_skel-build
+FROM dvlp_base AS dvlp_skel-build-kernel
 ARG REFRESH_REPO
 ARG _MNT
 ARG _AGL_USR
@@ -390,9 +390,9 @@ COPY --from=dvlp_repo                   --chown=r00t:halo    --chmod=1770    ./d
 WORKDIR /
 
 #############
-# dvlp_skel #
+# dvlp_skel-kernel #
 #############
-FROM dvlp_skel-build-lite AS dvlp_skel
+FROM dvlp_skel-build-lite AS dvlp_skel-kernel
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -434,7 +434,7 @@ USER ${_DVL}
 #################
 # dvlp_base-git_lite #
 #################
-FROM dvlp_skel AS dvlp_base-git-lite
+FROM dvlp_skel-kernel AS dvlp_base-git-lite
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -448,8 +448,8 @@ USER ${_DVL}
 ############
 # dvlp_base-git #
 ############
-FROM dvlp_skel AS dvlp_base-git
-COPY --from=dvlp_skel-build         ./      ./
+FROM dvlp_skel-kernel AS dvlp_base-git
+COPY --from=dvlp_skel-build-kernel         ./      ./
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -692,7 +692,7 @@ USER ${_DVL}
 ##########################
 # dvlp_base-kernel-build #
 ##########################
-FROM dvlp_skel-build AS dvlp_base-kernel-build
+FROM dvlp_skel-build-kernel AS dvlp_base-kernel-build
 USER r00t
 # RUN echo exit 0 > /usr/sbin/policy-rc.d 
 RUN \
@@ -734,7 +734,7 @@ ARG CONFIG_FILE
 ARG KERNEL_TYPE
 USER r00t
 WORKDIR /
-# COPY --from=dvlp_skel-build ./ ./
+# COPY --from=dvlp_skel-build-kernel ./ ./
 WORKDIR /hal/dvlw/dvlp/kernels/linux
 SHELL ["/bin/bash", "-c"]
 # RUN chmod +x build-basic-wsl-kernel.sh
@@ -944,7 +944,7 @@ COPY --from=dvlp_kernel-make ./built-kernel.tar.gz ./built-kernel.tar.gz
 #####################
 ## dvlp_jacket-plus #
 #####################
-# FROM dvlp_jacket-kernel-skel AS dvlp_jacket-plus
+# FROM dvlp_jacket-kernel-skel-kernel AS dvlp_jacket-plus
 
 ############################
 ## dvlp_jacket-kernel-plus #
