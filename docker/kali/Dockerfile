@@ -329,9 +329,9 @@ WORKDIR /
 
 ############################## SKELETON ###################################
 ########################
-# dvlp_skel-build-lite #
+# dvlp_skel-build #
 ########################
-FROM dvlp_base AS dvlp_skel-build-lite
+FROM dvlp_base AS dvlp_skel-build
 ARG REFRESH_REPO
 ARG _MNT
 ARG _AGL_USR
@@ -392,7 +392,7 @@ WORKDIR /
 #############
 # dvlp_skel-kernel #
 #############
-FROM dvlp_skel-build-lite AS dvlp_skel-kernel
+FROM dvlp_skel-build AS dvlp_skel-kernel
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -407,9 +407,9 @@ RUN \
     rm -rf /var/cache/apt/archives/*.deb
 
 ##################
-# dvlp_skel-lite #
+# dvlp_skel #
 ##################
-FROM dvlp_skel-build-lite AS dvlp_skel-lite
+FROM dvlp_skel-build AS dvlp_skel
 
 #################################################################################
 ############################### IMAGE BASES #####################################
@@ -419,7 +419,7 @@ FROM dvlp_skel-build-lite AS dvlp_skel-lite
 ############
 # dvlp_base-bare #
 ############
-FROM dvlp_skel-build-lite AS dvlp_base-bare
+FROM dvlp_skel-build AS dvlp_base-bare
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -464,7 +464,7 @@ USER ${_DVL}
 #####################
 # dvlp_base-python-build #
 #####################
-FROM dvlp_skel-build-lite AS dvlp_base-python-build
+FROM dvlp_skel-build AS dvlp_base-python-build
 ARG _AGL_USR
 ARG _DVL_USR
 ENV _AGL=$_AGL_USR
@@ -486,7 +486,7 @@ RUN \
 ###############################
 # dvlp_base-python-build-lite #
 ###############################
-FROM dvlp_skel-build-lite AS dvlp_base-python-build-lite
+FROM dvlp_skel-build AS dvlp_base-python-build-lite
 USER r00t
 ARG angel_exists=true
 ARG devel_exists=true
@@ -553,7 +553,7 @@ USER ${_DVL}
 ##############################
 # dvlp_base-msdot-build-lite #
 #############################
-FROM dvlp_skel-build-lite AS dvlp_base-msdot-build-lite
+FROM dvlp_skel-build AS dvlp_base-msdot-build-lite
 USER r00t
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
@@ -632,7 +632,7 @@ USER ${_DVL}
 ########################
 # dvlp_base-dind-build #
 ########################
-FROM dvlp_skel-build-lite AS dvlp_base-dind-build
+FROM dvlp_skel-build AS dvlp_base-dind-build
 USER r00t
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
 RUN \
