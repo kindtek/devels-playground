@@ -237,9 +237,9 @@ WORKDIR /
 
 ############################## SKELETON ###################################
 ########################
-# dvlp_skel-build-lite #
+# dvlp_skel-build #
 ########################
-FROM ubuntu:latest AS dvlp_skel-build-lite
+FROM ubuntu:latest AS dvlp_skel-build
 ARG REFRESH_REPO
 ARG _MNT
 ARG _AGL_USR
@@ -290,7 +290,7 @@ COPY --from=dvlp_repo                   --chown=r00t:r00t            /dvlw/dvlp/
 #############
 # dvlp_skel-kernel #
 #############
-FROM dvlp_skel-build-lite AS dvlp_skel-kernel
+FROM dvlp_skel-build AS dvlp_skel-kernel
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -302,7 +302,7 @@ RUN \
     apt-get -y update && apt-get -y upgrade && \
     apt-get -y install apt-transport-https curl gh git gnupg2 libssl-dev nvi wget
 
-FROM dvlp_skel-build-lite AS dvlp_skel-lite
+FROM dvlp_skel-build AS dvlp_skel
 
 #################################################################################
 ############################### IMAGE BASES #####################################
@@ -312,7 +312,7 @@ FROM dvlp_skel-build-lite AS dvlp_skel-lite
 ############
 # dvlp_base-bare #
 ############
-FROM dvlp_skel-build-lite AS dvlp_base-bare
+FROM dvlp_skel-build AS dvlp_base-bare
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -357,7 +357,7 @@ USER ${_AGL}
 #####################
 # dvlp_base-python-build #
 #####################
-FROM dvlp_skel-build-lite AS dvlp_base-python-build
+FROM dvlp_skel-build AS dvlp_base-python-build
 ARG _AGL_USR
 ARG _DVL_USR
 ENV _AGL=$_AGL_USR
@@ -377,7 +377,7 @@ RUN \
 ###############################
 # dvlp_base-python-build-lite #
 ###############################
-FROM dvlp_skel-build-lite AS dvlp_base-python-build-lite
+FROM dvlp_skel-build AS dvlp_base-python-build-lite
 USER r00t
 ARG angel_exists=true
 ARG devel_exists=true
@@ -438,7 +438,7 @@ USER ${_AGL}
 ##############################
 # dvlp_base-msdot-build-lite #
 #############################
-FROM dvlp_skel-build-lite AS dvlp_base-msdot-build-lite
+FROM dvlp_skel-build AS dvlp_base-msdot-build-lite
 USER r00t
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
@@ -509,7 +509,7 @@ USER ${_AGL}
 ########################
 # dvlp_base-dind-build #
 ########################
-FROM dvlp_skel-build-lite AS dvlp_base-dind-build
+FROM dvlp_skel-build AS dvlp_base-dind-build
 USER r00t
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
 RUN \
@@ -814,9 +814,9 @@ COPY --from=dvlp_base-r00t-dirs  --chown=g0d:g0d        ./admin/    ./halo/g0d/
 COPY --from=dvlp_base-r00t-dirs  --chown=r00t:r00t      ./admin/    ./halo/r00t/
 COPY --from=dvlp_base-r00t-dirs  --chown=g0d:g0d        ./mnt/      ./halo/${_MNT}/
 
-COPY --from=dvlp_skel-lite	            	            ./	        ./
-COPY --from=dvlp_skel-lite              	            ./	        ./halo/
-COPY --from=dvlp_skel-lite	            	            ./	        ./hell/
+COPY --from=dvlp_skel	            	            ./	        ./
+COPY --from=dvlp_skel              	            ./	        ./halo/
+COPY --from=dvlp_skel	            	            ./	        ./hell/
 
 COPY --from=dvlp_base-devel-dirs --chown=${_DVL}:hel    ./hel/      ./hell/hel/
 COPY --from=dvlp_base-angel-dirs --chown=${_AGL}:halo   ./hal/      ./halo/hal/

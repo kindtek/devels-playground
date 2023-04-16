@@ -65,7 +65,7 @@ services:
     #   volumes:
     #     - home_dvl:/home/$_DVL_USR
 
-  skel-build-lite:
+  skel-build:
     extends: base
     tty: false
     privileged: true
@@ -84,7 +84,7 @@ services:
       - SETPCAP
       - SYS_CHROOT
     build:
-      target: dvlp_skel-build-lite
+      target: dvlp_skel-build
       args:
         - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
         - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
@@ -208,7 +208,7 @@ services:
     command:
       - sleep infinity
     # user: ${_AGL}
-    extends: skel-build-lite
+    extends: skel-build
     working_dir: /hel
     restart: on-failure
     tty: true
@@ -217,7 +217,7 @@ services:
       context: .
       target: dvlp_base-bare
     depends_on:
-      skel-build-lite:
+      skel-build:
         # Wait for the ownership to change
         condition: service_completed_successfully
     init: true
@@ -255,14 +255,14 @@ services:
       com.devels-playground.description: "basics + git"
 
   base-python-build:
-    extends: skel-build-lite
+    extends: skel-build
     build:
       context: .
       target: dvlp_base-python-build
     labels:
       com.devels-playground.description: "basics + git"
   base-python-build-lite:
-    extends: skel-build-lite
+    extends: skel-build
     build:
       context: .
       target: dvlp_base-python-build-lite
