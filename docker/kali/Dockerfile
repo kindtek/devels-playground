@@ -446,9 +446,9 @@ WORKDIR /hal
 USER ${_DVL}
 
 ############
-# dvlp_base-git #
+# dvlp_base-git-kernel #
 ############
-FROM dvlp_skel-kernel AS dvlp_base-git
+FROM dvlp_skel-kernel AS dvlp_base-git-kernel
 COPY --from=dvlp_skel-build-kernel         ./      ./
 ARG _AGL_USR
 ARG _DVL_USR
@@ -713,7 +713,7 @@ USER ${_DVL}
 ######################################################################################
 ###################  dvlp_base-kernel-builder - KERNEL BUILDER  ######################
 ######################################################################################
-FROM dvlp_base-git AS dvlp_base-kernel-builder
+FROM dvlp_base-git-kernel AS dvlp_base-kernel-builder
 ARG CONFIG_FILE
 ARG KERNEL_TYPE
 USER r00t
@@ -892,7 +892,7 @@ USER ${_DVL}
 #######################
 # dvlp_base-cuda-plus #
 #######################
-FROM dvlp_base-git AS dvlp_base-cuda-plus
+FROM dvlp_base-git-kernel AS dvlp_base-cuda-plus
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -978,7 +978,7 @@ WORKDIR /
 ############
 # dvlp_git #
 ############
-FROM dvlp_base-git AS dvlp_git
+FROM dvlp_base-git-kernel AS dvlp_git
 WORKDIR /
 ########################
 # dvlp_git-lite #

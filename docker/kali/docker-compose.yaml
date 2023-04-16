@@ -246,7 +246,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git"
 
-  base-git:
+  base-git-kernel:
     entrypoint: /bin/bash -c
     command:
       - sleep infinity
@@ -256,11 +256,11 @@ services:
     restart: on-failure
     tty: true
     privileged: true
-    image: kindtek/${HUB_REPO:-devels-playground}:kali-base-git
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-base-git-kernel
     # extends: skel-kernel
     build:
       context: .
-      target: dvlp_base-git
+      target: dvlp_base-git-kernel
     depends_on:
       skel-kernel:
         # Wait for the ownership to change
@@ -343,7 +343,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel"
   base-kernel-builder:
-    extends: base-git
+    extends: base-git-kernel
     image: kindtek/${HUB_REPO:-devels-playground}:kernel-builder
     build:
       context: .
@@ -379,7 +379,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   base-gui-plus:
-    extends: base-git
+    extends: base-git-kernel
     image: kindtek/${HUB_REPO:-devels-playground}:kali-base-gui-plus
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
@@ -483,7 +483,7 @@ services:
     # command: "if [ -f 'start-kde.sh'' ]; then bash start.sh; fi; && sleep infinity;"
     # - "if [ -f \"start-kde.sh\" ]; then bash start.sh; mv -vf start-kde.sh start.sh; else bash start.sh; fi; && sleep infinity;"
     # - ["if [ -f \"start-kde.sh\" ]; then bash start.sh; mv -vf start-kde.sh start.sh; else bash start.sh; fi;", "sleep infinity"]
-    image: kindtek/${HUB_REPO:-devels-playground}:kali-git
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-git-kernel
     build:
       target: dvlp_git
       args:
