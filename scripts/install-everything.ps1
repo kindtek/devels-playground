@@ -69,7 +69,7 @@ function install_dependencies {
         winget upgrade --exact --id GitHub.cli --silent --locale en-US --accept-package-agreements --accept-source-agreements
         winget install --id Git.Git --source winget --silent --locale en-US --accept-package-agreements --accept-source-agreements
         winget upgrade --id Git.Git --source winget --silent --locale en-US --accept-package-agreements --accept-source-agreements
-        Write-Host "`$software_name installed`r`n`r`n" | Out-File -FilePath "$git_path/.github-installed"
+        Write-Host "$software_name installed`r`n`r`n" | Out-File -FilePath "$git_path/.github-installed"
         $new_install = $true
     }
     else {
