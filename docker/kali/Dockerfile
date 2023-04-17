@@ -312,7 +312,10 @@ RUN \
     passwd -d r00t && \
     passwd -d root && \
     passwd -l root && \
-    install -o r00t -g w0rld -m 1770 dls
+    mkdir -m 1770 dls && \
+    mkdir -m 1770 repos && \
+    chown r00t:w0rld dls && \
+    chown ${_AGL}:halo repos
 
 RUN \
     --mount=type=cache,target=/var/cache/debconf,sharing=locked \
