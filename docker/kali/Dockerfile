@@ -31,6 +31,7 @@ ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 # USER r00t
 WORKDIR /
+# add git cache directory
 # RUN mkdir -pv /tmp/git/cache && \
 # chown -R r00t:r00t /tmp/git/cache && \
 #     mkdir -pv /dvlw && \
@@ -45,7 +46,6 @@ RUN \
     apt-get --reinstall -y install ca-certificates && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb 
-# add git cache directory
 
 # add safe directories
 RUN \
@@ -72,6 +72,7 @@ FROM dvlp_repo-build-prep AS dvlp_repo-build
 WORKDIR /repos
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked  \
+    # TODO: cleanup - for now play plinko to force clone when having submodule sync issues
     ( git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --filter=blob:limit=12400 --progress dvlw || git config pull.rebase false ) || \
     ( git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --filter=blob:limit=12400 --progress dvlw || git config pull.rebase true ) || \
     ( git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --filter=blob:limit=12400 --progress dvlw || git config pull.rebase false ) || \
@@ -110,6 +111,7 @@ RUN \
 WORKDIR /repos/dvlw/dvlp
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
+    # heavier download here
     ( git submodule update --init --progress || git submodule update --init --progress --force --rebase -- kernels ) 
 # (cd /tmp/git/cache/dvlw/dvlp && git pull && cp -rv --remove-destination . /home/${_DVL}/dvlw/dvlp)
 
@@ -432,7 +434,7 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
 WORKDIR /hal
-USER ${_DVL}
+USER ${_AGL}
 
 ################################### GIT #########################################
 #################
@@ -447,7 +449,7 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
 WORKDIR /hal
-USER ${_DVL}
+USER ${_AGL}
 
 ############
 # dvlp_base-git-kernel #
@@ -462,7 +464,7 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
 WORKDIR /hal
-USER ${_DVL}
+USER ${_AGL}
 
 ################################# PYTHON ########################################
 #####################
@@ -536,7 +538,7 @@ USER r00t
 WORKDIR / 
 COPY --from=dvlp_base-python-build-lite ./ ./
 WORKDIR /hal
-USER ${_DVL}
+USER ${_AGL}
 
 ####################
 # dvlp_base-python #
@@ -553,7 +555,7 @@ WORKDIR /
 COPY --from=dvlp_base-python-build ./ ./
 COPY --from=dvlp_base-python-build-lite ./ ./
 WORKDIR /hal
-USER ${_DVL}
+USER ${_AGL}
 
 ############################# POWERHELL #########################################
 ##############################
@@ -586,7 +588,7 @@ RUN \
 # apt-get clean all && \
 # apt-get autoremove --purge
 WORKDIR /hal
-USER ${_DVL}
+USER ${_AGL}
 
 #########################
 # dvlp_base-msdot-build #
@@ -598,7 +600,7 @@ RUN apt-get update -y && apt-get autoremove -y && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 WORKDIR /hal
-USER ${_DVL}
+USER ${_AGL}
 
 ########################
 # dvlp_base-msdot-lite #
@@ -615,7 +617,7 @@ WORKDIR /
 COPY --from=dvlp_base-python-build-lite ./ ./
 COPY --from=dvlp_base-msdot-build-lite ./ ./
 WORKDIR /hal
-USER ${_DVL}
+USER ${_AGL}
 
 ###################
 # dvlp_base-msdot #
@@ -632,7 +634,7 @@ WORKDIR /
 COPY --from=dvlp_base-python-build ./ ./
 COPY --from=dvlp_base-msdot-build ./ ./
 WORKDIR /hal
-USER ${_DVL}
+USER ${_AGL}
 
 ########################## DOCKER IN DOCKER ######################################
 ########################
@@ -662,7 +664,7 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 WORKDIR /hal
-USER ${_DVL}
+USER ${_AGL}
 
 #######################
 # dvlp_base-dind-lite #
@@ -847,7 +849,7 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 COPY --from=dvlp_repo --chown=r00t:r00t /dvlw/dvlp/mnt/etc/* /etc/
-
+WORKDIR /hal
 USER ${_DVL}
 
 ######################
@@ -922,7 +924,7 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb   
 WORKDIR /hal
-USER ${_DVL}
+USER ${_AGL}
 
 ###################################################################
 ########################### OUTPUT ################################
