@@ -5,7 +5,7 @@ services:
     build:
       target: dvlp_repo-lite
     volumes:
-      - repo-lite:/dvlw
+      - repo:/dvlw
   repo:
     build:
       target: dvlp_repo
@@ -98,13 +98,13 @@ services:
         - nix_bind_tgt_user_dir_dvl=${LOGNAME:+/hell/host_nix}:ro
       #  - bind_src_dir=${bind_win_src_user_dir:-/dev/null}
     volumes:
-      - repo-lite:/dvlw
-      - repo-lite:/r00t/dvlw
-      - repo-lite:/home/r00t/dvlw
-      - repo-lite:/hal/dvlw
-      - repo-lite:/home/{${_AGL}/dvlw
-      - repo-lite:/hel/dvlw
-      - repo-lite:/home/${_DVL}/dvlw
+      - repo:/dvlw
+      - repo:/r00t/dvlw
+      - repo:/home/r00t/dvlw
+      - repo:/hal/dvlw
+      - repo:/home/{${_AGL}/dvlw
+      - repo:/hel/dvlw
+      - repo:/home/${_DVL}/dvlw
       - mnt-data:/mnt/data
       - home_agl:/hal
       - home_agl:/home/${_AGL}
@@ -493,21 +493,21 @@ services:
     working_dir: /r00t/halo/hal
     extends: worlds
     volumes:
-      - repo-lite:/dvlw
-      - repo-lite:/g0d/dvlw
-      - repo-lite:/g0d/hell/hel/dvlw
-      - repo-lite:/g0d/halo/hal/dvlw
-      - repo-lite:/r00t/dvlw
-      - repo-lite:/r00t/hell/dvlw
-      - repo-lite:/r00t/hell/hel/dvlw
-      - repo-lite:/r00t/halo/dvlw
-      - repo-lite:/r00t/halo/hal/dvlw
-      - repo-lite:/hell/dvlw
-      - repo-lite:/halo/dvlw
-      - repo-lite:/hell/hel/dvlw
-      - repo-lite:/halo/hal/dvlw
-      - repo-lite:/hel/dvlw
-      - repo-lite:/hal/dvlw
+      - repo:/dvlw
+      - repo:/g0d/dvlw
+      - repo:/g0d/hell/hel/dvlw
+      - repo:/g0d/halo/hal/dvlw
+      - repo:/r00t/dvlw
+      - repo:/r00t/hell/dvlw
+      - repo:/r00t/hell/hel/dvlw
+      - repo:/r00t/halo/dvlw
+      - repo:/r00t/halo/hal/dvlw
+      - repo:/hell/dvlw
+      - repo:/halo/dvlw
+      - repo:/hell/hel/dvlw
+      - repo:/halo/hal/dvlw
+      - repo:/hel/dvlw
+      - repo:/hal/dvlw
   bare:
     extends: worlds-lite
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-bare
