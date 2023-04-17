@@ -400,7 +400,7 @@ services:
       labels:
         com.devels-playground.description: "basics + git + powerhell + docker + gui + cuda"
 
-  jacket:
+  jacket-kernel:
     user: ${_AGL}
     working_dir: /hal
     image: kindtek/${HUB_REPO:-devels-playground}:kali-${JACKET:-bare}
@@ -409,14 +409,14 @@ services:
       - sleep infinity
     build:
       context: .
-      target: dvlp_jacket-${JACKET:-bare}
+      target: dvlp_jacket-kernel-${JACKET:-bare}
       args:
         - JACKET=bare
         - _AGL=${_AGL_USR:-$_AGL}
         - _DVL=${_DVL_USR:-$_DVL}
         - _MNT=${_MNT_USR:-$_MNT}
       labels:
-        com.devels-playground.description: "hello jacket"
+        com.devels-playground.description: "hello jacket-kernel"
     volumes:
       - repo_agl:/dvlw
       - repo_agl:/r00t/dvlw
@@ -434,12 +434,12 @@ services:
       - home_dvl:/home/${_DVL}
       - dls:/dls
     # depends_on:
-    #   jacket-skel-kernel:
+    #   jacket-kernel-skel-kernel:
     #     condition: service_completed_successfully
   jacket-lite:
     user: ${_AGL}
     working_dir: /hal
-    extends: jacket
+    extends: jacket-kernel
     volumes:
       - repo_agl-lite:/dvlw
       - repo_agl-lite:/r00t/dvlw
@@ -476,7 +476,7 @@ services:
       args:
         - JACKET=git
   git-kernel:
-    extends: jacket
+    extends: jacket-kernel
     entrypoint: /bin/bash -c
     # command: 
     # - sleep infinity
@@ -519,7 +519,7 @@ services:
         - JACKET=gui-lite
   gui-plus:
     working_dir: /r00t
-    extends: jacket
+    extends: jacket-kernel
     image: kindtek/${HUB_REPO:-devels-playground}:kali-gui-plus
     # command: bash start-kde.sh
     build:
@@ -555,7 +555,7 @@ services:
       args:
         - JACKET=cuda-plus
     volumes_from:
-      - jacket
+      - jacket-kernel
 
 volumes:
   root:
