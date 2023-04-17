@@ -81,13 +81,13 @@ scripts/wsl-docker-import
  BUILD YOUR OWN KERNEL
 #######################
 ### use this config file as is or use your own
-config_file="https://raw.githubusercontent.com/kindtek/devels-playground/615b895f27a5c6827e468c0f5b92f4881e386208/kernels/linux/x86/amd/6_3rc4/.config_wsl-zfs0"
+# config_file="https://raw.githubusercontent.com/kindtek/devels-playground/615b895f27a5c6827e468c0f5b92f4881e386208/kernels/linux/x86/amd/6_3rc4/.config_wsl-zfs0"
 
 git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --progress dvlw
 cd dvlw
 git submodule update --init --remote --depth=1 --progress
 cd dvlp/docker/ubuntu
-docker buildx build -t dvlp_basic-wsl-kernel-builder --output type=tar,dest=example-ubuntu22-plus-linux-kernel-6-28.tar  --build-arg CONFIG_FILE=$config_file .
+docker buildx build -t dvlp_kernel-make --output type=tar,dest=example-ubuntu22-plus-linux-kernel-6_28.tar  --build-arg KERNEL_TYPE=stable-wsl-zfs CONFIG_FILE=$config_file .
 ###
 ### this will save a .tar image of your kernel in your home directory when you log in to the image
 #######################
