@@ -34,7 +34,7 @@ WORKDIR /
 # RUN mkdir -pv /tmp/git/cache && \
 # chown -R r00t:r00t /tmp/git/cache && \
 #     mkdir -pv /dvlw && \
-#     chown -R r00t:r00t /dvlw
+#     chown -R r00t:r00t /repos/dvlw
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
@@ -60,7 +60,7 @@ RUN \
     git config --global --add safe.directory / && \
     git config --global --add safe.directory /root && \
     git config --global --add safe.directory /r00t && \
-    git config --global --add safe.directory /dvlw && \
+    git config --global --add safe.directory /repos/dvlw && \
     git config --global --add safe.directory /tmp/git/cache && \
     git config --global user.name 'Snail Mail' && \
     git config --global user.email '<>'
@@ -69,18 +69,18 @@ RUN \
 # dvlp_repo-build #
 #######################
 FROM dvlp_repo-build-prep AS dvlp_repo-build
-WORKDIR /
+WORKDIR /repos
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked  \
-    ( git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --filter=blob:limit=12400 --progress dvlw-lite || git config pull.rebase false ) || \
-    ( git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --filter=blob:limit=12400 --progress dvlw-lite || git config pull.rebase true ) || \
-    ( git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --filter=blob:limit=12400 --progress dvlw-lite || git config pull.rebase false ) || \
-    ( git clone https://github.com/kindtek/devels-workshop --depth=1 --progress dvlw-lite || git config pull.rebase true ) || \
-    ( git clone https://github.com/kindtek/devels-workshop --depth=1 --progress dvlw-lite || git config pull.rebase false ) || \
-    ( git clone https://github.com/kindtek/devels-workshop --progress dvlw-lite || git config pull.rebase true ) || \
-    ( git clone https://github.com/kindtek/devels-workshop --progress dvlw-lite || git config pull.rebase false ) || \
-    ( cd dvlw-lite && git pull -f https://github.com/kindtek/devels-workshop ) 
-WORKDIR /dvlw-lite
+    ( git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --filter=blob:limit=12400 --progress dvlw || git config pull.rebase false ) || \
+    ( git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --filter=blob:limit=12400 --progress dvlw || git config pull.rebase true ) || \
+    ( git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --filter=blob:limit=12400 --progress dvlw || git config pull.rebase false ) || \
+    ( git clone https://github.com/kindtek/devels-workshop --depth=1 --progress dvlw || git config pull.rebase true ) || \
+    ( git clone https://github.com/kindtek/devels-workshop --depth=1 --progress dvlw || git config pull.rebase false ) || \
+    ( git clone https://github.com/kindtek/devels-workshop --progress dvlw || git config pull.rebase true ) || \
+    ( git clone https://github.com/kindtek/devels-workshop --progress dvlw || git config pull.rebase false ) || \
+    ( cd dvlw && git pull -f https://github.com/kindtek/devels-workshop ) 
+WORKDIR /repos/dvlw
 # RUN if [ $REFRESH_REPO != no ]; then git pull; fi    
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
@@ -97,17 +97,17 @@ RUN \
 # dvlp_repo-build-kernel #
 ###################
 FROM dvlp_repo-build AS dvlp_repo-build-kernel
-WORKDIR /
+WORKDIR /repos
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
-    git clone https://github.com/kindtek/devels-workshop --progress dvlw || (cd dvlw && git pull https://github.com/kindtek/devels-workshop) 
-WORKDIR /dvlw
+    git clone https://github.com/kindtek/devels-workshop --progress dvlw-kernel || (cd dvlw-kernel && git pull https://github.com/kindtek/devels-workshop) 
+WORKDIR /repos/dvlw-kernel
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
     git submodule update --init --remote --progress -- dvlp || git pull https://github.com/kindtek/devels-playground && \
     chmod -R 1770 dvlp/mnt/home && \
     chmod -R 1770 dvlp/mnt/bak
-WORKDIR /dvlw/dvlp
+WORKDIR /repos/dvlw-kernel/dvlp
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
     ( git submodule update --init --progress || git submodule update --init --progress --force --rebase -- kernels ) 
@@ -117,9 +117,9 @@ RUN \
 # dvlp_repo-build #
 #######################
 FROM scratch AS dvlp_repo
-COPY --from=dvlp_repo-build ./dvlw-lite/ ./dvlw/
+COPY --from=dvlp_repo-build ./repos/dvlw/ ./repos/dvlw/
 FROM scratch AS dvlp_repo-kernel
-COPY --from=dvlp_repo-build-kernel ./dvlw/ ./dvlw/
+COPY --from=dvlp_repo-build-kernel ./repos/dvlw-kernel/ ./repos/dvlw/
 
 ####################### BASE DIRS AND VOLUME MOUNT POINTS ####################################
 ########################
@@ -130,7 +130,7 @@ ARG _MNT
 ARG _DVL_USR
 ENV _DVL=$_DVL_USR
 WORKDIR /hel
-COPY --from=dvlp_repo ./dvlw/dvlp/mnt/home/ ./
+COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/home/ ./
 RUN mkdir -pv built-kernels && \
     mkdir -pv dvlw && \
     mkdir -pv dls && \
@@ -156,7 +156,7 @@ FROM dvlp_base-devel-dirs AS dvlp_base-devel-kernel-dirs
 ARG _MNT
 ARG _DVL
 WORKDIR /hel
-COPY --from=dvlp_repo ./dvlw/dvlp/mnt/home/ ./
+COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/home/ ./
 RUN mkdir -pv /hel && \
     mkdir -pv /hel/built-kernels && \
     mkdir -pv /home/${_DVL}/built-kernels && \
@@ -182,7 +182,7 @@ ARG _MNT
 ARG _AGL_USR
 ENV _AGL=${_AGL_USR:-agl}
 WORKDIR /hal
-COPY --from=dvlp_repo ./dvlw/dvlp/mnt/home/ ./
+COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/home/ ./
 RUN mkdir -pv built-kernels && \
     mkdir -pv dvlw && \
     mkdir -pv dls && \
@@ -206,8 +206,8 @@ FROM dvlp_base-angel-dirs AS dvlp_base-angel-kernel-dirs
 ARG _MNT
 ARG _AGL
 WORKDIR /hal
-COPY --from=dvlp_repo ./dvlw/dvlp/mnt/home/ ./
-# COPY --from=dvlp_repo ./dvlw/dvlp/mnt/      ./mnt/
+COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/home/ ./
+# COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/      ./mnt/
 RUN mkdir -pv dvlw && \
     mkdir -pv /hal && \
     mkdir -pv /hal/built-kernels && \
@@ -233,8 +233,8 @@ FROM kalilinux/kali-rolling:latest AS dvlp_base-r00t-dirs
 ARG _MNT
 ARG _ADMIN
 WORKDIR /admin
-COPY --from=dvlp_repo ./dvlw/dvlp/mnt/home/    ./
-COPY --from=dvlp_repo ./dvlw/dvlp/mnt/         ./mnt/
+COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/home/    ./
+COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/         ./mnt/
 
 RUN mkdir -pv dvlw && \
     mkdir -pv dls && \
@@ -265,7 +265,7 @@ FROM dvlp_base-r00t-dirs AS dvlp_base-r00t-kernel-dirs
 ARG _MNT
 ARG _ADMIN
 WORKDIR /admin
-COPY --from=dvlp_repo ./dvlw/dvlp/mnt/home/ ./
+COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/home/ ./
 RUN mkdir -pv /admin && mkdir -pv built-kernels && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
@@ -293,7 +293,7 @@ ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 WORKDIR /
-# COPY --from=dvlp_repo ./dvlw/dvlp/mnt/home/ ./etc/skel-kernel/
+# COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/home/ ./etc/skel-kernel/
 # USER r00t
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -342,18 +342,18 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /
-COPY --from=dvlp_base-r00t-dirs         --chown=r00t:r00t       --chmod=1770    ./admin/                    ./r00t/
-COPY --from=dvlp_base-devel-dirs        --chown=${_DVL}:hell    --chmod=1770    ./hel/                      ./hel/
-COPY --from=dvlp_base-angel-dirs        --chown=${_AGL}:halo    --chmod=1770    ./hal/                      ./hal/
-COPY --from=dvlp_repo              --chown=${_DVL}:hell    --chmod=1770    ./dvlw/dvlp/mnt/home/       ./hel/
-COPY --from=dvlp_repo              --chown=${_AGL}:halo    --chmod=1770    ./dvlw/dvlp/mnt/home/       ./hal/
-COPY --from=dvlp_repo              --chown=r00t:r00t       --chmod=1770    ./dvlw/dvlp/mnt/home/       ./r00t/
-COPY --from=dvlp_repo              --chown=${_AGL}:halo    --chmod=1770    ./dvlw/                     ./dvlw/
-COPY --from=dvlp_repo              --chown=${_DVL}:hell    --chmod=1770    ./dvlw/                     ./hel/dvlw/
-COPY --from=dvlp_repo              --chown=${_AGL}:halo    --chmod=1770    ./dvlw/                     ./hal/dvlw/
-COPY --from=dvlp_repo              --chown=${_AGL}:halo    --chmod=1770    ./dvlw/                     ./r00t/dvlw/
-COPY --from=dvlp_repo              --chown=r00t:r00t       --chmod=1770    /dvlw/dvlp/mnt/etc/*        /etc/
-COPY --from=dvlp_repo              --chown=r00t:halo       --chmod=1770    ./dvlw/dvlp/mnt/            .${_MNT}/
+COPY --from=dvlp_base-r00t-dirs             --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
+COPY --from=dvlp_base-devel-dirs            --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
+COPY --from=dvlp_base-angel-dirs            --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
+COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/home/     ./hel/
+COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/home/     ./hal/
+COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1770    ./repos/dvlw/dvlp/mnt/home/     ./r00t/
+COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./repos/dvlw/
+COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                   ./hel/dvlw/
+COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
+COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
+COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1770    /repos/dvlw/dvlp/mnt/etc/*      /etc/
+COPY --from=dvlp_repo                       --chown=r00t:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/
 
 
 ## WORKDIR /hall
@@ -371,22 +371,22 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /
-COPY --from=dvlp_base-r00t-kernel-dirs  --chown=r00t:r00t    --chmod=1770    ./admin/                ./r00t/ 
-COPY --from=dvlp_base-devel-kernel-dirs --chown=${_DVL}:hell --chmod=1770    ./hel/                  ./hel/ 
-COPY --from=dvlp_base-angel-kernel-dirs --chown=${_AGL}:halo --chmod=1770    ./hal/                  ./hal/ 
-COPY --from=dvlp_repo-kernel                  --chown=${_DVL}:hell --chmod=1770    ./dvlw/dvlp/mnt/home/   ./hel/
-COPY --from=dvlp_repo-kernel                  --chown=${_AGL}:halo --chmod=1770    ./dvlw/dvlp/mnt/home/   ./hal/
-COPY --from=dvlp_repo-kernel                  --chown=r00t:r00t    --chmod=1770    ./dvlw/dvlp/mnt/home/   ./r00t/
-COPY --from=dvlp_repo-kernel                  --chown=${_AGL}:halo --chmod=1770    ./dvlw/                 ./dvlw/
-# COPY --from=dvlp_base-angel-kernel-dirs --chown=${_AGL}:halo --chmod=1770    ./hal/                  ./dvlw/ 
-COPY --from=dvlp_repo-kernel                  --chown=${_DVL}:hell --chmod=1770    ./dvlw/                 ./hel/dvlw/
-COPY --from=dvlp_repo-kernel                  --chown=${_AGL}:halo --chmod=1770    ./dvlw/                 ./hal/dvlw/
-COPY --from=dvlp_repo-kernel                  --chown=${_AGL}:halo --chmod=1770    ./dvlw/                 ./r00t/dvlw/
-COPY --from=dvlp_repo-kernel                  --chown=r00t:r00t    --chmod=1770    /dvlw/dvlp/mnt/etc/*    /etc/
+COPY --from=dvlp_base-r00t-kernel-dirs        --chown=r00t:r00t     --chmod=1770    ./admin/                     ./r00t/ 
+COPY --from=dvlp_base-devel-kernel-dirs       --chown=${_DVL}:hell  --chmod=1770    ./hel/                       ./hel/ 
+COPY --from=dvlp_base-angel-kernel-dirs       --chown=${_AGL}:halo  --chmod=1770    ./hal/                       ./hal/ 
+COPY --from=dvlp_repo-kernel                  --chown=${_DVL}:hell  --chmod=1770    ./repos/dvlw/dvlp/mnt/home/  ./hel/
+COPY --from=dvlp_repo-kernel                  --chown=${_AGL}:halo  --chmod=1770    ./repos/dvlw/dvlp/mnt/home/  ./hal/
+COPY --from=dvlp_repo-kernel                  --chown=r00t:r00t     --chmod=1770    ./repos/dvlw/dvlp/mnt/home/  ./r00t/
+COPY --from=dvlp_repo-kernel                  --chown=${_AGL}:halo  --chmod=1770    ./repos/dvlw/                ./repos/dvlw/
+# COPY --from=dvlp_base-angel-kernel-dirs       --chown=${_AGL}:halo --chmod=1770    ./hal/                  ./dvlw/ 
+COPY --from=dvlp_repo-kernel                  --chown=${_DVL}:hell  --chmod=1770    ./repos/dvlw/                ./hel/dvlw/
+COPY --from=dvlp_repo-kernel                  --chown=${_AGL}:halo  --chmod=1770    ./repos/dvlw/                ./hal/dvlw/
+COPY --from=dvlp_repo-kernel                  --chown=${_AGL}:halo  --chmod=1770    ./repos/dvlw/                ./r00t/dvlw/
+COPY --from=dvlp_repo-kernel                  --chown=r00t:r00t     --chmod=1770    /repos/dvlw/dvlp/mnt/etc/*   /etc/
 WORKDIR ${_MNT}
 COPY --from=dvlp_base-r00t-kernel-dirs  --chown=r00t:r00t    --chmod=1770    ./mnt/                  ./
 COPY --from=dvlp_base-devel-kernel-dirs --chown=r00t:r00t    --chmod=1770    ./mnt/                  ./
-COPY --from=dvlp_repo-kernel                  --chown=r00t:halo    --chmod=1770    ./dvlw/dvlp/mnt/        ./
+COPY --from=dvlp_repo-kernel            --chown=r00t:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/        ./
 WORKDIR /
 
 #############

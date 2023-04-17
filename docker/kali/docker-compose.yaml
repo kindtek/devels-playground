@@ -5,12 +5,12 @@ services:
     build:
       target: dvlp_repo
     # volumes:
-    #   - repo:/dvlw
+    #   - repo:/repos/dvlw
   repo-kernel:
     build:
       target: dvlp_repo-kernel
     # volumes:
-    #   - repo-kernel:/dvlw
+    #   - repo-kernel:/repos/dvlw
   base:
     build:
       target: dvlp_base
@@ -120,7 +120,7 @@ services:
       #  - bind_src_dir=${bind_win_src_user_dir:-/dev/null}
 
     volumes:
-      - repo_agl-kernel:/dvlw
+      - repo_agl-kernel:/repos/dvlw
       - repo_agl-kernel:/r00t/dvlw
       - repo_agl-kernel:/home/r00t/dvlw
       - repo_agl-kernel:/hal/dvlw
@@ -183,7 +183,7 @@ services:
         - nix_bind_tgt_user_dir_dvl=${LOGNAME:+/hell/host_nix}:ro
       #  - bind_src_dir=${bind_win_src_user_dir:-/dev/null}
     volumes:
-      - repo_agl:/dvlw
+      - repo_agl:/repos/dvlw
       - repo_agl:/r00t/dvlw
       - repo_agl:/home/r00t/dvlw
       - repo_agl:/hal/dvlw
@@ -418,7 +418,7 @@ services:
       labels:
         com.devels-playground.description: "hello jacket-kernel"
     volumes:
-      - repo_agl-kernel:/dvlw
+      - repo_agl-kernel:/repos/dvlw
       - repo_agl-kernel:/r00t/dvlw
       - repo_agl-kernel:/home/r00t/dvlw
       - repo_agl-kernel:/hal/dvlw
@@ -441,7 +441,7 @@ services:
     working_dir: /hal
     extends: jacket-kernel
     volumes:
-      - repo_agl:/dvlw
+      - repo_agl:/repos/dvlw
       - repo_agl:/r00t/dvlw
       - repo_agl:/home/r00t/dvlw
       - repo_agl:/hal/dvlw
