@@ -1,7 +1,6 @@
 $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
-$global:img_subset = $args[0]
-# powershell version compatibility for PSScriptRoot
+Set-Variable -Name "img_subset" - value $args[0] -scope global -option constant# powershell version compatibility for PSScriptRoot
 if (!$PSScriptRoot) { $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent }
 $temp_repo_scripts_path = $PSScriptRoot
 
@@ -347,7 +346,7 @@ function run_devels_playground {
             Write-Host "Launching Devel's Playground ...`r`n" 
             # Write-Host "&$devs_playground $global:img_subset"
             # Write-Host "$([char]27)[2J"
-            $img_subset = $global:img_subset
+            $img_subset = Get-Variable -Name "img_subset"
             Write-Host "`r`npowershell.exe -Command `"$HOME/kindtek/devels-workshop/dvlp/scripts/wsl-docker-import.cmd`" $img_subset`r`n"
             powershell.exe -Command "$HOME/kindtek/devels-workshop/dvlp/scripts/wsl-docker-import.cmd" $img_subset
             # &$devs_playground = "$git_path/dvlp/scripts/wsl-docker-import.cmd $global:img_subset"
@@ -438,5 +437,4 @@ workflow start_installer_daemon {
     # }
 }
 
-    
 start_installer_daemon $temp_repo_scripts_path
