@@ -147,11 +147,14 @@ echo "
     -- use CTRL + C to cancel --
     "
 sleep 3
+
 if [ -r $ssh_dir/id_ed25519 ] || [ -r $ssh_dir/id_ed25519 ]; then
     mv -bv $ssh_dir $ssh_dir.old
 fi
+echo "  now running apt-get update and apt-get upgrade"
 sleep 3
 
+sudo apt-get update && sudo apt-get 
 
 echo "generating keys and saving to $ssh_dir"
 # if [ -d $ssh_dir ]; then echo "----- $ssh_dir directory already exists - remove the directory ( rm -rf $ssh_dir ) and try again -----"; fi;
@@ -245,5 +248,3 @@ fi
 
 echo "operation complete ...
 
-Now updating system ... "
-sudo apt-get update && sudo apt-get 
