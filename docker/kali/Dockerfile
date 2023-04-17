@@ -518,7 +518,9 @@ WORKDIR /hal
 RUN  ( $angel_exists && (chown -R ${_AGL}:halo /hal || chown -R ${_AGL}:halo /hal/.local || angel_exists=false )) 
 RUN \
     --mount=type=cache,target=/var/cache/pip,sharing=private \
-    pip3 install pip --upgrade --no-warn-script-location --no-deps || angel_exists=false 
+    pip3 install pip --upgrade --no-warn-script-location --no-deps || angel_exists=false && \
+    pip3 install cdir --user || devel_exists=false 
+
 USER r00t
 RUN rm -rf /var/cache/pip/*
 WORKDIR /
