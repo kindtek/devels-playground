@@ -15,11 +15,13 @@ SET mount_drive=C
 SET image_repo=kindtek
 SET image_repo_mask=kindtek
 IF "%~1" == "" (
-    SET "%1=kali-dind"
+    SET "image_tag=kali-dind-lite"
 )
-SET "image_tag=%1"
-SET image_name=devels-playground:%image_tag%
+ELSE (
+    SET "image_tag=%1"
+)
 
+SET "image_name=devels-playground:%image_tag%"
 SET "install_directory=%image_repo_mask%-%image_name::=-%"
 SET "save_location=%mount_drive%:\%save_directory%"
 SET "install_location=%save_location%\%install_directory%"
