@@ -436,7 +436,7 @@ services:
     # depends_on:
     #   jacket-kernel-skel-kernel:
     #     condition: service_completed_successfully
-  jacket-lite:
+  jacket:
     user: ${_AGL}
     working_dir: /hal
     extends: jacket-kernel
@@ -458,14 +458,14 @@ services:
       - dls:/dls
 
   bare:
-    extends: jacket-lite
+    extends: jacket
     image: kindtek/${HUB_REPO:-devels-playground}:kali-bare
     build:
       target: dvlp_bare
       args:
         - JACKET=bare
   git:
-    extends: jacket-lite
+    extends: jacket
     user: ${_AGL}
     working_dir: /hal
     # entrypoint: /bin/bash -c
@@ -489,28 +489,28 @@ services:
       args:
         - JACKET=git-kernel
   python-lite:
-    extends: jacket-lite
+    extends: jacket
     image: kindtek/${HUB_REPO:-devels-playground}:kali-python-lite
     build:
       target: dvlp_python-lite
       args:
         - JACKET=python-lite
   dind-lite:
-    extends: jacket-lite
+    extends: jacket
     image: kindtek/${HUB_REPO:-devels-playground}:kali-dind-lite
     build:
       target: dvlp_dind-lite
       args:
         - JACKET=dind-lite
   msdot-lite:
-    extends: jacket-lite
+    extends: jacket
     image: kindtek/${HUB_REPO:-devels-playground}:kali-msdot-lite
     build:
       target: dvlp_msdot-lite
       args:
         - JACKET=msdot-lite
   gui-lite:
-    extends: jacket-lite
+    extends: jacket
     image: kindtek/${HUB_REPO:-devels-playground}:kali-gui-lite
     # command: bash start.sh && mv -fv start-kde.sh || export FIRST_LOGIN=false
     build:
@@ -535,7 +535,7 @@ services:
       args:
         - JACKET=gui
     volumes_from:
-      - jacket-lite
+      - jacket
   cuda:
     extends: gui-plus
     image: kindtek/${HUB_REPO:-devels-playground}:kali-cuda
@@ -545,7 +545,7 @@ services:
       args:
         - JACKET=cuda
     volumes_from:
-      - jacket-lite
+      - jacket
   cuda-plus:
     extends: cuda
     image: kindtek/${HUB_REPO:-devels-playground}:kali-cuda-plus
