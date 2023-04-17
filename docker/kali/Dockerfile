@@ -311,7 +311,8 @@ RUN \
     passwd -d ${_AGL} && \
     passwd -d r00t && \
     passwd -d root && \
-    passwd -l root 
+    passwd -l root && \
+    install -o r00t -g w0rld -m 1770 dls
 
 RUN \
     --mount=type=cache,target=/var/cache/debconf,sharing=locked \
