@@ -14,7 +14,10 @@ SET mount_drive=C
 @REM SET image_name=kali:latest
 SET image_repo=kindtek
 SET image_repo_mask=kindtek
-SET "image_tag=kali-dind"
+IF "%1"=="" (
+    SET "%1=kali-dind"
+)
+SET "image_tag=%1"
 SET image_name=devels-playground:%image_tag%
 
 SET "install_directory=%image_repo_mask%-%image_name::=-%"
