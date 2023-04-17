@@ -571,12 +571,12 @@ RUN \
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get update -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y lsb-release wget && \
-    wget -q "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb" && \
+    apt-get install --no-install-recommends -y ca-certificates lsb-release wget && \
+    wget "https://packages.microsoft.com/config/$(lsb_release -is | tr '[:upper:]' '[:lower:]')/$(lsb_release -rs)/packages-microsoft-prod.deb" && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/trusted.gpg.d//microsoft-prod.gpg] https://packages.microsoft.com/repos/microsoft-$(lsb_release -is)-$(lsb_release -cs)-prod $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/microsoft-prod.list  > /dev/null && \
     mv packages-microsoft-prod.deb /var/cache/apt/archives && \
     dpkg -i /var/cache/apt/archives/packages-microsoft-prod.deb && \
-    apt-get -y update && \
-    apt-get -y install --no-install-recommends powershell wslu && \
+    apt-get -y update && apt-get -y install --no-install-recommends powershell wslu && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb 
 # now lives with other apt archives
@@ -649,8 +649,8 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/curl,sharing=locked \
-    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
-RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+    curl -fsSL https://download.docker.com/linux/$(lsb_release -is | tr '[:upper:]' '[:lower:]')/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/$(lsb_release -is | tr '[:upper:]' '[:lower:]') $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get update -y && apt-get autoremove -y && \
