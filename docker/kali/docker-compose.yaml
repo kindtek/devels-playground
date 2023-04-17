@@ -237,12 +237,12 @@ services:
     init: true
     labels:
       com.devels-playground.description: "basics + git"
-  base-git-lite:
+  base-git:
     extends: base-bare
     build:
       context: .
-      target: dvlp_base-git-lite
-    image: kindtek/${HUB_REPO:-devels-playground}:kali-base-git-lite
+      target: dvlp_base-git
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-base-git
     labels:
       com.devels-playground.description: "basics + git"
 
@@ -287,7 +287,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git"
   base-python-lite:
-    extends: base-git-lite
+    extends: base-git
     image: kindtek/${HUB_REPO:-devels-playground}:kali-base-py-lite
     build:
       context: .
@@ -299,7 +299,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git"
   base-python:
-    extends: base-git-lite
+    extends: base-git
     image: kindtek/${HUB_REPO:-devels-playground}:kali-base-py
     build:
       context: .
@@ -311,7 +311,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git"
   base-msdot-lite:
-    extends: base-git-lite
+    extends: base-git
     image: kindtek/${HUB_REPO:-devels-playground}:kali-base-msdot-lite
     build:
       context: .
@@ -319,7 +319,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git + powerhell"
   base-msdot:
-    extends: base-git-lite
+    extends: base-git
     image: kindtek/${HUB_REPO:-devels-playground}:kali-base-msdot
     build:
       context: .
@@ -327,7 +327,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git + powerhell"
   base-dind:
-    extends: base-git-lite
+    extends: base-git
     image: kindtek/${HUB_REPO:-devels-playground}:kali-base-dind
     build:
       context: .
@@ -335,7 +335,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker"
   base-dind-lite:
-    extends: base-git-lite
+    extends: base-git
     image: kindtek/${HUB_REPO:-devels-playground}:kali-base-dind-lite
     build:
       context: .
@@ -353,7 +353,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel"
   base-gui-lite:
-    extends: base-git-lite
+    extends: base-git
     image: kindtek/${HUB_REPO:-devels-playground}:kali-base-gui
     build:
       context: .
@@ -361,7 +361,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   base-gui:
-    extends: base-git-lite
+    extends: base-git
     image: kindtek/${HUB_REPO:-devels-playground}:kali-base-gui
     # user: ${_AGL}
     # entrypoint:
@@ -470,7 +470,7 @@ services:
     working_dir: /hal
     # entrypoint: /bin/bash -c
     # command: "if [ -f \"start-kde.sh\" ]; then bash start.sh; fi; && sleep infinity;"
-    image: kindtek/${HUB_REPO:-devels-playground}:kali-git-lite
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-git
     build:
       target: dvlp_git-lite
       args:
