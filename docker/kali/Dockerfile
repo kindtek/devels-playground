@@ -848,7 +848,7 @@ RUN \
     apt-get install --no-install-recommends -y kali-defaults kali-root-login desktop-base kde-plasma-desktop && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-COPY --from=dvlp_repo --chown=r00t:r00t /dvlw/dvlp/mnt/etc/* /etc/
+COPY --from=dvlp_repo --chown=r00t:r00t /repos/dvlw/dvlp/mnt/etc/* /etc/
 WORKDIR /hal
 USER ${_AGL}
 
