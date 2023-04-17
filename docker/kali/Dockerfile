@@ -29,7 +29,7 @@ ARG _AGL_USR
 ARG _DVL_USR
 ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
-USER r00t
+# USER r00t
 WORKDIR /
 # RUN mkdir -pv /tmp/git/cache && \
 # chown -R r00t:r00t /tmp/git/cache && \
@@ -294,7 +294,7 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 WORKDIR /
 # COPY --from=dvlp_repo-lite ./dvlw/dvlp/mnt/home/ ./etc/skel-kernel/
-USER r00t
+# USER r00t
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
