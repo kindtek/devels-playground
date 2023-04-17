@@ -14,7 +14,7 @@ SET mount_drive=C
 @REM SET image_name=kali:latest
 SET image_repo=kindtek
 SET image_repo_mask=kindtek
-IF "%1"=="" (
+IF [%1] == []  (
     SET "%1=kali-dind"
 )
 SET "image_tag=%1"
