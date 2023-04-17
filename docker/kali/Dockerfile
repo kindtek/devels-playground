@@ -396,9 +396,9 @@ COPY --from=dvlp_repo-kernel            --chown=r00t:halo    --chmod=1770    ./r
 WORKDIR /
 
 #############
-# dvlp_skel-kernel #
+# dvlp_skel #
 #############
-FROM dvlp_skel-build AS dvlp_skel-kernel
+FROM dvlp_skel-build AS dvlp_skel
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -412,10 +412,10 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 
-##################
-# dvlp_skel #
-##################
-FROM dvlp_skel-build AS dvlp_skel
+####################
+# dvlp_skel-kernel #
+####################
+FROM dvlp_skel-build AS dvlp_skel-kernel
 
 #################################################################################
 ############################### IMAGE BASES #####################################
