@@ -518,7 +518,7 @@ services:
       args:
         - JACKET=gui-lite
   gui-plus:
-    working_dir: /r00t
+    working_dir: /hal
     extends: jacket-kernel
     image: kindtek/${HUB_REPO:-devels-playground}:kali-gui-plus
     # command: bash start-kde.sh
