@@ -1,14 +1,14 @@
 version: "3.9"
 name: devels-playground-kali
 services:
-  repo-lite:
-    build:
-      target: dvlp_repo-lite
-    # volumes:
-    #   - repo:/dvlw
   repo:
     build:
       target: dvlp_repo
+    # volumes:
+    #   - repo:/dvlw
+  repo-kernel:
+    build:
+      target: dvlp_repo-kernel
     # volumes:
     #   - repo-kernel:/dvlw
   base:
