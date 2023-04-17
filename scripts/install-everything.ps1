@@ -1,5 +1,6 @@
 $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
+$img_subset = $args[0]
 # powershell version compatibility for PSScriptRoot
 if (!$PSScriptRoot) { $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent }
 $temp_repo_scripts_path = $PSScriptRoot
@@ -342,10 +343,10 @@ function run_devels_playground {
             # // if they are more up to date than the hub - which could be a difficult process
             # $cmd_command = "$git_path/devels_playground/docker-images-build-in-background.ps1"
             # &$cmd_command = cmd /c start powershell.exe -Command "$git_path/devels_playground/docker-images-build-in-background.ps1" -WindowStyle "Maximized"
-            $img_subset = $args[0]
+
             $devs_playground = "$git_path/dvlp/scripts/wsl-docker-import.cmd $img_subset"
             Write-Host "Launching Devel's Playground`r`n$devs_playground ...`r`n" 
-            Write-Host "&$devs_playground"
+            Write-Host "&$devs_playground $img_subset"
             # Write-Host "$([char]27)[2J"
             &$devs_playground = "$git_path/dvlp/scripts/wsl-docker-import.cmd $img_subset"
             Write-Host "$software_name installed`r`n" | Out-File -FilePath "$git_path/.dvlp-installed"
