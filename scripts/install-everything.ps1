@@ -321,7 +321,7 @@ function require_docker_online {
 
 function run_devels_playground {
     param (
-        $git_path
+        $git_path, $img_subset
     )
     try {
         $software_name = "Devel`'s Playground"
@@ -347,7 +347,6 @@ function run_devels_playground {
             Write-Host "Launching Devel's Playground ...`r`n" 
             # Write-Host "&$devs_playground $global:img_subset"
             # Write-Host "$([char]27)[2J"
-            $img_subset = Get-Variable -Name "img_subset" -scope Global
             Write-Host "`r`npowershell.exe -Command `"$HOME/kindtek/devels-workshop/dvlp/scripts/wsl-docker-import.cmd`" $img_subset`r`n"
             powershell.exe -Command "$HOME/kindtek/devels-workshop/dvlp/scripts/wsl-docker-import.cmd" $img_subset
             # &$devs_playground = "$git_path/dvlp/scripts/wsl-docker-import.cmd $global:img_subset"
@@ -383,7 +382,7 @@ function cleanup_installation {
 
 
 workflow start_installer_daemon {
-    param ([string]$temp_repo_scripts_path)
+    param ([string]$temp_repo_scripts_path, [string]$img_subset)
 
     $repo_src_owner = 'kindtek'
     $repo_src_name = 'devels-workshop'
@@ -421,7 +420,7 @@ workflow start_installer_daemon {
 
     
     if (require_docker_online) {
-        run_devels_playground $git_path
+        run_devels_playground $git_path $img_subset
     }
     else {
         InlineScript { Write-Host "Failed to launch docker. Not able to start Devel's Playground. Please restart and run the script again:" }
@@ -438,4 +437,4 @@ workflow start_installer_daemon {
     # }
 }
 
-start_installer_daemon $temp_repo_scripts_path
+start_installer_daemon $temp_repo_scripts_path $args[0]
