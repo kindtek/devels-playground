@@ -676,7 +676,7 @@ COPY --from=dvlp_base-python-build-lite ./ ./
 COPY --from=dvlp_base-msdot-build-lite ./ ./
 COPY --from=dvlp_base-dind-build ./ ./
 WORKDIR /hal
-USER ${_DVL}
+USER ${_AGL}
 
 ##################
 # dvlp_base-dind #
@@ -694,7 +694,7 @@ COPY --from=dvlp_base-python-build ./ ./
 COPY --from=dvlp_base-msdot-build ./ ./
 COPY --from=dvlp_base-dind-build ./ ./
 WORKDIR /hal
-USER ${_DVL}
+USER ${_AGL}
 
 ############################### KERNEL #########################################
 ##########################
@@ -716,7 +716,7 @@ RUN \
     rm -rf /var/cache/apt/archives/*.deb
 # RUN apt-get -y install zfsutils-linux zlib1g-dev zfs-dkms zstd zsys zfs-dracut zfs-zed
 WORKDIR /hal
-USER ${_DVL}
+USER ${_AGL}
 
 ######################################################################################
 ###################  dvlp_base-kernel-builder - KERNEL BUILDER  ######################
@@ -732,7 +732,7 @@ COPY --from=dvlp_base-dind-build ./ ./
 COPY --from=dvlp_base-kernel-build ./ ./
 # RUN echo '# daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/${_AGL}/.bashrc
 WORKDIR /hal
-USER ${_DVL}
+USER ${_AGL}
 
 ######################################################################################
 ########################  dvlp_kernel-make - KERNEL COMPILER  ########################
@@ -750,11 +750,11 @@ RUN bash build-${KERNEL_TYPE}-kernel.sh
 # RUN bash make-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" ${_AGL}
 # RUN echo '# daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/${_AGL}/.bashrc
 WORKDIR /hal
-USER ${_DVL}
+USER ${_AGL}
 
 #################################### GUI ######################################
 ######################
-# dvlp_base-gui-lite #
+# dvlp_base-gui-lite #USER ${_AGL}
 ######################
 # wsl2 required
 FROM dvlp_base-git AS dvlp_base-gui-lite
@@ -806,7 +806,7 @@ COPY --from=dvlp_repo /repos/dvlw/dvlp/mnt/opt/* /opt/
 # # # brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
 # # # sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/${_DVL} && \
 WORKDIR /hal
-USER ${_DVL}
+USER ${_AGL}
 
 #################
 # dvlp_base-gui #
@@ -850,7 +850,7 @@ RUN \
     rm -rf /var/cache/apt/archives/*.deb
 COPY --from=dvlp_repo --chown=r00t:r00t /dvlw/dvlp/mnt/etc/* /etc/
 WORKDIR /hal
-USER ${_DVL}
+USER ${_AGL}
 
 ######################
 # dvlp_base-gui-plus #
@@ -866,7 +866,7 @@ ARG REFRESH_REPO
 WORKDIR /
 COPY --from=dvlp_base-gui ./ ./
 WORKDIR /hal
-USER ${_DVL}
+USER ${_AGL}
 
 ############################## CUDA ###############################
 ##################
@@ -895,7 +895,7 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb   
 WORKDIR /hal
-USER ${_DVL}
+USER ${_AGL}
 
 #######################
 # dvlp_base-cuda-plus #
