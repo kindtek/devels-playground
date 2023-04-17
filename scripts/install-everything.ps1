@@ -1,6 +1,7 @@
 $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
-Set-Variable -Name "img_subset" - value $args[0] -scope global -option constant# powershell version compatibility for PSScriptRoot
+Set-Variable -Name "img_subset" - value $args[0] -scope global -option constant
+# powershell version compatibility for PSScriptRoot
 if (!$PSScriptRoot) { $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent }
 $temp_repo_scripts_path = $PSScriptRoot
 
