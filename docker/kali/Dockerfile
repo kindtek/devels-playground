@@ -434,7 +434,7 @@ USER ${_DVL}
 #################
 # dvlp_base-git_lite #
 #################
-FROM dvlp_skel-kernel AS dvlp_base-git-lite
+FROM dvlp_skel-kernel AS dvlp_base-git
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -525,7 +525,7 @@ WORKDIR /
 #########################
 # dvlp_base-python-lite #
 #########################
-FROM dvlp_base-git-lite AS dvlp_base-python-lite
+FROM dvlp_base-git AS dvlp_base-python-lite
 USER r00t
 WORKDIR / 
 COPY --from=dvlp_base-python-build-lite ./ ./
@@ -535,7 +535,7 @@ USER ${_DVL}
 ####################
 # dvlp_base-python #
 ###################
-FROM dvlp_base-git-lite AS dvlp_base-python
+FROM dvlp_base-git AS dvlp_base-python
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -597,7 +597,7 @@ USER ${_DVL}
 ########################
 # dvlp_base-msdot-lite #
 ########################
-FROM dvlp_base-git-lite AS dvlp_base-msdot-lite
+FROM dvlp_base-git AS dvlp_base-msdot-lite
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -614,7 +614,7 @@ USER ${_DVL}
 ###################
 # dvlp_base-msdot #
 ###################
-FROM dvlp_base-git-lite AS dvlp_base-msdot
+FROM dvlp_base-git AS dvlp_base-msdot
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -661,7 +661,7 @@ USER ${_DVL}
 #######################
 # dvlp_base-dind-lite #
 #######################
-FROM dvlp_base-git-lite AS dvlp_base-dind-lite
+FROM dvlp_base-git AS dvlp_base-dind-lite
 USER r00t
 WORKDIR /
 COPY --from=dvlp_base-python-build-lite ./ ./
@@ -673,7 +673,7 @@ USER ${_DVL}
 ##################
 # dvlp_base-dind #
 ##################
-FROM dvlp_base-git-lite AS dvlp_base-dind
+FROM dvlp_base-git AS dvlp_base-dind
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -749,7 +749,7 @@ USER ${_DVL}
 # dvlp_base-gui-lite #
 ######################
 # wsl2 required
-FROM dvlp_base-git-lite AS dvlp_base-gui-lite
+FROM dvlp_base-git AS dvlp_base-gui-lite
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -864,7 +864,7 @@ USER ${_DVL}
 ##################
 # dvlp_base-cuda #
 ##################
-FROM dvlp_base-git-lite AS dvlp_base-cuda
+FROM dvlp_base-git AS dvlp_base-cuda
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -983,7 +983,7 @@ WORKDIR /
 ########################
 # dvlp_git-lite #
 ########################
-FROM dvlp_base-git-lite AS dvlp_git-lite
+FROM dvlp_base-git AS dvlp_git-lite
 WORKDIR /
 
 ####################
