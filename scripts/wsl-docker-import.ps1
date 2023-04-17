@@ -19,10 +19,10 @@ function dev_boilerplate {
     # $image_repo="_"
     # mask=human readable - ie 'official' not '_'
     # $image_repo_mask="official"
-    # $image_name="ubuntu:latest"
+    # $image_name="kali:latest"
     $image_repo_mask="kindtek"
     $image_repo=$image_repo_mask
-    $image_name="dvlp:ubuntu-dind"
+    $image_name="dvlp:kali-dind"
     $mount_drive_letter="c"
     $unix_mount_drive="/mnt/$mount_drive_letter"
     $windows_mount_drive="${mount_drive_letter}:"
