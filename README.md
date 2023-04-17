@@ -10,7 +10,7 @@
 
 ### Easy as 1, 2, .., 4
 
-1. Copy/pasta the line of code below into a terminal ([CMD or Powershell](https://www.wikihow.com/Open-Terminal-in-Windows))
+1. Copy/pasta a line of code below into a terminal ([CMD or Powershell](https://www.wikihow.com/Open-Terminal-in-Windows))
 2. Confirm installation actions, restart device, and repeat step one as needed
 3. ??
 4. WSL, PYTHON, DOCKER-IN-DOCKER, KERNEL, GUI, KALI, CUDA, ...
