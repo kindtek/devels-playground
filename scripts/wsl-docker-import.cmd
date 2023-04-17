@@ -11,10 +11,10 @@ SET mount_drive=C
 
 @REM SET image_repo=_
 @REM SET image_repo_mask=official
-@REM SET image_name=ubuntu:latest
+@REM SET image_name=kali:latest
 SET image_repo=kindtek
 SET image_repo_mask=kindtek
-SET "image_tag=ubuntu-dind"
+SET "image_tag=kali-dind"
 SET image_name=devels-playground:%image_tag%
 
 SET "install_directory=%image_repo_mask%-%image_name::=-%"
