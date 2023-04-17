@@ -5,7 +5,7 @@ services:
     build:
       target: dvlp_repo-lite
     # volumes:
-    #   - repo-lite:/dvlw
+    #   - repo:/dvlw
   repo:
     build:
       target: dvlp_repo
@@ -183,13 +183,13 @@ services:
         - nix_bind_tgt_user_dir_dvl=${LOGNAME:+/hell/host_nix}:ro
       #  - bind_src_dir=${bind_win_src_user_dir:-/dev/null}
     volumes:
-      - repo_agl-lite:/dvlw
-      - repo_agl-lite:/r00t/dvlw
-      - repo_agl-lite:/home/r00t/dvlw
-      - repo_agl-lite:/hal/dvlw
-      - repo_agl-lite:/home/${_AGL}/dvlw
-      - repo_dvl-lite:/hel/dvlw
-      - repo_dvl-lite:/home/${_DVL}/dvlw
+      - repo_agl:/dvlw
+      - repo_agl:/r00t/dvlw
+      - repo_agl:/home/r00t/dvlw
+      - repo_agl:/hal/dvlw
+      - repo_agl:/home/${_AGL}/dvlw
+      - repo_dvl:/hel/dvlw
+      - repo_dvl:/home/${_DVL}/dvlw
       - mnt-data:/mnt/data
       - home_agl:/hal
       - home_agl:/home/${_AGL}
@@ -441,13 +441,13 @@ services:
     working_dir: /hal
     extends: jacket-kernel
     volumes:
-      - repo_agl-lite:/dvlw
-      - repo_agl-lite:/r00t/dvlw
-      - repo_agl-lite:/home/r00t/dvlw
-      - repo_agl-lite:/hal/dvlw
-      - repo_agl-lite:/home/${_AGL}/dvlw
-      - repo_dvl-lite:/hel/dvlw
-      - repo_dvl-lite:/home/${_DVL}/dvlw
+      - repo_agl:/dvlw
+      - repo_agl:/r00t/dvlw
+      - repo_agl:/home/r00t/dvlw
+      - repo_agl:/hal/dvlw
+      - repo_agl:/home/${_AGL}/dvlw
+      - repo_dvl:/hel/dvlw
+      - repo_dvl:/home/${_DVL}/dvlw
       - mnt-data:${_MNT}
       - home_r00t:/r00t
       - home_r00t:/home/r00t
