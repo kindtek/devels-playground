@@ -29,7 +29,7 @@ function dev_boilerplate {
     $windows_mount_drive="${mount_drive_letter}:"
     $mount_drive=$unix_mount_drive # default
     $save_directory="docker2wsl"
-    $wsl_version="1"
+    $wsl_version="2"
     Write-Host "$([char]27)[2J"
 
     try {
