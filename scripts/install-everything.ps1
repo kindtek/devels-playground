@@ -348,7 +348,9 @@ function run_devels_playground {
             Write-Host "Launching Devel's Playground`r`n$devs_playground ...`r`n" 
             Write-Host "&$devs_playground $img_subset"
             # Write-Host "$([char]27)[2J"
-            &$devs_playground = "$git_path/dvlp/scripts/wsl-docker-import.cmd $img_subset"
+            Write-Host "`r`npowershell.exe -Command `"kindtek/devels-workshop/dvlp/scripts/wsl-docker-import.cmd $img_subset`"`r`n"
+            powershell.exe -Command "kindtek/devels-workshop/dvlp/scripts/wsl-docker-import.cmd" $img_subset
+            # &$devs_playground = "$git_path/dvlp/scripts/wsl-docker-import.cmd $img_subset"
             Write-Host "$software_name installed`r`n" | Out-File -FilePath "$git_path/.dvlp-installed"
         }
     }
