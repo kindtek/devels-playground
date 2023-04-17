@@ -347,7 +347,7 @@ function run_devels_playground {
             Write-Host "Launching Devel's Playground ...`r`n" 
             # Write-Host "&$devs_playground $global:img_subset"
             # Write-Host "$([char]27)[2J"
-            $img_subset = Get-Variable -Name "img_subset"
+            $img_subset = Get-Variable -Name "img_subset" -scope Global
             Write-Host "`r`npowershell.exe -Command `"$HOME/kindtek/devels-workshop/dvlp/scripts/wsl-docker-import.cmd`" $img_subset`r`n"
             powershell.exe -Command "$HOME/kindtek/devels-workshop/dvlp/scripts/wsl-docker-import.cmd" $img_subset
             # &$devs_playground = "$git_path/dvlp/scripts/wsl-docker-import.cmd $global:img_subset"
