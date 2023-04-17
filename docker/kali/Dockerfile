@@ -939,17 +939,17 @@ COPY --from=dvlp_kernel-make ./built-kernel.tar.gz ./built-kernel.tar.gz
 
 # FROM dvlp_base AS dvlp_jacket-lite
 
-# FROM dvlp_base AS dvlp_jacket
+# FROM dvlp_base AS dvlp_jacket-kernel
 
 #####################
-## dvlp_jacket-plus #
-#####################
-# FROM dvlp_jacket-kernel-skel-kernel AS dvlp_jacket-plus
-
-############################
 ## dvlp_jacket-kernel-plus #
+#####################
+# FROM dvlp_jacket-kernel-kernel-skel-kernel AS dvlp_jacket-kernel-plus
+
 ############################
-# FROM dvlp_jacket-plus AS dvlp_jacket-kernel-plus
+## dvlp_jacket-kernel-kernel-plus #
+############################
+# FROM dvlp_jacket-kernel-plus AS dvlp_jacket-kernel-kernel-plus
 
 ##################
 ## dvlp_gui-plus #
