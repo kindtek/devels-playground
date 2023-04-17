@@ -306,7 +306,7 @@ RUN \
     groupadd            w0rld  && \
     useradd -s /bin/bash -u 0   -o  -g root     -G r00t,w0rld   -d /r00t    r00t && \
     useradd -s /bin/bash            -g hell     -G w0rld        -d /hel     ${_DVL} && \
-    useradd -s /bin/bash            -g halo     -G w0rld        -d /hal     ${_AGL} && \
+    useradd -s /bin/bash            -g halo     -G w0rld,hell   -d /hal     ${_AGL} && \
     passwd -d ${_DVL} && \
     passwd -d ${_AGL} && \
     passwd -d r00t && \
