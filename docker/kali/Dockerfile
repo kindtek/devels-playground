@@ -505,7 +505,7 @@ WORKDIR /r00t
 RUN \
     --mount=type=cache,target=/var/cache/pip,sharing=private \
     $r00t_exists && pip3 install pip --upgrade --no-warn-script-location --no-deps && \
-    pip3 install cdir --user || r00t_exists=false
+    pip3 install cdir --user --target=/r00t || r00t_exists=false
 RUN ( $devel_exists && (chown -R ${_DVL}:hell /hel || chown -R ${_DVL}:hell /hel/.local || devel_exists=false )) 
 USER ${_DVL}
 WORKDIR /hel
