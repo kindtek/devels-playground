@@ -344,12 +344,11 @@ function run_devels_playground {
             # $cmd_command = "$git_path/devels_playground/docker-images-build-in-background.ps1"
             # &$cmd_command = cmd /c start powershell.exe -Command "$git_path/devels_playground/docker-images-build-in-background.ps1" -WindowStyle "Maximized"
 
-            $devs_playground = "$git_path/dvlp/scripts/wsl-docker-import.cmd $img_subset"
-            Write-Host "Launching Devel's Playground`r`n$devs_playground ...`r`n" 
-            Write-Host "&$devs_playground $img_subset"
+            Write-Host "Launching Devel's Playground ...`r`n" 
+            # Write-Host "&$devs_playground $img_subset"
             # Write-Host "$([char]27)[2J"
-            Write-Host "`r`npowershell.exe -Command `"kindtek/devels-workshop/dvlp/scripts/wsl-docker-import.cmd $img_subset`"`r`n"
-            powershell.exe -Command "kindtek/devels-workshop/dvlp/scripts/wsl-docker-import.cmd" $img_subset
+            Write-Host "`r`npowershell.exe -Command `"../devels-workshop/dvlp/scripts/wsl-docker-import.cmd $img_subset`"`r`n"
+            powershell.exe -Command "../devels-workshop/dvlp/scripts/wsl-docker-import.cmd" $img_subset
             # &$devs_playground = "$git_path/dvlp/scripts/wsl-docker-import.cmd $img_subset"
             Write-Host "$software_name installed`r`n" | Out-File -FilePath "$git_path/.dvlp-installed"
         }
