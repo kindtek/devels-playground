@@ -1,6 +1,6 @@
 $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
-$img_subset = $args[0]
+$global:img_subset = $args[0]
 # powershell version compatibility for PSScriptRoot
 if (!$PSScriptRoot) { $PSScriptRoot = Split-Path $MyInvocation.MyCommand.Path -Parent }
 $temp_repo_scripts_path = $PSScriptRoot
@@ -345,11 +345,11 @@ function run_devels_playground {
             # &$cmd_command = cmd /c start powershell.exe -Command "$git_path/devels_playground/docker-images-build-in-background.ps1" -WindowStyle "Maximized"
 
             Write-Host "Launching Devel's Playground ...`r`n" 
-            # Write-Host "&$devs_playground $img_subset"
+            # Write-Host "&$devs_playground $global:img_subset"
             # Write-Host "$([char]27)[2J"
-            Write-Host "`r`npowershell.exe -Command `"$HOME/kindtek/devels-workshop/dvlp/scripts/wsl-docker-import.cmd $img_subset`"`r`n"
-            powershell.exe -Command "$HOME/kindtek/devels-workshop/dvlp/scripts/wsl-docker-import.cmd" $img_subset
-            # &$devs_playground = "$git_path/dvlp/scripts/wsl-docker-import.cmd $img_subset"
+            Write-Host "`r`npowershell.exe -Command `"$HOME/kindtek/devels-workshop/dvlp/scripts/wsl-docker-import.cmd $global:img_subset`"`r`n"
+            powershell.exe -Command "$HOME/kindtek/devels-workshop/dvlp/scripts/wsl-docker-import.cmd" $global:img_subset
+            # &$devs_playground = "$git_path/dvlp/scripts/wsl-docker-import.cmd $global:img_subset"
             Write-Host "$software_name installed`r`n" | Out-File -FilePath "$git_path/.dvlp-installed"
         }
     }
