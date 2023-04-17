@@ -193,7 +193,7 @@ function install_repo {
         git clone "https://github.com/$repo_src_owner/$repo_src_name.git" --branch $repo_src_branch #} *>$null
         Push-Location $repo_src_name
         # { 
-        git submodule update --force --recursive --init --remote 
+        git submodule update --force --recursive --init 
         # } *>$null
         Pop-Location
     }
@@ -203,7 +203,7 @@ function install_repo {
     git pull
     #  }  *>$null
     # { 
-    git submodule update --force --recursive --init --remote
+    git submodule update --force --recursive --init 
     #  }  *>$null
 
     
@@ -247,7 +247,7 @@ function install_repo {
         
 
     $refresh_env = "choco/src/chocolatey.resources/redirects/RefreshEnv.cmd"
-    &$refresh_env = "chocosrc/chocolatey.resources/redirects/RefreshEnv.cmd"
+    &$refresh_env = "choco/src/chocolatey.resources/redirects/RefreshEnv.cmd"
     
 
     return $new_install
