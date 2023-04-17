@@ -464,7 +464,7 @@ services:
       target: dvlp_bare
       args:
         - JACKET=bare
-  git-lite:
+  git:
     extends: jacket-lite
     user: ${_AGL}
     working_dir: /hal
@@ -472,10 +472,10 @@ services:
     # command: "if [ -f \"start-kde.sh\" ]; then bash start.sh; fi; && sleep infinity;"
     image: kindtek/${HUB_REPO:-devels-playground}:kali-git
     build:
-      target: dvlp_git-lite
+      target: dvlp_git
       args:
-        - JACKET=git-lite
-  git:
+        - JACKET=git
+  git-kernel:
     extends: jacket
     entrypoint: /bin/bash -c
     # command: 
@@ -485,9 +485,9 @@ services:
     # - ["if [ -f \"start-kde.sh\" ]; then bash start.sh; mv -vf start-kde.sh start.sh; else bash start.sh; fi;", "sleep infinity"]
     image: kindtek/${HUB_REPO:-devels-playground}:kali-git-kernel
     build:
-      target: dvlp_git
+      target: dvlp_git-kernel
       args:
-        - JACKET=git
+        - JACKET=git-kernel
   python-lite:
     extends: jacket-lite
     image: kindtek/${HUB_REPO:-devels-playground}:kali-python-lite

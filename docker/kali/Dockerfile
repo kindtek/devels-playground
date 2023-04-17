@@ -434,7 +434,7 @@ USER ${_DVL}
 #################
 # dvlp_base-git_lite #
 #################
-FROM dvlp_skel-kernel AS dvlp_base-git
+FROM dvlp_skel AS dvlp_base-git
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -978,12 +978,12 @@ WORKDIR /
 ############
 # dvlp_git #
 ############
-FROM dvlp_base-git-kernel AS dvlp_git
+FROM dvlp_base-git AS dvlp_git
 WORKDIR /
 ########################
 # dvlp_git-lite #
 ########################
-FROM dvlp_base-git AS dvlp_git-lite
+FROM dvlp_base-git-kernel AS dvlp_git-kernel
 WORKDIR /
 
 ####################
