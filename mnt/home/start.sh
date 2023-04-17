@@ -243,4 +243,7 @@ else
     ';
 fi
 
-echo "operation complete"
+echo "operation complete ...
+
+Now updating system ... "
+sudo apt-get update && sudo apt-get 
