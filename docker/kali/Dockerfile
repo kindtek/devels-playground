@@ -66,9 +66,9 @@ RUN \
     git config --global user.email '<>'
 
 ########################
-# dvlp_repo-build-lite #
+# dvlp_repo-build #
 #######################
-FROM dvlp_repo-build-prep AS dvlp_repo-build-lite
+FROM dvlp_repo-build-prep AS dvlp_repo-build
 WORKDIR /
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked  \
@@ -96,7 +96,7 @@ RUN \
 ###################
 # dvlp_repo-build-kernel #
 ###################
-FROM dvlp_repo-build-lite AS dvlp_repo-build-kernel
+FROM dvlp_repo-build AS dvlp_repo-build-kernel
 WORKDIR /
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
@@ -114,10 +114,10 @@ RUN \
 # (cd /tmp/git/cache/dvlw/dvlp && git pull && cp -rv --remove-destination . /home/${_DVL}/dvlw/dvlp)
 
 ########################
-# dvlp_repo-build-lite #
+# dvlp_repo-build #
 #######################
 FROM scratch AS dvlp_repo-lite
-COPY --from=dvlp_repo-build-lite ./dvlw-lite/ ./dvlw/
+COPY --from=dvlp_repo-build ./dvlw-lite/ ./dvlw/
 FROM scratch AS dvlp_repo
 COPY --from=dvlp_repo-build-kernel ./dvlw/ ./dvlw/
 
