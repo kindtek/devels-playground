@@ -3,6 +3,7 @@ Set-PSDebug -Off
 $host.UI.RawUI.ForegroundColor="White"
 $host.UI.RawUI.BackgroundColor="Black"
 # jump to first line without clearing scrollback
+$image_subset = if ( $args[0] ) { $args[0] } else { "kali-dind" }
 function main {
     dev_boilerplate
 }
@@ -22,7 +23,7 @@ function dev_boilerplate {
     # $image_name="kali:latest"
     $image_repo_mask="kindtek"
     $image_repo=$image_repo_mask
-    $image_name="dvlp:kali-dind"
+    $image_name="dvlp:$image_subset"
     $mount_drive_letter="c"
     $unix_mount_drive="/mnt/$mount_drive_letter"
     $windows_mount_drive="${mount_drive_letter}:"
