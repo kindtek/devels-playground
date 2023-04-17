@@ -10,7 +10,7 @@ services:
     build:
       target: dvlp_repo
     # volumes:
-    #   - repo:/dvlw
+    #   - repo-kernel:/dvlw
   base:
     build:
       target: dvlp_base
@@ -120,13 +120,13 @@ services:
       #  - bind_src_dir=${bind_win_src_user_dir:-/dev/null}
 
     volumes:
-      - repo_agl:/dvlw
-      - repo_agl:/r00t/dvlw
-      - repo_agl:/home/r00t/dvlw
-      - repo_agl:/hal/dvlw
-      - repo_agl:/home/${_AGL}/dvlw
-      - repo_dvl:/hel/dvlw
-      - repo_dvl:/home/${_DVL}/dvlw
+      - repo_agl-kernel:/dvlw
+      - repo_agl-kernel:/r00t/dvlw
+      - repo_agl-kernel:/home/r00t/dvlw
+      - repo_agl-kernel:/hal/dvlw
+      - repo_agl-kernel:/home/${_AGL}/dvlw
+      - repo_dvl-kernel:/hel/dvlw
+      - repo_dvl-kernel:/home/${_DVL}/dvlw
       - mnt-data:/mnt/data
       - home_agl:/hal
       - home_agl:/home/${_AGL}
@@ -418,13 +418,13 @@ services:
       labels:
         com.devels-playground.description: "hello jacket-kernel"
     volumes:
-      - repo_agl:/dvlw
-      - repo_agl:/r00t/dvlw
-      - repo_agl:/home/r00t/dvlw
-      - repo_agl:/hal/dvlw
-      - repo_agl:/home/${_AGL}/dvlw
-      - repo_dvl:/hel/dvlw
-      - repo_dvl:/home/${_DVL}/dvlw
+      - repo_agl-kernel:/dvlw
+      - repo_agl-kernel:/r00t/dvlw
+      - repo_agl-kernel:/home/r00t/dvlw
+      - repo_agl-kernel:/hal/dvlw
+      - repo_agl-kernel:/home/${_AGL}/dvlw
+      - repo_dvl-kernel:/hel/dvlw
+      - repo_dvl-kernel:/home/${_DVL}/dvlw
       - mnt-data:${_MNT}
       - home_r00t:/r00t
       - home_r00t:/home/r00t
