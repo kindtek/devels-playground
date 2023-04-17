@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/dvl/dvpg/linux",
-      "program": "/home/dvl/dvpg/linux/build/Debug/outDebug",
+      "cwd": "/home/dvl/dvlw/dvlp/kernels/linux",
+      "program": "home/dvl/dvlw/dvlp/kernels/linux/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
