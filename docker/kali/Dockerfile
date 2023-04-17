@@ -117,9 +117,9 @@ RUN \
 # dvlp_repo-build #
 #######################
 FROM scratch AS dvlp_repo
-COPY --from=dvlp_repo-build ./repos/dvlw/ ./repos/dvlw/
+COPY --from=dvlp_repo-build --chmod=1770 ./repos/dvlw/ ./repos/dvlw/
 FROM scratch AS dvlp_repo-kernel
-COPY --from=dvlp_repo-build-kernel ./repos/dvlw/ ./repos/dvlw/
+COPY --from=dvlp_repo-build-kernel --chmod=1770 ./repos/dvlw/ ./repos/dvlw/
 
 ####################### BASE DIRS AND VOLUME MOUNT POINTS ####################################
 ########################
