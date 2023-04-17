@@ -116,7 +116,7 @@ ARG _MNT
 ARG _DVL_USR
 ENV _DVL=$_DVL_USR
 WORKDIR /hel
-COPY --from=dvlp_repo./dvlw/dvlp/mnt/home/ ./
+COPY --from=dvlp_repo ./dvlw/dvlp/mnt/home/ ./
 RUN mkdir -pv dvlw && \
     mkdir -pv dls && \
     ln -fsv dvlw devels-workshop && \
@@ -137,7 +137,7 @@ FROM dvlp_base-devel-dirs AS dvlp_base-devel-kernel-dirs
 ARG _MNT
 ARG _DVL
 WORKDIR /hel
-COPY --from=dvlp_repo./dvlw/dvlp/mnt/home/ ./
+COPY --from=dvlp_repo ./dvlw/dvlp/mnt/home/ ./
 RUN mkdir -pv /hel && \
     mkdir -pv /hel/built-kernels && \
     mkdir -pv /home/${_DVL}}/built-kernels && \
@@ -160,7 +160,7 @@ ARG _MNT
 ARG _AGL_USR
 ENV _AGL=${_AGL_USR:-agl}
 WORKDIR /hal
-COPY --from=dvlp_repo./dvlw/dvlp/mnt/home/ ./
+COPY --from=dvlp_repo ./dvlw/dvlp/mnt/home/ ./
 RUN mkdir -pv dvlw && \
     mkdir -pv dls && \
     ln -fsv dvlw devels-workshop && \
@@ -181,7 +181,7 @@ FROM dvlp_base-angel-dirs AS dvlp_base-angel-kernel-dirs
 ARG _MNT
 ARG _AGL
 WORKDIR /hal
-COPY --from=dvlp_repo./dvlw/dvlp/mnt/home/ ./
+COPY --from=dvlp_repo ./dvlw/dvlp/mnt/home/ ./
 RUN mkdir -pv built-kernels && \
     mkdir -pv /home/${_AGL}/built-kernels && \
     ln -fsv dvlw/dvlp dvlp && \
@@ -203,8 +203,8 @@ FROM ubuntu:latest AS dvlp_base-r00t-dirs
 ARG _MNT
 ARG _ADMIN
 WORKDIR /admin
-COPY --from=dvlp_repo./dvlw/dvlp/mnt/home/    ./
-COPY --from=dvlp_repo./dvlw/dvlp/mnt/         ./mnt/
+COPY --from=dvlp_repo ./dvlw/dvlp/mnt/home/    ./
+COPY --from=dvlp_repo ./dvlw/dvlp/mnt/         ./mnt/
 
 RUN mkdir -pv dvlw && \
     mkdir -pv dls && \
@@ -227,7 +227,7 @@ FROM dvlp_base-r00t-dirs AS dvlp_base-r00t-kernel-dirs
 ARG _MNT
 ARG _ADMIN
 WORKDIR /admin
-COPY --from=dvlp_repo./dvlw/dvlp/mnt/home/ ./
+COPY --from=dvlp_repo ./dvlw/dvlp/mnt/home/ ./
 RUN mkdir -pv built-kernels && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
@@ -252,12 +252,12 @@ ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /
 RUN groupadd --gid 4325 g0d                 && \
     useradd -s /bin/bash    -u 0   -o  -g root -G g0d  -d /g0d                          g0d 
-COPY --from=dvlp_repo         --chown=${_DVL}:hell     ./dvlw/dvlp/mnt/home/    ./hel/
-COPY --from=dvlp_repo         --chown=${_AGL}:halo     ./dvlw/dvlp/mnt/home/    ./hal/
-COPY --from=dvlp_repo         --chown=r00t:r00t           ./dvlw/dvlp/mnt/home/    ./r00t/
-COPY --from=dvlp_repo         --chown=r00t:halo        ./dvlw/dvlp/mnt/         .${_MNT}/
-COPY --from=dvlp_repo                                     ./dvlw/                  ./dvlw/
-COPY --from=dvlp_repo             --chown=r00t:r00t            /dvlw/dvlp/mnt/etc/*   /etc/
+COPY --from=dvlp_repo          --chown=${_DVL}:hell     ./dvlw/dvlp/mnt/home/    ./hel/
+COPY --from=dvlp_repo          --chown=${_AGL}:halo     ./dvlw/dvlp/mnt/home/    ./hal/
+COPY --from=dvlp_repo          --chown=r00t:r00t           ./dvlw/dvlp/mnt/home/    ./r00t/
+COPY --from=dvlp_repo          --chown=r00t:halo        ./dvlw/dvlp/mnt/         .${_MNT}/
+COPY --from=dvlp_repo                                      ./dvlw/                  ./dvlw/
+COPY --from=dvlp_repo              --chown=r00t:r00t            /dvlw/dvlp/mnt/etc/*   /etc/
 
 ## WORKDIR /hal
 ###################
@@ -656,7 +656,7 @@ RUN cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old
     head -n -1 /opt/brave.com/brave/brave-browser.old | tee /opt/brave.com/brave/brave-browser > /dev/null && \
     # now no longeer need to add --disable-gpu flag everytime
     echo '"$HERE/brave" "$@" " --disable-gpu " || true' | tee --append /opt/brave.com/brave/brave-browser > /dev/null
-COPY --from=dvlp_repo/dvlw/dvlp/mnt/opt/* /opt/
+COPY --from=dvlp_repo /dvlw/dvlp/mnt/opt/* /opt/
 
 # # # this is a better way to do this but needs work
 # # # cd /opt/brave.com/brave && \
@@ -701,7 +701,7 @@ RUN \
     --mount=type=cache,target=/var/cache/debconf \
     # echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
     apt-get install --no-install-recommends -y kubuntu-desktop
-COPY --from=dvlp_repo--chown=r00t:r00t /dvlw/dvlp/mnt/etc/* /etc/
+COPY --from=dvlp_repo --chown=r00t:r00t /dvlw/dvlp/mnt/etc/* /etc/
 
 USER ${_AGL}
 
@@ -852,7 +852,7 @@ ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 WORKDIR /
-# COPY --from=dvlp_repo./dvlw/dvlp/mnt/home/ ./etc/skel-kernel/
+# COPY --from=dvlp_repo ./dvlw/dvlp/mnt/home/ ./etc/skel-kernel/
 USER r00t
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
