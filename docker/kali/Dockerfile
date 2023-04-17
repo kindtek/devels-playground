@@ -96,18 +96,18 @@ RUN \
 ###################
 # dvlp_repo-build-kernel #
 ###################
-FROM dvlp_repo-build AS dvlp_repo-build-kernel
+FROM dvlp_repo-build-prep AS dvlp_repo-build-kernel
 WORKDIR /repos
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
-    git clone https://github.com/kindtek/devels-workshop --progress dvlw-kernel || (cd dvlw-kernel && git pull https://github.com/kindtek/devels-workshop) 
-WORKDIR /repos/dvlw-kernel
+    git clone https://github.com/kindtek/devels-workshop --progress dvlw || (cd dvlw && git pull https://github.com/kindtek/devels-workshop) 
+WORKDIR /repos/dvlw
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
     git submodule update --init --remote --progress -- dvlp || git pull https://github.com/kindtek/devels-playground && \
     chmod -R 1770 dvlp/mnt/home && \
     chmod -R 1770 dvlp/mnt/bak
-WORKDIR /repos/dvlw-kernel/dvlp
+WORKDIR /repos/dvlw/dvlp
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
     ( git submodule update --init --progress || git submodule update --init --progress --force --rebase -- kernels ) 
@@ -119,7 +119,7 @@ RUN \
 FROM scratch AS dvlp_repo
 COPY --from=dvlp_repo-build ./repos/dvlw/ ./repos/dvlw/
 FROM scratch AS dvlp_repo-kernel
-COPY --from=dvlp_repo-build-kernel ./repos/dvlw-kernel/ ./repos/dvlw/
+COPY --from=dvlp_repo-build-kernel ./repos/dvlw/ ./repos/dvlw/
 
 ####################### BASE DIRS AND VOLUME MOUNT POINTS ####################################
 ########################
