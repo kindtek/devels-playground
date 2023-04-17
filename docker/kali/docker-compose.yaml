@@ -574,12 +574,10 @@ volumes:
   home_agl:
   home_r00t:
 
-  repo:
-  repo-lite:
   repo_agl:
-  repo_agl-lite:
+  repo_agl-kernel:
   repo_dvl:
-  repo_dvl-lite:
+  repo_dvl-kernel:
   repo_r00t:
 
   world_hell:
