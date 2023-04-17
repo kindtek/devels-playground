@@ -845,7 +845,7 @@ RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     # echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
     apt-get update -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y kali-defaults kali-root-login desktop-base kde-plasma-desktop && \
+    apt-get install --no-install-recommends -y kali-defaults kali-root-login desktop-base kali-win-kex && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 COPY --from=dvlp_repo --chown=r00t:r00t /repos/dvlw/dvlp/mnt/etc/* /etc/
