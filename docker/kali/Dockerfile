@@ -798,7 +798,7 @@ RUN cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old
     head -n -1 /opt/brave.com/brave/brave-browser.old | tee /opt/brave.com/brave/brave-browser > /dev/null && \
     # now no longeer need to add --disable-gpu flag everytime
     echo '"$HERE/brave" "$@" " --disable-gpu " || true' | tee --append /opt/brave.com/brave/brave-browser > /dev/null
-COPY --from=dvlp_repo /dvlw/dvlp/mnt/opt/* /opt/
+COPY --from=dvlp_repo /repos/dvlw/dvlp/mnt/opt/* /opt/
 
 # # # this is a better way to do this but needs work
 # # # cd /opt/brave.com/brave && \
