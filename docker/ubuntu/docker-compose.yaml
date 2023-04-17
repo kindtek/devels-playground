@@ -10,7 +10,7 @@ services:
     build:
       target: dvlp_repo
     volumes:
-      - repo:/dvlw
+      - repo-kernel:/dvlw
   base:
     build:
       # target: dvlp_worlds
@@ -162,13 +162,13 @@ services:
       #  - bind_src_dir=${bind_win_src_user_dir:-/dev/null}
 
     volumes:
-      - repo:/dvlw
-      - repo:/r00t/dvlw
-      - repo:/home/r00t/dvlw
-      - repo:/hal/dvlw
-      - repo:/home/{${_AGL}/dvlw
-      - repo:/hel/dvlw
-      - repo:/home/${_DVL}/dvlw
+      - repo-kernel:/dvlw
+      - repo-kernel:/r00t/dvlw
+      - repo-kernel:/home/r00t/dvlw
+      - repo-kernel:/hal/dvlw
+      - repo-kernel:/home/{${_AGL}/dvlw
+      - repo-kernel:/hel/dvlw
+      - repo-kernel:/home/${_DVL}/dvlw
       - mnt-data:/mnt/data
       - home_agl:/hal
       - home_agl:/home/${_AGL}
@@ -454,21 +454,21 @@ services:
       - world_halo:/r00t/halo
       - world_halo:/g0d/r00t/halo
       - world_hell:/g0d/r00t/hell
-      - repo:/dvlw
-      - repo:/g0d/dvlw
-      - repo:/g0d/hell/hel/dvlw
-      - repo:/g0d/halo/hal/dvlw
-      - repo:/r00t/dvlw
-      - repo:/r00t/hell/dvlw
-      - repo:/r00t/hell/hel/dvlw
-      - repo:/r00t/halo/dvlw
-      - repo:/r00t/halo/hal/dvlw
-      - repo:/hell/dvlw
-      - repo:/halo/dvlw
-      - repo:/hell/hel/dvlw
-      - repo:/halo/hal/dvlw
-      - repo:/hel/dvlw
-      - repo:/hal/dvlw
+      - repo-kernel:/dvlw
+      - repo-kernel:/g0d/dvlw
+      - repo-kernel:/g0d/hell/hel/dvlw
+      - repo-kernel:/g0d/halo/hal/dvlw
+      - repo-kernel:/r00t/dvlw
+      - repo-kernel:/r00t/hell/dvlw
+      - repo-kernel:/r00t/hell/hel/dvlw
+      - repo-kernel:/r00t/halo/dvlw
+      - repo-kernel:/r00t/halo/hal/dvlw
+      - repo-kernel:/hell/dvlw
+      - repo-kernel:/halo/dvlw
+      - repo-kernel:/hell/hel/dvlw
+      - repo-kernel:/halo/hal/dvlw
+      - repo-kernel:/hel/dvlw
+      - repo-kernel:/hal/dvlw
       - mnt-data:/mnt/data
       - mnt-data:/hell/mnt/data
       - mnt-data:/halo/mnt/data
