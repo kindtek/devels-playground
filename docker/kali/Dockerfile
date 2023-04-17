@@ -1014,5 +1014,5 @@ WORKDIR /
 ##################
 # dvlp_cuda-plus #
 ##################
-FROM dvlp_jacket-lite AS dvlp_cuda-plus
+FROM dvlp_base-cuda-plus AS dvlp_cuda-plus
 WORKDIR /
