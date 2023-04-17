@@ -94,9 +94,9 @@ RUN \
     chmod -R 1770 dvlp/mnt/bak
 
 ###################
-# dvlp_repo-build #
+# dvlp_repo-build-kernel #
 ###################
-FROM dvlp_repo-build-lite AS dvlp_repo-build
+FROM dvlp_repo-build-lite AS dvlp_repo-build-kernel
 WORKDIR /
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
@@ -119,7 +119,7 @@ RUN \
 FROM scratch AS dvlp_repo-lite
 COPY --from=dvlp_repo-build-lite ./dvlw-lite/ ./dvlw/
 FROM scratch AS dvlp_repo
-COPY --from=dvlp_repo-build ./dvlw/ ./dvlw/
+COPY --from=dvlp_repo-build-kernel ./dvlw/ ./dvlw/
 
 ####################### BASE DIRS AND VOLUME MOUNT POINTS ####################################
 ########################
