@@ -158,6 +158,12 @@ function require_docker_online {
                 # prompt to continue
                 $check_again = Read-Host "Keep trying to connect to Docker? ([y]n)"
             }
+            elseif ( $docker_online -eq $false -And (($docker_tries % 7) -eq 0)){
+                $restart = Read-Host "Restart docker? ([y]n)"
+                if ( $restart -ine 'n') {
+                    $docker_tries = 1
+                }
+            }
             elseif ($docker_online -eq $false -And (($docker_tries % 13) -eq 0)) {
                 docker info
                 docker update --restart=always docker-desktop
