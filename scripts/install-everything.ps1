@@ -162,10 +162,10 @@ function require_docker_online {
                 Write-Host "Waited $docker_tries seconds .. "
                 Write-Host "Restarting Docker Engine..."
                 Write-Host "Switching Docker Engine ...."
-                ./DockerCli.exe -SwitchDaemon
+                Start-Process DockerCli.exe -SwitchDaemon
                 Start-Sleep 5
                 Write-Host "Setting Docker Engine to Linux ....."
-                ./DockerCli.exe -SwitchLinuxEngine
+                Start-Process DockerCli.exe -SwitchLinuxEngine
                 Write-Host "Switch complete."
                 Write-Host "Retrying connection in 10 seconds ......"
                 Start-Sleep -seconds 10
