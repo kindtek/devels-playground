@@ -83,7 +83,7 @@ function install_dependencies {
         # Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --silent --locale en-US --accept-package-agreements --accept-source-agreements --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
         winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks="!runcode,addcontextmenufiles,addcontextmenufolders"'
         winget upgrade Microsoft.VisualStudioCode --override '/SILENT /mergetasks="!runcode,addcontextmenufiles,addcontextmenufolders"'
-        Write-Host "`$software_name installed`r`n`r`n" | Out-File -FilePath "$git_path/.vscode-installed"
+        Write-Host "$software_name installed`r`n`r`n" | Out-File -FilePath "$git_path/.vscode-installed"
         $new_install = $true
     }
     else {
@@ -96,7 +96,7 @@ function install_dependencies {
         winget install --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements
         winget upgrade --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements
         # "Docker Desktop Installer.exe" install --accept-license --backend=wsl-2 --installation-dir=C:\Docker 
-        Write-Host "`$software_name installed`r`n`r`n" | Out-File -FilePath "$git_path/.docker-installed"
+        Write-Host "$software_name installed`r`n`r`n" | Out-File -FilePath "$git_path/.docker-installed"
         $new_install = $true
     }
     else {
@@ -111,7 +111,7 @@ function install_dependencies {
         winget install Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements
         winget upgrade Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements
         # }
-        Write-Host "`$software_name installed`r`n`r`n" | Out-File -FilePath "$git_path/.wterminal-installed"
+        Write-Host "$software_name installed`r`n`r`n" | Out-File -FilePath "$git_path/.wterminal-installed"
         $new_install = $true
     }
     else {
