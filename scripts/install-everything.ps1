@@ -203,7 +203,7 @@ workflow start_installer_daemon {
 
     
     InlineScript { Write-Host "$([char]27)[2J" }
-    InlineScript { Write-Host "`r`nInstallations complete!`r`n" }
+    InlineScript { Write-Host "`r`nInstallations complete! Restart may be needed to complete update.`r`n`r`nStarting WSL import tool ... `r`n`r`n" }
 
     if (!(require_docker_online)) {
         InlineScript { Write-Host "`r`nCannot start Docker.`r`n" }
