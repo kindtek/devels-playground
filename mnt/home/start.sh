@@ -154,7 +154,7 @@ fi
 echo "  now running apt-get update and apt-get upgrade"
 sleep 3
 
-sudo apt-get update && sudo apt-get 
+sudo apt-get update && sudo apt-get upgrade
 
 echo "generating keys and saving to $ssh_dir"
 # if [ -d $ssh_dir ]; then echo "----- $ssh_dir directory already exists - remove the directory ( rm -rf $ssh_dir ) and try again -----"; fi;
