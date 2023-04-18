@@ -125,9 +125,10 @@ function require_docker_online {
                 Write-Host "Docker Desktop is now online"
             }
         
-            if ($docker_online -eq $false -And (($docker_tries % 8) -eq 0)) {
+            if ($docker_online -eq $false -And (($docker_tries % 2) -eq 0)) {
                 write-host docker info
                 write-host "`r`n"
+                Start-Sleep 20
             }
             elseif ($docker_online -eq $false -And (($docker_tries % 3) -eq 0)) {
                 # start count over
@@ -136,7 +137,7 @@ function require_docker_online {
                 write-host docker info
                 $check_again = Read-Host "Keep trying to connect to Docker? ([y]n)"
             }
-            elseif ($docker_online -eq $false -And (($docker_tries % 2) -eq 0)) {
+            elseif ($docker_online -eq $false -And (($docker_tries % 5) -eq 0)) {
                 write-host docker info
                 docker update --restart=always docker-desktop
                 docker update --restart=always docker-desktop-data
