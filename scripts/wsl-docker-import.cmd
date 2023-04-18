@@ -17,10 +17,10 @@ SET image_repo_mask=kindtek
 SET "image_tag=%~1"
 IF "!image_tag!"=="" (
     SET "image_tag=kali-dind-lite"
-    ECHO "image_tag set to !image_tag!"
+    @REM ECHO "image_tag set to !image_tag!"
 ) ELSE (
-    @REM SET "image_tag=%1"
-    ECHO "image_tag set to arg: '%1'  ('%~1') as !image_tag!"
+    SET "image_tag=%1"
+    @REM ECHO "image_tag set to arg: '%1'  ('%~1') as !image_tag!"
 )
 
 SET "image_name=devels-playground:%image_tag%"
