@@ -11,7 +11,7 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 }
 
 function reboot_prompt {
-    Write-Host "`r`nA restart may be required for the changes to fully take effect. "
+    # Write-Host "`r`nA restart may be required for the changes to fully take effect. "
     $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now`r`n`t ..or hit ENTER to skip" 
 
     if ($confirmation -ieq 'reboot now') {
@@ -37,43 +37,43 @@ function install_dependencies {
     "The following programs will be installed or updated`r`n`t- Visual Studio Code`r`n`t- Docker Desktop`r`n`t- Windows Terminal`r`n`t- Python 3.10`r`n`t"
     $software_name = "Visual Studio Code (VSCode)"
     if (!(Test-Path -Path "$git_path/.vscode-installed" -PathType Leaf)) {
-        Write-Host "Installing $software_name ...`r`n"
+        Write-Host "Installing $software_name ..."
         # Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
         winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks="!runcode,addcontextmenufiles,addcontextmenufolders"'
         winget upgrade Microsoft.VisualStudioCode --override '/SILENT /mergetasks="!runcode,addcontextmenufiles,addcontextmenufolders"'
-        Write-Host "$software_name installed`r`n`r`n" | Out-File -FilePath "$git_path/.vscode-installed"
+        Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.vscode-installed"
         $new_install = $true
     }
     else {
-        Write-Host "$software_name already installed`r`n" 
+        Write-Host "$software_name already installed" 
     }
 
     $software_name = "Docker Desktop"
     if (!(Test-Path -Path "$git_path/.docker-installed" -PathType Leaf)) {
-        Write-Host "Installing $software_name ...`r`n" 
+        Write-Host "Installing $software_name ..." 
         winget install --id=Docker.DockerDesktop --location="c:\docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity
         winget upgrade --id=Docker.DockerDesktop --location="c:\docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity
         # "Docker Desktop Installer.exe" install --accept-license --backend=wsl-2 --installation-dir=c:\docker 
-        Write-Host "$software_name installed`r`n`r`n" | Out-File -FilePath "$git_path/.docker-installed"
+        Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.docker-installed"
         $new_install = $true
     }
     else {
-        Write-Host "$software_name already installed`r`n"   
+        Write-Host "$software_name already installed"   
     }
 
     $software_name = "Windows Terminal"
     if (!(Test-Path -Path "$git_path/.wterminal-installed" -PathType Leaf)) {
         # $windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
         # if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no') { 
-        Write-Host "Installing $software_name ...`r`n" 
+        Write-Host "Installing $software_name ..." 
         winget install Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity
         winget upgrade Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity
         # }
-        Write-Host "$software_name installed`r`n`r`n" | Out-File -FilePath "$git_path/.wterminal-installed"
+        Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.wterminal-installed"
         $new_install = $true
     }
     else {
-        Write-Host "$software_name already installed`r`n"  
+        Write-Host "$software_name already installed"  
     }
 
 
@@ -89,10 +89,10 @@ function install_dependencies {
         # $cmd_command = pip install cdir
         # Start-Process -FilePath PowerShell.exe -NoNewWindow -ArgumentList $cmd_command
     
-        Write-Host "$software_name installed`r`n" | Out-File -FilePath "$git_path/.python-installed"
+        Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.python-installed"
     }
     else {
-        Write-Host "$software_name already installed`r`n" 
+        Write-Host "$software_name already installed" 
     }
 
     return $new_install
