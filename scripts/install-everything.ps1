@@ -316,6 +316,9 @@ function require_docker_online {
                 Write-Host "Retrying connection in 10 seconds ......"
                 Start-Sleep -seconds 10
             }
+            elseif ($docker_tries -gt 60) {
+                return $false
+            }
         }
         catch {}
     } while (-Not $docker_online )
@@ -407,23 +410,24 @@ workflow start_installer_daemon {
     # @TODO: fix $new_install variable - doesn't work for windows features in  
     $new_install = install_windows_features $temp_repo_scripts_path 
     if ($new_install -eq $true) {
-        InlineScript { Write-Host "`r`nWindows features installed. Restarting computer in ten seconds ... `r`n" }
-        Start-Sleep 10
-        Restart-Computer
-    }
+        InlineScript { Write-Host "`r`nWindows features installed. Restart? `r`n" }
+        Restart-Computer -Confirm
     wsl --install --no-launch
     wsl --update
     $new_install = install_dependencies $temp_repo_scripts_path $git_path
     if ($new_install -eq $true) {
-        InlineScript { Write-Host "`r`nRestart needed. Restarting computer in ten seconds ... `r`n" }
-        Start-Sleep 10
-        Restart-Computer
+        InlineScript { Write-Host "`r`nA restart may be necessary`r`n" }
+        Restart-Computer -Confirm
     }
 
     install_repo $parent_path $git_path $repo_src_owner $repo_src_name $repo_src_branch
     InlineScript { Write-Host "$([char]27)[2J" }
-    InlineScript { Write-Host "`r`nSetup complete!`r`n" }
+    InlineScript { Write-Host "`r`nInstallations complete!`r`n" }
 
+    if (!(require_docker_online)) {
+        InlineScript { Write-Host "`r`nA restart may be necessary`r`n" }
+        Restart-Computer -Confirm
+    }
     
     if (require_docker_online) {
         run_devels_playground $git_path $img_subset
