@@ -15,13 +15,13 @@ function reboot_prompt {
     $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now`r`n`t ..or hit ENTER to skip" 
 
     if ($confirmation -ieq 'reboot now') {
-        InlineScript { Write-Host "`r`nRestarting computer ... r`n" }
+        Write-Host "`r`nRestarting computer ... r`n"
         Restart-Computer
     }
-    else {
-        # powershell.exe -Command "$git_path\choco\src\chocolatey.resources\redirects\RefreshEnv.cmd"
-        Write-Host "`r`n"
-    }
+    # else {
+    #     # powershell.exe -Command "$git_path\choco\src\chocolatey.resources\redirects\RefreshEnv.cmd"
+    #     Write-Host "`r`n"
+    # }
 }
 
 function install_windows_features {
