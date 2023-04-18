@@ -66,10 +66,10 @@ function install_dependencies {
     $software_name = "Github CLI"
     if (!(Test-Path -Path "$git_path/.github-installed" -PathType Leaf)) {
         Write-Host "Installing $software_name ...`r`n"
-        winget install --exact --id GitHub.cli --silent --locale en-US --accept-package-agreements --accept-source-agreements
-        winget upgrade --exact --id GitHub.cli --silent --locale en-US --accept-package-agreements --accept-source-agreements
-        winget install --id Git.Git --source winget --silent --locale en-US --accept-package-agreements --accept-source-agreements
-        winget upgrade --id Git.Git --source winget --silent --locale en-US --accept-package-agreements --accept-source-agreements
+        winget install --exact --id GitHub.cli --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity
+        winget upgrade --exact --id GitHub.cli --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity
+        winget install --id Git.Git --source winget --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity
+        winget upgrade --id Git.Git --source winget --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity
         Write-Host "$software_name installed`r`n`r`n" | Out-File -FilePath "$git_path/.github-installed"
         $new_install = $true
     }
@@ -80,7 +80,7 @@ function install_dependencies {
     $software_name = "Visual Studio Code (VSCode)"
     if (!(Test-Path -Path "$git_path/.vscode-installed" -PathType Leaf)) {
         Write-Host "Installing $software_name ...`r`n"
-        # Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --silent --locale en-US --accept-package-agreements --accept-source-agreements --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
+        # Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
         winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks="!runcode,addcontextmenufiles,addcontextmenufolders"'
         winget upgrade Microsoft.VisualStudioCode --override '/SILENT /mergetasks="!runcode,addcontextmenufiles,addcontextmenufolders"'
         Write-Host "$software_name installed`r`n`r`n" | Out-File -FilePath "$git_path/.vscode-installed"
@@ -93,8 +93,8 @@ function install_dependencies {
     $software_name = "Docker Desktop"
     if (!(Test-Path -Path "$git_path/.docker-installed" -PathType Leaf)) {
         Write-Host "Installing $software_name ...`r`n" 
-        winget install --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements
-        winget upgrade --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements
+        winget install --id=Docker.DockerDesktop --location="C:\Docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity
+        winget upgrade --id=Docker.DockerDesktop --location="C:\Docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity
         # "Docker Desktop Installer.exe" install --accept-license --backend=wsl-2 --installation-dir=C:\Docker 
         Write-Host "$software_name installed`r`n`r`n" | Out-File -FilePath "$git_path/.docker-installed"
         $new_install = $true
@@ -108,8 +108,8 @@ function install_dependencies {
         # $windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
         # if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no') { 
         Write-Host "Installing $software_name ...`r`n" 
-        winget install Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements
-        winget upgrade Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements
+        winget install Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity
+        winget upgrade Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity
         # }
         Write-Host "$software_name installed`r`n`r`n" | Out-File -FilePath "$git_path/.wterminal-installed"
         $new_install = $true
@@ -124,8 +124,8 @@ function install_dependencies {
         $new_install = $true
         # @TODO: add cdir and python to install with same behavior as other installs above
         # not eloquent at all but good for now
-        winget install --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements
-        winget upgrade --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements
+        winget install --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity
+        winget upgrade --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity
 
         # ... even tho cdir does not appear to be working on windows
         # $cmd_command = pip install cdir
@@ -276,7 +276,7 @@ function require_docker_online {
     do {       
         try {
             # launch docker desktop and keep it open 
-            Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
+            Start-Process "C:\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
             $docker_tries++
             Start-Sleep -seconds 1
             # { 
