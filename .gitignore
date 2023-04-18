@@ -7,3 +7,4 @@ kernels/linux/zfs-*
 kernels/linux/linux-*
 kernels/linux/wsl2/*
 kernels/linux/WSLS2/*
+**/kali/install-kindtek-devels-workshop.ps1
