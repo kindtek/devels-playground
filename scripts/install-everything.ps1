@@ -119,13 +119,10 @@ function require_docker_online {
             # launch docker desktop and keep it open 
             $docker_tries++
             Start-Sleep -seconds 1
-            # { 
             if (Get-Process 'com.docker.proxy') {
                 $docker_online = $true
                 Write-Host "Docker Desktop is now online"
             }
-            # }
-            # *>$null
         
             if ($docker_online -eq $false -And (($docker_tries % 80) -eq 0)) {
                 write-host "$docker_status_now`r`n"
@@ -135,7 +132,7 @@ function require_docker_online {
                 # $docker_attempt1 = $docker_attempt2 = $false
                 # prompt to continue
                 write-host "$docker_status_now`r`n"
-                # $check_again = Read-Host "Keep trying to connect to Docker? ([y]n)"
+                $check_again = Read-Host "Keep trying to connect to Docker? ([y]n)"
             }
             elseif ($docker_online -eq $false -And (($docker_tries % 20) -eq 0)) {
                 docker update --restart=always docker-desktop
@@ -156,8 +153,8 @@ function require_docker_online {
             }
         }
         catch {}
-    } while (-Not $docker_online )
-    # } while (-Not $docker_online -Or $check_again -ine 'n')
+    # } while (-Not $docker_online )
+    } while (-Not $docker_online -Or $check_again -ine 'n')
 
     return $docker_online
 }
