@@ -204,7 +204,7 @@ function require_docker_online {
         }
         catch {}
         # } while (-Not $docker_online )
-    } while (-Not $docker_online -And $check_again -ine 'n')
+    } while ( -Not $docker_online -And $check_again -ine 'n' )
 
     return $docker_online
 }
