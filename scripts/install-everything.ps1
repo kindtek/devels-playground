@@ -119,7 +119,7 @@ function require_docker_online {
         try {
             # launch docker desktop and keep it open 
             $docker_tries++
-            Start-Sleep -seconds 5
+            Start-Sleep 10
             if (Get-Process 'com.docker.proxy') {
                 $docker_online = $true
                 # wait extra time before executing next commands
@@ -209,7 +209,6 @@ function start_installer_daemon {
 
     
     # Write-Host "$([char]27)[2J" 
-    Start-Sleep 10
     if (!(require_docker_online)) {
         Write-Host "`r`nCannot start Docker.`r`n" 
     }
