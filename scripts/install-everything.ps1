@@ -439,3 +439,5 @@ workflow start_installer_daemon {
 }
 
 start_installer_daemon $temp_repo_scripts_path $args[0]
+Write-Host "args.."
+Write-Host $args[0]
