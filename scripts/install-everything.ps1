@@ -122,13 +122,15 @@ function require_docker_online {
             Start-Sleep -seconds 5
             if (Get-Process 'com.docker.proxy') {
                 $docker_online = $true
+                # wait extra time before executing next commands
+                Start-Sleep 10
                 Write-Host "Docker Desktop is now online"
             }
         
             if ($docker_online -eq $false -And (($docker_tries % 2) -eq 0)) {
                 write-host docker info
                 write-host "`r`n"
-                Start-Sleep 20
+                Start-Sleep 22
             }
             elseif ($docker_online -eq $false -And (($docker_tries % 3) -eq 0)) {
                 # start count over
