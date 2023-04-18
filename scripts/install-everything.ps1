@@ -406,7 +406,8 @@ workflow start_installer_daemon {
         Start-Sleep 5
         Restart-Computer -Wait
     }
-    
+    wsl --install --no-launch
+    wsl --update
     $new_install = install_dependencies $temp_repo_scripts_path $git_path
     if ($new_install -eq $true) {
         InlineScript { Write-Host "`r`nRestart needed. Restarting computer in five seconds ... `r`n" }
