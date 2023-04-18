@@ -136,7 +136,7 @@ function require_docker_online {
         try {
             # launch docker desktop and keep it open 
             $docker_tries++
-            if ( Get-Process 'com.docker.proxy' | Out-Null ) {
+            if ( Get-Process 'com.docker.proxy'  ) {
                 $docker_online = $true
                 # if service was already up continue right away otherwise sleep a bit
                 if ( $docker_tries -gt 1 ) {
@@ -157,7 +157,7 @@ function require_docker_online {
                 # prompt to continue
                 $check_again = Read-Host "Keep trying to connect to Docker? ([y]n)"
             }
-            elseif ($docker_online -eq $false -And (($docker_tries % 5) -eq 0)) {
+            elseif ($docker_online -eq $false -And (($docker_tries % 13) -eq 0)) {
                 docker info
                 docker update --restart=always docker-desktop
                 docker update --restart=always docker-desktop-data
