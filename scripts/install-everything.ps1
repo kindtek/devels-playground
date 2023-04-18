@@ -93,9 +93,9 @@ function install_dependencies {
     $software_name = "Docker Desktop"
     if (!(Test-Path -Path "$git_path/.docker-installed" -PathType Leaf)) {
         Write-Host "Installing $software_name ...`r`n" 
-        winget install --id=Docker.DockerDesktop --location="C:\Docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity
-        winget upgrade --id=Docker.DockerDesktop --location="C:\Docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity
-        # "Docker Desktop Installer.exe" install --accept-license --backend=wsl-2 --installation-dir=C:\Docker 
+        winget install --id=Docker.DockerDesktop --location="c:\docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity
+        winget upgrade --id=Docker.DockerDesktop --location="c:\docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity
+        # "Docker Desktop Installer.exe" install --accept-license --backend=wsl-2 --installation-dir=c:\docker 
         Write-Host "$software_name installed`r`n`r`n" | Out-File -FilePath "$git_path/.docker-installed"
         $new_install = $true
     }
@@ -275,7 +275,7 @@ function require_docker_online {
 
     do {    
         try {
-            Start-Process "C:\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
+            Start-Process "c:\docker\Docker Desktop.exe" -WindowStyle "Hidden"
         } catch {}
         try {
             Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
@@ -407,17 +407,17 @@ workflow start_installer_daemon {
     # @TODO: fix $new_install variable - doesn't work for windows features in  
     $new_install = install_windows_features $temp_repo_scripts_path 
     if ($new_install -eq $true) {
-        InlineScript { Write-Host "`r`nWindows features installed. Restarting computer in five seconds ... `r`n" }
-        Start-Sleep 5
-        Restart-Computer -Wait
+        InlineScript { Write-Host "`r`nWindows features installed. Restarting computer in ten seconds ... `r`n" }
+        Start-Sleep 10
+        Restart-Computer
     }
     wsl --install --no-launch
     wsl --update
     $new_install = install_dependencies $temp_repo_scripts_path $git_path
     if ($new_install -eq $true) {
-        InlineScript { Write-Host "`r`nRestart needed. Restarting computer in five seconds ... `r`n" }
-        Start-Sleep 5
-        Restart-Computer -Wait
+        InlineScript { Write-Host "`r`nRestart needed. Restarting computer in ten seconds ... `r`n" }
+        Start-Sleep 10
+        Restart-Computer
     }
 
     install_repo $parent_path $git_path $repo_src_owner $repo_src_name $repo_src_branch
