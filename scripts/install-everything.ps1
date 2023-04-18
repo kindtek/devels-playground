@@ -119,23 +119,25 @@ function require_docker_online {
         try {
             # launch docker desktop and keep it open 
             $docker_tries++
-            Start-Sleep -seconds 1
+            Start-Sleep -seconds 5
             if (Get-Process 'com.docker.proxy') {
                 $docker_online = $true
                 Write-Host "Docker Desktop is now online"
             }
         
-            if ($docker_online -eq $false -And (($docker_tries % 80) -eq 0)) {
-                write-host "$docker_status_now`r`n"
+            if ($docker_online -eq $false -And (($docker_tries % 8) -eq 0)) {
+                write-host docker info
+                write-host "`r`n"
             }
-            elseif ($docker_online -eq $false -And (($docker_tries % 30) -eq 0)) {
+            elseif ($docker_online -eq $false -And (($docker_tries % 3) -eq 0)) {
                 # start count over
                 # $docker_attempt1 = $docker_attempt2 = $false
                 # prompt to continue
-                write-host "$docker_status_now`r`n"
+                write-host docker info
                 $check_again = Read-Host "Keep trying to connect to Docker? ([y]n)"
             }
-            elseif ($docker_online -eq $false -And (($docker_tries % 20) -eq 0)) {
+            elseif ($docker_online -eq $false -And (($docker_tries % 2) -eq 0)) {
+                write-host docker info
                 docker update --restart=always docker-desktop
                 docker update --restart=always docker-desktop-data
                 Write-Host "Waited $docker_tries seconds .. "
@@ -148,9 +150,6 @@ function require_docker_online {
                 Write-Host "Switch complete."
                 Write-Host "Retrying connection in 10 seconds ......"
                 Start-Sleep -seconds 10
-            }
-            elseif ($docker_tries -gt 60) {
-                return $false
             }
         }
         catch {}
@@ -187,8 +186,7 @@ function start_installer_daemon {
     $git_path = "$HOME\repos\$repo_src_owner\$repo_git_name"
 
     # jump to bottom line without clearing scrollback
-    InlineScript { Write-Host "$([char]27)[2J" }
-    # @TODO: fix $new_install variable - doesn't work for windows features in  
+    Write-Host "$([char]27)[2J" 
     $new_install = install_windows_features $git_path 
     if ($new_install -eq $true) {
         reboot_prompt
