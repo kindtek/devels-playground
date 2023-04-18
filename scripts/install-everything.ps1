@@ -172,6 +172,37 @@ function require_docker_online {
                 Write-Host "Retrying connection in 10 seconds ......"
                 Start-Sleep -seconds 10
             }
+            elseif ($docker_online -eq $false -And (($docker_tries % 7) -eq 0)) {
+                # try extraordinary measures
+                $check_again = Read-Host "Try resetting default distro and restarting Docker? ([y]n)"
+                if ( $check_again -ine 'n' ) {
+                    wsl --install -d Ubuntu --no-launch
+                    wsl --update
+                    wsl -s Ubuntu
+                    try {
+                        Start-Process "Docker Desktop.exe" -WindowStyle "Hidden"
+                    }
+                    catch {
+                        try {
+                            Start-Process "c:\docker\Docker Desktop.exe" -WindowStyle "Hidden"
+                        }
+                        catch {
+                            try {
+                                Start-Process "c:\docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
+                            }
+                            catch {
+                                try {
+                                    Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
+                                }
+                                catch {} 
+                            }
+                        }
+                    }
+
+                    Start-Sleep 20
+                }
+                
+            }
         }
         catch {}
         # } while (-Not $docker_online )
@@ -214,8 +245,9 @@ function start_installer_daemon {
     }
 
     # Write-Host "$([char]27)[2J" 
-    wsl --install --no-launch
+    wsl --install -d Ubuntu --no-launch
     wsl --update
+    wsl -s Ubuntu
 
     # Write-Host "$([char]27)[2J" 
     $new_install = install_dependencies $git_path
