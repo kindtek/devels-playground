@@ -12,14 +12,14 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 
 function reboot_prompt {
     Write-Host "`r`nA restart may be required for the changes to fully take effect. "
-    $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now`r`n ..or hit ENTER to try a soft refresh" 
+    $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now`r`n ..or hit ENTER to skip" 
 
     if ($confirmation -ieq 'reboot now') {
         InlineScript { Write-Host "`r`nRestarting computer ... r`n" }
         Restart-Computer
     }
     else {
-        powershell.exe -Command "$git_path\choco\src\chocolatey.resources\redirects\RefreshEnv.cmd"
+        # powershell.exe -Command "$git_path\choco\src\chocolatey.resources\redirects\RefreshEnv.cmd"
         Write-Host "`r`n"
     }
 }
