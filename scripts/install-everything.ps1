@@ -12,13 +12,14 @@ if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
 
 function reboot_prompt {
     Write-Host "`r`nA restart may be required for the changes to fully take effect. "
-    $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now`r`n ..or hit ENTER to skip" 
+    $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now`r`n ..or hit ENTER to try a soft refresh" 
 
     if ($confirmation -ieq 'reboot now') {
         InlineScript { Write-Host "`r`nRestarting computer ... r`n" }
         Restart-Computer
     }
     else {
+        powershell.exe -Command "$git_path\choco\src\chocolatey.resources\redirects\RefreshEnv.cmd"
         Write-Host "`r`n"
     }
 }
@@ -178,7 +179,7 @@ function cleanup_installation {
 }
 
 
-workflow start_installer_daemon {
+function start_installer_daemon {
     param ([string]$img_subset)
 
     $repo_src_owner = 'kindtek'
