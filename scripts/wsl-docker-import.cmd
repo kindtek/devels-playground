@@ -123,7 +123,7 @@ if %default%==config (
     SET "distro=!distro::=-!"
     SET "distro=!distro:/=-!"
 
-    SET /p "wsl_version=WSL version: (1) $ "
+    SET /p "wsl_version=WSL version: (!wsl_version!) $ "
     if "!wsl_version!"=="2" (
         SET "wsl_version=2"
     ) ELSE (
