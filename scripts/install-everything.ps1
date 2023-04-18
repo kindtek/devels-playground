@@ -182,7 +182,7 @@ function install_repo {
     Write-Host "Now installing:`r`n`t- GitHub repos`r`n`t- Chocolatey`r`n" 
 
     # refresh environment variables using script in choco temp download location
-    powershell.exe "$git_path/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle "Hidden"
+    # powershell.exe "$git_path/choco/src/chocolatey.resources/redirects/RefreshEnv.cmd" -Wait -WindowStyle "Hidden"
     # Write-Host "parent path: $parent_path"
     Set-Location $parent_path
     $new_install = $false
