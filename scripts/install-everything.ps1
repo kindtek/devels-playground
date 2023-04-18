@@ -190,8 +190,7 @@ workflow start_installer_daemon {
     # @TODO: fix $new_install variable - doesn't work for windows features in  
     $new_install = install_windows_features $git_path 
     if ($new_install -eq $true) {
-        InlineScript { Write-Host "`r`nWindows features installed. Restart? `r`n" }
-        Restart-Computer
+        reboot_prompt
     }
 
     wsl --install --no-launch
