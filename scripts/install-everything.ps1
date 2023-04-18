@@ -172,13 +172,11 @@ function require_docker_online {
                 Write-Host "Retrying connection in 10 seconds ......"
                 Start-Sleep -seconds 10
             }
-            elseif ($docker_online -eq $false -And (($docker_tries % 7) -eq 0)) {
+
+            if ($docker_online -eq $false -And ( $docker_tries -eq 1)) {
                 # try extraordinary measures
-                $check_again = Read-Host "Try resetting default distro and restarting Docker? ([y]n)"
-                if ( $check_again -ine 'n' ) {
-                    wsl --install -d Ubuntu --no-launch
-                    wsl --update
-                    wsl -s Ubuntu
+                # $check_again = Read-Host "Try resetting default distro and restarting Docker? ([y]n)"
+
                     try {
                         Start-Process "Docker Desktop.exe" -WindowStyle "Hidden"
                     }
@@ -200,7 +198,7 @@ function require_docker_online {
                     }
 
                     Start-Sleep 20
-                }
+                
                 
             }
         }
