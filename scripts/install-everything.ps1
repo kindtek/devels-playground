@@ -138,7 +138,8 @@ function require_docker_online {
                 $docker_online = $true
                 # if service was already up continue right away otherwise sleep a bit
                 if ( $docker_tries -gt 1 ) {
-                    Start-Sleep $sleep_time
+                    $sleep_time += 5
+                    Start-Sleep -s $sleep_time
                 }
                 Write-Host "Docker Desktop is now online"
             }
@@ -147,7 +148,7 @@ function require_docker_online {
                 docker info
                 write-host "`r`n"
                 $sleep_time += 15
-                Start-Sleep $sleep_time
+                Start-Sleep -s $sleep_time
             }
             elseif ($docker_online -eq $false -And (($docker_tries % 3) -eq 0)) {
                 # start count over
