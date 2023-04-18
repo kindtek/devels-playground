@@ -7,3 +7,4 @@ scripts/Microsoft-*
 **/.vscode-server/**
 **/.history/**
 dvlp/docker/ubuntu/ubuntu22-plus-linux-kernel-6-28.tar
+..*-installed
