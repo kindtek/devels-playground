@@ -411,14 +411,14 @@ workflow start_installer_daemon {
     $new_install = install_windows_features $temp_repo_scripts_path 
     if ($new_install -eq $true) {
         InlineScript { Write-Host "`r`nWindows features installed. Restart? `r`n" }
-        Restart-Computer -Confirm
+        Restart-Computer
     }
     wsl --install --no-launch
     wsl --update
     $new_install = install_dependencies $temp_repo_scripts_path $git_path
     if ($new_install -eq $true) {
         InlineScript { Write-Host "`r`nA restart may be necessary`r`n" }
-        Restart-Computer -Confirm
+        Restart-Computer
     }
 
     install_repo $parent_path $git_path $repo_src_owner $repo_src_name $repo_src_branch
@@ -427,7 +427,7 @@ workflow start_installer_daemon {
 
     if (!(require_docker_online)) {
         InlineScript { Write-Host "`r`nA restart may be necessary`r`n" }
-        Restart-Computer -Confirm
+        Restart-Computer
     }
     
     if (require_docker_online) {
