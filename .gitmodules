@@ -6,7 +6,7 @@
 	url = https://github.com/kindtek/devels-playground.git
 	branch = kali-devel
 	recurse = false
-[submodule "dvl-adv"]
+[submodule "dvl_adv"]
 	active = true
 	shallow = false
 	path = dvl-adv
