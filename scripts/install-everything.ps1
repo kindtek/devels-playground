@@ -208,10 +208,10 @@ function start_installer_daemon {
     
     Write-Host "$([char]27)[2J" 
     Write-Host "`r`nInstallations complete! Restart may be needed to complete begin WSL import phase. `r`n`r`n" 
+    reboot_prompt
     Start-Sleep 10
     if (!(require_docker_online)) {
         Write-Host "`r`nCannot start Docker.`r`n" 
-        reboot_prompt
     }
 }
 
