@@ -112,18 +112,21 @@ function require_docker_online {
     do {    
         try {
             Start-Process "c:\docker\Docker Desktop.exe" -WindowStyle "Hidden"
-        } catch {}
-        try {
+        } catch {
+            try {
             Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
-        } catch {}   
+            } catch {} 
+        }
+          
         try {
             # launch docker desktop and keep it open 
             $docker_tries++
-            Start-Sleep 10
             if (Get-Process 'com.docker.proxy') {
                 $docker_online = $true
-                # wait extra time before executing next commands
-                Start-Sleep 10
+                # if service was already up continue
+                if (!( $docker_tries -eq 1 )){
+                    Start-Sleep $sleep_time
+                }
                 Write-Host "Docker Desktop is now online"
             }
         
