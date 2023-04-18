@@ -134,10 +134,10 @@ function require_docker_online {
         try {
             # launch docker desktop and keep it open 
             $docker_tries++
-            if (Get-Process 'com.docker.proxy') {
+            if (Get-Process 'com.docker.proxy'  | Out-Null ) {
                 $docker_online = $true
-                # if service was already up continue
-                if (!( $docker_tries -eq 1 )) {
+                # if service was already up continue right away otherwise sleep a bit
+                if ( $docker_tries -gt 1 ) {
                     Start-Sleep $sleep_time
                 }
                 Write-Host "Docker Desktop is now online"
