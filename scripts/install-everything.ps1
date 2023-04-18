@@ -412,6 +412,7 @@ workflow start_installer_daemon {
     if ($new_install -eq $true) {
         InlineScript { Write-Host "`r`nWindows features installed. Restart? `r`n" }
         Restart-Computer -Confirm
+    }
     wsl --install --no-launch
     wsl --update
     $new_install = install_dependencies $temp_repo_scripts_path $git_path
