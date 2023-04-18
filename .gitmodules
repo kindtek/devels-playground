@@ -9,7 +9,7 @@
 [submodule "dvl_adv"]
 	active = true
 	shallow = false
-	path = dvl-adv
+	path = dvl_adv
 	url = https://github.com/kindtek/dvl-adv.git
 	branch = dvl-works
 	recurse = false
