@@ -38,7 +38,7 @@ function install_dependencies {
     $software_name = "Visual Studio Code (VSCode)"
     if (!(Test-Path -Path "$git_path/.vscode-installed" -PathType Leaf)) {
         Write-Host "Installing $software_name ..."
-        # Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
+        # Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --silent --locale en-US --accept-package-agreements --accept-source-agreements --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
         winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks="!runcode,addcontextmenufiles,addcontextmenufolders"'
         winget upgrade Microsoft.VisualStudioCode --override '/SILENT /mergetasks="!runcode,addcontextmenufiles,addcontextmenufolders"'
         Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.vscode-installed"
@@ -51,8 +51,8 @@ function install_dependencies {
     $software_name = "Docker Desktop"
     if (!(Test-Path -Path "$git_path/.docker-installed" -PathType Leaf)) {
         Write-Host "Installing $software_name ..." 
-        # winget install --id=Docker.DockerDesktop --location="c:\docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity
-        # winget upgrade --id=Docker.DockerDesktop --location="c:\docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity
+        # winget install --id=Docker.DockerDesktop --location="c:\docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements
+        # winget upgrade --id=Docker.DockerDesktop --location="c:\docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements
         winget install --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements
         winget upgrade --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements
         # "Docker Desktop Installer.exe" install --accept-license --backend=wsl-2 --installation-dir=c:\docker 
@@ -68,8 +68,8 @@ function install_dependencies {
         # $windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
         # if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no') { 
         Write-Host "Installing $software_name ..." 
-        winget install Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity
-        winget upgrade Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity
+        winget install Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements
+        winget upgrade Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements
         # }
         Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.wterminal-installed"
         $new_install = $true
@@ -84,8 +84,8 @@ function install_dependencies {
         $new_install = $true
         # @TODO: add cdir and python to install with same behavior as other installs above
         # not eloquent at all but good for now
-        winget install --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity
-        winget upgrade --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements --disable-interactivity
+        winget install --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements
+        winget upgrade --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements
 
         # ... even tho cdir does not appear to be working on windows
         # $cmd_command = pip install cdir
