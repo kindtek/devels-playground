@@ -109,26 +109,27 @@ function require_docker_online {
    
     Write-Host "`r`n`r`nWaiting for Docker to come online ..."  
     $sleep_time = 30
-    do {    
+    try {
+        Start-Process "Docker Desktop.exe" -WindowStyle "Hidden"
+    }
+    catch {
         try {
-            Start-Process "Docker Desktop.exe" -WindowStyle "Hidden"
+            Start-Process "c:\docker\Docker Desktop.exe" -WindowStyle "Hidden"
         }
         catch {
             try {
-                Start-Process "c:\docker\Docker Desktop.exe" -WindowStyle "Hidden"
+                Start-Process "c:\docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
             }
             catch {
                 try {
-                    Start-Process "c:\docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
+                    Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
                 }
-                catch {
-                    try {
-                        Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
-                    }
-                    catch {} 
-                }
+                catch {} 
             }
         }
+    }
+    do {    
+        
           
         try {
             # launch docker desktop and keep it open 
