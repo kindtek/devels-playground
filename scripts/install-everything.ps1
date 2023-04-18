@@ -24,10 +24,10 @@ function reboot_prompt {
 }
 
 function install_windows_features {
-    param ( $git_scripts_path )
+    param ( $git_path )
     $new_install = $false
-    $winconfig = "$git_scripts_path/dvl-adv/add-windows-features.ps1"
-    &$winconfig = Invoke-Expression -command "$git_scripts_path/dvl-adv/add-windows-features.ps1"
+    $winconfig = "$git_path/dvl-adv/add-windows-features.ps1"
+    &$winconfig = Invoke-Expression -command "$git_path/dvl-adv/add-windows-features.ps1"
     return $new_install
 }
 
@@ -192,7 +192,7 @@ workflow start_installer_daemon {
     # jump to bottom line without clearing scrollback
     InlineScript { Write-Host "$([char]27)[2J" }
     # @TODO: fix $new_install variable - doesn't work for windows features in  
-    $new_install = install_windows_features $git_path\scripts 
+    $new_install = install_windows_features $git_path 
     if ($new_install -eq $true) {
         InlineScript { Write-Host "`r`nWindows features installed. Restart? `r`n" }
         Restart-Computer
