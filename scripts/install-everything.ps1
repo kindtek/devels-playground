@@ -108,7 +108,8 @@ function require_docker_online {
 
     $docker_tries = 0
     $docker_online = $false
-   
+    $host.UI.RawUI.ForegroundColor = "Black"
+    $host.UI.RawUI.BackgroundColor = "DarkRed"
     Write-Host "`r`n`r`nWaiting for Docker to come online ..."  
     $sleep_time = 30
     try {
