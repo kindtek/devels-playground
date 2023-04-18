@@ -114,8 +114,12 @@ function require_docker_online {
             Start-Process "c:\docker\Docker Desktop.exe" -WindowStyle "Hidden"
         } catch {
             try {
+                Start-Process "c:\docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
+            } catch {
+            try {
             Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
             } catch {} 
+            }
         }
           
         try {
