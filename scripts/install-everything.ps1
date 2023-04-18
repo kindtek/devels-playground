@@ -32,7 +32,7 @@ function install_windows_features {
 }
 
 function install_dependencies {
-    param ($git_scripts_path, $git_path)
+    param ( $git_path )
 
     $software_name = "Visual Studio Code (VSCode)"
     if (!(Test-Path -Path "$git_path/.vscode-installed" -PathType Leaf)) {
@@ -184,7 +184,6 @@ workflow start_installer_daemon {
     $repo_src_owner = 'kindtek'
     $repo_git_name = 'dvlw'
     $git_path = "$HOME\repos\$repo_src_owner\$repo_git_name"
-    $git_scripts_path
 
     # jump to bottom line without clearing scrollback
     InlineScript { Write-Host "$([char]27)[2J" }
@@ -198,7 +197,7 @@ workflow start_installer_daemon {
     wsl --install --no-launch
     wsl --update
 
-    $new_install = install_dependencies $git_scripts_path $git_path
+    $new_install = install_dependencies $git_path
     if ($new_install -eq $true) {
         reboot_prompt
     }
