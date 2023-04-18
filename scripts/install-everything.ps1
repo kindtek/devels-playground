@@ -189,24 +189,24 @@ function start_installer_daemon {
     $git_path = "$HOME\repos\$repo_src_owner\$repo_git_name"
 
     # jump to bottom line without clearing scrollback
-    Write-Host "$([char]27)[2J" 
+    # Write-Host "$([char]27)[2J" 
     $new_install = install_windows_features $git_path 
     if ($new_install -eq $true) {
         reboot_prompt
     }
 
-    Write-Host "$([char]27)[2J" 
+    # Write-Host "$([char]27)[2J" 
     wsl --install --no-launch
     wsl --update
 
-    Write-Host "$([char]27)[2J" 
+    # Write-Host "$([char]27)[2J" 
     $new_install = install_dependencies $git_path
     if ($new_install -eq $true) {
         reboot_prompt
     }
 
     
-    Write-Host "$([char]27)[2J" 
+    # Write-Host "$([char]27)[2J" 
     Write-Host "`r`nInstallations complete! Restart may be needed to complete begin WSL import phase. `r`n`r`n" 
     reboot_prompt
     Start-Sleep 10
