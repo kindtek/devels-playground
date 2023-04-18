@@ -182,7 +182,6 @@ function cleanup_installation {
 
 
 function start_installer_daemon {
-    param ([string]$img_subset)
 
     $repo_src_owner = 'kindtek'
     $repo_git_name = 'dvlw'
@@ -195,9 +194,11 @@ function start_installer_daemon {
         reboot_prompt
     }
 
+    Write-Host "$([char]27)[2J" 
     wsl --install --no-launch
     wsl --update
 
+    Write-Host "$([char]27)[2J" 
     $new_install = install_dependencies $git_path
     if ($new_install -eq $true) {
         reboot_prompt
@@ -213,6 +214,4 @@ function start_installer_daemon {
     }
 }
 
-Write-Host "args.."
-Write-Host $args[0]
-start_installer_daemon $args[0]
+start_installer_daemon
