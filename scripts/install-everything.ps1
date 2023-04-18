@@ -128,7 +128,7 @@ function require_docker_online {
             }
         
             if ($docker_online -eq $false -And (($docker_tries % 2) -eq 0)) {
-                write-host docker info
+                docker info
                 write-host "`r`n"
                 $sleep_time += 15
                 Start-Sleep $sleep_time
@@ -137,11 +137,11 @@ function require_docker_online {
                 # start count over
                 # $docker_attempt1 = $docker_attempt2 = $false
                 # prompt to continue
-                write-host docker info
+                docker info
                 $check_again = Read-Host "Keep trying to connect to Docker? ([y]n)"
             }
             elseif ($docker_online -eq $false -And (($docker_tries % 5) -eq 0)) {
-                write-host docker info
+                docker info
                 docker update --restart=always docker-desktop
                 docker update --restart=always docker-desktop-data
                 Write-Host "Waited $docker_tries seconds .. "
