@@ -350,7 +350,7 @@ function run_devels_playground {
             Write-Host "`r`npowershell.exe -Command `"$HOME/kindtek/devels-workshop/dvlp/scripts/wsl-docker-import.cmd`" $img_subset`r`n"
             powershell.exe -Command "$HOME/kindtek/devels-workshop/dvlp/scripts/wsl-docker-import.cmd" $img_subset
             # &$devs_playground = "$git_path/dvlp/scripts/wsl-docker-import.cmd $global:img_subset"
-            Write-Host "$software_name installed`r`n" | Out-File -FilePath "$git_path/.dvlp-installed"
+            # Write-Host "$software_name installed`r`n" | Out-File -FilePath "$git_path/.dvlp-installed"
         }
     }
     catch {}
