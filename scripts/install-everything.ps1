@@ -108,7 +108,7 @@ function require_docker_online {
     $docker_online = $false
    
     Write-Host "`r`n`r`nWaiting for Docker to come online ..."  
-
+    sleep_time = 30
     do {    
         try {
             Start-Process "c:\docker\Docker Desktop.exe" -WindowStyle "Hidden"
@@ -130,7 +130,8 @@ function require_docker_online {
             if ($docker_online -eq $false -And (($docker_tries % 2) -eq 0)) {
                 write-host docker info
                 write-host "`r`n"
-                Start-Sleep 30
+                $sleep_time += 15
+                Start-Sleep $sleep_time
             }
             elseif ($docker_online -eq $false -And (($docker_tries % 3) -eq 0)) {
                 # start count over
@@ -206,7 +207,7 @@ function start_installer_daemon {
 
     
     Write-Host "$([char]27)[2J" 
-    Write-Host "`r`nInstallations complete! Restart may be needed to complete update.`r`n`r`nStarting WSL import tool ... `r`n`r`n" 
+    Write-Host "`r`nInstallations complete! Restart may be needed to complete begin WSL import phase. `r`n`r`n" 
     Start-Sleep 10
     if (!(require_docker_online)) {
         Write-Host "`r`nCannot start Docker.`r`n" 
