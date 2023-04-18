@@ -34,7 +34,7 @@ function install_windows_features {
 
 function install_dependencies {
     param ( $git_path )
-    "The following programs will be installed or updated`r`n`t- Visual Studio Code`r`n`t- Docker Desktop`r`n`t- Windows Terminal`r`n`t- Python 3.10`r`n`t"
+    Write-Host "The following programs will be installed or updated`r`n`t- Visual Studio Code`r`n`t- Docker Desktop`r`n`t- Windows Terminal`r`n`t- Python 3.10`r`n`t"
     $software_name = "Visual Studio Code (VSCode)"
     if (!(Test-Path -Path "$git_path/.vscode-installed" -PathType Leaf)) {
         Write-Host "Installing $software_name ..."
@@ -192,6 +192,7 @@ function start_installer_daemon {
     # Write-Host "$([char]27)[2J" 
     $new_install = install_windows_features $git_path 
     if ($new_install -eq $true) {
+        Write-Host "`r`nWindows features installations complete! Restart may be needed to continue. `r`n`r`n" 
         reboot_prompt
     }
 
@@ -202,13 +203,12 @@ function start_installer_daemon {
     # Write-Host "$([char]27)[2J" 
     $new_install = install_dependencies $git_path
     if ($new_install -eq $true) {
+        Write-Host "`r`nSoftware installations complete! Restart may be needed to begin WSL import phase. `r`n`r`n" 
         reboot_prompt
     }
 
     
     # Write-Host "$([char]27)[2J" 
-    Write-Host "`r`nInstallations complete! Restart may be needed to begin WSL import phase. `r`n`r`n" 
-    reboot_prompt
     Start-Sleep 10
     if (!(require_docker_online)) {
         Write-Host "`r`nCannot start Docker.`r`n" 
