@@ -210,7 +210,9 @@ function require_docker_online {
                 
             }
         }
-        catch {}
+        catch {
+            $docker_online = $false
+        }
         # } while (-Not $docker_online )
     } while ( -Not $docker_online -And $check_again -ine 'n' )
 
