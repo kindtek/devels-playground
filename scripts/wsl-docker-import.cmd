@@ -18,14 +18,15 @@ SET "image_tag=%~1"
 IF "!image_tag!"=="" (
     SET image_repo=_
     SET image_repo_mask=official
-    SET "image_tag=ubuntu:latest"
+    SET "image_tag=latest"
+    SET "image_name=ubuntu:%image_tag%"
     @REM ECHO "image_tag set to !image_tag!"
 ) ELSE (
     SET "image_tag=%1"
+    SET "image_name=devels-playground:%image_tag%"
     @REM ECHO "image_tag set to arg: '%1'  ('%~1') as !image_tag!"
 )
 
-SET "image_name=devels-playground:%image_tag%"
 SET "install_directory=%image_repo_mask%-%image_name::=-%"
 SET "save_location=%mount_drive%:\%save_directory%"
 SET "install_location=%save_location%\%install_directory%"
@@ -139,10 +140,13 @@ if %default%==config (
     )
 )
 
-
-SET docker_image_id_path=%install_location%\.image_id
-SET docker_container_id_path=%install_location%\.container_id
-SET image_save_path=%save_location%\%distro%.tar
+SET "timestamp=%DATE:~10,4%%DATE:~4,2%%DATE:~7,2%%TIME:*.=%"
+SET "install_location=!install_location!-!timestamp!"
+SET "save_location=!save_location!-!timestamp!"
+SET "distro=!distro!-!timestamp!"
+SET "docker_image_id_path=%install_location%\.image_id"
+SET "docker_container_id_path=%install_location%\.container_id"
+SET "image_save_path=%save_location%\%distro%.tar"
 
 @REM directory structure: 
 @REM %mount_drive%:\%install_directory%\%save_directory%
