@@ -16,7 +16,9 @@ SET image_repo=kindtek
 SET image_repo_mask=kindtek
 SET "image_tag=%~1"
 IF "!image_tag!"=="" (
-    SET "image_tag=kali-dind-lite"
+    SET image_repo=_
+    SET image_repo_mask=official
+    SET "image_tag=ubuntu:latest"
     @REM ECHO "image_tag set to !image_tag!"
 ) ELSE (
     SET "image_tag=%1"
