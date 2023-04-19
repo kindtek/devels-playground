@@ -145,6 +145,7 @@ function require_docker_online {
                     Start-Sleep -s $sleep_time
                 }
                 Write-Host "Docker Desktop is now online"
+                docker info
             }
         
             if ($docker_online -eq $false -And (($docker_tries % 2) -eq 0)) {
