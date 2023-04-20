@@ -649,8 +649,8 @@ ECHO:
 SET /p "options=$ "
 IF "!options!"=="" (
 @REM dism /Online /Cleanup-Image /RestoreHealth
-    shutdown /r
     ECHO "initializing restart ..."
+    shutdown /r
     goto quit
 )
 IF "!options!"=="o" (
