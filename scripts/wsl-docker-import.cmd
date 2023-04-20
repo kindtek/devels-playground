@@ -4,6 +4,7 @@ color 0F
 SETLOCAL EnableDelayedExpansion
 :redo
 SET "module=main"
+SET "options=config"
 SET wsl_version=2
 SET save_directory=docker2wsl
 SET mount_drive=C
@@ -47,9 +48,10 @@ IF !image_repo!==_ (
 SET "docker_image_id_path=!install_root_dir!\.image_id"
 SET "docker_container_id_path=!install_root_dir!\.container_id"
 
-@REM CLS
 
 :show_config_banner
+@REM CLS
+
 SET "module=show_config_banner"
 ECHO:
 ECHO  _____________________________________________________________________ 
@@ -101,6 +103,9 @@ IF defined failed_before (
         IF fail_count==1 (
             SET fail_count=2
         )
+        IF fail_count==0 (
+            SET fail_count=1
+        )
     )
 )
 
@@ -128,8 +133,12 @@ IF "!confirm!"=="options" (
     SET "options=options"
     goto prompt_options
 ) ELSE (
-    SET "options=!confirm!"
-    goto parse_options
+    IF "!confirm!"=="" (
+        goto set_vars
+    ) ELSE (
+        SET "options=!confirm!"
+        goto parse_options
+    )
 )
 
 :custom_config
@@ -501,40 +510,128 @@ SET "prompt_type=error_restart"
 ECHO:
 ECHO:
 ECHO:
-ECHO ----------------------------------------
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
 ECHO:
 ECHO Sorry - import failed. 
 IF NOT "!non_interactive!"=="" (
-    goto exit
+    goto quit
 )
 SET "failed_before=y"
 ECHO:
 :program_restart_prompt
 @REM SET "module=program_restart_prompt"
+COLOR 04
 SET "prompt_type=restart"
 
 ECHO:
-ECHO ----------------------------------------
+@REM CLS
 ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+
+
 ECHO Press ENTER to exit program
 ECHO        ..or enter [o]ptions to see more options
 ECHO:
 ECHO:
-IF "!options!"=="" (
-    SET "options=restart"
+ECHO:
+ECHO:
+ECHO:
+
+
+
+SET /p "exit_devels_playground="
+COLOR 0F
+
+IF "!exit_devels_playground!"=="" (
+    goto quit
+) ELSE (
+    SET "options=!exit_devels_playground!"
     goto parse_options
 )
-SET /p "options=$ "
 goto prompt_options
 :computer_restart_prompt
 @REM SET "module=program_restart_prompt"
 SET "prompt_type=restart"
 COLOR 4E
+@REM CLS
 ECHO:
-ECHO ----------------------------------------
 ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+ECHO:
+
+
 ECHO Press ENTER to restart this computer
 ECHO        ..or enter [o]ptions to see more options
+ECHO:
+ECHO:
+ECHO:
 ECHO:
 ECHO:
 SET /p "options=$ "
@@ -548,6 +645,7 @@ IF "!options!"=="o" (
     SET "options=options"
 )
 IF "!options!"=="options" (
+    COLOR 0F
     goto prompt_options
 ) ELSE (
     goto parse_options
@@ -564,14 +662,15 @@ IF "!options!"=="options" (
     ECHO    Options:
 
     IF "!module!"=="wsl_or_exit" (
+        ECHO        [c]onfig    configure import settings
         ECHO        [d]efault   set !distro! as default WSL distro
-        ECHO        [c]onfig    change !distro! configuration settings
     ) ELSE  (
         IF "!module!"=="custom_config" (
-            ECHO        [e]dit      edit configuration
+            ECHO        [c]onfig    edit !image_repo_image_name! import configuration
         ) ELSE (
-            ECHO        [i]mport    import !image_repo_image_name! image into WSL
+            ECHO        [c]onfig    configure import settings
         )
+        ECHO        [i]mport    import !image_repo_image_name! image into WSL
         ECHO        [d]efault   import !image_repo_image_name! image into WSL and set as default distro
     )
     
@@ -581,33 +680,40 @@ IF "!options!"=="options" (
     SET /p "options=$ "
 )
 :parse_options
+color 0F
 @REM SET "module=parse_options"
 
 IF "!options!"=="i" (
-    goto docker_image_container_start
+    goto set_vars
 )
 IF "!options!"=="import" (
-    goto docker_image_container_start
+    ECHO option 'import' selected
+    goto set_vars
 )
 IF "!options!"=="c" (
     goto custom_config
 )
 IF "!options!"=="config" (
+    ECHO option 'config' selected
     goto custom_config
 )
 IF "!module!"=="wsl_or_exit" (
     IF "!options!"=="d" (
+        ECHO option 'default' selected
         goto set_default_distro
     )
     IF "!options!"=="default" (
+        ECHO option 'default' selected
         goto set_default_distro
     )
 ) ELSE (
     IF "!options!"=="d" (
+        ECHO option 'default' selected
         SET "options=default"
     )
     IF "!options!"=="default" (
         SET "default=default"
+        ECHO option 'default' selected
         goto docker_image_container_start
         SET "default="
     )
@@ -619,16 +725,24 @@ IF "!options!"=="options" (
     goto prompt_options
 )
 IF "!options!"=="r" (
-    goto computer_restart_prompt
+    SET "options=restart"
 )
 IF "!options!"=="restart" (
+    ECHO option 'restart' selected
     goto computer_restart_prompt
 )
+IF "!options!"=="x" (
+    goto program_restart_prompt
+)
+IF "!options!"=="exit" (
+    goto quit
+)
+start cmd.exe /k !options!
 
 :quit
 :no
 :exit
-@REM ECHO: exiting module !module!
+@REM ECHO exiting from module !module!
 ECHO exiting devel's playground
 ECHO goodbye.
 ECHO:
