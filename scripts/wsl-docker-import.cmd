@@ -18,6 +18,11 @@ SET "image_tag=%~1"
 SET "non_interactive=%~2"
 SET non_interactive=%non_interactive: =%
 SET "options=%~3"
+IF "!options!"="default" (
+    SET "default_distro=y"
+) ELSE (
+    SET "default_distro=n"
+)
 
 IF "!image_tag!"=="" (
     SET image_repo=_
@@ -443,13 +448,16 @@ if "options"=="yes" (
         ECHO press ENTER to import !distro! as the default WSL distro
         ECHO  ..or enter any character to skip
         SET /p "setdefault=$ "
+        IF "!setdefault!"="" (
+            SET "default_distro=y"
+        )
     )
 )
 
 
 :set_default_distro
 SET "module=set_default_distro"
-IF "!setdefault!"=="" (
+IF "!default_distro!"=="y" (
 
     SET "options=default"
     ECHO:
@@ -741,10 +749,12 @@ IF "!options!"=="config" (
 )
 IF "!module!"=="wsl_or_exit" (
     IF "!options!"=="d" (
+        SET "default_distro=y"
         ECHO option 'default' selected
         goto set_default_distro
     )
     IF "!options!"=="default" (
+        SET "default_distro=y"
         ECHO option 'default' selected
         goto set_default_distro
     )
