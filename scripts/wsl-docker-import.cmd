@@ -75,12 +75,34 @@ IF NOT "!non_interactive!"=="" (
 ) 
 
 :start_main_prompt
+IF defined failed_before (
+    IF !fail_count! GTR 2 (
+        SET fail_count=0
+        ECHO fail_count
+        echo !fail_count!
+        goto error_restart_prompt
+    ) ELSE (        
+        IF fail_count==3 (
+            SET fail_count=4
+        )
+        IF fail_count==2 (
+            SET fail_count=3
+        )
+        IF fail_count==1 (
+            SET fail_count=2
+        )
+    )
+)
+
 ECHO:
 ECHO:
 ECHO Press ENTER to use !above! settings and import !distro! as default WSL distro 
 ECHO:
 ECHO   ..or type 'config' for custom install.
 ECHO   ..or type 'x' to exit
+@REM IF defined failed_before (  
+@REM  ECHO   ..or type 'restart' to restart device
+@REM )
 @REM @TODO: add options ie: 
 @REM ECHO   ..or type:
 @REM ECHO           - 'registry' to specify distro from a registry on the Docker Hub
@@ -90,7 +112,9 @@ ECHO   ..or type 'x' to exit
 ECHO:
 ECHO:
 SET /p "default=$ "
-
+if !default!==restart (
+    goto restart_prompt
+)
 :custom_config
 
 @REM prompt user to type input or hit enter for default shown in parentheses
@@ -211,18 +235,37 @@ IF %default%==config (
 ) ELSE (
     ECHO docker run -dit --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID!
     docker run -dit --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID! 
+
 )
 
 SET /P WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path! > nul
 if "!WSL_DOCKER_CONTAINER_ID!"=="" (
-    ECHO An error occurred. Missing container ID. Please restart and try again
+    ECHO An error occurred. Missing container ID. Please try again
     SET above=previous
-    goto start_main_prompt
+    SET failed_before=y
+    goto error_restart_prompt
 )
 ECHO:
 ECHO exporting image (!WSL_DOCKER_IMG_ID!) as container (!WSL_DOCKER_CONTAINER_ID!)...
 ECHO docker export !WSL_DOCKER_CONTAINER_ID! ^> !image_save_path!
+@set /A _tic=%time:~0,2%*3600^
+                +%time:~3,1%*10*60^
+                +%time:~4,1%*60^
+                +%time:~6,1%*10^
+                +%time:~7,1% >nul
+
 docker export !WSL_DOCKER_CONTAINER_ID! > !image_save_path!
+
+@set /A _toc=%time:~0,2%*3600^
+            +%time:~3,1%*10*60^
+            +%time:~4,1%*60^
+            +%time:~6,1%*10^
+            +%time:~7,1% >nul
+@set /A _elapsed=%_toc%-%_tic
+@REM IF !_elapse! LEQ 1 (
+@REM     ECHO Docker export failure
+@REM     goto error_restart_prompt
+@REM     )
 ECHO DONE
 
 :wsl_list
@@ -239,11 +282,11 @@ ECHO _____________________________________________________________________
 
 :install_prompt
 ECHO:
-ECHO Would you still like to continue (y/n/redo)?
-SET /p "continue="
-IF "!image_tag!"=="" (
+IF NOT "!non_interactive!"=="" (
     SET continue=install
 )
+ECHO Would you still like to continue (y/n/redo)?
+SET /p "continue="
 
 @REM if blank -> yes 
 IF "%continue%"=="" ( 
@@ -283,7 +326,25 @@ if "!distro!"=="official-ubuntu-latest" (
 ECHO:
 ECHO importing !distro!.tar to !install_location! as !distro!...
 ECHO wsl --import !distro! !install_location! !image_save_path! --version !wsl_version!
+@set /A _tic=%time:~0,2%*3600^
+            +%time:~3,1%*10*60^
+            +%time:~4,1%*60^
+            +%time:~6,1%*10^
+            +%time:~7,1% >nul
+
 wsl --import !distro! !install_location! !image_save_path! --version !wsl_version!
+
+@set /A _toc=%time:~0,2%*3600^
+            +%time:~3,1%*10*60^
+            +%time:~4,1%*60^
+            +%time:~6,1%*10^
+            +%time:~7,1% >nul
+@set /A _elapsed=%_toc%-%_tic
+IF !_elapse! LEQ 1 (
+    ECHO WSL import failure
+    SET "failed_before=y"
+    goto error_restart_prompt
+)
 ECHO DONE
 
 if default==yes (
@@ -365,16 +426,30 @@ IF "%exit%"=="" (
                         +%time:~6,1%*10^
                         +%time:~7,1% >nul
             @set /A _elapsed=%_toc%-%_tic
-    IF !_elapse! LEQ 1 (
-        ECHO WSL is down. Restart computer?
-        SET /p "restart_computer="
-        IF "!restart_computer!"=="" (
-            shutdown /r
-        )
-    )
+            IF !_elapse! LEQ 1 (
+                ECHO WSL is down.
+                SET "failed_before=y"
+                goto error_restart_prompt
+            )
 
 )    
-
+:error_restart_prompt:
+ECHO Error detected. 
+IF NOT "!non_interactive!"=="" (
+    goto exit
+)
+ECHO:
+ECHO Hit ENTER to restart devel's playground. 
+:restart_prompt
+    ECHO Type 'restart' and ENTER to restart computer
+    SET /p "restart_computer="
+    IF "!restart_computer!"=="" (
+        SET "failed_before=y"
+        goto start_main_prompt
+    ) 
+    IF "!restart_computer!"=="restart" (
+        shutdown /r
+    )
 )
 :quit
 :no
