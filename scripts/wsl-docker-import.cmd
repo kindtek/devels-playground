@@ -242,13 +242,12 @@ if "!options!"=="config" (
 :set_vars
 SET "module=set_vars"
 for /f %%x in ('wmic path win32_utctime get /format:list ^| findstr "="') do set %%x
-set today=%Year%%Month%%Day%
-SET "timestamp=-!today!"
+set "timestamp=%Year%%Month%%Day%"
 SET timestamp_id=!timestamp!_%TIME:*.=%
 SET "install_location=!install_root_dir!\!timestamp!\!timestamp_id!"
 SET "save_location=!save_location!"
 IF NOT "!distro!"=="official-ubuntu-latest" (
-    SET "distro=!distro!!timestamp_id!"
+    SET "distro=!distro!-!timestamp_id!"
 )
 SET "docker_image_id_path=!install_location!\.image_id"
 SET "docker_container_id_path=!install_location!\.container_id"
