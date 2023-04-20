@@ -134,6 +134,7 @@ IF "!confirm!"=="options" (
     goto prompt_options
 ) ELSE (
     IF "!confirm!"=="" (
+        SET "options="
         goto set_vars
     ) ELSE (
         SET "options=!confirm!"
@@ -199,6 +200,7 @@ if "!options!"=="config" (
     ECHO:   or enter [o]ptions to see more options
     SET /p "options= $ "
     IF "!options!"=="" (
+        SET "options="
         goto set_vars
     )
     IF "!options!"=="o" (
@@ -559,6 +561,12 @@ ECHO:
 SET /p "exit_devels_playground="
 COLOR 0F
 
+IF "!exit_devels_playground!"=="x" (
+    goto quit
+)
+IF "!exit_devels_playground!"=="exit" (
+    goto quit
+)
 IF "!exit_devels_playground!"=="" (
     goto quit
 ) ELSE (
@@ -648,7 +656,16 @@ IF "!options!"=="options" (
     COLOR 0F
     goto prompt_options
 ) ELSE (
-    goto parse_options
+    IF "!options!"=="r" (
+        SET "options=restart"
+    )
+    IF "!options!"=="restart" (
+        shutdown /r
+    ) ELSE (
+        COLOR 0F
+        goto parse_options
+    )
+    
 )
 
 :prompt_options:
