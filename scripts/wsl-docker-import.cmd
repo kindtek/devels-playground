@@ -40,7 +40,9 @@ IF "!image_tag!"=="" (
     
 )
 IF NOT "!non_interactive!"=="" (
-    SET "options=yes"
+    SET "interactive=y"
+) ELSE (
+    SET "interactive=n"
 )
 
 SET "install_directory=!image_repo_mask!-!image_name::=-!"
@@ -356,7 +358,7 @@ ECHO _____________________________________________________________________
 SET "module=install_prompt"
 
 ECHO:
-IF NOT "!non_interactive!"=="" (
+IF "!interactive!"=="n" (
     SET "continue=install"
     goto install
 ) ELSE (
@@ -490,37 +492,35 @@ IF "!exit!"=="" (
                 +%time:~6,1%*10^
                 +%time:~7,1% >nul
     @set /A _elapsed=%_toc%-%_tic
-    IF "!non_interactive!"=="" (
-        IF !_elapse! LEQ 1 (
-            ECHO ERROR DETECTED
-            IF "!options!"=="default" (
-                ECHO reverting back to official ubuntu latest distro
-                wsl -s official-ubuntu-latest
-            )
-            ECHO trying to convert distro version to WSL1 with:
-            ECHO wsl --set-version !distro! 1
-            wsl --set-version !distro! 1
-            @set /A _tic=%time:~0,2%*3600^
-                        +%time:~3,1%*10*60^
-                        +%time:~4,1%*60^
-                        +%time:~6,1%*10^
-                        +%time:~7,1% >nul
-
-                wsl -d !distro!
-
-            @set /A _toc=%time:~0,2%*3600^
-                        +%time:~3,1%*10*60^
-                        +%time:~4,1%*60^
-                        +%time:~6,1%*10^
-                        +%time:~7,1% >nul
-            @set /A _elapsed=%_toc%-%_tic
-            IF !_elapse! LEQ 1 (
-                ECHO WSL is down.
-                SET "failed_before=y"
-                goto error_restart_prompt
-            )
+    IF !_elapse! LEQ 1 (
+        ECHO ERROR DETECTED
+        IF "!options!"=="default" (
+            ECHO reverting back to official ubuntu latest distro
+            wsl -s official-ubuntu-latest
         )
-    ) 
+        ECHO trying to convert distro version to WSL1 with:
+        ECHO wsl --set-version !distro! 1
+        wsl --set-version !distro! 1
+        @set /A _tic=%time:~0,2%*3600^
+                    +%time:~3,1%*10*60^
+                    +%time:~4,1%*60^
+                    +%time:~6,1%*10^
+                    +%time:~7,1% >nul
+
+        wsl -d !distro!
+
+        @set /A _toc=%time:~0,2%*3600^
+                    +%time:~3,1%*10*60^
+                    +%time:~4,1%*60^
+                    +%time:~6,1%*10^
+                    +%time:~7,1% >nul
+        @set /A _elapsed=%_toc%-%_tic
+        IF !_elapse! LEQ 1 (
+            ECHO WSL is down.
+            SET "failed_before=y"
+            goto error_restart_prompt
+        )
+    )
 )
 
 :error_restart_prompt:
@@ -539,7 +539,7 @@ ECHO:
 ECHO:
 ECHO:
 ECHO Sorry - import failed. 
-IF NOT "!non_interactive!"=="" (
+IF "!interactive!"=="y" (
     goto quit
 )
 SET "failed_before=y"
