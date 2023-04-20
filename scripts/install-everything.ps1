@@ -214,8 +214,11 @@ function require_docker_online {
             $docker_online = $false
         }
         # } while (-Not $docker_online )
-    } while ( -Not $docker_online -And $check_again -ine 'n' )
-
+    } while ( -Not $docker_online -And ( $check_again -ine 'n' -And $check_again -ine 'no') )
+    if  ( -Not $docker_online -And ( $check_again -ine 'n' -Or $check_again -ine 'no') ) {
+        Write-Host "Could not start Docker. You may need to restart your computer"
+        reboot_prompt
+    }
     return $docker_online
 }
 
