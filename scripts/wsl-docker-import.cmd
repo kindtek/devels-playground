@@ -429,17 +429,14 @@ wsl --import !distro! !install_location! !image_save_path! --version !wsl_versio
 @REM     goto error_restart_prompt
 @REM )
 ECHO DONE
-
+IF "!default_distro!"=="y" (
+    SET "options=yes"
+)
 if "options"=="yes" (
     goto set_default_distro
 ) ELSE (
     IF "interactive"=="n" (
-        IF "!default_distro!"=="y" (
-            SET "setdefault="
-            goto set_default_distro
-        ) ELSE (
-            goto wsl_or_exit
-        )
+        goto wsl_or_exit
     ) ELSE (
         ECHO: 
         ECHO press ENTER to import !distro! as the default WSL distro
