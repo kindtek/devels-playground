@@ -94,15 +94,15 @@ IF "!options!"=="default" (
 
 )
 ECHO   -------------------------------------------------------------------
+
+:start_main_prompt
+SET "module=start_main_prompt"
 SET above=above
 IF "!interactive!"=="n" (
     @REM official repo has no repo name in address/url
     SET options=yes
     goto set_vars
 )
-
-:start_main_prompt
-SET "module=start_main_prompt"
 IF defined failed_before (
     IF !fail_count! GTR 2 (
         SET fail_count=0
