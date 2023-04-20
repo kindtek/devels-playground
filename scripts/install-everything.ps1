@@ -151,7 +151,6 @@ function require_docker_online {
             if ( $docker_tries -eq 1 -And $docker_online -eq $false ) {
                     Write-Host "Error messages are expected when first starting Docker. Please wait ..."
             }
-        
             if ($docker_online -eq $false -And (($docker_tries % 2) -eq 0)) {
                 write-host ""
                 $sleep_time += 15
@@ -170,7 +169,7 @@ function require_docker_online {
             elseif ( $docker_online -eq $false -And (($docker_tries % 7) -eq 0)){
                 $restart = Read-Host "Restart docker? ([y]n)"
                 if ( $restart -ine 'n' -And $restart -ine 'no') {
-                    wsl --install --no-launch
+                    wsl --install -d kali-linux --no-launch
                     wsl --update --pre-release
                     $docker_tries = 1
                 }
@@ -179,6 +178,8 @@ function require_docker_online {
                 docker info
                 docker update --restart=always docker-desktop
                 docker update --restart=always docker-desktop-data
+                wsl --install -d kali-linux --no-launch
+                wsl --update --pre-release
                 Write-Host "Waited $docker_tries seconds .. "
                 Write-Host "Restarting Docker Engine..."
                 Write-Host "Switching Docker Engine ...."
