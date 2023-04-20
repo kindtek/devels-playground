@@ -40,10 +40,10 @@ IF "!image_tag!"=="default" (
 )
     
 
-IF NOT "!non_interactive!"=="" (
-    SET "interactive=n"
-) ELSE (
+IF "!non_interactive!"=="" (
     SET "interactive=y"
+) ELSE (
+    SET "interactive=n"
 )
 
 SET "install_directory=!image_repo_mask!-!image_name::=-!"
@@ -553,7 +553,7 @@ ECHO:
 ECHO:
 ECHO:
 ECHO Sorry - import failed. 
-IF "!interactive!"=="y" (
+IF "!interactive!"=="n" (
     goto quit
 )
 SET "failed_before=y"
