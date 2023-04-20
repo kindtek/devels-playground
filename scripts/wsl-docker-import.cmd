@@ -26,9 +26,18 @@ IF "!image_tag!"=="" (
     SET "image_name=ubuntu:!image_tag!"
     @REM ECHO "image_tag set to !image_tag!"
 ) ELSE (
-    SET "image_tag=%1"
-    SET "image_name=devels-playground:!image_tag!"
-    @REM ECHO "image_tag set to arg: '%1'  ('%~1') as !image_tag!"
+    IF "!image_tag!"=="default" (
+        SET image_repo=_
+        SET image_repo_mask=official
+        SET "image_tag=latest"
+        SET "image_name=ubuntu:!image_tag!"
+        @REM ECHO "image_tag set to !image_tag!"
+    ) ELSE (
+        SET "image_tag=%1"
+        SET "image_name=devels-playground:!image_tag!"
+        @REM ECHO "image_tag set to arg: '%1'  ('%~1') as !image_tag!"
+    )
+    
 )
 
 SET "install_directory=!image_repo_mask!-!image_name::=-!"
