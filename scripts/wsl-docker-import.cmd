@@ -159,7 +159,9 @@ IF "!confirm!"=="options" (
 
 :custom_config
 SET "module=custom_config"
-
+if "!interactive!"="n"(
+    goto quit
+)
 if "!options!"=="c" (
     SET "options=config"
 )
@@ -355,7 +357,9 @@ ECHO _____________________________________________________________________
 
 :install_prompt
 SET "module=install_prompt"
-
+if "!interactive!"="n"(
+    goto quit
+)
 ECHO:
 IF "!interactive!"=="n" (
     SET "continue=install"
@@ -555,6 +559,9 @@ IF "!interactive!"=="n" (
 SET "failed_before=y"
 ECHO:
 :program_restart_prompt
+if "!interactive!"="n"(
+    goto quit
+)
 @REM SET "module=program_restart_prompt"
 COLOR 04
 SET "prompt_type=restart"
@@ -602,6 +609,9 @@ IF "!exit_devels_playground!"=="" (
 )
 goto prompt_options
 :computer_restart_prompt
+if "!interactive!"="n"(
+    goto quit
+)
 @REM SET "module=program_restart_prompt"
 SET "prompt_type=restart"
 COLOR 4E
@@ -702,6 +712,9 @@ IF "!options!"=="o" (
     SET "options=options"
 )
 IF "!options!"=="options" (
+    if "!interactive!"="n"(
+        goto quit
+    )
     ECHO:
     ECHO    Options:
 
