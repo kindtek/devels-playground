@@ -39,6 +39,9 @@ IF "!image_tag!"=="" (
     )
     
 )
+IF NOT "!non_interactive!"=="" (
+    SET "options=yes"
+)
 
 SET "install_directory=!image_repo_mask!-!image_name::=-!"
 SET "save_location=!mount_drive!:\!save_directory!"
