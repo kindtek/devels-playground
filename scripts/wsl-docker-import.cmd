@@ -140,10 +140,13 @@ if %default%==config (
     )
 )
 
-SET "timestamp=%DATE:~0,2%%DATE:~3,2%%DATE:~6,2%%TIME:*.=%"
-SET "install_location=!install_location!-!timestamp!"
-SET "save_location=!save_location!-!timestamp!"
-SET "distro=!distro!-!timestamp!"
+SET "timestamp=-%DATE:~0,2%%DATE:~3,2%%DATE:~6,2%%TIME:*.=%"
+IF "!distro!"=="official-ubuntu-latest" (
+    SET "timestamp="
+) 
+SET "install_location=!install_location!!timestamp!"
+SET "save_location=!save_location!!timestamp!"
+SET "distro=!distro!!timestamp!"
 SET "docker_image_id_path=%install_location%\.image_id"
 SET "docker_container_id_path=%install_location%\.container_id"
 SET "image_save_path=%save_location%\%distro%.tar"
@@ -255,6 +258,14 @@ goto install_prompt
 :yes
 :install
 
+if "!distro!"=="official-ubuntu-latest" (
+    ECHO:
+    ECHO deleting WSL distro !distro! if it exists...
+    ECHO wsl --unregister !distro!
+    wsl --unregister !distro!
+    ECHO DONE
+)
+
 ECHO:
 ECHO importing !distro!.tar to !install_location! as !distro!...
 ECHO wsl --import !distro! !install_location! !image_save_path! --version !wsl_version!
@@ -303,10 +314,53 @@ IF "%exit%"=="" (
     ECHO launching WSL with !distro! distro...
     ECHO wsl -d !distro!
     ECHO:
-    wsl -d !distro!
-        
-    ECHO if WSL fails to start try converting the distro version to WSL1:
-    ECHO wsl --set-version !distro! 1
+    @set /A _tic=%time:~0,2%*3600^
+                +%time:~3,1%*10*60^
+                +%time:~4,1%*60^
+                +%time:~6,1%*10^
+                +%time:~7,1% >nul
+
+        wsl -d !distro!
+
+    @set /A _toc=%time:~0,2%*3600^
+                +%time:~3,1%*10*60^
+                +%time:~4,1%*60^
+                +%time:~6,1%*10^
+                +%time:~7,1% >nul
+    @set /A _elapsed=%_toc%-%_tic
+    IF !_elapse! LEQ 1 (
+            ECHO ERROR DETECTED
+            IF "!setdefault!"=="" (
+                ECHO reverting back to official ubuntu latest distro
+                wsl -s official-ubuntu-latest
+            )
+            ECHO trying to convert distro version to WSL1 with:
+            ECHO wsl --set-version !distro! 1
+            wsl --set-version !distro! 1
+            @set /A _tic=%time:~0,2%*3600^
+                        +%time:~3,1%*10*60^
+                        +%time:~4,1%*60^
+                        +%time:~6,1%*10^
+                        +%time:~7,1% >nul
+
+                wsl -d !distro!
+
+            @set /A _toc=%time:~0,2%*3600^
+                        +%time:~3,1%*10*60^
+                        +%time:~4,1%*60^
+                        +%time:~6,1%*10^
+                        +%time:~7,1% >nul
+            @set /A _elapsed=%_toc%-%_tic
+    IF !_elapse! LEQ 1 (
+        ECHO WSL is down. Restart computer?
+        SET /p "restart_computer="
+        IF "!restart_computer!"=="" (
+            shutdown /r
+        )
+    )
+
+)    
+
 )
 :quit
 :no
