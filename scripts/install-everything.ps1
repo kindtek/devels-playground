@@ -254,7 +254,7 @@ function start_installer_daemon {
 
     # Write-Host "$([char]27)[2J" 
     wsl --install -d Ubuntu --no-launch
-    wsl --update
+    wsl --update --pre-release
     wsl -s Ubuntu
 
     # Write-Host "$([char]27)[2J" 
