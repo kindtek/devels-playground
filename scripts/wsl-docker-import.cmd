@@ -16,7 +16,6 @@ SET image_repo=kindtek
 SET image_repo_mask=kindtek
 SET "image_tag=%~1"
 SET "non_interactive=%~2"
-SET non_interactive=%non_interactive: =%
 SET "options=%~3"
 IF "!options!"=="default" (
     SET "default_distro=y"
@@ -45,6 +44,8 @@ IF "!non_interactive!"=="" (
 ) ELSE (
     SET "interactive=n"
 )
+ECHO "non-interactive: !non_interactive!"
+
 ECHO "interactive: !interactive!"
 
 SET "install_directory=!image_repo_mask!-!image_name::=-!"
@@ -104,10 +105,10 @@ IF "!interactive!"=="n" (
     goto set_vars
 )
 IF defined failed_before (
-    IF !fail_count! GTR 2 (
-        SET fail_count=0
+    IF fail_count GTR 2 (
+        @REM SET fail_count=0
         ECHO fail_count
-        echo !fail_count!
+        echo fail_count
         goto error_restart_prompt
     ) ELSE (        
         IF fail_count==3 (
@@ -560,7 +561,7 @@ IF "!interactive!"=="n" (
 SET "failed_before=y"
 ECHO:
 :program_restart_prompt
-if "!interactive!"=="n"(
+if "!interactive!"=="n" (
     goto quit
 )
 @REM SET "module=program_restart_prompt"
