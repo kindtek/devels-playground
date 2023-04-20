@@ -46,7 +46,7 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 ## Now time for the fun stuff
 
-## **Instructions for importing images from [hub.docker.com](https://hub.docker.com/search?q=&image_filter=official) and the official [kindtek devel's playground docker hub repo](https://hub.docker.com/r/kindtek/dvlp/tags) into WSL with the Devel's Playground are [found here](https://github.com/kindtek/devels-playground#idle-minds-are-the-developers-playground)**
+## **Instructions for importing images from [hub.docker.com](https://hub.docker.com/search?q=&image_filter=official) and the official [kindtek devel's playground docker hub repo](https://hub.docker.com/r/kindtek/dvlp/tags) into WSL with the devel's playground are [found here](https://github.com/kindtek/devels-playground#idle-minds-are-the-developers-playground)**
 
 &nbsp;
 ## NEW FEATURES
