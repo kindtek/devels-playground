@@ -484,6 +484,9 @@ IF "!interactive!"=="y" (
     SET WSLENV=USERPROFILE/p 
     SET /p "openwsl=$ "
 )
+IF "!interactive!"=="n" (
+    goto quit
+)
 IF "!openwsl!"=="" (
     ECHO:
     ECHO launching WSL with !distro! distro...
@@ -533,6 +536,8 @@ IF "!openwsl!"=="" (
             goto error_restart_prompt
         )
     )
+) ELSE (
+    goto prompt_options
 )
 
 :error_restart_prompt:
