@@ -503,6 +503,7 @@ IF "!openwsl!"=="" (
                 +%time:~6,1%*10^
                 +%time:~7,1% >nul
     @set /A _elapsed=%_toc%-%_tic
+    ECHO "time elapsed: !_elapsed!"
     IF !_elapse! LEQ 1 (
         ECHO ERROR DETECTED
         IF "!options!"=="default" (
