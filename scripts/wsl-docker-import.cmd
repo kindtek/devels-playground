@@ -433,28 +433,32 @@ ECHO DONE
 if "options"=="yes" (
     goto set_default_distro
 ) ELSE (
-    ECHO: 
-    ECHO press ENTER to import !distro! as the default WSL distro
-    ECHO  ..or enter any character to skip
-    SET /p "setdefault=$ "
-    IF "!setdefault!"=="" (
+    IF "interactive"=="no" (
+        goto set_default_distro
+    ) ELSE (
+        ECHO: 
+        ECHO press ENTER to import !distro! as the default WSL distro
+        ECHO  ..or enter any character to skip
+        SET /p "setdefault=$ "
+    )
+)
+
 
 :set_default_distro
 SET "module=set_default_distro"
+IF "!setdefault!"=="" (
 
-        SET "options=default"
-        ECHO:
-        ECHO setting default WSL distro as !distro!...
-        ECHO  wsl --set-default !distro! 
-        wsl --set-default !distro! 
-        ECHO DONE!
-        ECHO:
-        ECHO  ..if starting WSL results in an error, try converting the distro version to WSL1 by running:
-        ECHO wsl --set-version !distro! 1
-        ECHO:
-        goto wsl_or_exit
-    )
-
+    SET "options=default"
+    ECHO:
+    ECHO setting default WSL distro as !distro!...
+    ECHO  wsl --set-default !distro! 
+    wsl --set-default !distro! 
+    ECHO DONE!
+    ECHO:
+    ECHO  ..if starting WSL results in an error, try converting the distro version to WSL1 by running:
+    ECHO wsl --set-version !distro! 1
+    ECHO:
+    goto wsl_or_exit
 )
 
 :wsl_or_exit
@@ -467,11 +471,13 @@ wsl -l -v
 ECHO:
 wsl --status
 ECHO:
-ECHO press ENTER to open !distro! in WSL
-ECHO  ..or enter any character to skip 
-@REM make sure windows paths transfer
-SET WSLENV=USERPROFILE/p 
-SET /p "exit=$ "
+IF "!interactive!"="y"(
+    ECHO press ENTER to open !distro! in WSL
+    ECHO  ..or enter any character to skip 
+    @REM make sure windows paths transfer
+    SET WSLENV=USERPROFILE/p 
+    SET /p "exit=$ "
+)
 IF "!exit!"=="" (
     ECHO:
     ECHO launching WSL with !distro! distro...
