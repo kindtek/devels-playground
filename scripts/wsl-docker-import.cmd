@@ -159,7 +159,7 @@ IF "!confirm!"=="options" (
 
 :custom_config
 SET "module=custom_config"
-if "!interactive!"="n"(
+if "!interactive!"=="n"(
     goto quit
 )
 if "!options!"=="c" (
@@ -357,7 +357,7 @@ ECHO _____________________________________________________________________
 
 :install_prompt
 SET "module=install_prompt"
-if "!interactive!"="n"(
+if "!interactive!"=="n"(
     goto quit
 )
 ECHO:
@@ -559,7 +559,7 @@ IF "!interactive!"=="n" (
 SET "failed_before=y"
 ECHO:
 :program_restart_prompt
-if "!interactive!"="n"(
+if "!interactive!"=="n"(
     goto quit
 )
 @REM SET "module=program_restart_prompt"
@@ -609,7 +609,7 @@ IF "!exit_devels_playground!"=="" (
 )
 goto prompt_options
 :computer_restart_prompt
-if "!interactive!"="n"(
+if "!interactive!"=="n"(
     goto quit
 )
 @REM SET "module=program_restart_prompt"
@@ -712,7 +712,7 @@ IF "!options!"=="o" (
     SET "options=options"
 )
 IF "!options!"=="options" (
-    if "!interactive!"="n"(
+    if "!interactive!"=="n"(
         goto quit
     )
     ECHO:
