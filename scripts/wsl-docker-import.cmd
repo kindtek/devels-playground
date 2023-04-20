@@ -239,10 +239,9 @@ if "!options!"=="config" (
 
 :set_vars
 SET "module=set_vars"
-FOR /F "TOKENS=1 eol=/ DELIMS=/ " %%A IN ('DATE/T') DO SET dd=%%A
-FOR /F "TOKENS=1,2 eol=/ DELIMS=/ " %%A IN ('DATE/T') DO SET mm=%%B
-FOR /F "TOKENS=1,2,3 eol=/ DELIMS=/ " %%A IN ('DATE/T') DO SET yyyy=%%C
-SET "timestamp=-%yyyy%%mm%%dd%"
+for /f %%x in ('wmic path win32_utctime get /format:list ^| findstr "="') do set %%x
+set today=%Year%%Month%%Day%
+SET "timestamp=-!today!"
 SET timestamp_id=!timestamp!_%TIME:*.=%
 SET "install_location=!install_root_dir!\!timestamp!\!timestamp_id!"
 SET "save_location=!save_location!"
