@@ -315,6 +315,7 @@ if "!WSL_DOCKER_CONTAINER_ID!"=="" (
     ECHO An error occurred. Missing container ID. Please try again
     SET above=previous
     SET failed_before=y
+    SET "options=options"
     goto error_restart_prompt
 )
 ECHO:
