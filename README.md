@@ -241,7 +241,7 @@ _Note: Each image forms the base layer for the image described below it. For ins
 
 ### Docker in Docker (DIND) - the holy grail.
 
-#### You will now be able to run nested virtual systems with Docker-in-Docker. This is not easy to set up on your own. This image is the default image installed by the Devel's Playground. It is reasonably lightweight at just under 700MB. This has most everything you need as a developer
+#### You will now be able to run nested virtual systems with Docker-in-Docker. This is not easy to set up on your own. This image is the default image installed by the devel's playground. It is reasonably lightweight at just under 700MB. This has most everything you need as a developer
 
 ---
 
@@ -274,7 +274,7 @@ This is a lightweight Graphical User Interface by most standards but still weigh
 # `apt-get install lightdm xrdp xfce4 xfce4-goodies`
 # `apt-get install --no-install-recommends -y kubuntu-desktop`
 
-These images has everything but CUDA. You can build your own kernel with the ubuntu-gui-plus image. The GUI is locked, loaded, and ready to go once installed into WSL2 with the Devel's Playground. Kubuntu has too many features and packages to list. See them [here](https://packages.ubuntu.com/jammy/kubuntu-desktop). The red packages come installed with this image. To keep the size of the image down, the recommended packages (in green) are not installed. Install them with sudo `apt-get install kubuntu-desktop` if you like
+These images has everything but CUDA. You can build your own kernel with the ubuntu-gui-plus image. The GUI is locked, loaded, and ready to go once installed into WSL2 with the devel's playground. Kubuntu has too many features and packages to list. See them [here](https://packages.ubuntu.com/jammy/kubuntu-desktop). The red packages come installed with this image. To keep the size of the image down, the recommended packages (in green) are not installed. Install them with sudo `apt-get install kubuntu-desktop` if you like
 
 ---
 
