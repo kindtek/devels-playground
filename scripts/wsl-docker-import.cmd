@@ -228,7 +228,7 @@ if "!options!"=="config" (
 SET "module=set_vars"
 
 SET "timestamp=-%DATE:~0,2%%DATE:~3,2%%DATE:~6,2%"
-SET timestamp_id=%TIME:*.=%
+SET timestamp_id=!timestamp!_%TIME:*.=%
 IF "!distro!"=="official-ubuntu-latest" (
     SET "timestamp="
 ) 
