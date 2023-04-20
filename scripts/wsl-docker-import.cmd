@@ -1,4 +1,4 @@
-@echo off
+@echo on
 @REM this file is solid but will be deprecated once wsl-import.ps1 is fixed
 color 0F
 SETLOCAL EnableDelayedExpansion
@@ -453,12 +453,12 @@ if "!options!"=="yes" (
 SET "module=set_default_distro"
 IF "!default_distro!"=="y" (
 
-    SET "options=default"
     ECHO:
     ECHO setting default WSL distro as !distro!...
     ECHO  wsl --set-default !distro! 
     wsl --set-default !distro! 
     ECHO DONE
+    SET "options=options"
     ECHO:
     ECHO  ..if starting WSL results in an error, try converting the distro version to WSL1 by running:
     ECHO wsl --set-version !distro! 1
@@ -483,11 +483,17 @@ IF "!interactive!"=="y" (
     @REM make sure windows paths transfer
     SET WSLENV=USERPROFILE/p 
     SET /p "openwsl=$ "
+    IF "!openwsl!"=="" (
+        SET "open_wsl=y"
+    )
+    goto open_wsl
 )
 IF "!interactive!"=="n" (
     goto quit
 )
-IF "!openwsl!"=="" (
+
+:open_wsl
+IF "!open_wsl!"=="y" (
     ECHO:
     ECHO launching WSL with !distro! distro...
     ECHO wsl -d !distro!
@@ -498,7 +504,7 @@ IF "!openwsl!"=="" (
                 +%time:~6,1%*10^
                 +%time:~7,1% >nul
 
-        wsl -d !distro!
+    wsl -d !distro!
 
     @set /A _toc=%time:~0,2%*3600^
                 +%time:~3,1%*10*60^
@@ -533,10 +539,13 @@ IF "!openwsl!"=="" (
         IF !_elapse! LEQ 1 (
             ECHO WSL is down.
             SET "failed_before=y"
-            goto error_restart_prompt
+            @REM goto error_restart_prompt
         )
+        SET "open_wsl=n"
+
     )
 ) ELSE (
+    SET /P 
     goto prompt_options
 )
 
