@@ -162,6 +162,8 @@ function require_docker_online {
             elseif ( $docker_online -eq $false -And (($docker_tries % 7) -eq 0)){
                 $restart = Read-Host "Restart docker? ([y]n)"
                 if ( $restart -ine 'n') {
+                    wsl --install -d Ubuntu --no-launch
+                    wsl --update --pre-release
                     $docker_tries = 1
                 }
             }
