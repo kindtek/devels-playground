@@ -16,6 +16,7 @@ SET image_repo=kindtek
 SET image_repo_mask=kindtek
 SET "image_tag=%~1"
 SET "non_interactive=%~2"
+SET non_interactive=%non_interactive: =%
 SET "options=%~3"
 
 IF "!image_tag!"=="" (
@@ -83,7 +84,7 @@ IF NOT "!non_interactive!"=="" (
     @REM official repo has no repo name in address/url
     SET options=yes
     goto set_vars
-) 
+)
 
 :start_main_prompt
 SET "module=start_main_prompt"
