@@ -345,6 +345,9 @@ SET "module=install_prompt"
 ECHO:
 IF NOT "!non_interactive!"=="" (
     SET "continue=install"
+    goto install
+) ELSE (
+    SET "options="
 )
 ECHO Would you still like to continue (y/n/redo)?
 SET /p "continue="
