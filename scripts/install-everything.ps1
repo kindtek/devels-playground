@@ -147,6 +147,9 @@ function require_docker_online {
                 Write-Host "Docker Desktop is now online"
                 docker info
             }
+            if ( $docker_tries -eq 1 -And $docker_online -eq $false ) {
+                    Write-Host "Error messages are expected when first starting Docker. Please wait ..."
+            }
         
             if ($docker_online -eq $false -And (($docker_tries % 2) -eq 0)) {
                 write-host "`r`n"
