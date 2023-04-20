@@ -40,9 +40,9 @@ IF "!image_tag!"=="" (
     
 )
 IF NOT "!non_interactive!"=="" (
-    SET "interactive=y"
-) ELSE (
     SET "interactive=n"
+) ELSE (
+    SET "interactive=y"
 )
 
 SET "install_directory=!image_repo_mask!-!image_name::=-!"
@@ -433,7 +433,7 @@ ECHO DONE
 if "options"=="yes" (
     goto set_default_distro
 ) ELSE (
-    IF "interactive"=="no" (
+    IF "interactive"=="n" (
         goto set_default_distro
     ) ELSE (
         ECHO: 
