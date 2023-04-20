@@ -476,14 +476,15 @@ wsl -l -v
 ECHO:
 wsl --status
 ECHO:
+SET "openwsl=no"
 IF "!interactive!"=="y" (
     ECHO press ENTER to open !distro! in WSL
     ECHO  ..or enter any character to skip 
     @REM make sure windows paths transfer
     SET WSLENV=USERPROFILE/p 
-    SET /p "exit=$ "
+    SET /p "openwsl=$ "
 )
-IF "!exit!"=="" (
+IF "!openwsl!"=="" (
     ECHO:
     ECHO launching WSL with !distro! distro...
     ECHO wsl -d !distro!
