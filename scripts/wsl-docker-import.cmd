@@ -435,9 +435,11 @@ if "options"=="yes" (
     goto set_default_distro
 ) ELSE (
     IF "interactive"=="n" (
-        IF "!options!"=="default" (
+        IF "!default_distro!"=="y" (
             SET "setdefault="
             goto set_default_distro
+        ) ELSE (
+            goto wsl_or_exit
         )
     ) ELSE (
         ECHO: 
