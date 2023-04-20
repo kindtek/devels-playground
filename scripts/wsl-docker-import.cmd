@@ -18,32 +18,28 @@ SET "image_tag=%~1"
 SET "non_interactive=%~2"
 SET non_interactive=%non_interactive: =%
 SET "options=%~3"
-IF "!options!"="default" (
+IF "!options!"=="default" (
     SET "default_distro=y"
 ) ELSE (
     SET "default_distro=n"
 )
 
 IF "!image_tag!"=="" (
+    SET "image_tag=default"
+) 
+IF "!image_tag!"=="default" (
     SET image_repo=_
     SET image_repo_mask=official
     SET "image_tag=latest"
     SET "image_name=ubuntu:!image_tag!"
     @REM ECHO "image_tag set to !image_tag!"
 ) ELSE (
-    IF "!image_tag!"=="default" (
-        SET image_repo=_
-        SET image_repo_mask=official
-        SET "image_tag=latest"
-        SET "image_name=ubuntu:!image_tag!"
-        @REM ECHO "image_tag set to !image_tag!"
-    ) ELSE (
-        SET "image_tag=%1"
-        SET "image_name=devels-playground:!image_tag!"
-        @REM ECHO "image_tag set to arg: '%1'  ('%~1') as !image_tag!"
-    )
-    
+    SET "image_tag=%1"
+    SET "image_name=devels-playground:!image_tag!"
+    @REM ECHO "image_tag set to arg: '%1'  ('%~1') as !image_tag!"
 )
+    
+
 IF NOT "!non_interactive!"=="" (
     SET "interactive=n"
 ) ELSE (
@@ -439,7 +435,7 @@ if "options"=="yes" (
     goto set_default_distro
 ) ELSE (
     IF "interactive"=="n" (
-        IF "options"="default" (
+        IF "!options!"=="default" (
             SET "setdefault="
             goto set_default_distro
         )
