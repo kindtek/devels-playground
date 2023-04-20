@@ -143,6 +143,7 @@ function require_docker_online {
                 if ( $docker_tries -gt 1 ) {
                     $sleep_time += 5
                     Start-Sleep -s $sleep_time
+                    Write-Host ""
                 }
                 Write-Host "Docker Desktop is now online"
                 docker info
@@ -152,9 +153,10 @@ function require_docker_online {
             }
         
             if ($docker_online -eq $false -And (($docker_tries % 2) -eq 0)) {
-                write-host "`r`n"
+                write-host ""
                 $sleep_time += 15
                 Start-Sleep -s $sleep_time
+                Write-Host ""
             }
             elseif ($docker_online -eq $false -And (($docker_tries % 3) -eq 0)) {
                 # start count over
@@ -181,18 +183,20 @@ function require_docker_online {
                 Write-Host "Restarting Docker Engine..."
                 Write-Host "Switching Docker Engine ...."
                 Start-Process DockerCli.exe -SwitchDaemon
+                Write-Host ""
                 Start-Sleep 5
                 Write-Host "Setting Docker Engine to Linux ....."
                 Start-Process DockerCli.exe -SwitchLinuxEngine
                 Write-Host "Switch complete."
                 Write-Host "Retrying connection in 10 seconds ......"
                 Start-Sleep -seconds 10
+                Write-Host ""
             }
 
             if ($docker_online -eq $false -And ( $docker_tries -eq 1)) {
                 # try extraordinary measures
                 # $check_again = Read-Host "Try resetting default distro and restarting Docker? ([y]n)"
-
+                Write-Host ""
                     try {
                         Start-Process "Docker Desktop.exe" -WindowStyle "Hidden"
                     }
@@ -212,8 +216,9 @@ function require_docker_online {
                             }
                         }
                     }
-
+                    Write-Host ""
                     Start-Sleep 20
+                    Write-Host ""
                 
                 
             }
