@@ -244,13 +244,11 @@ FOR /F "TOKENS=1,2 eol=/ DELIMS=/ " %%A IN ('DATE/T') DO SET mm=%%B
 FOR /F "TOKENS=1,2,3 eol=/ DELIMS=/ " %%A IN ('DATE/T') DO SET yyyy=%%C
 SET "timestamp=-%yyyy%%mm%%dd%"
 SET timestamp_id=!timestamp!_%TIME:*.=%
-IF "!distro!"=="official-ubuntu-latest" (
-    SET "timestamp="
-    SET "timestamp_id="
-) 
 SET "install_location=!install_root_dir!\!timestamp!\!timestamp_id!"
 SET "save_location=!save_location!"
-SET "distro=!distro!!timestamp_id!"
+IF NOT "!distro!"=="official-ubuntu-latest" (
+    SET "distro=!distro!!timestamp_id!"
+)
 SET "docker_image_id_path=!install_location!\.image_id"
 SET "docker_container_id_path=!install_location!\.container_id"
 SET "image_save_path=!save_location!\!distro!.tar"
