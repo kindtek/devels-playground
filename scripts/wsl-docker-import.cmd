@@ -822,7 +822,12 @@ call !options!
 :quit
 :no
 :exit
-@REM ECHO exiting from module !module!
-ECHO exiting devel's playground
-ECHO goodbye.
-ECHO:
+IF "!interactive!"=="y" (
+    @REM ECHO exiting from module !module!
+    ECHO exiting devel's playground
+    ECHO:
+) ELSE (
+    @REM ECHO exiting from module !module!
+    @REM ECHO exiting devel's playground
+    ECHO:  
+)
