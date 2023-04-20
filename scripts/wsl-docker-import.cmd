@@ -19,11 +19,11 @@ IF "!image_tag!"=="" (
     SET image_repo=_
     SET image_repo_mask=official
     SET "image_tag=latest"
-    SET "image_name=ubuntu:%image_tag%"
+    SET "image_name=ubuntu:!image_tag!"
     @REM ECHO "image_tag set to !image_tag!"
 ) ELSE (
     SET "image_tag=%1"
-    SET "image_name=devels-playground:%image_tag%"
+    SET "image_name=devels-playground:!image_tag!"
     @REM ECHO "image_tag set to arg: '%1'  ('%~1') as !image_tag!"
 )
 
@@ -140,7 +140,7 @@ if %default%==config (
     )
 )
 
-SET "timestamp=%DATE:~10,4%%DATE:~4,2%%DATE:~7,2%%TIME:*.=%"
+SET "timestamp=%DATE:~0,2%%DATE:~3,2%%DATE:~6,2%%TIME:*.=%"
 SET "install_location=!install_location!-!timestamp!"
 SET "save_location=!save_location!-!timestamp!"
 SET "distro=!distro!-!timestamp!"
@@ -254,22 +254,6 @@ goto install_prompt
 
 :yes
 :install
-ECHO:
-ECHO killing the !distro! WSL process if it is running...
-ECHO wsl --terminate !distro!
-wsl --terminate !distro!
-ECHO DONE
-@REM ECHO:
-@REM ECHO killing all WSL processes...
-@REM wsl --shutdown
-@REM ECHO DONE
-if default==yes (
-    ECHO:
-    ECHO deleting WSL distro !distro! if it exists...
-    ECHO wsl --unregister !distro!
-    wsl --unregister !distro!
-    ECHO DONE
-)
 
 ECHO:
 ECHO importing !distro!.tar to !install_location! as !distro!...
