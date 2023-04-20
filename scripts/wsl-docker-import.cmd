@@ -340,11 +340,11 @@ wsl --import !distro! !install_location! !image_save_path! --version !wsl_versio
             +%time:~6,1%*10^
             +%time:~7,1% >nul
 @set /A _elapsed=%_toc%-%_tic
-IF !_elapse! LEQ 1 (
-    ECHO WSL import failure
-    SET "failed_before=y"
-    goto error_restart_prompt
-)
+@REM IF !_elapse! LEQ 1 (
+@REM     ECHO WSL import failure
+@REM     SET "failed_before=y"
+@REM     goto error_restart_prompt
+@REM )
 ECHO DONE
 
 if default==yes (
@@ -403,7 +403,8 @@ IF "%exit%"=="" (
                 +%time:~6,1%*10^
                 +%time:~7,1% >nul
     @set /A _elapsed=%_toc%-%_tic
-    IF !_elapse! LEQ 1 (
+    IF "!non_interactive!"=="" (
+        IF !_elapse! LEQ 1 (
             ECHO ERROR DETECTED
             IF "!setdefault!"=="" (
                 ECHO reverting back to official ubuntu latest distro
@@ -431,8 +432,9 @@ IF "%exit%"=="" (
                 SET "failed_before=y"
                 goto error_restart_prompt
             )
-
-)    
+        ) 
+    )
+       
 :error_restart_prompt:
 ECHO Error detected. 
 IF NOT "!non_interactive!"=="" (
