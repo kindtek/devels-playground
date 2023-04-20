@@ -94,7 +94,7 @@ IF "!options!"=="default" (
 )
 ECHO   -------------------------------------------------------------------
 SET above=above
-IF NOT "!non_interactive!"=="" (
+IF "!interactive!"=="n" (
     @REM official repo has no repo name in address/url
     SET options=yes
     goto set_vars
