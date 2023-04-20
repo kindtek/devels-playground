@@ -480,7 +480,7 @@ wsl -l -v
 ECHO:
 wsl --status
 ECHO:
-IF "!interactive!"="y"(
+IF "!interactive!"=="y"(
     ECHO press ENTER to open !distro! in WSL
     ECHO  ..or enter any character to skip 
     @REM make sure windows paths transfer
