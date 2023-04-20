@@ -15,6 +15,7 @@ SET mount_drive=C
 SET image_repo=kindtek
 SET image_repo_mask=kindtek
 SET "image_tag=%~1"
+SET "non_interactive=%~2"
 IF "!image_tag!"=="" (
     SET image_repo=_
     SET image_repo_mask=official
@@ -230,6 +231,9 @@ ECHO _____________________________________________________________________
 ECHO:
 ECHO Would you still like to continue (y/n/redo)?
 SET /p "continue="
+IF "!image_tag!"=="" (
+    SET continue=install
+)
 
 @REM if blank -> yes 
 IF "%continue%"=="" ( 
