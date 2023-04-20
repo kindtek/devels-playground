@@ -356,16 +356,13 @@ ECHO _____________________________________________________________________
 
 :install_prompt
 SET "module=install_prompt"
-if "!interactive!"=="n" (
-    goto quit
-)
-ECHO:
 IF "!interactive!"=="n" (
     SET "continue=install"
     goto install
 ) ELSE (
     SET "options="
 )
+ECHO:
 ECHO Would you still like to continue (y/n/redo)?
 SET /p "continue="
 
@@ -435,10 +432,10 @@ ECHO DONE
 IF "!default_distro!"=="y" (
     SET "options=yes"
 )
-if "options"=="yes" (
+if "!options!"=="yes" (
     goto set_default_distro
 ) ELSE (
-    IF "interactive"=="n" (
+    IF "!interactive!"=="n" (
         goto wsl_or_exit
     ) ELSE (
         ECHO: 
@@ -461,7 +458,7 @@ IF "!default_distro!"=="y" (
     ECHO setting default WSL distro as !distro!...
     ECHO  wsl --set-default !distro! 
     wsl --set-default !distro! 
-    ECHO DONE!
+    ECHO DONE
     ECHO:
     ECHO  ..if starting WSL results in an error, try converting the distro version to WSL1 by running:
     ECHO wsl --set-version !distro! 1
@@ -479,7 +476,7 @@ wsl -l -v
 ECHO:
 wsl --status
 ECHO:
-IF "!interactive!"=="y"(
+IF "!interactive!"=="y" (
     ECHO press ENTER to open !distro! in WSL
     ECHO  ..or enter any character to skip 
     @REM make sure windows paths transfer
@@ -796,7 +793,7 @@ IF "!options!"=="x" (
 IF "!options!"=="exit" (
     goto quit
 )
-start cmd.exe /k !options!
+call !options!
 
 :quit
 :no
