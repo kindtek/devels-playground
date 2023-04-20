@@ -444,7 +444,7 @@ if "options"=="yes" (
         ECHO press ENTER to import !distro! as the default WSL distro
         ECHO  ..or enter any character to skip
         SET /p "setdefault=$ "
-        IF "!setdefault!"="" (
+        IF "!setdefault!"=="" (
             SET "default_distro=y"
         )
     )
