@@ -44,9 +44,6 @@ IF "!non_interactive!"=="" (
 ) ELSE (
     SET "interactive=n"
 )
-ECHO "non-interactive: !non_interactive!"
-
-ECHO "interactive: !interactive!"
 
 SET "install_directory=!image_repo_mask!-!image_name::=-!"
 SET "save_location=!mount_drive!:\!save_directory!"
@@ -687,6 +684,7 @@ IF "!options!"=="" (
     ECHO "initializing restart ..."
     shutdown /r
     goto quit
+    exit
 )
 IF "!options!"=="o" (
     SET "options=options"
