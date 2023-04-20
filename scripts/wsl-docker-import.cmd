@@ -67,10 +67,17 @@ ECHO   .............                                         .............
 ECHO   .............    WSL alias:                           .............
 ECHO   .............       !distro!          
 ECHO   -------------------------------------------------------------------
+SET above=above
+IF NOT "!non_interactive!"=="" (
+    @REM official repo has no repo name in address/url
+    SET default=yes
+    goto set_vars
+) 
 
+:start_main_prompt
 ECHO:
 ECHO:
-ECHO Press ENTER to use settings above and import %distro% as default WSL distro 
+ECHO Press ENTER to use !above! settings and import !distro! as default WSL distro 
 ECHO:
 ECHO   ..or type 'config' for custom install.
 ECHO   ..or type 'x' to exit
@@ -87,7 +94,7 @@ SET /p "default=$ "
 :custom_config
 
 @REM prompt user to type input or hit enter for default shown in parentheses
-if %default%==config (
+if !default!==config (
 
     color 0B
 
@@ -136,10 +143,12 @@ if %default%==config (
 
     color 0F
 ) ELSE (
-    IF %default%==x (
+    IF !default!==x (
         goto quit
     )
 )
+
+:set_vars
 
 SET "timestamp=-%DATE:~0,2%%DATE:~3,2%%DATE:~6,2%%TIME:*.=%"
 IF "!distro!"=="official-ubuntu-latest" (
@@ -207,7 +216,8 @@ IF %default%==config (
 SET /P WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path! > nul
 if "!WSL_DOCKER_CONTAINER_ID!"=="" (
     ECHO An error occurred. Missing container ID. Please restart and try again
-    goto exit
+    SET above=previous
+    goto start_main_prompt
 )
 ECHO:
 ECHO exporting image (!WSL_DOCKER_IMG_ID!) as container (!WSL_DOCKER_CONTAINER_ID!)...
