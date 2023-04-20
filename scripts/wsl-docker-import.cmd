@@ -1,4 +1,4 @@
-@echo on
+@echo off
 @REM this file is solid but will be deprecated once wsl-import.ps1 is fixed
 color 0F
 SETLOCAL EnableDelayedExpansion
