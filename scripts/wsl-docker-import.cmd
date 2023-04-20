@@ -434,7 +434,10 @@ if "options"=="yes" (
     goto set_default_distro
 ) ELSE (
     IF "interactive"=="n" (
-        goto set_default_distro
+        IF "options"="default" (
+            SET "setdefault="
+            goto set_default_distro
+        )
     ) ELSE (
         ECHO: 
         ECHO press ENTER to import !distro! as the default WSL distro
