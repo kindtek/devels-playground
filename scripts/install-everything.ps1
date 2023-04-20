@@ -159,13 +159,13 @@ function require_docker_online {
                 # prompt to continue
                 $check_again = Read-Host "Keep trying to connect to Docker? ([y]n)"
                 if ($check_again -ine 'n' -And $check_again -ine 'no'){
-                    wsl --install -d Ubuntu --no-launch
+                    wsl --install --no-launch
                 }
             }
             elseif ( $docker_online -eq $false -And (($docker_tries % 7) -eq 0)){
                 $restart = Read-Host "Restart docker? ([y]n)"
                 if ( $restart -ine 'n' -And $restart -ine 'no') {
-                    wsl --install -d Ubuntu --no-launch
+                    wsl --install --no-launch
                     wsl --update --pre-release
                     $docker_tries = 1
                 }
@@ -261,7 +261,7 @@ function start_installer_daemon {
     }
 
     # Write-Host "$([char]27)[2J" 
-    wsl --install -d Ubuntu --no-launch
+    wsl --install --no-launch
     wsl --update --pre-release
     wsl -s Ubuntu
 
