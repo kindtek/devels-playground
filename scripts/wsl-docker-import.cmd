@@ -196,11 +196,12 @@ if "!options!"=="config" (
         SET "wsl_version=1" 
     )
     ECHO:
+    SET "options="
     ECHO Press ENTER to import !distro! as a distro into WSL
     ECHO:   or enter [o]ptions to see more options
-    SET /p "options= $ "
+    SET /p "options=$ "
     IF "!options!"=="" (
-        SET "options="
+        SET "options=import"
         goto set_vars
     )
     IF "!options!"=="o" (
