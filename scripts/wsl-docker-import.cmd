@@ -313,6 +313,7 @@ IF "!options!"=="config" (
 SET /P WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path! > nul
 if "!WSL_DOCKER_CONTAINER_ID!"=="" (
     ECHO An error occurred. Missing container ID. Please try again
+    docker pull !image_repo_image_name!
     SET above=previous
     SET failed_before=y
     SET "options=options"
@@ -608,18 +609,19 @@ ECHO:
 SET /p "exit_devels_playground="
 COLOR 0F
 
+IF "!exit_devels_playground!"=="" (
+    SET "exit_devels_playground=x"
+)
 IF "!exit_devels_playground!"=="x" (
-    goto quit
+    SET "exit_devels_playground=exit"
 )
 IF "!exit_devels_playground!"=="exit" (
-    goto quit
-)
-IF "!exit_devels_playground!"=="" (
     goto quit
 ) ELSE (
     SET "options=!exit_devels_playground!"
     goto parse_options
 )
+
 goto prompt_options
 :computer_restart_prompt
 if "!interactive!"=="n" (
@@ -696,9 +698,10 @@ SET /p "options=$ "
 IF "!options!"=="" (
 @REM dism /Online /Cleanup-Image /RestoreHealth
     ECHO "initializing restart ..."
-    shutdown /r
-    goto quit
-    exit
+    SET "options=restart_now"
+    @REM shutdown /r
+    @REM goto quit
+    @REM exit
 )
 IF "!options!"=="o" (
     SET "options=options"
@@ -708,10 +711,14 @@ IF "!options!"=="options" (
     goto prompt_options
 ) ELSE (
     IF "!options!"=="r" (
-        SET "options=restart"
+        SET "options=restart_now"
     )
     IF "!options!"=="restart" (
+        SET "options=restart_now"
+    )
+    IF "!options!"=="restart_now" (
         shutdown /r
+        goto quit
     ) ELSE (
         COLOR 0F
         goto parse_options
