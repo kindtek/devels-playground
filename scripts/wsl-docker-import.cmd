@@ -8,35 +8,39 @@ SET "options=config"
 SET wsl_version=2
 SET save_directory=docker2wsl
 SET mount_drive=C
-
 @REM SET image_repo=_
 @REM SET image_repo_mask=official
 @REM SET image_name=kali:latest
 SET image_repo=kindtek
 SET image_repo_mask=kindtek
-SET "image_tag=%~1"
+SET "image_name_tag=%~1"
 SET "non_interactive=%~2"
 SET "options=%~3"
 IF "!options!"=="default" (
-    SET "default_distro=y"
+    SET "default_wsl_distro=y"
 ) ELSE (
-    SET "default_distro=n"
+    SET "default_wsl_distro=n"
 )
 
-IF "!image_tag!"=="" (
-    SET "image_tag=default"
-) 
-IF "!image_tag!"=="default" (
-    SET image_repo=_
-    SET image_repo_mask=official
+IF "!image_name_tag!"=="" (
+    SET "image_repo=_"
+    SET "image_repo_mask=official"
     SET "image_tag=latest"
-    SET "image_name=ubuntu:!image_tag!"
+    SET "image_name=ubuntu"
     @REM ECHO "image_tag set to !image_tag!"
 ) ELSE (
-    SET "image_tag=%1"
-    SET "image_name=devels-playground:!image_tag!"
+    SET "image_name_tag=%1"
+    SET "image_name="
+    for /f "tokens=1 delims=:" %%a in ("%image_name_tag%") do (
+        SET "image_name=%%a"
+    )
+    SET "image_tag=%image_name_tag::=" & SET "image_tag=%"
+    SET "image_name_tag=!image_name!:!image_tag!"
+
     @REM ECHO "image_tag set to arg: '%1'  ('%~1') as !image_tag!"
 )
+    SET "image_name_tag=!image_tag!:!image_name!"
+
     
 
 IF "!non_interactive!"=="" (
@@ -45,29 +49,30 @@ IF "!non_interactive!"=="" (
     SET "interactive=n"
 )
 
-SET "install_directory=!image_repo_mask!-!image_name::=-!"
+SET "install_directory=!image_repo_mask!-!image_name!-!image_tag!"
 SET "save_location=!mount_drive!:\!save_directory!"
 SET "install_root_dir=!save_location!\!install_directory!"
-@REM distro - meaning local distro
-SET "distro=!install_directory!"
+@REM wsl_distro - meaning local wsl_distro
+SET "wsl_distro=!install_directory!"
 @REM :header
-SET "image_save_path=!save_location!\!distro!.tar"
+SET "image_save_path=!save_location!\!wsl_distro!.tar"
 SET "install_root_dir=!save_location!\!install_directory!"
-SET "image_repo_image_name=!image_repo!/!image_name!"
+SET "image_repo_image_name_tag=!image_repo!/!image_name!:!image_tag!"
 @REM special rule for official distros on docker hub
 @REM replaces '_' with 'official' for printing
 IF !image_repo!==_ (
     @REM official repo has no repo name in address/url
-    SET "image_repo_image_name=!image_name!"
+    SET "image_repo_image_name_tag=!image_name!:!image_tag!"
+
 ) 
 SET "docker_image_id_path=!install_root_dir!\.image_id"
 SET "docker_container_id_path=!install_root_dir!\.container_id"
 
 
-:show_config_banner
+:show_banner_home_menu
 @REM CLS
 
-SET "module=show_config_banner"
+SET "module=show_banner_home_menu"
 ECHO:
 ECHO  _____________________________________________________________________ 
 ECHO /                          DEVEL'S PLAYGROUND                         \
@@ -78,15 +83,15 @@ ECHO   .............-----------------------------------------.............
 ECHO   .............    source:                              .............
 ECHO   .............      !image_repo_mask!                            .............
 ECHO   .............                                         .............
-ECHO   .............    name:                                .............
-ECHO   .............      !image_name!                   
+ECHO   .............    name/tag:                            .............
+ECHO   .............      !image_name!:!image_tag!                   
 ECHO   .............                                         .............
 ECHO   .............    download to:                         .............
 ECHO   .............       !image_save_path! 
 ECHO   .............                                         .............
 ECHO   .............    WSL alias:                           .............
-ECHO   .............       !distro!          
-IF "!options!"=="default" (
+ECHO   .............       !wsl_distro!          
+IF "!default_wsl_distro!"=="y" (
     ECHO   .............                                         .............
     ECHO   .............    default:                             .............
     ECHO   .............      yes                                .............
@@ -99,7 +104,7 @@ SET "module=start_main_prompt"
 SET above=above
 IF "!interactive!"=="n" (
     @REM official repo has no repo name in address/url
-    goto set_vars
+    goto make_dirs
 )
 IF defined failed_before (
     IF fail_count GTR 2 (
@@ -129,7 +134,7 @@ ECHO Confirm !above! settings.
 ECHO: 
 ECHO: 
 ECHO: 
-ECHO    Press ENTER to import !image_name! into WSL as !distro!
+ECHO    Press ENTER to import !image_name! into WSL as !wsl_distro!
 ECHO        ..or type [o]ptions to see more options
 
 @REM @TODO: add options ie: 
@@ -149,7 +154,7 @@ IF "!confirm!"=="options" (
 ) ELSE (
     IF "!confirm!"=="" (
         SET "options="
-        goto set_vars
+        goto make_dirs
     ) ELSE (
         SET "options=!confirm!"
         goto parse_options
@@ -173,19 +178,26 @@ if "!options!"=="config" (
     ECHO:
     SET /p "image_repo=image repository: (!image_repo_mask!) $ "
 
-    SET /p "image_name=image name in !image_repo_mask!: (!image_name!) $ "
-
+    SET /p "image_name_tag=image name/tag in !image_repo_mask!: (!image_name!:!image_tag!) $ "
+    SET "image_name="
+    SET "image_tag="
+    for /f "tokens=1 delims=:" %%a in ("%image_name_tag%") do (
+        ECHO %%a
+        SET "image_name=%%a"
+    )
+    SET "image_tag=%image_name_tag::=" & SET "image_tag=%"
+    @REM SET "image_name_tag=!image_name!:!image_tag!"
     @REM special rule for official distros on docker hub
     @REM replaces '_' with 'official' for printing
     IF "!image_repo!"=="_" (
-        SET "image_repo_image_name=!image_name!"
+        SET "image_repo_image_name_tag=!image_name!:!image_tag!"
     ) ELSE (
         SET "image_repo_mask=!image_repo!"
-        SET "image_repo_image_name=!image_repo_mask!/!image_name!"
+        SET "image_repo_image_name_tag=!image_repo_mask!/!image_name!:!image_tag!"
     )
 
     SET /p "save_directory=download folder: !mount_drive!:\(!save_directory!) $ "
-    SET install_directory=!image_repo_image_name:/=-!
+    SET install_directory=!image_repo_image_name_tag:/=-!
     SET install_directory=!install_directory::=-!
 
     SET /p "install_directory=install folder: !mount_drive!:\!save_directory!\(!install_directory!) $ "
@@ -196,14 +208,14 @@ if "!options!"=="config" (
     SET install_root_dir=!save_location!\!install_directory!
     @REM special rule for official distro
     if "!image_repo!"=="_" (
-        SET "distro=official-!install_directory!"
+        SET "wsl_distro=official-!install_directory!"
     ) ELSE (
-        SET "distro=!install_directory!" 
+        SET "wsl_distro=!install_directory!" 
     )
 
-    SET /p "distro=distro name in WSL: (!distro!) $ "
-    SET "distro=!distro::=-!"
-    SET "distro=!distro:/=-!"
+    SET /p "wsl_distro=distro name in WSL: (!wsl_distro!) $ "
+    SET "wsl_distro=!wsl_distro::=-!"
+    SET "wsl_distro=!wsl_distro:/=-!"
 
     SET /p "wsl_version=WSL version: (!wsl_version!) $ "
     IF "!wsl_version!"=="2" (
@@ -213,12 +225,12 @@ if "!options!"=="config" (
     )
     ECHO:
     SET "options="
-    ECHO Press ENTER to import !distro! as a distro into WSL
+    ECHO Press ENTER to import !wsl_distro! as a distro into WSL
     ECHO:   or enter [o]ptions to see more options
     SET /p "options=$ "
     IF "!options!"=="" (
         SET "options=import"
-        goto set_vars
+        goto make_dirs
     )
     IF "!options!"=="o" (
         SET "options=options"
@@ -240,8 +252,9 @@ if "!options!"=="config" (
     )
 )
 
-:set_vars
-SET "module=set_vars"
+:make_dirs
+SET "module=make_dirs"
+@REM ECHO "entering module !module!"
 for /f %%x in ('wmic path win32_utctime get /format:list ^| findstr "="') do set %%x
 SET "Month=0%Month%"
 SET "Month=%Month:~-2%"
@@ -257,33 +270,55 @@ set "timestamp_date=%Year%%Month%%Day%"
 SET "timestamp_time=%Hour%%Minute%%Second%%TIME:*.=%"
 SET "install_location=!install_root_dir!\!timestamp_date!\!timestamp_time!"
 SET "save_location=!save_location!"
-IF NOT "!distro!"=="official-ubuntu-latest" (
-    SET "distro=!distro!-!timestamp_id!"
+IF NOT "!wsl_distro!"=="official-ubuntu-latest" (
+    SET "wsl_distro=!wsl_distro!-!timestamp_id!"
 )
 SET "docker_image_id_path=!install_location!\.image_id"
 SET "docker_container_id_path=!install_location!\.container_id"
-SET "image_save_path=!save_location!\!distro!.tar"
-
+SET "image_save_path=!save_location!\!wsl_distro!.tar"
 @REM directory structure: 
 @REM !mount_drive!:\!install_directory!\!save_directory!
-@REM ie: C:\wsl-distros\docker
+@REM ie: C:\wsl-wsl_distros\docker
+@REM ECHO "mkdir save: !save_location!"
 mkdir !save_location! > nul 2> nul
+@REM ECHO "mkdir install: !install_location!"
 mkdir !install_location! > nul 2> nul
+SET "dvlp_path=repos/!image_repo!/dvlw/dvlp"
 
-:docker_image_container_start
-SET "module=docker_image_container_start"
+goto !docker_get_image!
+
+:docker_image_pull
+SET "module=docker_image_pull"
 
 ECHO ========================================================================
 ECHO:
-ECHO pulling image (!image_repo_image_name!)...
-ECHO docker pull !image_repo_image_name!
+ECHO pulling image (!image_repo_image_name_tag!)...
+ECHO docker pull !image_repo_image_name_tag!
 @REM pull the image
-docker pull !image_repo_image_name!
+docker pull !image_repo_image_name_tag!
+goto docker_image_run
+
+:docker_image_build
+SET "module=docker_image_build"
+for /f "tokens=1 delims=-" %%a in ("%image_tag%") do (
+    SET "image_distro=%%a"
+)
+SET "image_service=%image_tag:-=" & SET "image_service=%"
+ECHO ========================================================================
+ECHO:
+ECHO building image (!image_service!)...
+ECHO docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !image_service!
+@REM build the image
+docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !image_service!
+goto docker_image_run
+
+:docker_image_run
+SET "module=docker_image_run"
 ECHO:
 ECHO initializing the image container...
 @REM @TODO: handle WSL_DOCKER_IMG_ID case of multiple ids returned from docker images query
-ECHO "docker images -aq !image_repo_image_name! > !docker_image_id_path!"
-docker images -aq !image_repo_image_name! > !docker_image_id_path!
+ECHO "docker images -aq !image_repo_image_name_tag! > !docker_image_id_path!"
+docker images -aq !image_repo_image_name_tag! > !docker_image_id_path!
 SET /P WSL_DOCKER_IMG_ID_RAW=< !docker_image_id_path!
 @REM ECHO WSL_DOCKER_IMG_ID_RAW: !WSL_DOCKER_IMG_ID_RAW!
 SET WSL_DOCKER_IMG_ID=!WSL_DOCKER_IMG_ID_RAW!
@@ -299,7 +334,7 @@ IF "!options!"=="config" (
     ECHO:
     ECHO:
     ECHO:
-    ECHO this container is running as a local copy of the image !image_repo_image_name!
+    ECHO this container is running as a local copy of the image !image_repo_image_name_tag!
     ECHO:
     ECHO ^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!
     ECHO ^^!^^!^^!^^!^^!^^! IMPORTANT: type 'exit' then ENTER to exit container preview ^^!^^!^^!^^!^^!^^!
@@ -323,12 +358,16 @@ IF "!options!"=="config" (
 SET /P WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path! > nul
 if "!WSL_DOCKER_CONTAINER_ID!"=="" (
     ECHO An error occurred. Missing container ID. Please try again
-    docker pull !image_repo_image_name!
+    docker pull !image_repo_image_name_tag!
     SET above=previous
     SET failed_before=y
     SET "options=options"
     goto error_restart_prompt
 )
+
+:docker_image_export
+SET "module=docker_image_export"
+
 ECHO:
 ECHO exporting image (!WSL_DOCKER_IMG_ID!) as container (!WSL_DOCKER_CONTAINER_ID!)...
 ECHO docker export !WSL_DOCKER_CONTAINER_ID! ^> !image_save_path!
@@ -352,30 +391,17 @@ docker export !WSL_DOCKER_CONTAINER_ID! > !image_save_path!
 @REM     )
 ECHO DONE
 
-:wsl_list
-SET "module=wsl_list"
-
-@REM ECHO ---------------------------------------------------------------------
-@REM ECHO Windows Subsystem for Linux Distributions:
-@REM wsl -l -v
-@REM ECHO ---------------------------------------------------------------------
-@REM ECHO Check the list of current WSL distros installed on your system above. 
-@REM ECHO ^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!
-@REM ECHO ^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!                   WARNING:                ^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!
-@REM ECHO If !distro! is already listed above it will be REPLACED.  
-@REM ECHO ^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!
-@REM ECHO _____________________________________________________________________
-
-:install_prompt
-SET "module=install_prompt"
+:wsl_import_prompt
+SET "module=wsl_import_prompt"
 IF "!interactive!"=="n" (
-    SET "continue=install"
-    goto install
+    SET "continue=wsl_import"
+    goto wsl_import
 ) ELSE (
     SET "options="
 )
 ECHO:
-ECHO Would you still like to continue (y/n/redo)?
+ECHO Ready to import into WSL. Would you still like to continue?
+ECHO [y]es / [n]o / ([r]edo) 
 SET /p "continue="
 
 @REM if blank -> yes 
@@ -385,49 +411,52 @@ IF "!continue!"=="" (
 
 @REM if y -> yes 
 IF !continue!==y ( 
-    SET "continue=install"
+    SET "continue=wsl_import"
 )
 IF "!continue!"=="yes" ( 
-    SET "continue=install"
+    SET "continue=wsl_import"
 )
 
 @REM if n -> no
 IF "!continue!"=="n" ( 
     SET "continue=no"
 )
+IF "!continue!"=="r" ( 
+    SET "continue=redo"
+)
 
 @REM if label exists goto it
 goto !continue!
 
-@REM otherwise... use the built in error message and repeat install prompt
-goto install_prompt
+@REM otherwise... use the built in error message and repeat wsl_import prompt
+goto wsl_import_prompt
 
-@REM EASTER EGG1: typing yes at first prompt bypasses cofirm and restart the default distro
-@REM EASTER EGG2: typing yes at second prompt (instead of 'y' ) makes distro default
+@REM EASTER EGG1: typing yes at first prompt bypasses cofirm and restart the default wsl_distro
+@REM EASTER EGG2: typing yes at second prompt (instead of 'y' ) makes wsl_distro default
 
 :yes
-:install
-SET "module=install"
+:wsl_import
+SET "module=wsl_import"
 
 
-if "!distro!"=="official-ubuntu-latest" (
+if "!wsl_distro!"=="official-ubuntu-latest" (
     ECHO:
-    ECHO deleting WSL distro !distro! if it exists...
-    ECHO wsl --unregister !distro!
-    wsl --unregister !distro!
+    ECHO deleting WSL distro !wsl_distro! if it exists...
+    ECHO wsl --unregister !wsl_distro!
+    wsl --unregister !wsl_distro!
     ECHO DONE
 )
 
 ECHO:
-ECHO importing !distro!.tar to !install_location! as !distro!...
-ECHO wsl --import !distro! !install_location! !image_save_path! --version !wsl_version!
+ECHO importing !wsl_distro!.tar to !install_location! as !wsl_distro!...
+ECHO wsl --import !wsl_distro! !install_location! !image_save_path! --version !wsl_version!
 @set /A _tic=%time:~0,2%*3600^
             +%time:~3,1%*10*60^
             +%time:~4,1%*60^
             +%time:~6,1%*10^
             +%time:~7,1% >nul
 
-wsl --import !distro! !install_location! !image_save_path! --version !wsl_version!
+wsl --import !wsl_distro! !install_location! !image_save_path! --version !wsl_version!
 
 @set /A _toc=%time:~0,2%*3600^
             +%time:~3,1%*10*60^
@@ -441,41 +470,29 @@ wsl --import !distro! !install_location! !image_save_path! --version !wsl_versio
 @REM     goto error_restart_prompt
 @REM )
 ECHO DONE
-IF "!default_distro!"=="y" (
-    SET "options=yes"
-)
-if "!options!"=="yes" (
-    goto set_default_distro
+if "!default_wsl_distro!"=="y" (
+    goto set_default_wsl_distro
 ) ELSE (
-    IF "!interactive!"=="n" (
-        goto wsl_or_exit
-    ) ELSE (
-        ECHO: 
-        ECHO press ENTER to import !distro! as the default WSL distro
-        ECHO  ..or enter any character to skip
-        SET /p "setdefault=$ "
-        IF "!setdefault!"=="" (
-            SET "default_distro=y"
-        )
-    )
+    goto wsl_or_exit
 )
 
 
-:set_default_distro
-SET "module=set_default_distro"
-IF "!default_distro!"=="y" (
+:set_default_wsl_distro
+SET "module=set_default_wsl_distro"
+IF "!default_wsl_distro!"=="y" (
 
     ECHO:
-    ECHO setting default WSL distro as !distro!...
-    ECHO  wsl --set-default !distro! 
-    wsl --set-default !distro! 
+    ECHO setting default WSL distro as !wsl_distro!...
+    ECHO  wsl --set-default !wsl_distro! 
+    wsl --set-default !wsl_distro! 
     ECHO DONE
     SET "options=options"
     ECHO:
     ECHO  ..if starting WSL results in an error, try converting the distro version to WSL1 by running:
-    ECHO wsl --set-version !distro! 1
+    ECHO wsl --set-version !wsl_distro! 1
     ECHO:
-    goto wsl_or_exit
+    @REM reset default flag
+    SET "default_wsl_distro=n"
 )
 
 :wsl_or_exit
@@ -490,7 +507,7 @@ wsl --status
 ECHO:
 SET "openwsl=no"
 IF "!interactive!"=="y" (
-    ECHO press ENTER to open !distro! in WSL
+    ECHO press ENTER to open !wsl_distro! in WSL
     ECHO  ..or enter any character to skip 
     @REM make sure windows paths transfer
     SET WSLENV=USERPROFILE/p 
@@ -507,8 +524,8 @@ IF "!interactive!"=="n" (
 :open_wsl
 IF "!open_wsl!"=="y" (
     ECHO:
-    ECHO launching WSL with !distro! distro...
-    ECHO wsl -d !distro!
+    ECHO launching WSL with !wsl_distro! distro...
+    ECHO wsl -d !wsl_distro!
     ECHO:
     @set /A _tic=%time:~0,2%*3600^
                 +%time:~3,1%*10*60^
@@ -516,7 +533,7 @@ IF "!open_wsl!"=="y" (
                 +%time:~6,1%*10^
                 +%time:~7,1% >nul
 
-    wsl -d !distro!
+    wsl -d !wsl_distro!
 
     @set /A _toc=%time:~0,2%*3600^
                 +%time:~3,1%*10*60^
@@ -532,15 +549,15 @@ IF "!open_wsl!"=="y" (
             wsl -s official-ubuntu-latest
         )
         ECHO trying to convert distro version to WSL1 with:
-        ECHO wsl --set-version !distro! 1
-        wsl --set-version !distro! 1
+        ECHO wsl --set-version !wsl_distro! 1
+        wsl --set-version !wsl_distro! 1
         @set /A _tic=%time:~0,2%*3600^
                     +%time:~3,1%*10*60^
                     +%time:~4,1%*60^
                     +%time:~6,1%*10^
                     +%time:~7,1% >nul
 
-        wsl -d !distro!
+        wsl -d !wsl_distro!
 
         @set /A _toc=%time:~0,2%*3600^
                     +%time:~3,1%*10*60^
@@ -748,18 +765,20 @@ IF "!options!"=="options" (
     )
     ECHO:
     ECHO    Options:
+    ECHO        [h]ome      go to home screen
 
     IF "!module!"=="wsl_or_exit" (
         ECHO        [c]onfig    configure import settings
-        ECHO        [d]efault   set !distro! as default WSL distro
-    ) ELSE  (
+        ECHO        [d]efault   [!default_wsl_distro!] toggle !image_repo_image_name_tag! image as default WSL distro 
+    ) ELSE (
         IF "!module!"=="custom_config" (
-            ECHO        [c]onfig    edit !image_repo_image_name! import configuration
+            ECHO        [c]onfig    edit !image_repo_image_name_tag! import configuration
         ) ELSE (
             ECHO        [c]onfig    configure import settings
         )
-        ECHO        [i]mport    import !image_repo_image_name! image into WSL
-        ECHO        [d]efault   import !image_repo_image_name! image into WSL and set as default distro
+        ECHO        [i]nstall   pull and import !image_repo_image_name_tag! image into WSL
+        ECHO        [b]uild     build and import !image_repo_image_name_tag! image into WSL
+        ECHO        [d]efault   [!default_wsl_distro!] toggle !image_repo_image_name_tag! image as default WSL distro 
     )
     
     ECHO        [r]estart   **restart computer**
@@ -771,60 +790,86 @@ IF "!options!"=="options" (
 color 0F
 @REM SET "module=parse_options"
 
-IF "!options!"=="i" (
-    goto set_vars
+IF /I "!options!"=="i" (
+    SET "options=install"
 )
-IF "!options!"=="import" (
-    ECHO option 'import' selected
-    goto set_vars
+IF /I "!options!"=="install" (
+    SET "docker_get_image=docker_image_pull"
+    @REM ECHO option 'install' selected
+    goto make_dirs
 )
-IF "!options!"=="c" (
+IF /I "!options!"=="b" (
+    SET "options=build"
+)
+IF /I "!options!"=="build" (
+    SET "docker_get_image=docker_image_build"
+    @REM ECHO option 'build' selected
+    goto make_dirs
+)
+IF /I "!options!"=="c" (
     goto custom_config
 )
-IF "!options!"=="config" (
-    ECHO option 'config' selected
+IF /I "!options!"=="config" (
+    @REM ECHO option 'config' selected
     goto custom_config
 )
-IF "!module!"=="wsl_or_exit" (
-    IF "!options!"=="d" (
-        SET "default_distro=y"
-        ECHO option 'default' selected
-        goto set_default_distro
-    )
-    IF "!options!"=="default" (
-        SET "default_distro=y"
-        ECHO option 'default' selected
-        goto set_default_distro
-    )
-) ELSE (
-    IF "!options!"=="d" (
-        ECHO option 'default' selected
+IF /I "!options!"=="h" (
+    goto show_banner_home_menu
+)
+IF /I "!options!"=="home" (
+    @REM ECHO option 'config' selected
+    goto show_banner_home_menu
+)
+@REM IF "!module!"=="wsl_or_exit" (
+@REM     IF "!options!"=="d" (
+@REM         SET "default_wsl_distro=y"
+@REM         ECHO option 'default' selected
+@REM         goto set_default_wsl_distro
+@REM     )
+@REM     IF "!options!"=="default" (
+@REM         SET "default_wsl_distro=y"
+@REM         ECHO option 'default' selected
+@REM         goto set_default_wsl_distro
+@REM     )
+@REM ) ELSE (
+    IF /I "!options!"=="d" (
+        @REM ECHO option 'default' selected
         SET "options=default"
     )
-    IF "!options!"=="default" (
+    IF /I "!options!"=="default" (
         SET "default=default"
-        ECHO option 'default' selected
-        goto docker_image_container_start
-        SET "default="
+        @REM ECHO option 'default' selected
+        ECHO default flag changed
+        if "!default_wsl_distro!"=="y" (
+            SET "default_wsl_distro=n"
+            ECHO "!!image_repo_image_name_tag!! WILL be configured to be default WSL distro during import"
+        ) ELSE (
+            ECHO "!!image_repo_image_name_tag!! will NOT be configured to be default WSL distro during import"
+            SET "default_wsl_distro=y"
+        )
+        
+        SET "options=options"
+        @REM goto docker_image_pull
+        goto prompt_options
     )
-)
-IF "!options!"=="o" (
+@REM )
+IF /I "!options!"=="o" (
     goto prompt_options
 )
-IF "!options!"=="options" (
+IF /I "!options!"=="options" (
     goto prompt_options
 )
-IF "!options!"=="r" (
+IF /I "!options!"=="r" (
     SET "options=restart"
 )
-IF "!options!"=="restart" (
+IF /I "!options!"=="restart" (
     ECHO option 'restart' selected
     goto computer_restart_prompt
 )
-IF "!options!"=="x" (
+IF /I "!options!"=="x" (
     goto program_restart_prompt
 )
-IF "!options!"=="exit" (
+IF /I "!options!"=="exit" (
     goto quit
 )
 call !options!

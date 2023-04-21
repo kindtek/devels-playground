@@ -59,7 +59,7 @@ function install_repo {
 
 function run_devels_playground {
     param (
-        $git_path, $img_tag, $non_interactive, $default_distro
+        $git_path, $img_name_tag, $non_interactive, $default_distro
     )
     try {
         $software_name = "devel`'s playground"
@@ -89,11 +89,8 @@ function run_devels_playground {
             # Write-Host "&$devs_playground $global:img_tag"
             # Write-Host "$([char]27)[2J"
             # Write-Host "`r`npowershell.exe -Command `"$git_path/dvlp/scripts/wsl-docker-import.cmd`" $img_tag`r`n"
-            $img_tag = $img_tag.replace("\s+",'')
-            if ($img_tag -eq "") {
-                $img_tag = "default"
-            }
-            powershell.exe -Command "$git_path/dvlp/scripts/wsl-docker-import.cmd" "$img_tag" "$non_interactive" "$default_distro"
+            $img_name_tag = $img_name_tag.replace("\s+",'')
+            powershell.exe -Command "$git_path/dvlp/scripts/wsl-docker-import.cmd" "$img_name_tag" "$non_interactive" "$default_distro"
             # &$devs_playground = "$git_path/dvlp/scripts/wsl-docker-import.cmd $global:img_tag"
             # Write-Host "$software_name installed`r`n" | Out-File -FilePath "$git_path/.dvlp-installed"
         }
@@ -112,7 +109,9 @@ do {
     $repo_git_name = 'dvlw'
     $git_parent_path = "$HOME/repos/$repo_src_owner"
     $git_path = "$git_parent_path/$repo_git_name"
+    $img_name = 'devels-playground'
     $img_tag = $args[0]
+    $img_name_tag = "$img_name`:$img_tag"
 
     $confirmation = ''
     
@@ -170,9 +169,9 @@ do {
         $host.UI.RawUI.BackgroundColor = "DarkRed"
 
         # make sure failsafe official-ubuntu-latest distro is installed so changes can be easily reverted
-        run_devels_playground "$git_path" "default" "nointeract" "default"
+        run_devels_playground "$git_path" "" "nointeract" "default"
         # instsall distro requested in arg
-        run_devels_playground "$git_path" "$img_tag" "nointeract" "default"
+        run_devels_playground "$git_path" "$img_name_tag" "nointeract" "default"
         
         Write-Host "`r`n`r`n"
 
@@ -183,7 +182,7 @@ do {
             wsl
         }
         elseif ($start_over -ieq 'd') {
-            run_devels_playground "$git_path" "$img_tag" ""
+            run_devels_playground "$git_path" "$img_name_tag" ""
         }
         elseif ($start_over -ieq 's') {
             Write-Host 'Restarting process ...'
