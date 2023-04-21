@@ -243,9 +243,19 @@ if "!options!"=="config" (
 :set_vars
 SET "module=set_vars"
 for /f %%x in ('wmic path win32_utctime get /format:list ^| findstr "="') do set %%x
-set "timestamp=%Year%%Month%%Day%"
-SET timestamp_id=!timestamp!_%TIME:*.=%
-SET "install_location=!install_root_dir!\!timestamp!\!timestamp_id!"
+SET "Month=0%Month%"
+SET "Month=%Month:~-2%"
+SET "Day=0%Day%"
+SET "Day=%Day:~-2%"
+SET "Hour=0%Hour%"
+SET "Hour=%Hour:~-2%"
+SET "Minute=0%Minute%"
+SET "Minute=%Minute:~-2%"
+SET "Second=0%Second%"
+SET "Second=%Second:~-2%"
+set "timestamp_date=%Year%%Month%%Day%"
+SET "timestamp_time=%Hour%%Minute%%Second%%TIME:*.=%"
+SET "install_location=!install_root_dir!\!timestamp_date!\!timestamp_time!"
 SET "save_location=!save_location!"
 IF NOT "!distro!"=="official-ubuntu-latest" (
     SET "distro=!distro!-!timestamp_id!"
