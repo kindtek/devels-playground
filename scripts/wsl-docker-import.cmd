@@ -49,20 +49,19 @@ IF "!non_interactive!"=="" (
     SET "interactive=n"
 )
 
-SET "install_directory=!image_repo_mask!-!image_name!-!image_tag!"
+SET "wsl_distro=!image_repo_mask!-!image_name!-!image_tag!"
 SET "save_location=!mount_drive!:\!save_directory!"
-SET "install_root_dir=!save_location!\!install_directory!"
+SET "install_root_dir=!save_location!\!wsl_distro!"
 @REM wsl_distro - meaning local wsl_distro
-SET "wsl_distro=!install_directory!"
 @REM :header
 SET "image_save_path=!save_location!\!wsl_distro!.tar"
-SET "install_root_dir=!save_location!\!install_directory!"
-SET "image_repo_image_name_tag=!image_repo!/!image_name!:!image_tag!"
+SET "install_root_dir=!save_location!\!wsl_distro!"
+SET "image_repo_name_tag=!image_repo!/!image_name!:!image_tag!"
 @REM special rule for official distros on docker hub
 @REM replaces '_' with 'official' for printing
 IF !image_repo!==_ (
     @REM official repo has no repo name in address/url
-    SET "image_repo_image_name_tag=!image_name!:!image_tag!"
+    SET "image_repo_name_tag=!image_name!:!image_tag!"
 
 ) 
 SET "docker_image_id_path=!install_root_dir!\.image_id"
@@ -104,7 +103,8 @@ SET "module=start_main_prompt"
 SET above=above
 IF "!interactive!"=="n" (
     @REM official repo has no repo name in address/url
-    goto make_dirs
+    SET "options=install"
+    goto parse_options
 )
 IF defined failed_before (
     IF fail_count GTR 2 (
@@ -190,14 +190,14 @@ if "!options!"=="config" (
     @REM special rule for official distros on docker hub
     @REM replaces '_' with 'official' for printing
     IF "!image_repo!"=="_" (
-        SET "image_repo_image_name_tag=!image_name!:!image_tag!"
+        SET "image_repo_name_tag=!image_name!:!image_tag!"
     ) ELSE (
         SET "image_repo_mask=!image_repo!"
-        SET "image_repo_image_name_tag=!image_repo_mask!/!image_name!:!image_tag!"
+        SET "image_repo_name_tag=!image_repo_mask!/!image_name!:!image_tag!"
     )
 
     SET /p "save_directory=download folder: !mount_drive!:\(!save_directory!) $ "
-    SET install_directory=!image_repo_image_name_tag:/=-!
+    SET install_directory=!image_repo_name_tag:/=-!
     SET install_directory=!install_directory::=-!
 
     SET /p "install_directory=install folder: !mount_drive!:\!save_directory!\(!install_directory!) $ "
@@ -284,6 +284,7 @@ mkdir !save_location! > nul 2> nul
 @REM ECHO "mkdir install: !install_location!"
 mkdir !install_location! > nul 2> nul
 SET "dvlp_path=repos/!image_repo!/dvlw/dvlp"
+ECHO DOCKER_IMG:!docker_get_image!
 
 goto !docker_get_image!
 
@@ -292,10 +293,10 @@ SET "module=docker_image_pull"
 
 ECHO ========================================================================
 ECHO:
-ECHO pulling image (!image_repo_image_name_tag!)...
-ECHO docker pull !image_repo_image_name_tag!
+ECHO pulling image (!image_repo_name_tag!)...
+ECHO docker pull !image_repo_name_tag!
 @REM pull the image
-docker pull !image_repo_image_name_tag!
+docker pull !image_repo_name_tag!
 goto docker_image_run
 
 :docker_image_build
@@ -317,8 +318,8 @@ SET "module=docker_image_run"
 ECHO:
 ECHO initializing the image container...
 @REM @TODO: handle WSL_DOCKER_IMG_ID case of multiple ids returned from docker images query
-ECHO "docker images -aq !image_repo_image_name_tag! > !docker_image_id_path!"
-docker images -aq !image_repo_image_name_tag! > !docker_image_id_path!
+ECHO "docker images -aq !image_repo_name_tag! > !docker_image_id_path!"
+docker images -aq !image_repo_name_tag! > !docker_image_id_path!
 SET /P WSL_DOCKER_IMG_ID_RAW=< !docker_image_id_path!
 @REM ECHO WSL_DOCKER_IMG_ID_RAW: !WSL_DOCKER_IMG_ID_RAW!
 SET WSL_DOCKER_IMG_ID=!WSL_DOCKER_IMG_ID_RAW!
@@ -334,7 +335,7 @@ IF "!options!"=="config" (
     ECHO:
     ECHO:
     ECHO:
-    ECHO this container is running as a local copy of the image !image_repo_image_name_tag!
+    ECHO this container is running as a local copy of the image !image_repo_name_tag!
     ECHO:
     ECHO ^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!^^!
     ECHO ^^!^^!^^!^^!^^!^^! IMPORTANT: type 'exit' then ENTER to exit container preview ^^!^^!^^!^^!^^!^^!
@@ -358,7 +359,7 @@ IF "!options!"=="config" (
 SET /P WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path! > nul
 if "!WSL_DOCKER_CONTAINER_ID!"=="" (
     ECHO An error occurred. Missing container ID. Please try again
-    docker pull !image_repo_image_name_tag!
+    docker pull !image_repo_name_tag!
     SET above=previous
     SET failed_before=y
     SET "options=options"
@@ -769,16 +770,16 @@ IF "!options!"=="options" (
 
     IF "!module!"=="wsl_or_exit" (
         ECHO        [c]onfig    configure import settings
-        ECHO        [d]efault   [!default_wsl_distro!] toggle !image_repo_image_name_tag! image as default WSL distro 
+        ECHO        [d]efault   [!default_wsl_distro!] toggle !image_repo_name_tag! image as default WSL distro 
     ) ELSE (
         IF "!module!"=="custom_config" (
-            ECHO        [c]onfig    edit !image_repo_image_name_tag! import configuration
+            ECHO        [c]onfig    edit !image_repo_name_tag! import configuration
         ) ELSE (
             ECHO        [c]onfig    configure import settings
         )
-        ECHO        [i]nstall   pull and import !image_repo_image_name_tag! image into WSL
-        ECHO        [b]uild     build and import !image_repo_image_name_tag! image into WSL
-        ECHO        [d]efault   [!default_wsl_distro!] toggle !image_repo_image_name_tag! image as default WSL distro 
+        ECHO        [i]nstall   pull and import !image_repo_name_tag! image into WSL
+        ECHO        [b]uild     build and import !image_repo_name_tag! image into WSL
+        ECHO        [d]efault   [!default_wsl_distro!] toggle !image_repo_name_tag! image as default WSL distro 
     )
     
     ECHO        [r]estart   **restart computer**
@@ -842,9 +843,9 @@ IF /I "!options!"=="home" (
         ECHO default flag changed
         if "!default_wsl_distro!"=="y" (
             SET "default_wsl_distro=n"
-            ECHO "!!image_repo_image_name_tag!! WILL be configured to be default WSL distro during import"
+            ECHO "!!image_repo_name_tag!! WILL be configured to be default WSL distro during import"
         ) ELSE (
-            ECHO "!!image_repo_image_name_tag!! will NOT be configured to be default WSL distro during import"
+            ECHO "!!image_repo_name_tag!! will NOT be configured to be default WSL distro during import"
             SET "default_wsl_distro=y"
         )
         
