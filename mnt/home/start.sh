@@ -246,5 +246,5 @@ else
     ';
 fi
 
-echo "operation complete ...
+echo "operation complete ..."
 
