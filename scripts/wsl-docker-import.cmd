@@ -1,7 +1,8 @@
-@echo off
+@echo oFF
 @REM this file is solid but will be deprecated once wsl-import.ps1 is fixed
 color 0F
 SETLOCAL EnableDelayedExpansion
+SET "DVLP_DEBUG=y"
 :redo
 SET "module=main"
 SET wsl_version_int=2
@@ -31,16 +32,20 @@ IF "!image_name_tag!"=="" (
     SET "image_name_tag=%1"
     ECHO IMG_NAME_TAG !image_name_tag!
     SET "image_name="
-    for /f "tokens=1 delims=:" %%a in ("%image_name_tag%") do (
+    FOR /f "tokens=1 delims=:" %%a IN ( 
+        "%image_name_tag%"
+    ) DO (
         SET "image_name=%%a"
     )
     SET "image_tag=%image_name_tag::=" & SET "image_tag=%"
     SET "image_name_tag=!image_name!:!image_tag!"
-    ECHO IMG_NAME !image_name!
-    ECHO IMG_TAG !image_tag!
-    ECHO IMG_NAME_TAG !image_name_tag!
-    ECHO OLD_IMG_NAME_TAG %1
-    @REM ECHO "image_tag set to arg: '%1'  ('%~1') as !image_tag!"
+    IF "DVLP_DEBUG"=="y" (
+        ECHO IMG_NAME !image_name!
+        ECHO IMG_TAG !image_tag!
+        ECHO IMG_NAME_TAG !image_name_tag!
+        ECHO OLD_IMG_NAME_TAG %1
+        @REM ECHO "image_tag set to arg: '%1'  ('%~1') as !image_tag!"
+    )
 )
     SET "image_name_tag=!image_name!:!image_tag!"
 
@@ -62,14 +67,16 @@ IF "!non_interactive_distro_name!"=="" (
     
 )
 
-goto config
+GOTO config
 
 
 :set_paths
 SET "module=set_paths"
 SET "go2="
 @REM ECHO "entering module !module!"
-for /f %%x in ('wmic path win32_utctime get /format:list ^| findstr "="') do set %%x
+FOR /f %%x IN (
+    'wmic PATH win32_utctime get /format:list ^| findstr "="'
+) DO SET %%x
 SET "Month=0%Month%"
 SET "Month=%Month:~-2%"
 SET "Day=0%Day%"
@@ -95,7 +102,9 @@ SET "image_save_path=!save_location!\!wsl_distro!.tar"
 @REM !mount_drive!:\!install_directory!\!save_directory!
 @REM ie: C:\wsl-wsl_distros\docker
 SET "dvlp_path=repos/!image_repo!/dvlw/dvlp"
-for /f "tokens=1 delims=-" %%a in ("%image_tag%") do (
+FOR /f "tokens=1 delims=-" %%a IN (
+    "%image_tag%" 
+) DO (
     SET "image_distro=%%a"
 )
 SET "image_service=%image_tag:-=" & SET "image_service=%"
@@ -104,7 +113,7 @@ ECHO "DOCKER_IMG_DO: !docker_image_do!"
 SET "docker_image_doing=!docker_image_do!"
 @REM unset action before using goto
 SET "docker_image_do="
-goto !docker_image_doing!
+GOTO !docker_image_doing!
 
 :docker_image_pull
 SET "module=docker_image_pull"
@@ -116,37 +125,40 @@ ECHO pulling image (!image_repo_name_tag!)...
 ECHO docker pull !image_repo_name_tag!
 @REM pull the image
 docker pull !image_repo_name_tag!
-if "!wsl!"=="n" (
-    @REM goto home_banner
+IF "!wsl!"=="n" (
+    @REM GOTO home_banner
 ) ELSE (
-    goto docker_image_run_from_pull
+    GOTO docker_image_run_from_pull
 )
+
 
 :docker_image_build
 SET "module=docker_image_build"
 ECHO ========================================================================
 ECHO:
+SET "docker_image_do="
 ECHO building image (!image_service!)...
 ECHO docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !image_service!
 @REM build the image
 docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !image_service!
 SET "image_built=y"
-if "!wsl!"=="n" (
+IF "!wsl!"=="n" (
     SET "options=options"
-    goto home_banner
+    GOTO home_banner
 ) ELSE (
-    goto docker_image_run_from_build
+    GOTO docker_image_run_from_build
 )
 
 :docker_image_push
 SET "module=docker_image_push"
 ECHO ========================================================================
 ECHO:
+SET "docker_image_do="
 ECHO pushing image (!image_service!)...
 ECHO docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml push !image_service!
 @REM build the image
 docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml push !image_service!
-goto home_banner
+GOTO home_banner
 
 :docker_image_run_from_pull
 SET "module=docker_image_run_from_pull"
@@ -155,6 +167,7 @@ mkdir !save_location! > nul 2> nul
 @REM ECHO "mkdir install: !install_location!"
 mkdir !install_location! > nul 2> nul
 ECHO:
+SET "docker_image_do="
 ECHO initializing the image container...
 @REM @TODO: handle WSL_DOCKER_IMG_ID case of multiple ids returned from docker images query
 ECHO "docker images -aq !image_repo_name_tag! > !docker_image_id_path!"
@@ -196,13 +209,13 @@ IF /I "!options!"=="config" (
 )
 
 SET /P WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path! > nul
-if "!WSL_DOCKER_CONTAINER_ID!"=="" (
+IF "!WSL_DOCKER_CONTAINER_ID!"=="" (
     ECHO An error occurred. Missing container ID. Please try again
     docker pull !image_repo_name_tag!
     SET above=previous
     SET failed_before=y
     SET "options=options"
-    goto error_restart_prompt
+    GOTO error_restart_prompt
 )
 
 :docker_image_run_from_build
@@ -212,6 +225,7 @@ mkdir !save_location! > nul 2> nul
 @REM ECHO "mkdir install: !install_location!"
 mkdir !install_location! > nul 2> nul
 ECHO:
+SET "docker_image_do="
 ECHO initializing the image container...
 ECHO docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml up !image_service! --detach
 docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml up !image_service! --detach
@@ -257,22 +271,21 @@ IF /I "!options!"=="config" (
 )
 
 SET /P WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path! > nul
-if "!WSL_DOCKER_CONTAINER_ID!"=="" (
+IF "!WSL_DOCKER_CONTAINER_ID!"=="" (
     ECHO An error occurred. Missing container ID. Please try again
     docker pull !image_repo_name_tag!
     SET above=previous
     SET failed_before=y
     SET "options=options"
-    goto error_restart_prompt
+    GOTO error_restart_prompt
 )
 
 :docker_image_export
 SET "module=docker_image_export"
-
 ECHO:
 ECHO exporting image (!WSL_DOCKER_IMG_ID!) as container (!WSL_DOCKER_CONTAINER_ID!)...
 ECHO docker export !WSL_DOCKER_CONTAINER_ID! ^> !image_save_path!
-@set /A _tic=%time:~0,2%*3600^
+@SET /A _tic=%time:~0,2%*3600^
                 +%time:~3,1%*10*60^
                 +%time:~4,1%*60^
                 +%time:~6,1%*10^
@@ -280,15 +293,15 @@ ECHO docker export !WSL_DOCKER_CONTAINER_ID! ^> !image_save_path!
 
 docker export !WSL_DOCKER_CONTAINER_ID! > !image_save_path!
 
-@set /A _toc=%time:~0,2%*3600^
+@SET /A _toc=%time:~0,2%*3600^
             +%time:~3,1%*10*60^
             +%time:~4,1%*60^
             +%time:~6,1%*10^
             +%time:~7,1% >nul
-@set /A _elapsed=%_toc%-%_tic
+@SET /A _elapsed=%_toc%-%_tic
 @REM IF !_elapse! LEQ 1 (
 @REM     ECHO Docker export failure
-@REM     goto error_restart_prompt
+@REM     GOTO error_restart_prompt
 @REM     )
 ECHO DONE
 
@@ -296,16 +309,16 @@ ECHO DONE
 @REM SET "module=wsl_import_prompt"
 @REM IF "!interactive!"=="n" (
 @REM     SET "continue=wsl_import"
-@REM     goto wsl_import
+@REM     GOTO wsl_import
 @REM ) ELSE (
 @REM     SET "options="
 @REM )
 @REM ECHO:
 @REM ECHO Ready to import into WSL. Would you still like to continue?
 @REM ECHO [y]es / [n]o / ([r]edo) 
-@REM SET /p "continue="
+@REM SET /P "continue="
 
-@REM @REM if blank -> yes 
+@REM @REM IF blank -> yes 
 @REM IF /I "!continue!"=="" ( 
 @REM     SET "continue=y"
 @REM )
@@ -316,7 +329,7 @@ ECHO DONE
 @REM     SET "continue=yes"
 @REM )
 
-@REM @REM if y -> yes 
+@REM @REM IF y -> yes 
 @REM IF /I !continue!==y ( 
 @REM     SET "continue=wsl_import"
 @REM )
@@ -325,7 +338,7 @@ ECHO DONE
 @REM )
 
 
-@REM @REM if n -> no
+@REM @REM IF n -> no
 @REM IF /I "!continue!"=="n" ( 
 @REM     SET "continue=no"
 @REM )
@@ -336,11 +349,11 @@ ECHO DONE
 @REM     SET "continue=redo"
 @REM )
 
-@REM @REM if label exists goto it
-@REM goto !continue!
+@REM @REM IF label exists GOTO it
+@REM GOTO !continue!
 
 @REM @REM otherwise... use the built in error message and repeat wsl_import prompt
-@REM goto wsl_import_prompt
+@REM GOTO wsl_import_prompt
 
 @REM EASTER EGG1: typing yes at first prompt bypasses cofirm and restart the default wsl_distro
 @REM EASTER EGG2: typing yes at second prompt (instead of 'y' ) makes wsl_distro default
@@ -348,9 +361,9 @@ ECHO DONE
 :yes
 :wsl_import
 SET "module=wsl_import"
+SET "handle=set_default_wsl_distro"
 
-
-if "!wsl_distro!"=="official-ubuntu-latest" (
+IF "!wsl_distro!"=="official-ubuntu-latest" (
     ECHO:
     ECHO deleting WSL distro !wsl_distro! if it exists...
     ECHO wsl --unregister !wsl_distro!
@@ -361,7 +374,7 @@ if "!wsl_distro!"=="official-ubuntu-latest" (
 ECHO:
 ECHO importing !wsl_distro!.tar to !install_location! as !wsl_distro!...
 ECHO wsl --import !wsl_distro! !install_location! !image_save_path! --version !wsl_version!
-@set /A _tic=%time:~0,2%*3600^
+@SET /A _tic=%time:~0,2%*3600^
             +%time:~3,1%*10*60^
             +%time:~4,1%*60^
             +%time:~6,1%*10^
@@ -369,27 +382,30 @@ ECHO wsl --import !wsl_distro! !install_location! !image_save_path! --version !w
 
 wsl --import !wsl_distro! !install_location! !image_save_path! --version !wsl_version!
 
-@set /A _toc=%time:~0,2%*3600^
+@SET /A _toc=%time:~0,2%*3600^
             +%time:~3,1%*10*60^
             +%time:~4,1%*60^
             +%time:~6,1%*10^
             +%time:~7,1% >nul
-@set /A _elapsed=%_toc%-%_tic
+@SET /A _elapsed=%_toc%-%_tic
 @REM IF !_elapse! LEQ 1 (
 @REM     ECHO WSL import failure
 @REM     SET "failed_before=y"
-@REM     goto error_restart_prompt
+@REM     GOTO error_restart_prompt
 @REM )
 ECHO DONE
-if "!default_wsl_distro!"=="y" (
-    goto set_default_wsl_distro
+IF "!default_wsl_distro!"=="y" (
+    GOTO set_default_wsl_distro
 ) ELSE (
-    goto wsl_or_exit
+    GOTO wsl_distro_launch_prompt
 )
 
 
 :set_default_wsl_distro
 SET "module=set_default_wsl_distro"
+IF "!handle!"=="wsl_import" (
+    SET "handle=set_default_wsl_distro"
+)
 IF "!default_wsl_distro!"=="y" (
 
     ECHO:
@@ -406,95 +422,159 @@ IF "!default_wsl_distro!"=="y" (
     SET "default_wsl_distro=n"
 )
 
-:wsl_or_exit
-SET "module=wsl_or_exit"
-
+:wsl_distro_launch_prompt
+SET "module=wsl_distro_launch_prompt"
+SET "handle=wsl_distro_launch_prompt"
 @REM make sure windows paths transfer
-SET WSLENV=USERPROFILE/p
+SET WSLENV=USERPROFILE/P
 ECHO Windows Subsystem for Linux Distributions:
 wsl -l -v
 ECHO:
 wsl --status
 ECHO:
-SET "openwsl=no"
+SET "wsl_launch="
 IF "!interactive!"=="y" (
     ECHO press ENTER to open !wsl_distro! in WSL
     ECHO  ..or enter any character to skip 
     @REM make sure windows paths transfer
-    SET /p "openwsl=$ "
-    IF "!openwsl!"=="" (
-        SET "openwsl=y"
+    SET /P "wsl_launch=$ "
+    IF /I "!wsl_launch!"=="" (
+        SET "wsl_launch=y"
     ) 
-    goto open_wsl
-)
-IF "!interactive!"=="n" (
-    goto home_banner
+    IF /I "!wsl_launch!"=="yes" (
+        SET "wsl_launch=y"
+    ) 
+    IF /I NOT "!wsl_launch!"=="y" (
+        GOTO home_banner
+    ) 
 )
 
-:open_wsl
-IF NOT DEFINED set_wsl_conv (
-    go to set_wsl_conversion
+:wsl_distro_test
+SET "module=wsl_distro_test"
+SET "handle=wsl_distro_test"
+SET test_string=helloworld
+SET "wsl_distro_test_pass=n"
+SET "wsl_in=wsl -d !wsl_distro! --exec echo !test_string!"
+FOR /F "tokens=*" %%g IN (
+    !wsl_in! 
+) DO (
+    SET wsl_out=%%g
+    SET wsl_out=!wsl_out:~-100!
 )
-IF !set_wsl_conv! EQU 2 (
-    SET set_wsl_conv=1
+ECHO "!wsl_out!"
+ECHO "!test_string!"
+IF "!wsl_out!"=="!test_string!" (
+    SET "wsl_distro_test_pass=y"
 ) ELSE (
-    SET set_wsl_conv=2
+    SET "wsl_distro_test_pass=n"
 )
-SET "wsl_in=wsl -d !wsl_distro! --exec echo y"
-FOR /F "tokens=*" %%g IN (!wsl_in!) do (SET wsl_out=%%g)
-IF "!wsl_out!"=="y" (
+
+
+:wsl_set_conversion_version
+IF NOT "!handle!"=="wsl_distro_launch" (
+    SET "handle=wsl_set_conversion_version"
+)
+SET "module=wsl_set_conversion_version"
+IF NOT !set_wsl_conv! EQU 1 (
+    IF NOT !set_wsl_conv! EQU 2 (
+        SET /A "set_wsl_conv=%wsl_version_int%%% 2 + 1" 
+    )
+)
+
+
+:wsl_distro_error_handler
+SET "module=wsl_distro_error_handler"
+IF NOT "!handle!"=="wsl_distro_test" (
+    SET "handle=wsl_distro_error_handler"
+)
+IF !set_wsl_conv! EQU 0 (
+    IF NOT !set_wsl_conv! EQU 1 (
+        IF NOT !set_wsl_conv! EQU 2 (
+            GOTO wsl_set_conversion_version
+        )
+    )
+)
+IF "!wsl_distro_test_pass!"=="n" (
+    SET "convert="
+    ECHO ERROR DETECTED
+    wsl -d !wsl_distro!
+    ECHO try to convert distro version to WSL!set_wsl_conv!? (y^^^)^^/^^n
+    SET /P "convert="
+    IF /I "!convert!"=="" (
+        SET "convert=y"
+    )
+    IF /I  "!convert!"=="yes" (
+        SET "convert=y"
+    )
+    IF NOT "!convert!"=="y" (
+        ECHO !wsl_distro! failed to import.
+        SET "options=options"
+        GOTO wsl_delete_prompt
+    )
+)
+
+:wsl_distro_convert_version
+IF NOT DEFINED set_wsl_conv (
+    GOTO wsl_set_conversion_version
+) ELSE (
+    wsl --set-version !wsl_distro! !set_wsl_conv!
+    IF !set_wsl_conv! EQU 2 (
+        SET set_wsl_conv=1
+    ) ELSE (
+        SET set_wsl_conv=2
+    )
+    GOTO wsl_distro_test
+)
+
+:wsl_delete_prompt
+SET "module=wsl_delete_prompt"
+ECHO Delete !wsl_distro!? (y^^^)^^/^^n
+SET /P "delete="
+IF /I "!delete!"=="" (
+    SET "delete=yes"
+)
+IF /I "!delete!"=="y" (
+    SET "delete=yes"
+)
+IF /I "!delete!"=="yes" (
+    SET "delete=yes"
+    GOTO wsl_delete 
+)
+SET "options=options" 
+GOTO home_banner
+
+:wsl_delete
+wsl --unregister !wsl_distro!
+GOTO redo
+
+:wsl_distro_launch
+IF "!wsl_distro_test_pass!"=="y" (
     ECHO launching WSL with !wsl_distro! distro...
     ECHO wsl -d !wsl_distro!
+    wsl -d !wsl_distro!
 ) ELSE (
-    ECHO ERROR DETECTED
-    ECHO wsl -d !wsl_distro!
-    ECHO ("try to convert distro version to WSL!set_wsl_conv!? (y)/n")
-    @REM IF NOT "!revert!"=="yes" (    
-        SET /P "revert="
-    @REM )
-    IF "!revert!"=="" (
-        SET "revert=yes"
-    )
-    IF /I "!revert!"=="y" (
-        SET "revert=yes"
-    )
-    IF /I "!revert!"=="yes" (
-        wsl --set-version !set_wsl_conv!
-        goto open_wsl
-    ) ELSE (
-        SET "revert="
-    )
+    GOTO wsl_distro_test
 )
-
-:set_wsl_conversion
-IF NOT DEFINED set_wsl_conv (
-    SET set_wsl_conv=!wsl_version!
-    set /a set_wsl_conv=%wsl_version_int%%1
-) ELSE (
-    goto home_prompt
-)
-
-
-
 
 :custom_config
 SET "module=custom_config"
-if "!interactive!"=="n" (
-    goto quit
+SET "handle=custom_config"
+IF "!interactive!"=="n" (
+    GOTO quit
 )
-@REM if "!options!"=="c" (
+@REM IF "!options!"=="c" (
 @REM     SET "options=config"
 @REM )
 @REM @REM prompt user to type input or hit enter for default shown in parentheses
-@REM if "!options!"=="config" (
+@REM IF "!options!"=="config" (
 
     color 0B
 
     @REM @TODO: filter/safeguard user input
     ECHO:
-    SET /p "image_repo=image repository: (!image_repo_mask!) $ "
+    SET /P "image_repo=image repository: (!image_repo_mask!) $ "
     SET "old_image_name_tag=!image_name_tag!"
-    SET /p "image_name_tag=image name/tag in !image_repo_mask!: (!image_name!:!image_tag!) $ "
+    SET /P "image_name_tag=image name/tag in !image_repo_mask!: (!image_name!:!image_tag!) $ "
     @REM reset image_built flag if the image_name_tag changes
     IF NOT "!old_image_name_tag!"=="!image_name_tag!" (
         SET "docker_image_built=n"
@@ -509,9 +589,10 @@ if "!interactive!"=="n" (
     ECHO OLD_IMG_NAME_TAG !old_image_name_tag!
 
 
-    for /f "tokens=1 delims=:" %%a in ("%image_name_tag%") do (
+    FOR /f "tokens=1 delims=:" %%a IN (
+        "%image_name_tag%"
+    ) DO (
         SET "image_name=%%a"
-
     )
     SET "image_tag=%image_name_tag::=" & SET "image_tag=%"
         ECHO image_tag !image_tag!
@@ -527,12 +608,12 @@ if "!interactive!"=="n" (
         SET "image_repo_name_tag=!image_repo_mask!/!image_name!:!image_tag!"
     )
     IF "!wsl!"=="y" (
-        SET /p "save_directory=download folder: !mount_drive!:\(!save_directory!) $ "
+        SET /P "save_directory=download folder: !mount_drive!:\(!save_directory!) $ "
     )
     SET install_directory=!image_repo_name_tag:/=-!
     SET install_directory=!install_directory::=-!
     IF "!wsl!"=="y" (
-        SET /p "install_directory=install folder: !mount_drive!:\!save_directory!\(!install_directory!) $ "
+        SET /P "install_directory=install folder: !mount_drive!:\!save_directory!\(!install_directory!) $ "
     )
     SET install_directory=!install_directory:/=-!
     SET install_directory=!install_directory::=-!
@@ -540,18 +621,18 @@ if "!interactive!"=="n" (
     SET save_location=!mount_drive!:\!save_directory!
     SET install_root_dir=!save_location!\!install_directory!
     @REM special rule for official distro
-    if "!image_repo!"=="_" (
+    IF "!image_repo!"=="_" (
         SET "wsl_distro=official-!install_directory!"
     ) ELSE (
         SET "wsl_distro=!install_directory!" 
     )
     IF "!wsl!"=="y" (
-        SET /p "wsl_distro=distro name in WSL: (!wsl_distro!) $ "
+        SET /P "wsl_distro=distro name in WSL: (!wsl_distro!) $ "
     )
     SET "wsl_distro=!wsl_distro::=-!"
     SET "wsl_distro=!wsl_distro:/=-!"
     IF "!wsl!"=="y" (
-        SET /p "wsl_version=WSL version: (!wsl_version_int!) $ "
+        SET /P "wsl_version=WSL version: (!wsl_version_int!) $ "
         IF "!wsl_version!"=="2" (
             SET wsl_version_int=2
         ) ELSE (
@@ -560,36 +641,40 @@ if "!interactive!"=="n" (
     )
 
     ECHO:
-    @REM goto home_banner
+    @REM GOTO home_banner
     @REM SET "options="
     @REM ECHO Press ENTER to import !wsl_distro! as a distro into WSL
     @REM ECHO:   or enter [o]ptions to see more options
-    @REM SET /p "options=$ "
+    @REM SET /P "options=$ "
     @REM IF "!options!"=="" (
     @REM     SET "options=import"
-    @REM     goto set_paths
+    @REM     GOTO set_paths
     @REM )
     @REM IF "!options!"=="o" (
     @REM     SET "options=options"
     @REM )
     @REM IF "!options!"=="options" (
-    @REM     goto home_banner
+    @REM     GOTO home_banner
     @REM ) ELSE (
-    @REM     goto options_parse
+    @REM     GOTO options_parse
     @REM )
 
 
     color 0F
 @REM ) ELSE (
 @REM     IF /I "!options!"=="exit" (
-@REM         goto quit
+@REM         GOTO quit
 @REM     )
 @REM     IF /I "!options!"=="x" (
-@REM         goto program_restart_prompt
+@REM         GOTO program_restart_prompt
 @REM     )
 @REM )
 
 :config
+SET "module=config"
+IF "!handle!"=="custom_config" (
+    SET "handle=config"
+)
 SET "save_location=!mount_drive!:\!save_directory!"
 SET "install_root_dir=!save_location!\!wsl_distro!"
 @REM wsl_distro - meaning local wsl_distro
@@ -610,8 +695,8 @@ SET "docker_container_id_path=!install_root_dir!\.container_id"
 
 :home_banner
 @REM CLS
-
-SET "module=home_banner"
+SET "prompt_type=home_prompt"
+SET "handle=home_banner"
 ECHO:
 ECHO       _____________________________________________________________________ 
 ECHO      /                          DEVEL'S PLAYGROUND                         \
@@ -648,28 +733,31 @@ IF "!wsl!"=="y" (
 
     )
 ) ELSE (
-    ECHO        ............                                           ............
-    ECHO        ............    import into WSL:                       ............
-    ECHO        ............      no                                   ............
+    ECHO        ............                                           ..............
+    ECHO        ............    import into WSL:                       ..............
+    ECHO        ............      no                                   ..............
 
 )
 
 ECHO      -----------------------------------------------------------------------
 ECHO:
 :home_prompt
-SET "module=home_prompt"
+SET "prompt_type=home_prompt"
+IF NOT "!handle!"=="home_banner" (
+    SET "handle=home_prompt"
+)
 SET above=above
 IF "!interactive!"=="n" (
     @REM official repo has no repo name in address/url
     SET "options=build"
-    goto options_parse
+    GOTO options_parse
 )
 
-IF defined failed_before (
+IF DEFINED failed_before (
     IF fail_count GTR 2 (
         @REM SET fail_count=0
         echo !fail_count!
-        goto error_restart_prompt
+        GOTO error_restart_prompt
     ) ELSE (        
         IF !fail_count!==3 (
             SET fail_count=4
@@ -737,17 +825,14 @@ IF "!quiet_home_prompt!"=="n" (
     ECHO        ..or type [o]ptions
 )
 ECHO:
-
 @REM IF "!options!"=="options" (
-
-@REM )
 ECHO "options1: !options!"
 ECHO "home_default_option1: !home_default_option!"
 IF "!quiet_home_prompt!"=="n" (
     ECHO "no quiet prompt"
     SET "options=!home_default_option!"
     SET "confirm="
-    SET /p "confirm=$ "
+    SET /P "confirm=$ "
     IF NOT "!confirm!"=="" (
         SET "options=!confirm!"
         ECHO "options set to !confirm! (confirm)"
@@ -772,11 +857,11 @@ ECHO "home_default_option2: !home_default_option!"
 
 
 
-@REM goto options_parse
+@REM GOTO options_parse
 
 @REM ) ELSE (
-@REM     goto options_parse
-    @REM goto options_prompt
+@REM     GOTO options_parse
+    @REM GOTO options_prompt
     @REM IF /I "!options!"=="o" (
     @REM     SET "options=options"
     @REM )
@@ -786,20 +871,21 @@ ECHO "home_default_option2: !home_default_option!"
 
 :options_prompt
 @REM SET "module=options_prompt"
-SET "exit_module=options_prompt"
-SET "prompt_type=normal"
+SET "prompt_type=options_prompt"
+SET "handle=options_prompt"
+
 IF /I "!options!"=="o" (
     SET "options=options"
 )
 IF /I "!options!"=="options" (
-    if "!interactive!"=="n" (
-        goto quit
+    IF "!interactive!"=="n" (
+        GOTO quit
     )
     ECHO   Options:
     ECHO:
     ECHO        [h]ome      go to home screen
 
-    IF "!module!"=="wsl_or_exit" (
+    IF "!module!"=="wsl_distro_launch_prompt" (
         ECHO        [c]onfig    configure import settings
         ECHO        [d]efault   !default_wsl_distro! toggle !image_repo_name_tag! image as default WSL distro 
     ) ELSE (
@@ -809,16 +895,16 @@ IF /I "!options!"=="options" (
             ECHO        [c]onfig    configure import settings
         )
 
-        if "!wsl!"=="y" (
+        IF "!wsl!"=="y" (
             ECHO        [l]aunch    launch !wsl_distro! if it exists in WSL
             ECHO        [p]ull      pull and import !image_name_tag! image into WSL
-            ECHO        [b]uild     build and import !image_name_tag! image into WSL
-            ECHO        [P]ush      push !image_repo_name_tag! image to Docker Hub - requires build
+            ECHO        [b]uild     build and import !wsl_distro! into WSL
+            ECHO        [P]ush      push a built image to Hub
             IF "!image_built!"=="y" (
                 ECHO        [i]nstall[P]   [i]nstall[b] ^^+ push to !to image_repo!
             )
             ECHO [ON]   [w]sl       toggle - import !image_repo_name_tag! into WSL 
-            if "!default_wsl_distro!"=="y" (
+            IF "!default_wsl_distro!"=="y" (
                 ECHO [ON]    [d]wsl      toggle - designate !image_repo_name_tag! as default WSL distro 
             ) ELSE (
                 ECHO [OFF]  [d]wsl      toggle - designate !image_repo_name_tag! as default WSL distro  
@@ -840,9 +926,9 @@ IF /I "!options!"=="options" (
     )
     IF /I "!options!"=="options" (
         ECHO "894 options: !options!"
-        SET /p "options=$ "
+        SET /P "options=$ "
         IF "!options!"=="options" (
-            ECHO "set /p options: !options!"
+            ECHO "set /P options: !options!"
             IF NOT "!home_default_option!"=="" (
                 ECHO "options=home_default_option: !options!"
                 SET "options=!home_default_option!"
@@ -857,38 +943,20 @@ IF /I "!options!"=="options" (
     ECHO "OPTIONS: !options!"
 )
 :options_parse
-@REM SET "exit_module=options_parse"
-
+IF NOT "!handle!"=="options_prompt" (
+    SET "handle=options_parse"
+)
 color 0F
-@REM SET "module=options_parse"
-
-@REM gotoo and options are live
-@REM opti0ns - just temp copy of val
+SET "handle=options_parse"
 SET "opti0ns=!options!"
-@REM go2 - just temp copy of val
-@REM SET "go2="
-
-@REM IF /I "!opti0ns!"=="ib" (
-@REM     SET "opti0ns=installb"
-@REM )
-@REM IF /I "!opti0ns!"=="installb" (
-@REM     SET "docker_image_do=docker_image_build"
-@REM     @REM ECHO option 'install' selected
-@REM     SET "go2=set_paths"
-@REM     goto switchboard
-@REM )
-@REM IF /I "!opti0ns!"=="ip" (
-@REM     SET "opti0ns=installp"
-@REM )
-@REM IF /I "!opti0ns!"=="installp" (
-@REM     SET "docker_image_do=docker_image_pull"
-@REM     @REM ECHO option 'install' selected
-@REM     SET "go2=set_paths"
-@REM     goto switchboard
-@REM )
-ECHO "OPTIONS PARSE: !options!"
-ECHO "OPTI0NS PARSE: !opti0ns!"
-ECHO "go2 PARSE: !go2!"
+IF !DVLP_DEBUG!=="y" (
+    ECHO "OPTIONS PARSE: !options!"
+    ECHO "OPTI0NS PARSE: !opti0ns!"
+    ECHO "go2 PARSE: !go2!"
+    ECHO "MOD: !module!"
+    ECHO "EXIT_MOD: !exit_module!"
+    ECHO HANDLE !handle!
+)
 
 
 @REM P -> push
@@ -899,7 +967,7 @@ IF /I "!opti0ns!"=="push" (
     SET "docker_image_do=docker_image_push"
     @REM ECHO option 'install' selected
     SET "go2=set_paths"
-    goto switchboard
+    GOTO switchboard
 )
 IF /I "!opti0ns!"=="b" (
     SET "opti0ns=build"
@@ -908,7 +976,7 @@ IF /I "!opti0ns!"=="build" (
     SET "docker_image_do=docker_image_build"
     @REM ECHO option 'build' selected
     SET "go2=set_paths"
-    goto switchboard
+    GOTO switchboard
 )
 @REM p -> pull
 IF "!opti0ns!"=="p" (
@@ -918,7 +986,7 @@ IF /I "!opti0ns!"=="pull" (
     SET "docker_image_do=docker_image_pull"
     ECHO option 'pull' selected
     SET "go2=set_paths"
-    goto switchboard
+    GOTO switchboard
 )
 @REM P -> push
 IF /I "!image_built!"=="y" (
@@ -930,7 +998,7 @@ IF /I "!image_built!"=="y" (
         @REM ECHO option 'build' selected
         SET "go2=set_paths"
     )
-    goto switchboard
+    GOTO switchboard
 )
 IF /I "!opti0ns!"=="c" (
     SET "opti0ns=config"
@@ -938,7 +1006,7 @@ IF /I "!opti0ns!"=="c" (
 IF /I "!opti0ns!"=="config" (
     @REM ECHO option 'config' selected
     SET "go2=custom_config"
-    goto switchboard
+    GOTO switchboard
 )
 IF /I "!opti0ns!"=="h" (
     SET "opti0ns=home"
@@ -946,13 +1014,13 @@ IF /I "!opti0ns!"=="h" (
 IF /I "!opti0ns!"=="home" (
     @REM ECHO option 'config' selected
     SET "go2=home_banner"
-    goto switchboard
+    GOTO switchboard
 )
-@REM IF "!module!"=="wsl_or_exit" (
+@REM IF "!module!"=="wsl_distro_launch_prompt" (
 @REM     IF "!opti0ns!"=="d" (
 @REM         SET "default_wsl_distro=y"
 @REM         ECHO option 'default' selected
-@REM         goto set_default_wsl_distro
+@REM         GOTO set_default_wsl_distro
 @REM     )
 @REM     IF "!opti0ns!"=="default" (
 @REM         SET "default_wsl_distro=y"
@@ -972,7 +1040,7 @@ IF /I "!opti0ns!"=="home" (
         SET "default=default"
         @REM ECHO option 'default' selected
         ECHO default flag changed
-        if "!default_wsl_distro!"=="y" (
+        IF "!default_wsl_distro!"=="y" (
             SET "default_wsl_distro=n"
             ECHO "make default distro: ON"
         ) ELSE (
@@ -983,30 +1051,31 @@ IF /I "!opti0ns!"=="home" (
         SET "options=options"
         @REM SET "go2= docker_image_pull"
         SET "go2= home_banner"
-        goto switchboard
+        GOTO switchboard
     )
 @REM )
 IF /I "!opti0ns!"=="l" (
     SET "opti0ns=launch"
 )
 IF /I "!opti0ns!"=="launch" (
-    SET "go2=wsl_open"
-    goto switchboard
+    SET "go2=wsl_distro_launch"
+    GOTO switchboard
 )
 IF /I "!opti0ns!"=="o" (
     SET "opti0ns=options"
 )
 IF /I "!opti0ns!"=="options" (
     ECHO EXIT_MODULE !exit_module!
+    ECHO HANDLE !handle!
 
     IF "!exit_module!"=="error_restart_prompt" (
             ECHO MODULE !module!
-        goto options_prompt
+        GOTO options_prompt
     ) ELSE (
         IF "!exit_module!"=="options_prompt" (
-            goto options_prompt
+            GOTO options_prompt
         ) ELSE (
-            goto home_banner
+            GOTO home_banner
         )
 
     )
@@ -1022,7 +1091,7 @@ IF /I "!opti0ns!"=="restart" (
 
     ECHO option 'restart' selected
     SET "go2=computer_restart_prompt"
-    goto switchboard
+    GOTO switchboard
 )
 IF /I "!opti0ns!"=="w" (
     SET "opti0ns=wsl"
@@ -1030,7 +1099,7 @@ IF /I "!opti0ns!"=="w" (
 IF /I "!opti0ns!"=="wsl" (
     @REM ECHO option 'default' selected
     ECHO default flag changed
-    if "!wsl!"=="y" (
+    IF "!wsl!"=="y" (
         SET "wsl=n"
         ECHO "toggle wsl import [ON]"
     ) ELSE (
@@ -1040,20 +1109,22 @@ IF /I "!opti0ns!"=="wsl" (
     SET "opti0ns=options"
     @REM SET "go2=docker_image_pull"
     SET "go2=home_banner"
-    goto switchboard
+    GOTO switchboard
 )
 IF /I "!opti0ns!"=="x" (
     SET "go2=program_restart_prompt"
-    goto switchboard
+    GOTO switchboard
 )
 IF /I "!opti0ns!"=="exit" (
     SET "go2=quit"
-    goto switchboard
+    GOTO switchboard
 )
 
 :switchboard
+@REM 
 @REM SET "exit_module=switchboard"
-=error_restart_prompt"
+SET "handle=switchboard"
+@REM =error_restart_prompt"
 ECHO "options: !options!"
 ECHO "opti0ns: !opti0ns!"
 IF NOT "!opti0ns!"=="" (
@@ -1062,17 +1133,19 @@ IF NOT "!opti0ns!"=="" (
 
 ECHO "go2: !go2!"
 IF NOT "!go2!"=="" (
-    @REM goto !goto!
-    goto !go2!
+    @REM GOTO !goto!
+    GOTO !go2!
 ) ELSE (
-    goto home_banner
+    GOTO home_banner
 )
 
-goto home_banner
+GOTO home_banner
+
 :computer_restart_prompt
-SET "exit_module=computer_restart_prompt"
-if "!interactive!"=="n" (
-    goto quit
+SET "handle=computer_restart_prompt"
+SET "prompt_type=computer_restart_prompt"
+IF "!interactive!"=="n" (
+    GOTO quit
 )
 @REM SET "module=program_restart_prompt"
 SET "prompt_type=restart"
@@ -1132,22 +1205,20 @@ ECHO:
 ECHO:
 ECHO:
 ECHO:
-
-
 ECHO Press ENTER to restart this computer
-ECHO        ..or enter [o]ptions to see more options
+ECHO        Enter [o]ptions for options
 ECHO:
 ECHO:
 ECHO:
 ECHO:
 ECHO:
-SET /p "options=$ "
+SET /P "options=$ "
 IF "!options!"=="" (
 @REM dism /Online /Cleanup-Image /RestoreHealth
     ECHO "initializing restart ..."
     SET "options=restart_now"
     @REM shutdown /r
-    @REM goto quit
+    @REM GOTO quit
     @REM exit
 )
 IF /I "!options!"=="o" (
@@ -1155,7 +1226,7 @@ IF /I "!options!"=="o" (
 )
 IF /I "!options!"=="options" (
     COLOR 0F
-    goto home_banner
+    GOTO home_banner
 ) ELSE (
     IF /I "!options!"=="r" (
         SET "options=restart_now"
@@ -1165,47 +1236,40 @@ IF /I "!options!"=="options" (
     )
     IF /I "!options!"=="restart_now" (
         shutdown /r
-        goto quit
+        GOTO quit
     ) ELSE (
         COLOR 0F
-        goto options_parse
+        GOTO options_parse
     )
     
 )
 
 @REM :cmd
-@REM if "!opti0ns!"=="cmd" (
-@REM     set /p "cmd_call="
+@REM IF "!opti0ns!"=="cmd" (
+@REM     set /P "cmd_call="
 @REM     call !cmd_call!
 @REM )
 :no
-goto home_banner
+GOTO home_banner
 
 :error_restart_prompt:
-SET "exit_module=error_restart_prompt"
-@REM SET "module=error_restart_prompt"
-SET "prompt_type=error_restart"
-ECHO:
-ECHO:
-ECHO:
-ECHO:
-ECHO:
-ECHO:
-ECHO:
-ECHO:
-ECHO:
-ECHO:
-ECHO:
-ECHO:
-ECHO Sorry - import failed. 
+SET "handle=error_restart_prompt"
+SET "prompt_type=error_restart_prompt"
+SET "prompt_error_msg=Sorry - import failed. "
+
 IF "!interactive!"=="n" (
-    goto quit
+    GOTO quit
 )
 SET "failed_before=y"
 ECHO:
 :program_restart_prompt
-if "!interactive!"=="n" (
-    goto quit
+IF NOT "!handle!"=="error_restart_prompt" (
+    SET "handle=program_restart_prompt"
+)
+SET "prompt_type=program_restart_prompt"
+
+IF "!interactive!"=="n" (
+    GOTO quit
 )
 @REM SET "module=program_restart_prompt"
 COLOR 04
@@ -1247,9 +1311,9 @@ ECHO:
 ECHO:
 ECHO:
 ECHO:
+ECHO !prompt_error_msg!
 ECHO:
 ECHO:
-
 ECHO Press ENTER to exit program
 ECHO        ..or enter [o]ptions to see more options
 ECHO:
@@ -1261,22 +1325,16 @@ ECHO:
 
 
 SET "exit_devels_playground="
-SET /p "exit_devels_playground="
+SET /P "exit_devels_playground="
 COLOR 0F
 
 IF "!exit_devels_playground!"=="" (
-    SET "exit_devels_playground=exit"
+    SET "exit_devels_playground=x"
 )
-IF "!exit_devels_playground!"=="x" (
-    SET "exit_devels_playground=exit"
-)
-IF "!exit_devels_playground!"=="exit" (
-    goto quit
-) ELSE (
-    SET "options=!exit_devels_playground!"
-    ECHO "options: !exit_devels_playground! (exit_devels_playground)"
-    goto options_parse
-)
+SET "options=!exit_devels_playground!"
+SET "prompt_error_msg="
+GOTO options_parse
+
 :quit
 :exit
 IF "!interactive!"=="y" (
