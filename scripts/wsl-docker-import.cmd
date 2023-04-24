@@ -63,6 +63,9 @@ IF "!non_interactive_distro_name!"=="" (
     ) ELSE (
         SET "wsl=n"
     )
+    IF "!image_name_tag!"=="" (
+        SET "wsl=y"
+    ) 
 
 ) ELSE (
     SET "interactive=n"
