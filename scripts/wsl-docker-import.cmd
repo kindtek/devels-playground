@@ -65,6 +65,7 @@ IF "!non_interactive_distro_name!"=="" (
     )
     IF "!image_name_tag!"=="" (
         SET "wsl=y"
+        SET "wsl_distro=official-ubuntu-latest"
     ) 
 
 ) ELSE (
