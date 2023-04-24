@@ -34,7 +34,7 @@ IF "!image_name_tag!"=="default" (
     SET "image_repo_mask=official"
     SET "image_tag=latest"
     SET "image_name=ubuntu"
-    SET "image_name_tag=!image_name!:!image_tag!"
+    
 
     ECHO "image_name_tag set to !image_name_tag!"
 ) ELSE (
@@ -47,18 +47,18 @@ IF "!image_name_tag!"=="default" (
         SET "image_name=%%a"
     )
     SET "image_tag=%image_name_tag::=" & SET "image_tag=%"
-    SET "image_name_tag=!image_name!:!image_tag!"
-    IF "DVLP_DEBUG"=="y" (
-        ECHO IMG_NAME !image_name!
-        ECHO IMG_TAG !image_tag!
-        ECHO IMG_NAME_TAG !image_name_tag!
-        ECHO OLD_IMG_NAME_TAG %1
-        @REM ECHO "image_tag set to arg: '%1'  ('%~1') as !image_tag!"
-    )
-)
-    SET "image_name_tag=!image_name!:!image_tag!"
 
-ECHO "image_name_tag==!image_name_tag!"
+)
+
+SET "image_name_tag=!image_name!:!image_tag!"
+
+IF "DVLP_DEBUG"=="y" (
+    ECHO IMG_NAME !image_name!
+    ECHO IMG_TAG !image_tag!
+    ECHO IMG_NAME_TAG !image_name_tag!
+    ECHO OLD_IMG_NAME_TAG %1
+    @REM ECHO "image_tag set to arg: '%1'  ('%~1') as !image_tag!"
+)
 IF "!image_name_tag!"=="default" (
     SET "image_name_tag="
 )
@@ -79,6 +79,16 @@ IF "!non_interactive_distro_name!"=="" (
 ) ELSE (
     SET "interactive=n"
     SET "wsl_distro=!non_interactive_distro_name!"
+    IF "!image_repo!"=="kindtek" (
+        SET "wsl=y"
+    ) ELSE (
+        SET "wsl=n"
+    )
+    IF "!image_name_tag!"=="" (
+        ECHO "official-ubuntu-latest"
+        SET "wsl=y"
+        SET "wsl_distro=official-ubuntu-latest"
+    ) 
     SET "wsl=y"
     
 )
