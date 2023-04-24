@@ -3,6 +3,6 @@
 	path = kernels
 	shallow = true
 	url = https://github.com/kindtek/kernels
-	branch = dvlw
+	branch = dvlp
 	recurse = false
 	ignore = all
