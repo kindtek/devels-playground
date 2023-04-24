@@ -21,8 +21,10 @@ IF "!options!"=="default" (
 ) ELSE (
     SET "default_wsl_distro=n"
 )
-
 IF "!image_name_tag!"=="" (
+    SET "image_name_tag=default"
+)
+IF "!image_name_tag!"=="default" (
     SET "image_repo=_"
     SET "image_repo_mask=official"
     SET "image_tag=latest"
@@ -50,7 +52,9 @@ IF "!image_name_tag!"=="" (
     SET "image_name_tag=!image_name!:!image_tag!"
 
     
-
+IF "!image_name_tag!"=="default" (
+    SET "image_name_tag="
+)
 IF "!non_interactive_distro_name!"=="" (
     SET "interactive=y"
     SET "wsl_distro=!image_repo_mask!-!image_name!-!image_tag!"
