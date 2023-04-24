@@ -330,7 +330,8 @@ RUN \
     apt-get install --no-install-recommends -y sudo && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb && \
-    usermod -aG sudo ${_AGL}
+    usermod -aG sudo ${_AGL} && \
+    echo :WSLInterop:M::MZ::/init:PF > /usr/lib/binfmt.d/WSLInterop.conf
 WORKDIR /
 
 ############################## SKELETON ###################################
