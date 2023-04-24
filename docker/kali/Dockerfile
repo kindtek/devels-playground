@@ -73,7 +73,7 @@ WORKDIR /repos
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked  \
     # TODO: cleanup - for now play plinko to force clone when having submodule sync issues
-    ( git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --filter=blob:limit=12400 --progress dvlw || git config pull.rebase false ) || \
+    ( git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --recurse-submodules --filter=blob:limit=12400 --progress dvlw || git config pull.rebase false ) || \
     ( git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --filter=blob:limit=12400 --progress dvlw || git config pull.rebase true ) || \
     ( git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --filter=blob:limit=12400 --progress dvlw || git config pull.rebase false ) || \
     ( git clone https://github.com/kindtek/devels-workshop --depth=1 --progress dvlw || git config pull.rebase true ) || \
@@ -83,16 +83,16 @@ RUN \
     ( cd dvlw && git pull -f https://github.com/kindtek/devels-workshop ) 
 WORKDIR /repos/dvlw
 # RUN if [ $REFRESH_REPO != no ]; then git pull; fi    
-RUN \
-    --mount=type=cache,target=/tmp/git/cache,sharing=locked \
-    # git submodule init dvlp && \
-    (git pull --progress --depth=1 --prune https://github.com/kindtek/devels-playground ) || \
-    ( git config pull.rebase false && git submodule update  --depth=1 --init --progress -- dvlp )  || \
-    ( git config pull.rebase true &&  git submodule update --init --remote --progress -- dvlp ) || \
-    (git config pull.rebase false && git submodule update --init --remote --progress -- dvlp ) || (git pull --progress --prune https://github.com/kindtek/devels-playground ) && \
-    # (cd /tmp/git/cache/dvlw/dvlp && git pull && cp -rv --remove-destination . /home/${_DVL}/dvlw/dvlp)
-    chmod -R 1770 dvlp/mnt/home && \
-    chmod -R 1770 dvlp/mnt/bak
+# RUN \
+#     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
+#     # git submodule init dvlp && \
+#     (git pull --progress --depth=1 --prune https://github.com/kindtek/devels-playground ) || \
+#     ( git config pull.rebase false && git submodule update  --depth=1 --init --progress -- dvlp )  || \
+#     ( git config pull.rebase true &&  git submodule update --init --remote --progress -- dvlp ) || \
+#     (git config pull.rebase false && git submodule update --init --remote --progress -- dvlp ) || (git pull --progress --prune https://github.com/kindtek/devels-playground ) && \
+#     # (cd /tmp/git/cache/dvlw/dvlp && git pull && cp -rv --remove-destination . /home/${_DVL}/dvlw/dvlp)
+#     chmod -R 1770 dvlp/mnt/home && \
+#     chmod -R 1770 dvlp/mnt/bak
 
 ###################
 # dvlp_repo-build-kernel #
