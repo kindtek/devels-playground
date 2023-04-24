@@ -21,18 +21,25 @@ IF "!options!"=="default" (
 ) ELSE (
     SET "default_wsl_distro=n"
 )
+@REM ECHO IMG_NAME_TAG !image_name_tag!
+
 IF "!image_name_tag!"=="" (
     SET "image_name_tag=default"
+    ECHO "default image set"
 )
 IF "!image_name_tag!"=="default" (
+        ECHO "default image set"
+
     SET "image_repo=_"
     SET "image_repo_mask=official"
     SET "image_tag=latest"
     SET "image_name=ubuntu"
-    @REM ECHO "image_tag set to !image_tag!"
+    SET "image_name_tag=!image_name!:!image_tag!"
+
+    ECHO "image_name_tag set to !image_name_tag!"
 ) ELSE (
     SET "image_name_tag=%1"
-    ECHO IMG_NAME_TAG !image_name_tag!
+    @REM ECHO IMG_NAME_TAG !image_name_tag!
     SET "image_name="
     FOR /F "tokens=1 delims=:" %%a IN ( 
         "%image_name_tag%"
@@ -51,7 +58,7 @@ IF "!image_name_tag!"=="default" (
 )
     SET "image_name_tag=!image_name!:!image_tag!"
 
-    
+ECHO "image_name_tag==!image_name_tag!"
 IF "!image_name_tag!"=="default" (
     SET "image_name_tag="
 )
@@ -64,6 +71,7 @@ IF "!non_interactive_distro_name!"=="" (
         SET "wsl=n"
     )
     IF "!image_name_tag!"=="" (
+        ECHO "official-ubuntu-latest"
         SET "wsl=y"
         SET "wsl_distro=official-ubuntu-latest"
     ) 
