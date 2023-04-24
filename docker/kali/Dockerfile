@@ -331,6 +331,7 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb && \
     usermod -aG sudo ${_AGL} && \
+    mkdir -p /usr/lib/binfmt.d && \
     echo :WSLInterop:M::MZ::/init:PF > /usr/lib/binfmt.d/WSLInterop.conf
 WORKDIR /
 
