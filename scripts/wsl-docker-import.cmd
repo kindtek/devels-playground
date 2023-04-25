@@ -36,7 +36,6 @@ IF "!image_name_tag!"=="default" (
     SET "image_name=ubuntu"
     
 
-    ECHO "image_name_tag set to !image_name_tag!"
 ) ELSE (
     SET "image_name_tag=%1"
     @REM ECHO IMG_NAME_TAG !image_name_tag!
@@ -51,6 +50,7 @@ IF "!image_name_tag!"=="default" (
 )
 
 SET "image_name_tag=!image_name!:!image_tag!"
+ECHO "image_name_tag set to !image_name_tag!"
 
 IF "DVLP_DEBUG"=="y" (
     ECHO IMG_NAME !image_name!
