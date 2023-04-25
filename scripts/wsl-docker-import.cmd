@@ -127,6 +127,7 @@ SET "image_save_path=!save_location!\!wsl_distro!.tar"
 @REM directory structure: 
 @REM !mount_drive!:\!install_directory!\!save_directory!
 @REM ie: C:\wsl-wsl_distros\docker
+
 SET "dvlp_path=repos/!image_repo!/dvlw/dvlp"
 FOR /F "tokens=1 delims=-" %%a IN (
     "%image_tag%" 
@@ -134,7 +135,10 @@ FOR /F "tokens=1 delims=-" %%a IN (
     SET "image_distro=%%a"
 )
 SET "image_service=%image_tag:-=" & SET "image_service=%"
-
+@REM do not try to build sources that are official
+IF "!image_repo!"=="_" (
+    SET "docker_image_do=docker_image_pull"
+)
 ECHO "DOCKER_IMG_DO: !docker_image_do!"
 SET "docker_image_doing=!docker_image_do!"
 SET "docker_image_do="
