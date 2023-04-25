@@ -783,6 +783,10 @@ IF "!DVLP_DEBUG!"=="y" (
     ECHO "options1: !options!"
     ECHO "home_default_option1: !home_default_option!"
 )
+@REM avoid building official sources
+IF "!image_repo!"=="_" (
+    SET "home_default_option=pull"
+)
 IF "!quiet_home_prompt!"=="n" (
     IF "!DVLP_DEBUG!"=="y" (
         ECHO "no quiet prompt"
