@@ -893,10 +893,17 @@ IF /I "!opti0ns!"=="b" (
     SET "opti0ns=build"
 )
 IF /I "!opti0ns!"=="build" (
-    SET "docker_image_do=docker_image_build"
-    @REM ECHO option 'build' selected
-    SET "go2=set_paths"
-    GOTO switchboard
+    IF /I "!image_name_tag!"=="default" (
+        SET "docker_image_do=docker_image_pull"
+        @REM ECHO option 'build' selected
+        SET "go2=set_paths"
+        GOTO switchboard
+    ) ELSE (
+        SET "docker_image_do=docker_image_build"
+        @REM ECHO option 'build' selected
+        SET "go2=set_paths"
+        GOTO switchboard
+    )
 )
 @REM p -> pull
 IF "!opti0ns!"=="p" (
