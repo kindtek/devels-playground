@@ -78,7 +78,8 @@ IF "!non_interactive_distro_name!"=="" (
 
 ) ELSE (
     SET "interactive=n"
-    SET "wsl_distro=!non_interactive_distro_name!"
+    @REM SET "wsl_distro=!non_interactive_distro_name!"
+    SET "wsl_distro=!image_repo_mask!-!image_name!-!image_tag!"
     IF "!image_repo!"=="kindtek" (
         SET "wsl=y"
     ) ELSE (
