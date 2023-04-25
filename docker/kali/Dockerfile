@@ -923,7 +923,7 @@ USER ${_AGL}
 ##################
 # dvlp_base-cuda #
 ##################
-FROM dvlp_base-git AS dvlp_base-cuda
+FROM dvlp_base-gui-plus AS dvlp_base-cuda
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -931,11 +931,11 @@ ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 USER r00t
-COPY --from=dvlp_base-python-build-lite ./ ./
-COPY --from=dvlp_base-msdot-build-lite ./ ./
-COPY --from=dvlp_base-dind-build ./ ./
-COPY --from=dvlp_base-kernel-build ./ ./
-# COPY --from=dvlp_base-kernel-lite ./ ./
+# COPY --from=dvlp_base-python-build-lite ./ ./
+# COPY --from=dvlp_base-msdot-build-lite ./ ./
+# COPY --from=dvlp_base-dind-build ./ ./
+# COPY --from=dvlp_base-kernel-build ./ ./
+# # COPY --from=dvlp_base-kernel-lite ./ ./
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
