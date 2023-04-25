@@ -70,7 +70,7 @@ IF "!non_interactive_distro_name!"=="" (
     ) ELSE (
         SET "wsl=n"
     )
-    IF "!image_name_tag!"=="" (
+    IF "!image_repo!"=="_" (
         ECHO "official-ubuntu-latest"
         SET "wsl=y"
         SET "wsl_distro=official-ubuntu-latest"
