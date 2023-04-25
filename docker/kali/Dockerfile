@@ -455,7 +455,7 @@ RUN \
 ####################
 # dvlp_skel-kernel #
 ####################
-FROM dvlp_skel-build AS dvlp_skel-kernel
+FROM dvlp_skel-build-kernel AS dvlp_skel-kernel
 
 #################################################################################
 ############################### IMAGE BASES #####################################
@@ -495,6 +495,21 @@ USER ${_AGL}
 # dvlp_base-git-kernel #
 ############
 FROM dvlp_skel-kernel AS dvlp_base-git-kernel
+# COPY --from=dvlp_skel-build-kernel         ./      ./
+ARG _AGL_USR
+ARG _DVL_USR
+ARG _ADM_USR
+ENV _AGL=$_AGL_USR
+ENV _DVL=$_DVL_USR
+ENV _ADM=$_ADM_USR
+ARG REFRESH_REPO
+WORKDIR /hal
+USER ${_AGL}
+
+############
+# dvlp_base-git-kernel #
+############
+FROM dvlp_skel AS dvlp_base-nmap
 # COPY --from=dvlp_skel-build-kernel         ./      ./
 ARG _AGL_USR
 ARG _DVL_USR
