@@ -72,27 +72,39 @@ FROM dvlp_repo-build-prep AS dvlp_repo-build
 WORKDIR /repos
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked  \
-    # TODO: cleanup - for now play plinko to force clone when having submodule sync issues
-    ( git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --recurse-submodules --filter=blob:limit=12400 --progress dvlw || git config pull.rebase false ) || \
-    ( git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --filter=blob:limit=12400 --progress dvlw || git config pull.rebase true ) || \
-    ( git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --filter=blob:limit=12400 --progress dvlw || git config pull.rebase false ) || \
-    ( git clone https://github.com/kindtek/devels-workshop --depth=1 --progress dvlw || git config pull.rebase true ) || \
-    ( git clone https://github.com/kindtek/devels-workshop --depth=1 --progress dvlw || git config pull.rebase false ) || \
-    ( git clone https://github.com/kindtek/devels-workshop --progress dvlw || git config pull.rebase true ) || \
-    ( git clone https://github.com/kindtek/devels-workshop --progress dvlw || git config pull.rebase false ) || \
-    ( cd dvlw && git pull -f https://github.com/kindtek/devels-workshop ) 
+    repo_owner=kindtek && \
+    repo_name=devels-workshop && \
+    repo_url=https://github.com/${repo_owner}/${repo_name} && \
+    repo_path=dvlw && \
+    repo_branch=main && \
+    echo repo_owner: $repo_owner && \
+    echo repo_name: $repo_name && \
+    echo repo_url: $repo_url && \
+    echo repo_path: $repo_path && \
+    echo repo_branch: $repo_branch && \
+    git clone "$repo_url" --branch $repo_branch --progress -- $repo_path 2>/dev/null
+    # # TODO: cleanup - for now play plinko to force clone when having submodule sync issues
+    # ( git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --recurse-submodules --filter=blob:limit=12400 --progress dvlw || git config pull.rebase false ) || \
+    # ( git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --filter=blob:limit=12400 --progress dvlw || git config pull.rebase true ) || \
+    # ( git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --filter=blob:limit=12400 --progress dvlw || git config pull.rebase false ) || \
+    # ( git clone https://github.com/kindtek/devels-workshop --depth=1 --progress dvlw || git config pull.rebase true ) || \
+    # ( git clone https://github.com/kindtek/devels-workshop --depth=1 --progress dvlw || git config pull.rebase false ) || \
+    # ( git clone https://github.com/kindtek/devels-workshop --progress dvlw || git config pull.rebase true ) || \
+    # ( git clone https://github.com/kindtek/devels-workshop --progress dvlw || git config pull.rebase false ) || \
+    # ( cd dvlw && git pull -f https://github.com/kindtek/devels-workshop ) 
 WORKDIR /repos/dvlw
 # RUN if [ $REFRESH_REPO != no ]; then git pull; fi    
-# RUN \
-#     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
+RUN \
+    --mount=type=cache,target=/tmp/git/cache,sharing=locked \
+    git submodule update --init --remote --progress -- dvlp dvl-adv powerhell 2>/dev/null && \
 #     # git submodule init dvlp && \
 #     (git pull --progress --depth=1 --prune https://github.com/kindtek/devels-playground ) || \
 #     ( git config pull.rebase false && git submodule update  --depth=1 --init --progress -- dvlp )  || \
 #     ( git config pull.rebase true &&  git submodule update --init --remote --progress -- dvlp ) || \
 #     (git config pull.rebase false && git submodule update --init --remote --progress -- dvlp ) || (git pull --progress --prune https://github.com/kindtek/devels-playground ) && \
 #     # (cd /tmp/git/cache/dvlw/dvlp && git pull && cp -rv --remove-destination . /home/${_DVL}/dvlw/dvlp)
-#     chmod -R 1770 dvlp/mnt/home && \
-#     chmod -R 1770 dvlp/mnt/bak
+    chmod -R 1770 dvlp/mnt/home && \
+    chmod -R 1770 dvlp/mnt/bak
 
 ###################
 # dvlp_repo-build-kernel #
@@ -101,18 +113,28 @@ FROM dvlp_repo-build-prep AS dvlp_repo-build-kernel
 WORKDIR /repos
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
-    git clone https://github.com/kindtek/devels-workshop --progress dvlw || (cd dvlw && git pull https://github.com/kindtek/devels-workshop) 
+    repo_owner=kindtek && \
+    repo_name=devels-workshop && \
+    repo_url=https://github.com/${repo_owner}/${repo_name} && \
+    repo_path=dvlw && \
+    repo_branch=main && \
+    echo repo_owner: $repo_owner && \
+    echo repo_name: $repo_name && \
+    echo repo_url: $repo_url && \
+    echo repo_path: $repo_path && \
+    echo repo_branch: $repo_branch && \
+    git clone "$repo_url" --branch $repo_branch --progress -- $repo_path 2>/dev/null
 WORKDIR /repos/dvlw
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
-    git submodule update --init --remote --progress -- dvlp || git pull https://github.com/kindtek/devels-playground && \
+    git submodule update --init --remote --progress -- dvlp dvl-adv powerhell 2>/dev/null && \
     chmod -R 1770 dvlp/mnt/home && \
     chmod -R 1770 dvlp/mnt/bak
 WORKDIR /repos/dvlw/dvlp
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
     # heavier download here
-    ( git submodule update --init --progress || git submodule update --init --progress --force --rebase -- kernels ) 
+    git submodule update --init --progress -- kernels 
 # (cd /tmp/git/cache/dvlw/dvlp && git pull && cp -rv --remove-destination . /home/${_DVL}/dvlw/dvlp)
 
 ########################
