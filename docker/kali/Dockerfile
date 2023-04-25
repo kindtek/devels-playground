@@ -437,6 +437,21 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 
+##################
+# dvlp_skel-nmap #
+##################
+FROM dvlp_skel AS dvlp_skel-nmap
+USER r00t
+WORKDIR /r00t/build
+RUN \
+    git clone https://github.com/nmap/nmap 
+WORKDIR /r00t/build/nmap
+RUN \
+    ./configure && \
+    make && \
+    make install && \
+    rm -rf /r00t
+
 ####################
 # dvlp_skel-kernel #
 ####################
@@ -581,6 +596,14 @@ COPY --from=dvlp_base-python-build ./ ./
 COPY --from=dvlp_base-python-build-lite ./ ./
 WORKDIR /hal
 USER ${_AGL}
+
+
+# dvlp_base-scan #
+
+FROM dvlp_base-python-lite AS dvlp_base-scan
+RUN \
+    apt-get -y install finger ncat rpcbind telnet
+# network-manager-openvpn network-manager-openvpn-gnome
 
 ############################# POWERHELL #########################################
 ##############################
