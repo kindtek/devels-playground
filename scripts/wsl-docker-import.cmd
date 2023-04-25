@@ -695,7 +695,7 @@ IF NOT "!handle!"=="home_banner" (
 )
 SET above=above
 IF "!interactive!"=="n" (
-    IF NOT "!wsl_distro!"=="official-ubuntu-latest" (
+    IF NOT "!image_name_tag!"=="ubuntu:latest" (
         @REM official repo has no repo name in address/url
         SET "options=build"
         GOTO options_parse
