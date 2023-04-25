@@ -450,7 +450,7 @@ RUN \
     ./configure && \
     make && \
     make install && \
-    rm -rf /r00t
+    rm -rf /r00t/build/*
 
 ####################
 # dvlp_skel-kernel #
