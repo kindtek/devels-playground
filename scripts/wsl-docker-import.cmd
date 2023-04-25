@@ -432,7 +432,7 @@ FOR /F "tokens=*" %%g IN (
     !wsl_in! 
 ) DO (
     SET wsl_out=%%g
-    SET wsl_out=!wsl_out:~-100!
+    SET wsl_out=!wsl_out:~-10!
 )
 IF "!DVLP_DEBUG!"=="y" (
     ECHO "!wsl_out!"
@@ -1158,6 +1158,7 @@ IF /I "!options!"=="o" (
 )
 IF /I "!options!"=="options" (
     COLOR 0F
+    SET "docker_do="
     GOTO home_banner
 ) ELSE (
     IF /I "!options!"=="r" (
