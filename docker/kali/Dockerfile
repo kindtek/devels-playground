@@ -11,6 +11,7 @@ ARG INTERNAL_BUILD
 ARG CONFIG_FILE=${CONFIG_FILE}
 ARG DEBIAN_FRONTEND=noninteractive
 ARG DOCKER_BUILDKIT=1
+ARG KERNEL_PACKAGE_NAME=${KERNEL_PACKAGE_NAME:-built-kernel}
 ARG KERNEL_TYPE=${KERNEL_TYPE:-basic-wsl}
 ARG REFRESH_REPO=${REFRESH_REPO:-no}
 ARG _AGL_USR=${_AGL:-agl}
@@ -763,6 +764,7 @@ USER ${_AGL}
 ######################################################################################
 FROM dvlp_base-kernel-builder AS dvlp_kernel-make
 ARG CONFIG_FILE
+ARG KERNEL_PACKAGE_NAME
 ARG KERNEL_TYPE
 USER r00t
 WORKDIR /
@@ -967,8 +969,9 @@ ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG CONFIG_FILE
+ARG KERNEL_PACKAGE_NAME
 WORKDIR /
-COPY --from=dvlp_kernel-make ./built-kernel.tar.gz ./built-kernel.tar.gz
+COPY --from=dvlp_kernel-make ./built-kernel.tar.gz ./${KERNEL_PACKAGE_NAME}.tar.gz
 
 
 # FROM dvlp_base AS dvlp_jacket
