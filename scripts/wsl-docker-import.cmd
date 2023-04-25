@@ -70,7 +70,7 @@ IF "!non_interactive_distro_name!"=="" (
     ) ELSE (
         SET "wsl=n"
     )
-    IF "!image_repo!"=="_" (
+    IF "!image_name_tag!"=="" (
         ECHO "official-ubuntu-latest"
         SET "wsl=y"
         SET "wsl_distro=official-ubuntu-latest"
@@ -896,6 +896,7 @@ IF /I "!opti0ns!"=="build" (
     IF /I "!image_name_tag!"=="default" (
         SET "docker_image_do=docker_image_pull"
         @REM ECHO option 'build' selected
+        SET "opti0ns=pull"
         SET "go2=set_paths"
         GOTO switchboard
     ) ELSE (
