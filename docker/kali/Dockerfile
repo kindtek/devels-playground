@@ -82,7 +82,7 @@ RUN \
     echo repo_url: $repo_url && \
     echo repo_path: $repo_path && \
     echo repo_branch: $repo_branch && \
-    git clone "$repo_url" --branch $repo_branch --progress -- $repo_path 2>/dev/null
+    git clone "$repo_url" --single-branch --branch $repo_branch --filter=blob:limit=12400 --progress -- $repo_path 2>/dev/null
     # # TODO: cleanup - for now play plinko to force clone when having submodule sync issues
     # ( git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --recurse-submodules --filter=blob:limit=12400 --progress dvlw || git config pull.rebase false ) || \
     # ( git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch --filter=blob:limit=12400 --progress dvlw || git config pull.rebase true ) || \
@@ -479,7 +479,7 @@ USER ${_AGL}
 # dvlp_base-git-kernel #
 ############
 FROM dvlp_skel-kernel AS dvlp_base-git-kernel
-COPY --from=dvlp_skel-build-kernel         ./      ./
+# COPY --from=dvlp_skel-build-kernel         ./      ./
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
