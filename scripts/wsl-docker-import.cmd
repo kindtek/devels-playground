@@ -479,20 +479,22 @@ IF !set_wsl_conv! EQU 0 (
 IF "!wsl_distro_test_pass!"=="n" (
     SET "convert="
     ECHO ERROR DETECTED
-    @REM wsl -d !wsl_distro!
-    ECHO try to convert distro version to WSL!set_wsl_conv!? (y^^^)^^/^^n
-    SET /P "convert="
-    IF /I "!convert!"=="" (
-        SET "convert=y"
-    )
-    IF /I  "!convert!"=="yes" (
-        SET "convert=y"
-    )
-    IF NOT "!convert!"=="y" (
-        ECHO !wsl_distro! failed to import.
-        SET "options=options"
-        GOTO wsl_delete_prompt
-    )
+    IF "!interactive!"=="y" (    
+        @REM wsl -d !wsl_distro!
+        ECHO try to convert distro version to WSL!set_wsl_conv!? (y^^^)^^/^^n
+        SET /P "convert="
+        IF /I "!convert!"=="" (
+            SET "convert=y"
+        )
+        IF /I  "!convert!"=="yes" (
+            SET "convert=y"
+        )
+        IF NOT "!convert!"=="y" (
+            ECHO !wsl_distro! failed to import.
+            SET "options=options"
+            GOTO wsl_delete_prompt
+        )
+    )   
 )
 
 :wsl_distro_convert_version
