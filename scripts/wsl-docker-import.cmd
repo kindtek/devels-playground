@@ -834,6 +834,9 @@ IF /I "!options!"=="o" (
     SET "options=options"
 )
 IF "!interactive!"=="n" (
+    IF "!DVLP_DEBUG!"=="y" (
+        ECHO "non-interactive session"
+    )
     IF /I "!options!"=="options" (
         ECHO   Options:
         ECHO:
