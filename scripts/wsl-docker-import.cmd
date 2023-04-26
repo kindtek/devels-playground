@@ -495,7 +495,7 @@ IF "!wsl_distro_test_pass!"=="n" (
             GOTO wsl_delete_prompt
         )
     )  ELSE (
-        GOTO home_banner
+        GOTO quit
     )  
 )
 
