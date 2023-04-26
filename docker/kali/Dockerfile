@@ -444,6 +444,13 @@ FROM dvlp_skel AS dvlp_skel-nmap
 USER r00t
 WORKDIR /r00t/build
 RUN \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    apt-get update -y && apt-get autoremove -y && \
+    apt-get install -y build-essential && \
+    apt-get install -y --reinstall ca-certificates && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb
+RUN \
     git clone https://github.com/nmap/nmap 
 WORKDIR /r00t/build/nmap
 RUN \
@@ -451,6 +458,9 @@ RUN \
     make && \
     make install && \
     rm -rf /r00t/build/*
+RUN \
+    apt-get remove -y build-essential
+
 
 ####################
 # dvlp_skel-kernel #
@@ -612,13 +622,24 @@ COPY --from=dvlp_base-python-build-lite ./ ./
 WORKDIR /hal
 USER ${_AGL}
 
-
+##################
 # dvlp_base-scan #
-
-FROM dvlp_base-python-lite AS dvlp_base-scan
+##################
+FROM dvlp_skel-nmap AS dvlp_base-scan
+COPY --from=dvlp_base-python-lite ./ ./
+USER r00t
 RUN \
-    apt-get -y install finger ncat rpcbind telnet
+    rm -f /etc/apt/apt.conf.d/docker-clean && \
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
+RUN \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    apt-get update -y && apt-get autoremove -y && \
+    apt-get --no-install-recommends -y install finger ncat rpcbind telnet && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb
 # network-manager-openvpn network-manager-openvpn-gnome
+WORKDIR /hal
+USER ${_AGL}
 
 ############################# POWERHELL #########################################
 ##############################
@@ -1078,6 +1099,12 @@ WORKDIR /
 # dvlp_bare #
 #############
 FROM dvlp_base-bare AS dvlp_bare
+WORKDIR /
+
+#############
+# dvlp_scan #
+#############
+FROM dvlp_base-scan AS dvlp_scan
 WORKDIR /
 
 #############
