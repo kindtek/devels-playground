@@ -833,7 +833,7 @@ SET "handle=options_prompt"
 IF /I "!options!"=="o" (
     SET "options=options"
 )
-IF "!interactive!"=="n" (
+IF "!interactive!"=="y" (
     IF "!DVLP_DEBUG!"=="y" (
         ECHO "non-interactive session"
     )
