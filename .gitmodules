@@ -1,5 +1,4 @@
 [submodule "dvlp"]
-	branch = kali-devel
 	active = true
 	path = dvlp
 	shallow = false
