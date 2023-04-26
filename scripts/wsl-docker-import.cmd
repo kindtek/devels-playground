@@ -904,7 +904,13 @@ IF NOT "!confirm!"=="" (
         ECHO "options set to !home_default_option! (home_default_option)"
     )
 )
-
+IF "!options"=="o" (
+    SET "options=options"
+)
+IF "!options!"=="options" ( 
+    SET "options="
+    GOTO options_prompt
+)
 :options_parse
 IF NOT "!handle!"=="options_prompt" (
     SET "handle=options_parse"
