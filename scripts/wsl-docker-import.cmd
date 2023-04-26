@@ -517,7 +517,9 @@ IF /I "!delete!"=="yes" (
     GOTO wsl_delete 
 )
 SET "options=options" 
-GOTO home_banner
+IF "!interactive"=="y" (
+    GOTO home_banner
+) ELSE ( GOTO quit )
 
 :wsl_delete
 wsl --unregister !wsl_distro!
