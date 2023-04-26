@@ -827,89 +827,84 @@ SET "handle=options_prompt"
 IF /I "!options!"=="o" (
     SET "options=options"
 )
-IF /I "!options!"=="options" (
-    IF "!interactive!"=="n" (
-        GOTO quit
-    )
-    ECHO   Options:
-    ECHO:
-    ECHO        [h]ome      go to home screen
-
-    IF "!module!"=="wsl_distro_launch_prompt" (
-        ECHO        [c]onfig    configure import settings
-        ECHO        [d]efault   !default_wsl_distro! toggle !image_repo_name_tag! image as default WSL distro 
-    ) ELSE (
-        IF "!module!"=="custom_config" (
-            ECHO        [c]onfig    edit !image_repo_name_tag! import configuration
-        ) ELSE (
-            ECHO        [c]onfig    configure import settings
-        )
-
-        IF "!wsl!"=="y" (
-            ECHO        [l]aunch    launch !wsl_distro! if it exists in WSL
-            ECHO        [p]ull      pull and import !image_name_tag! image into WSL
-            ECHO        [b]uild     build and import !wsl_distro! into WSL
-            ECHO        [P]ush      push a built image to Hub
-            IF "!image_built!"=="y" (
-                ECHO        [i]nstall[P]   [i]nstall[b] ^^+ push to !to image_repo!
-            )
-            ECHO [ON]   [w]sl       toggle - import !image_repo_name_tag! into WSL 
-            IF "!default_wsl_distro!"=="y" (
-                ECHO [ON]    [d]wsl      toggle - designate !image_repo_name_tag! as default WSL distro 
-            ) ELSE (
-                ECHO [OFF]  [d]wsl      toggle - designate !image_repo_name_tag! as default WSL distro  
-            )
-        ) ELSE (
-            ECHO        [p]ull      pull !image_repo_name_tag! image into Docker 
-            ECHO        [b]uild     build !image_repo_name_tag! image with Docker
-            ECHO        [P]ush      push !image_repo_name_tag! image to Docker Hub - requires build
-            ECHO [OFF]  [w]sl       toggle - import !image_repo_name_tag! into WSL 
-        )
-
-    )
-    
-    ECHO [ ^^! ]  [r]estart   restart computer
-    ECHO        e[x]it      exit
-    ECHO:
-    IF /I "!options!"=="o" (
-        SET "options=options"
-    )
+IF "!interactive!"=="n" (
     IF /I "!options!"=="options" (
-        IF NOT "!home_default_option!"=="" (
-            IF "DVLP_DEBUG"=="y" (
-                ECHO "options=home_default_option: !options!"
+        ECHO   Options:
+        ECHO:
+        ECHO        [h]ome      go to home screen
+
+        IF "!module!"=="wsl_distro_launch_prompt" (
+            ECHO        [c]onfig    configure import settings
+            ECHO        [d]efault   !default_wsl_distro! toggle !image_repo_name_tag! image as default WSL distro 
+        ) ELSE (
+            IF "!module!"=="custom_config" (
+                ECHO        [c]onfig    edit !image_repo_name_tag! import configuration
+            ) ELSE (
+                ECHO        [c]onfig    configure import settings
             )
-            @REM post option then discard
-            SET "options=!home_default_option!"
-            SET "home_default_option="
+
+            IF "!wsl!"=="y" (
+                ECHO        [l]aunch    launch !wsl_distro! if it exists in WSL
+                ECHO        [p]ull      pull and import !image_name_tag! image into WSL
+                ECHO        [b]uild     build and import !wsl_distro! into WSL
+                ECHO        [P]ush      push a built image to Hub
+                IF "!image_built!"=="y" (
+                    ECHO        [i]nstall[P]   [i]nstall[b] ^^+ push to !to image_repo!
+                )
+                ECHO [ON]   [w]sl       toggle - import !image_repo_name_tag! into WSL 
+                IF "!default_wsl_distro!"=="y" (
+                    ECHO [ON]    [d]wsl      toggle - designate !image_repo_name_tag! as default WSL distro 
+                ) ELSE (
+                    ECHO [OFF]  [d]wsl      toggle - designate !image_repo_name_tag! as default WSL distro  
+                )
+            ) ELSE (
+                ECHO        [p]ull      pull !image_repo_name_tag! image into Docker 
+                ECHO        [b]uild     build !image_repo_name_tag! image with Docker
+                ECHO        [P]ush      push !image_repo_name_tag! image to Docker Hub - requires build
+                ECHO [OFF]  [w]sl       toggle - import !image_repo_name_tag! into WSL 
+            )
+
+        )
+        
+        ECHO [ ^^! ]  [r]estart   restart computer
+        ECHO        e[x]it      exit
+        ECHO:
+        IF /I "!options!"=="options" (
+            IF NOT "!home_default_option!"=="" (
+                IF "DVLP_DEBUG"=="y" (
+                    ECHO "options=home_default_option: !options!"
+                )
+                @REM post option then discard
+                SET "options=!home_default_option!"
+                SET "home_default_option="
+            )
+        ) 
+        IF "DVLP_DEBUG"=="y" (
+            ECHO "MAIN OPTS: !home_default_option!"
+            ECHO "OPTIONS: !options!"
         )
     ) 
-    IF "DVLP_DEBUG"=="y" (
-        ECHO "MAIN OPTS: !home_default_option!"
-        ECHO "OPTIONS: !options!"
+    SET "confirm="
+    SET /P "confirm=$ "
+    IF NOT "!confirm!"=="" (
+        SET "options=!confirm!"
+        IF "!DVLP_DEBUG!"=="y" (
+            ECHO "options set to !confirm! (confirm)"
+        )
+        @REM SET "confirm="
+    ) ELSE (
+        SET "options=!home_default_option!"
+        IF "!DVLP_DEBUG!"=="y" (
+            ECHO "options set to !home_default_option! (home_default_option)"
+        )
     )
-)
-
-SET "confirm="
-SET /P "confirm=$ "
-IF NOT "!confirm!"=="" (
-    SET "options=!confirm!"
-    IF "!DVLP_DEBUG!"=="y" (
-        ECHO "options set to !confirm! (confirm)"
+    IF "!options!"=="o" (
+        SET "options=options"
     )
-    @REM SET "confirm="
-) ELSE (
-    SET "options=!home_default_option!"
-    IF "!DVLP_DEBUG!"=="y" (
-        ECHO "options set to !home_default_option! (home_default_option)"
+    IF "!options!"=="options" ( 
+        SET "options="
+        GOTO options_prompt
     )
-)
-IF "!options!"=="o" (
-    SET "options=options"
-)
-IF "!options!"=="options" ( 
-    @REM SET "options="
-    GOTO options_prompt
 )
 :options_parse
 IF NOT "!handle!"=="options_prompt" (
