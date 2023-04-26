@@ -908,7 +908,7 @@ IF "!options"=="o" (
     SET "options=options"
 )
 IF "!options!"=="options" ( 
-    SET "options="
+    @REM SET "options="
     GOTO options_prompt
 )
 :options_parse
