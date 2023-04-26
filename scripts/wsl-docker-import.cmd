@@ -904,7 +904,7 @@ IF NOT "!confirm!"=="" (
         ECHO "options set to !home_default_option! (home_default_option)"
     )
 )
-IF "!options"=="o" (
+IF "!options!"=="o" (
     SET "options=options"
 )
 IF "!options!"=="options" ( 
