@@ -753,8 +753,12 @@ IF "!options!"=="options" (
     ECHO: 
     ECHO: 
 )
+IF "!interactive!"=="n" (
+    SET "quiet_home_prompt=y"
+)
 
 SET "home_default_option=build"
+
 IF "!wsl!"=="y" (
     IF "!image_repo!"=="kindtek" (
         IF "!image_built!"=="y" ( 
@@ -914,6 +918,8 @@ IF "!interactive!"=="y" (
         SET "options="
         GOTO options_prompt
     )
+) ELSE (
+    SET "options=!home_default_option!"
 )
 :options_parse
 IF NOT "!handle!"=="options_prompt" (
