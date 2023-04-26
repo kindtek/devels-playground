@@ -651,7 +651,6 @@ SET "docker_container_id_path=!install_root_dir!\.container_id"
 
 :home_banner
 @REM CLS
-SET "prompt_type=home_prompt"
 SET "handle=home_banner"
 ECHO:
 ECHO       _____________________________________________________________________ 
@@ -699,7 +698,9 @@ ECHO      ----------------------------------------------------------------------
 ECHO:
 
 :home_prompt
-SET "prompt_type=home_prompt"
+SET "module=home_prompt"
+SET "prompt_type=home"
+SET "docker_do="
 IF NOT "!handle!"=="home_banner" (
     SET "handle=home_prompt"
 )
