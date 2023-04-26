@@ -796,8 +796,8 @@ WORKDIR /hal/dvlw/dvlp/kernels/linux
 SHELL ["/bin/bash", "-c"]
 # RUN chmod +x build-basic-wsl-kernel.sh
 RUN bash build-${KERNEL_TYPE}-kernel.sh && \
-remove -rf /r00t/dvlw/dvlp/kernels/linux-* && \
-remove -rf /r00t/dvlw/dvlp/kernels/zfs-*
+    remove -rf /r00t/dvlw/dvlp/kernels/linux-* && \
+    remove -rf /r00t/dvlw/dvlp/kernels/zfs-*
 # RUN bash make-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" ${_AGL}
 # RUN echo '# daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/${_AGL}/.bashrc
 WORKDIR /hal
