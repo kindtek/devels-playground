@@ -1040,9 +1040,10 @@ WORKDIR /
 ############
 FROM dvlp_base-git AS dvlp_git
 WORKDIR /
-########################
-# dvlp_git-lite #
-########################
+
+###################
+# dvlp_git-kernel #
+###################
 FROM dvlp_base-git-kernel AS dvlp_git-kernel
 WORKDIR /
 
