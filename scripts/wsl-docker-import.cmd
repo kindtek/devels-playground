@@ -742,19 +742,20 @@ IF DEFINED failed_before (
 
 ECHO:
 ECHO:
-IF "!options!"=="options" (
-    SET "quiet_home_prompt=y"
-    SET "quiet_home_prompt=n"
 
-) ELSE (
-    SET "quiet_home_prompt=n"
-    ECHO Confirm !above! settings.
-    ECHO: 
-    ECHO: 
-    ECHO: 
-)
 IF "!interactive!"=="n" (
     SET "quiet_home_prompt=y"
+) ELSE (
+    IF "!options!"=="options" (
+        SET "quiet_home_prompt=y"
+        SET "quiet_home_prompt=n"
+    ) ELSE (
+        SET "quiet_home_prompt=n"
+        ECHO Confirm !above! settings.
+        ECHO: 
+        ECHO: 
+        ECHO: 
+    )
 )
 
 SET "home_default_option=build"
