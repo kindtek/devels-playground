@@ -63,6 +63,9 @@ IF "!image_name_tag!"=="default" (
     SET "image_name_tag="
 )
 IF "!non_interactive_distro_name!"=="" (
+    IF "!DVLP_DEBUG!"=="y" (
+        ECHO "interactive session"
+    )
     SET "interactive=y"
     SET "wsl_distro=!image_repo_mask!-!image_name!-!image_tag!"
     IF "!image_repo!"=="kindtek" (
@@ -77,6 +80,9 @@ IF "!non_interactive_distro_name!"=="" (
     ) 
 
 ) ELSE (
+    IF "!DVLP_DEBUG!"=="y" (
+        ECHO "NON-interactive session"
+    )
     SET "interactive=n"
     @REM SET "wsl_distro=!non_interactive_distro_name!"
     SET "wsl_distro=!image_repo_mask!-!image_name!-!image_tag!"
