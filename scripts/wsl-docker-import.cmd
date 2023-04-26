@@ -432,6 +432,7 @@ FOR /F "tokens=*" %%g IN ( !wsl_in! ) DO (
     SET wsl_out=%%g
     @REM SET wsl_out=!wsl_out:~-10!
     IF "!DVLP_DEBUG!"=="y" (
+        ECHO "!wsl_in!"
         ECHO "!wsl_out!"
         ECHO "!test_string!"
     )
@@ -472,7 +473,7 @@ IF !set_wsl_conv! EQU 0 (
 IF "!wsl_distro_test_pass!"=="n" (
     SET "convert="
     ECHO ERROR DETECTED
-    wsl -d !wsl_distro!
+    @REM wsl -d !wsl_distro!
     ECHO try to convert distro version to WSL!set_wsl_conv!? (y^^^)^^/^^n
     SET /P "convert="
     IF /I "!convert!"=="" (
