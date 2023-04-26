@@ -494,7 +494,9 @@ IF "!wsl_distro_test_pass!"=="n" (
             SET "options=options"
             GOTO wsl_delete_prompt
         )
-    )   
+    )  ELSE (
+        GOTO home_banner
+    )  
 )
 
 :wsl_distro_convert_version
