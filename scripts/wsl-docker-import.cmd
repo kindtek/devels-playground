@@ -794,26 +794,26 @@ IF "!DVLP_DEBUG!"=="y" (
 IF "!image_repo!"=="_" (
     SET "home_default_option=pull"
 )
-IF "!quiet_home_prompt!"=="n" (
-    IF "!DVLP_DEBUG!"=="y" (
-        ECHO "no quiet prompt"
-    )
-    SET "options=!home_default_option!"
-    SET "confirm="
-    SET /P "confirm=$ "
-    IF NOT "!confirm!"=="" (
-        SET "options=!confirm!"
-        IF "!DVLP_DEBUG!"=="y" (
-            ECHO "options set to !confirm! (confirm)"
-        )
-        @REM SET "confirm="
-    ) ELSE (
-        SET "options=!home_default_option!"
-        IF "!DVLP_DEBUG!"=="y" (
-            ECHO "options set to !home_default_option! (home_default_option)"
-        )
-    )
-)
+@REM IF "!quiet_home_prompt!"=="n" (
+@REM     IF "!DVLP_DEBUG!"=="y" (
+@REM         ECHO "no quiet prompt"
+@REM     )
+@REM     SET "options=!home_default_option!"
+@REM     SET "confirm="
+@REM     SET /P "confirm=$ "
+@REM     IF NOT "!confirm!"=="" (
+@REM         SET "options=!confirm!"
+@REM         IF "!DVLP_DEBUG!"=="y" (
+@REM             ECHO "options set to !confirm! (confirm)"
+@REM         )
+@REM         @REM SET "confirm="
+@REM     ) ELSE (
+@REM         SET "options=!home_default_option!"
+@REM         IF "!DVLP_DEBUG!"=="y" (
+@REM             ECHO "options set to !home_default_option! (home_default_option)"
+@REM         )
+@REM     )
+@REM )
 IF "!DVLP_DEBUG!"=="y" (
     ECHO "options2: !options!"
     ECHO "home_default_option2: !home_default_option!"
@@ -887,6 +887,21 @@ IF /I "!options!"=="options" (
     IF "DVLP_DEBUG"=="y" (
         ECHO "MAIN OPTS: !home_default_option!"
         ECHO "OPTIONS: !options!"
+    )
+)
+
+SET "confirm="
+SET /P "confirm=$ "
+IF NOT "!confirm!"=="" (
+    SET "options=!confirm!"
+    IF "!DVLP_DEBUG!"=="y" (
+        ECHO "options set to !confirm! (confirm)"
+    )
+    @REM SET "confirm="
+) ELSE (
+    SET "options=!home_default_option!"
+    IF "!DVLP_DEBUG!"=="y" (
+        ECHO "options set to !home_default_option! (home_default_option)"
     )
 )
 
