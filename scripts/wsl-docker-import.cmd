@@ -428,11 +428,13 @@ SET "handle=wsl_distro_test"
 SET test_string=helloworld
 SET "wsl_distro_test_pass=n"
 SET "wsl_in=wsl -d !wsl_distro! --exec echo !test_string!"
-FOR /F "tokens=*" %%g IN (
-    !wsl_in! 
-) DO (
+FOR /F "tokens=*" %%g IN ( !wsl_in! ) DO (
     SET wsl_out=%%g
-    SET wsl_out=!wsl_out:~-10!
+    @REM SET wsl_out=!wsl_out:~-10!
+    IF "!DVLP_DEBUG!"=="y" (
+        ECHO "!wsl_out!"
+        ECHO "!test_string!"
+    )
 )
 IF "!DVLP_DEBUG!"=="y" (
     ECHO "!wsl_out!"
@@ -1071,7 +1073,7 @@ IF NOT "!go2!"=="" (
     GOTO home_banner
 )
 
-GOTO home_banner
+@REM GOTO home_banner
 
 :computer_restart_prompt
 SET "handle=computer_restart_prompt"
