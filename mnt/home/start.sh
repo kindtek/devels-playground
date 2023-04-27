@@ -248,6 +248,7 @@ fi
 
 echo "converting virtual network to bridged"
 
+pwsh
 $remoteport = bash.exe -c "ifconfig eth0 | grep 'inet '"
 $found = $remoteport -match '\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}';
 
@@ -283,7 +284,10 @@ for( $i = 0; $i -lt $ports.length; $i++ ){
   iex "netsh interface portproxy add v4tov4 listenport=$port listenaddress=$addr connectport=$port connectaddress=$remoteport";
 }
 
+echo "if this does not work copy/pasta this into a windows shell:
+"
 
+cat bridge-wsl2-net
 
 echo "operation complete ..."
 
