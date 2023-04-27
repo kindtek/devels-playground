@@ -284,10 +284,33 @@ for( $i = 0; $i -lt $ports.length; $i++ ){
   iex "netsh interface portproxy add v4tov4 listenport=$port listenaddress=$addr connectport=$port connectaddress=$remoteport";
 }
 
-echo "if this does not work copy/pasta this into a windows shell:
+
+echo "
+
+if this operation fails copy/pasta the code below into a windows shell:
+
+-----------------------------------------------------------------------
+
 "
 
 cat bridge-wsl2-net
+
+echo "
+
+-----------------------------------------------------------------------
+
+if this operation fails copy/pasta the code above into a windows shell:
+"
+
+echo "build kernel for WSL? y/(n)"
+read install_kernel
+if [ $install_kernel = "y" ] || [ $install_kernel = "Y" ]; then
+    orig_user=$LOGNAME
+    su r00t
+    bash /hal/dvlw/dvlp/kernels/linux/build-kernel.sh "basic" "" "zfs"
+    logout
+    su $orig_user
+fi
 
 echo "operation complete ..."
 
