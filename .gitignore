@@ -5,6 +5,9 @@ docker/ubuntu/ubuntu22-plus-linux-kernel-6-28_1.tar
 *.log
 kernels/linux/zfs-*
 kernels/linux/linux-*
+kernels/linux/wsl2-build
+kernels/linux/linux-build
+kernels/linux/zfs-build
 kernels/linux/wsl2/*
 kernels/linux/WSLS2/*
 **/kali/install-kindtek-devels-workshop.ps1
