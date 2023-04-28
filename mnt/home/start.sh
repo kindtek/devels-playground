@@ -66,7 +66,7 @@ while [ "$confirm" == "r" ] || [ "$confirm" == "retry" ]; do
     git_uname_len=${#git_uname}
     uname_padding_ws_count=$((max_padding - git_uname_len))
     uname_padding=""
-    if [ $uname_padding_ws_count -lt 0 ]; then 
+    if [ "$uname_padding_ws_count"-lt 0 ]; then 
         uname_padding_ws_count=0
         uname_padding=""
     else
@@ -82,7 +82,7 @@ while [ "$confirm" == "r" ] || [ "$confirm" == "retry" ]; do
     git_email_len=${#git_email}
     email_padding_ws_count=$((max_padding - git_email_len))
     email_padding=""
-    if [ $email_padding_ws_count -lt 0 ]; then 
+    if [ "$email_padding_ws_count"-lt 0 ]; then 
         email_padding_ws_count=0
         email_padding=""
     else
@@ -98,7 +98,7 @@ while [ "$confirm" == "r" ] || [ "$confirm" == "retry" ]; do
     ssh_dir_len=${#ssh_dir}
     ssh_dir_padding_ws_count=$((max_padding - ssh_dir_len))  
     ssh_dir_padding=""
-    if [ $ssh_dir_padding_ws_count -lt 0 ]; then
+    if [ "$ssh_dir_padding_ws_count"-lt 0 ]; then
         ssh_dir_padding_ws_count=0
         ssh_dir_padding=""
     else
@@ -185,7 +185,7 @@ matching_prints_ecdsa=false;
 if [ "$host_fingerprint_actually_ecdsa" = "$host_fingerprint_expected_ecdsa" ]; then matching_prints_rsa=true; fi;
 if [ "$host_fingerprint_actually_ed25519" = "$host_fingerprint_expected_ed25519" ]; then matching_prints_ed25519=true; fi;
 if [ "$host_fingerprint_actually_ecdsa" = "$host_fingerprint_expected_ecdsa" ]; then matching_prints_ecdsa=true; fi;
-if  [ $matching_prints_rsa ] && [ $matching_prints_ed25519 ] && [ $matching_prints_ecdsa ]; then
+if  [ "$matching_prints_rsa"] && [ "$matching_prints_ed25519"] && [ "$matching_prints_ecdsa"]; then
     echo "
     github host confirmed and verified
     "
@@ -216,9 +216,9 @@ else
     
     ';
 
-    if ! [ $matching_prints_rsa ]; then echo '\nexpected RSA:\t$host_fingerprint_expected_rsa\nactual RSA:\t$host_fingerprint_actually_rsa';   fi;
-    if ! [ $matching_prints_ed25519 ]; then  echo '\nexpected ED25519:\t$host_fingerprint_expected_ed25519\nactual ED25519:\t$host_fingerprint_actually_ed25519';  fi;
-    if ! [ $matching_prints_ecdsa ]; then  echo '\nexpected ECDSA:\t$host_fingerprint_expected_ecdsa\nactual ECDSA:\t$host_fingerprint_actually_ecdsa';  fi;
+    if ! [ "$matching_prints_rsa"]; then echo '\nexpected RSA:\t$host_fingerprint_expected_rsa\nactual RSA:\t$host_fingerprint_actually_rsa';   fi;
+    if ! [ "$matching_prints_ed25519"]; then  echo '\nexpected ED25519:\t$host_fingerprint_expected_ed25519\nactual ED25519:\t$host_fingerprint_actually_ed25519';  fi;
+    if ! [ "$matching_prints_ecdsa"]; then  echo '\nexpected ECDSA:\t$host_fingerprint_expected_ecdsa\nactual ECDSA:\t$host_fingerprint_actually_ecdsa';  fi;
 
 	echo '
 
@@ -270,7 +270,7 @@ if this operation fails copy/pasta the code above into a windows shell:
 
 echo "build kernel for WSL? y/(n)"
 read install_kernel
-if [ $install_kernel = "y" ] || [ $install_kernel = "Y" ]; then
+if [ "$install_kernel"= "y" ] || [ "$install_kernel"= "Y" ]; then
     orig_user=$LOGNAME
     su r00t
     bash /hal/dvlw/dvlp/kernels/linux/build-kernel.sh "basic" "" "zfs"

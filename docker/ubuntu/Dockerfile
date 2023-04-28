@@ -82,7 +82,7 @@ RUN \
     ( git clone https://github.com/kindtek/devels-workshop --progress dvlw || git config pull.rebase false ) || \
     ( cd dvlw && git pull -f https://github.com/kindtek/devels-workshop ) 
 WORKDIR /repos/dvlw
-# RUN if [ $REFRESH_REPO != no ]; then git pull; fi    
+# RUN if [ "$REFRESH_REPO"!= no ]; then git pull; fi    
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
     # git submodule init dvlp && \
