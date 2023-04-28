@@ -397,7 +397,7 @@ ENV _ADM=$_ADM_USR
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get update -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y apt-transport-https curl gh git gnupg2 libssl-dev nvi screen ssh wget && \
+    apt-get install --no-install-recommends -y apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen ssh wget && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 
