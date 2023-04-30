@@ -758,7 +758,7 @@ RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get update -y && apt-get autoremove -y && \
     apt-get install --no-install-recommends -y alien autoconf bison build-essential dbus-user-session daemonize dwarves fakeroot \ 
-    flex fontconfig gawk kmod libblkid-dev libffi-dev lxcfs libudev-dev libaio-dev libattr1-dev libelf-dev \
+    flex fontconfig gawk kmod libblkid-dev libffi-dev lxcfs libudev-dev libaio-dev libattr1-dev libelf-dev libpam-systemd \
     python3-dev python3-setuptools python3-cffi net-tools snapd systemd-sysv sysvinit-utils uuid-dev && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
