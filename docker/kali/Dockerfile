@@ -769,7 +769,7 @@ USER ${_AGL}
 ######################################################################################
 ###################  dvlp_base-kernel-builder - KERNEL BUILDER  ######################
 ######################################################################################
-FROM dvlp_base-git-kernel AS dvlp_base-kernel-builder
+FROM dvlp_base-kernel-build AS dvlp_base-kernel-builder
 ARG CONFIG_FILE
 ARG KERNEL_TYPE
 USER r00t
