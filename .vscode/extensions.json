@@ -36,6 +36,8 @@
     "ms-vscode.powershell",
     "jeff-hykin.code-eol",
     "donjayamanne.git-extension-pack",
-    "ivanhofer.git-assistant"
+    "ivanhofer.git-assistant",
+    "mads-hartmann.bash-ide-vscode",
+    "timonwong.shellcheck"
   ]
 }
