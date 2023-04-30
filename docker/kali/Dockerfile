@@ -792,12 +792,12 @@ ARG KERNEL_TYPE
 USER r00t
 WORKDIR /
 # COPY --from=dvlp_skel-build-kernel ./ ./
-WORKDIR /hal/dvlw/dvlp/kernels/linux
+WORKDIR /r00t/dvlw/dvlp/kernels/linux
 SHELL ["/bin/bash", "-c"]
-# RUN chmod +x build-basic-wsl-kernel.sh
-RUN bash build-kernel.sh "${KERNEL_TYPE}" && \
-    remove -rf /r00t/dvlw/dvlp/kernels/linux-* && \
-    remove -rf /r00t/dvlw/dvlp/kernels/zfs-*
+RUN chmod o+x make-kernel.sh || ls -al
+RUN bash build-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "" "docker" && \
+    rm -rf /r00t/dvlw/dvlp/kernels/linux/linux-* && \
+    rm -rf /r00t/dvlw/dvlp/kernels/linux/zfs-*
 # RUN bash make-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" ${_AGL}
 # RUN echo '# daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/${_AGL}/.bashrc
 WORKDIR /hal
