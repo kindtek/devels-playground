@@ -11,7 +11,7 @@ ARG INTERNAL_BUILD
 ARG CONFIG_FILE=${CONFIG_FILE}
 ARG DEBIAN_FRONTEND=noninteractive
 ARG DOCKER_BUILDKIT=1
-ARG KERNEL_PACKAGE_NAME=${KERNEL_PACKAGE_NAME:-built-kernel}
+ARG KERNEL_PACKAGE_NAME=${KERNEL_PACKAGE_NAME:-k-cache}
 ARG KERNEL_TYPE=${KERNEL_TYPE:-basic-wsl}
 ARG REFRESH_REPO=${REFRESH_REPO:-no}
 ARG _AGL_USR=${_AGL:-agl}
@@ -120,7 +120,7 @@ ARG _DVL_USR
 ENV _DVL=$_DVL_USR
 WORKDIR /hel
 COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/home/ ./
-RUN mkdir -pv built-kernels && \
+RUN mkdir -pv k-cache && \
     mkdir -pv dvlw && \
     mkdir -pv dls && \
     ln -fsv dvlw devels-workshop && \
@@ -147,8 +147,8 @@ ARG _DVL
 WORKDIR /hel
 COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/home/ ./
 RUN mkdir -pv /hel && \
-    mkdir -pv /hel/built-kernels && \
-    mkdir -pv /home/${_DVL}/built-kernels && \
+    mkdir -pv /hel/k-cache && \
+    mkdir -pv /home/${_DVL}/k-cache && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
     ln -fsv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
@@ -172,7 +172,7 @@ ARG _AGL_USR
 ENV _AGL=${_AGL_USR:-agl}
 WORKDIR /hal
 COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/home/ ./
-RUN mkdir -pv built-kernels && \
+RUN mkdir -pv k-cache && \
     mkdir -pv dvlw && \
     mkdir -pv dls && \
     ln -fsv dvlw devels-workshop && \
@@ -199,8 +199,8 @@ COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/home/ ./
 # COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/      ./mnt/
 RUN mkdir -pv dvlw && \
     mkdir -pv /hal && \
-    mkdir -pv /hal/built-kernels && \
-    mkdir -pv /home/${_AGL}/built-kernels && \
+    mkdir -pv /hal/k-cache && \
+    mkdir -pv /home/${_AGL}/k-cache && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
     ln -fsv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
@@ -255,7 +255,7 @@ ARG _MNT
 ARG _ADMIN
 WORKDIR /admin
 COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/home/ ./
-RUN mkdir -pv /admin && mkdir -pv built-kernels && \
+RUN mkdir -pv /admin && mkdir -pv k-cache && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
     ln -fsv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
@@ -795,7 +795,7 @@ WORKDIR /
 WORKDIR /hal/dvlw/dvlp/kernels/linux
 SHELL ["/bin/bash", "-c"]
 # RUN chmod +x build-basic-wsl-kernel.sh
-RUN bash build-${KERNEL_TYPE}-kernel.sh && \
+RUN bash build-kernel.sh "${KERNEL_TYPE}" && \
     remove -rf /r00t/dvlw/dvlp/kernels/linux-* && \
     remove -rf /r00t/dvlw/dvlp/kernels/zfs-*
 # RUN bash make-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" ${_AGL}
@@ -994,7 +994,7 @@ ENV _ADM=$_ADM_USR
 ARG CONFIG_FILE
 ARG KERNEL_PACKAGE_NAME
 WORKDIR /
-COPY --from=dvlp_kernel-make ./built-kernel.tar.gz ./${KERNEL_PACKAGE_NAME}.tar.gz
+COPY --from=dvlp_kernel-make ./k-cache/*.tar.gz ./
 
 
 # FROM dvlp_base AS dvlp_jacket
