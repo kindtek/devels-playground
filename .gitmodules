@@ -2,7 +2,7 @@
 	active = false
 	path = kernels
 	shallow = true
-	url = https://github.com/kindtek/kernels
+	url = https://github.com/kindtek/kernels.git
 	branch = dvlp
 	recurse = false
 	ignore = all
