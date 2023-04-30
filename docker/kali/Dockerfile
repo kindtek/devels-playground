@@ -794,10 +794,23 @@ WORKDIR /
 # COPY --from=dvlp_skel-build-kernel ./ ./
 WORKDIR /r00t/dvlw/dvlp/kernels/linux
 SHELL ["/bin/bash", "-c"]
-RUN chmod o+x make-kernel.sh || ls -al
-RUN bash build-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "" "docker" && \
+# RUN chmod o+x make-kernel.sh 
+RUN \
+    rm -f /etc/apt/apt.conf.d/docker-clean && \
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
+RUN \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    apt-get update -y && apt-get install -y git
+
+RUN \
+    --mount=type=cache,target=/var/cache/make-kernel/archives,sharing=locked \
+    bash build-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "" "docker" && \
+    # get filename of tar
+    KERNEL_PACKAGE_NAME=$(ls -at /r00t/k-cache/*.tar.gz) && \
     rm -rf /r00t/dvlw/dvlp/kernels/linux/linux-* && \
-    rm -rf /r00t/dvlw/dvlp/kernels/linux/zfs-*
+    rm -rf /r00t/dvlw/dvlp/kernels/linux/zfs-* && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb
 # RUN bash make-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" ${_AGL}
 # RUN echo '# daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/${_AGL}/.bashrc
 WORKDIR /hal
@@ -994,7 +1007,7 @@ ENV _ADM=$_ADM_USR
 ARG CONFIG_FILE
 ARG KERNEL_PACKAGE_NAME
 WORKDIR /
-COPY --from=dvlp_kernel-make ./k-cache/*.tar.gz ./
+COPY --from=dvlp_kernel-make ./r00t/k-cache/${KERNEL_PACKAGE_NAME} ./${KERNEL_PACKAGE_NAME}
 
 
 # FROM dvlp_base AS dvlp_jacket
