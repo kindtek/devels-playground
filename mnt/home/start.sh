@@ -66,7 +66,7 @@ while [ "$confirm" == "r" ] || [ "$confirm" == "retry" ]; do
     git_uname_len=${#git_uname}
     uname_padding_ws_count=$((max_padding - git_uname_len))
     uname_padding=""
-    if [ "$uname_padding_ws_count"-lt 0 ]; then 
+    if [ "$uname_padding_ws_count" -lt 0 ]; then 
         uname_padding_ws_count=0
         uname_padding=""
     else
@@ -82,7 +82,7 @@ while [ "$confirm" == "r" ] || [ "$confirm" == "retry" ]; do
     git_email_len=${#git_email}
     email_padding_ws_count=$((max_padding - git_email_len))
     email_padding=""
-    if [ "$email_padding_ws_count"-lt 0 ]; then 
+    if [ "$email_padding_ws_count" -lt 0 ]; then 
         email_padding_ws_count=0
         email_padding=""
     else
@@ -98,7 +98,7 @@ while [ "$confirm" == "r" ] || [ "$confirm" == "retry" ]; do
     ssh_dir_len=${#ssh_dir}
     ssh_dir_padding_ws_count=$((max_padding - ssh_dir_len))  
     ssh_dir_padding=""
-    if [ "$ssh_dir_padding_ws_count"-lt 0 ]; then
+    if [ "$ssh_dir_padding_ws_count" -lt 0 ]; then
         ssh_dir_padding_ws_count=0
         ssh_dir_padding=""
     else
