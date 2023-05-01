@@ -13,7 +13,7 @@ username=${2}
 docker_vols=$(docker volume ls -q)
 #               ___________________________________________________                 #
 #               ||||               Executing ...               ||||                 #
-#               -------------------------------------------------                   #
+#                -------------------------------------------------                   #
 # docker buildx build --target dvlp_kernel-output --output type=local,dest=/mnt/c/users/"${username:-$2}"/k-cache/kernels/linux --build-arg KERNEL_TYPE=basic --build-arg REFRESH_REPO=yes --build-arg CONFIG_FILE= . 2>&1
 # no-cache
 docker buildx build --no-cache --target dvlp_kernel-output --output type=local,dest=/mnt/c/users/"${username:-$2}"/k-cache/kernels/linux --build-arg KERNEL_TYPE=basic --build-arg REFRESH_REPO=yes --build-arg CONFIG_FILE= . 2>&1
