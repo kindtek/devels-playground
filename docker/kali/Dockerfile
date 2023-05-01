@@ -11,8 +11,8 @@ ARG INTERNAL_BUILD
 ARG CONFIG_FILE=${CONFIG_FILE}
 ARG DEBIAN_FRONTEND=noninteractive
 ARG DOCKER_BUILDKIT=1
-ARG KERNEL_PACKAGE_NAME=${KERNEL_PACKAGE_NAME:-k-cache}
-ARG KERNEL_TYPE=${KERNEL_TYPE:-basic-wsl}
+ARG KERNEL_TYPE=${KERNEL_TYPE:-basic}
+ARG KERNEL_PACKAGE_NAME=${KERNEL_PACKAGE_NAME}
 ARG REFRESH_REPO=${REFRESH_REPO:-no}
 ARG _AGL_USR=${_AGL:-agl}
 ARG _DVL_USR=${_DVL:-dvl}
@@ -406,6 +406,7 @@ RUN \
     apt-get install --no-install-recommends -y apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh wget && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
+WORKDIR /
 
 ##################
 # dvlp_skel-nmap #
@@ -430,6 +431,7 @@ RUN \
     rm -rf /r00t/build/*
 RUN \
     apt-get remove -y build-essential
+WORKDIR /
 
 
 ####################
@@ -794,6 +796,7 @@ USER ${_AGL}
 FROM dvlp_base-kernel-builder AS dvlp_kernel-make
 ARG CONFIG_FILE
 ARG KERNEL_PACKAGE_NAME
+ENV KERNEL_PACKAGE_NAME=${KERNEL_PACKAGE_NAME}
 ARG KERNEL_TYPE
 USER r00t
 WORKDIR /
@@ -806,13 +809,13 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get install -y git
-
+    apt-get update -y && apt-get install -y libssl-dev git
 RUN \
     --mount=type=cache,target=/var/cache/make-kernel/archives,sharing=locked \
-    bash build-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "" "docker" && \
+    bash build-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "zfs" "docker" && \
     # get filename of tar
-    KERNEL_PACKAGE_NAME=$(ls -at /r00t/k-cache/*.tar.gz) && \
+    KERNEL_PACKAGE_NAME=$(./../../kernels/linux/build-kernel.sh basic get-package) && \
+    echo "KERNEL_PACKAGE_NAME=$KERNEL_PACKAGE_NAME" >> /etc/environment && \
     rm -rf /r00t/dvlw/dvlp/kernels/linux/linux-* && \
     rm -rf /r00t/dvlw/dvlp/kernels/linux/zfs-* && \
     rm -rf /var/lib/apt/lists && \
@@ -1011,9 +1014,8 @@ ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG CONFIG_FILE
-ARG KERNEL_PACKAGE_NAME
 WORKDIR /
-COPY --from=dvlp_kernel-make ./r00t/k-cache/${KERNEL_PACKAGE_NAME} ./${KERNEL_PACKAGE_NAME}
+COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/${KERNEL_PACKAGE_NAME} ./${KERNEL_PACKAGE_NAME}
 
 
 # FROM dvlp_base AS dvlp_jacket

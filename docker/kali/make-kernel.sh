@@ -1,42 +1,44 @@
 #!/bin/bash
 timestamp=$(date +"%Y%m%d-%H%M%S")
 label=make-kernel
-filename="$label-${2:-timestamp}"
-# user_name=${1}
+filename="$label-${1:-$timestamp}"
+username=${2}
 # docker_vols=$(docker volume ls -q)
 tee "$filename.sh" >/dev/null <<'TXT'
 #!/bin/bash
-timestamp=$(date +"%Y%m%d-%H%M%S")
+timestamp=${1}
 label=make-kernel
-filename="$label-${2:-timestamp}"
-user_name=${1}
+filename="$label-${1:-timestamp}"
+username=${2}
 docker_vols=$(docker volume ls -q)
 #               ___________________________________________________                 #
 #               ||||               Executing ...               ||||                 #
 #               -------------------------------------------------                   #
-# docker buildx build --target dvlp_kernel-output --output type=local,dest=/mnt/c/users/"${user_name:-$1}"/"$filename".tar.gz --build-arg KERNEL_TYPE=basic --build-arg REFRESH_REPO=yes --build-arg CONFIG_FILE= .
-docker buildx build --target dvlp_kernel-output --output type=local,dest=/mnt/c/users/"${user_name:-$1}"/k-cache/"$(../../kernels/linux/build-kernel.sh basic get-package)".tar.gz --build-arg KERNEL_TYPE=basic --build-arg REFRESH_REPO=yes --build-arg CONFIG_FILE= .
-# docker buildx build --target dvlp_kernel-output --output type=local,dest=/mnt/c/users/"${user_name:-$1}"/k-cache/"$(../../kernels/linux/build-kernel.sh basic get-package)".tar.gz --build-arg KERNEL_TYPE=basic --build-arg REFRESH_REPO=yes --build-arg CONFIG_FILE= .
-# docker buildx build --target dvlp_kernel-output --output type=local,dest=/mnt/c/users/"${user_name:-$1}"/k-cache/"$(../../kernels/linux/build-kernel.sh basic get-package)".tar.gz --build-arg KERNEL_TYPE=basic --build-arg REFRESH_REPO=yes --build-arg CONFIG_FILE= .
+docker buildx build --target dvlp_kernel-output --output type=local,dest=/mnt/c/users/"${username:-$2}"/k-cache/kernels/linux --build-arg KERNEL_TYPE=basic --build-arg REFRESH_REPO=yes --build-arg CONFIG_FILE= . 2>&1
+# no-cache
+# docker buildx build --no-cache --target dvlp_kernel-output --output type=local,dest=/mnt/c/users/"${username:-$2}"/k-cache/kernels/linux --build-arg KERNEL_TYPE=basic --build-arg REFRESH_REPO=yes --build-arg CONFIG_FILE= . 2>&1
+cp -fv /mnt/c/users/$username/k-cache/kernels/linux/$(../../kernels/linux/build-kernel.sh basic get-package).tar.gz /mnt/c/users/$username/k-cache
+cd /mnt/c/users/$username/k-cache || exit
+tar -xvzf $(kernels/linux/build-kernel.sh basic get-package).tar.gz
 # 
 #                -----------------------------------------------                    #
 #               |||||||||||||||||||||||||||||||||||||||||||||||||                   #
 #               __________________________________________________                  #
 TXT
 # copy the command to the log first
-cat "$filename.sh" 2>&1 | tee --append "$filename.log"
+eval cat "$filename.sh" 2>&1 | tee --append "$filename.log"
 # execute .sh file && log all output
-bash "$filename.sh" "$1" | tee --append "$filename.log"
+sh "$filename.sh" "$timestamp" "$username" | tee --append "$filename.log"
 
-# bash "$filename.sh" "$user_name" | tee --append "$filename.log"
+# bash "$filename.sh" "$username" | tee --append "$filename.log"
 
 # timestamp=$(date +"%Y%m%d-%H%M%S")
 # label=rc-wsl-zfs-kernel-builder
 # filename="$label-$timestamp.log"
-# user_name=$(wslvar USERNAME)
+# username=$(wslvar USERNAME)
 # command_string=sudo docker buildx build \
 # --target dvlp_kernel-output \
-# --output type=local,dest=/mnt/c/users/${user_name:-default}/$filename.tar \
+# --output type=local,dest=/mnt/c/users/${username:-default}/$filename.tar \
 # --build-arg KERNEL_TYPE=latest-rc-wsl-zfs \
 # --build-arg REFRESH_REPO=yes \
 # --build-arg CONFIG_FILE= \
