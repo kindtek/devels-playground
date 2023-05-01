@@ -216,9 +216,9 @@ else
     
     ';
 
-    if ! [ "$matching_prints_rsa"]; then echo '\nexpected RSA:\t$host_fingerprint_expected_rsa\nactual RSA:\t$host_fingerprint_actually_rsa';   fi;
-    if ! [ "$matching_prints_ed25519"]; then  echo '\nexpected ED25519:\t$host_fingerprint_expected_ed25519\nactual ED25519:\t$host_fingerprint_actually_ed25519';  fi;
-    if ! [ "$matching_prints_ecdsa"]; then  echo '\nexpected ECDSA:\t$host_fingerprint_expected_ecdsa\nactual ECDSA:\t$host_fingerprint_actually_ecdsa';  fi;
+    if ! [ "$matching_prints_rsa" ]; then printf '\nexpected RSA:\t%s\nactual RSA:\t%s' "$host_fingerprint_expected_rsa" "$host_fingerprint_actually_rsa";   fi;
+    if ! [ "$matching_prints_ed25519" ]; then  printf '\nexpected ED25519:\t%s\nactual ED25519:\t%s' "$host_fingerprint_expected_ed25519" "$host_fingerprint_actually_ed25519";  fi;
+    if ! [ "$matching_prints_ecdsa" ]; then  printf '\nexpected ECDSA:\t%s\nactual ECDSA:\t%s' "$host_fingerprint_expected_ecdsa" "$host_fingerprint_actually_ecdsa";  fi;
 
 	echo '
 
@@ -268,14 +268,30 @@ echo "
 if this operation fails copy/pasta the code above into a windows shell:
 "
 
-echo "build kernel for WSL? y/(n)"
-read install_kernel
-if [ "$install_kernel"= "y" ] || [ "$install_kernel"= "Y" ]; then
-    orig_user=$LOGNAME
-    su r00t
-    bash /hal/dvlw/dvlp/kernels/linux/build-kernel.sh "basic" "" "zfs"
-    logout
-    su $orig_user
+echo "build kernel for WSL?"
+read -r -p "
+(no)" install_kernel
+if [ "${install_kernel,,}"  = "y" ] || [ "${install_kernel,,}" = "yes" ]; then
+    if [ "$(read -r -p '
+(install with zfs)' = '')" ]; then
+        sudo bash /hal/dvlw/dvlp/kernels/linux/build-kernel.sh basic "" zfs
+    else
+        sudo bash /hal/dvlw/dvlp/kernels/linux/build-kernel.sh basic
+    fi
+fi
+
+echo "build KEX gui?"
+read -r -p "
+(no)" build_kex
+if [ "${build_kex,,}"  = "y" ] || [ "${build_kex,,}" = "yes" ]; then
+    ./start-kex.sh
+fi
+
+echo "build KDE gui?"
+read -r -p "
+(no)" build_kex
+if [ "${build_kex,,}"  = "y" ] || [ "${build_kex,,}" = "yes" ]; then
+    ./start-kex.sh
 fi
 
 echo "operation complete ..."
