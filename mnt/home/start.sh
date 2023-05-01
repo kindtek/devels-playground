@@ -185,7 +185,7 @@ matching_prints_ecdsa=false;
 if [ "$host_fingerprint_actually_ecdsa" = "$host_fingerprint_expected_ecdsa" ]; then matching_prints_rsa=true; fi;
 if [ "$host_fingerprint_actually_ed25519" = "$host_fingerprint_expected_ed25519" ]; then matching_prints_ed25519=true; fi;
 if [ "$host_fingerprint_actually_ecdsa" = "$host_fingerprint_expected_ecdsa" ]; then matching_prints_ecdsa=true; fi;
-if  [ "$matching_prints_rsa"] && [ "$matching_prints_ed25519"] && [ "$matching_prints_ecdsa"]; then
+if  [ "$matching_prints_rsa" ] && [ "$matching_prints_ed25519" ] && [ "$matching_prints_ecdsa" ]; then
     echo "
     github host confirmed and verified
     "
