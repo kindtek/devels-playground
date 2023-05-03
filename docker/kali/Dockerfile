@@ -812,9 +812,9 @@ RUN \
     apt-get update -y && apt-get install -y libssl-dev git
 RUN \
     --mount=type=cache,target=/var/cache/make-kernel/archives,sharing=locked \
-    bash build-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "" "docker" && \
+    bash build-import-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "" "docker" && \
     # get filename of tar
-    KERNEL_PACKAGE_NAME=$(./../../kernels/linux/build-kernel.sh basic get-package) && \
+    KERNEL_PACKAGE_NAME=$(./../../kernels/linux/build-import-kernel.sh basic get-package) && \
     echo "KERNEL_PACKAGE_NAME=$KERNEL_PACKAGE_NAME" >> /etc/environment && \
     rm -rf /r00t/dvlw/dvlp/kernels/linux/linux-* && \
     rm -rf /r00t/dvlw/dvlp/kernels/linux/zfs-* && \
