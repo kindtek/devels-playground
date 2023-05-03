@@ -798,6 +798,7 @@ ARG CONFIG_FILE
 ARG KERNEL_PACKAGE_NAME
 ENV KERNEL_PACKAGE_NAME=${KERNEL_PACKAGE_NAME}
 ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
 USER r00t
 WORKDIR /
 # COPY --from=dvlp_skel-build-kernel ./ ./
@@ -812,10 +813,7 @@ RUN \
     apt-get update -y && apt-get install -y libssl-dev git
 RUN \
     --mount=type=cache,target=/var/cache/make-kernel/archives,sharing=locked \
-    bash build-import-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "" "docker" && \
-    # get filename of tar
-    KERNEL_PACKAGE_NAME=$(./../../kernels/linux/build-import-kernel.sh basic get-package) && \
-    echo "KERNEL_PACKAGE_NAME=$KERNEL_PACKAGE_NAME" >> /etc/environment && \
+    bash build-import-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "docker" && \
     rm -rf /r00t/dvlw/dvlp/kernels/linux/linux-* && \
     rm -rf /r00t/dvlw/dvlp/kernels/linux/zfs-* && \
     rm -rf /var/lib/apt/lists && \
