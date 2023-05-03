@@ -17,9 +17,9 @@ docker_vols=$(docker volume ls -q)
 # docker buildx build --target dvlp_kernel-output --output type=local,dest=/mnt/c/users/"${username:-$2}"/k-cache/kernels/linux --build-arg KERNEL_TYPE=basic --build-arg REFRESH_REPO=yes --build-arg CONFIG_FILE= . 2>&1
 # no-cache
 docker buildx build --no-cache --target dvlp_kernel-output --output type=local,dest=/mnt/c/users/"${username:-$2}"/k-cache/kernels/linux --build-arg KERNEL_TYPE=basic --build-arg REFRESH_REPO=yes --build-arg CONFIG_FILE= . 2>&1
-cp -fv /mnt/c/users/$username/k-cache/kernels/linux/$(../../kernels/linux/build-kernel.sh basic get-package).tar.gz /mnt/c/users/$username/k-cache
+cp -fv /mnt/c/users/$username/k-cache/kernels/linux/$(../../kernels/linux/build-import-kernel.sh basic get-package).tar.gz /mnt/c/users/$username/k-cache
 cd /mnt/c/users/$username/k-cache || exit
-tar -xvzf $(kernels/linux/build-kernel.sh basic get-package).tar.gz
+tar -xvzf $(kernels/linux/build-import-kernel.sh basic get-package).tar.gz
 # 
 #                -----------------------------------------------                    #
 #               |||||||||||||||||||||||||||||||||||||||||||||||||                   #
