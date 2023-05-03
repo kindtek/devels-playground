@@ -1015,7 +1015,7 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG CONFIG_FILE
 WORKDIR /
-COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/${KERNEL_PACKAGE_NAME} ./${KERNEL_PACKAGE_NAME}
+COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/k-cache ./k-cache
 
 
 # FROM dvlp_base AS dvlp_jacket
