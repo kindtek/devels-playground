@@ -22,7 +22,7 @@ while [ ! -d "/mnt/c/users/$win_user" ]; do
 " win_user
 done
 
-# docker_vols=$(docker volume ls -q)
+## docker_vols=$(docker volume ls -q)
 tee "$filename.sh" >/dev/null <<'TXT'
 #!/bin/bash
 win_user=${1}
