@@ -27,7 +27,7 @@ tee "$filename.sh" >/dev/null <<'TXT'
 #!/bin/bash
 timestamp=${1}
 label=make-kernel
-filename="$label-$timestamp"
+filename="$label-$timestamp${kernel_type:+-$kernel_type}${kernel_feature:+-$kernel_feature}.sh"
 username=${2}
 echo "username = $username"
 kernel_type=${3:-basic}
@@ -56,7 +56,7 @@ docker_vols=$(docker volume ls -q)
 #               __________________________________________________                  #
 TXT
 # copy the command to the log first
-eval cat "$filename${kernel_type:+-$kernel_type}${kernel_feature:+-$kernel_feature}.sh" 2>&1 | tee --append "$filename.log"
+eval cat "$filename" 2>&1 | tee --append "$filename.log"
 # execute .sh file && log all output
 bash "${filename}.sh" "${timestamp}" "${username}" "${kernel_type}" "${kernel_feature}" "${build_cache}" | tee --append "${filename}.log"
 # prompt to install newly built kernel
