@@ -782,11 +782,10 @@ ARG CONFIG_FILE
 ARG KERNEL_TYPE
 USER r00t
 WORKDIR /
-COPY --from=dvlp_base-python-build-lite ./ ./
-COPY --from=dvlp_base-msdot-build-lite ./ ./
-COPY --from=dvlp_base-dind-build ./ ./
+# COPY --from=dvlp_base-python-build-lite ./ ./
+# COPY --from=dvlp_base-msdot-build-lite ./ ./
+# COPY --from=dvlp_base-dind-build ./ ./
 COPY --from=dvlp_base-kernel-build ./ ./
-# RUN echo '# daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/${_AGL}/.bashrc
 WORKDIR /hal
 USER ${_AGL}
 
@@ -818,8 +817,6 @@ RUN \
     rm -rf /r00t/dvlw/dvlp/kernels/linux/zfs-* && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-# RUN bash make-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" ${_AGL}
-# RUN echo '# daemonize /usr/bin/unshare --fork --pid --mount-proc /lib/systemd/systemd --system-unit=basic.target\n# exec nsenter -t $(pidof -s systemd) -a su - $LOGNAME\n# echo "exec nsenter -t $(pidof -s systemd) -a su - $LOGNAME" > /dev/null && wait -n\n' >> /home/${_AGL}/.bashrc
 WORKDIR /hal
 USER ${_AGL}
 
@@ -1013,7 +1010,7 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG CONFIG_FILE
 WORKDIR /
-COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/k-cache ./k-cache
+COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/k-cache/ ./
 
 
 # FROM dvlp_base AS dvlp_jacket
