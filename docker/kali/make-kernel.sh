@@ -33,7 +33,7 @@ kernel_type=${3:-basic}
 echo "kernel_type = $kernel_type"
 kernel_feature=${4}
 echo "kernel_feature = $kernel_feature"
-cache=${5:+' --no-cache'}
+build_cache=${5:+' --no-cache'}
 echo "cache = $cache"
 filename="$label-$timestamp${kernel_type:+-$kernel_type}${kernel_feature:+-$kernel_feature}.sh"
 docker_vols=$(docker volume ls -q)
@@ -41,7 +41,7 @@ docker_vols=$(docker volume ls -q)
 #               ||||               Executing ...               ||||                 #
 #                -------------------------------------------------                  #
 #
-                    docker buildx build ${cache} \
+                    docker buildx build ${build_cache} \
                     --target dvlp_kernel-output \
                     --output type=local,dest=/mnt/c/users/"${username}"/k-cache \
                     --build-arg KERNEL_TYPE=${kernel_type} \
