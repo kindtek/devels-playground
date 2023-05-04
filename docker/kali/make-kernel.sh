@@ -22,7 +22,7 @@ while [ ! -d "/mnt/c/users/$username" ]; do
 " username
 done
 
-# docker_vols=$(docker volume ls -q)
+## docker_vols=$(docker volume ls -q)
 tee "$filename.sh" >/dev/null <<'TXT'
 #!/bin/bash
 username=${1}
