@@ -27,7 +27,6 @@ tee "$filename.sh" >/dev/null <<'TXT'
 #!/bin/bash
 timestamp=${1}
 label=make-kernel
-filename="$label-$timestamp${kernel_type:+-$kernel_type}${kernel_feature:+-$kernel_feature}.sh"
 username=${2}
 echo "username = $username"
 kernel_type=${3:-basic}
@@ -36,6 +35,7 @@ kernel_feature=${4}
 echo "kernel_feature = $kernel_feature"
 cache=${5:+' --no-cache'}
 echo "cache = $cache"
+filename="$label-$timestamp${kernel_type:+-$kernel_type}${kernel_feature:+-$kernel_feature}.sh"
 docker_vols=$(docker volume ls -q)
 #               ___________________________________________________                 #
 #               ||||               Executing ...               ||||                 #
