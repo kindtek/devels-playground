@@ -56,8 +56,8 @@ docker_vols=$(docker volume ls -q)
 #               __________________________________________________                  #
 TXT
 # copy the command to the log first
-eval cat "$filename.sh" 2>&1 | tee --append "$filename.log"
+eval cat "$filename${kernel_type:+-$kernel_type}${kernel_feature:+-$kernel_feature}.sh" 2>&1 | tee --append "$filename.log"
 # execute .sh file && log all output
 bash "${filename}.sh" "${timestamp}" "${username}" "${kernel_type}" "${kernel_feature}" "${build_cache}" | tee --append "${filename}.log"
 # prompt to install newly built kernel
-# bash ../../kernels/linux/install-kernel.sh "$username" latest
+bash ../../kernels/linux/install-kernel.sh "$username" latest
