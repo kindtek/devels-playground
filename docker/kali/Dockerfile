@@ -293,7 +293,7 @@ RUN \
     groupadd            halo    && \
     groupadd            hell    && \
     groupadd            w0rld  && \
-    useradd -s /bin/bash -u 1000   -o  -g root     -G r00t,w0rld   -d /r00t    r00t && \
+    useradd -s /bin/bash -u 0   -o  -g root     -G r00t,w0rld   -d /r00t    r00t && \
     useradd -s /bin/bash            -g halo     -G w0rld,hell   -d /hal     ${_AGL} && \
     useradd -s /bin/bash            -g hell     -G w0rld        -d /hel     ${_DVL} && \
     passwd -d ${_AGL} && \
@@ -799,6 +799,7 @@ ENV KERNEL_PACKAGE_NAME=${KERNEL_PACKAGE_NAME}
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
 USER r00t
+WORKDIR /
 # COPY --from=dvlp_skel-build-kernel ./ ./
 WORKDIR /r00t/dvlw/dvlp/kernels/linux
 SHELL ["/bin/bash", "-c"]
