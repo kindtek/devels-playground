@@ -5,7 +5,7 @@ username=$1
 kernel_type=$2
 kernel_feature=$3
 build_cache=${4:+'nocache'}
-filename="$label${kernel_type:+-$kernel_type}${kernel_feature:+-$kernel_feature}-$timestamp.sh"
+filename="$label${kernel_type:+-$kernel_type}${kernel_feature:+-$kernel_feature}-$timestamp"
 
 while [ ! -d "/mnt/c/users/$username" ]; do
     echo " 
@@ -31,15 +31,14 @@ kernel_type=${2:-basic}
 echo "kernel_type = $kernel_type"
 kernel_feature=${3}
 echo "kernel_feature = $kernel_feature"
-build_cache="${4:+' --no-cache'}"
+build_cache=${4:+' --no-cache'}
 echo "build_cache = $build_cache"
 docker_vols=$(docker volume ls -q)
 #               ___________________________________________________                 #
 #               ||||               Executing ...               ||||                 #
 #                -------------------------------------------------                  #
 #
-                    docker buildx build \
-                    ${build_cache} \
+                    docker buildx build ${build_cache} \
                     --target dvlp_kernel-output \
                     --output type=local,dest=/mnt/c/users/"${username}"/k-cache \
                     --build-arg KERNEL_TYPE="${kernel_type}" \
@@ -54,7 +53,7 @@ docker_vols=$(docker volume ls -q)
 #               __________________________________________________                  #
 TXT
 # copy the command to the log first
-eval cat "$filename" 2>&1 | tee --append "$filename.log"
+eval cat "$filename.sh" 2>&1 | tee --append "$filename.log"
 # execute .sh file && log all output
 bash "${filename}.sh" "${username}" "${kernel_type}" "${kernel_feature}" "${build_cache}" | tee --append "${filename}.log"
 # prompt to install newly built kernel
