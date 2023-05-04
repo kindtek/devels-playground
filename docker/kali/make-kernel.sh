@@ -52,7 +52,6 @@ docker_vols=$(docker volume ls -q)
 #               |||||||||||||||||||||||||||||||||||||||||||||||||                   #
 #               __________________________________________________                  #
 TXT
-
 # copy the command to the log first
 eval cat "$filename.sh" 2>&1 | tee --append "$filename.log"
 # execute .sh file && log all output
