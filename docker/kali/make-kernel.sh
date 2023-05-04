@@ -34,7 +34,7 @@ echo "kernel_type = $kernel_type"
 kernel_feature=${4}
 echo "kernel_feature = $kernel_feature"
 build_cache=${5:+' --no-cache'}
-echo "cache = $cache"
+echo "build_cache = $build_cache"
 filename="$label-$timestamp${kernel_type:+-$kernel_type}${kernel_feature:+-$kernel_feature}.sh"
 docker_vols=$(docker volume ls -q)
 #               ___________________________________________________                 #
