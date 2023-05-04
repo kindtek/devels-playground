@@ -799,7 +799,6 @@ ENV KERNEL_PACKAGE_NAME=${KERNEL_PACKAGE_NAME}
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
 USER r00t
-WORKDIR /
 # COPY --from=dvlp_skel-build-kernel ./ ./
 WORKDIR /r00t/dvlw/dvlp/kernels/linux
 SHELL ["/bin/bash", "-c"]

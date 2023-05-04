@@ -48,6 +48,7 @@ docker_vols=$(docker volume ls -q)
                     --build-arg KERNEL_FEATURE=${kernel_feature} \
                     --build-arg REFRESH_REPO=yes \
                     --build-arg CONFIG_FILE= \
+                    --progress=auto \
                     . 2>&1
 # 
 #                -----------------------------------------------                    #
