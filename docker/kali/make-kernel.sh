@@ -7,7 +7,6 @@ kernel_feature=$3
 build_cache=${4:+'nocache'}
 filename="$label${kernel_type:+-$kernel_type}${kernel_feature:+-$kernel_feature}-$timestamp"
 
-
 while [ ! -d "/mnt/c/users/$username" ]; do
     echo " 
 
