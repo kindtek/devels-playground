@@ -1,11 +1,11 @@
 #!/bin/bash
 timestamp=$(date +"%Y%m%d-%H%M%S")
 label=make-kernel
-filename="$label-${timestamp}"
 username=$1
 kernel_type=$2
 kernel_feature=$3
-build_cache=${4:+' --no-cache '}
+build_cache=${4:+'nocache'}
+filename="$label${kernel_type:+-$kernel_type}${kernel_feature:+-$kernel_feature}-$timestamp.sh"
 
 while [ ! -d "/mnt/c/users/$username" ]; do
     echo " 
@@ -25,27 +25,25 @@ done
 # docker_vols=$(docker volume ls -q)
 tee "$filename.sh" >/dev/null <<'TXT'
 #!/bin/bash
-timestamp=${1}
-label=make-kernel
-username=${2}
+username=${1}
 echo "username = $username"
-kernel_type=${3:-basic}
+kernel_type=${2:-basic}
 echo "kernel_type = $kernel_type"
-kernel_feature=${4}
+kernel_feature=${3}
 echo "kernel_feature = $kernel_feature"
-build_cache=${5:+' --no-cache'}
+build_cache="${4:+' --no-cache'}"
 echo "build_cache = $build_cache"
-filename="$label-$timestamp${kernel_type:+-$kernel_type}${kernel_feature:+-$kernel_feature}.sh"
 docker_vols=$(docker volume ls -q)
 #               ___________________________________________________                 #
 #               ||||               Executing ...               ||||                 #
 #                -------------------------------------------------                  #
 #
-                    docker buildx build ${build_cache} \
+                    docker buildx build \
+                    ${build_cache} \
                     --target dvlp_kernel-output \
                     --output type=local,dest=/mnt/c/users/"${username}"/k-cache \
-                    --build-arg KERNEL_TYPE=${kernel_type} \
-                    --build-arg KERNEL_FEATURE=${kernel_feature} \
+                    --build-arg KERNEL_TYPE="${kernel_type}" \
+                    --build-arg KERNEL_FEATURE="${kernel_feature}" \
                     --build-arg REFRESH_REPO=yes \
                     --build-arg CONFIG_FILE= \
                     --progress=auto \
@@ -58,6 +56,6 @@ TXT
 # copy the command to the log first
 eval cat "$filename" 2>&1 | tee --append "$filename.log"
 # execute .sh file && log all output
-bash "${filename}.sh" "${timestamp}" "${username}" "${kernel_type}" "${kernel_feature}" "${build_cache}" | tee --append "${filename}.log"
+bash "${filename}.sh" "${username}" "${kernel_type}" "${kernel_feature}" "${build_cache}" | tee --append "${filename}.log"
 # prompt to install newly built kernel
 bash ../../kernels/linux/install-kernel.sh "$username" latest
