@@ -35,6 +35,7 @@ echo "kernel_feature = $kernel_feature"
 build_cache=${4:+' --no-cache'}
 echo "build_cache = $build_cache"
 docker_vols=$(docker volume ls -q)
+set -x
 #               ___________________________________________________                 #
 #               ||||               Executing ...               ||||                 #
 #                -------------------------------------------------                  #
