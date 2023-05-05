@@ -409,28 +409,44 @@ RUN \
 WORKDIR /
 
 ##################
-# dvlp_skel-nmap #
+# dvlp_scan-build #
 ##################
-FROM dvlp_skel AS dvlp_skel-nmap
+FROM dvlp_skel AS dvlp_scan-build
 USER r00t
 WORKDIR /r00t/build
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get update -y && apt-get autoremove -y && \
-    apt-get install -y build-essential && \
+    apt-get install -y autoconf automake build-essential ethtool expect hostapd iw libnl-3-dev libnl-genl-3-dev libpcre2-dev libhwloc-dev libssl-dev libsqlite3-dev libtool libcmocka-dev libpcap-dev pkg-config rfkill shtool screen tcpdump usbutils wpasupplicant zlib1g-dev && \
     apt-get install -y --reinstall ca-certificates && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-RUN \
-    git clone https://github.com/nmap/nmap 
+WORKDIR /r00t/build
+RUN git clone https://github.com/nmap/nmap 
 WORKDIR /r00t/build/nmap
 RUN \
     ./configure && \
     make && \
     make install && \
-    rm -rf /r00t/build/*
+    rm -rf /r00t/build/nmap
+WORKDIR /r00t/build
+RUN git clone https://github.com/aircrack-ng/aircrack-ng 
+WORKDIR /r00t/build/aircrack
 RUN \
-    apt-get remove -y build-essential
+    ./configure && \
+    make && \
+    make install && \
+    rm -rf /r00t/build/aircrack
+# WORKDIR /r00t
+# RUN git clone https://github.com/beefproject/beef 
+# WORKDIR /r00t/beef
+# RUN ./install
+# WORKDIR /r00t/build
+#     #  && \
+#     # rm -rf /r00t/build/beef
+RUN \
+    apt-get remove -y automake build-essential ethtool expect hostapd iw libnl-3-dev libnl-genl-3-dev libpcre2-dev libhwloc-dev libssl-dev libsqlite3-dev libtool libcmocka-dev libpcap-dev pkg-config rfkill shtool screen tcpdump usbutils wpasupplicant zlib1g-dev
+
 WORKDIR /
 
 
@@ -597,7 +613,7 @@ USER ${_AGL}
 ##################
 # dvlp_base-scan #
 ##################
-FROM dvlp_skel-nmap AS dvlp_base-scan
+FROM dvlp_scan-build AS dvlp_base-scan
 COPY --from=dvlp_base-python-lite ./ ./
 USER r00t
 RUN \
@@ -606,7 +622,7 @@ RUN \
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get update -y && apt-get autoremove -y && \
-    apt-get --no-install-recommends -y install finger ncat rpcbind telnet && \
+    apt-get --no-install-recommends -y install aircrack-ng beef-xss burpsuite finger hydra maltego metasploit-framework ncat nmap nikto rpcbind telnet  wireshark && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 # network-manager-openvpn network-manager-openvpn-gnome
