@@ -8,9 +8,11 @@ foreach ($distro in $distros) {
     if ($count -lt 3 -Or $distro.length -le 1) { 
         continue 
     }
+   
 
-    if (($distro.IndexOf("*") -lt 0) -And ($distro.IndexOf("docker-desktop") -lt 0)) {
-        $index_start = 2
+
+    if (($distro.IndexOf("*") -le 0) -And ($distro.IndexOf("docker-desktop") -lt 0)) {
+        $index_start = 3
         $warning_str = ""
     }
     else {
@@ -21,11 +23,19 @@ WARNING: removing this distro is not a good idea
 "
     }
 
+    $index_stop = 0
     $index_stop = $distro.IndexOf("    ")
+
+    if ($index_stop -ge $distro.length ) {
+        $index_stop -= $distro.length - 1
+    }
+    if ($index_stop -le 0 ) {
+        $index_stop += 100
+    }
+
     $distroName = $distro.Substring($index_start, $index_stop)
     $distroName = $distroName.Split('', [System.StringSplitOptions]::RemoveEmptyEntries) -join ''
     $distroName -replace '\s', ''
-    $distroName = $distroName.Substring(3, $distroName.Length - 5)
 
     $removeDistro = Read-Host "`n`n`n`n`nDo you want to remove ${distroName}? $warning_str(Y/N)"
 
@@ -34,6 +44,9 @@ WARNING: removing this distro is not a good idea
 
         # Remove distro
         Write-Host "$command_str"
-        Invoke-Expression -Command "$command_str"
+        $wsl_exe = 'wsl.exe --unregister'.Trim()
+        $unregister = "$distroName".Trim()
+        $command_string = "$wsl_exe `'$unregister`'".Trim()
+        & "$command_string"
     }
 }
