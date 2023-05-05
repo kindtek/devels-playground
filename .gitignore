@@ -5,3 +5,4 @@ kernels/linux/zfs-*
 kernels/linux/linux-*
 **/kali/make-kernel-*
 **/kali/install-kindtek-devels-workshop.ps1
+docker/kali/logs*

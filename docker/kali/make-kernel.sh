@@ -4,7 +4,7 @@ label=make-kernel
 win_user=$1
 kernel_type=$2
 kernel_feature=$3
-build_cache=${4:+'nocache'}
+config_file=${4}
 filename="$label${kernel_type:+-$kernel_type}${kernel_feature:+-$kernel_feature}-$timestamp"
 
 while [ "$win_user" = "" ] || [ ! -d "/mnt/c/users/$win_user" ]; do
@@ -24,18 +24,14 @@ done
 # log save location
 mkdir -p logs
 # docker_vols=$(docker volume ls -q)
-tee "$filename.sh" >/dev/null <<'TXT'
+tee "logs/$filename.sh" >/dev/null <<'TXT'
 #!/bin/bash
 set -x
 win_user=${1}
-echo "win_user = $win_user"
 kernel_type=${2:-basic}
-echo "kernel_type = $kernel_type"
 kernel_feature=${3}
-echo "kernel_feature = $kernel_feature"
+config_file=${4}
 build_cache=${4:+' --no-cache'}
-echo "build_cache = $build_cache"
-docker_vols=$(docker volume ls -q)
 #               ___________________________________________________                 #
 #               ||||               Executing ...               ||||                 #
 #                -------------------------------------------------                  #
@@ -47,7 +43,7 @@ docker_vols=$(docker volume ls -q)
                     --build-arg KERNEL_FEATURE="${kernel_feature}" \
                     --build-arg REFRESH_REPO=yes \
                     --build-arg WIN_USER="${win_user}" \
-                    --build-arg CONFIG_FILE= \
+                    --build-arg CONFIG_FILE="${config_file}" \
                     --progress=auto \
                     . 2>&1
 # 
@@ -56,8 +52,8 @@ docker_vols=$(docker volume ls -q)
 #               __________________________________________________                  #
 TXT
 # copy the command to the log first
-eval cat "$filename.sh" 2>&1 | tee --append "logs/$filename.log"
+eval cat "logs/$filename.sh" 2>&1 | tee --append "logs/$filename.log" && \
 # execute .sh file && log all output
-bash "${filename}.sh" "${win_user}" "${kernel_type}" "${kernel_feature}" "${build_cache}" | tee --append "${filename}.log"
+bash "logs/${filename}.sh" "${win_user}" "${kernel_type}" "${kernel_feature}" "${config_file}" 2>&1 | tee --append "logs/${filename}.log" && \
 # prompt to install newly built kernel
-bash ../../kernels/linux/install-kernel.sh "$win_user" latest
+bash ../../kernels/linux/install-kernel.sh "$win_user" latest 2>&1 | tee --append "logs/$filename.log"
