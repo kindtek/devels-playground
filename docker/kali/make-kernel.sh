@@ -26,6 +26,7 @@ mkdir -p logs
 # docker_vols=$(docker volume ls -q)
 tee "$filename.sh" >/dev/null <<'TXT'
 #!/bin/bash
+set -x
 win_user=${1}
 echo "win_user = $win_user"
 kernel_type=${2:-basic}
@@ -35,7 +36,6 @@ echo "kernel_feature = $kernel_feature"
 build_cache=${4:+' --no-cache'}
 echo "build_cache = $build_cache"
 docker_vols=$(docker volume ls -q)
-set -x
 #               ___________________________________________________                 #
 #               ||||               Executing ...               ||||                 #
 #                -------------------------------------------------                  #
