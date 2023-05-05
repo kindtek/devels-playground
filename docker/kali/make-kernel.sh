@@ -23,7 +23,7 @@ while [ "$win_user" = "" ] || [ ! -d "/mnt/c/users/$win_user" ]; do
 done
 # log save location
 mkdir -p logs
-## docker_vols=$(docker volume ls -q)
+# docker_vols=$(docker volume ls -q)
 tee "$filename.sh" >/dev/null <<'TXT'
 #!/bin/bash
 win_user=${1}
