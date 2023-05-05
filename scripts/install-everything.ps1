@@ -160,18 +160,24 @@ function require_docker_online {
             elseif ($docker_online -eq $false -And (($docker_tries % 3) -eq 0)) {
                 # start count over
                 # $docker_attempt1 = $docker_attempt2 = $false
-                # prompt to continue
-                $check_again = Read-Host "Keep trying to connect to Docker? ([y]n)"
-                if ($check_again -ine 'n' -And $check_again -ine 'no'){
-                    wsl --install --no-launch
-                }
-            }
-            elseif ( $docker_online -eq $false -And (($docker_tries % 7) -eq 0)){
+                # prompt to restart or continue to wait
                 $restart = Read-Host "Restart docker? ([y]n)"
                 if ( $restart -ine 'n' -And $restart -ine 'no') {
-                    wsl --install -d kali-linux --no-launch
-                    wsl --update --pre-release
+                    Write-Output "restarting docker ..."
+                    cmd.exe /c net stop docker
+                    cmd.exe /c net stop com.docker.service
+                    cmd.exe /c taskkill /IM "dockerd.exe" /F
+                    cmd.exe /c taskkill /IM "Docker Desktop.exe" /F
+                    cmd.exe /c net start docker
+                    cmd.exe /c net start com.docker.service
+                    wsl.exe --exec echo 'Docker restarted';
                     $docker_tries = 1
+                }
+                else {
+                    $check_again = Read-Host "Keep trying to connect to Docker? ([y]n)"
+                    if ($check_again -ine 'n' -And $check_again -ine 'no'){
+                        wsl --install --no-launch
+                    }
                 }
             }
             elseif ($docker_online -eq $false -And (($docker_tries % 13) -eq 0)) {
