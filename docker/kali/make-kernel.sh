@@ -7,7 +7,7 @@ kernel_feature=$3
 build_cache=${4:+'nocache'}
 filename="$label${kernel_type:+-$kernel_type}${kernel_feature:+-$kernel_feature}-$timestamp"
 
-while [ ! -d "/mnt/c/users/$win_user" ]; do
+while [ "$win_user" = "" ] || [ ! -d "/mnt/c/users/$win_user" ]; do
     echo " 
 
 
@@ -21,7 +21,8 @@ while [ ! -d "/mnt/c/users/$win_user" ]; do
     read -r -p "
 " win_user
 done
-
+# log save location
+mkdir -p logs
 ## docker_vols=$(docker volume ls -q)
 tee "$filename.sh" >/dev/null <<'TXT'
 #!/bin/bash
@@ -54,7 +55,7 @@ docker_vols=$(docker volume ls -q)
 #               __________________________________________________                  #
 TXT
 # copy the command to the log first
-eval cat "$filename.sh" 2>&1 | tee --append "$filename.log"
+eval cat "$filename.sh" 2>&1 | tee --append "logs/$filename.log"
 # execute .sh file && log all output
 bash "${filename}.sh" "${win_user}" "${kernel_type}" "${kernel_feature}" "${build_cache}" | tee --append "${filename}.log"
 # prompt to install newly built kernel
