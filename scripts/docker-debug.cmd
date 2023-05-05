@@ -4,7 +4,10 @@ SETLOCAL EnableDelayedExpansion
 @REM this is useful for when docker refuses to start due to a bad wsl distro set as default or ...
 @REM ..if docker hangs when it tries to start
 @REM also try deleting the .docker folder in user directory (C:\Users\xxxx)
-
+SET "command_arg=%~1"
+IF "!command_arg!"!="" (
+    goto !command_arg!
+)
 SET prompt=prompt
 
 :prompt
@@ -32,7 +35,11 @@ net start docker
 net start com.docker.service
 "C:\Program Files\Docker\Docker\resources\dockerd.exe"
 "C:\Program Files\Docker\Docker\Docker Desktop.exe"
-goto prompt
+IF "!command_arg!"=="" (
+    goto prompt
+) ELSE (
+    goto quit
+)
 
 :u
 @REM force restart for docker containers
@@ -41,6 +48,9 @@ goto prompt
 docker update --restart=always docker-desktop
 docker update --restart=always docker-desktop-data
 "C:\Program Files\Docker\Docker\DockerCli.exe" -SwitchDaemon
+IF "!command_arg!"!="" (
+    goto quit
+)
 
 
 
@@ -115,16 +125,29 @@ docker update --restart=always docker-desktop-data
 
 :h
 "C:\Windows\System32\net.exe" start "com.docker.service"
-goto prompt
+IF "!command_arg!"=="" (
+    goto prompt
+) ELSE (
+    goto quit
+)
+
 
 @REM reset default wsl distro
 :r
-wsl -s Ubuntu-20.04
-goto prompt
+wsl -s official-ubuntu-latest
+IF "!command_arg!"=="" (
+    goto prompt
+) ELSE (
+    goto quit
+)
+
 
 :reboot
 @REM restart windows
 @REM shutdown -r -t 0
+IF "!command_arg!"!="" (
+    goto quit
+)
 
 :q
 :quit
