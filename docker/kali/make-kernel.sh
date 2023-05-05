@@ -21,7 +21,6 @@ while [ "$win_user" = "" ] || [ ! -d "/mnt/c/users/$win_user" ]; do
     read -r -p "
 " win_user
 done
-
 # log save location
 mkdir -p logs
 tee "logs/$filename.sh" >/dev/null <<'TXT'
