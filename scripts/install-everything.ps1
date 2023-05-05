@@ -170,34 +170,42 @@ function require_docker_online {
                     cmd.exe /c taskkill /IM "Docker Desktop.exe" /F
                     cmd.exe /c net start docker
                     cmd.exe /c net start com.docker.service
-                    wsl.exe --exec echo 'Docker restarted';
                     $docker_tries = 1
                 }
                 else {
                     $check_again = Read-Host "Keep trying to connect to Docker? ([y]n)"
                     if ($check_again -ine 'n' -And $check_again -ine 'no'){
-                        wsl --install --no-launch
+                        Write-Host "resetting Docker engine ....."
+                        Start-Process DockerCli.exe -SwitchDaemon
+                        Write-Host ""
+                        Start-Sleep 5
+                        Write-Host "setting Docker engine to Linux ....."
+                        Start-Process DockerCli.exe -SwitchLinuxEngine
+                        Write-Host "switch complete."
+                        Write-Output "restarting docker ..."
                     }
                 }
             }
             elseif ($docker_online -eq $false -And (($docker_tries % 13) -eq 0)) {
+                Write-Host "waited $docker_tries seconds .. "
                 docker info
+                Write-Host "restarting Docker engine..."
                 docker update --restart=always docker-desktop
                 docker update --restart=always docker-desktop-data
-                wsl --install -d kali-linux --no-launch
-                wsl --update --pre-release
-                Write-Host "Waited $docker_tries seconds .. "
-                Write-Host "Restarting Docker Engine..."
-                Write-Host "Switching Docker Engine ...."
+                Write-Host "switching Docker engine ...."
                 Start-Process DockerCli.exe -SwitchDaemon
                 Write-Host ""
                 Start-Sleep 5
-                Write-Host "Setting Docker Engine to Linux ....."
+                Write-Host "setting Docker engine to Linux ....."
                 Start-Process DockerCli.exe -SwitchLinuxEngine
-                Write-Host "Switch complete."
-                Write-Host "Retrying connection in 10 seconds ......"
-                Start-Sleep -seconds 10
-                Write-Host ""
+                Write-Host "switch complete."
+                Write-Output "restarting docker ..."
+                cmd.exe /c net stop docker
+                cmd.exe /c net stop com.docker.service
+                cmd.exe /c taskkill /IM "dockerd.exe" /F
+                cmd.exe /c taskkill /IM "Docker Desktop.exe" /F
+                cmd.exe /c net start docker
+                cmd.exe /c net start com.docker.service
             }
 
             if ($docker_online -eq $false -And ( $docker_tries -eq 1)) {
