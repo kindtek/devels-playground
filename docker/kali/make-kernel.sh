@@ -24,7 +24,6 @@ done
 
 # log save location
 mkdir -p logs
-
 tee "logs/$filename.sh" >/dev/null <<'TXT'
 #!/bin/bash
 set -x
