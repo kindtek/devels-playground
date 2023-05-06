@@ -31,7 +31,7 @@ win_user=${1}
 kernel_type=${2:-basic}
 kernel_feature=${3}
 config_file=${4}
-build_cache=${4:+' --no-cache'}
+# build_cache=${4:+' --no-cache'}
 filename=${5}
 #               ___________________________________________________                 #
 #               ||||               Executing ...               ||||                 #
@@ -42,11 +42,8 @@ filename=${5}
                     --output type=local,dest=/mnt/c/users/"${win_user}"/k-cache \
                     --build-arg KERNEL_TYPE="${kernel_type}" \
                     --build-arg KERNEL_FEATURE="${kernel_feature}" \
-                    --build-arg REFRESH_REPO=yes \
                     --build-arg WIN_USER="${win_user}" \
                     --build-arg CONFIG_FILE="${config_file}" \
-                    --no-cache-filter=dvlp_repo-build \
-                    --no-cache-filter=dvlp_repo-build-kernel \
                     --progress=plain \
                     . 2>&1 || exit
 # 
