@@ -163,13 +163,16 @@ function require_docker_online {
                 # prompt to restart or continue to wait
                 $restart = Read-Host "Restart docker? ([y]n)"
                 if ( $restart -ine 'n' -And $restart -ine 'no') {
-                    Write-Output "restarting docker ..."
-                    cmd.exe /c net stop docker
-                    cmd.exe /c net stop com.docker.service
-                    cmd.exe /c taskkill /IM "dockerd.exe" /F
-                    cmd.exe /c taskkill /IM "Docker Desktop.exe" /F
-                    cmd.exe /c net start docker
-                    cmd.exe /c net start com.docker.service
+                    Write-Output "stopping docker ..."
+                    powershell.exe -Command cmd.exe /c net stop com.docker.service
+                    powershell.exe -Command cmd.exe /c taskkill /IM "'Docker Desktop.exe'" /F
+                    Write-Output "stopping wsl ..."
+                    powershell.exe -Command wsl.exe --shutdown; 
+                    Write-Output "starting wsl ..."
+                    powershell.exe -Command wsl.exe --exec echo 'wsl restarted';
+                    Write-Output "starting docker ..."
+                    powershell.exe -Command cmd.exe /c net start com.docker.service
+                    powershell.exe -Command wsl.exe --exec echo 'docker restarted';
                     $docker_tries = 1
                 }
                 else {
@@ -182,7 +185,6 @@ function require_docker_online {
                         Write-Host "setting Docker engine to Linux ....."
                         Start-Process DockerCli.exe -SwitchLinuxEngine
                         Write-Host "switch complete."
-                        Write-Output "restarting docker ..."
                     }
                 }
             }
