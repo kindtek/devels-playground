@@ -46,10 +46,10 @@ filename=${5}
                     --build-arg CONFIG_FILE="${config_file}" \
                     --progress=plain \
                     . 2>&1 || exit<<'temp_comment'
+                    echo 'docker failed to start'
                     # --no-cache-filter=dvlp_repo-build \
                     # --no-cache-filter=dvlp_repo-build-kernel \
 temp_comment
-
 # 
 #                -----------------------------------------------                    #
 #               |||||||||||||||||||||||||||||||||||||||||||||||||                   #
