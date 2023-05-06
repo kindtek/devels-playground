@@ -34,7 +34,7 @@ config_file=${4}
 build_cache=${4:+' --no-cache'}
 filename=${5}
 #               _________________________________________________                 #
-#                ||||             Executing ...             ||||                  #
+#                |||| |           Executing ...           | ||||                  #
 #              ---------------------------------------------------                #
 #
                     docker buildx build ${build_cache} \
