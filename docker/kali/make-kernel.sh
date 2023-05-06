@@ -13,7 +13,7 @@ while [ "$win_user" = "" ] || [ ! -d "/mnt/c/users/$win_user" ]; do
 
     install to which Windows home directory?
 
-        C:\\users\\__________ 
+        C:\\users\\__________
 
         choose from:
     " 
