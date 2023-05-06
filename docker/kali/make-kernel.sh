@@ -44,7 +44,7 @@ build_cache=${4:+' --no-cache'}
                     --build-arg WIN_USER="${win_user}" \
                     --build-arg CONFIG_FILE="${config_file}" \
                     --progress=auto \
-                    . 2>&1
+                    . 2>&1 || exit
 # 
 #                -----------------------------------------------                    #
 #               |||||||||||||||||||||||||||||||||||||||||||||||||                   #
