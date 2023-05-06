@@ -8,7 +8,7 @@ config_file=${4}
 filename="$label${kernel_type:+-$kernel_type}${kernel_feature:+-$kernel_feature}-$timestamp"
 
 while [ "$win_user" = "" ] || [ ! -d "/mnt/c/users/$win_user" ]; do
-    echo " 
+    echo "
 
 
     install to which Windows home directory?
