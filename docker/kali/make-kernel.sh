@@ -31,6 +31,7 @@ kernel_type=${2:-basic}
 kernel_feature=${3}
 config_file=${4}
 build_cache=${4:+' --no-cache'}
+filename=${5}
 #               ___________________________________________________                 #
 #               ||||               Executing ...               ||||                 #
 #                -------------------------------------------------                  #
@@ -43,7 +44,10 @@ build_cache=${4:+' --no-cache'}
                     --build-arg REFRESH_REPO=yes \
                     --build-arg WIN_USER="${win_user}" \
                     --build-arg CONFIG_FILE="${config_file}" \
-                    --progress=auto \
+                    --no-cache-filter=dvlp_repo-build \
+                    --no-cache-filter=dvlp_repo-build-kernel \
+                    --metadata-file="${filename}.docker" \
+                    --progress=plain \
                     . 2>&1 || exit
 # 
 #                -----------------------------------------------                    #
@@ -53,6 +57,6 @@ TXT
 # copy the command to the log first
 eval cat "logs/$filename.sh" 2>&1 | tee --append "logs/$filename.log" && \
 # execute .sh file && log all output
-bash "logs/${filename}.sh" "${win_user}" "${kernel_type}" "${kernel_feature}" "${config_file}" 2>&1 | tee --append "logs/${filename}.log" || exit
+bash "logs/${filename}.sh" "${win_user}" "${kernel_type}" "${kernel_feature}" "${config_file}" "${filename}"  2>&1 | tee --append "logs/${filename}.log" && \
 # prompt to install newly built kernel
-bash ../../kernels/linux/install-kernel.sh "$win_user" latest 2>&1 | tee --append "logs/$filename.log"
+bash ../../kernels/linux/install-kernel.sh "$win_user" latest 2>&1 | tee --append "logs/$filename.log" || exit
