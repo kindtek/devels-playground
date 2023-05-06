@@ -45,7 +45,11 @@ filename=${5}
                     --build-arg WIN_USER="${win_user}" \
                     --build-arg CONFIG_FILE="${config_file}" \
                     --progress=plain \
-                    . 2>&1 || exit
+                    . 2>&1 || exit<<'temp_comment'
+                    # --no-cache-filter=dvlp_repo-build \
+                    # --no-cache-filter=dvlp_repo-build-kernel \
+temp_comment
+
 # 
 #                -----------------------------------------------                    #
 #               |||||||||||||||||||||||||||||||||||||||||||||||||                   #
