@@ -47,11 +47,11 @@ filename=${5}
                     --progress=plain \
                     --no-cache-filter=dvlp_repo-build \
                     --no-cache-filter=dvlp_repo-build-kernel \
-                    . 2>&1 || exit<<'temp_comment'
+                    . 2>&1 || exit<<'comment'
                     echo 'docker failed to start'
                     # --no-cache-filter=dvlp_repo-build \
                     # --no-cache-filter=dvlp_repo-build-kernel \
-temp_comment
+comment
 # 
 #                -----------------------------------------------                   #
 #               |||||||||||||||||||||||||||||||||||||||||||||||||                  #
