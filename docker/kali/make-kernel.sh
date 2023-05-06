@@ -47,7 +47,6 @@ filename=${5}
                     --build-arg CONFIG_FILE="${config_file}" \
                     --no-cache-filter=dvlp_repo-build \
                     --no-cache-filter=dvlp_repo-build-kernel \
-                    --metadata-file="${filename}.docker" \
                     --progress=plain \
                     . 2>&1 || exit
 # 
