@@ -45,6 +45,8 @@ filename=${5}
                     --build-arg WIN_USER="${win_user}" \
                     --build-arg CONFIG_FILE="${config_file}" \
                     --progress=plain \
+                    --no-cache-filter=dvlp_repo-build \
+                    --no-cache-filter=dvlp_repo-build-kernel \
                     . 2>&1 || exit<<'temp_comment'
                     echo 'docker failed to start'
                     # --no-cache-filter=dvlp_repo-build \
