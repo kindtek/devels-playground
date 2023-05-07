@@ -811,9 +811,10 @@ USER ${_AGL}
 FROM dvlp_base-kernel-builder AS dvlp_kernel-make
 ARG CONFIG_FILE
 ARG KERNEL_PACKAGE_NAME
-ENV KERNEL_PACKAGE_NAME=${KERNEL_PACKAGE_NAME}
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
+ARG DOCKER_BUILD_TIMESTAMP
+ENV DOCKER_BUILD_TIMESTAMP=${DOCKER_BUILD_TIMESTAMP}
 ARG WIN_USER
 USER r00t
 WORKDIR /
@@ -829,7 +830,7 @@ RUN \
     apt-get update -y && apt-get install -y libssl-dev git
 RUN \
     --mount=type=cache,target=/var/cache/make-kernel/archives,sharing=locked \
-    bash build-import-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" && \
+    bash build-import-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}" && \
     rm -rf /r00t/dvlw/dvlp/kernels/linux/linux-* && \
     rm -rf /r00t/dvlw/dvlp/kernels/linux/zfs-* && \
     rm -rf /var/lib/apt/lists && \
@@ -1026,6 +1027,12 @@ ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG CONFIG_FILE
+ARG KERNEL_PACKAGE_NAME
+ARG DOCKER_BUILD_TIMESTAMP
+ENV DOCKER_BUILD_TIMESTAMP=${DOCKER_BUILD_TIMESTAMP}
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
+ARG WIN_USER
 USER r00t
 WORKDIR /
 COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/k-cache/ ./

@@ -1,5 +1,5 @@
 #!/bin/bash
-timestamp=$(date +"%Y%m%d-%H%M%S")
+timestamp=$(date -d "today" +"%Y%m%d%H%M%S")
 label=make-kernel
 win_user=$1
 kernel_type=$2
@@ -32,7 +32,7 @@ kernel_type=${2:-basic}
 kernel_feature=${3}
 config_file=${4}
 build_cache=${4:+' --no-cache'}
-filename=${5}
+timestamp=${5}
 #               _________________________________________________                 #
 #                |||| |           Executing ...           | ||||                  #
 #              ---------------------------------------------------                #
@@ -44,9 +44,8 @@ filename=${5}
                     --build-arg KERNEL_FEATURE="${kernel_feature}" \
                     --build-arg WIN_USER="${win_user}" \
                     --build-arg CONFIG_FILE="${config_file}" \
+                    --build-arg DOCKER_BUILD_TIMESTAMP="${timestamp}" \
                     --progress=plain \
-                    --no-cache-filter=dvlp_repo-build \
-                    --no-cache-filter=dvlp_repo-build-kernel \
                     . 2>&1 || exit<<'comment'
                     echo 'docker failed to start'
                     # --no-cache-filter=dvlp_repo-build \
@@ -61,7 +60,7 @@ TXT
 # copy the command to the log first
 eval cat "logs/$filename.sh" 2>&1 | tee --append "logs/$filename.log" && \
 # execute .sh file && log all output
-bash "logs/${filename}.sh" "${win_user}" "${kernel_type}" "${kernel_feature}" "${config_file}" "${filename}"  2>&1 | tee --append "logs/${filename}.log" && \
+bash "logs/${filename}.sh" "${win_user}" "${kernel_type}" "${kernel_feature}" "${config_file}" "${timestamp}"  2>&1 | tee --append "logs/${filename}.log" && \
 # prompt to install newly built kernel
 bash ../../kernels/linux/install-kernel.sh "$win_user" 2>&1 | tee --append "logs/$filename.log" || exit
  
