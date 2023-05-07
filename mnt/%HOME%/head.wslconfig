@@ -1,0 +1,19 @@
+[wsl2]
+
+# An absolute Windows path to a custom Linux kernel
+# IMPORTANT: use \\ not \ or /
+# kernel=C:\\users\\%USERPROFILE%\\linux-6_3rc4_wz0_
+
+# Turn on default connection to bind WSL 2 localhost to Windows localhost
+# Boolean specifying if ports bound to wildcard or localhost in the WSL 2 VM should be connectable from the host via localhost:port
+localhostforwarding=true
+
+# Boolean to turn on or off support for GUI applications
+guiApplications=true
+
+# Turns on output console showing contents of dmesg when opening a WSL 2 distro for debugging
+debugConsole=true
+
+# Boolean to turn on or off nested virtualization, enabling other nested VMs to run inside WSL 2
+nestedVirtualization=true
+
