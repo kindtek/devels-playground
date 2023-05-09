@@ -91,7 +91,7 @@ RUN \
     ( git config pull.rebase true &&  git submodule update --init --remote --progress -- dvlp ) || \
     (git config pull.rebase false && git submodule update --init --remote --progress -- dvlp ) || (git pull --progress --prune https://github.com/kindtek/devels-playground ) && \
     # (cd /tmp/git/cache/dvlw/dvlp && git pull && cp -rv --remove-destination . /home/${_DVL}/dvlw/dvlp)
-    chmod -R 1770 dvlp/mnt/home && \
+    chmod -R 1770 dvlp/mnt/HOME$ && \
     chmod -R 1770 dvlp/mnt/bak
 
 ###################
@@ -106,7 +106,7 @@ WORKDIR /repos/dvlw
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
     git submodule update --init --remote --progress -- dvlp || git pull https://github.com/kindtek/devels-playground && \
-    chmod -R 1770 dvlp/mnt/home && \
+    chmod -R 1770 dvlp/mnt/HOME$ && \
     chmod -R 1770 dvlp/mnt/bak
 WORKDIR /repos/dvlw/dvlp
 RUN \
