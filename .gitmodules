@@ -6,3 +6,6 @@
 	branch = dvlp
 	recurse = false
 	ignore = all
+[submodule "mnt"]
+	path = mnt
+	url = git@github.com:/k-home
