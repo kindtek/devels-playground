@@ -13,5 +13,5 @@ dvlp/docker/ubuntu/ubuntu22-plus-linux-kernel-6-28.tar
 /.wterminal-installed
 /.github-installed
 **/install-kindtek-devels-workshop.ps1
-dvlp/kernels/linux/k-cache
+dvlp/kernels/linux/kache
 dvlp/kernels/linux-build*
