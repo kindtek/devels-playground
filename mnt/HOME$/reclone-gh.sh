@@ -26,7 +26,7 @@ echo repo_branch: "$repo_branch" && \
 git clone "$repo_url" --single-branch --branch "$repo_branch" --filter=blob:limit=13k --progress -- "$repo_path" 2>/dev/nullcd dvlw && \
 cd dvlw && \
 git submodule update --init --remote --filter=blob:limit=13k --progress -- dvlp dvl-adv powerhell 2>/dev/null && \
-chmod -R 1770 dvlp/mnt/home && \
+chmod -R 1770 dvlp/mnt/HOME$ && \
 chmod -R 1770 dvlp/mnt/bak && \
 cd dvlp && \
 git submodule update --init --progress --filter=blob:limit=20m -- kernels 

@@ -132,7 +132,7 @@ ARG _MNT
 ARG _DVL_USR
 ENV _DVL=$_DVL_USR
 WORKDIR /hel
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/home/ ./
+COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME$/ ./
 RUN mkdir -pv built-kernels && \
     mkdir -pv dvlw && \
     mkdir -pv dls && \
@@ -158,7 +158,7 @@ FROM dvlp_base-devel-dirs AS dvlp_base-devel-kernel-dirs
 ARG _MNT
 ARG _DVL
 WORKDIR /hel
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/home/ ./
+COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME$/ ./
 RUN mkdir -pv /hel && \
     mkdir -pv /hel/built-kernels && \
     mkdir -pv /home/${_DVL}/built-kernels && \
@@ -184,7 +184,7 @@ ARG _MNT
 ARG _AGL_USR
 ENV _AGL=${_AGL_USR:-agl}
 WORKDIR /hal
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/home/ ./
+COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME$/ ./
 RUN mkdir -pv built-kernels && \
     mkdir -pv dvlw && \
     mkdir -pv dls && \
@@ -208,7 +208,7 @@ FROM dvlp_base-angel-dirs AS dvlp_base-angel-kernel-dirs
 ARG _MNT
 ARG _AGL
 WORKDIR /hal
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/home/ ./
+COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME$/ ./
 # COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/      ./mnt/
 RUN mkdir -pv dvlw && \
     mkdir -pv /hal && \
@@ -235,7 +235,7 @@ FROM ubuntu:latest AS dvlp_base-r00t-dirs
 ARG _MNT
 ARG _ADMIN
 WORKDIR /admin
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/home/    ./
+COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME$/    ./
 COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/         ./mnt/
 
 RUN mkdir -pv dvlw && \
@@ -267,7 +267,7 @@ FROM dvlp_base-r00t-dirs AS dvlp_base-r00t-kernel-dirs
 ARG _MNT
 ARG _ADMIN
 WORKDIR /admin
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/home/ ./
+COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME$/ ./
 RUN mkdir -pv /admin && mkdir -pv built-kernels && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
@@ -295,7 +295,7 @@ ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 WORKDIR /
-# COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/home/ ./etc/skel-kernel/
+# COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME$/ ./etc/skel-kernel/
 # USER r00t
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -351,9 +351,9 @@ WORKDIR /
 COPY --from=dvlp_base-r00t-dirs             --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
 COPY --from=dvlp_base-devel-dirs            --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
 COPY --from=dvlp_base-angel-dirs            --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
-COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/home/     ./hel/
-COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/home/     ./hal/
-COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1770    ./repos/dvlw/dvlp/mnt/home/     ./r00t/
+COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME$/     ./hel/
+COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME$/     ./hal/
+COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME$/     ./r00t/
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./repos/dvlw/
 COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                   ./hel/dvlw/
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
@@ -380,9 +380,9 @@ WORKDIR /
 COPY --from=dvlp_base-r00t-kernel-dirs        --chown=r00t:r00t     --chmod=1770    ./admin/                     ./r00t/ 
 COPY --from=dvlp_base-devel-kernel-dirs       --chown=${_DVL}:hell  --chmod=1770    ./hel/                       ./hel/ 
 COPY --from=dvlp_base-angel-kernel-dirs       --chown=${_AGL}:halo  --chmod=1770    ./hal/                       ./hal/ 
-COPY --from=dvlp_repo-kernel                  --chown=${_DVL}:hell  --chmod=1770    ./repos/dvlw/dvlp/mnt/home/  ./hel/
-COPY --from=dvlp_repo-kernel                  --chown=${_AGL}:halo  --chmod=1770    ./repos/dvlw/dvlp/mnt/home/  ./hal/
-COPY --from=dvlp_repo-kernel                  --chown=r00t:r00t     --chmod=1770    ./repos/dvlw/dvlp/mnt/home/  ./r00t/
+COPY --from=dvlp_repo-kernel                  --chown=${_DVL}:hell  --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME$/  ./hel/
+COPY --from=dvlp_repo-kernel                  --chown=${_AGL}:halo  --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME$/  ./hal/
+COPY --from=dvlp_repo-kernel                  --chown=r00t:r00t     --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME$  ./r00t/
 COPY --from=dvlp_repo-kernel                  --chown=${_AGL}:halo  --chmod=1770    ./repos/dvlw/                ./repos/dvlw/
 # COPY --from=dvlp_base-angel-kernel-dirs       --chown=${_AGL}:halo --chmod=1770    ./hal/                  ./dvlw/ 
 COPY --from=dvlp_repo-kernel                  --chown=${_DVL}:hell  --chmod=1770    ./repos/dvlw/                ./hel/dvlw/
