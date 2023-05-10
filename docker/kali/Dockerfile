@@ -124,7 +124,7 @@ ARG _MNT
 ARG _DVL_USR
 ENV _DVL=$_DVL_USR
 WORKDIR /hel
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME\$/ ./
+COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME$/ ./
 RUN mkdir -pv kache && \
     mkdir -pv dvlw && \
     mkdir -pv dls && \
@@ -1052,11 +1052,11 @@ COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/kache/ ./
 FROM scratch AS dvlp_repo-k-home
 
 # determine which home dir to get -- default is HOME$ (linux)
-ARG HOME_DIR='HOME$'
+ARG HOME_DIR='HOME\$'
 # if WINDOWS argument is provided, use Windows-style path
-ARG HOME_DIR="${WINDOWS:+'HOME%'}"
+ARG HOME_DIR="${WINDOWS:+'HOME\%'}"
 # if LINUX argument is provided, use Linux-style path
-ARG HOME_DIR="${LINUX:+'HOME%'}"
+ARG HOME_DIR="${LINUX:+${HOME_DIR}"
 
 USER r00t
 WORKDIR /
