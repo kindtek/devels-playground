@@ -124,7 +124,7 @@ ARG _MNT
 ARG _DVL_USR
 ENV _DVL=$_DVL_USR
 WORKDIR /hel
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME$/ ./
+COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME\$/ ./
 RUN mkdir -pv kache && \
     mkdir -pv dvlw && \
     mkdir -pv dls && \
