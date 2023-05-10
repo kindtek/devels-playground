@@ -1049,17 +1049,19 @@ COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/kache/ ./
 ############
 # get-home #
 ############
+FROM scratch AS dvlp_repo
 
-FROM scratch AS dvlp_repo-k-home
-ARG WINDOWS
-ARG LINUX
 # determine which home dir to get -- default is HOME$ (linux)
-ARG HOME_DIR='HOME\$'
-ARG HOME_DIR=${"${WINDOWS}":+"${HOME_DIR}"}
-ARG HOME_DIR=${"${LINUX}":+'HOME%'}
+ARG HOME_DIR='HOME$'
+# if WINDOWS argument is provided, use Windows-style path
+ARG HOME_DIR="${WINDOWS:+'HOME%'}"
+# if LINUX argument is provided, use Linux-style path
+ARG HOME_DIR="${LINUX:+'HOME%'}"
+
 USER r00t
 WORKDIR /
 COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/${HOME_DIR}/ ./
+
 #####################
 ## dvlp_jacket-kernel-plus #
 #####################
