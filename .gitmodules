@@ -8,4 +8,6 @@
 	ignore = all
 [submodule "mnt"]
 	path = mnt
-	url = git@github.com:/k-home
+	url = https://github.com/kindtek/k-home.git
+	branch = main
+	active = true
