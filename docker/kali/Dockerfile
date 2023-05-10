@@ -125,7 +125,7 @@ ARG _DVL_USR
 ENV _DVL=$_DVL_USR
 WORKDIR /hel
 COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME$/ ./
-RUN mkdir -pv k-cache && \
+RUN mkdir -pv kache && \
     mkdir -pv dvlw && \
     mkdir -pv dls && \
     ln -fsv dvlw devels-workshop && \
@@ -152,8 +152,8 @@ ARG _DVL
 WORKDIR /hel
 COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME$/ ./
 RUN mkdir -pv /hel && \
-    mkdir -pv /hel/k-cache && \
-    mkdir -pv /home/${_DVL}/k-cache && \
+    mkdir -pv /hel/kache && \
+    mkdir -pv /home/${_DVL}/kache && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
     ln -fsv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
@@ -177,7 +177,7 @@ ARG _AGL_USR
 ENV _AGL=${_AGL_USR:-agl}
 WORKDIR /hal
 COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME$/ ./
-RUN mkdir -pv k-cache && \
+RUN mkdir -pv kache && \
     mkdir -pv dvlw && \
     mkdir -pv dls && \
     ln -fsv dvlw devels-workshop && \
@@ -204,8 +204,8 @@ COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME$/ ./
 # COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/      ./mnt/
 RUN mkdir -pv dvlw && \
     mkdir -pv /hal && \
-    mkdir -pv /hal/k-cache && \
-    mkdir -pv /home/${_AGL}/k-cache && \
+    mkdir -pv /hal/kache && \
+    mkdir -pv /home/${_AGL}/kache && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
     ln -fsv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
@@ -260,7 +260,7 @@ ARG _MNT
 ARG _ADMIN
 WORKDIR /admin
 COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME$/ ./
-RUN mkdir -pv /admin && mkdir -pv k-cache && \
+RUN mkdir -pv /admin && mkdir -pv kache && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
     ln -fsv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
@@ -1040,7 +1040,7 @@ ARG KERNEL_FEATURE
 ARG WIN_USER
 USER r00t
 WORKDIR /
-COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/k-cache/ ./
+COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/kache/ ./
 
 
 # FROM dvlp_base AS dvlp_jacket
