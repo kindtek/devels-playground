@@ -90,6 +90,11 @@ RUN \
     git submodule update --init --remote --filter=blob:limit=13k --progress -- dvlp dvl-adv powerhell 2>/dev/null && \
     chmod -R 1770 dvlp/mnt/HOME$ && \
     chmod -R 1770 dvlp/mnt/bak
+WORKDIR /repos/dvlw/dvlp
+RUN \
+    --mount=type=cache,target=/tmp/git/cache,sharing=locked \
+    # get default user files
+    git submodule update --init --progress -- mnt 
 
 ###################
 # dvlp_repo-build-kernel #
