@@ -1055,7 +1055,7 @@ ARG WINDOWS
 ARG LINUX
 # determine which home dir to get -- default is HOME$ (linux)
 ARG HOME_DIR=HOME$
-ARG HOME_DIR=${$WINDOWS:+HOME$}
+ARG HOME_DIR=${$WINDOWS:+$HOME_DIR}
 ARG HOME_DIR=${$LINUX:+HOME%}
 USER r00t
 WORKDIR /
