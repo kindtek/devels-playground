@@ -1018,13 +1018,13 @@ WORKDIR /hal
 USER ${_AGL}
 
 ###################################################################
-########################### OUTPUT ################################
+########################### KERNEL KACHE ##########################
 ###################################################################
-#################
-# KERNEL OUTPUT #
-#################
+################
+# kernel-kache #
+################
 
-FROM scratch AS dvlp_kernel-get
+FROM scratch AS dvlp_kernel-kache
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -1042,10 +1042,6 @@ USER r00t
 WORKDIR /
 COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/kache/ ./
 
-
-# FROM dvlp_base AS dvlp_jacket
-
-# FROM dvlp_base AS dvlp_jacket-kernel
 
 #####################
 ## dvlp_jacket-kernel-plus #
