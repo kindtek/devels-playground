@@ -1049,7 +1049,7 @@ COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/kache/ ./
 ############
 # get-home #
 ############
-FROM scratch AS dvlp_repo
+FROM scratch AS dvlp_repo-k-home
 
 # determine which home dir to get -- default is HOME$ (linux)
 ARG HOME_DIR='HOME$'
