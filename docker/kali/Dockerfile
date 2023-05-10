@@ -87,14 +87,14 @@ RUN \
 WORKDIR /repos/dvlw
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
-    git submodule update --init --remote --filter=blob:limit=13k --progress -- dvlp dvl-adv powerhell 2>/dev/null && \
-    chmod -R 1770 dvlp/mnt/HOME$ && \
-    chmod -R 1770 dvlp/mnt/bak
+    git submodule update --init --remote --filter=blob:limit=13k --progress -- dvlp dvl-adv powerhell 2>/dev/null 
 WORKDIR /repos/dvlw/dvlp
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked \
     # get default user files
-    git submodule update --init --progress -- mnt 
+    git submodule update --init --progress -- mnt && \
+    chmod -R 1770 mnt/HOME$ && \
+    chmod -R 1770 mnt/bak
 
 ###################
 # dvlp_repo-build-kernel #
