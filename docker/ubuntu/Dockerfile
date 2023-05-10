@@ -927,7 +927,7 @@ USER ${_AGL}
 # KERNEL OUTPUT #
 #################
 
-FROM scratch AS dvlp_kernel-output
+FROM scratch AS dvlp_kernel-get
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR

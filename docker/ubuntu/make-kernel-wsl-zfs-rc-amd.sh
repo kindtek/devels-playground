@@ -8,8 +8,8 @@ sudo tee $filename.sh >/dev/null <<'TXT'
 #               ___________________________________________________                 #
 #               ||||               Executing ...               ||||                 #
 #               -------------------------------------------------                   #
-# sudo docker buildx build --target dvlp_kernel-output --output type=local,dest=/mnt/c/users/${user_name:-default}/$filename.tar --build-arg KERNEL_TYPE=stable-wsl-zfs --build-arg REFRESH_REPO=yes --build-arg CONFIG_FILE= .
-sudo docker buildx build --target dvlp_kernel-output --no-cache --output type=local,dest=/mnt/c/users/${user_name:-default}/$filename.tar --build-arg KERNEL_TYPE=stable-wsl-zfs --build-arg REFRESH_REPO=y --build-arg CONFIG_FILE= .
+# sudo docker buildx build --target dvlp_kernel-get --output type=local,dest=/mnt/c/users/${user_name:-default}/$filename.tar --build-arg KERNEL_TYPE=stable-wsl-zfs --build-arg REFRESH_REPO=yes --build-arg CONFIG_FILE= .
+sudo docker buildx build --target dvlp_kernel-get --no-cache --output type=local,dest=/mnt/c/users/${user_name:-default}/$filename.tar --build-arg KERNEL_TYPE=stable-wsl-zfs --build-arg REFRESH_REPO=y --build-arg CONFIG_FILE= .
 
 #                -----------------------------------------------                    #
 #               |||||||||||||||||||||||||||||||||||||||||||||||||                   #
@@ -25,7 +25,7 @@ sudo sh $filename.sh | sudo tee --append $filename.log
 # filename="$label-$timestamp.log"
 # user_name=$(wslvar USERNAME)
 # command_string=sudo docker buildx build \
-# --target dvlp_kernel-output \
+# --target dvlp_kernel-get \
 # --output type=local,dest=/mnt/c/users/${user_name:-default}/$filename.tar \
 # --build-arg KERNEL_TYPE=latest-rc-wsl-zfs \
 # --build-arg REFRESH_REPO=yes \
@@ -37,4 +37,4 @@ sudo sh $filename.sh | sudo tee --append $filename.log
 
 # | sudo tee rc-wsl-zfs-kernel-builder"$timestamp".log
 
-# sudo docker buildx build --target dvlp_kernel-output --output type=local,dest=/mnt/c/users/n8kin/kindtek-wsl-zfs-linux-kernel-$timestamp.tar --build-arg KERNEL_TYPE=latest-rc-wsl-zfs --build-arg REFRESH_REPO=true --build-arg CONFIG_FILE=  --no-cache .  2>&1 |     sudo tee rc-wsl-zfs-kernel-builder"$timestamp".log
+# sudo docker buildx build --target dvlp_kernel-get --output type=local,dest=/mnt/c/users/n8kin/kindtek-wsl-zfs-linux-kernel-$timestamp.tar --build-arg KERNEL_TYPE=latest-rc-wsl-zfs --build-arg REFRESH_REPO=true --build-arg CONFIG_FILE=  --no-cache .  2>&1 |     sudo tee rc-wsl-zfs-kernel-builder"$timestamp".log

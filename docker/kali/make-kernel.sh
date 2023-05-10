@@ -38,7 +38,7 @@ timestamp=${5}
 #              ---------------------------------------------------                #
 #
                     docker buildx build ${build_cache} \
-                    --target dvlp_kernel-output \
+                    --target dvlp_kernel-get \
                     --output type=local,dest=/mnt/c/users/"${win_user}"/kache \
                     --build-arg KERNEL_TYPE="${kernel_type}" \
                     --build-arg KERNEL_FEATURE="${kernel_feature}" \
