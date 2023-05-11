@@ -420,6 +420,7 @@ WORKDIR /
 ##################
 FROM dvlp_skel AS dvlp_scan-build
 USER r00t
+SHELL ["/bin/bash", "-c"]
 WORKDIR /r00t/build
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
@@ -437,7 +438,7 @@ RUN \
     make install && \
     rm -rf /r00t/build/nmap
 WORKDIR /r00t/build
-RUN git clone https://github.com/aircrack-ng/aircrack-ng 
+RUN git clone https://github.com/aircrack-ng/aircrack-ng aircrack
 WORKDIR /r00t/build/aircrack
 RUN \
     ./configure && \
