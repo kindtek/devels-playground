@@ -440,9 +440,13 @@ RUN \
 WORKDIR /r00t/build
 RUN git clone https://github.com/aircrack-ng/aircrack-ng aircrack
 WORKDIR /r00t/build/aircrack
+ENV NOCONFIGURE=1
 RUN \
+     ./autogen.sh && \
     ./configure && \
     make && \
+    make check && \
+    make integration && \
     make install && \
     rm -rf /r00t/build/aircrack
 # WORKDIR /r00t
