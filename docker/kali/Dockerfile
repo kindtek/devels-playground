@@ -1050,7 +1050,8 @@ COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/kache/ ./
 # get-home #
 ############
 FROM scratch AS dvlp_repo-k-home
-
+ARG WINDOWS
+ARG LINUX
 # determine which home dir to get -- default is HOME_NIX (linux)
 ARG HOME_DIR='HOME_NIX'
 # if WINDOWS argument is provided, use Windows-style path
