@@ -1057,7 +1057,7 @@ ARG HOME_DIR='HOME_NIX'
 # if WINDOWS argument is provided, use Windows-style path
 ARG HOME_DIR="${WINDOWS:+'HOME_WIN'}"
 # if LINUX argument is provided, use Linux-style path
-ARG HOME_DIR="${LINUX:+${HOME_DIR}"
+ARG HOME_DIR="${LINUX:+${HOME_DIR}}"
 
 USER r00t
 WORKDIR /
