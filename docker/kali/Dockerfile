@@ -14,6 +14,8 @@ ARG DOCKER_BUILDKIT=1
 ARG KERNEL_TYPE=${KERNEL_TYPE:-basic}
 ARG KERNEL_PACKAGE_NAME=${KERNEL_PACKAGE_NAME}
 ARG REFRESH_REPO=${REFRESH_REPO:-no}
+ARG WINDOWS
+ARG LINUX
 ARG _AGL_USR=${_AGL:-agl}
 ARG _DVL_USR=${_DVL:-dvl}
 ARG _MNT=${_MNT:-/mnt/data}
@@ -1052,11 +1054,11 @@ COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/kache/ ./
 FROM scratch AS dvlp_repo-k-home
 ARG WINDOWS
 ARG LINUX
-# determine which home dir to get -- default is HOME_NIX (linux)
+# determine which home dir to get -- default is HOME_NIX 
 ARG HOME_DIR='HOME_NIX'
-# if WINDOWS argument is provided, use Windows-style path
+# if WINDOWS argument is provided, use win home dir
 ARG HOME_DIR="${WINDOWS:+'HOME_WIN'}"
-# if LINUX argument is provided, use Linux-style path
+# if LINUX argument is provided, use nix home dir
 ARG HOME_DIR="${LINUX:+${HOME_DIR}}"
 
 USER r00t
