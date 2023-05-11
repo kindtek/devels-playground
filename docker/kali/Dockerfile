@@ -1054,6 +1054,7 @@ COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/kache/ ./
 FROM scratch AS dvlp_repo-k-home
 ARG WINDOWS
 ARG LINUX
+SHELL ["/bin/bash", "-c"]
 RUN echo "LINUX: $LINUX"
 RUN echo "WINDOWS: $WINDOWS"
 # determine which home dir to get -- default is HOME_NIX 
