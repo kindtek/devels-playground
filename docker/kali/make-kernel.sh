@@ -49,6 +49,7 @@ timestamp=${5}
                     --build-arg WIN_USER="${win_user}" \
                     --build-arg CONFIG_FILE="${config_file}" \
                     --build-arg DOCKER_BUILD_TIMESTAMP="${timestamp}" \
+                    --no-cache-filter=dvlp_repo \
                     --no-cache-filter=dvlp_repo-build \
                     --no-cache-filter=dvlp_repo-build-kernel \
                     --progress=plain \
