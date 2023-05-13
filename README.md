@@ -51,9 +51,9 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 &nbsp;
 ## NEW FEATURES
 
-## Build a kernel and pop into a Kubuntu GUI with [ubuntu-gui-plus](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-gui-plus/images/sha256-e358b4a835faff261ff0b284a207496da7e4d61ce70aa3f44db7618714c7ccf5?context=repo)
+## Build a kernel and pop into a Kubuntu GUI with [ubuntu-gui-kernel](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-gui-kernel/images/sha256-e358b4a835faff261ff0b284a207496da7e4d61ce70aa3f44db7618714c7ccf5?context=repo)
 
-( No setup necessary. Kubuntu GUI also included with [ubuntu-gui](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-gui/images/sha256-266c029b305ea1d9553aacb7cf2ecc8ebd8830841945a2427374b8e0c9b478aa?context=repo), [ubuntu-cuda](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda/images/sha256-96fa98d5d82f0991218fd9501f56dae9341955a8b3c49a19d99d7d7e59c41b84?context=repo), and [ubuntu-cuda-plus](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda-plus/images/sha256-717739827455ab9eaddb539dbbf3ea6a0c9b943b74cd493a5fc337dd2adb9e92?context=repo) ) 
+( No setup necessary. Kubuntu GUI also included with [ubuntu-gui](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-gui/images/sha256-266c029b305ea1d9553aacb7cf2ecc8ebd8830841945a2427374b8e0c9b478aa?context=repo), [ubuntu-cuda](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda/images/sha256-96fa98d5d82f0991218fd9501f56dae9341955a8b3c49a19d99d7d7e59c41b84?context=repo), and [ubuntu-cuda-kernel](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda-kernel/images/sha256-717739827455ab9eaddb539dbbf3ea6a0c9b943b74cd493a5fc337dd2adb9e92?context=repo) ) 
 
 
 ### [CLICK for more details](https://github.com/kindtek/devels-playground#idle-minds-are-the-developers-playground)
