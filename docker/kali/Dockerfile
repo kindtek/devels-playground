@@ -504,7 +504,7 @@ USER ${_AGL}
 ############
 # dvlp_base-git-kernel #
 ############
-FROM dvlp_skel-kernel AS dvlp_base-git-kernel
+FROM dvlp_skel AS dvlp_base-nmap
 # COPY --from=dvlp_skel-build-kernel         ./      ./
 ARG _AGL_USR
 ARG _DVL_USR
@@ -519,7 +519,7 @@ USER ${_AGL}
 ############
 # dvlp_base-git-kernel #
 ############
-FROM dvlp_skel AS dvlp_base-nmap
+FROM dvlp_skel-kernel AS dvlp_base-git-kernel
 # COPY --from=dvlp_skel-build-kernel         ./      ./
 ARG _AGL_USR
 ARG _DVL_USR
@@ -625,7 +625,7 @@ USER ${_AGL}
 ##################
 # dvlp_base-scan #
 ##################
-FROM dvlp_scan-build AS dvlp_base-scan
+FROM dvlp_base-scan-build AS dvlp_base-scan
 COPY --from=dvlp_base-python-lite ./ ./
 USER r00t
 RUN \
