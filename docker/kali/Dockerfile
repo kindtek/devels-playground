@@ -564,7 +564,7 @@ RUN \
     apt-get -y update && apt-get -y autoremove && \
     apt-get -y --reinstall install apt-utils ca-certificates && \
     apt-get -y install software-properties-common && \
-    apt-add-repository -y ppa:brightbox/ruby-ng && \
+    # apt-add-repository -y ppa:brightbox/ruby-ng && \
     apt-get -y install autoconf automake build-essential dbus espeak ethtool expect hostapd iw lame libnl-3-dev libnl-genl-3-dev libpcre2-dev libhwloc-dev libssl-dev libsqlite3-dev libtool libcmocka-dev libpcap-dev pkg-config ruby-dev rfkill shtool screen tcpdump usbutils wpasupplicant zlib1g-dev && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
@@ -588,8 +588,19 @@ RUN \
     make install
 WORKDIR /usr/share
 RUN git clone https://github.com/beefproject/beef beef
+WORKDIR /usr/share/beef
+USER agl
+RUN \
+    gem install bundler
+# RUN \
+#     bundle config set --local with 'test' 
+RUN \
+    yes "" | ./install 
 WORKDIR /
 RUN \
+    # apt-get remove -y automake ethtool expect hostapd iw libnl-3-dev libnl-genl-3-dev libpcre2-dev libhwloc-dev libssl-dev libsqlite3-dev libtool libcmocka-dev libpcap-dev pkg-config zlib1g-dev && \
+    # apt-get -y update && apt-get -y autoremove && \
+    rm -rf /r00t/build && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 
@@ -709,21 +720,6 @@ COPY --from=dvlp_base-python-build ./ ./
 COPY --from=dvlp_base-python-build-lite ./ ./
 WORKDIR /hal
 USER ${_AGL}
-
-
-USER agl
-RUN \
-    gem install bundler
-RUN \
-    bundle config set --local with 'test' 
-RUN \
-    yes "" | ./install 
-WORKDIR /
-RUN \
-    apt-get remove -y automake ethtool expect hostapd iw libnl-3-dev libnl-genl-3-dev libpcre2-dev libhwloc-dev libssl-dev libsqlite3-dev libtool libcmocka-dev libpcap-dev pkg-config zlib1g-dev && \
-    rm -rf /r00t/build && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt/archives/*.deb
 
 
 ############################# POWERHELL #########################################
