@@ -44,8 +44,8 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y git && \
+    apt-get -y update && apt-get -y autoremove && \
+    apt-get --no-install-recommends -y install git && \
     apt-get --reinstall -y install ca-certificates && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb 
@@ -320,8 +320,8 @@ RUN \
 # add-apt-repository ppa:apt-fast/stable && \
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y sudo && \
+    apt-get -y update && apt-get -y autoremove && \
+    apt-get --no-install-recommends -y install sudo && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb && \
     usermod -aG sudo ${_AGL} && \
@@ -391,8 +391,8 @@ COPY --from=dvlp_base-devel-kernel-dirs --chown=r00t:r00t    --chmod=1770    ./m
 COPY --from=dvlp_repo-kernel            --chown=r00t:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/        ./
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh wget && \
+    apt-get -y update && apt-get -y autoremove && \
+    apt-get --no-install-recommends -y install apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh wget && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 WORKDIR /
@@ -409,8 +409,8 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh wget && \
+    apt-get -y update && apt-get -y autoremove && \
+    apt-get --no-install-recommends -y install apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh wget && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 WORKDIR /
@@ -467,8 +467,8 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y alien autoconf bison bc build-essential dbus-user-session daemonize dwarves fakeroot \ 
+    apt-get -y update && apt-get -y autoremove && \
+    apt-get --no-install-recommends -y install alien autoconf bison bc build-essential dbus-user-session daemonize dwarves fakeroot \ 
     flex fontconfig gawk kmod libblkid-dev libffi-dev lxcfs libudev-dev libaio-dev libattr1-dev libelf-dev libpam-systemd \
     python3-dev python3-setuptools python3-cffi net-tools snapd systemd-sysv sysvinit-utils uuid-dev zstd && \
     rm -rf /var/lib/apt/lists && \
@@ -514,7 +514,7 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get install -y libssl-dev git
+    apt-get -y update && apt-get -y install libssl-dev git
 RUN \
     --mount=type=cache,target=/var/cache/make-kernel/archives,sharing=locked \
     bash build-import-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}" && \
@@ -552,11 +552,11 @@ SHELL ["/bin/bash", "-c"]
 WORKDIR /r00t/build
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
-    apt-get install -y --reinstall apt-utils ca-certificates dbus && \
-    apt-get install -y software-properties-common && \
+    apt-get -y update && apt-get -y autoremove && \
+    apt-get -y --reinstall install apt-utils ca-certificates dbus && \
+    apt-get -y install software-properties-common && \
     apt-add-repository -y ppa:brightbox/ruby-ng && \
-    apt-get install -y autoconf automake build-essential espeak ethtool expect hostapd iw lame libnl-3-dev libnl-genl-3-dev libpcre2-dev libhwloc-dev libssl-dev libsqlite3-dev libtool libcmocka-dev libpcap-dev pkg-config ruby-dev rfkill shtool screen tcpdump usbutils wpasupplicant zlib1g-dev && \
+    apt-get -y install autoconf automake build-essential espeak ethtool expect hostapd iw lame libnl-3-dev libnl-genl-3-dev libpcre2-dev libhwloc-dev libssl-dev libsqlite3-dev libtool libcmocka-dev libpcap-dev pkg-config ruby-dev rfkill shtool screen tcpdump usbutils wpasupplicant zlib1g-dev && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 WORKDIR /r00t/build
@@ -620,7 +620,7 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
+    apt-get -y update && apt-get -y autoremove && \
     apt-get --no-install-recommends -y install apt-utils jq libdbus-1-dev libcairo2-dev libgirepository1.0-dev  libpython3-dev pkg-config python3-pip python3-venv && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
@@ -644,8 +644,8 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y jq python3-pip python3-venv && \
+    apt-get -y update && apt-get -y autoremove && \
+    apt-get --no-install-recommends -y install jq python3-pip python3-venv && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 WORKDIR /r00t
@@ -728,8 +728,8 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y apt-utils ca-certificates curl gnupg2 apt-transport-https lsb-release wget && \
+    apt-get -y update && apt-get -y autoremove && \
+    apt-get --no-install-recommends -y install apt-utils ca-certificates curl gnupg2 apt-transport-https lsb-release wget && \
     wget "https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb" && \
     mv packages-microsoft-prod.deb /var/cache/apt/archives && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/trusted.gpg.d//microsoft-prod.gpg] https://packages.microsoft.com/repos/microsoft-debian-bullseye-prod bullseye main" | tee /etc/apt/sources.list.d/microsoft-prod.list  > /dev/null && \
@@ -738,7 +738,7 @@ RUN \
     wget -O - https://pkg.wslutiliti.es/public.key | tee --append /etc/apt/trusted.gpg.d/wslu.asc && \
     echo "deb [arch=$(dpkg --print-architecture)] https://pkg.wslutiliti.es/debian bullseye main" | tee --append /etc/apt/sources.list && \
     apt-get -y update && \
-    apt-get install --no-install-recommends -y powershell wslu && \
+    apt-get --no-install-recommends -y install powershell wslu && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb 
 # now lives with other apt archives
@@ -753,8 +753,8 @@ USER ${_AGL}
 #########################
 FROM dvlp_base-msdot-build-lite AS dvlp_base-msdot-build
 USER r00t
-RUN apt-get update -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y dotnet-sdk-7.0  && \
+RUN apt-get -y update && apt-get -y autoremove && \
+    apt-get --no-install-recommends -y install dotnet-sdk-7.0  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 WORKDIR /hal
@@ -803,8 +803,8 @@ USER r00t
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y ca-certificates curl lsb-release gpg && \
+    apt-get -y update && apt-get -y autoremove && \
+    apt-get --no-install-recommends -y install ca-certificates curl lsb-release gpg && \
     mkdir -pv /etc/apt/keyrings
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -817,8 +817,8 @@ RUN \
 RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bullseye stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin gnupg && \
+    apt-get -y update && apt-get -y autoremove && \
+    apt-get --no-install-recommends -y install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin gnupg && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 WORKDIR /hal
@@ -880,8 +880,8 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y curl && \
+    apt-get -y update && apt-get -y autoremove && \
+    apt-get --no-install-recommends -y install curl && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
@@ -891,8 +891,8 @@ RUN \
 RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | tee /etc/apt/sources.list.d/brave-browser-release.list 
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y brave-browser dolphin vlc x11-apps  && \
+    apt-get -y update && apt-get -y autoremove && \
+    apt-get --no-install-recommends -y install brave-browser dolphin vlc x11-apps  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 # change last line of this file - fix for brave-browser displaying empty windows
@@ -929,34 +929,37 @@ ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
 USER r00t
 RUN apt-get -y update && apt-get -y upgrade && \
-    apt-get install -y locales && \    
+    apt-get -y install locales && \    
     update-locale LANGUAGE="C" && \
     update-locale LANG="C" && \
     update-locale LC_ALL="C" && \
     ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime  
-# RUN apt-get install -y locales && \
+# RUN apt-get -y install locales && \
 #     dpkg-reconfigure --frontend noninteractive locales && \
 #     echo "/usr/sbin/lightdm" | tee /etc/X11/default-display-manager && \
 #     locale-gen && update-locale 
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y xrdp xfce4 xfce4-goodies && \
+    apt-get -y update && apt-get -y autoremove && \
+    apt-get --no-install-recommends -y install xrdp xfce4 xfce4-goodies && \
     # MUST install this separately and AFTER xfce or xfce prompting to choose default dm will hang/break build
-    apt-get install --no-install-recommends -y lightdm && \
+    apt-get --no-install-recommends -y install lightdm && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     # echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
-    apt-get update -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y kali-defaults kali-root-login desktop-base kali-win-kex && \
+    apt-get -y update && apt-get -y autoremove && \
+    apt-get --no-install-recommends -y install kali-defaults kali-root-login desktop-base kali-win-kex && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 COPY --from=dvlp_repo --chown=r00t:r00t /repos/dvlw/dvlp/mnt/etc/* /etc/
 WORKDIR /hal
 USER ${_AGL}
-
+#################
+# dvlp_base-gui #
+#################
+# building this will compile a kernel saved to /kache
 FROM dvlp_base-gui AS dvlp_base-gui-kernel
 COPY --from=dvlp_kernel-make ./kache/ ./kache/
 
@@ -998,8 +1001,8 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y nvidia-cuda-toolkit && \
+    apt-get -y update && apt-get -y autoremove && \
+    apt-get --no-install-recommends -y install nvidia-cuda-toolkit && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb   
 WORKDIR /hal
@@ -1027,8 +1030,8 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y nvidia-cuda-toolkit && \
+    apt-get -y update && apt-get -y autoremove && \
+    apt-get --no-install-recommends -y install nvidia-cuda-toolkit && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb   
 WORKDIR /hal
