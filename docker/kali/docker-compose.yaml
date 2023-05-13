@@ -268,7 +268,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git"
 
-  base-scan:
+  base-scan-build:
     entrypoint: /bin/bash -c
     command:
       - sleep infinity
@@ -278,15 +278,34 @@ services:
     restart: on-failure
     tty: true
     privileged: true
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-base-scan-build
+    # extends: skel-kernel
+    build:
+      context: .
+      target: dvlp_base-scan-build
+    depends_on:
+      skel:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
+    labels:
+      com.devels-playground.description: "basics + git"
+
+  base-scan:
+    entrypoint: /bin/bash -c
+    command:
+      - sleep infinity
+    # user: ${_AGL}
+    extends: base-scan-build
+    privileged: true
     image: kindtek/${HUB_REPO:-devels-playground}:kali-base-scan
     # extends: skel-kernel
     build:
       context: .
       target: dvlp_base-scan
-    depends_on:
-      skel-kernel:
-        # Wait for the ownership to change
-        condition: service_completed_successfully
+    # depends_on:
+    #   base-scan-build:
+    #     # Wait for the ownership to change
+    #     condition: service_completed_successfully
     labels:
       com.devels-playground.description: "basics + git"
 
