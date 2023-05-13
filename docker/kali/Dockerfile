@@ -525,24 +525,11 @@ RUN \
 WORKDIR /hal
 USER ${_AGL}
 
-############
-# dvlp_base-git-kernel #
-############
-FROM dvlp_skel AS dvlp_base-nmap
-# COPY --from=dvlp_skel-build-kernel         ./      ./
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
-ENV _AGL=$_AGL_USR
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-ARG REFRESH_REPO
-WORKDIR /hal
-USER ${_AGL}
 
-############
+
+########################
 # dvlp_base-git-kernel #
-############
+########################
 FROM dvlp_skel-kernel AS dvlp_base-git-kernel
 # COPY --from=dvlp_skel-build-kernel         ./      ./
 ARG _AGL_USR
@@ -554,6 +541,68 @@ ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
 WORKDIR /hal
 USER ${_AGL}
+
+########################
+# dvlp_base-scan-build #
+########################
+FROM dvlp_skel AS dvlp_base-scan-build
+USER r00t
+SHELL ["/bin/bash", "-c"]
+WORKDIR /r00t/build
+RUN \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    apt-get update -y && apt-get autoremove -y && \
+        apt-get install -y --reinstall apt-utils ca-certificates dbus && \
+    apt-get install -y software-properties-common && \
+    apt-add-repository -y ppa:brightbox/ruby-ng && \
+    apt-get install -y autoconf automake build-essential espeak ethtool expect hostapd iw lame libnl-3-dev libnl-genl-3-dev libpcre2-dev libhwloc-dev libssl-dev libsqlite3-dev libtool libcmocka-dev libpcap-dev pkg-config ruby-dev rfkill shtool screen tcpdump usbutils wpasupplicant zlib1g-dev && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb
+WORKDIR /r00t/build
+RUN git clone https://github.com/nmap/nmap 
+WORKDIR /r00t/build/nmap
+RUN \
+    ./configure && \
+    make && \
+    make install && \
+    rm -rf /r00t/build/nmap
+WORKDIR /r00t/build
+RUN git clone https://github.com/aircrack-ng/aircrack-ng aircrack
+WORKDIR /r00t/build/aircrack
+ENV NOCONFIGURE=1
+RUN \
+    ./autogen.sh && \
+    ./configure  && \
+    make  && \
+    make check && \
+    make install
+WORKDIR /usr/share
+RUN git clone https://github.com/beefproject/beef beef
+WORKDIR /usr/share/beef
+
+
+##################
+# dvlp_base-scan #
+##################
+FROM dvlp_base-scan-build AS dvlp_base-scan
+COPY --from=dvlp_base-python-lite ./ ./
+USER r00t
+RUN \
+    rm -f /etc/apt/apt.conf.d/docker-clean && \
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
+RUN \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    apt-get update -y && apt-get autoremove -y
+RUN \
+    apt-get --no-install-recommends -y install burpsuite finger hydra maltego metasploit-framework ncat nmap nikto rpcbind telnet wireshark
+RUN \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb
+# network-manager-openvpn network-manager-openvpn-gnome
+WORKDIR /hal
+USER ${_AGL}
+
+
 
 ################################# PYTHON ########################################
 #####################
@@ -648,43 +697,7 @@ COPY --from=dvlp_base-python-build ./ ./
 COPY --from=dvlp_base-python-build-lite ./ ./
 WORKDIR /hal
 USER ${_AGL}
-##################
-# dvlp_base-scan-build #
-##################
-FROM dvlp_skel AS dvlp_base-scan-build
-USER r00t
-SHELL ["/bin/bash", "-c"]
-WORKDIR /r00t/build
-RUN \
-    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
-        apt-get install -y --reinstall apt-utils ca-certificates dbus && \
-    apt-get install -y software-properties-common && \
-    apt-add-repository -y ppa:brightbox/ruby-ng && \
-    apt-get install -y autoconf automake build-essential espeak ethtool expect hostapd iw lame libnl-3-dev libnl-genl-3-dev libpcre2-dev libhwloc-dev libssl-dev libsqlite3-dev libtool libcmocka-dev libpcap-dev pkg-config ruby-dev rfkill shtool screen tcpdump usbutils wpasupplicant zlib1g-dev && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt/archives/*.deb
-WORKDIR /r00t/build
-RUN git clone https://github.com/nmap/nmap 
-WORKDIR /r00t/build/nmap
-RUN \
-    ./configure && \
-    make && \
-    make install && \
-    rm -rf /r00t/build/nmap
-WORKDIR /r00t/build
-RUN git clone https://github.com/aircrack-ng/aircrack-ng aircrack
-WORKDIR /r00t/build/aircrack
-ENV NOCONFIGURE=1
-RUN \
-    ./autogen.sh && \
-    ./configure  && \
-    make  && \
-    make check && \
-    make install
-WORKDIR /usr/share
-RUN git clone https://github.com/beefproject/beef beef
-WORKDIR /usr/share/beef
+
 
 USER agl
 RUN \
@@ -700,25 +713,6 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 
-
-##################
-# dvlp_base-scan #
-##################
-FROM dvlp_base-scan-build AS dvlp_base-scan
-COPY --from=dvlp_base-python-lite ./ ./
-USER r00t
-RUN \
-    rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
-RUN \
-    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
-    apt-get --no-install-recommends -y install aircrack-ng beef-xss burpsuite finger hydra maltego metasploit-framework ncat nmap nikto rpcbind telnet  wireshark && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt/archives/*.deb
-# network-manager-openvpn network-manager-openvpn-gnome
-WORKDIR /hal
-USER ${_AGL}
 
 ############################# POWERHELL #########################################
 ##############################
