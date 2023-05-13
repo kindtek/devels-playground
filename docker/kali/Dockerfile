@@ -520,6 +520,7 @@ RUN \
     bash build-import-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}" && \
     rm -rf /r00t/dvlw/dvlp/kernels/linux/linux-* && \
     rm -rf /r00t/dvlw/dvlp/kernels/linux/zfs-* && \
+    rm -rf /boot && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 WORKDIR /hal
@@ -552,7 +553,7 @@ WORKDIR /r00t/build
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get update -y && apt-get autoremove -y && \
-        apt-get install -y --reinstall apt-utils ca-certificates dbus && \
+    apt-get install -y --reinstall apt-utils ca-certificates dbus && \
     apt-get install -y software-properties-common && \
     apt-add-repository -y ppa:brightbox/ruby-ng && \
     apt-get install -y autoconf automake build-essential espeak ethtool expect hostapd iw lame libnl-3-dev libnl-genl-3-dev libpcre2-dev libhwloc-dev libssl-dev libsqlite3-dev libtool libcmocka-dev libpcap-dev pkg-config ruby-dev rfkill shtool screen tcpdump usbutils wpasupplicant zlib1g-dev && \
@@ -705,7 +706,7 @@ RUN \
 RUN \
     bundle config set --local with 'test' 
 RUN \
-     yes "" | ./install 
+    yes "" | ./install 
 WORKDIR /
 RUN \
     apt-get remove -y automake ethtool expect hostapd iw libnl-3-dev libnl-genl-3-dev libpcre2-dev libhwloc-dev libssl-dev libsqlite3-dev libtool libcmocka-dev libpcap-dev pkg-config zlib1g-dev && \
@@ -909,6 +910,9 @@ COPY --from=dvlp_repo /repos/dvlw/dvlp/mnt/opt/* /opt/
 WORKDIR /hal
 USER ${_AGL}
 
+FROM dvlp_base-gui-lite AS dvlp_base-gui-lite-kernel
+COPY --from=dvlp_kernel-make ./kache/ ./kache/
+
 #################
 # dvlp_base-gui #
 #################
@@ -953,27 +957,30 @@ COPY --from=dvlp_repo --chown=r00t:r00t /repos/dvlw/dvlp/mnt/etc/* /etc/
 WORKDIR /hal
 USER ${_AGL}
 
-######################
-# dvlp_base-gui-plus #
-#####################
-FROM dvlp_base-kernel-builder AS dvlp_base-gui-plus
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
-ENV _AGL=$_AGL_USR
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-ARG REFRESH_REPO
-WORKDIR /
-COPY --from=dvlp_base-gui ./ ./
-WORKDIR /hal
-USER ${_AGL}
+FROM dvlp_base-gui AS dvlp_base-gui-kernel
+COPY --from=dvlp_kernel-make ./kache/ ./kache/
+
+# ######################
+# # dvlp_base-gui-kernel #
+# #####################
+# FROM dvlp_base-kernel-builder AS dvlp_base-gui-kernel
+# ARG _AGL_USR
+# ARG _DVL_USR
+# ARG _ADM_USR
+# ENV _AGL=$_AGL_USR
+# ENV _DVL=$_DVL_USR
+# ENV _ADM=$_ADM_USR
+# ARG REFRESH_REPO
+# WORKDIR /
+# COPY --from=dvlp_base-gui ./ ./
+# WORKDIR /hal
+# USER ${_AGL}
 
 ############################## CUDA ###############################
 ##################
 # dvlp_base-cuda #
 ##################
-FROM dvlp_base-gui-plus AS dvlp_base-cuda
+FROM dvlp_base-gui-kernel AS dvlp_base-cuda
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -999,9 +1006,9 @@ WORKDIR /hal
 USER ${_AGL}
 
 #######################
-# dvlp_base-cuda-plus #
+# dvlp_base-cuda-kernel #
 #######################
-FROM dvlp_base-git-kernel AS dvlp_base-cuda-plus
+FROM dvlp_base-git-kernel AS dvlp_base-cuda-kernel
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -1074,19 +1081,19 @@ WORKDIR /
 COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/${HOME_DIR}/ ./
 
 #####################
-## dvlp_jacket-kernel-plus #
+## dvlp_jacket-kernel-kernel #
 #####################
-# FROM dvlp_jacket-kernel-kernel-skel-kernel AS dvlp_jacket-kernel-plus
+# FROM dvlp_jacket-kernel-kernel-skel-kernel AS dvlp_jacket-kernel-kernel
 
 ############################
-## dvlp_jacket-kernel-kernel-plus #
+## dvlp_jacket-kernel-kernel-kernel #
 ############################
-# FROM dvlp_jacket-kernel-plus AS dvlp_jacket-kernel-kernel-plus
+# FROM dvlp_jacket-kernel-kernel AS dvlp_jacket-kernel-kernel-kernel
 
 ##################
-## dvlp_gui-plus #
+## dvlp_gui-kernel #
 ##################
-FROM dvlp_base-gui-plus AS dvlp_gui-plus
+FROM dvlp_base-gui-kernel AS dvlp_gui-kernel
 WORKDIR /
 
 ############
@@ -1151,7 +1158,7 @@ FROM dvlp_base-cuda  AS dvlp_cuda
 WORKDIR /
 
 ##################
-# dvlp_cuda-plus #
+# dvlp_cuda-kernel #
 ##################
-FROM dvlp_base-cuda-plus AS dvlp_cuda-plus
+FROM dvlp_base-cuda-kernel AS dvlp_cuda-kernel
 WORKDIR /

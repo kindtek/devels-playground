@@ -378,9 +378,9 @@ services:
         - _DVL=${_DVL_USR:-$_DVL}
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
-  base-gui-plus:
+  base-gui-kernel:
     extends: base-git-kernel
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-gui-plus
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-gui-kernel
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   base-cuda:
@@ -391,12 +391,12 @@ services:
       target: dvlp_base-cuda
       labels:
         com.devels-playground.description: "basics + git + powerhell + docker + gui + cuda"
-  base-cuda-plus:
-    extends: base-gui-plus
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-cuda-plus
+  base-cuda-kernel:
+    extends: base-gui-kernel
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-base-cuda-kernel
     build:
       context: .
-      target: dvlp_base-cuda-plus
+      target: dvlp_base-cuda-kernel
       labels:
         com.devels-playground.description: "basics + git + powerhell + docker + gui + cuda"
 
@@ -517,17 +517,17 @@ services:
       target: dvlp_gui-lite
       args:
         - JACKET=gui-lite
-  gui-plus:
+  gui-kernel:
     working_dir: /hal
     extends: jacket-kernel
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-gui-plus
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-gui-kernel
     # command: bash start-kde.sh
     build:
-      target: dvlp_gui-plus
+      target: dvlp_gui-kernel
       args:
-        - JACKET=gui-plus
+        - JACKET=gui-kernel
   gui:
-    extends: gui-plus
+    extends: gui-kernel
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-gui
     # command: bash start-kde.sh
     build:
@@ -537,7 +537,7 @@ services:
     volumes_from:
       - jacket
   cuda:
-    extends: gui-plus
+    extends: gui-kernel
     image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-cuda
     # command: bash start-kde.sh
     build:
@@ -546,14 +546,14 @@ services:
         - JACKET=cuda
     volumes_from:
       - jacket
-  cuda-plus:
+  cuda-kernel:
     extends: cuda
-    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-cuda-plus
+    image: kindtek/${HUB_REPO:-devels-playground}:ubuntu-cuda-kernel
     # command: bash start-kde.sh
     build:
-      target: dvlp_cuda-plus
+      target: dvlp_cuda-kernel
       args:
-        - JACKET=cuda-plus
+        - JACKET=cuda-kernel
     volumes_from:
       - jacket-kernel
 

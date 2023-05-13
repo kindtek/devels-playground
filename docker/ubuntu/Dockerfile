@@ -847,9 +847,9 @@ WORKDIR /hal
 USER ${_AGL}
 
 ######################
-# dvlp_base-gui-plus #
+# dvlp_base-gui-kernel #
 #####################
-FROM dvlp_base-kernel-builder AS dvlp_base-gui-plus
+FROM dvlp_base-kernel-builder AS dvlp_base-gui-kernel
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -892,9 +892,9 @@ WORKDIR /hal
 USER ${_AGL}
 
 #######################
-# dvlp_base-cuda-plus #
+# dvlp_base-cuda-kernel #
 #######################
-FROM dvlp_base-git-kernel AS dvlp_base-cuda-plus
+FROM dvlp_base-git-kernel AS dvlp_base-cuda-kernel
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -944,19 +944,19 @@ COPY --from=dvlp_kernel-make ./built-kernel.tar.gz ./built-kernel.tar.gz
 # FROM dvlp_base AS dvlp_jacket-kernel
 
 #####################
-## dvlp_jacket-kernel-plus #
+## dvlp_jacket-kernel-kernel #
 #####################
-# FROM dvlp_jacket-kernel-kernel-skel-kernel AS dvlp_jacket-kernel-plus
+# FROM dvlp_jacket-kernel-kernel-skel-kernel AS dvlp_jacket-kernel-kernel
 
 ############################
-## dvlp_jacket-kernel-kernel-plus #
+## dvlp_jacket-kernel-kernel-kernel #
 ############################
-# FROM dvlp_jacket-kernel-plus AS dvlp_jacket-kernel-kernel-plus
+# FROM dvlp_jacket-kernel-kernel AS dvlp_jacket-kernel-kernel-kernel
 
 ##################
-## dvlp_gui-plus #
+## dvlp_gui-kernel #
 ##################
-FROM dvlp_base-gui-plus AS dvlp_gui-plus
+FROM dvlp_base-gui-kernel AS dvlp_gui-kernel
 WORKDIR /
 
 ############
@@ -1014,7 +1014,7 @@ FROM dvlp_base-cuda  AS dvlp_cuda
 WORKDIR /
 
 ##################
-# dvlp_cuda-plus #
+# dvlp_cuda-kernel #
 ##################
-FROM dvlp_base-cuda-plus AS dvlp_cuda-plus
+FROM dvlp_base-cuda-kernel AS dvlp_cuda-kernel
 WORKDIR /

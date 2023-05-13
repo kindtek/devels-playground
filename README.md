@@ -9,12 +9,12 @@
 
 ## NEW FEATURES
 
-## Build a kernel and pop into a Kubuntu GUI with [ubuntu-gui-plus](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-gui-plus/images/sha256-e358b4a835faff261ff0b284a207496da7e4d61ce70aa3f44db7618714c7ccf5?context=repo)
+## Build a kernel and pop into a Kubuntu GUI with [ubuntu-gui-kernel](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-gui-kernel/images/sha256-e358b4a835faff261ff0b284a207496da7e4d61ce70aa3f44db7618714c7ccf5?context=repo)
 
-( No setup necessary. Kubuntu GUI also included with [ubuntu-gui](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-gui/images/sha256-266c029b305ea1d9553aacb7cf2ecc8ebd8830841945a2427374b8e0c9b478aa?context=repo), [ubuntu-cuda](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda/images/sha256-96fa98d5d82f0991218fd9501f56dae9341955a8b3c49a19d99d7d7e59c41b84?context=repo), and [ubuntu-cuda-plus](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda-plus/images/sha256-717739827455ab9eaddb539dbbf3ea6a0c9b943b74cd493a5fc337dd2adb9e92?context=repo) ) 
+( No setup necessary. Kubuntu GUI also included with [ubuntu-gui](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-gui/images/sha256-266c029b305ea1d9553aacb7cf2ecc8ebd8830841945a2427374b8e0c9b478aa?context=repo), [ubuntu-cuda](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda/images/sha256-96fa98d5d82f0991218fd9501f56dae9341955a8b3c49a19d99d7d7e59c41b84?context=repo), and [ubuntu-cuda-kernel](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda-kernel/images/sha256-717739827455ab9eaddb539dbbf3ea6a0c9b943b74cd493a5fc337dd2adb9e92?context=repo) ) 
 
 ### Build and customize your own kernel
-#### [ubuntu-basic-wsl-kernel-builder](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-basic-wsl-kernel-builder/images/sha256-bd756e1775327d2b8ea51590ba471fdd0c4997a7d44e3f437999a60e59105a70?context=repo) and all "-plus" named images include:
+#### [ubuntu-basic-wsl-kernel-builder](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-basic-wsl-kernel-builder/images/sha256-bd756e1775327d2b8ea51590ba471fdd0c4997a7d44e3f437999a60e59105a70?context=repo) and all "-kernel" named images include:
 
 - Linux kernel - use a generic prebuilt kernel or use ...
 - .config templates to optimize your kernel ([example](kernels/linux/x86/amd/5_15901/.config_wsl0))
@@ -22,7 +22,7 @@
 - enterprise grade ZFS filesystem and volume manager built into the kernel (Advanced: Even build/mount your own ZFS partition!)
 
 ### More image selections
-#### Choices range from having nothing but sudo installed [ubuntu-bare](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-bare/images/sha256-92d7012da7ae667613f9a52ed1e330eac17134b5a0e7d8e66231efc0e594ef97?context=repo) (~90MB) to having everything AND the kitchen sink installed [ubuntu-cuda-plus](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda-plus/images/sha256-717739827455ab9eaddb539dbbf3ea6a0c9b943b74cd493a5fc337dd2adb9e92?context=repo) (6GB+)
+#### Choices range from having nothing but sudo installed [ubuntu-bare](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-bare/images/sha256-92d7012da7ae667613f9a52ed1e330eac17134b5a0e7d8e66231efc0e594ef97?context=repo) (~90MB) to having everything AND the kitchen sink installed [ubuntu-cuda-kernel](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda-kernel/images/sha256-717739827455ab9eaddb539dbbf3ea6a0c9b943b74cd493a5fc337dd2adb9e92?context=repo) (6GB+)
 
 #### Coming Soon
 - better documentation
@@ -87,7 +87,7 @@ git clone https://github.com/kindtek/devels-workshop --depth=1 --single-branch -
 cd dvlw
 git submodule update --init --remote --depth=1 --progress
 cd dvlp/docker/ubuntu
-docker buildx build -t dvlp_kernel-make --output type=tar,dest=example-ubuntu22-plus-linux-kernel-6_28.tar  --build-arg KERNEL_TYPE=stable-wsl-zfs CONFIG_FILE=$config_file .
+docker buildx build -t dvlp_kernel-make --output type=tar,dest=example-ubuntu22-kernel-linux-kernel-6_28.tar  --build-arg KERNEL_TYPE=stable-wsl-zfs CONFIG_FILE=$config_file .
 ###
 ### this will save a .tar image of your kernel in your home directory when you log in to the image
 #######################
@@ -245,14 +245,14 @@ _Note: Each image forms the base layer for the image described below it. For ins
 
 ---
 
-# [**kernel-builder**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-basic-wsl-kernel-builder/images/sha256-dc29a6491faf9fce15b768e399b521b15e43fa54e7e1700b42af19b3f9590f94?context=explore) and -plus images:
+# [**kernel-builder**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-basic-wsl-kernel-builder/images/sha256-dc29a6491faf9fce15b768e399b521b15e43fa54e7e1700b42af19b3f9590f94?context=explore) and -kernel images:
 
 ## `apt-get install alien autoconf automake bc bison build-essential dbus-user-session daemonize dwarves fakeroot flex fontconfig gawk gnupg libtooldkms libblkid-dev libffi-dev lxcfs libudev-dev libssl-dev libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi snapd sysvinit-utils uuid-dev`
 ### This pre-built image (and those below) comes with a kernel saved conveniently in both `/hel/kernels` and `/halo/kernels`.
 
-If you build this yourself (ie: run `docker compose build kernel-builder --build-arg CONFIG_FILE=<url or path to config file>` in the `devels-workshop/dvlp/docker/ubuntu` directory) a basic 5.15.90 kernel built with your machine is included. If you don't include a config file the default is a generic configuration sourced from https://github.com/microsoft/WSL2-Linux-Kernel.git. If you own a machine with an AMD processor you are in luck and there are already configuration files and kernels saved in the [repository](kernel). If you want to optimize your kernel for your hardware it is not hard to do it yourself with the template config files and scripts already made. To do this and/or partition a hard drive with [ZFS](<(https://zfsonlinux.org/)>) built in to the latest kernels released by [Linux](https://www.kernel.org/), you will need either the kernel-plus, gui-plus, or cuda-plus images. Read up on what the gui and cuda images include below
+If you build this yourself (ie: run `docker compose build kernel-builder --build-arg CONFIG_FILE=<url or path to config file>` in the `devels-workshop/dvlp/docker/ubuntu` directory) a basic 5.15.90 kernel built with your machine is included. If you don't include a config file the default is a generic configuration sourced from https://github.com/microsoft/WSL2-Linux-Kernel.git. If you own a machine with an AMD processor you are in luck and there are already configuration files and kernels saved in the [repository](kernel). If you want to optimize your kernel for your hardware it is not hard to do it yourself with the template config files and scripts already made. To do this and/or partition a hard drive with [ZFS](<(https://zfsonlinux.org/)>) built in to the latest kernels released by [Linux](https://www.kernel.org/), you will need either the kernel-kernel, gui-kernel, or cuda-kernel images. Read up on what the gui and cuda images include below
 
-If you end up building your own kernel, please consider contributing to this project by making a pull request with your .config file and/or kernel. If you are using a kernel-builder or (gui/cuda)-plus image, a copy of both the config file and the kernel will automatically be saved in your local copy of your repository (devels-workshop/dvlp/kernels/linux/<CPU architecture>/<CPU vendor>/<kernel version/linux-<kernel version>>) in the directory that matches your system so all you have to do is click the "Commit && Create make pull request" button
+If you end up building your own kernel, please consider contributing to this project by making a pull request with your .config file and/or kernel. If you are using a kernel-builder or (gui/cuda)-kernel image, a copy of both the config file and the kernel will automatically be saved in your local copy of your repository (devels-workshop/dvlp/kernels/linux/<CPU architecture>/<CPU vendor>/<kernel version/linux-<kernel version>>) in the directory that matches your system so all you have to do is click the "Commit && Create make pull request" button
 
 If you don't need/want to save or import a large docker image, you can build the kernel only by installing docker and running:
 `docker buildx build -t dvlp_basic-wsl-kernel-builder --build-arg CONFIG_FILE="https://raw.githubusercontent.com/kindtek/dvl-playg/615b895f27a5c6827e468c0f5b92f4881e386208/kernels/linux/x86/amd/6_3rc4/.config_wsl-zfs0" --target=built-kernels --output type=local,dest=$(pwd)/out/ .` inside a local copy of the devels-playground repo in the docker/ubuntu directory. When the build is finished it will save a zip file with the kernel, a sample wslconfig file, and a kernel config file as built-kernels.zip. You will need to update your wslconfig file with the filename of your kernel and you can change it to whatever you want.
@@ -269,20 +269,20 @@ The CONFIG_FILE argument is optional. If you don't include it or leave it blank 
 
 This is a lightweight Graphical User Interface by most standards but still weighs in at ~1.3GB. It also requires WSL 2. It has a few applicaations that have a graphical interface such as Brave Browser (aka privacy focused Google-less Chrome). One of the coolest things ever is to type `brave-browser` into your shell terminal and watch a browser window pop up out of the void
 
-# [**ubuntu-gui-plus**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-gui-plus/images/sha256-e358b4a835faff261ff0b284a207496da7e4d61ce70aa3f44db7618714c7ccf5?context=explore) and [ubuntu-gui](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-gui/images/sha256-266c029b305ea1d9553aacb7cf2ecc8ebd8830841945a2427374b8e0c9b478aa?context=explore)
+# [**ubuntu-gui-kernel**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-gui-kernel/images/sha256-e358b4a835faff261ff0b284a207496da7e4d61ce70aa3f44db7618714c7ccf5?context=explore) and [ubuntu-gui](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-gui/images/sha256-266c029b305ea1d9553aacb7cf2ecc8ebd8830841945a2427374b8e0c9b478aa?context=explore)
 
 # `apt-get install lightdm xrdp xfce4 xfce4-goodies`
 # `apt-get install --no-install-recommends -y kubuntu-desktop`
 
-These images has everything but CUDA. You can build your own kernel with the ubuntu-gui-plus image. The GUI is locked, loaded, and ready to go once installed into WSL2 with the devel's playground. Kubuntu has too many features and packages to list. See them [here](https://packages.ubuntu.com/jammy/kubuntu-desktop). The red packages come installed with this image. To keep the size of the image down, the recommended packages (in green) are not installed. Install them with sudo `apt-get install kubuntu-desktop` if you like
+These images has everything but CUDA. You can build your own kernel with the ubuntu-gui-kernel image. The GUI is locked, loaded, and ready to go once installed into WSL2 with the devel's playground. Kubuntu has too many features and packages to list. See them [here](https://packages.ubuntu.com/jammy/kubuntu-desktop). The red packages come installed with this image. To keep the size of the image down, the recommended packages (in green) are not installed. Install them with sudo `apt-get install kubuntu-desktop` if you like
 
 ---
 
-## [**ubuntu-cuda-plus**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda-plus/images/sha256-717739827455ab9eaddb539dbbf3ea6a0c9b943b74cd493a5fc337dd2adb9e92?context=explore) and [**ubuntu-cuda**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda/images/sha256-a58446b7bee69471309a8cfd0020a6c70f4a102aecccd86ae9026d945651ede0?context=explore)
+## [**ubuntu-cuda-kernel**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda-kernel/images/sha256-717739827455ab9eaddb539dbbf3ea6a0c9b943b74cd493a5fc337dd2adb9e92?context=explore) and [**ubuntu-cuda**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda/images/sha256-a58446b7bee69471309a8cfd0020a6c70f4a102aecccd86ae9026d945651ede0?context=explore)
 
 ### `apt-get install nvidia-cuda-toolkit`
 
-If CUDA is a necessity for your developer needs your life just became easier. These images are fully loaded and use approximately 6GB of space. You can build your own kernel with the ubuntu-cuda-plus image.
+If CUDA is a necessity for your developer needs your life just became easier. These images are fully loaded and use approximately 6GB of space. You can build your own kernel with the ubuntu-cuda-kernel image.
 
 ---
 

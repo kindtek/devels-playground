@@ -11,9 +11,9 @@ sudo tee $filename.sh >/dev/null <<'TXT'
 #               -------------------------------------------------                   #
                     docker compose down                                 
                     docker volume rm $docker_vols 
-                    docker compose build gui-plus                                        
-                    # docker compose build --no-cache gui-plus                  
-                    # docker compose up gui-plus                      
+                    docker compose build gui-kernel                                        
+                    # docker compose build --no-cache gui-kernel                  
+                    # docker compose up gui-kernel                      
 #                -----------------------------------------------                    #
 #               |||||||||||||||||||||||||||||||||||||||||||||||||                   #
 #               __________________________________________________                  #
