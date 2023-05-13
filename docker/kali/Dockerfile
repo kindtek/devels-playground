@@ -415,53 +415,6 @@ RUN \
     rm -rf /var/cache/apt/archives/*.deb
 WORKDIR /
 
-##################
-# dvlp_scan-build #
-##################
-FROM dvlp_skel AS dvlp_scan-build
-USER r00t
-SHELL ["/bin/bash", "-c"]
-WORKDIR /r00t/build
-RUN \
-    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
-    apt-get install -y autoconf automake build-essential ethtool expect hostapd iw libnl-3-dev libnl-genl-3-dev libpcre2-dev libhwloc-dev libssl-dev libsqlite3-dev libtool libcmocka-dev libpcap-dev pkg-config rfkill shtool screen tcpdump usbutils wpasupplicant zlib1g-dev && \
-    apt-get install -y --reinstall ca-certificates && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt/archives/*.deb
-WORKDIR /r00t/build
-RUN git clone https://github.com/nmap/nmap 
-WORKDIR /r00t/build/nmap
-RUN \
-    ./configure && \
-    make && \
-    make install && \
-    rm -rf /r00t/build/nmap
-WORKDIR /r00t/build
-RUN git clone https://github.com/aircrack-ng/aircrack-ng aircrack
-WORKDIR /r00t/build/aircrack
-ENV NOCONFIGURE=1
-RUN \
-     ./autogen.sh && \
-    ./configure && \
-    make && \
-    make check && \
-    make integration && \
-    make install && \
-    rm -rf /r00t/build/aircrack
-# WORKDIR /r00t
-# RUN git clone https://github.com/beefproject/beef 
-# WORKDIR /r00t/beef
-# RUN ./install
-# WORKDIR /r00t/build
-#     #  && \
-#     # rm -rf /r00t/build/beef
-RUN \
-    apt-get remove -y automake build-essential ethtool expect hostapd iw libnl-3-dev libnl-genl-3-dev libpcre2-dev libhwloc-dev libssl-dev libsqlite3-dev libtool libcmocka-dev libpcap-dev pkg-config rfkill shtool screen tcpdump usbutils wpasupplicant zlib1g-dev
-
-WORKDIR /
-
-
 ####################
 # dvlp_skel-kernel #
 ####################
@@ -498,6 +451,77 @@ ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
+WORKDIR /hal
+USER ${_AGL}
+
+
+############################### KERNEL #########################################
+##########################
+# dvlp_base-kernel-build #
+##########################
+FROM dvlp_skel-kernel AS dvlp_base-kernel-build
+USER r00t
+# RUN echo exit 0 > /usr/sbin/policy-rc.d 
+RUN \
+    rm -f /etc/apt/apt.conf.d/docker-clean && \
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
+RUN \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    apt-get update -y && apt-get autoremove -y && \
+    apt-get install --no-install-recommends -y alien autoconf bison bc build-essential dbus-user-session daemonize dwarves fakeroot \ 
+    flex fontconfig gawk kmod libblkid-dev libffi-dev lxcfs libudev-dev libaio-dev libattr1-dev libelf-dev libpam-systemd \
+    python3-dev python3-setuptools python3-cffi net-tools snapd systemd-sysv sysvinit-utils uuid-dev zstd && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb
+# RUN apt-get -y install zfsutils-linux zlib1g-dev zfs-dkms zstd zsys zfs-dracut zfs-zed
+WORKDIR /hal
+USER ${_AGL}
+
+######################################################################################
+###################  dvlp_base-kernel-builder - KERNEL BUILDER  ######################
+######################################################################################
+FROM dvlp_base-kernel-build AS dvlp_base-kernel-builder
+ARG CONFIG_FILE
+ARG KERNEL_TYPE
+USER r00t
+WORKDIR /
+# COPY --from=dvlp_base-python-build-lite ./ ./
+# COPY --from=dvlp_base-msdot-build-lite ./ ./
+# COPY --from=dvlp_base-dind-build ./ ./
+COPY --from=dvlp_base-kernel-build ./ ./
+WORKDIR /hal
+USER ${_AGL}
+
+######################################################################################
+########################  dvlp_kernel-make - KERNEL COMPILER  ########################
+######################################################################################
+FROM dvlp_base-kernel-builder AS dvlp_kernel-make
+ARG CONFIG_FILE
+ARG KERNEL_PACKAGE_NAME
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
+ARG DOCKER_BUILD_TIMESTAMP
+ENV DOCKER_BUILD_TIMESTAMP=${DOCKER_BUILD_TIMESTAMP}
+ARG WIN_USER
+USER r00t
+WORKDIR /
+# COPY --from=dvlp_skel-build-kernel ./ ./
+WORKDIR /r00t/dvlw/dvlp/kernels/linux
+SHELL ["/bin/bash", "-c"]
+# RUN chmod o+x make-kernel.sh 
+RUN \
+    rm -f /etc/apt/apt.conf.d/docker-clean && \
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
+RUN \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    apt-get update -y && apt-get install -y libssl-dev git
+RUN \
+    --mount=type=cache,target=/var/cache/make-kernel/archives,sharing=locked \
+    bash build-import-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}" && \
+    rm -rf /r00t/dvlw/dvlp/kernels/linux/linux-* && \
+    rm -rf /r00t/dvlw/dvlp/kernels/linux/zfs-* && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb
 WORKDIR /hal
 USER ${_AGL}
 
@@ -621,6 +645,58 @@ COPY --from=dvlp_base-python-build ./ ./
 COPY --from=dvlp_base-python-build-lite ./ ./
 WORKDIR /hal
 USER ${_AGL}
+##################
+# dvlp_base-scan-build #
+##################
+FROM dvlp_skel AS dvlp_base-scan-build
+USER r00t
+SHELL ["/bin/bash", "-c"]
+WORKDIR /r00t/build
+RUN \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    apt-get update -y && apt-get autoremove -y && \
+        apt-get install -y --reinstall apt-utils ca-certificates dbus && \
+    apt-get install -y software-properties-common && \
+    apt-add-repository -y ppa:brightbox/ruby-ng && \
+    apt-get install -y autoconf automake build-essential espeak ethtool expect hostapd iw lame libnl-3-dev libnl-genl-3-dev libpcre2-dev libhwloc-dev libssl-dev libsqlite3-dev libtool libcmocka-dev libpcap-dev pkg-config ruby-dev rfkill shtool screen tcpdump usbutils wpasupplicant zlib1g-dev && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb
+WORKDIR /r00t/build
+RUN git clone https://github.com/nmap/nmap 
+WORKDIR /r00t/build/nmap
+RUN \
+    ./configure && \
+    make && \
+    make install && \
+    rm -rf /r00t/build/nmap
+WORKDIR /r00t/build
+RUN git clone https://github.com/aircrack-ng/aircrack-ng aircrack
+WORKDIR /r00t/build/aircrack
+ENV NOCONFIGURE=1
+RUN \
+    ./autogen.sh && \
+    ./configure  && \
+    make  && \
+    make check && \
+    make install
+WORKDIR /usr/share
+RUN git clone https://github.com/beefproject/beef beef
+WORKDIR /usr/share/beef
+
+USER agl
+RUN \
+    gem install bundler
+RUN \
+    bundle config set --local with 'test' 
+RUN \
+     yes "" | ./install 
+WORKDIR /
+RUN \
+    apt-get remove -y automake ethtool expect hostapd iw libnl-3-dev libnl-genl-3-dev libpcre2-dev libhwloc-dev libssl-dev libsqlite3-dev libtool libcmocka-dev libpcap-dev pkg-config zlib1g-dev && \
+    rm -rf /r00t/build && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb
+
 
 ##################
 # dvlp_base-scan #
@@ -777,76 +853,6 @@ WORKDIR /
 COPY --from=dvlp_base-python-build ./ ./
 COPY --from=dvlp_base-msdot-build ./ ./
 COPY --from=dvlp_base-dind-build ./ ./
-WORKDIR /hal
-USER ${_AGL}
-
-############################### KERNEL #########################################
-##########################
-# dvlp_base-kernel-build #
-##########################
-FROM dvlp_skel-build-kernel AS dvlp_base-kernel-build
-USER r00t
-# RUN echo exit 0 > /usr/sbin/policy-rc.d 
-RUN \
-    rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
-RUN \
-    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y alien autoconf bison bc build-essential dbus-user-session daemonize dwarves fakeroot \ 
-    flex fontconfig gawk kmod libblkid-dev libffi-dev lxcfs libudev-dev libaio-dev libattr1-dev libelf-dev libpam-systemd \
-    python3-dev python3-setuptools python3-cffi net-tools snapd systemd-sysv sysvinit-utils uuid-dev zstd && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt/archives/*.deb
-# RUN apt-get -y install zfsutils-linux zlib1g-dev zfs-dkms zstd zsys zfs-dracut zfs-zed
-WORKDIR /hal
-USER ${_AGL}
-
-######################################################################################
-###################  dvlp_base-kernel-builder - KERNEL BUILDER  ######################
-######################################################################################
-FROM dvlp_base-kernel-build AS dvlp_base-kernel-builder
-ARG CONFIG_FILE
-ARG KERNEL_TYPE
-USER r00t
-WORKDIR /
-# COPY --from=dvlp_base-python-build-lite ./ ./
-# COPY --from=dvlp_base-msdot-build-lite ./ ./
-# COPY --from=dvlp_base-dind-build ./ ./
-COPY --from=dvlp_base-kernel-build ./ ./
-WORKDIR /hal
-USER ${_AGL}
-
-######################################################################################
-########################  dvlp_kernel-make - KERNEL COMPILER  ########################
-######################################################################################
-FROM dvlp_base-kernel-builder AS dvlp_kernel-make
-ARG CONFIG_FILE
-ARG KERNEL_PACKAGE_NAME
-ARG KERNEL_TYPE
-ARG KERNEL_FEATURE
-ARG DOCKER_BUILD_TIMESTAMP
-ENV DOCKER_BUILD_TIMESTAMP=${DOCKER_BUILD_TIMESTAMP}
-ARG WIN_USER
-USER r00t
-WORKDIR /
-# COPY --from=dvlp_skel-build-kernel ./ ./
-WORKDIR /r00t/dvlw/dvlp/kernels/linux
-SHELL ["/bin/bash", "-c"]
-# RUN chmod o+x make-kernel.sh 
-RUN \
-    rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
-RUN \
-    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get install -y libssl-dev git
-RUN \
-    --mount=type=cache,target=/var/cache/make-kernel/archives,sharing=locked \
-    bash build-import-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}" && \
-    rm -rf /r00t/dvlw/dvlp/kernels/linux/linux-* && \
-    rm -rf /r00t/dvlw/dvlp/kernels/linux/zfs-* && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt/archives/*.deb
 WORKDIR /hal
 USER ${_AGL}
 
