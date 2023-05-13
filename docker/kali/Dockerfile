@@ -390,6 +390,9 @@ COPY --from=dvlp_base-r00t-kernel-dirs  --chown=r00t:r00t    --chmod=1770    ./m
 COPY --from=dvlp_base-devel-kernel-dirs --chown=r00t:r00t    --chmod=1770    ./mnt/                  ./
 COPY --from=dvlp_repo-kernel            --chown=r00t:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/        ./
 RUN \
+    rm -f /etc/apt/apt.conf.d/docker-clean && \
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
+RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get -y update && apt-get -y autoremove && \
     apt-get --no-install-recommends -y install apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh wget && \
@@ -407,6 +410,9 @@ ARG _ADM_USR
 ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
+RUN \
+    rm -f /etc/apt/apt.conf.d/docker-clean && \
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get -y update && apt-get -y autoremove && \
@@ -551,12 +557,15 @@ USER r00t
 SHELL ["/bin/bash", "-c"]
 WORKDIR /r00t/build
 RUN \
+    rm -f /etc/apt/apt.conf.d/docker-clean && \
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
+RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get -y update && apt-get -y autoremove && \
-    apt-get -y --reinstall install apt-utils ca-certificates dbus && \
+    apt-get -y --reinstall install apt-utils ca-certificates && \
     apt-get -y install software-properties-common && \
     apt-add-repository -y ppa:brightbox/ruby-ng && \
-    apt-get -y install autoconf automake build-essential espeak ethtool expect hostapd iw lame libnl-3-dev libnl-genl-3-dev libpcre2-dev libhwloc-dev libssl-dev libsqlite3-dev libtool libcmocka-dev libpcap-dev pkg-config ruby-dev rfkill shtool screen tcpdump usbutils wpasupplicant zlib1g-dev && \
+    apt-get -y install autoconf automake build-essential dbus espeak ethtool expect hostapd iw lame libnl-3-dev libnl-genl-3-dev libpcre2-dev libhwloc-dev libssl-dev libsqlite3-dev libtool libcmocka-dev libpcap-dev pkg-config ruby-dev rfkill shtool screen tcpdump usbutils wpasupplicant zlib1g-dev && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 WORKDIR /r00t/build
@@ -579,8 +588,10 @@ RUN \
     make install
 WORKDIR /usr/share
 RUN git clone https://github.com/beefproject/beef beef
-WORKDIR /usr/share/beef
-
+WORKDIR /
+RUN \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb
 
 ##################
 # dvlp_base-scan #
@@ -628,8 +639,8 @@ RUN \
     --mount=type=cache,target=/var/cache/pip,sharing=private \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps 
-RUN \
-    apt-get --no-install-recommends -y remove libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev 
+# RUN \
+#     apt-get --no-install-recommends -y remove libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev 
 
 ###############################
 # dvlp_base-python-build-lite #
@@ -753,6 +764,10 @@ USER ${_AGL}
 #########################
 FROM dvlp_base-msdot-build-lite AS dvlp_base-msdot-build
 USER r00t
+
+RUN \
+    rm -f /etc/apt/apt.conf.d/docker-clean && \
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN apt-get -y update && apt-get -y autoremove && \
     apt-get --no-install-recommends -y install dotnet-sdk-7.0  && \
     rm -rf /var/lib/apt/lists && \
@@ -801,6 +816,9 @@ USER ${_AGL}
 FROM dvlp_skel-build AS dvlp_base-dind-build
 USER r00t
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
+RUN \
+    rm -f /etc/apt/apt.conf.d/docker-clean && \
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get -y update && apt-get -y autoremove && \
@@ -928,6 +946,9 @@ ARG REFRESH_REPO
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
 USER r00t
+RUN \
+    rm -f /etc/apt/apt.conf.d/docker-clean && \
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN apt-get -y update && apt-get -y upgrade && \
     apt-get -y install locales && \    
     update-locale LANGUAGE="C" && \
