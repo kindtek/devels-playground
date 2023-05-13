@@ -49,7 +49,7 @@ RUN \
     apt-get --reinstall -y install ca-certificates && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb 
-
+RUN printf '#!/bin/sh\nexit 0' > /usr/sbin/policy-rc.d
 # add safe directories
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked  \
