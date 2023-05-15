@@ -520,7 +520,7 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get install -y libssl-dev git
+    apt-get update -y && apt-get install -y libssl-dev git && apt-get clean 
 RUN \
     --mount=type=cache,target=/var/cache/make-kernel/archives,sharing=locked \
     bash build-import-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}" && \
