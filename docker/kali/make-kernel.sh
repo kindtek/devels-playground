@@ -30,7 +30,6 @@ done
 mkdir -p logs
 tee "logs/$filename.sh" >/dev/null <<'TXT'
 #!/bin/bash
-set -x
 win_user=${1}
 kernel_type=${2:-basic}
 kernel_feature=${3}
@@ -60,6 +59,7 @@ scratchpad
 #               |||||||||||||||||||||||||||||||||||||||||||||||||                  #
 #              ___________________________________________________                 #
 TXT
+set -x
 # copy the command to the log first
 eval cat "logs/$filename.sh" 2>&1 | tee --append "logs/$filename.log" && \
 # execute .sh file && log all output
