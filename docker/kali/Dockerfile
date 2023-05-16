@@ -566,7 +566,7 @@ RUN printf '#!/bin/sh\nexit 0' > /usr/sbin/policy-rc.d && \
     apt-get install -y --reinstall ca-certificates && \
     apt-get install -y software-properties-common && \
     apt-get update --fix-missing && apt-get install -f && \
-    apt-get install -y  --install-suggests autoconf automake build-essential espeak ethtool expect hostapd iw lame libnl-3-dev libnl-genl-3-dev libpcre2-dev libhwloc-dev libssl-dev libsqlite3-dev libtool libcmocka-dev libpcap-dev pkg-config ruby-dev rfkill shtool screen tcpdump usbutils wpasupplicant zlib1g-dev && \
+    apt-get install -y  --install-suggests autoconf automake build-essential espeak ethtool expect hostapd iw lame libnl-3-dev libnl-genl-3-dev libpcre2-dev libhwloc-dev libssl-dev libsqlite3-dev libtool libcmocka-dev libpcap-dev pkg-config ruby-dev rfkill shtool screen strace tcpdump usbutils wpasupplicant zlib1g-dev && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 WORKDIR /r00t/build
