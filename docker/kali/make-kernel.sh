@@ -52,7 +52,8 @@ timestamp=${5}
                     --no-cache-filter=dvlp_repo \
                     --no-cache-filter=dvlp_repo-build \
                     --no-cache-filter=dvlp_repo-build-kernel \
-                    . 2>&1 || exit<<'scratchpad'
+                    . 2>&1 || exit
+<<'scratchpad'
 
 scratchpad
 # 
