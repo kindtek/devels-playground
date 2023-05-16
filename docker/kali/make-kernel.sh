@@ -60,9 +60,11 @@ scratchpad
 #               |||||||||||||||||||||||||||||||||||||||||||||||||                  #
 #              ___________________________________________________                 #
 TXT
+set -x
 # copy the command to the log first
 eval cat "logs/$filename.sh" 2>&1 | tee --append "logs/$filename.log" && \
 # execute .sh file && log all output
 bash "logs/${filename}.sh" "${win_user}" "${kernel_type}" "${kernel_feature}" "${config_file}" "${timestamp}"  2>&1 | tee --append "logs/${filename}.log" && \
 # prompt to install newly built kernel
 bash ../../kernels/linux/install-kernel.sh "$win_user" "latest" 2>&1 | tee --append "logs/$filename.log" || exit
+set +x
