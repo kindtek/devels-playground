@@ -69,4 +69,3 @@ bash "logs/${filename}.sh" "${win_user}" "${kernel_type}" "${kernel_feature}" "$
 # prompt to install newly built kernel
 bash ../../kernels/linux/install-kernel.sh "$win_user" "latest" 2>&1 | tee --append "logs/$filename.log" || exit
 set +x
-
