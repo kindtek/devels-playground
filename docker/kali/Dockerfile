@@ -907,7 +907,7 @@ RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg a
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get update -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y brave-browser dolphin vlc x11-apps  && \
+    apt-get install --no-install-recommends -y brave-browser dolphin virtualbox vlc x11-apps  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 # change last line of this file - fix for brave-browser displaying empty windows
