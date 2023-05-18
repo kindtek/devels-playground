@@ -40,8 +40,19 @@ WORKDIR /
 #     mkdir -pv /dvlw && \
 #     chown -R r00t:r00t /repos/dvlw
 RUN \
+    # clear docker-clean to flag for apt-get clean
     rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
+    # cache packages in docker builds as long as using apt-get
+    echo 'Binary::apt-get::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
+    # no suggests or recommends for apt-get
+    # suggests and recommends for apt
+    echo 'Binary::apt-get::APT::Install-Recommends "0"; \
+    Binary::apt-get::APT::Install-Suggests "0"; \
+    Binary::apt::APT::Install-Recommends "1"; \
+    Binary::apt::APT::Install-Suggests "1";' | tee --append /etc/apt/apt.conf.d && \
+    # use apt loading bar for apt-get by default
+    echo 'Binary::apt-get::DPkg::Progress-Fancy "1"' | tee /etc/apt/apt.conf.d/06fancybar.conf
+# import/install basic utils from layer cache if possible and delete .deb archives from container when finished
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get update -y && apt-get autoremove -y && \
@@ -49,7 +60,6 @@ RUN \
     apt-get --reinstall -y install ca-certificates && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb 
-RUN printf '#!/bin/sh\nexit 0' > /usr/sbin/policy-rc.d
 # add safe directories
 RUN \
     --mount=type=cache,target=/tmp/git/cache,sharing=locked  \
