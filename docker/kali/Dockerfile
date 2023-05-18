@@ -43,19 +43,22 @@ RUN \
     # clear docker-clean to flag for apt-get clean
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     # cache packages in docker builds as long as using apt-get
-    echo 'Binary::apt-get::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
+    echo 'Binary::apt-get::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache 
     # no suggests or recommends for apt-get
     # suggests and recommends for apt
-    echo 'Binary::apt-get::APT::Install-Recommends "0"; \
-    Binary::apt-get::APT::Install-Suggests "0"; \
-    Binary::apt::APT::Install-Recommends "1"; \
-    Binary::apt::APT::Install-Suggests "1";' | tee --append /etc/apt/apt.conf.d && \
+RUN echo "Binary::apt-get::APT::Install-Recommends '0'; \
+    Binary::apt-get::APT::Install-Suggests '0'; \
+    Binary::apt::APT::Install-Recommends '1'; \
+    Binary::apt::APT::Install-Suggests '1';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm 
     # use apt loading bar for apt-get by default
-    echo 'Binary::apt-get::DPkg::Progress-Fancy "1"' | tee /etc/apt/apt.conf.d/06fancybar.conf
+# RUN echo 'Binary::apt-get::DPkg::Progress-Fancy "1"' | tee /etc/apt/apt.conf.d/99fancybar.conf
 # import/install basic utils from layer cache if possible and delete .deb archives from container when finished
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
+    apt-get update -y 
+    # && 
+RUN \
+    apt-get autoremove -y && \
     apt-get install --no-install-recommends -y git && \
     apt-get --reinstall -y install ca-certificates && \
     rm -rf /var/lib/apt/lists && \
