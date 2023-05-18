@@ -158,7 +158,7 @@ RUN mkdir -pv /hel && \
     mkdir -pv /home/${_DVL}/kache && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
-    ln -fsv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
+    ln -fsv "dvlw/dvlp/kernels/linux/$(uname -m | grep -o '^[^_]*')/$(echo "$(grep -Pom 1 '^vendor_id\s*:\s*\K.*' /proc/cpuinfo | grep -Eio --color=never 'intel|amd' || grep -Pom 1 '^vendor_id\s*:\s*\K.*' /proc/cpuinfo --color=never)" | tr '[:upper:]' '[:lower:]')" "$(uname -m | grep -o '^[^_]*')" && \
     ln -fsv dvlw/dvlp/kernels kernels && \
     chmod -R 1770 /hel && \
     chmod -R 1770 /home/${_DVL} && \
@@ -166,7 +166,7 @@ RUN mkdir -pv /hel && \
 # WORKDIR /home/${_DVL}
 # RUN ln -fsv dvlw/dvlp dvlp && \
 #     ln -fsv dvlw/dvlp/kernels/linux linux && \
-#     ln -fsv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
+#     ln -fsv dvlw/dvlp/kernels/linux/$(echo "${cpu_arch%%_*}")/amd x64amd && \
 #     ln -fsv dvlw/dvlp/kernels kernels && \
 WORKDIR /
 
@@ -210,7 +210,7 @@ RUN mkdir -pv dvlw && \
     mkdir -pv /home/${_AGL}/kache && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
-    ln -fsv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
+    ln -fsv "dvlw/dvlp/kernels/linux/$(uname -m | grep -o '^[^_]*')/$(echo "$(grep -Pom 1 '^vendor_id\s*:\s*\K.*' /proc/cpuinfo | grep -Eio --color=never 'intel|amd' || grep -Pom 1 '^vendor_id\s*:\s*\K.*' /proc/cpuinfo --color=never)" | tr '[:upper:]' '[:lower:]')" "$(uname -m | grep -o '^[^_]*')" && \
     ln -fsv dvlw/dvlp/kernels kernels  && \
     chmod -R 1770 /hal && \
     chmod -R 1770 /home/${_AGL} && \
@@ -265,7 +265,7 @@ COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
 RUN mkdir -pv /admin && mkdir -pv kache && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
-    ln -fsv dvlw/dvlp/kernels/linux/x86/amd x64amd && \
+    ln -fsv "dvlw/dvlp/kernels/linux/$(uname -m | grep -o '^[^_]*')/$(echo "$(grep -Pom 1 '^vendor_id\s*:\s*\K.*' /proc/cpuinfo | grep -Eio --color=never 'intel|amd' || grep -Pom 1 '^vendor_id\s*:\s*\K.*' /proc/cpuinfo --color=never)" | tr '[:upper:]' '[:lower:]')" "$(uname -m | grep -o '^[^_]*')" && \
     ln -fsv dvlw/dvlp/kernels kernels 
 #  && \
 # chmod -R 1770 /admin && \
