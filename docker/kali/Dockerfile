@@ -1100,19 +1100,38 @@ COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/kache/ ./
 ############
 # get-home #
 ############
-FROM scratch AS dvlp_repo-k-home
-ARG WINDOWS
-ARG LINUX
-# determine which home dir to get -- default is HOME_NIX 
+FROM scratch AS dvlp_k-home-nix
+# ARG WINDOWS
+# ARG LINUX
+# # determine which home dir to get -- default is HOME_NIX 
 ARG HOME_DIR='HOME_NIX'
-# if WINDOWS argument is provided, use win home dir
-ARG HOME_DIR="${WINDOWS:+'HOME_WIN'}"
-# if LINUX argument is provided, use nix home dir
-ARG HOME_DIR="${LINUX:+'HOME_NIX'}"
-
+# # if WINDOWS argument is provided, use win home dir
+# ARG HOME_DIR="${WINDOWS:+'HOME_WIN'}"
+# # if LINUX argument is provided, use nix home dir
+# ARG HOME_DIR="${LINUX:+'HOME_NIX'}"
 USER r00t
 WORKDIR /
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/${HOME_DIR}/ ./
+COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
+# COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/${HOME_DIR}/ ./
+
+############
+# get-home #
+############
+FROM scratch AS dvlp_k-home-win
+# ARG WINDOWS
+# ARG LINUX
+# determine which home dir to get -- default is HOME_NIX 
+# ARG HOME_DIR='HOME_WIN'
+# # if WINDOWS argument is provided, use win home dir
+# ARG HOME_DIR="${WINDOWS:+'HOME_WIN'}"
+# # if LINUX argument is provided, use nix home dir
+# ARG HOME_DIR="${LINUX:+'HOME_NIX'}"
+USER r00t
+WORKDIR /
+COPY --from=dvlp_repo_kernel ./repos/dvlw/dvlp/mnt/HOME_WIN/ ./
+COPY --from=dvlp_repo_kernel ./repos/dvlw/ ./repos/kindtek/dvlw/
+COPY --from=dvlp_repo_kernel ./repos/dvlw/dvlp/kernels/linux/kache/ ./
+# COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/${HOME_DIR}/ ./
 
 #####################
 ## dvlp_jacket-kernel-kernel #
