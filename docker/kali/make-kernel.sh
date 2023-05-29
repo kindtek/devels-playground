@@ -63,7 +63,6 @@ scratchpad
 TXT
 set -x
 
-
 # copy the command to the log first
 eval cat "logs/$filename.sh" 2>&1 | tee --append "logs/$filename.log" && \
 # execute .sh file && log all output
