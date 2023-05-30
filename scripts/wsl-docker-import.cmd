@@ -172,9 +172,9 @@ ECHO ========================================================================
 ECHO:
 SET "docker_image_do="
 ECHO building image (!image_service!)...
-ECHO docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !image_service!
+ECHO docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --nocache !image_service!
 @REM build the image
-docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !image_service!
+docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --nocache !image_service!
 SET "image_built=y"
 IF "!wsl!"=="n" (
     SET "options=options"
@@ -844,7 +844,8 @@ IF /I "!options!"=="o" (
 )
 IF "!interactive!"=="y" (
     IF "!DVLP_DEBUG!"=="y" (
-        ECHO "non-interactive session"
+        ECHO "interactive session"
+        ECHO "options3: !options!"
     )
     IF /I "!options!"=="options" (
         ECHO   Options:
