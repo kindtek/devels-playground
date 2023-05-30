@@ -9,12 +9,12 @@
 
 ## NEW FEATURES
 
-## Build a kernel and pop into a Kubuntu GUI with [ubuntu-gui-kernel](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-gui-kernel/images/sha256-e358b4a835faff261ff0b284a207496da7e4d61ce70aa3f44db7618714c7ccf5?context=repo)
+## Build a kernel and pop into a Kubuntu GUI with [kali-gui-kernel](https://hub.docker.com/layers/kindtek/dvlp/kali-gui-kernel/images/sha256-e358b4a835faff261ff0b284a207496da7e4d61ce70aa3f44db7618714c7ccf5?context=repo)
 
-( No setup necessary. Kubuntu GUI also included with [ubuntu-gui](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-gui/images/sha256-266c029b305ea1d9553aacb7cf2ecc8ebd8830841945a2427374b8e0c9b478aa?context=repo), [ubuntu-cuda](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda/images/sha256-96fa98d5d82f0991218fd9501f56dae9341955a8b3c49a19d99d7d7e59c41b84?context=repo), and [ubuntu-cuda-kernel](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda-kernel/images/sha256-717739827455ab9eaddb539dbbf3ea6a0c9b943b74cd493a5fc337dd2adb9e92?context=repo) ) 
+( No setup necessary. Kubuntu GUI also included with [kali-gui](https://hub.docker.com/layers/kindtek/dvlp/kali-gui/images/sha256-266c029b305ea1d9553aacb7cf2ecc8ebd8830841945a2427374b8e0c9b478aa?context=repo), [kali-cuda](https://hub.docker.com/layers/kindtek/dvlp/kali-cuda/images/sha256-96fa98d5d82f0991218fd9501f56dae9341955a8b3c49a19d99d7d7e59c41b84?context=repo), and [kali-cuda-kernel](https://hub.docker.com/layers/kindtek/dvlp/kali-cuda-kernel/images/sha256-717739827455ab9eaddb539dbbf3ea6a0c9b943b74cd493a5fc337dd2adb9e92?context=repo) ) 
 
 ### Build and customize your own kernel
-#### [ubuntu-basic-wsl-kernel-builder](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-basic-wsl-kernel-builder/images/sha256-bd756e1775327d2b8ea51590ba471fdd0c4997a7d44e3f437999a60e59105a70?context=repo) and all "-kernel" named images include:
+#### [kali-basic-wsl-kernel-builder](https://hub.docker.com/layers/kindtek/dvlp/kali-basic-wsl-kernel-builder/images/sha256-bd756e1775327d2b8ea51590ba471fdd0c4997a7d44e3f437999a60e59105a70?context=repo) and all "-kernel" named images include:
 
 - Linux kernel - use a generic prebuilt kernel or use ...
 - .config templates to optimize your kernel ([example](kernels/linux/x86/amd/5_15901/.config_wsl0))
@@ -22,7 +22,7 @@
 - enterprise grade ZFS filesystem and volume manager built into the kernel (Advanced: Even build/mount your own ZFS partition!)
 
 ### More image selections
-#### Choices range from having nothing but sudo installed [ubuntu-bare](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-bare/images/sha256-92d7012da7ae667613f9a52ed1e330eac17134b5a0e7d8e66231efc0e594ef97?context=repo) (~90MB) to having everything AND the kitchen sink installed [ubuntu-cuda-kernel](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda-kernel/images/sha256-717739827455ab9eaddb539dbbf3ea6a0c9b943b74cd493a5fc337dd2adb9e92?context=repo) (6GB+)
+#### Choices range from having nothing but sudo installed [kali-bare](https://hub.docker.com/layers/kindtek/dvlp/kali-bare/images/sha256-92d7012da7ae667613f9a52ed1e330eac17134b5a0e7d8e66231efc0e594ef97?context=repo) (~90MB) to having everything AND the kitchen sink installed [kali-cuda-kernel](https://hub.docker.com/layers/kindtek/dvlp/kali-cuda-kernel/images/sha256-717739827455ab9eaddb539dbbf3ea6a0c9b943b74cd493a5fc337dd2adb9e92?context=repo) (6GB+)
 
 #### Coming Soon
 - better documentation
@@ -43,7 +43,7 @@
 
 ### [ OPTIONAL TEST ]
 
-### _When the Devel's Playground loads, at the main menu hit ENTER a few times to import and confirm the default [ubuntu-dind image](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-dind/images/sha256-d4b592c32d92db53e8380a5556bdd771063d946e5614d0ebc953359941be5263?context=explore) ([see details below](#ubuntu-dind)) being imported on your WSL environment_
+### _When the Devel's Playground loads, at the main menu hit ENTER a few times to import and confirm the default [kali-dind image](https://hub.docker.com/layers/kindtek/dvlp/kali-dind/images/sha256-d4b592c32d92db53e8380a5556bdd771063d946e5614d0ebc953359941be5263?context=explore) ([see details below](#kali-dind)) being imported on your WSL environment_
 
 &nbsp;
 
@@ -53,7 +53,7 @@
 
 #### - source: [kindtek](https://hub.docker.com/u/kindtek)
 
-#### - name: [dvlp](https://hub.docker.com/r/kindtek/dvlp/tags):[ubuntu-gui](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-gui/images/sha256-266c029b305ea1d9553aacb7cf2ecc8ebd8830841945a2427374b8e0c9b478aa?context=repo)
+#### - name: [dvlp](https://hub.docker.com/r/kindtek/dvlp/tags):[kali-gui](https://hub.docker.com/layers/kindtek/dvlp/kali-gui/images/sha256-266c029b305ea1d9553aacb7cf2ecc8ebd8830841945a2427374b8e0c9b478aa?context=repo)
 
 &nbsp;
 
@@ -110,7 +110,7 @@ If you want to easily install or already have installed
 Paste one line into a command prompt ([CMD or Powershell](https://www.wikihow.com/Open-Terminal-in-Windows))
 
 ```bat
-powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell/dvl-works/download-everything-and-install.ps1 -OutFile install-kindtek-devels-workshop.ps1; powershell.exe -executionpolicy remotesigned -File install-kindtek-devels-workshop.ps1 ubuntu-dind-lite"
+powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell/dvl-works/download-everything-and-install.ps1 -OutFile install-kindtek-devels-workshop.ps1; powershell.exe -executionpolicy remotesigned -File install-kindtek-devels-workshop.ps1 kal-gui"
 
 ```
 
@@ -120,20 +120,20 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 ### For everyone else
 
-If you prefer not to use the easy install script, things are not quite so simple and seamless, but you can run the images referenced in this repo as a Docker container on your system. For example, to open a Docker container containing the [ubuntu-dind](#ubuntu-dind) image:
+If you prefer not to use the easy install script, things are not quite so simple and seamless, but you can run the images referenced in this repo as a Docker container on your system. For example, to open a Docker container containing the [kali-dind](#kali-dind) image:
 
 &nbsp;
 
 Run the following in a terminal on any operating system with Docker installed:
 
 ```shell
-docker pull kindtek/dvlp:ubuntu-dind
+docker pull kindtek/dvlp:kali-dind
 ```
 
 The above line downloads the image and Docker registers the image id. You will now get that image id by running:
 
 ```shell
-docker images -aq kindtek/dvlp:ubuntu-dind
+docker images -aq kindtek/dvlp:kali-dind
 ```
 
 The above code will output your image id to the screen. Replace \<image_id\> in the code below with this image id and run it:
@@ -144,7 +144,7 @@ docker run -it <image_id>
 
 &nbsp;
 
-This will start a new container using the [example image](#ubuntu-dind) and the shell enviornment entered into its shell terminal. You will not enjoy the same integrated, seamless experience that Windows users will with WSL2, but full support for MacOS and Linux will be coming soon
+This will start a new container using the [example image](#kali-dind) and the shell enviornment entered into its shell terminal. You will not enjoy the same integrated, seamless experience that Windows users will with WSL2, but full support for MacOS and Linux will be coming soon
 
 &nbsp;
 
@@ -207,11 +207,11 @@ This will start a new container using the [example image](#ubuntu-dind) and the 
 
 ## Image Tags
 
-_Note: Each image forms the base layer for the image described below it. For instance, ubuntu-dind will contain all of the features from the ubuntu-git and ubuntu-msdot tags listed above it. You could install a lot of this software manually on a Debian system by copying and pasting the line of code shown. Others, like Brave Browser, require you to add its respective repository registry first which gets messy. Not having to do this is one of the many ways that running Docker images makes a developer's life easier_
+_Note: Each image forms the base layer for the image described below it. For instance, kali-dind will contain all of the features from the kali-git and kali-msdot tags listed above it. You could install a lot of this software manually on a Debian system by copying and pasting the line of code shown. Others, like Brave Browser, require you to add its respective repository registry first which gets messy. Not having to do this is one of the many ways that running Docker images makes a developer's life easier_
 
 ---
 
-### [**ubuntu-git**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-git/images/sha256-6cb1ae8ea632598d3fc9e0ad742b178346f6b3a146af31e9fe14fbbc93a326c2?context=explore)
+### [**kali-git**](https://hub.docker.com/layers/kindtek/dvlp/kali-git/images/sha256-6cb1ae8ea632598d3fc9e0ad742b178346f6b3a146af31e9fe14fbbc93a326c2?context=explore)
 
 #### `apt-get install apt-transport-https build-essential ca-certificates curl git gh gnupg2 libssl-dev nvi wget wslu`
 
@@ -219,7 +219,7 @@ _Note: Each image forms the base layer for the image described below it. For ins
 
 ---
 
-### [**ubuntu-python**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-py/images/sha256-c0e62053f5364278c5190b64619e0ccf3e6dc34129e485e3037bde28177af13f?context=explore)
+### [**kali-python**](https://hub.docker.com/layers/kindtek/dvlp/kali-py/images/sha256-c0e62053f5364278c5190b64619e0ccf3e6dc34129e485e3037bde28177af13f?context=explore)
 
 #### `apt-utils jq libdbus-1-3 libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv`
 
@@ -227,15 +227,15 @@ _Note: Each image forms the base layer for the image described below it. For ins
 
 ---
 
-### [**ubuntu-msdot**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-msdot/images/sha256-1dbf76db650ac81d8b6294fae035f837851d5dca928f57a04ce7530141f4fd38?context=explore)
+### [**kali-msdot**](https://hub.docker.com/layers/kindtek/dvlp/kali-msdot/images/sha256-1dbf76db650ac81d8b6294fae035f837851d5dca928f57a04ce7530141f4fd38?context=explore)
 
 #### `apt-get install powershell dotnet-sdk-7.0`
 
-#### This edition includes power$hell which is needed for bridging the gap between Windows and the rest of the world. Be also advised that it is referred to as 'powerhell' within this repo and has earned the nickname for good reason. It is a necessary evil and it is combined with Microsoft .NET 7 SDK in this image. The [lite flavor](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-msdot-lite/images/sha256-eeaf6a63b2f47bce765b0d4256cdaaeaf682caf149accc84397a6d65ed4aa60d?context=explore) has only powershell
+#### This edition includes power$hell which is needed for bridging the gap between Windows and the rest of the world. Be also advised that it is referred to as 'powerhell' within this repo and has earned the nickname for good reason. It is a necessary evil and it is combined with Microsoft .NET 7 SDK in this image. The [lite flavor](https://hub.docker.com/layers/kindtek/dvlp/kali-msdot-lite/images/sha256-eeaf6a63b2f47bce765b0d4256cdaaeaf682caf149accc84397a6d65ed4aa60d?context=explore) has only powershell
 
 ---
 
-## [**ubuntu-dind**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-dind/images/sha256-f3bd25b349e47370482baf411c6e54d8c141ba38dc8e6029161a34cd5141f403?context=explore)
+## [**kali-dind**](https://hub.docker.com/layers/kindtek/dvlp/kali-dind/images/sha256-f3bd25b349e47370482baf411c6e54d8c141ba38dc8e6029161a34cd5141f403?context=explore)
 
 ### `apt-get install docker-compose-plugin docker-ce docker-ce-cli containerd.io`
 
@@ -245,7 +245,7 @@ _Note: Each image forms the base layer for the image described below it. For ins
 
 ---
 
-# [**kernel-builder**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-basic-wsl-kernel-builder/images/sha256-dc29a6491faf9fce15b768e399b521b15e43fa54e7e1700b42af19b3f9590f94?context=explore) and -kernel images:
+# [**kernel-builder**](https://hub.docker.com/layers/kindtek/dvlp/kali-basic-wsl-kernel-builder/images/sha256-dc29a6491faf9fce15b768e399b521b15e43fa54e7e1700b42af19b3f9590f94?context=explore) and -kernel images:
 
 ## `apt-get install alien autoconf automake bc bison build-essential dbus-user-session daemonize dwarves fakeroot flex fontconfig gawk gnupg libtooldkms libblkid-dev libffi-dev lxcfs libudev-dev libssl-dev libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi snapd sysvinit-utils uuid-dev`
 ### This pre-built image (and those below) comes with a kernel saved conveniently in both `/hel/kernels` and `/halo/kernels`.
@@ -263,26 +263,26 @@ The CONFIG_FILE argument is optional. If you don't include it or leave it blank 
 
 ---
 
-## [**ubuntu-gui-lite**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-gui/images/sha256-ca41db9a7ffc60a29f9201f7ac2690ac2c4251a7ebf7899ac8393498f7540442?context=explore)
+## [**kali-gui-lite**](https://hub.docker.com/layers/kindtek/dvlp/kali-gui/images/sha256-ca41db9a7ffc60a29f9201f7ac2690ac2c4251a7ebf7899ac8393498f7540442?context=explore)
 
 ### `apt-get install brave-browser gimp gedit nautilus vlc x11-apps `
 
 This is a lightweight Graphical User Interface by most standards but still weighs in at ~1.3GB. It also requires WSL 2. It has a few applicaations that have a graphical interface such as Brave Browser (aka privacy focused Google-less Chrome). One of the coolest things ever is to type `brave-browser` into your shell terminal and watch a browser window pop up out of the void
 
-# [**ubuntu-gui-kernel**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-gui-kernel/images/sha256-e358b4a835faff261ff0b284a207496da7e4d61ce70aa3f44db7618714c7ccf5?context=explore) and [ubuntu-gui](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-gui/images/sha256-266c029b305ea1d9553aacb7cf2ecc8ebd8830841945a2427374b8e0c9b478aa?context=explore)
+# [**kali-gui-kernel**](https://hub.docker.com/layers/kindtek/dvlp/kali-gui-kernel/images/sha256-e358b4a835faff261ff0b284a207496da7e4d61ce70aa3f44db7618714c7ccf5?context=explore) and [kali-gui](https://hub.docker.com/layers/kindtek/dvlp/kali-gui/images/sha256-266c029b305ea1d9553aacb7cf2ecc8ebd8830841945a2427374b8e0c9b478aa?context=explore)
 
 # `apt-get install lightdm xrdp xfce4 xfce4-goodies`
 # `apt-get install --no-install-recommends -y kubuntu-desktop`
 
-These images has everything but CUDA. You can build your own kernel with the ubuntu-gui-kernel image. The GUI is locked, loaded, and ready to go once installed into WSL2 with the devel's playground. Kubuntu has too many features and packages to list. See them [here](https://packages.ubuntu.com/jammy/kubuntu-desktop). The red packages come installed with this image. To keep the size of the image down, the recommended packages (in green) are not installed. Install them with sudo `apt-get install kubuntu-desktop` if you like
+These images has everything but CUDA. You can build your own kernel with the kali-gui-kernel image. The GUI is locked, loaded, and ready to go once installed into WSL2 with the devel's playground. Kubuntu has too many features and packages to list. See them [here](https://packages.ubuntu.com/jammy/kubuntu-desktop). The red packages come installed with this image. To keep the size of the image down, the recommended packages (in green) are not installed. Install them with sudo `apt-get install kubuntu-desktop` if you like
 
 ---
 
-## [**ubuntu-cuda-kernel**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda-kernel/images/sha256-717739827455ab9eaddb539dbbf3ea6a0c9b943b74cd493a5fc337dd2adb9e92?context=explore) and [**ubuntu-cuda**](https://hub.docker.com/layers/kindtek/dvlp/ubuntu-cuda/images/sha256-a58446b7bee69471309a8cfd0020a6c70f4a102aecccd86ae9026d945651ede0?context=explore)
+## [**kali-cuda-kernel**](https://hub.docker.com/layers/kindtek/dvlp/kali-cuda-kernel/images/sha256-717739827455ab9eaddb539dbbf3ea6a0c9b943b74cd493a5fc337dd2adb9e92?context=explore) and [**kali-cuda**](https://hub.docker.com/layers/kindtek/dvlp/kali-cuda/images/sha256-a58446b7bee69471309a8cfd0020a6c70f4a102aecccd86ae9026d945651ede0?context=explore)
 
 ### `apt-get install nvidia-cuda-toolkit`
 
-If CUDA is a necessity for your developer needs your life just became easier. These images are fully loaded and use approximately 6GB of space. You can build your own kernel with the ubuntu-cuda-kernel image.
+If CUDA is a necessity for your developer needs your life just became easier. These images are fully loaded and use approximately 6GB of space. You can build your own kernel with the kali-cuda-kernel image.
 
 ---
 
