@@ -921,7 +921,7 @@ IF "!interactive!"=="y" (
         SET "options=options"
     )
     IF "!options!"=="options" ( 
-        SET "options="
+        @REM SET "options="
         GOTO options_prompt
     )
 ) ELSE (
