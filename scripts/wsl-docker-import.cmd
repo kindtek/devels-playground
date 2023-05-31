@@ -177,12 +177,10 @@ ECHO docker pull !image_repo_name_tag!
 @REM pull the image to possibly save time building
 docker pull !image_repo_name_tag!
 @REM re-building repo
-ECHO docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !image_service!
-ECHO docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache repo
-ECHO building image (!image_service!)...
 ECHO docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache repo-kernel
+ECHO docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !image_service!
+ECHO building image (!image_service!)...
 @REM build the image
-docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache repo
 docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache repo-kernel
 docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !image_service!
 SET "image_built=y"
