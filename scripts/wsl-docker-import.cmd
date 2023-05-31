@@ -1101,11 +1101,11 @@ IF /I "!opti0ns!"=="wsl" (
 IF /I "!opti0ns!"=="debug" (
     SET "DVLP_DEBUG=n"
     IF "!DVLP_DEBUG!"=="y" (
-        SET "wsl=n"
+        SET "DVLP_DEBUG=n"
         ECHO "toggle debug output [ON]"
     ) ELSE (
         ECHO "toggle debug output [OFF]"
-        SET "wsl=y"
+        SET "DVLP_DEBUG=y"
     )
     SET "opti0ns=options"
     @REM SET "go2=docker_image_pull"
