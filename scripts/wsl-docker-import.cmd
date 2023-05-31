@@ -173,9 +173,16 @@ ECHO ========================================================================
 ECHO:
 SET "docker_image_do="
 ECHO building image (!image_service!)...
-ECHO docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !image_service!
-@REM build the image
-docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !image_service!
+IF "!interactive!=y" (
+    ECHO docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !image_service!
+    @REM build the image
+    docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !image_service!
+) ELSE (
+    ECHO docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !image_service!
+    @REM build the image
+    docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !image_service!
+)
+
 SET "image_built=y"
 IF "!wsl!"=="n" (
     SET "options=options"
