@@ -1097,6 +1097,22 @@ IF /I "!opti0ns!"=="wsl" (
     SET "go2=home_banner"
     GOTO switchboard
 )
+
+IF /I "!opti0ns!"=="debug" (
+    SET "DVLP_DEBUG=n"
+    IF "!DVLP_DEBUG!"=="y" (
+        SET "wsl=n"
+        ECHO "toggle debug output [ON]"
+    ) ELSE (
+        ECHO "toggle debug output [OFF]"
+        SET "wsl=y"
+    )
+    SET "opti0ns=options"
+    @REM SET "go2=docker_image_pull"
+    SET "go2=home_banner"
+    GOTO switchboard
+)
+
 IF /I "!opti0ns!"=="x" (
     SET "go2=program_restart_prompt"
     GOTO switchboard
