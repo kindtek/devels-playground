@@ -108,7 +108,7 @@ GOTO config
 
 :set_paths
 SET "module=set_paths"
-SET "go2="
+SET "go2=home_banner"
 @REM ECHO "entering module !module!"
 FOR /F %%x IN (
     'wmic PATH win32_utctime get /Format:list ^| findstr "="'
@@ -952,7 +952,7 @@ SET "opti0ns=!options!"
 IF "!DVLP_DEBUG!"=="y" (
     ECHO "OPTIONS PARSE: !options!"
     ECHO "OPTI0NS PARSE: !opti0ns!"
-    ECHO "go2 PARSE: !go2!"
+ECHO "go2 PARSE: !go2!"
     ECHO "MOD: !module!"
     ECHO "EXIT_MOD: !exit_module!"
     ECHO HANDLE !handle!
