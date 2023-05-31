@@ -956,7 +956,7 @@ IF "!interactive!"=="y" (
         SET "display_options=n"
     ) 
     SET "confirm="
-    SET /P "confirm=$ "
+    SET /P "confirm=(!home_default_option!)`n"
     IF NOT "!confirm!"=="" (
         SET "options=!confirm!"
         IF "!DVLP_DEBUG!"=="y" (
