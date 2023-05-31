@@ -100,7 +100,9 @@ IF "!non_interactive_distro_name!"=="" (
     SET "wsl=y"
     
 )
-
+IF "DVLP_DEBUG"=="y" (
+    ECHO WSL_IMPORT !wsl!
+)
 GOTO config
 
 
