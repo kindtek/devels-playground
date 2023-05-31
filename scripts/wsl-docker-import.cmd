@@ -147,7 +147,7 @@ SET "image_service=%image_tag:-=" & SET "image_service=%"
 IF "!image_repo!"=="_" (
     SET "docker_image_do=docker_image_pull"
 )
-ECHO "DOCKER_IMG_DO: !docker_image_do!"
+@REM ECHO "DOCKER_IMG_DO: !docker_image_do!"
 SET "docker_image_doing=!docker_image_do!"
 SET "docker_image_do="
 GOTO !docker_image_doing!
