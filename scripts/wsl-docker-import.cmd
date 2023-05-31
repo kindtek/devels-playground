@@ -604,7 +604,7 @@ color 0B
 ECHO:
 SET /P "image_repo=image repository: (!image_repo_mask!) $ "
 SET "old_image_name_tag=!image_name_tag!"
-SET /P "image_name_tag=image name/tag in !image_repo_mask!: (!image_name!:!image_tag!) $ "
+SET /P "image_name_tag=image name/tag in !image_repo!: (!image_name!:!image_tag!) $ "
 @REM reset image_built flag if the image_name_tag changes
 IF NOT "!old_image_name_tag!"=="!image_name_tag!" (
     SET "docker_image_built=n"
