@@ -955,7 +955,7 @@ IF "!interactive!"=="y" (
         )
         SET "display_options=n"
     ) 
-    ECHO (!home_default_option!^^)
+    ECHO (!home_default_option!^^^)
     SET "confirm="
     SET /P "confirm="
     IF NOT "!confirm!"=="" (
