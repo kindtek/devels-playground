@@ -905,9 +905,9 @@ IF "!interactive!"=="y" (
                 IF "DVLP_DEBUG"=="y" (
                     ECHO "options=home_default_option: !options!"
                 )
-                @REM post option then discard
+                @REM post option (don't discard)
                 SET "options=!home_default_option!"
-                SET "home_default_option="
+                @REM SET "home_default_option="
             )
         ) 
         IF "DVLP_DEBUG"=="y" (
