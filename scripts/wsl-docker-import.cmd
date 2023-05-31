@@ -16,6 +16,7 @@ SET image_repo_mask=kindtek
 SET "image_name_tag=%~1"
 SET "non_interactive_distro_name=%~2"
 SET "options=%~3"
+SET "display_options=n"
 IF "!options!"=="default" (
     SET "default_wsl_distro=y"
 ) ELSE (
@@ -842,7 +843,11 @@ SET "handle=options_prompt"
 IF /I "!options!"=="o" (
     SET "options=options"
 )
-IF "!interactive!"=="y" (
+IF /I "!options!"=="options" (
+    SET "display_options=y"
+
+)
+IF "!display_options!"=="y" (
     IF "!DVLP_DEBUG!"=="y" (
         ECHO "interactive session"
         ECHO "options3: !options!"
@@ -902,6 +907,7 @@ IF "!interactive!"=="y" (
             ECHO "MAIN OPTS: !home_default_option!"
             ECHO "OPTIONS: !options!"
         )
+        SET "display_options=n"
     ) 
     SET "confirm="
     SET /P "confirm=$ "
@@ -921,7 +927,8 @@ IF "!interactive!"=="y" (
         SET "options=options"
     )
     IF "!options!"=="options" ( 
-        @REM SET "options="
+        SET "options="
+        SET "display_options=y"
         GOTO options_prompt
     )
 ) ELSE (
