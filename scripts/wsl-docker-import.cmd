@@ -1083,6 +1083,10 @@ IF /I "!opti0ns!"=="restart" (
 )
 IF /I "!opti0ns!"=="w" (
     SET "opti0ns=wsl"
+    IF "!DVLP_DEBUG!"=="y" (
+        ECHO "opti0ns: !opti0ns!"
+        ECHO "wsl: !wsl!"
+    )
 )
 IF /I "!opti0ns!"=="wsl" (
     @REM ECHO option 'default' selected
@@ -1097,6 +1101,10 @@ IF /I "!opti0ns!"=="wsl" (
     SET "opti0ns=options"
     @REM SET "go2=docker_image_pull"
     SET "go2=home_banner"
+    IF "!DVLP_DEBUG!"=="y" (
+        ECHO "opti0ns: !opti0ns!"
+        ECHO "wsl: !wsl!"
+    )
     GOTO switchboard
 )
 
@@ -1117,10 +1125,16 @@ IF /I "!opti0ns!"=="debug" (
 
 IF /I "!opti0ns!"=="x" (
     SET "go2=program_restart_prompt"
+    IF "!DVLP_DEBUG!"=="y" (
+        ECHO "x-opti0ns: !opti0ns!"
+    )
     GOTO switchboard
 )
 IF /I "!opti0ns!"=="exit" (
     SET "go2=quit"
+    IF "!DVLP_DEBUG!"=="y" (
+        ECHO "exit-opti0ns: !opti0ns!"
+    )
     GOTO switchboard
 )
 
