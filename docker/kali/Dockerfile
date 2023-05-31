@@ -55,7 +55,7 @@ RUN echo "Binary::apt-get::APT::Install-Recommends '0'; \
 # import/install basic utils from layer cache if possible and delete .deb archives from container when finished
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
+    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
     apt-get install --no-install-recommends -y git && \
     apt-get --reinstall -y install ca-certificates && \
     rm -rf /var/lib/apt/lists && \
@@ -330,7 +330,7 @@ RUN \
 # add-apt-repository ppa:apt-fast/stable && \
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
+    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
     apt-get install --no-install-recommends -y sudo && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb && \
@@ -404,7 +404,7 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
+    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
     apt-get install --no-install-recommends -y apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh wget && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
@@ -425,7 +425,7 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
+    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
     apt-get install --no-install-recommends -y apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh wget && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
@@ -483,7 +483,7 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
+    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
     apt-get install --no-install-recommends -y alien autoconf bison bc build-essential cpio dbus-user-session daemonize dwarves fakeroot \ 
     flex fontconfig gawk kmod libblkid-dev libffi-dev lxcfs libudev-dev libaio-dev libattr1-dev libelf-dev libpam-systemd \
     python3-dev python3-setuptools python3-cffi net-tools rsync snapd systemd-sysv sysvinit-utils uuid-dev zstd && \
@@ -572,7 +572,7 @@ RUN \
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked
 RUN printf '#!/bin/sh\nexit 0' > /usr/sbin/policy-rc.d && \
-    apt-get update -y && apt-get autoremove -y && \
+    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
     apt-get install -y --reinstall ca-certificates && \
     apt-get install -y software-properties-common && \
     apt-get update --fix-missing && apt-get install -f && \
@@ -626,7 +626,7 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y
+    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y
 RUN \
     apt-get --no-install-recommends -y install burpsuite finger hydra maltego metasploit-framework ncat nmap nikto rpcbind telnet wireshark
 RUN \
@@ -653,7 +653,7 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
+    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
     apt-get --no-install-recommends -y install apt-utils jq libdbus-1-dev libcairo2-dev libgirepository1.0-dev  libpython3-dev pkg-config python3-pip python3-venv && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
@@ -677,7 +677,7 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
+    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
     apt-get install --no-install-recommends -y jq python3-pip python3-venv && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
@@ -746,7 +746,7 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
+    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
     apt-get install --no-install-recommends -y apt-utils ca-certificates curl gnupg2 apt-transport-https lsb-release wget && \
     wget "https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb" && \
     mv packages-microsoft-prod.deb /var/cache/apt/archives && \
@@ -775,7 +775,7 @@ USER r00t
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
-    RUN apt-get update -y && apt-get autoremove -y && \
+    RUN apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
     apt-get install --no-install-recommends -y dotnet-sdk-7.0  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
@@ -828,7 +828,7 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
+    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
     apt-get install --no-install-recommends -y ca-certificates curl lsb-release gpg && \
     mkdir -pv /etc/apt/keyrings
 RUN \
@@ -842,7 +842,7 @@ RUN \
 RUN echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bullseye stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
+    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
     apt-get install --no-install-recommends -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin gnupg && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
@@ -905,7 +905,7 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
+    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
     apt-get install --no-install-recommends -y curl && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
@@ -916,7 +916,7 @@ RUN \
 RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | tee /etc/apt/sources.list.d/brave-browser-release.list 
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
+    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
     apt-get install --no-install-recommends -y brave-browser dolphin virtualbox vlc x11-apps  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
@@ -968,7 +968,7 @@ RUN apt-get -y update && apt-get -y upgrade && \
 #     locale-gen && update-locale 
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
+    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
     apt-get install --no-install-recommends -y xrdp xfce4 xfce4-goodies && \
     # MUST install this separately and AFTER xfce or xfce prompting to choose default dm will hang/break build
     apt-get install --no-install-recommends -y lightdm && \
@@ -977,7 +977,7 @@ RUN \
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     # echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
-    apt-get update -y && apt-get autoremove -y && \
+    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
     apt-get install --no-install-recommends -y kali-defaults kali-root-login desktop-base kali-win-kex && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
@@ -1029,7 +1029,7 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
+    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
     apt-get install --no-install-recommends -y nvidia-cuda-toolkit && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb   
@@ -1058,7 +1058,7 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get autoremove -y && \
+    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
     apt-get install --no-install-recommends -y nvidia-cuda-toolkit && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb   
