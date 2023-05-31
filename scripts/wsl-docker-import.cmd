@@ -1041,7 +1041,7 @@ IF /I "!opti0ns!"=="home" (
             SET "default_wsl_distro=y"
         )
         
-        SET "options=options"
+        SET "opti0ns=options"
         @REM SET "go2= docker_image_pull"
         SET "go2= home_banner"
         GOTO switchboard
