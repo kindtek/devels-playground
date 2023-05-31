@@ -134,6 +134,10 @@ IF NOT "!wsl_distro!"=="official-ubuntu-latest" (
 SET "docker_image_id_path=!install_location!\.image_id"
 SET "docker_container_id_path=!install_location!\.container_id"
 SET "image_save_path=!save_location!\!wsl_distro!.tar"
+SET "diskman_file_path=!install_location!\diskman.ps1"
+SET "diskshrink_file_path=!install_location!\diskshrink.ps1"
+
+SET "image_save_path=!save_location!\!wsl_distro!.tar"
 @REM directory structure: 
 @REM !mount_drive!:\!install_directory!\!save_directory!
 @REM ie: C:\wsl-wsl_distros\docker
@@ -215,10 +219,41 @@ mkdir !install_location! > nul 2> nul
 ECHO:
 SET "docker_image_do="
 ECHO initializing the image container...
-@REM @TODO: handle WSL_DOCKER_IMG_ID case of multiple ids returned from docker images query
+@REM save id to file and then set wsl_docker_img_id with file contents
 ECHO "docker images -aq !image_repo_name_tag! > !docker_image_id_path!"
 docker images -aq !image_repo_name_tag! > !docker_image_id_path!
 SET /P WSL_DOCKER_IMG_ID_RAW=< !docker_image_id_path!
+@REM create diskman.ps1 file
+ECHO select vdisk file="!install_location!\ext4.vhdx" > !diskman_file_path!
+ECHO attach vdisk readonly >> !diskman_file_path!
+ECHO compact vdisk >> !diskman_file_path!
+ECHO detach vdisk >> !diskman_file_path!
+@REM create diskshrink.ps1 file
+ECHO try { > !diskshrink_file_path!
+ECHO    # Self-elevate the privileges >> !diskshrink_file_path!
+ECHO    if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator')) { >> !diskshrink_file_path!
+ECHO        if ([int](Get-CimInstance -Class Win32_OperatingSystem | Select-Object -ExpandProperty BuildNumber) -ge 6000) { >> !diskshrink_file_path!
+ECHO            $CommandLine = "-File `"" + $MyInvocation.MyCommand.Path + "`" " + $MyInvocation.UnboundArguments >> !diskshrink_file_path!
+ECHO            Start-Process -FilePath PowerShell.exe -Verb Runas -WindowStyle "Maximized" -ArgumentList $CommandLine >> !diskshrink_file_path!
+ECHO            Exit >> !diskshrink_file_path!
+ECHO        } >> !diskshrink_file_path!
+ECHO    } >> !diskshrink_file_path!
+ECHO }  catch {} >> !diskshrink_file_path!
+ECHO docker system df >> !diskshrink_file_path!
+ECHO docker builder prune -af --volumes >> !diskshrink_file_path!
+ECHO docker system prune -af --volumes >> !diskshrink_file_path!
+ECHO stop-service -name docker* -force;  >> !diskshrink_file_path!
+ECHO # wsl --exec sudo shutdown -h now; >> !diskshrink_file_path!
+ECHO # wsl --exec sudo shutdown -r 0; >> !diskshrink_file_path!
+ECHO wsl --shutdown; >> !diskshrink_file_path!
+ECHO stop-service -name wsl* -force -ErrorAction SilentlyContinue; >> !diskshrink_file_path!
+ECHO stop-process -name docker* -force -ErrorAction SilentlyContinue; >> !diskshrink_file_path!
+ECHO stop-process -name wsl* -force -ErrorAction SilentlyContinue; >> !diskshrink_file_path!
+ECHO Invoke-Command -ScriptBlock { diskpart /s !install_location!\diskman.ps1 } -ArgumentList "-Wait -Verbose"; >> !diskshrink_file_path!
+ECHO start-service wsl*; >> !diskshrink_file_path!
+ECHO start-service docker*; >> !diskshrink_file_path!
+ECHO write-host 'done.'; >> !diskshrink_file_path!
+ECHO read-host >> !diskshrink_file_path!
 @REM ECHO WSL_DOCKER_IMG_ID_RAW: !WSL_DOCKER_IMG_ID_RAW!
 SET WSL_DOCKER_IMG_ID=!WSL_DOCKER_IMG_ID_RAW!
 del !docker_container_id_path! > nul 2> nul
