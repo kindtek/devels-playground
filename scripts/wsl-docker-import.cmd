@@ -1126,12 +1126,13 @@ IF /I "!opti0ns!"=="exit" (
 @REM 
 @REM SET "exit_module=switchboard"
 SET "handle=switchboard"
-IF "DVLP_DEBUG"=="y" (
-    @REM =error_restart_prompt"
-    ECHO "options: !options!"
-    ECHO "opti0ns: !opti0ns!"
-    ECHO "go2: !go2!"
-
+IF "!DVLP_DEBUG!"=="y" (
+    ECHO "OPTIONS PARSE: !options!"
+    ECHO "OPTI0NS PARSE: !opti0ns!"
+    ECHO "go2 PARSE: !go2!"
+    ECHO "MOD: !module!"
+    ECHO "EXIT_MOD: !exit_module!"
+    ECHO HANDLE !handle!
 )
 IF NOT "!opti0ns!"=="" (
     SET "options=!opti0ns!"
