@@ -2,7 +2,7 @@
 @REM this file is solid but will be deprecated once wsl-import.ps1 is fixed
 color 0F
 SETLOCAL EnableDelayedExpansion
-SET "DVLP_DEBUG=y"
+SET "DVLP_DEBUG=n"
 :redo
 SET "module=main"
 SET wsl_version_int=2
