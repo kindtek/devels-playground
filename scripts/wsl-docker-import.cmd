@@ -1087,9 +1087,9 @@ IF /I "!opti0ns!"=="wsl" (
     ECHO default flag changed
     IF "!wsl!"=="y" (
         SET "wsl=n"
-        ECHO "toggle wsl import [ON]"
-    ) ELSE (
         ECHO "toggle wsl import [OFF]"
+    ) ELSE (
+        ECHO "toggle wsl import [ON]"
         SET "wsl=y"
     )
     SET "opti0ns=options"
@@ -1102,9 +1102,9 @@ IF /I "!opti0ns!"=="debug" (
     SET "DVLP_DEBUG=n"
     IF "!DVLP_DEBUG!"=="y" (
         SET "DVLP_DEBUG=n"
-        ECHO "toggle debug output [ON]"
-    ) ELSE (
         ECHO "toggle debug output [OFF]"
+    ) ELSE (
+        ECHO "toggle debug output [ON]"
         SET "DVLP_DEBUG=y"
     )
     SET "opti0ns=options"
