@@ -197,9 +197,9 @@ ECHO ========================================================================
 ECHO:
 SET "docker_image_do="
 ECHO pushing image (!image_service!)...
-ECHO docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!wsl_distro!/docker-compose.yaml push !image_service!
+ECHO docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml push !image_service!
 @REM build the image
-docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!wsl_distro!/docker-compose.yaml push !image_service!
+docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml push !image_service!
 GOTO home_banner
 
 :docker_image_run_from_pull
