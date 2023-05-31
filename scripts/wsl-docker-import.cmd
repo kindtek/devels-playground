@@ -164,7 +164,8 @@ ECHO docker pull !image_repo_name_tag!
 @REM pull the image
 docker pull !image_repo_name_tag!
 IF "!wsl!"=="n" (
-    @REM GOTO home_banner
+    SET "options=options"
+    GOTO home_banner
 ) ELSE (
     GOTO docker_image_run_from_pull
 )
@@ -202,6 +203,7 @@ ECHO pushing image (!image_service!)...
 ECHO docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml push !image_service!
 @REM build the image
 docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml push !image_service!
+SET "options=options"
 GOTO home_banner
 
 :docker_image_run_from_pull
@@ -448,14 +450,14 @@ FOR /F "tokens=*" %%g IN ( !wsl_in! ) DO (
     SET wsl_out=%%g
     @REM SET wsl_out=!wsl_out:~-10!
     IF "!DVLP_DEBUG!"=="y" (
-        ECHO "!wsl_in!"
-        ECHO "!wsl_out!"
-        ECHO "!test_string!"
+        ECHO "wsl_in: !wsl_in!"
+        ECHO "wsl_out: : !wsl_out!"
+        ECHO "test_string: !test_string!"
     )
 )
 IF "!DVLP_DEBUG!"=="y" (
-    ECHO "!wsl_out!"
-    ECHO "!test_string!"
+    ECHO "wsl_out: !wsl_out!"
+    ECHO "test_string: !test_string!"
 )
 IF "!wsl_out!"=="!test_string!" (
     SET "wsl_distro_test_pass=y"
@@ -952,10 +954,11 @@ SET "opti0ns=!options!"
 IF "!DVLP_DEBUG!"=="y" (
     ECHO "OPTIONS PARSE: !options!"
     ECHO "OPTI0NS PARSE: !opti0ns!"
-ECHO "go2 PARSE: !go2!"
+    ECHO "go2 PARSE: !go2!"
     ECHO "MOD: !module!"
     ECHO "EXIT_MOD: !exit_module!"
     ECHO HANDLE !handle!
+    ECHO "WSL: !wsl!"
 )
 
 IF /I "!opti0ns!"=="b" (
@@ -992,8 +995,8 @@ IF /I "!image_built!"=="y" (
     IF /I "!opti0ns!"=="push" (
         SET "docker_image_do=docker_image_push"
         SET "go2=set_paths"
+        GOTO switchboard
     )
-    GOTO switchboard
 )
 IF /I "!opti0ns!"=="c" (
     SET "opti0ns=config"
