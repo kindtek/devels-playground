@@ -55,10 +55,7 @@ RUN echo "Binary::apt-get::APT::Install-Recommends '0'; \
 # import/install basic utils from layer cache if possible and delete .deb archives from container when finished
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y 
-    # && 
-RUN \
-    apt-get autoremove -y && \
+    apt-get update -y && apt-get autoremove -y && \
     apt-get install --no-install-recommends -y git && \
     apt-get --reinstall -y install ca-certificates && \
     rm -rf /var/lib/apt/lists && \
