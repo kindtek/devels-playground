@@ -6,6 +6,7 @@ SET "DVLP_DEBUG=n"
 :redo
 SET "module=main"
 SET wsl_version_int=2
+SET "wsl_version=!wsl_version_int!"
 SET save_directory=docker2wsl
 SET mount_drive=C
 @REM SET image_repo=_
