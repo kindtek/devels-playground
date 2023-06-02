@@ -289,7 +289,10 @@ function start_installer_daemon {
     # Write-Host "$([char]27)[2J" 
     wsl --install --no-launch
     wsl --update --pre-release
-    # wsl -s Ubuntu
+    $default_wsl_distro = wsl --list | Where-Object { $_ -and $_ -ne '' -and $_ -match '(.*)\(Default\)' }
+    $default_wsl_distro = $default_wsl_distro -replace '^(.*)(\(Default\))$', '$1'
+    wsl -s Ubuntu
+    wsl -s $default_wsl_distro
 
     # Write-Host "$([char]27)[2J" 
     $new_install = install_dependencies $git_path
