@@ -209,6 +209,7 @@ ECHO building image (!image_service!)...
 @REM build the image
 docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache repo repo-kernel
 docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !image_service!
+
 SET "image_built=y"
 IF "!wsl!"=="n" (
     SET "options=options"
@@ -438,6 +439,9 @@ wsl --import !wsl_distro! !install_location! !image_save_path! --version !wsl_ve
 @REM     SET "failed_before=y"
 @REM     GOTO error_restart_prompt
 @REM )
+IF "!image_service_suffix!"=="kernel" (
+    wsl -d !wsl_distro! --cd '/r00t/dvlw/dvlp/kernels/linux' --exec "bash install-kernel.sh ^^"%USERPROFILE%^^" latest"
+)
 ECHO DONE
 IF "!default_wsl_distro!"=="y" (
     GOTO set_default_wsl_distro
