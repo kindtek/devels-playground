@@ -295,7 +295,7 @@ function start_installer_daemon {
     Write-Host "temporarily switching default WSL distro from `"$default_wsl_distro`" to Ubuntu"
     wsl -s Ubuntu
     # Write-Host "$([char]27)[2J" 
-    Write-Host "switching default WSL distro back to `"$default_wsl_distro`"
+    Write-Host "switching default WSL distro back to `"$default_wsl_distro`""
     wsl -s "$default_wsl_distro"
     $new_install = install_dependencies $git_path
     if ($new_install -eq $true) {
