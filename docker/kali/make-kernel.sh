@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+set +x
 timestamp=$(date -d "today" +"%Y%m%d%H%M%S")
 label=make-kernel
 win_user=$1
@@ -7,7 +7,6 @@ kernel_type=$2
 kernel_feature=$3
 config_file=${4}
 filename="$label${kernel_type:+-$kernel_type}${kernel_feature:+-$kernel_feature}-$timestamp"
-set +x
 while [ "$win_user" = "" ] || [ ! -d "/mnt/c/users/$win_user" ]; do
     if [ "$win_user" != "" ]; then
         echo "could not find C:\\users\\$win_user"
