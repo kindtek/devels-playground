@@ -49,12 +49,11 @@ timestamp=${5}
                     --build-arg CONFIG_FILE="${config_file}" \
                     --build-arg DOCKER_BUILD_TIMESTAMP="${timestamp}" \
                     --progress=plain \
+                    . 2>&1 || exit
+<<'scratchpad'
                     --no-cache-filter=dvlp_repo \
                     --no-cache-filter=dvlp_repo-build \
                     --no-cache-filter=dvlp_repo-build-kernel \
-                    . 2>&1 || exit
-<<'scratchpad'
-
 scratchpad
 # 
 #                -----------------------------------------------                   #
