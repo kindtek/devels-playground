@@ -150,7 +150,7 @@ function require_docker_online {
                 docker info
             }
             if ( $docker_tries -eq 1 -And $docker_online -eq $false ) {
-                    Write-Host "Error messages are expected when first starting Docker. Please wait ..."
+                Write-Host "Error messages are expected when first starting Docker. Please wait ..."
             }
             if ($docker_online -eq $false -And (($docker_tries % 2) -eq 0)) {
                 write-host ""
@@ -178,7 +178,7 @@ function require_docker_online {
                 }
                 else {
                     $check_again = Read-Host "Keep trying to connect to Docker? ([y]n)"
-                    if ($check_again -ine 'n' -And $check_again -ine 'no'){
+                    if ($check_again -ine 'n' -And $check_again -ine 'no') {
                         Write-Host "resetting Docker engine ....."
                         Start-Process DockerCli.exe -SwitchDaemon
                         Write-Host ""
@@ -215,28 +215,28 @@ function require_docker_online {
                 # try extraordinary measures
                 # $check_again = Read-Host "Try resetting default distro and restarting Docker? ([y]n)"
                 Write-Host ""
+                try {
+                    Start-Process "Docker Desktop.exe" -WindowStyle "Hidden"
+                }
+                catch {
                     try {
-                        Start-Process "Docker Desktop.exe" -WindowStyle "Hidden"
+                        Start-Process "c:\docker\Docker Desktop.exe" -WindowStyle "Hidden"
                     }
                     catch {
                         try {
-                            Start-Process "c:\docker\Docker Desktop.exe" -WindowStyle "Hidden"
+                            Start-Process "c:\docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
                         }
                         catch {
                             try {
-                                Start-Process "c:\docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
+                                Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
                             }
-                            catch {
-                                try {
-                                    Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
-                                }
-                                catch {} 
-                            }
+                            catch {} 
                         }
                     }
-                    Write-Host ""
-                    Start-Sleep 20
-                    Write-Host ""
+                }
+                Write-Host ""
+                Start-Sleep 20
+                Write-Host ""
                 
                 
             }
@@ -246,7 +246,7 @@ function require_docker_online {
         }
         # } while (-Not $docker_online )
     } while ( -Not $docker_online -And ( $check_again -ine 'n' -And $check_again -ine 'no') )
-    if  ( -Not $docker_online -And ( $check_again -ine 'n' -Or $check_again -ine 'no') ) {
+    if ( -Not $docker_online -And ( $check_again -ine 'n' -Or $check_again -ine 'no') ) {
         Write-Host "Could not start Docker. You may need to restart your computer"
         reboot_prompt
     }
@@ -294,9 +294,11 @@ function start_installer_daemon {
     $default_wsl_distro = $default_wsl_distro -replace '^(.*)(\s\(Default\))$', '$1'
     Write-Host "temporarily switching default WSL distro from `"$default_wsl_distro`" to Ubuntu"
     wsl -s Ubuntu
+    Start-Sleep 8
     # Write-Host "$([char]27)[2J" 
     Write-Host "switching default WSL distro back to `"$default_wsl_distro`""
     wsl -s "$default_wsl_distro"
+    Start-Sleep 8
     $new_install = install_dependencies $git_path
     if ($new_install -eq $true) {
         Write-Host "`r`nSoftware installations complete! Restart may be needed to begin WSL import phase. `r`n`r`n" 
