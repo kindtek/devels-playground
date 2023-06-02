@@ -152,7 +152,15 @@ FOR /F "tokens=1* delims=-" %%a IN (
     )
     SET "image_distro=%%a"
 )
-SET "image_service=%image_tag:-=" & SET "image_service=%"
+@REM SET "image_service=%image_tag:-=" & SET "image_service=%"
+FOR /F "tokens=1* delims=-" %%G IN (
+    "%image_tag%" 
+) DO (
+    IF "!DVLP_DEBUG!"=="y" (
+        ECHO "parsed image service: %%H"
+    )
+    SET "image_service=%%H"
+)
 @REM do not try to build sources that are official
 IF "!image_repo!"=="_" (
     SET "docker_image_do=docker_image_pull"
