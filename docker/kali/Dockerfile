@@ -539,7 +539,7 @@ RUN \
     bash build-import-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}" && \
     rm -rf /r00t/dvlw/dvlp/kernels/linux/linux-* && \
     rm -rf /r00t/dvlw/dvlp/kernels/linux/zfs-* && \
-    rm -rf /boot && \
+    # rm -rf /boot && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 WORKDIR /hal
@@ -939,7 +939,7 @@ WORKDIR /hal
 USER ${_AGL}
 
 FROM dvlp_base-gui-lite AS dvlp_base-gui-lite-kernel
-COPY --from=dvlp_kernel-make ./kache/ ./kache/
+COPY --from=dvlp_kernel-make ./ ./
 
 #################
 # dvlp_base-gui #
@@ -992,7 +992,7 @@ USER ${_AGL}
 #################
 # building this will compile a kernel saved to /kache
 FROM dvlp_base-gui AS dvlp_base-gui-kernel
-COPY --from=dvlp_kernel-make ./kache/ ./kache/
+COPY --from=dvlp_kernel-make ./ ./
 
 # ######################
 # # dvlp_base-gui-kernel #
