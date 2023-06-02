@@ -482,15 +482,16 @@ SET "handle=wsl_distro_test"
 SET test_string=helloworld
 SET "wsl_distro_test_pass=n"
 SET wsl_in=wsl.exe -d !wsl_distro! --exec echo !test_string!
-FOR /F "tokens=*" %%g IN ( "!wsl_in!" ) DO (
-    SET wsl_out=%%g
-    @REM SET wsl_out=!wsl_out:~-10!
+SET "wsl_out="
+FOR /F %%g IN (!wsl_in!) DO (
+    @SET "wsl_out=%%g"
     IF "!DVLP_DEBUG!"=="y" (
         ECHO "wsl_in: !wsl_in!"
         ECHO "wsl_out: : !wsl_out!"
         ECHO "test_string: !test_string!"
     )
 )
+
 IF "!DVLP_DEBUG!"=="y" (
     ECHO "wsl_out: !wsl_out!"
     ECHO "test_string: !test_string!"
