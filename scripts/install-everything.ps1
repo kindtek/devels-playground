@@ -292,11 +292,11 @@ function start_installer_daemon {
     [Console]::OutputEncoding = [System.Text.Encoding]::Unicode
     $default_wsl_distro = wsl --list | Where-Object { $_ -and $_ -ne '' -and $_ -match '(.*)\(Default\)' }
     $default_wsl_distro = $default_wsl_distro -replace '^(.*)(\(Default\))$', '$1'
-    Write-Host "temporarily switching default WSL distro from $default_wsl_distro to Ubuntu"
+    Write-Host "temporarily switching default WSL distro from ^"$default_wsl_distro^" to Ubuntu"
     wsl -s Ubuntu
     # Write-Host "$([char]27)[2J" 
-    Write-Host "switching default WSL distro back to $default_wsl_distro"
-    wsl -s $default_wsl_distro
+    Write-Host "switching default WSL distro back to ^"$default_wsl_distro^""
+    wsl -s "$default_wsl_distro"
     $new_install = install_dependencies $git_path
     if ($new_install -eq $true) {
         Write-Host "`r`nSoftware installations complete! Restart may be needed to begin WSL import phase. `r`n`r`n" 
