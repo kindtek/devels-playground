@@ -140,6 +140,7 @@ COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
 RUN mkdir -pv kache && \
     mkdir -pv dvlw && \
     mkdir -pv dls && \
+    mkdir -pv .docker/run && \
     ln -fsv dvlw devels-workshop && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/docker/kali kdock && \
@@ -192,6 +193,7 @@ COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
 RUN mkdir -pv kache && \
     mkdir -pv dvlw && \
     mkdir -pv dls && \
+    mkdir -pv .docker/run && \
     ln -fsv dvlw devels-workshop && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/docker/kali kdock && \
@@ -244,6 +246,7 @@ COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/         ./mnt/
 
 RUN mkdir -pv dvlw && \
     mkdir -pv dls && \
+    mkdir -pv .docker/run && \
     ln -fsv dvlw devels-workshop && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/docker/kali kdock && \
