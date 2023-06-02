@@ -1,18 +1,17 @@
-@echo on
-SETLOCAL EnableDelayedExpansion
-
+@echo oFF
+@SETLOCAL EnableDelayedExpansion
 @REM this is useful for when docker refuses to start due to a bad wsl distro set as default or ...
 @REM ..if docker hangs when it tries to start
 @REM also try deleting the .docker folder in user directory (C:\Users\xxxx)
 SET "command_arg=%~1"
-IF "!command_arg!"!="" (
+IF "!command_arg!" NEQ "" (
     goto !command_arg!
 )
 SET prompt=prompt
 
 :prompt
 ECHO:
-ECHO  running this in linux fixes 90% of Docker connection problems: 
+ECHO  running this in linux fixes most Docker connection problems: 
 ECHO  'unset DOCKER_HOST'
 ECHO:
 ECHO:
@@ -42,13 +41,13 @@ IF "!command_arg!"=="" (
 )
 
 :u
-@REM force restart for docker containers
-@REM wsl --unregister docker-desktop
-@REM wsl --unregister docker-desktop-data
-docker update --restart=always docker-desktop
-docker update --restart=always docker-desktop-data
+@REM @REM force restart for docker containers
+wsl --unregister docker-desktop
+wsl --unregister docker-desktop-data
+@REM docker update --restart=always docker-desktop
+@REM docker update --restart=always docker-desktop-data
 "C:\Program Files\Docker\Docker\DockerCli.exe" -SwitchDaemon
-IF "!command_arg!"!="" (
+IF "!command_arg!" NEQ "" (
     goto quit
 )
 
@@ -76,7 +75,7 @@ IF "!command_arg!"=="" (
 :reboot
 @REM restart windows
 @REM shutdown -r -t 0
-IF "!command_arg!"!="" (
+IF "!command_arg!" NEQ "" (
     goto quit
 )
 
