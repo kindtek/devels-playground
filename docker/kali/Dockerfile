@@ -939,7 +939,11 @@ WORKDIR /hal
 USER ${_AGL}
 
 FROM dvlp_base-gui-lite AS dvlp_base-gui-lite-kernel
+USER r00t
+WORKDIR /
 COPY --from=dvlp_kernel-make ./ ./
+WORKDIR /hal
+USER ${_AGL}
 
 #################
 # dvlp_base-gui #
@@ -992,7 +996,11 @@ USER ${_AGL}
 #################
 # building this will compile a kernel saved to /kache
 FROM dvlp_base-gui AS dvlp_base-gui-kernel
+USER r00t
+WORKDIR /
 COPY --from=dvlp_kernel-make ./ ./
+WORKDIR /hal
+USER ${_AGL}
 
 # ######################
 # # dvlp_base-gui-kernel #
