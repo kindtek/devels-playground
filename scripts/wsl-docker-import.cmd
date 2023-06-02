@@ -144,7 +144,7 @@ SET "image_save_path=!save_location!\!wsl_distro!.tar"
 @REM ie: C:\wsl-wsl_distros\docker
 
 SET "dvlp_path=repos/!image_repo!/dvlw/dvlp"
-FOR /F "tokens=1 delims=-" %%a IN (
+FOR /F "tokens=1* delims=-" %%a IN (
     "%image_tag%" 
 ) DO (
     SET "image_distro=%%a"
