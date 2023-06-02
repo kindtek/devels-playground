@@ -503,9 +503,10 @@ SET "module=wsl_distro_test"
 SET "handle=wsl_distro_test"
 SET test_string=helloworld
 SET "wsl_distro_test_pass=n"
-wsl.exe -d !wsl_distro! --exec echo !test_string! > tmp_test_string
-SET /P wsl_out=<tmp_test_string
-DEL tmp_test_string
+SET "test_string_path=c:\users\%USERPROFILE%\kache\tst"
+wsl.exe -d !wsl_distro! --exec echo !test_string! > !test_string_path!
+SET /P wsl_out=<!test_string_path!
+DEL !test_string_path!
 @REM SET "wsl_out="
 @REM FOR /F %%g IN (!wsl_in!) DO (
 @REM     @SET "wsl_out=%%g"
