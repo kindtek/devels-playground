@@ -1001,7 +1001,7 @@ FROM dvlp_base-gui AS dvlp_base-gui-kernel
 USER r00t
 WORKDIR /
 COPY --from=dvlp_kernel-make ./boot/ ./boot/
-COPY --from=dvlp_kernel-make ./usr/src/include/ ./usr/src/include/
+COPY --from=dvlp_kernel-make ./usr/src/ ./usr/src/
 COPY --from=dvlp_kernel-make ./usr/lib/modules/ ./usr/lib/modules/
 WORKDIR /hal
 USER ${_AGL}
