@@ -199,7 +199,7 @@ docker pull !image_repo_name_tag!
 SET "build_args="
 IF "!image_service_suffix!"=="kernel" (
     @REM TODO: add prompt (when noninteractive) for kernel type/feature
-    SET "build_args=--build-arg WIN_USER=%USERPROFILE%"
+    SET "build_args=--build-arg WIN_USER=%USERNAME%"
     SET "build_args=!build_args! --build-arg KERNEL_TYPE=basic"
     @REM SET "build_args= !build_args! --build-arg KERNEL_FEATURE='zfs'"
 )
