@@ -152,7 +152,7 @@ FOR /F "tokens=1* delims=-" %%a IN (
     )
     SET "image_distro=%%a"
 )
-@REM SET "image_service=%image_tag:-=" & SET "image_service=%"
+SET "image_service_suffix=%image_tag:-=" & SET "image_service=%"
 FOR /F "tokens=1* delims=-" %%G IN (
     "%image_tag%" 
 ) DO (
@@ -196,12 +196,19 @@ ECHO docker pull !image_repo_name_tag!
 @REM pull the image to possibly save time building
 docker pull !image_repo_name_tag!
 @REM re-building repo
+SET "build_args="
+IF "!image_service_suffix!"=="kernel" (
+    @REM TODO: add prompt (when noninteractive) for kernel type/feature
+    SET "build_args=--build-arg WIN_USER=%USERPROFILE%"
+    SET "build_args=!build_args! --build-arg KERNEL_TYPE=basic"
+    @REM SET "build_args= !build_args! --build-arg KERNEL_FEATURE='zfs'"
+)
 ECHO docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache repo repo-kernel
-ECHO docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !image_service!
+ECHO docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !image_service!
 ECHO building image (!image_service!)...
 @REM build the image
 docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache repo repo-kernel
-docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !image_service!
+docker compose -f %HOMEDRIVE%%HOMEPATH%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !image_service!
 SET "image_built=y"
 IF "!wsl!"=="n" (
     SET "options=options"
