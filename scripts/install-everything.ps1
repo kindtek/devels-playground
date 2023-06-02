@@ -289,7 +289,7 @@ function start_installer_daemon {
     # Write-Host "$([char]27)[2J" 
     wsl --install --no-launch
     wsl --update --pre-release
-    wsl -s Ubuntu
+    # wsl -s Ubuntu
 
     # Write-Host "$([char]27)[2J" 
     $new_install = install_dependencies $git_path
