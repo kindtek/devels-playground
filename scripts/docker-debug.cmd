@@ -1,4 +1,4 @@
-@echo off
+@echo on
 SETLOCAL EnableDelayedExpansion
 
 @REM this is useful for when docker refuses to start due to a bad wsl distro set as default or ...
@@ -51,75 +51,6 @@ docker update --restart=always docker-desktop-data
 IF "!command_arg!"!="" (
     goto quit
 )
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-@REM -SwitchLinuxEngine
-@REM -SwitchWindowsEngine
-@REM -Start
-@REM -Stop
-@REM -SendDiagnostic
-@REM -ResetToDefault
-@REM -ResetCredential
-@REM -DownloadMobyLogs
-@REM -DownloadVpnKitLogs
-@REM -MoveVhd
-@REM -Mount=
-@REM -Unmount=
-@REM -Wait=
-@REM -SetMemory=
-@REM -SetCpus=
-@REM -SetDNS=
-@REM -SetIP=
-@REM -SetDaemonJson=
-@REM -SetWindowsDaemonJson=
-
-@REM dockerd --containerd /var/run/dev/docker-containerd.sockgoto prompt
-@REM file::
-@REM {
-@REM   "default-runtime": "runc",
-@REM   "runtimes": {
-@REM     "custom": {
-@REM       "path": "/usr/local/bin/my-runc-replacement",
-@REM       "runtimeArgs": [
-@REM         "--debug"
-@REM       ]
-@REM     },
-@REM     "runc": {
-@REM       "path": "runc"
-@REM     }
-@REM   }
-@REM }
-@REM 
-@REM {
-@REM   "builder": {
-@REM     "gc": {
-@REM       "defaultKeepStorage": "20GB",
-@REM       "enabled": true
-@REM     }
-@REM   },
-@REM   "experimental": false,
-@REM   "features": {
-@REM     "buildkit": true
-@REM   }
-@REM }
 
 @REM  dockerd --add-runtime runc=runc --add-runtime custom=/usr/local/bin/my-runc-replacement
 
