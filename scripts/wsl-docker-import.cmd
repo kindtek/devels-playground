@@ -147,6 +147,9 @@ SET "dvlp_path=repos/!image_repo!/dvlw/dvlp"
 FOR /F "tokens=1* delims=-" %%a IN (
     "%image_tag%" 
 ) DO (
+    IF "!DVLP_DEBUG!"=="y" (
+        ECHO "parsed image distro: %%a"
+    )
     SET "image_distro=%%a"
 )
 SET "image_service=%image_tag:-=" & SET "image_service=%"
