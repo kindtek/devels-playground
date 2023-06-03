@@ -145,7 +145,7 @@ function set_docker_config {
 function require_docker_online {
     $docker_tries = 0
     $docker_online = $false
-    $refresh_envs = "$env:HOME/repos/kindtek/RefreshEnv.cmd"
+    $refresh_envs = "$env:USERPROFILE/repos/kindtek/RefreshEnv.cmd"
     $host.UI.RawUI.ForegroundColor = "Black"
     $host.UI.RawUI.BackgroundColor = "DarkRed"
     Write-Host "`r`n`r`nWaiting for Docker to come online ..."  
@@ -336,7 +336,7 @@ function start_installer_daemon {
 
     $repo_src_owner = 'kindtek'
     $repo_git_name = 'dvlw'
-    $git_path = "$env:HOME\repos\$repo_src_owner\$repo_git_name"
+    $git_path = "$env:USERPROFILE\repos\$repo_src_owner\$repo_git_name"
     # log default distro
     $global:ORIG_DEFAULT_WSL_DISTRO = wsl --list | Where-Object { $_ -and $_ -ne '' -and $_ -match '(.*)\(Default\)' }
     $global:ORIG_DEFAULT_WSL_DISTRO = $global:ORIG_DEFAULT_WSL_DISTRO -replace '^(.*)(\s\(Default\))$', '$1'
