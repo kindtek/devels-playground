@@ -131,8 +131,7 @@ set "timestamp_date=%Year%%Month%%Day%"
 SET "timestamp_time=%Hour%%Minute%%Second%%TIME:*.=%"
 SET "install_location=!install_root_dir!\!timestamp_date!\!timestamp_time!"
 SET "save_location=!save_location!"
-IF NOT "!wsl_distro!"=="kalilinux-kali-rolling-latest" (
-    set var=%var:~-1%
+IF "!wsl_distro!" NEQ "kalilinux-kali-rolling-latest" (
     SET "wsl_distro=!wsl_distro!-!timestamp_time:~-3!"
 )
 SET "docker_image_id_path=!install_location!\.image_id"
@@ -503,7 +502,7 @@ IF "!interactive!"=="y" (
     IF /I "!wsl_launch!"=="yes" (
         SET "wsl_launch=y"
     ) 
-    IF /I NOT "!wsl_launch!"=="y" (
+    IF /I "!wsl_launch!" NEQ "y" (
         GOTO home_banner
     ) 
 )
@@ -538,11 +537,11 @@ IF "!wsl_out!"=="!test_string!" (
 )
 
 :wsl_set_conversion_version
-IF NOT "!handle!"=="wsl_distro_launch" (
+IF "!handle!" NEQ "wsl_distro_launch" (
     SET "handle=wsl_set_conversion_version"
 )
 SET "module=wsl_set_conversion_version"
-IF NOT !set_wsl_conv! EQU 1 (
+IF !set_wsl_conv! NEQ 1 (
     IF NOT !set_wsl_conv! EQU 2 (
         SET /A "set_wsl_conv=%wsl_version_int%%% 2 + 1" 
     )
@@ -550,12 +549,12 @@ IF NOT !set_wsl_conv! EQU 1 (
 
 :wsl_distro_error_handler
 SET "module=wsl_distro_error_handler"
-IF NOT "!handle!"=="wsl_distro_test" (
+IF "!handle!" NEQ "wsl_distro_test" (
     SET "handle=wsl_distro_error_handler"
 )
 IF !set_wsl_conv! EQU 0 (
-    IF NOT !set_wsl_conv! EQU 1 (
-        IF NOT !set_wsl_conv! EQU 2 (
+    IF !set_wsl_conv! NEQ 1 (
+        IF !set_wsl_conv! NEQ 2 (
             GOTO wsl_set_conversion_version
         )
     )
@@ -573,7 +572,7 @@ IF "!wsl_distro_test_pass!"=="n" (
         IF /I  "!convert!"=="yes" (
             SET "convert=y"
         )
-        IF NOT "!convert!"=="y" (
+        IF NEQ "!convert!"=="y" (
             ECHO !wsl_distro! failed to import.
             SET "options=options"
             GOTO wsl_delete_prompt
@@ -643,7 +642,7 @@ SET /P "image_repo=image repository: (!image_repo_mask!) $ "
 SET "old_image_name_tag=!image_name_tag!"
 SET /P "image_name_tag=image name/tag in !image_repo!: (!image_name!:!image_tag!) $ "
 @REM reset image_built flag if the image_name_tag changes
-IF NOT "!old_image_name_tag!"=="!image_name_tag!" (
+IF "!old_image_name_tag!" NEQ "!image_name_tag!" (
     SET "docker_image_built=n"
 )
 IF "!DVLP_DEBUG!"=="y" (
@@ -795,12 +794,12 @@ ECHO:
 SET "module=home_prompt"
 SET "prompt_type=home"
 SET "docker_do="
-IF NOT "!handle!"=="home_banner" (
+IF "!handle!" NEQ "home_banner" (
     SET "handle=home_prompt"
 )
 SET above=above
 IF "!interactive!"=="n" (
-    IF NOT "!image_name_tag!"=="kali-rolling:latest" (
+    IF "!image_name_tag!" NEQ "kali-rolling:latest" (
         @REM official repo has no repo name in address/url
         SET "options=build"
         GOTO options_parse
@@ -900,7 +899,7 @@ IF "!image_repo!"=="_" (
 @REM     SET "options=!home_default_option!"
 @REM     SET "confirm="
 @REM     SET /P "confirm=$ "
-@REM     IF NOT "!confirm!"=="" (
+@REM     IF "!confirm!" NEQ "" (
 @REM         SET "options=!confirm!"
 @REM         IF "!DVLP_DEBUG!"=="y" (
 @REM             ECHO "options set to !confirm! (confirm)"
@@ -977,7 +976,7 @@ IF "!interactive!"=="y" (
         ECHO        e[x]it      exit
         ECHO:
         IF /I "!options!"=="options" (
-            IF NOT "!home_default_option!"=="" (
+            IF "!home_default_option!" NEQ "" (
                 IF "DVLP_DEBUG"=="y" (
                     ECHO "options=home_default_option: !options!"
                 )
@@ -995,7 +994,7 @@ IF "!interactive!"=="y" (
     ECHO (!home_default_option!^^^)
     SET "confirm="
     SET /P "confirm="
-    IF NOT "!confirm!"=="" (
+    IF "!confirm!" NEQ "" (
         SET "options=!confirm!"
         IF "!DVLP_DEBUG!"=="y" (
             ECHO "options set to !confirm! (confirm)"
@@ -1018,7 +1017,7 @@ IF "!interactive!"=="y" (
     SET "options=!home_default_option!"
 )
 :options_parse
-IF NOT "!handle!"=="options_prompt" (
+IF "!handle!" NEQ "options_prompt" (
     SET "handle=options_parse"
 )
 color 0F
@@ -1226,11 +1225,11 @@ IF "!DVLP_DEBUG!"=="y" (
     ECHO "EXIT_MOD: !exit_module!"
     ECHO HANDLE !handle!
 )
-IF NOT "!opti0ns!"=="" (
+IF "!opti0ns!" NEQ "" (
     SET "options=!opti0ns!"
 )
 
-IF NOT "!go2!"=="" (
+IF "!go2!" NEQ "" (
     GOTO !go2!
 ) ELSE (
     GOTO home_banner
@@ -1357,7 +1356,7 @@ IF "!interactive!"=="n" (
 SET "failed_before=y"
 ECHO:
 :program_restart_prompt
-IF NOT "!handle!"=="error_restart_prompt" (
+IF "!handle!" NEQ "error_restart_prompt" (
     SET "handle=program_restart_prompt"
 )
 SET "prompt_type=program_restart_prompt"
