@@ -146,6 +146,7 @@ function set_docker_config {
 function require_docker_online {
     $docker_tries = 0
     $docker_online = $false
+    $refresh_envs = "$HOME/repos/kindtek/RefreshEnv.cmd"
     $host.UI.RawUI.ForegroundColor = "Black"
     $host.UI.RawUI.BackgroundColor = "DarkRed"
     Write-Host "`r`n`r`nWaiting for Docker to come online ..."  
@@ -157,18 +158,21 @@ function require_docker_online {
         try {
             ([void]( New-Item -path alias:'Docker Desktop' -Value 'C:\Program Files\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
             ([void]( New-Item -path alias:'Docker Desktop.exe' -Value 'C:\Program Files\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
+            powershell.exe -Command $refresh_envs | Out-Null
             Start-Process "C:\Program Files\docker\docker\Docker Desktop.exe" -WindowStyle "Hidden"
         }
         catch {
             try {
                 ([void]( New-Item -path alias:'Docker Desktop' -Value 'c:\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                 ([void]( New-Item -path alias:'Docker Desktop.exe' -Value 'c:\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
+                powershell.exe -Command $refresh_envs | Out-Null
                 Start-Process "c:\docker\docker\Docker Desktop.exe" -WindowStyle "Hidden"
             }
             catch {
                 try {
                     ([void]( New-Item -path alias:'Docker Desktop' -Value ':\docker\docker desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                     ([void]( New-Item -path alias:'Docker Desktop.exe' -Value 'c:\docker\docker desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
+                    powershell.exe -Command $refresh_envs | Out-Null
                     Start-Process "c:\docker\docker desktop.exe" -WindowStyle "Hidden"
                 }
                 catch {} 
