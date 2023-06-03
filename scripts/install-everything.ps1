@@ -132,9 +132,7 @@ function set_docker_config {
         $jcurrent = $config_json.integratedWslDistros
         $new_distro = @"
             [
-                {
-                    "integratedWslDistros":"$new_integrated_distro"
-                }
+                "integratedWslDistros":"$new_integrated_distro"
             ]
 "@
         $jnew = ConvertFrom-Json -InputObject $new_distro
