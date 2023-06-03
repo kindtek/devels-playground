@@ -114,20 +114,19 @@ function set_docker_config {
     $config_file = "$env:APPDATA\Docker\settings.json"
     $config_json = Get-Content -Raw "$config_file" | ConvertFrom-JSON
     # $config_json = ConvertFrom-JSON (Get-Content "$config_file")
-    $config_json.disableTips = "true"
-    $config_json.disableUpdate = "false"
-    $config_json.autoDownloadUpdates = "true"
-    $config_json.displayedTutorial = "true"
-    $config_json.enableIntegrationWithDefaultWslDistro = "true"
-    # $config_json.kubernetesEnabled = "true"
-    $config_json.autoStart = "true"
-    $config_json.useWindowsContainers = "false"
-    $config_json.wslEngineEnabled = "true"
-    $config_json.openUIOnStartupDisabled = "false"
-    $config_json.skipUpdateToWSLPrompt = "true"
-    $config_json.skipWSLMountPerfWarning = "true"
+    $config_json.disableTips = true
+    $config_json.disableUpdate = false
+    $config_json.autoDownloadUpdates = true
+    $config_json.displayedTutorial = true
+    $config_json.enableIntegrationWithDefaultWslDistro = true
+    # $config_json.kubernetesEnabled = true
+    $config_json.autoStart = true
+    $config_json.useWindowsContainers = false
+    $config_json.wslEngineEnabled = true
+    $config_json.openUIOnStartupDisabled = false
+    $config_json.skipUpdateToWSLPrompt = true
+    $config_json.skipWSLMountPerfWarning = true
     $config_json.activeOrganizationName = "kindtek"
-
     if ("$new_integrated_distro" -ne "") {
         $jcurrent = $config_json.integratedWslDistros
         $new_distro = @"
