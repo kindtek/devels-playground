@@ -126,8 +126,9 @@ function set_docker_config {
     $config_json.openUIOnStartupDisabled = "false"
     $config_json.skipUpdateToWSLPrompt = "true"
     $config_json.skipWSLMountPerfWarning = "true"
+    $config_json.activeOrganizationName = "kindtek"
 
-    if ("$new_integrated_distro" -eq "") {
+    if ("$new_integrated_distro" -ne "") {
         $jcurrent = $config_json.integratedWslDistros
         $new_distro = @"
             [
