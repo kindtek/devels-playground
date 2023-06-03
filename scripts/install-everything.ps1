@@ -182,8 +182,7 @@ function require_docker_online {
             }
         }
     }
-    :nested_do
-    do {    
+:nested_do do {    
         try {
             # launch docker desktop and keep it open 
             $docker_tries++
