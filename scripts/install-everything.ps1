@@ -128,7 +128,7 @@ function set_docker_config {
     $config_json.skipUpdateToWSLPrompt = "true"
     $config_json.skipWSLMountPerfWarning = "true"
 
-    if ("$new_integrated_distro" -eq ""){
+    if ("$new_integrated_distro" -eq "") {
         $jcurrent = $config_json.integratedWslDistros
         $new_distro = @"
             [
@@ -182,7 +182,7 @@ function require_docker_online {
             }
         }
     }
-:nested_do
+    :nested_do
     do {    
         
           
@@ -216,10 +216,12 @@ function require_docker_online {
                 # automatically restart docker on try 3 then prompt for restart after that
                 if ( $docker_tries -ge 6 ) {
                     $restart = Read-Host "Restart docker? ([y]n)"
-                } else {
-                    if ( $docker_tries -le 3 ){
+                }
+                else {
+                    if ( $docker_tries -le 3 ) {
                         $restart = 'n'
-                    } else {
+                    }
+                    else {
                         $restart = 'y'
                     }
                 }
@@ -356,8 +358,8 @@ function start_installer_daemon {
     # [Console]::OutputEncoding = [System.Text.Encoding]::Unicode
     # $default_wsl_distro = wsl --list | Where-Object { $_ -and $_ -ne '' -and $_ -match '(.*)\(Default\)' }
     # $default_wsl_distro = $default_wsl_distro -replace '^(.*)(\s\(Default\))$', '$1'
-    # Write-Host "temporarily switching default WSL distro from `"$default_wsl_distro`" to Ubuntu"
-    # wsl -s Ubuntu
+    # Write-Host "temporarily switching default WSL distro from `"$default_wsl_distro`" to kali-linux"
+    # wsl -s kali-linux
     # Start-Sleep 8
     # # Write-Host "$([char]27)[2J" 
     # Write-Host "switching default WSL distro back to `"$default_wsl_distro`""
