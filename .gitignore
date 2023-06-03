@@ -15,3 +15,11 @@ dvlp/docker/ubuntu/ubuntu22-kernel-linux-kernel-6-28.tar
 **/install-kindtek-devels-workshop.ps1
 dvlp/kernels/linux/kache
 dvlp/kernels/linux-build*
+.dvlp-installed
+.github-installed
+.winget-installed
+.wterminal-installed
+.vscode-installed
+.python-installed
+.docker-installed
+get-latest-winget.ps1
