@@ -288,6 +288,9 @@ IF "!WSL_DOCKER_CONTAINER_ID!"=="" (
     SET "options=options"
     GOTO error_restart_prompt
 )
+IF "!wsl!"!="y" (
+    GOTO home_banner
+)
 
 :docker_image_run_from_build
 SET "module=docker_image_run_from_build"
@@ -349,6 +352,9 @@ IF "!WSL_DOCKER_CONTAINER_ID!"=="" (
     SET failed_before=y
     SET "options=options"
     GOTO error_restart_prompt
+)
+IF "!wsl!"!="y" (
+    GOTO home_banner
 )
 
 :docker_image_export
@@ -445,7 +451,7 @@ IF "!image_service_suffix!"=="kernel" (
     wsl -d !wsl_distro! --cd '/r00t/dvlw/dvlp/kernels/linux' --exec "bash install-kernel.sh ^^"%USERPROFILE%^^" latest"
 )
 @REM add !wsl_distro! to Docker integrated WSL distro list
-powershell -Command ". ..\dvlw\scripts\install-everything.ps1; set_docker_config(!wsl_distro!);"
+powershell -Command ". ..\..\dvlw\scripts\install-everything.ps1; set_docker_config(!wsl_distro!);"
 ECHO DONE
 IF "!default_wsl_distro!"=="y" (
     GOTO set_default_wsl_distro
