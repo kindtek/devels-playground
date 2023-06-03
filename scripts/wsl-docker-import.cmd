@@ -3,8 +3,8 @@
 color 0F
 SETLOCAL EnableDelayedExpansion
 
-doskey docker = "C:\Program Files\Docker\Docker\Docker Desktop.exe"
-doskey wsl = "C:\Windows\System32\wsl.exe"
+doskey /exename docker.exe docker=C:\Program Files\Docker\Docker\Docker Desktop.exe
+doskey /exename wsl.exe wsl=C:\Windows\System32\wsl.exe
 SET "DVLP_DEBUG=n"
 :redo
 SET "module=main"
