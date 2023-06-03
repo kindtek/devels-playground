@@ -2,6 +2,9 @@
 @REM this file is solid but will be deprecated once wsl-import.ps1 is fixed
 color 0F
 SETLOCAL EnableDelayedExpansion
+
+doskey docker = "C:\Program Files\Docker\Docker\Docker Desktop.exe"
+doskey wsl = "C:\Windows\System32\wsl.exe"
 SET "DVLP_DEBUG=n"
 :redo
 SET "module=main"
