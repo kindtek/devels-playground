@@ -339,6 +339,9 @@ function start_installer_daemon {
     $repo_src_owner = 'kindtek'
     $repo_git_name = 'dvlw'
     $git_path = "$HOME\repos\$repo_src_owner\$repo_git_name"
+    # log default distro
+    $global:ORIG_DEFAULT_WSL_DISTRO = wsl --list | Where-Object { $_ -and $_ -ne '' -and $_ -match '(.*)\(Default\)' }
+    $global:ORIG_DEFAULT_WSL_DISTRO = $global:ORIG_DEFAULT_WSL_DISTRO -replace '^(.*)(\s\(Default\))$', '$1'
 
     # jump to bottom line without clearing scrollback
     # Write-Host "$([char]27)[2J" 
@@ -348,17 +351,6 @@ function start_installer_daemon {
         reboot_prompt
     }
 
-    # Write-Host "$([char]27)[2J" 
-    # [Console]::OutputEncoding = [System.Text.Encoding]::Unicode
-    # $default_wsl_distro = wsl --list | Where-Object { $_ -and $_ -ne '' -and $_ -match '(.*)\(Default\)' }
-    # $default_wsl_distro = $default_wsl_distro -replace '^(.*)(\s\(Default\))$', '$1'
-    # Write-Host "temporarily switching default WSL distro from `"$default_wsl_distro`" to kali-linux"
-    # wsl -s kali-linux
-    # Start-Sleep 8
-    # # Write-Host "$([char]27)[2J" 
-    # Write-Host "switching default WSL distro back to `"$default_wsl_distro`""
-    # wsl -s "$default_wsl_distro"
-    # Start-Sleep 8
     $new_install = install_dependencies $git_path
     if ($new_install -eq $true) {
         Write-Host "`r`nSoftware installations complete! Restart may be needed to begin WSL import phase. `r`n`r`n" 
