@@ -79,9 +79,9 @@ IF "!non_interactive_distro_name!"=="" (
         SET "wsl=n"
     )
     IF "!image_name_tag!"=="" (
-        ECHO "official-kali-rolling-latest"
+        ECHO "kalilinux-kali-rolling-latest"
         SET "wsl=y"
-        SET "wsl_distro=official-kali-rolling-latest"
+        SET "wsl_distro=kalilinux-kali-rolling-latest"
     ) 
 
 ) ELSE (
@@ -97,9 +97,9 @@ IF "!non_interactive_distro_name!"=="" (
         SET "wsl=n"
     )
     IF "!image_name_tag!"=="" (
-        ECHO "official-kali-rolling-latest"
+        ECHO "kalilinux-kali-rolling-latest"
         SET "wsl=y"
-        SET "wsl_distro=official-kali-rolling-latest"
+        SET "wsl_distro=kalilinux-kali-rolling-latest"
     ) 
     SET "wsl=y"
     
@@ -131,7 +131,7 @@ set "timestamp_date=%Year%%Month%%Day%"
 SET "timestamp_time=%Hour%%Minute%%Second%%TIME:*.=%"
 SET "install_location=!install_root_dir!\!timestamp_date!\!timestamp_time!"
 SET "save_location=!save_location!"
-IF NOT "!wsl_distro!"=="official-kali-rolling-latest" (
+IF NOT "!wsl_distro!"=="kalilinux-kali-rolling-latest" (
     set var=%var:~-1%
     SET "wsl_distro=!wsl_distro!-!timestamp_time:~-3!"
 )
@@ -411,7 +411,7 @@ docker export !WSL_DOCKER_CONTAINER_ID! > !image_save_path!
 SET "module=wsl_import"
 SET "handle=set_default_wsl_distro"
 
-IF "!wsl_distro!"=="official-kali-rolling-latest" (
+IF "!wsl_distro!"=="kalilinux-kali-rolling-latest" (
     ECHO:
     ECHO deleting WSL distro !wsl_distro! if it exists...
     ECHO wsl --unregister !wsl_distro!
