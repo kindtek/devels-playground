@@ -64,7 +64,7 @@ IF "!command_arg!"=="" (
 
 @REM reset default wsl distro
 :r
-wsl -s official-ubuntu-latest
+wsl -s official-kali-rolling-latest
 IF "!command_arg!"=="" (
     goto prompt
 ) ELSE (
