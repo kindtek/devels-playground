@@ -69,22 +69,6 @@ function install_dependencies {
         Write-Host "$software_name already installed"   
     }
 
-    $software_name = "Windows Terminal"
-    if (!(Test-Path -Path "$git_path/.wterminal-installed" -PathType Leaf)) {
-        # $windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
-        # if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no') { 
-        Write-Host "Installing $software_name ..." 
-        winget install Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements
-        winget upgrade Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements
-        # }
-        Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.wterminal-installed"
-        $new_install = $true
-    }
-    else {
-        Write-Host "$software_name already installed"  
-    }
-
-
     $software_name = "Python"
     if (!(Test-Path -Path "$git_path/.python-installed" -PathType Leaf)) {
         $new_install = $true
