@@ -76,7 +76,6 @@ function install_dependencies {
         Write-Host "Getting updates for $software_name"
         Invoke-WebRequest -Uri https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe -OutFile DockerDesktopInstaller.exe
         .\DockerDesktopInstaller.exe /silent
-        Remove-Item DockerDesktopInstaller.exe
         # & 'C:\Program Files\Docker\Docker\Docker Desktop.exe'
         # "Docker Desktop Installer.exe" install --accept-license --backend=wsl-2 --installation-dir=c:\docker 
         Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.docker-installed"
@@ -310,6 +309,7 @@ function cleanup_installation {
     try {
         Remove-Item "$git_path".replace($repo_src_name, "install-$repo_src_owner-$repo_src_name.ps1") -Force -ErrorAction SilentlyContinue
         Write-Host "`r`nCleaning up..  `r`n"
+        Remove-Item "$git_path".replace($repo_src_name, "DockerDesktopInstaller.exe") -Force -ErrorAction SilentlyContinue
         # make extra sure this is not a folder that is not important (ie: system32 - which is a default location)
         if ($git_path.Contains($repo_src_name) -And $git_path.NotContains("System32") ) {
             Remove-Item $git_path -Recurse -Confirm -Force -ErrorAction SilentlyContinue
