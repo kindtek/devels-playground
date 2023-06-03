@@ -34,7 +34,23 @@ function install_windows_features {
 
 function install_dependencies {
     param ( $git_path )
-    Write-Host "`r`nThe following programs will be installed or updated`r`n`t- Visual Studio Code`r`n`t- Docker Desktop`r`n`t- Windows Terminal`r`n`t- Python 3.10`r`n`t" -ForegroundColor Magenta
+    Write-Host "`r`nThe following programs will be installed or updated`r`n`t- Windows Terminal`r`n`t- Visual Studio Code`r`n`t- Docker Desktop`r`n`t- Python 3.10`r`n`t" -ForegroundColor Magenta
+    
+    $software_name = "Windows Terminal"
+    if (!(Test-Path -Path "$git_path/.wterminal-installed" -PathType Leaf)) {
+        # $windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
+        # if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no') { 
+        Write-Host "Installing $software_name ..." 
+        winget install Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements
+        winget upgrade Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements
+        # }
+        Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.wterminal-installed"
+        $new_install = $true
+    }
+    else {
+        Write-Host "$software_name already installed"  
+    }    
+
     $software_name = "Visual Studio Code (VSCode)"
     if (!(Test-Path -Path "$git_path/.vscode-installed" -PathType Leaf)) {
         Write-Host "Installing $software_name ..."
@@ -57,6 +73,7 @@ function install_dependencies {
         winget install --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements
         # winget upgrade --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements
         # update using rolling stable url
+        Write-Host "Getting updates for $software_name"
         Invoke-WebRequest -Uri https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe -OutFile DockerDesktopInstaller.exe
         .\DockerDesktopInstaller.exe /silent
         Remove-Item DockerDesktopInstaller.exe
@@ -167,8 +184,9 @@ function require_docker_online {
                 }
                 Write-Host "Docker Desktop is now online"
                 docker info
+                break
             }
-            if ( $docker_tries -eq 1 -And $docker_online -eq $false ) {
+            if ( $docker_tries -eq 1 ) {
                 Write-Host "Error messages are expected when first starting Docker. Please wait ..."
             }
             if ($docker_online -eq $false -And (($docker_tries % 2) -eq 0)) {
@@ -177,11 +195,19 @@ function require_docker_online {
                 Start-Sleep -s $sleep_time
                 Write-Host ""
             }
-            elseif ($docker_online -eq $false -And (($docker_tries % 3) -eq 0)) {
+            elseif (($docker_tries % 3) -eq 0) {
                 # start count over
                 # $docker_attempt1 = $docker_attempt2 = $false
-                # prompt to restart or continue to wait
-                $restart = Read-Host "Restart docker? ([y]n)"
+                # automatically restart docker on try 3 then prompt for restart after that
+                if ( $docker_tries -ge 6 ) {
+                    $restart = Read-Host "Restart docker? ([y]n)"
+                } else {
+                    if ( $docker_tries -le 3 ){
+                        $restart = 'n'
+                    } else {
+                        $restart = 'y'
+                    }
+                }
                 if ( $restart -ine 'n' -And $restart -ine 'no') {
                     Write-Output "stopping docker ..."
                     powershell.exe -Command cmd.exe /c net stop com.docker.service
