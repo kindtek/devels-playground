@@ -184,8 +184,6 @@ function require_docker_online {
     }
     :nested_do
     do {    
-        
-          
         try {
             # launch docker desktop and keep it open 
             $docker_tries++
@@ -272,7 +270,6 @@ function require_docker_online {
                 cmd.exe /c net start docker
                 cmd.exe /c net start com.docker.service
             }
-
             if ($docker_online -eq $false -And ( $docker_tries -eq 1)) {
                 # try extraordinary measures
                 # $check_again = Read-Host "Try resetting default distro and restarting Docker? ([y]n)"
@@ -309,12 +306,11 @@ function require_docker_online {
         catch {
             $docker_online = $false
         }
-        # } while (-Not $docker_online )
     } while ( -Not $docker_online -And ( $check_again -ine 'n' -And $check_again -ine 'no') )
-    if ( -Not $docker_online -And ( $check_again -ine 'n' -Or $check_again -ine 'no') ) {
-        Write-Host "Could not start Docker. You may need to restart your computer"
-        reboot_prompt
-    }
+        if ( -Not $docker_online -And ( $check_again -ine 'n' -Or $check_again -ine 'no') ) {
+            Write-Host "Could not start Docker. You may need to restart your computer"
+            reboot_prompt
+        }
     return $docker_online
 }
 
@@ -333,7 +329,7 @@ function cleanup_installation {
         }
     }
     catch {
-        Write-Host "Run the following command to delete the setup files:`r`nRemove-Item $git_path -Recurse -Confirm -Force`r`n"
+        Write-Host "Run the following command to delete the repo and setup files:`r`nRemove-Item $git_path -Recurse -Confirm -Force`r`n"
     }
 }
 
@@ -353,8 +349,6 @@ function start_installer_daemon {
     }
 
     # Write-Host "$([char]27)[2J" 
-    wsl --install --no-launch
-    wsl --update --pre-release
     # [Console]::OutputEncoding = [System.Text.Encoding]::Unicode
     # $default_wsl_distro = wsl --list | Where-Object { $_ -and $_ -ne '' -and $_ -match '(.*)\(Default\)' }
     # $default_wsl_distro = $default_wsl_distro -replace '^(.*)(\s\(Default\))$', '$1'
