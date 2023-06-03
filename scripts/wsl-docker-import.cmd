@@ -288,7 +288,7 @@ IF "!WSL_DOCKER_CONTAINER_ID!"=="" (
     SET "options=options"
     GOTO error_restart_prompt
 )
-IF "!wsl!"!="y" (
+IF "!wsl!" NEQ "y" (
     GOTO home_banner
 )
 
@@ -353,7 +353,7 @@ IF "!WSL_DOCKER_CONTAINER_ID!"=="" (
     SET "options=options"
     GOTO error_restart_prompt
 )
-IF "!wsl!"!="y" (
+IF "!wsl!" NEQ "y" (
     GOTO home_banner
 )
 
