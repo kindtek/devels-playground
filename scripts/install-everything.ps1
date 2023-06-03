@@ -80,7 +80,6 @@ function install_dependencies {
         # "Docker Desktop Installer.exe" install --accept-license --backend=wsl-2 --installation-dir=c:\docker 
         Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.docker-installed"
         $new_install = $true
-        set_docker_config
     }
     else {
         Write-Host "$software_name already installed"   
