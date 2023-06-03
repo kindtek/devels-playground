@@ -172,6 +172,7 @@ function require_docker_online {
             }
         }
     }
+    nested_do: 
     do {    
         
           
@@ -188,7 +189,7 @@ function require_docker_online {
                 }
                 Write-Host "Docker Desktop is now online"
                 docker info
-                break
+                break nested_do
             }
             if ( $docker_tries -eq 1 ) {
                 Write-Host "Error messages are expected when first starting Docker. Please wait ..."
