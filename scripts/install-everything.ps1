@@ -138,7 +138,7 @@ function set_docker_config {
         $config_json.integratedWslDistros = $jcurrent + $jnew
     }
 
-    ConvertTo-JSON $config_json -Depth 2 | Out-File $config_file -Force
+    ConvertTo-JSON $config_json -Depth 2 | Set-Content -Encoding utf8 | Out-File $config_file -Force
 
 }
 
