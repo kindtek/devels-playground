@@ -146,7 +146,6 @@ function set_docker_config {
 }
 
 function require_docker_online {
-
     $docker_tries = 0
     $docker_online = $false
     $host.UI.RawUI.ForegroundColor = "Black"
@@ -158,15 +157,21 @@ function require_docker_online {
     }
     catch {
         try {
-            Start-Process "c:\docker\Docker Desktop.exe" -WindowStyle "Hidden"
+            ([void]( New-Item -path alias:'Docker Desktop' -Value 'C:\Program Files\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
+            ([void]( New-Item -path alias:'Docker Desktop.exe' -Value 'C:\Program Files\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
+            Start-Process "C:\Program Files\docker\docker\Docker Desktop.exe" -WindowStyle "Hidden"
         }
         catch {
             try {
-                Start-Process "c:\docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
+                ([void]( New-Item -path alias:'Docker Desktop' -Value 'c:\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
+                ([void]( New-Item -path alias:'Docker Desktop.exe' -Value 'c:\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
+                Start-Process "c:\docker\docker\Docker Desktop.exe" -WindowStyle "Hidden"
             }
             catch {
                 try {
-                    Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
+                    ([void]( New-Item -path alias:'Docker Desktop' -Value ':\docker\docker desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
+                    ([void]( New-Item -path alias:'Docker Desktop.exe' -Value 'c:\docker\docker desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
+                    Start-Process "c:\docker\docker desktop.exe" -WindowStyle "Hidden"
                 }
                 catch {} 
             }
