@@ -37,7 +37,7 @@ function install_repo {
         winget upgrade --id Git.Git --source winget --silent --locale en-US --accept-package-agreements --accept-source-agreements
         Write-Host "$software_name installed" | Out-File -FilePath "$git_parent_path/.github-installed"
         $new_install = $true
-        $file = "$HOME/repos/kindtek/RefreshEnv.cmd"
+        $file = "$env:USERPROFILE/repos/kindtek/RefreshEnv.cmd"
         Invoke-WebRequest "https://raw.githubusercontent.com/kindtek/choco/ac806ee5ce03dea28f01c81f88c30c17726cb3e9/src/chocolatey.resources/redirects/RefreshEnv.cmd" -OutFile $file;
         powershell.exe -Command $file 
     }
@@ -89,7 +89,7 @@ function run_devels_playground {
             # Write-Host "&$devs_playground $global:img_tag"
             # Write-Host "$([char]27)[2J"
             # Write-Host "`r`npowershell.exe -Command `"$git_path/dvlp/scripts/wsl-docker-import.cmd`" $img_tag`r`n"
-            $img_name_tag = $img_name_tag.replace("\s+",'')
+            $img_name_tag = $img_name_tag.replace("\s+", '')
             powershell.exe -Command "$git_path/dvlp/scripts/wsl-docker-import.cmd" "$img_name_tag" "$non_interactive" "$default_distro"
             # &$devs_playground = "$git_path/dvlp/scripts/wsl-docker-import.cmd $global:img_tag"
             # Write-Host "$software_name installed`r`n" | Out-File -FilePath "$git_path/.dvlp-installed"
@@ -107,7 +107,7 @@ do {
     $repo_src_name = 'devels-workshop'
     $repo_src_branch = 'main'
     $repo_git_name = 'dvlw'
-    $git_parent_path = "$HOME/repos/$repo_src_owner"
+    $git_parent_path = "$env:USERPROFILE/repos/$repo_src_owner"
     $git_path = "$git_parent_path/$repo_git_name"
     $img_name = 'devels-playground'
     $img_tag = $args[0]
@@ -156,7 +156,7 @@ do {
         Start-Sleep 1
         Write-Host "`r`n`t- WinGet`r`n`t- Github CLI`r`n`t- devels-workshop repo`r`n`t- devels-playground repo" -ForegroundColor Magenta
         
-        # Write-Host "Creating path $HOME\repos\kindtek if it does not exist ... "  
+        # Write-Host "Creating path $env:USERPROFILE\repos\kindtek if it does not exist ... "  
         New-Item -ItemType Directory -Force -Path $git_parent_path | Out-Null
 
         install_winget $git_parent_path
