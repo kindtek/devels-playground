@@ -273,24 +273,30 @@ function require_docker_online {
                 # $check_again = Read-Host "Try resetting default distro and restarting Docker? ([y]n)"
                 Write-Host ""
                 try {
-                    Start-Process "Docker Desktop.exe" -WindowStyle "Hidden"
-                }
-                catch {
-                    try {
-                        Start-Process "c:\docker\Docker Desktop.exe" -WindowStyle "Hidden"
-                    }
-                    catch {
+                    Start-Process "com.docker.proxy" -WindowStyle "Hidden"
+                    } catch {
                         try {
-                            Start-Process "c:\docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
+                            Start-Process "Docker Desktop.exe" -WindowStyle "Hidden"
                         }
                         catch {
                             try {
-                                Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
+                                Start-Process "c:\docker\Docker Desktop.exe" -WindowStyle "Hidden"
                             }
-                            catch {} 
+                            catch {
+                                try {
+                                    Start-Process "c:\docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
+                                }
+                                catch {
+                                    try {
+                                        Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
+                                    }
+                                    catch {} 
+                                }
+                            }
                         }
                     }
                 }
+                catch {}
                 Write-Host ""
                 Start-Sleep 20
                 Write-Host ""
