@@ -274,35 +274,32 @@ function require_docker_online {
                 Write-Host ""
                 try {
                     Start-Process "com.docker.proxy" -WindowStyle "Hidden"
-                    } catch {
+                } 
+                catch {
+                    try {
+                        Start-Process "Docker Desktop.exe" -WindowStyle "Hidden"
+                    }
+                    catch {
                         try {
-                            Start-Process "Docker Desktop.exe" -WindowStyle "Hidden"
+                            Start-Process "c:\docker\Docker Desktop.exe" -WindowStyle "Hidden"
                         }
                         catch {
                             try {
-                                Start-Process "c:\docker\Docker Desktop.exe" -WindowStyle "Hidden"
+                                Start-Process "c:\docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
                             }
                             catch {
                                 try {
-                                    Start-Process "c:\docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
+                                    Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
                                 }
-                                catch {
-                                    try {
-                                        Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
-                                    }
-                                    catch {} 
-                                }
+                                catch {} 
                             }
                         }
                     }
                 }
-                catch {}
-                Write-Host ""
-                Start-Sleep 20
-                Write-Host ""
-                
-                
             }
+            Write-Host ""
+            Start-Sleep 20
+            Write-Host ""
         }
         catch {
             $docker_online = $false
