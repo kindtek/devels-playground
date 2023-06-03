@@ -39,6 +39,7 @@ IF "!image_name_tag!"=="default" (
     SET "image_repo_mask=kalilinux"
     SET "image_tag=latest"
     SET "image_name=kali-rolling"
+    SET "wsl_distro=kalilinux-kali-rolling-latest"
     
 
 ) ELSE (
@@ -81,8 +82,11 @@ IF "!non_interactive_distro_name!"=="" (
     IF "!image_name_tag!"=="" (
         ECHO "kalilinux-kali-rolling-latest"
         SET "wsl=y"
-        SET "wsl_distro=kalilinux-kali-rolling-latest"
-    ) 
+        SET "image_repo=kalilinux"
+        SET "image_repo_mask=kalilinux"
+        SET "image_tag=latest"
+        SET "image_name=kali-rolling"
+        SET "wsl_distro=kalilinux-kali-rolling-latest"    ) 
 
 ) ELSE (
     IF "!DVLP_DEBUG!"=="y" (
@@ -99,7 +103,11 @@ IF "!non_interactive_distro_name!"=="" (
     IF "!image_name_tag!"=="" (
         ECHO "kalilinux-kali-rolling-latest"
         SET "wsl=y"
-        SET "wsl_distro=kalilinux-kali-rolling-latest"
+        SET "image_repo=kalilinux"
+        SET "image_repo_mask=kalilinux"
+        SET "image_tag=latest"
+        SET "image_name=kali-rolling"
+        SET "wsl_distro=kalilinux-kali-rolling-latest"    
     ) 
     SET "wsl=y"
     
@@ -799,9 +807,13 @@ IF "!handle!" NEQ "home_banner" (
 )
 SET above=above
 IF "!interactive!"=="n" (
-    IF "!image_name_tag!" NEQ "kali-rolling:latest" (
+    IF "!image_repo!" NEQ "kalilinux" (
         @REM official repo has no repo name in address/url
         SET "options=build"
+        IF "!DVLP_DEBUG!"=="y" (
+            ECHO "options0: !options!"
+            ECHO "image_name_tag: !image_name_tag!"
+        )
         GOTO options_parse
     )
 )
