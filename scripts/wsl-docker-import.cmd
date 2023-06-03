@@ -35,8 +35,8 @@ IF "!image_name_tag!"=="" (
 IF "!image_name_tag!"=="default" (
         ECHO "default image set"
 
-    SET "image_repo=_"
-    SET "image_repo_mask=official"
+    SET "image_repo=kalilinux"
+    SET "image_repo_mask=kalilinux"
     SET "image_tag=latest"
     SET "image_name=kali-rolling"
     
