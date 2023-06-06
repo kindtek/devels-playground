@@ -41,6 +41,7 @@ function install_dependencies {
         # $windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
         # if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no') { 
         Write-Host "Installing $software_name ..." 
+        winget install Microsoft.PowerShell
         winget install Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements
         winget upgrade Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements
         # }
@@ -70,10 +71,10 @@ function install_dependencies {
         # winget uninstall --id=Docker.DockerDesktop
         # winget install --id=Docker.DockerDesktop --location="c:\docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements
         # winget upgrade --id=Docker.DockerDesktop --location="c:\docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements
-        # winget install --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements
-        # winget upgrade --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements
+        winget install --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements
+        winget upgrade --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements
         # update using rolling stable url
-        Write-Host "Downloading $software_name installation file ..." 
+        Write-Host "Downloading $software_name update installation file ..." 
         Invoke-WebRequest -Uri https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe -OutFile DockerDesktopInstaller.exe
         .\DockerDesktopInstaller.exe
         # & 'C:\Program Files\Docker\Docker\Docker Desktop.exe'
