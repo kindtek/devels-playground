@@ -909,7 +909,8 @@ COPY --from=dvlp_base-dind-build ./ ./
 WORKDIR /
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
+    echo 'Acquire::Retries "30";' | tee /etc/apt/apt.conf.d/50kali
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
