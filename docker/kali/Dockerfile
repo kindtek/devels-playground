@@ -309,6 +309,7 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/tmp/cache/useradd,sharing=private \
+    groupadd    -g 999  docker && \
     groupadd            r00t    && \
     groupadd            halo    && \
     groupadd            hell    && \
@@ -337,7 +338,10 @@ RUN \
     apt-get install --no-install-recommends -y sudo && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb && \
+    usermod -aG docker root && \
+    usermod -aG docker r00t && \
     usermod -aG sudo ${_AGL} && \
+    usermod -aG docker ${_AGL} && \
     mkdir -p /usr/lib/binfmt.d && \
     echo :WSLInterop:M::MZ::/init:PF > /usr/lib/binfmt.d/WSLInterop.conf
 WORKDIR /
