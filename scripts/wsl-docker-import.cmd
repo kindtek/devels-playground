@@ -572,7 +572,7 @@ IF "!wsl_distro_test_pass!"=="n" (
     ECHO ERROR DETECTED
     IF "!interactive!"=="y" (    
         @REM wsl -d !wsl_distro!
-        ECHO try to convert distro version to WSL!set_wsl_conv!? (y^^^)^^/^^n
+        ECHO try to convert distro version to WSL!set_wsl_conv!? ^(y^)^/n
         SET /P "convert="
         IF /I "!convert!"=="" (
             SET "convert=y"
