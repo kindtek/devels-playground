@@ -461,7 +461,7 @@ ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
 USER r00t
 RUN echo "[user]" | tee /etc/wsl.conf
-RUN echo "${_AGL}" | tee --append /etc/wsl.conf
+RUN echo "default = ${_AGL}" | tee --append /etc/wsl.conf
 WORKDIR /hal
 USER ${_AGL}
 
