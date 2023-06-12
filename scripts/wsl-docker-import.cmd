@@ -544,6 +544,9 @@ IF "!wsl_out!"=="!test_string!" (
 ) ELSE (
     SET "wsl_distro_test_pass=n"
 )
+IF "!DVLP_DEBUG!"=="y" (
+    ECHO "wsl_distro_test_pass: !wsl_distro_test_pass!"
+)
 @echo oFF
 
 :wsl_set_conversion_version
