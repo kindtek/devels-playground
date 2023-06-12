@@ -577,10 +577,10 @@ IF "!wsl_distro_test_pass!"=="n" (
         IF /I "!convert!"=="" (
             SET "convert=y"
         )
-        IF /I  "!convert!"=="yes" (
+        IF /I "!convert!"=="yes" (
             SET "convert=y"
         )
-        IF NEQ "!convert!"=="y" (
+        IF "!convert!" NEQ "y" (
             ECHO !wsl_distro! failed to import.
             SET "options=options"
             GOTO wsl_delete_prompt
