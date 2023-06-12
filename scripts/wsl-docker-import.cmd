@@ -593,7 +593,9 @@ IF "!wsl_distro_test_pass!"=="n" (
     )  ELSE (
         GOTO quit
     )  
-)
+) ELSE (
+    GOTO quit
+)  
 
 :wsl_distro_convert_version
 IF NOT DEFINED set_wsl_conv (
