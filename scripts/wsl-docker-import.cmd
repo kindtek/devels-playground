@@ -521,7 +521,7 @@ SET "module=wsl_distro_test"
 SET "handle=wsl_distro_test"
 SET test_string=helloworld
 SET "wsl_distro_test_pass=n"
-SET "test_string_path=c:\users\%USERPROFILE%\kache\tst"
+SET "test_string_path=%USERPROFILE%\kache\tst"
 wsl.exe -d !wsl_distro! --exec echo !test_string! > !test_string_path!
 SET /P wsl_out=<!test_string_path!
 DEL !test_string_path!
