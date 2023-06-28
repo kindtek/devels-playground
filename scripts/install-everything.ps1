@@ -113,35 +113,35 @@ function install_dependencies {
 
 function set_docker_config {
     param ( $new_integrated_distro )
-#     $config_file = "$env:APPDATA\Docker\settings.json"
-#     $config_json = Get-Content -Raw "$config_file" | ConvertFrom-JSON
-#     # $config_json = ConvertFrom-JSON (Get-Content "$config_file")
-#     $config_json.disableTips = $true
-#     $config_json.disableUpdate = $false
-#     $config_json.autoDownloadUpdates = $true
-#     $config_json.displayedTutorial = $true
-#     $config_json.enableIntegrationWithDefaultWslDistro = $true
-#     # $config_json.kubernetesEnabled = $true
-#     $config_json.autoStart = $true
-#     $config_json.useWindowsContainers = $false
-#     $config_json.wslEngineEnabled = $true
-#     $config_json.openUIOnStartupDisabled = $false
-#     $config_json.skipUpdateToWSLPrompt = $true
-#     $config_json.skipWSLMountPerfWarning = $true
-#     $config_json.activeOrganizationName = "kindtek"
-#     if ("$new_integrated_distro" -ne "") {
-#         $jcurrent = $config_json.integratedWslDistros
-#         $new_distro = @"
-#             [
-#                 "integratedWslDistros":"$new_integrated_distro"
-#             ]
-# "@
-#         $jnew = ConvertFrom-Json -InputObject $new_distro
-#         $config_json.integratedWslDistros = $jcurrent + $jnew
-#     }
+    #     $config_file = "$env:APPDATA\Docker\settings.json"
+    #     $config_json = Get-Content -Raw "$config_file" | ConvertFrom-JSON
+    #     # $config_json = ConvertFrom-JSON (Get-Content "$config_file")
+    #     $config_json.disableTips = $true
+    #     $config_json.disableUpdate = $false
+    #     $config_json.autoDownloadUpdates = $true
+    #     $config_json.displayedTutorial = $true
+    #     $config_json.enableIntegrationWithDefaultWslDistro = $true
+    #     # $config_json.kubernetesEnabled = $true
+    #     $config_json.autoStart = $true
+    #     $config_json.useWindowsContainers = $false
+    #     $config_json.wslEngineEnabled = $true
+    #     $config_json.openUIOnStartupDisabled = $false
+    #     $config_json.skipUpdateToWSLPrompt = $true
+    #     $config_json.skipWSLMountPerfWarning = $true
+    #     $config_json.activeOrganizationName = "kindtek"
+    #     if ("$new_integrated_distro" -ne "") {
+    #         $jcurrent = $config_json.integratedWslDistros
+    #         $new_distro = @"
+    #             [
+    #                 "integratedWslDistros":"$new_integrated_distro"
+    #             ]
+    # "@
+    #         $jnew = ConvertFrom-Json -InputObject $new_distro
+    #         $config_json.integratedWslDistros = $jcurrent + $jnew
+    #     }
 
-#     ConvertTo-JSON $config_json -Depth 2 | Out-File $config_file -Force
-#     Get-Content $config_file | Set-Content -Encoding utf8 $config_file
+    #     ConvertTo-JSON $config_json -Depth 2 | Out-File $config_file -Force
+    #     Get-Content $config_file | Set-Content -Encoding utf8 $config_file
 
 
 }
@@ -185,7 +185,7 @@ function require_docker_online {
             }
         }
     }
-:nested_do do {    
+    :nested_do do {    
         try {
             # launch docker desktop and keep it open 
             $docker_tries++
@@ -309,10 +309,10 @@ function require_docker_online {
             $docker_online = $false
         }
     } while ( -Not $docker_online -And ( $check_again -ine 'n' -And $check_again -ine 'no') )
-        if ( -Not $docker_online -And ( $check_again -ine 'n' -Or $check_again -ine 'no') ) {
-            Write-Host "Could not start Docker. You may need to restart your computer"
-            reboot_prompt
-        }
+    if ( -Not $docker_online -And ( $check_again -ine 'n' -Or $check_again -ine 'no') ) {
+        Write-Host "Could not start Docker. You may need to restart your computer"
+        reboot_prompt
+    }
     return $docker_online
 }
 
@@ -342,9 +342,7 @@ function start_installer_daemon {
     $repo_git_name = 'dvlw'
     $git_path = "$env:USERPROFILE\repos\$repo_src_owner\$repo_git_name"
     # log default distro
-    $global:ORIG_DEFAULT_WSL_DISTRO = wsl --list | Where-Object { $_ -and $_ -ne '' -and $_ -match '(.*)\(Default\)' }
-    $global:ORIG_DEFAULT_WSL_DISTRO = $global:ORIG_DEFAULT_WSL_DISTRO -replace '^(.*)(\s\(Default\))$', '$1'
-
+    $global:ORIG_DEFAULT_WSL_DISTRO = get_default_wsl_distro
     # jump to bottom line without clearing scrollback
     # Write-Host "$([char]27)[2J" 
     $new_install = install_windows_features $git_path 
@@ -363,7 +361,8 @@ function start_installer_daemon {
     # Write-Host "$([char]27)[2J" 
     if (!(require_docker_online)) {
         Write-Host "`r`nCannot start Docker.`r`n" 
-    } else {
+    }
+    else {
         set_docker_config
     }
 }
