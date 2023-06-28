@@ -313,6 +313,10 @@ function require_docker_online {
         Write-Host "Could not start Docker. You may need to restart your computer"
         reboot_prompt
     }
+    $docker_daemon_online= docker search scratch --limit 1 --format helloworld
+    if ($docker_daemon_online -ne 'helloworld'){
+        $docker_online = $false
+    }
     return $docker_online
 }
 
