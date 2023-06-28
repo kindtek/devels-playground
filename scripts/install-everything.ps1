@@ -335,6 +335,11 @@ function cleanup_installation {
     }
 }
 
+function get_default_wsl_distro {
+    $default_wsl_distro = wsl --list | Where-Object { $_ -and $_ -ne '' -and $_ -match '(.*)\(' }
+    $default_wsl_distro = $default_wsl_distro -replace '^(.*)\s.*$', '$1'
+    return $default_wsl_distro
+}
 
 function start_installer_daemon {
 
