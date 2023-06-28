@@ -378,5 +378,3 @@ function run_installer {
         }
     }
 }
-
-run_installer
