@@ -346,7 +346,7 @@ function get_default_wsl_distro {
     return $default_wsl_distro
 }
 
-function start_installer_daemon {
+function run_installer {
 
     $repo_src_owner = 'kindtek'
     $repo_git_name = 'dvlw'
@@ -379,4 +379,4 @@ function start_installer_daemon {
     }
 }
 
-start_installer_daemon
+run_installer
