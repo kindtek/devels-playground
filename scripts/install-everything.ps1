@@ -352,23 +352,25 @@ function start_installer_daemon {
     # Write-Host "$([char]27)[2J" 
     $new_install = install_windows_features $git_path 
     if ($new_install -eq $true) {
-        Write-Host "`r`nWindows features installations complete! Restart may be needed to continue. `r`n`r`n" 
+        Write-Host "`r`nwindows features installations complete! restart may be needed to continue. `r`n`r`n" 
         reboot_prompt
     }
 
     $new_install = install_dependencies $git_path
     if ($new_install -eq $true) {
-        Write-Host "`r`nSoftware installations complete! Restart may be needed to begin WSL import phase. `r`n`r`n" 
+        Write-Host "`r`nsoftware installations complete! restart(s) may be needed to begin WSL import phase. `r`n`r`n" 
         reboot_prompt
     }
 
-    
+
     # Write-Host "$([char]27)[2J" 
-    if (!(require_docker_online)) {
-        Write-Host "`r`nCannot start Docker.`r`n" 
-    }
-    else {
-        set_docker_config
+    if (!(Test-Path -Path "$git_path/.dvlp-installed" -PathType Leaf)){
+        if (!(require_docker_online)) {
+            Write-Host "`r`nnot starting docker desktop.`r`n" 
+        }
+        else {
+            set_docker_config
+        }
     }
 }
 
