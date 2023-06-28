@@ -516,7 +516,7 @@ IF "!interactive!"=="y" (
 )
 
 :wsl_distro_test
-@echo on
+@REM @echo on
 SET "module=wsl_distro_test"
 SET "handle=wsl_distro_test"
 SET test_string=helloworld
@@ -547,7 +547,7 @@ IF "!wsl_out!"=="!test_string!" (
 IF "!DVLP_DEBUG!"=="y" (
     ECHO "wsl_distro_test_pass: !wsl_distro_test_pass!"
 )
-@echo oFF
+@REM @echo oFF
 
 :wsl_set_conversion_version
 IF "!handle!" NEQ "wsl_distro_launch" (
