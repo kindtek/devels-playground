@@ -401,7 +401,7 @@ function run_installer {
             Write-Host "`r`nnot starting docker desktop.`r`n" 
         }
         else {
-            set_docker_config
+            ini_docker_config
         }
     }
 }
