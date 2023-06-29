@@ -298,6 +298,8 @@ function require_docker_online {
                 cmd.exe /c taskkill /IM "Docker Desktop.exe" /F
                 cmd.exe /c net start docker
                 cmd.exe /c net start com.docker.service
+                $docker_tries = 1
+                $docker_restarts++
             }
             if ($docker_online -eq $false -And ( $docker_tries -eq 1)) {
                 # try extraordinary measures
