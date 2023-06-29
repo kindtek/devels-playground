@@ -275,9 +275,9 @@ function require_docker_online {
                     $check_again = Read-Host "Keep trying to connect to docker? ([y]n)"
                     if ($check_again -ine 'n' -And $check_again -ine 'no') {
                         Write-Host "resetting docker engine ....."
-& $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchWindowsEngine
-                        Start-Sleep 5
-& $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
+                        &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchWindowsEngine;
+                        Start-Sleep 5;
+                        &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine;
                         Write-Host "reset complete"
                         Write-Host "trying again to start docker desktop ..."
 
