@@ -340,7 +340,7 @@ function require_docker_online {
                 $check_again = 'n'
             }
             Write-Host ""
-            Start-Sleep 10
+            Start-Sleep 5
             Write-Host ""
         }
         catch {
