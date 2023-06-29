@@ -1149,10 +1149,10 @@ IF /I "!opti0ns!"=="o" (
     SET "opti0ns=options"
 )
 IF /I "!opti0ns!"=="options" (
-    IF "!exit_module!"=="error_restart_prompt" (
+    IF "!handle!"=="error_restart_prompt" (
         GOTO options_prompt
     ) ELSE (
-        IF "!exit_module!"=="options_prompt" (
+        IF "!handle!"=="options_prompt" (
             GOTO options_prompt
         ) ELSE (
             GOTO home_banner
@@ -1438,7 +1438,7 @@ COLOR 0F
 IF "!exit_devels_playground!"=="" (
     SET "exit_devels_playground=exit"
 )
-@REM SET "options=!exit_devels_playground!"
+SET "options=!exit_devels_playground!"
 SET "prompt_error_msg="
 GOTO options_parse
 
