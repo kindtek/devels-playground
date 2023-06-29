@@ -1,9 +1,10 @@
 version: "3.9"
 name: devels-playground-kali
 services:
-  kali-test:
+  test:
     build:
-      target: kali_testing
+      target: dvlp_testing
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-test
     entrypoint: /bin/bash -c
     command:
       - sleep infinity

@@ -24,7 +24,7 @@ ARG JACKET=bare
 ################
 # kali_testing #
 ################
-FROM kalilinux/kali-rolling:latest AS kali_testing
+FROM kalilinux/kali-rolling:latest AS dvlp_testing
 WORKDIR /
 RUN touch testing
 
