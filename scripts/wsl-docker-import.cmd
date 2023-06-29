@@ -311,11 +311,11 @@ ECHO initializing the image container...
 ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml up !image_service! --detach
 docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml up !image_service! --detach
 @REM @TODO: handle WSL_DOCKER_IMG_ID case of multiple ids returned from docker images query
-ECHO "docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml images -q !image_service!  --log-level=ERROR> !docker_image_id_path!"
-docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml images -q !image_service!  --log-level=ERROR> !docker_image_id_path!
+ECHO "docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml images -q !image_service! > !docker_image_id_path!"
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml images -q !image_service! > !docker_image_id_path!
 SET /P WSL_DOCKER_IMG_ID_RAW=< !docker_image_id_path!
-ECHO "docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml ps -q !image_service!  --log-level=ERROR> !docker_container_id_path!"
-docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml ps -q !image_service!  --log-level=ERROR> !docker_container_id_path!
+ECHO "docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml ps -q !image_service! > !docker_container_id_path!"
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml ps -q !image_service! > !docker_container_id_path!
 SET /P WSL_DOCKER_CTR_ID_RAW=< !docker_container_id_path!
 SET WSL_DOCKER_CTR_ID=!WSL_DOCKER_CTR_ID_RAW!
 SET WSL_DOCKER_IMG_ID=!WSL_DOCKER_IMG_ID_RAW!
