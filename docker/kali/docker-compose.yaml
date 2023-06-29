@@ -1,6 +1,12 @@
 version: "3.9"
 name: devels-playground-kali
 services:
+  kali-test:
+    build:
+      target: kali_testing
+    entrypoint: /bin/bash -c
+    command:
+      - sleep infinity
   repo:
     build:
       target: dvlp_repo

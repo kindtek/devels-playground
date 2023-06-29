@@ -21,6 +21,13 @@ ARG _DVL_USR=${_DVL:-dvl}
 ARG _MNT=${_MNT:-/mnt/data}
 ARG JACKET=bare
 
+################
+# kali_testing #
+################
+FROM kalilinux/kali-rolling:latest AS kali_testing
+WORKDIR /
+RUN touch testing
+
 ################################### GITHUB REPO #####################################
 ########################
 # dvlp_repo-build-prep #
