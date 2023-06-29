@@ -459,8 +459,7 @@ wsl --import !wsl_distro! !install_location! !image_save_path! --version !wsl_ve
 IF "!image_service_suffix!"=="kernel" (
     wsl -d !wsl_distro! --cd '/r00t/dvlw/dvlp/kernels/linux' --exec "bash install-kernel.sh ^^"%USERPROFILE%^^" latest"
 )
-@REM add !wsl_distro! to Docker integrated WSL distro list
-powershell -Command ". ..\..\dvlw\scripts\install-everything.ps1; set_docker_config('!wsl_distro!');"
+
 ECHO DONE
 IF "!default_wsl_distro!"=="y" (
     GOTO set_default_wsl_distro
@@ -538,6 +537,8 @@ IF "!DVLP_DEBUG!"=="y" (
 )
 IF "!wsl_out!"=="!test_string!" (
     SET "wsl_distro_test_pass=y"
+    @REM add !wsl_distro! to Docker integrated WSL distro list
+    powershell -Command ". ..\..\dvlw\scripts\install-everything.ps1; set_docker_config('!wsl_distro!');"
     ECHO !wsl_distro! was imported successfully!
 ) ELSE (
     SET "wsl_distro_test_pass=n"
