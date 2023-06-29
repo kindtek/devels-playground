@@ -261,7 +261,7 @@ function require_docker_online {
                         $restart = 'y'
                     }
                 }
-                if ( $restart -ine 'n' -And $restart -ine 'no') {
+                if ( $restart -ine 'n' -And $restart -ine 'no' -And (($docker_tries % 6) -eq 0)) {
                     Write-Output "stopping docker ..."
                     powershell.exe -Command cmd.exe /c net stop com.docker.service
                     powershell.exe -Command cmd.exe /c taskkill /IM "'Docker Desktop.exe'" /F
@@ -280,12 +280,9 @@ function require_docker_online {
                     $check_again = 'y'
                     if ($check_again -ine 'n' -And $check_again -ine 'no') {
                         Write-Host "resetting docker engine ....."
-                        &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchWindowsEngine;
-                        Start-Sleep 1;
-                        &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine;
+                        &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchWindowsEngine; Start-Sleep 5; &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine;
                         Write-Host "reset complete"
                         Write-Host "trying again to start docker desktop ..."
-
                     }
                 }
             }
