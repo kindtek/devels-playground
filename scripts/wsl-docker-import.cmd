@@ -1438,7 +1438,7 @@ COLOR 0F
 IF "!exit_devels_playground!"=="" (
     SET "exit_devels_playground=exit"
 )
-SET "options=!exit_devels_playground!"
+@REM SET "options=!exit_devels_playground!"
 SET "prompt_error_msg="
 GOTO options_parse
 
