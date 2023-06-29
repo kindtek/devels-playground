@@ -46,7 +46,8 @@ wsl --unregister docker-desktop
 wsl --unregister docker-desktop-data
 @REM docker update --restart=always docker-desktop
 @REM docker update --restart=always docker-desktop-data
-"C:\Program Files\Docker\Docker\DockerCli.exe" -SwitchDaemon
+& $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchWindowsEngine
+& $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
 IF "!command_arg!" NEQ "" (
     goto quit
 )
