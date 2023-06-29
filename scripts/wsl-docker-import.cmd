@@ -510,7 +510,7 @@ IF "!interactive!"=="y" (
 )
 
 :wsl_distro_test
-ECHO checking !wsl_distro! for errors ...
+ECHO testing !wsl_distro! ...
 @REM @echo on
 SET "module=wsl_distro_test"
 SET "handle=wsl_distro_test"
@@ -536,8 +536,10 @@ IF "!DVLP_DEBUG!"=="y" (
 )
 IF "!wsl_out!"=="!test_string!" (
     SET "wsl_distro_test_pass=y"
+    ECHO "!wsl_distro! booted succesfully!"
 ) ELSE (
     SET "wsl_distro_test_pass=n"
+    ECHO "!wsl_distro! did not boot."
 )
 IF "!DVLP_DEBUG!"=="y" (
     ECHO "wsl_distro_test_pass: !wsl_distro_test_pass!"
