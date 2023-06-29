@@ -115,7 +115,7 @@ function install_dependencies {
 function ini_docker_config {
     param ( $new_integrated_distro )
     $config_file = "$env:APPDATA\Docker\settings.json"
-    $config_json = Get-Content -Raw "$config_file" | ConvertFrom-JSON
+    $config_json = Get-Content -Raw "$config_file" | ConvertFrom-JSON -NoEnumerate
     # $config_json = ConvertFrom-JSON (Get-Content "$config_file")
     $config_json.disableTips = $true
     $config_json.disableUpdate = $false
@@ -142,7 +142,7 @@ $new_distro = @"
         $jnew = ConvertFrom-Json -InputObject $new_distro
         $config_json.integratedWslDistros = $jcurrent + $jnew
     }
-    ConvertTo-JSON $config_json -Depth 2 | Out-File $config_file -Force
+    ConvertTo-JSON $config_json -Depth 2 -Compress | Out-File $config_file -Encoding utf8 -Force
     Get-Content $config_file | Set-Content -Encoding utf8 $config_file
 }
 
@@ -173,7 +173,7 @@ $new_distro = @"
         $config_json.integratedWslDistros = $jcurrent + $jnew
     }
 
-    ConvertTo-JSON $config_json -Depth 2 | Out-File $config_file -Force
+    ConvertTo-JSON $config_json -Depth 2 -Compress | Out-File $config_file -Encoding utf8 -Force
     Get-Content $config_file | Set-Content -Encoding utf8 $config_file
 
 
