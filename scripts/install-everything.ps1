@@ -226,7 +226,7 @@ function require_docker_online {
                 $docker_online = $true
                 # if service was already up continue right away otherwise sleep a bit
                 if ( $docker_tries -gt 1 ) {
-                    $sleep_time += 2
+                    $sleep_time += 1
                     Start-Sleep -s $sleep_time
                     Write-Host ""
                 }
