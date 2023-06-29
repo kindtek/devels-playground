@@ -223,7 +223,7 @@ function require_docker_online {
         try {
             # launch docker desktop and keep it open 
             $docker_tries++
-            Write-Host $docker_tries
+            Write-Host "${docker_restarts}.${docker_tries}"
             if ( Get-Process 'com.docker.proxy'  ) {
                 $docker_online = $true
                 # if service was already up continue right away otherwise sleep a bit
@@ -331,11 +331,11 @@ function require_docker_online {
                         }
                     }
                 }
-            } elseif ($docker_online -eq $false -And  ($docker_restarts -eq 5 )){
+            } elseif ($docker_online -eq $false -And  ($docker_restarts -eq 2 )){
                 # clear settings 
                 Rename-item -Path "$env:APPDATA\Docker\settings.json" "settings.json.old"
             }
-            elseif ($docker_online -eq $false -And  ($docker_restarts -eq 8 )){
+            elseif ($docker_online -eq $false -And  ($docker_restarts -eq 4 )){
                 # give up
                 $check_again = 'n'
             }
