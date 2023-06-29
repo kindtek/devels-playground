@@ -194,7 +194,7 @@ function require_docker_online {
                 $docker_online = $true
                 # if service was already up continue right away otherwise sleep a bit
                 if ( $docker_tries -gt 1 ) {
-                    $sleep_time += 4
+                    $sleep_time += 2
                     Start-Sleep -s $sleep_time
                     Write-Host ""
                 }
@@ -207,7 +207,7 @@ function require_docker_online {
             }
             if ($docker_online -eq $false -And (($docker_tries % 2) -eq 0)) {
                 write-host ""
-                $sleep_time += 7
+                $sleep_time += 2
                 Start-Sleep -s $sleep_time
                 Write-Host ""
             }
@@ -215,7 +215,7 @@ function require_docker_online {
                 # start count over
                 # $docker_attempt1 = $docker_attempt2 = $false
                 # automatically restart docker on try 3 then prompt for restart after that
-                if ( $docker_tries -ge 6 ) {
+                if ( $docker_tries -ge 11 ) {
                     $restart = Read-Host "Restart docker? ([y]n)"
                 }
                 else {
