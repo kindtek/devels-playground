@@ -132,10 +132,12 @@ function ini_docker_config {
     $config_json.activeOrganizationName = "kindtek"
     if ("$new_integrated_distro" -ne "") {
         $jcurrent = $config_json.integratedWslDistros
-        $new_distro = @"
-            [
-                "integratedWslDistros":"kalilinux-kali-rolling-latest"
-            ]
+$new_distro = @"
+[
+    {
+        "integratedWslDistros":"kalilinux-kali-rolling-latest"
+    }
+]
 "@
         $jnew = ConvertFrom-Json -InputObject $new_distro
         $config_json.integratedWslDistros = $jcurrent + $jnew
@@ -160,10 +162,12 @@ function set_docker_config {
     $config_json.activeOrganizationName = "kindtek"
     if ("$new_integrated_distro" -ne "") {
         $jcurrent = $config_json.integratedWslDistros
-        $new_distro = @"
-            [
-                "integratedWslDistros":"$new_integrated_distro"
-            ]
+$new_distro = @"
+[
+    {
+        "integratedWslDistros":"$new_integrated_distro"
+    }
+]
 "@
         $jnew = ConvertFrom-Json -InputObject $new_distro
         $config_json.integratedWslDistros = $jcurrent + $jnew
