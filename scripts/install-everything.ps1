@@ -331,8 +331,13 @@ function require_docker_online {
                         }
                     }
                 }
-            } elseif ($docker_online -eq $false -And  ($docker_restarts -gt 5 )){
+            } elseif ($docker_online -eq $false -And  ($docker_restarts -eq 5 )){
+                # clear settings 
                 Rename-item -Path "$env:APPDATA\Docker\settings.json" "settings.json.old"
+            }
+            elseif ($docker_online -eq $false -And  ($docker_restarts -eq 8 )){
+                # give up
+                $check_again = 'n'
             }
             Write-Host ""
             Start-Sleep 10
