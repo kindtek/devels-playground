@@ -1447,8 +1447,6 @@ GOTO options_parse
 :quit
 :exit
 IF "!interactive!"=="y" (
-    ECHO exiting from modules !exit_module! !module!
-    ECHO exiting devel's playground
     ECHO:
 ) ELSE (
     @REM ECHO exiting from module !module!
