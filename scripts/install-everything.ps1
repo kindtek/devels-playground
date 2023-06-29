@@ -338,6 +338,7 @@ function require_docker_online {
         }
     } while ( -Not $docker_online -And ( $check_again -ine 'n' -And $check_again -ine 'no') )
     if ( -Not $docker_online -And ( $check_again -ine 'n' -Or $check_again -ine 'no') ) {
+        Rename-item -Path "$env:APPDATA\Docker\settings.json" "settings.json.old"
         Write-Host "docker failed to start. if restarting WSL and your computer does not help you may need to use a different WSL default distro"
     }
     $docker_daemon_online= docker search scratch --limit 1 --format helloworld
