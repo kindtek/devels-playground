@@ -213,12 +213,12 @@ IF "!image_service_suffix!"=="kernel" (
     SET "build_args=!build_args! --build-arg KERNEL_TYPE=basic"
     @REM SET "build_args= !build_args! --build-arg KERNEL_FEATURE='zfs'"
 )
-ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --log-level ERROR --no-cache repo repo-kernel
-ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --log-level ERROR !build_args! !image_service!
+ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache repo repo-kernel
+ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !image_service!
 ECHO building image (!image_service!)...
 @REM build the image
-docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --log-level ERROR --no-cache repo repo-kernel
-docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --log-level ERROR !build_args! !image_service!
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache repo repo-kernel
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !image_service!
 
 SET "image_built=y"
 IF "!wsl!"=="n" (
@@ -234,9 +234,9 @@ ECHO ========================================================================
 ECHO:
 SET "docker_image_do="
 ECHO pushing image (!image_service!)...
-ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml push --log-level ERROR !image_service!
+ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml push !image_service!
 @REM build the image
-docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml push --log-level ERROR !image_service!
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml push !image_service!
 SET "options=options"
 GOTO home_banner
 
@@ -308,14 +308,14 @@ mkdir !install_location! > nul 2> nul
 ECHO:
 SET "docker_image_do="
 ECHO initializing the image container...
-ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml up --log-level ERROR !image_service! --detach
-docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml up --log-level ERROR !image_service! --detach
+ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml up !image_service! --detach
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml up !image_service! --detach
 @REM @TODO: handle WSL_DOCKER_IMG_ID case of multiple ids returned from docker images query
-ECHO "docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml images -q !image_service!  --log-level ERROR> !docker_image_id_path!"
-docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml images -q !image_service!  --log-level ERROR> !docker_image_id_path!
+ECHO "docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml images -q !image_service!  --log-level=ERROR> !docker_image_id_path!"
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml images -q !image_service!  --log-level=ERROR> !docker_image_id_path!
 SET /P WSL_DOCKER_IMG_ID_RAW=< !docker_image_id_path!
-ECHO "docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml ps -q !image_service!  --log-level ERROR> !docker_container_id_path!"
-docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml ps -q !image_service!  --log-level ERROR> !docker_container_id_path!
+ECHO "docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml ps -q !image_service!  --log-level=ERROR> !docker_container_id_path!"
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml ps -q !image_service!  --log-level=ERROR> !docker_container_id_path!
 SET /P WSL_DOCKER_CTR_ID_RAW=< !docker_container_id_path!
 SET WSL_DOCKER_CTR_ID=!WSL_DOCKER_CTR_ID_RAW!
 SET WSL_DOCKER_IMG_ID=!WSL_DOCKER_IMG_ID_RAW!
@@ -505,17 +505,12 @@ IF "!interactive!"=="y" (
     @REM make sure windows paths transfer
     SET /P "wsl_launch=$ "
     IF /I "!wsl_launch!"=="" (
-        SET "wsl_launch=y"
-    ) 
-    IF /I "!wsl_launch!"=="yes" (
-        SET "wsl_launch=y"
-    ) 
-    IF /I "!wsl_launch!" NEQ "y" (
-        GOTO home_banner
+        wsl.exe -d !wsl_distro! --cd /
     ) 
 )
 
 :wsl_distro_test
+ECHO checking !wsl_distro! for errors ...
 @REM @echo on
 SET "module=wsl_distro_test"
 SET "handle=wsl_distro_test"
