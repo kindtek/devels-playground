@@ -245,7 +245,7 @@ function require_docker_online {
                 Start-Sleep -s $sleep_time
                 Write-Host ""
             }
-            elseif (($docker_tries % 3) -eq 0) {
+            elseif (($docker_tries % 6) -eq 0) {
                 # start count over
                 # $docker_attempt1 = $docker_attempt2 = $false
                 # automatically restart docker on try 3 then prompt for restart after that
@@ -340,7 +340,7 @@ function require_docker_online {
                 $check_again = 'n'
             }
             Write-Host ""
-            Start-Sleep 5
+            Start-Sleep 3
             Write-Host ""
         }
         catch {
