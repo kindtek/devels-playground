@@ -538,7 +538,7 @@ IF "!DVLP_DEBUG!"=="y" (
 )
 IF "!wsl_out!"=="!test_string!" (
     SET "wsl_distro_test_pass=y"
-    ECHO !wsl_distro! imported succesfully!
+    ECHO !wsl_distro! was imported successfully!
 ) ELSE (
     SET "wsl_distro_test_pass=n"
     ECHO !wsl_distro! did not boot.
