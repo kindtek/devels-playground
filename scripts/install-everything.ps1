@@ -248,7 +248,8 @@ function require_docker_online {
                 # $docker_attempt1 = $docker_attempt2 = $false
                 # automatically restart docker on try 3 then prompt for restart after that
                 if ( $docker_tries -ge 11 ) {
-                    $restart = Read-Host "Restart docker? ([y]n)"
+                    # $restart = Read-Host "Restart docker? ([y]n)"
+                    $restart = 'y'
                 }
                 else {
                     if ( $docker_tries -le 3 ) {
@@ -272,7 +273,8 @@ function require_docker_online {
                     $docker_tries = 1
                 }
                 else {
-                    $check_again = Read-Host "Keep trying to connect to docker? ([y]n)"
+                    # $check_again = Read-Host "Keep trying to connect to docker? ([y]n)"
+                    $check_again = 'y'
                     if ($check_again -ine 'n' -And $check_again -ine 'no') {
                         Write-Host "resetting docker engine ....."
                         &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchWindowsEngine;
