@@ -330,7 +330,7 @@ function require_docker_online {
                 }
             }
             Write-Host ""
-            Start-Sleep 20
+            Start-Sleep 10
             Write-Host ""
         }
         catch {
