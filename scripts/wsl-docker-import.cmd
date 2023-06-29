@@ -3,8 +3,8 @@
 color 0F
 SETLOCAL EnableDelayedExpansion
 
-doskey /exename docker.exe docker=C:\Program Files\Docker\Docker\Docker Desktop.exe
-doskey /exename wsl.exe wsl=C:\Windows\System32\wsl.exe
+doskey /exename docker.exe docker=C:\Program Files\Docker\Docker\Docker Desktop.exe > nul 2> nul
+doskey /exename wsl.exe wsl=C:\Windows\System32\wsl.exe > nul 2> nul
 SET "DVLP_DEBUG=n"
 :redo
 SET "module=main"
@@ -56,7 +56,9 @@ IF "!image_name_tag!"=="default" (
 )
 
 SET "image_name_tag=!image_name!:!image_tag!"
-ECHO "image_name_tag set to !image_name_tag!"
+    IF "!DVLP_DEBUG!"=="y" (
+        ECHO "image_name_tag set to !image_name_tag!"
+    )
 
 IF "DVLP_DEBUG"=="y" (
     ECHO IMG_NAME !image_name!
