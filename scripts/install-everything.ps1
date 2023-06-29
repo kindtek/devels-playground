@@ -153,8 +153,8 @@ function require_docker_online {
     $refresh_envs = "$env:USERPROFILE/repos/kindtek/RefreshEnv.cmd"
     $host.UI.RawUI.ForegroundColor = "Black"
     $host.UI.RawUI.BackgroundColor = "DarkRed"
-    Write-Host "`r`n`r`nWaiting for Docker to come online ..."  
-    $sleep_time = 30
+    Write-Host "`r`n`r`nloading docker desktop ..."
+    Write-Host "waiting for docker backend to come online ..."  
     try {
         Start-Process "Docker Desktop.exe" -WindowStyle "Hidden"
     }
@@ -198,7 +198,7 @@ function require_docker_online {
                     Start-Sleep -s $sleep_time
                     Write-Host ""
                 }
-                Write-Host "Docker Desktop is now online"
+                Write-Host "docker backend is now online"
                 docker info
                 break nested_do
             }
@@ -311,8 +311,7 @@ function require_docker_online {
         }
     } while ( -Not $docker_online -And ( $check_again -ine 'n' -And $check_again -ine 'no') )
     if ( -Not $docker_online -And ( $check_again -ine 'n' -Or $check_again -ine 'no') ) {
-        Write-Host "Could not start Docker. You may need to restart your computer"
-        reboot_prompt
+        Write-Host "docker failed to start. if restarting WSL and your computer does not help you may need to use a different WSL default distro"
     }
     $docker_daemon_online= docker search scratch --limit 1 --format helloworld
     if ($docker_daemon_online -ne 'helloworld'){
