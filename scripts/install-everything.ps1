@@ -245,7 +245,7 @@ function require_docker_online {
                 Start-Sleep -s $sleep_time
                 Write-Host ""
             }
-            elseif (($docker_tries % 6) -eq 0) {
+            elseif (($docker_tries % 3) -eq 0) {
                 # start count over
                 # $docker_attempt1 = $docker_attempt2 = $false
                 # automatically restart docker on try 3 then prompt for restart after that
@@ -254,7 +254,7 @@ function require_docker_online {
                     $restart = 'y'
                 }
                 else {
-                    if ( $docker_tries -le 3 ) {
+                    if ( $docker_tries -le 7 ) {
                         $restart = 'n'
                     }
                     else {
@@ -281,7 +281,7 @@ function require_docker_online {
                     if ($check_again -ine 'n' -And $check_again -ine 'no') {
                         Write-Host "resetting docker engine ....."
                         &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchWindowsEngine;
-                        Start-Sleep 5;
+                        Start-Sleep 1;
                         &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine;
                         Write-Host "reset complete"
                         Write-Host "trying again to start docker desktop ..."
@@ -290,7 +290,6 @@ function require_docker_online {
                 }
             }
             elseif ($docker_online -eq $false -And (($docker_tries % 13) -eq 0)) {
-                Write-Host "waited $docker_tries seconds .. "
                 docker info
                 Write-Host "resetting Docker engine data ..."
                 docker update --restart=always docker-desktop
@@ -340,7 +339,7 @@ function require_docker_online {
                 $check_again = 'n'
             }
             Write-Host ""
-            Start-Sleep 3
+            Start-Sleep 1
             Write-Host ""
         }
         catch {
