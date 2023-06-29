@@ -272,31 +272,24 @@ function require_docker_online {
                     $docker_tries = 1
                 }
                 else {
-                    $check_again = Read-Host "Keep trying to connect to Docker? ([y]n)"
+                    $check_again = Read-Host "Keep trying to connect to docker? ([y]n)"
                     if ($check_again -ine 'n' -And $check_again -ine 'no') {
-                        Write-Host "resetting Docker engine ....."
-                        Start-Process DockerCli.exe -SwitchDaemon
-                        Write-Host ""
+                        Write-Host "resetting docker engine ....."
+& $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchWindowsEngine
                         Start-Sleep 5
-                        Write-Host "setting Docker engine to Linux ....."
-                        Start-Process DockerCli.exe -SwitchLinuxEngine
-                        Write-Host "switch complete."
+& $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
+                        Write-Host "reset complete"
+                        Write-Host "trying again to start docker desktop ..."
+
                     }
                 }
             }
             elseif ($docker_online -eq $false -And (($docker_tries % 13) -eq 0)) {
                 Write-Host "waited $docker_tries seconds .. "
                 docker info
-                Write-Host "restarting Docker engine..."
+                Write-Host "resetting Docker engine data ..."
                 docker update --restart=always docker-desktop
                 docker update --restart=always docker-desktop-data
-                Write-Host "switching Docker engine ...."
-                Start-Process DockerCli.exe -SwitchDaemon
-                Write-Host ""
-                Start-Sleep 5
-                Write-Host "setting Docker engine to Linux ....."
-                Start-Process DockerCli.exe -SwitchLinuxEngine
-                Write-Host "switch complete."
                 Write-Output "restarting docker ..."
                 cmd.exe /c net stop docker
                 cmd.exe /c net stop com.docker.service
