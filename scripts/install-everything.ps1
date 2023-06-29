@@ -181,6 +181,7 @@ $new_distro = @"
 
 function require_docker_online {
     $docker_tries = 0
+    $docker_restarts = 0
     $docker_online = $false
     $refresh_envs = "$env:USERPROFILE/repos/kindtek/RefreshEnv.cmd"
     $host.UI.RawUI.ForegroundColor = "Black"
@@ -222,6 +223,7 @@ function require_docker_online {
         try {
             # launch docker desktop and keep it open 
             $docker_tries++
+            Write-Host $docker_tries
             if ( Get-Process 'com.docker.proxy'  ) {
                 $docker_online = $true
                 # if service was already up continue right away otherwise sleep a bit
@@ -235,7 +237,7 @@ function require_docker_online {
                 break nested_do
             }
             if ( $docker_tries -eq 1 ) {
-                Write-Host "Error messages are expected when first starting Docker. Please wait ..."
+                Write-Host "error messages are expected when first starting docker. please wait ..."
             }
             if ($docker_online -eq $false -And (($docker_tries % 2) -eq 0)) {
                 write-host ""
@@ -271,6 +273,7 @@ function require_docker_online {
                     powershell.exe -Command cmd.exe /c net start com.docker.service
                     powershell.exe -Command wsl.exe --exec echo 'docker restarted';
                     $docker_tries = 1
+                    $docker_restarts++
                 }
                 else {
                     # $check_again = Read-Host "Keep trying to connect to docker? ([y]n)"
@@ -328,6 +331,8 @@ function require_docker_online {
                         }
                     }
                 }
+            } elseif ($docker_online -eq $false -And  ($docker_restarts -gt 5 )){
+                Rename-item -Path "$env:APPDATA\Docker\settings.json" "settings.json.old"
             }
             Write-Host ""
             Start-Sleep 10
@@ -338,7 +343,6 @@ function require_docker_online {
         }
     } while ( -Not $docker_online -And ( $check_again -ine 'n' -And $check_again -ine 'no') )
     if ( -Not $docker_online -And ( $check_again -ine 'n' -Or $check_again -ine 'no') ) {
-        Rename-item -Path "$env:APPDATA\Docker\settings.json" "settings.json.old"
         Write-Host "docker failed to start. if restarting WSL and your computer does not help you may need to use a different WSL default distro"
     }
     $docker_daemon_online= docker search scratch --limit 1 --format helloworld
