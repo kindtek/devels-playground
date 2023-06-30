@@ -443,8 +443,8 @@ function run_installer {
         if (!(require_docker_online)) {
             Write-Host "`r`nnot starting docker desktop.`r`n" 
         }
-        else {
-            ini_docker_config
-        }
+        # else {
+        #     ini_docker_config
+        # }
     }
 }
