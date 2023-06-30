@@ -1,6 +1,6 @@
 $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
-$env:WSL_UTF8=1
+$env:WSL_UTF8 = 1
 # source of the below self-elevating script: https://blog.expta.com/2017/03/how-to-self-elevate-powershell-script.html#:~:text=If%20User%20Account%20Control%20(UAC,select%20%22Run%20with%20PowerShell%22.
 # Self-elevate the script if required
 if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator')) {
@@ -132,7 +132,7 @@ function ini_docker_config {
     $config_json.activeOrganizationName = "kindtek"
     if ("$new_integrated_distro" -ne "") {
         $jcurrent = $config_json.integratedWslDistros
-$new_distro = @"
+        $new_distro = @"
 [
     {
         "integratedWslDistros":"kalilinux-kali-rolling-latest"
@@ -162,7 +162,7 @@ function set_docker_config {
     $config_json.activeOrganizationName = "kindtek"
     if ("$new_integrated_distro" -ne "") {
         $jcurrent = $config_json.integratedWslDistros
-$new_distro = @"
+        $new_distro = @"
 [
     {
         "integratedWslDistros":"$new_integrated_distro"
@@ -249,19 +249,14 @@ function require_docker_online {
                 # start count over
                 # $docker_attempt1 = $docker_attempt2 = $false
                 # automatically restart docker on try 3 then prompt for restart after that
-                if ( $docker_tries -ge 11 ) {
+                if ( $docker_tries -gt 9 ) {
                     # $restart = Read-Host "Restart docker? ([y]n)"
                     $restart = 'y'
                 }
                 else {
-                    if ( $docker_tries -le 7 ) {
-                        $restart = 'n'
-                    }
-                    else {
-                        $restart = 'y'
-                    }
+                    $restart = 'n'
                 }
-                if ( $restart -ine 'n' -And $restart -ine 'no' -And (($docker_tries % 6) -eq 0)) {
+                if ( $restart -ine 'n' -And $restart -ine 'no' -And (($docker_tries % 9) -eq 0)) {
                     Write-Output "stopping docker ..."
                     powershell.exe -Command cmd.exe /c net stop com.docker.service
                     powershell.exe -Command cmd.exe /c taskkill /IM "'Docker Desktop.exe'" /F
@@ -275,7 +270,7 @@ function require_docker_online {
                     $docker_tries = 1
                     $docker_restarts++
                 }
-                else {
+                elseif ( ($docker_tries % 6) -eq 0) {
                     # $check_again = Read-Host "Keep trying to connect to docker? ([y]n)"
                     $check_again = 'y'
                     if ($check_again -ine 'n' -And $check_again -ine 'no') {
@@ -288,9 +283,10 @@ function require_docker_online {
             }
             elseif ($docker_online -eq $false -And (($docker_tries % 13) -eq 0)) {
                 docker info
-                Write-Host "resetting Docker engine data ..."
+                Write-Host "resetting Docker engine and data ..."
                 docker update --restart=always docker-desktop
                 docker update --restart=always docker-desktop-data
+                &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchWindowsEngine; Start-Sleep 5; &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine;
                 Write-Output "restarting docker ..."
                 cmd.exe /c net stop docker
                 cmd.exe /c net stop com.docker.service
@@ -329,11 +325,12 @@ function require_docker_online {
                         }
                     }
                 }
-            } elseif ($docker_online -eq $false -And  ($docker_restarts -eq 2 ) -And  ($docker_tries -eq 10 )){
+            }
+            elseif ($docker_online -eq $false -And ($docker_restarts -eq 2 ) -And ($docker_tries -eq 10 )) {
                 # clear settings 
                 Rename-item -Path "$env:APPDATA\Docker\settings.json" "settings.json.old" -Force
             }
-            elseif ($docker_online -eq $false -And  ($docker_restarts -eq 4 )){
+            elseif ($docker_online -eq $false -And ($docker_restarts -eq 4 )) {
                 # give up
                 $check_again = 'n'
             }
@@ -348,8 +345,8 @@ function require_docker_online {
     if ( -Not $docker_online -And ( $check_again -ine 'n' -Or $check_again -ine 'no') ) {
         Write-Host "docker failed to start. if restarting WSL and your computer does not help you may need to use a different WSL default distro"
     }
-    $docker_daemon_online= docker search scratch --limit 1 --format helloworld
-    if ($docker_daemon_online -ne 'helloworld'){
+    $docker_daemon_online = docker search scratch --limit 1 --format helloworld
+    if ($docker_daemon_online -ne 'helloworld') {
         $docker_online = $false
     }
     return $docker_online
@@ -403,7 +400,7 @@ function run_installer {
 
 
     # Write-Host "$([char]27)[2J" 
-    if (!(Test-Path -Path "$git_path/.dvlp-installed" -PathType Leaf)){
+    if (!(Test-Path -Path "$git_path/.dvlp-installed" -PathType Leaf)) {
         if (!(require_docker_online)) {
             Write-Host "`r`nnot starting docker desktop.`r`n" 
         }
