@@ -511,7 +511,8 @@ IF "!DVLP_DEBUG!"=="y" (
 IF "!wsl_out!"=="!test_string!" (
     SET "wsl_distro_test_pass=y"
     @REM add !wsl_distro! to Docker integrated WSL distro list
-    powershell -Command ". ..\..\dvlw\scripts\install-everything.ps1; set_docker_config('!wsl_distro!');"
+    @REM powershell -Command ". ..\..\dvlw\scripts\install-everything.ps1; set_docker_config('!wsl_distro!');"
+    powershell -Command ". ..\..\dvlw\scripts\install-everything.ps1;"
     ECHO !wsl_distro! was imported successfully!
 ) ELSE (
     SET "wsl_distro_test_pass=n"
