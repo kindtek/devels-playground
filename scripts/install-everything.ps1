@@ -331,7 +331,7 @@ function require_docker_online {
                 }
             } elseif ($docker_online -eq $false -And  ($docker_restarts -eq 2 ) -And  ($docker_tries -eq 10 )){
                 # clear settings 
-                Rename-item -Path "$env:APPDATA\Docker\settings.json" "settings.json.old"
+                Rename-item -Path "$env:APPDATA\Docker\settings.json" "settings.json.old" -Force
             }
             elseif ($docker_online -eq $false -And  ($docker_restarts -eq 4 )){
                 # give up
