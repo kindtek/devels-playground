@@ -234,7 +234,9 @@ function require_docker_online {
                     Write-Host ""
                 }
                 Write-Host "docker backend is now online"
-                docker info
+                try {
+                    docker info
+                } catch {}
                 break nested_do
             }
             if ( $docker_tries -eq 1 ) {
@@ -259,39 +261,73 @@ function require_docker_online {
                 }
                 if ( $restart -ine 'n' -And $restart -ine 'no' -And (($docker_tries % 9) -eq 0)) {
                     Write-Output "stopping docker ..."
-                    powershell.exe -Command cmd.exe /c net stop com.docker.service
-                    powershell.exe -Command cmd.exe /c taskkill /IM "'Docker Desktop.exe'" /F
+                    try {
+                        powershell.exe -Command cmd.exe /c net stop com.docker.service
+                    } catch {}
+                    try {
+                        powershell.exe -Command cmd.exe /c taskkill /IM "'Docker Desktop.exe'" /F
+                    } catch {}
                     Write-Output "stopping wsl ..."
-                    powershell.exe -Command wsl.exe --shutdown; 
+                    try {
+                        powershell.exe -Command wsl.exe --shutdown; 
+                    } catch {}
                     Write-Output "starting wsl ..."
-                    powershell.exe -Command wsl.exe --exec echo 'wsl restarted';
+                    try {
+                        powershell.exe -Command wsl.exe --exec echo 'wsl restarted';
                     Write-Output "starting docker ..."
-                    powershell.exe -Command cmd.exe /c net start com.docker.service
-                    powershell.exe -Command wsl.exe --exec echo 'docker restarted';
+                    } catch {}
+                    try {
+                        powershell.exe -Command cmd.exe /c net start com.docker.service
+                    } catch {}
+                    try {
+                        powershell.exe -Command wsl.exe --exec echo 'docker restarted';
+                    } catch {}
                 }
                 elseif ( ($docker_tries % 6) -eq 0) {
                     # $check_again = Read-Host "Keep trying to connect to docker? ([y]n)"
                     $check_again = 'y'
                     if ($check_again -ine 'n' -And $check_again -ine 'no') {
                         Write-Host "resetting docker engine ....."
-                        &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine;
+                        try {
+                            &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine;
+                        } catch {}
                         Write-Host "trying again to start docker desktop ..."
                     }
                 }
             }
             elseif ($docker_online -eq $false -And (($docker_tries % 13) -eq 0)) {
-                docker info
+                try { 
+                    docker info
+                } catch {}
                 Write-Host "resetting Docker engine and data ..."
-                docker update --restart=always docker-desktop
-                docker update --restart=always docker-desktop-data
-                &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine;
+                try {
+                    docker update --restart=always docker-desktop
+                } catch {}
+                try {
+                    docker update --restart=always docker-desktop-data
+                } catch {}
+                try {
+                    &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine;
+                } catch {}
                 Write-Output "restarting docker ..."
-                cmd.exe /c net stop docker
-                cmd.exe /c net stop com.docker.service
-                cmd.exe /c taskkill /IM "dockerd.exe" /F
-                cmd.exe /c taskkill /IM "Docker Desktop.exe" /F
-                cmd.exe /c net start docker
-                cmd.exe /c net start com.docker.service
+                try {
+                        cmd.exe /c net stop docker
+                } catch {}
+                try {
+                        cmd.exe /c net stop com.docker.service
+                } catch {}
+                try {
+                    cmd.exe /c taskkill /IM "dockerd.exe" /F
+                } catch {}
+                try {
+                    cmd.exe /c taskkill /IM "Docker Desktop.exe" /F
+                } catch {}
+                try {
+                    cmd.exe /c net start docker
+                } catch {}
+                try {
+                    cmd.exe /c net start com.docker.service
+                } catch {}
                 $docker_tries = 1
                 $docker_cycles++
             }
