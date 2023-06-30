@@ -115,7 +115,7 @@ function install_dependencies {
 function ini_docker_config {
     param ( $new_integrated_distro )
     $config_file = "$env:APPDATA\Docker\settings.json"
-    $config_json = (Get-Content -Raw "$config_file") | ConvertFrom-JSON -NoEnumerate
+    $config_json = (Get-Content -Raw "$config_file") | ConvertFrom-JSON 
     # $config_json = ConvertFrom-JSON (Get-Content "$config_file")
     $config_json.disableTips = $true
     $config_json.disableUpdate = $false
