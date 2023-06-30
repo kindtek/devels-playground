@@ -249,7 +249,7 @@ function require_docker_online {
                 # start count over
                 # $docker_attempt1 = $docker_attempt2 = $false
                 # automatically restart docker on try 3 then prompt for restart after that
-                if ( $docker_tries -gt 9 ) {
+                if ( $docker_tries -gt 8 ) {
                     # $restart = Read-Host "Restart docker? ([y]n)"
                     $restart = 'y'
                 }
@@ -285,7 +285,7 @@ function require_docker_online {
                 Write-Host "resetting Docker engine and data ..."
                 docker update --restart=always docker-desktop
                 docker update --restart=always docker-desktop-data
-                Start-Process $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchWindowsEngine; Start-Sleep 5; &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine;
+                &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine;
                 Write-Output "restarting docker ..."
                 cmd.exe /c net stop docker
                 cmd.exe /c net stop com.docker.service
@@ -293,7 +293,6 @@ function require_docker_online {
                 cmd.exe /c taskkill /IM "Docker Desktop.exe" /F
                 cmd.exe /c net start docker
                 cmd.exe /c net start com.docker.service
-                &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
                 $docker_tries = 1
                 $docker_restarts++
             }
@@ -328,7 +327,8 @@ function require_docker_online {
             }
             elseif ($docker_online -eq $false -And ($docker_restarts -eq 2 ) -And ($docker_tries -eq 10 )) {
                 # clear settings 
-                Rename-item -Path "$env:APPDATA\Docker\settings.json" "settings.json.old" -Force
+                Move-Item -Path "$env:APPDATA\Docker\settings.json" "settings.json.old" -Force
+                &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine -ResetToDefault;
             }
             elseif ($docker_online -eq $false -And ($docker_restarts -eq 4 )) {
                 # give up
