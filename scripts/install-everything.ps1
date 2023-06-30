@@ -275,8 +275,7 @@ function require_docker_online {
                     $check_again = 'y'
                     if ($check_again -ine 'n' -And $check_again -ine 'no') {
                         Write-Host "resetting docker engine ....."
-                        &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchWindowsEngine; Start-Sleep 5; &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine;
-                        Write-Host "reset complete"
+                        &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine;
                         Write-Host "trying again to start docker desktop ..."
                     }
                 }
@@ -286,7 +285,7 @@ function require_docker_online {
                 Write-Host "resetting Docker engine and data ..."
                 docker update --restart=always docker-desktop
                 docker update --restart=always docker-desktop-data
-                &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchWindowsEngine; Start-Sleep 5; &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine;
+                Start-Process $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchWindowsEngine; Start-Sleep 5; &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine;
                 Write-Output "restarting docker ..."
                 cmd.exe /c net stop docker
                 cmd.exe /c net stop com.docker.service
@@ -294,6 +293,7 @@ function require_docker_online {
                 cmd.exe /c taskkill /IM "Docker Desktop.exe" /F
                 cmd.exe /c net start docker
                 cmd.exe /c net start com.docker.service
+                &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine
                 $docker_tries = 1
                 $docker_restarts++
             }
