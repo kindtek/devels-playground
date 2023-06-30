@@ -56,64 +56,37 @@ IF "!image_name_tag!"=="default" (
 )
 
 SET "image_name_tag=!image_name!:!image_tag!"
-    IF "!DVLP_DEBUG!"=="y" (
-        ECHO "image_name_tag set to !image_name_tag!"
-    )
-
-IF "DVLP_DEBUG"=="y" (
+SET "wsl_distro=!image_repo_mask!-!image_name!-!image_tag!"
+IF "!DVLP_DEBUG!"=="y" (
+    ECHO "image_name_tag set to !image_name_tag!"
     ECHO IMG_NAME !image_name!
     ECHO IMG_TAG !image_tag!
     ECHO IMG_NAME_TAG !image_name_tag!
     ECHO OLD_IMG_NAME_TAG %1
+    ECHO WSL_DISTRO %1
     @REM ECHO "image_tag set to arg: '%1'  ('%~1') as !image_tag!"
 )
-IF "!image_name_tag!"=="default" (
-    SET "image_name_tag="
-)
+
 IF "!non_interactive_distro_name!"=="" (
     IF "!DVLP_DEBUG!"=="y" (
         ECHO "interactive session"
     )
     SET "interactive=y"
-    SET "wsl_distro=!image_repo_mask!-!image_name!-!image_tag!"
     IF "!image_repo!"=="kindtek" (
         SET "wsl=y"
     ) ELSE (
         SET "wsl=n"
     )
-    IF "!image_name_tag!"=="" (
-        ECHO "kalilinux-kali-rolling-latest"
-        SET "wsl=y"
-        SET "image_repo=kalilinux"
-        SET "image_repo_mask=kalilinux"
-        SET "image_tag=latest"
-        SET "image_name=kali-rolling"
-        SET "wsl_distro=kalilinux-kali-rolling-latest"    ) 
-
 ) ELSE (
     IF "!DVLP_DEBUG!"=="y" (
         ECHO "NON-interactive session"
     )
     SET "interactive=n"
     @REM SET "wsl_distro=!non_interactive_distro_name!"
-    SET "wsl_distro=!image_repo_mask!-!image_name!-!image_tag!"
-    IF "!image_repo!"=="kindtek" (
-        SET "wsl=y"
-    ) ELSE (
-        SET "wsl=n"
-    )
-    IF "!image_name_tag!"=="" (
-        ECHO "kalilinux-kali-rolling-latest"
-        SET "wsl=y"
-        SET "image_repo=kalilinux"
-        SET "image_repo_mask=kalilinux"
-        SET "image_tag=latest"
-        SET "image_name=kali-rolling"
-        SET "wsl_distro=kalilinux-kali-rolling-latest"    
-    ) 
     SET "wsl=y"
     
 )
+
 IF "DVLP_DEBUG"=="y" (
     ECHO WSL_IMPORT !wsl!
 )
