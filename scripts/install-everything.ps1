@@ -181,7 +181,7 @@ function set_docker_config {
 
 function require_docker_online {
     $docker_tries = 0
-    $docker_restarts = 0
+    $docker_cycles = 0
     $docker_online = $false
     $refresh_envs = "$env:USERPROFILE/repos/kindtek/RefreshEnv.cmd"
     $host.UI.RawUI.ForegroundColor = "Black"
@@ -223,7 +223,7 @@ function require_docker_online {
         try {
             # launch docker desktop and keep it open 
             $docker_tries++
-            Write-Host "${docker_restarts}.${docker_tries}"
+            Write-Host "${docker_cycles}.${docker_tries}"
             if ( Get-Process 'com.docker.proxy' ) {
                 $docker_online = $true
                 # if service was already up continue right away otherwise sleep a bit
@@ -267,8 +267,6 @@ function require_docker_online {
                     Write-Output "starting docker ..."
                     powershell.exe -Command cmd.exe /c net start com.docker.service
                     powershell.exe -Command wsl.exe --exec echo 'docker restarted';
-                    $docker_tries = 1
-                    $docker_restarts++
                 }
                 elseif ( ($docker_tries % 6) -eq 0) {
                     # $check_again = Read-Host "Keep trying to connect to docker? ([y]n)"
@@ -294,7 +292,7 @@ function require_docker_online {
                 cmd.exe /c net start docker
                 cmd.exe /c net start com.docker.service
                 $docker_tries = 1
-                $docker_restarts++
+                $docker_cycles++
             }
             if ($docker_online -eq $false -And ( $docker_tries -eq 1)) {
                 # try extraordinary measures
@@ -325,12 +323,12 @@ function require_docker_online {
                     }
                 }
             }
-            elseif ($docker_online -eq $false -And ($docker_restarts -eq 2 ) -And ($docker_tries -eq 10 )) {
+            elseif ($docker_online -eq $false -And ($docker_cycles -eq 2 ) -And ($docker_tries -eq 10 )) {
                 # clear settings 
                 Move-Item -Path "$env:APPDATA\Docker\settings.json" "settings.json.old" -Force
                 &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine -ResetToDefault;
             }
-            elseif ($docker_online -eq $false -And ($docker_restarts -eq 4 )) {
+            elseif ($docker_online -eq $false -And ($docker_cycles -eq 4 )) {
                 # give up
                 $check_again = 'n'
             }
