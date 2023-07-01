@@ -267,17 +267,6 @@ function wsl_docker_restart {
     }
     catch {}
 }
-
-function is_docker_desktop_online {
-    $docker_daemon_online = docker search scratch --limit 1 --format helloworld | Out-Null
-    if ($docker_daemon_online -eq 'helloworld') {
-        return $true
-    }
-    else {
-        return $false
-    }
-}
-
 function is_docker_backend_online {
     try {
         $docker_process = Get-Process 'com.docker.proxy' | Out-Null
@@ -292,6 +281,16 @@ function is_docker_backend_online {
         return $false
     }
 }
+function is_docker_desktop_online {
+    $docker_daemon_online = docker search scratch --limit 1 --format helloworld | Out-Null
+    if (($docker_daemon_online -eq 'helloworld') -And (is_docker_backend_online -eq $true)) {
+        return $true
+    }
+    else {
+        return $false
+    }
+}
+
 
 function start_docker_desktop {
     $refresh_envs = "$env:USERPROFILE/repos/kindtek/RefreshEnv.cmd"
@@ -344,7 +343,7 @@ function require_docker_online {
             # launch docker desktop and keep it open 
             $docker_tries++
             Write-Host "${docker_cycles}.${docker_tries}"
-            if ( is_docker_backend_online -and is_docker_desktop_online ) {
+            if ( is_docker_desktop_online ) {
                 $docker_online = $true
                 $docker_desktop_online = $true
             }
