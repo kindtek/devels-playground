@@ -267,6 +267,29 @@ function wsl_docker_restart {
     catch {}
 }
 
+function is_docker_desktop_online {
+    $docker_daemon_online = docker search scratch --limit 1 --format helloworld
+    if ($docker_daemon_online -eq 'helloworld'){
+        return $true
+    } else {
+        return $false
+    }
+}
+
+function is_docker_backend_online {
+    try {
+        $docker_process = Get-Process 'com.docker.proxy'
+    }
+    catch {
+        return $false
+    }
+    if ( $docker_process -ne 'error' ) {
+        return $true
+    } else {
+        return $false
+    }
+}
+
 function require_docker_online {
     $docker_tries = 0
     $docker_cycles = 0
@@ -314,35 +337,10 @@ function require_docker_online {
             # launch docker desktop and keep it open 
             $docker_tries++
             Write-Host "${docker_cycles}.${docker_tries}"
-            try {
-                $docker_process = Get-Process 'com.docker.proxy'
-            }
-            catch {
-                $docker_process = 'error'
-            }
-            if ( $docker_process -ne 'error' ) {
+            if ( is_docker_backend_online ) {
                 $docker_online = $true
-                try {
-                    Start-Sleep 2
-                    $docker_daemon_online = docker search scratch --limit 1 --format helloworld
-                    if ($docker_daemon_online -eq 'helloworld') {
-                        $docker_desktop_online = $true
-                    }
-                    else {
-                        $docker_online = $false
-                        if ( $docker_settings_reset -eq $true ){
-                            reset_docker_wsl_settings
-                            $docker_settings_reset = $false
-                        }
-                    }
-                }
-                catch {
-                    $docker_online = $false
-                    if ( $docker_settings_reset -eq $true ){
-                        reset_docker_wsl_settings
-                        $docker_settings_reset = $false
-                    }
-                }
+                Start-Sleep 2
+                $docker_desktop_online = is_docker_desktop_online
                 # if service was already up continue right away otherwise sleep a bit
                 if ( $docker_tries -gt 1 ) {
                     $sleep_time += 1
@@ -352,14 +350,13 @@ function require_docker_online {
                 Write-Host "docker backend is online"
                 if ( $docker_desktop_online -eq $false) {
                     Write-Host "trying to connect to docker backend to docker desktop ..."
+                    if ( $docker_settings_reset -eq $true ) {
+                        reset_docker_wsl_settings
+                    }
                 }
                 else {
                     Write-Host "docker desktop is now online"
                 }
-                try {
-                    docker info
-                }
-                catch {}
                 if ( $docker_online -eq $true ) {
                     break nested_do
                 }
