@@ -264,6 +264,7 @@ function wsl_docker_restart {
     catch {}
 }
 function is_docker_backend_online {
+    function Out-Default {}
     try {
         $docker_process = (Get-Process 'com.docker.proxy' )
     }
@@ -277,8 +278,10 @@ function is_docker_backend_online {
     else {
         return $false
     }
+    Remove-Item -Path function:Out-Default
 }
 function is_docker_desktop_online {
+    function Out-Default {}
     try {
         $docker_daemon_online = docker search scratch --limit 1 --format helloworld 
         if (($docker_daemon_online -eq 'helloworld') -And (is_docker_backend_online -eq $true)) {
@@ -290,11 +293,12 @@ function is_docker_desktop_online {
     } catch {
         return $false
     }
-
+    Remove-Item -Path function:Out-Default
 }
 
 
 function start_docker_desktop {
+    function Out-Default {}
     $refresh_envs = "$env:USERPROFILE/repos/kindtek/RefreshEnv.cmd"
     try {
         Start-Process "Docker Desktop.exe" -WindowStyle "Hidden"
@@ -327,6 +331,7 @@ function start_docker_desktop {
             }
         }
     }
+    Remove-Item -Path function:Out-Default
 }
 
 function require_docker_online {
