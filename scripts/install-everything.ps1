@@ -1,7 +1,7 @@
 $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
 $env:WSL_UTF8 = 1
-$failsafe_wsl_distro = 'kalilinux-kali-rolling-latest'
+$global:FAILSAFE_WSL_DISTRO = 'kalilinux-kali-rolling-latest'
 # source of the below self-elevating script: https://blog.expta.com/2017/03/how-to-self-elevate-powershell-script.html#:~:text=If%20User%20Account%20Control%20(UAC,select%20%22Run%20with%20PowerShell%22.
 # Self-elevate the script if required
 if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator')) {
@@ -183,12 +183,13 @@ function set_docker_config {
 
 function reset_docker_wsl_settings {
     # clear settings 
-    Write-Host "clearing settings and reverting wsl to $failsafe_wsl_distro"
+    Write-Host "clearing settings and reverting wsl to $FAILSAFE_WSL_DISTRO"
     Push-Location $env:APPDATA\Docker
+    Delete-Item "settings.json.old" | Out-Null
     Move-Item -Path "settings.json" "settings.json.old" -Force | Out-Null
     Pop-Location
     &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine -ResetToDefault;
-    wsl -s $failsafe_wsl_distro
+    wsl -s $FAILSAFE_WSL_DISTRO
 }
 
 function docker_wsl_full_restart {
