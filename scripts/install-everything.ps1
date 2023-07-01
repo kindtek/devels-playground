@@ -406,6 +406,8 @@ function require_docker_online {
             }
             elseif (((is_docker_desktop_online) -eq $false) -And (($docker_tries % 13) -eq 0)) {
                 wsl_docker_full_restart
+            }
+            elseif (((is_docker_desktop_online) -eq $false) -And (($docker_tries % 15) -eq 0)) {
                 $docker_tries = 1
                 $docker_cycles++
             }
