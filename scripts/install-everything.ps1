@@ -185,6 +185,7 @@ function require_docker_online {
     $docker_tries = 0
     $docker_cycles = 0
     $docker_online = $false
+    $docker_desktop_online = $false
     $refresh_envs = "$env:USERPROFILE/repos/kindtek/RefreshEnv.cmd"
     $host.UI.RawUI.ForegroundColor = "Black"
     $host.UI.RawUI.BackgroundColor = "DarkRed"
@@ -226,8 +227,17 @@ function require_docker_online {
             # launch docker desktop and keep it open 
             $docker_tries++
             Write-Host "${docker_cycles}.${docker_tries}"
-            if ( Get-Process 'com.docker.proxy' ) {
+            try {
+                $docker_process = Get-Process 'com.docker.proxy'
+            } catch {
+                $docker_process = 'error'
+            }
+            if ( $docker_process -ne 'error' ) {
                 $docker_online = $true
+                $docker_daemon_online = docker search scratch --limit 1 --format helloworld
+                if ($docker_daemon_online -eq 'helloworld') {
+                    $docker_desktop_online = $true
+                }
                 # if service was already up continue right away otherwise sleep a bit
                 if ( $docker_tries -gt 1 ) {
                     $sleep_time += 1
@@ -361,7 +371,7 @@ function require_docker_online {
                     }
                 }
             }
-            elseif ($docker_online -eq $false -And ($docker_cycles -eq 2 ) -And ($docker_tries -eq 10 )) {
+            elseif (($docker_online -eq $false -And ($docker_cycles -eq 2 ) -And ($docker_tries -eq 10 )) -Or ($docker_online -eq $true -And $docker_desktop_online -eq $false)) {
                 # clear settings 
                 Write-Host "clearing settings and reverting wsl to $failsafe_wsl_distro"
                 Push-Location $env:APPDATA\Docker
@@ -369,6 +379,10 @@ function require_docker_online {
                 Pop-Location
                 &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine -ResetToDefault;
                 wsl -s $failsafe_wsl_distro
+                if ($docker_online -eq $true -And $docker_desktop_online -eq $false){
+                    # restart loop
+                    $docker_online = $false
+                }
             }
             elseif ($docker_online -eq $false -And ($docker_cycles -eq 4 )) {
                 # give up
