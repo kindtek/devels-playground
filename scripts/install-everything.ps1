@@ -341,7 +341,11 @@ function require_docker_online {
             # launch docker desktop and keep it open 
             $docker_tries++
             Write-Host "${docker_cycles}.${docker_tries}"
-            if ( is_docker_backend_online ) {
+            if ( is_docker_backend_online -and is_docker_desktop_online ) {
+                $docker_online = $true
+                $docker_desktop_online = $true
+            }
+            elseif ( is_docker_backend_online ) {
                 $docker_online = $true
                 Start-Sleep 2
                 $docker_desktop_online = is_docker_desktop_online
@@ -437,10 +441,7 @@ function require_docker_online {
     if ( -Not $docker_online -And ( $check_again -ine 'n' -Or $check_again -ine 'no') ) {
         Write-Host "docker failed to start."
     }
-    $docker_daemon_online = docker search scratch --limit 1 --format helloworld
-    if ($docker_daemon_online -ne 'helloworld') {
-        $docker_online = $false
-    }
+
     return $docker_online
 }
 
