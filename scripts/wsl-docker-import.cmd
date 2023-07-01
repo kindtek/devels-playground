@@ -185,17 +185,21 @@ ECHO docker pull !image_repo_name_tag!
 docker pull !image_repo_name_tag!
 @REM re-building repo
 SET "build_args="
+SET "build_repos=repo"
+ECHO building image (!image_service!)...
+@REM build the image
 IF "!image_service_suffix!"=="kernel" (
     @REM TODO: add prompt (when noninteractive) for kernel type/feature
     SET "build_args=--build-arg WIN_USER=%USERNAME%"
     SET "build_args=!build_args! --build-arg KERNEL_TYPE=basic"
+    SET "build_repos=!build_repos! repo-kernel"
     @REM SET "build_args= !build_args! --build-arg KERNEL_FEATURE='zfs'"
 )
-ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache repo repo-kernel
+IF "!image_service_suffix!" NEQ "test" (
+    ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !build_repos!
+    docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !build_repos!
+)
 ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !image_service!
-ECHO building image (!image_service!)...
-@REM build the image
-docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache repo repo-kernel
 docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !image_service!
 
 SET "image_built=y"
