@@ -372,59 +372,62 @@ function require_docker_online {
             elseif ( ($docker_tries -eq 1 -And $docker_cycles -eq 1) -And (((is_docker_backend_online) -eq $false) -Or ((is_docker_desktop_online) -eq $false)) ) {
                 Write-Host "error messages are expected when first starting docker. please wait ..."
             }
-            if (((is_docker_desktop_online) -eq $false) -And (($docker_tries % 2) -eq 0)) {
-                write-host ""
-                $sleep_time += 1
-                Start-Sleep -s $sleep_time
-                Write-Host ""
-            }
-            elseif (((is_docker_desktop_online) -eq $false) -And ($docker_tries % 3) -eq 0) {
-                # start count over
-                # $docker_attempt1 = $docker_attempt2 = $false
-                # automatically restart docker on try 3 then prompt for restart after that
-                if ( $docker_tries -gt 8 ) {
-                    # $restart = Read-Host "Restart docker? ([y]n)"
-                    $restart = 'y'
+            if ((is_docker_desktop_online) -eq $false) {
+                if (($docker_tries % 2) -eq 0) {
+                    write-host ""
+                    $sleep_time += 1
+                    Start-Sleep -s $sleep_time
+                    Write-Host ""
                 }
-                else {
-                    $restart = 'n'
-                }
-                if ( $restart -ine 'n' -And $restart -ine 'no' -And (($docker_tries % 9) -eq 0)) {
-                    wsl_docker_restart
-                }
-                elseif ( ($docker_tries % 6) -eq 0) {
-                    # $check_again = Read-Host "Keep trying to connect to docker? ([y]n)"
-                    $check_again = 'y'
-                    if ($check_again -ine 'n' -And $check_again -ine 'no') {
-                        Write-Host "resetting docker engine ....."
-                        try {
-                            &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine;
+                elseif (($docker_tries % 3) -eq 0) {
+                    # start count over
+                    # $docker_attempt1 = $docker_attempt2 = $false
+                    # automatically restart docker on try 3 then prompt for restart after that
+                    if ( $docker_tries -gt 8 ) {
+                        # $restart = Read-Host "Restart docker? ([y]n)"
+                        $restart = 'y'
+                    }
+                    else {
+                        $restart = 'n'
+                    }
+                    if ( $restart -ine 'n' -And $restart -ine 'no' -And (($docker_tries % 9) -eq 0)) {
+                        wsl_docker_restart
+                    }
+                    elseif ( ($docker_tries % 6) -eq 0) {
+                        # $check_again = Read-Host "Keep trying to connect to docker? ([y]n)"
+                        $check_again = 'y'
+                        if ($check_again -ine 'n' -And $check_again -ine 'no') {
+                            Write-Host "resetting docker engine ....."
+                            try {
+                                &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine;
+                            }
+                            catch {}
+                            Write-Host "trying again to start docker desktop ..."
                         }
-                        catch {}
-                        Write-Host "trying again to start docker desktop ..."
+                    }
+                    elseif (((is_docker_desktop_online) -eq $false) -And (($docker_tries % 15) -eq 0)) {
+                        $docker_tries = 1
+                        $docker_cycles++
                     }
                 }
-                elseif (((is_docker_desktop_online) -eq $false) -And (($docker_tries % 15) -eq 0)) {
-                    $docker_tries = 1
-                    $docker_cycles++
+                elseif (($docker_tries % 13) -eq 0) {
+                    wsl_docker_full_restart
                 }
-            }
-            elseif (((is_docker_desktop_online) -eq $false) -And (($docker_tries % 13) -eq 0)) {
-                wsl_docker_full_restart
+            
+                if (( $docker_cycles -eq 2 ) -Or (is_docker_backend_online) -eq $true ) {
+                    if ($docker_tries -eq 10 ) {
+                        reset_docker_wsl_settings
+                    }
+                }
+                elseif ($docker_cycles -eq 4 ) {
+                    # give up
+                    $check_again = 'n'
+                }
+                Write-Host ""
+                Start-Sleep 1
+                Write-Host ""
             }
             
-            if ((((is_docker_backend_online) -eq $false) -And ($docker_cycles -eq 2 )) -Or ((is_docker_backend_online) -eq $true -And (is_docker_desktop_online) -eq $false)) {
-                if ($docker_tries -eq 10 ) {
-                    reset_docker_wsl_settings
-                }
-            }
-            elseif (((is_docker_backend_online) -eq $false) -And ($docker_cycles -eq 4 )) {
-                # give up
-                $check_again = 'n'
-            }
-            Write-Host ""
-            Start-Sleep 1
-            Write-Host ""
         }
         catch {
             # Write-Host "error connecting to docker"
