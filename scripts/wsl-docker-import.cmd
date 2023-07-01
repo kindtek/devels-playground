@@ -41,6 +41,7 @@ IF "!image_name_tag!"=="default" (
     SET "image_name=kali-rolling"
     SET "wsl_distro=kalilinux-kali-rolling-latest"
     SET "non_interactive_distro_name=!wsl_distro!"
+    SET "default_wsl_distro=y"
 
 ) ELSE (
     SET "image_name_tag=%1"
