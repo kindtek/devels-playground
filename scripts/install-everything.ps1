@@ -350,7 +350,8 @@ function require_docker_online {
                 if ( $docker_desktop_online -eq $false) {
                     $docker_online = $false
                     Write-Host "trying to connect to docker backend to docker desktop ..."
-                    if ( $docker_settings_reset -eq $true ) {
+                    if ( $docker_settings_reset -eq $true -And $docker_cycles -gt 5 ) {
+                        # only reset settings once and after trying 6 times
                         reset_docker_wsl_settings
                         $docker_settings_reset = $false
                     }
