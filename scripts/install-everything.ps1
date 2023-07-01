@@ -290,17 +290,8 @@ function is_docker_backend_online {
     }
 }
 
-function require_docker_online {
-    $docker_tries = 0
-    $docker_cycles = 0
-    $docker_online = $false
-    $docker_desktop_online = $false
-    $docker_settings_reset = $true
+function start_docker_desktop {
     $refresh_envs = "$env:USERPROFILE/repos/kindtek/RefreshEnv.cmd"
-    $host.UI.RawUI.ForegroundColor = "Black"
-    $host.UI.RawUI.BackgroundColor = "DarkRed"
-    Write-Host "`r`n`r`nloading docker desktop ..."
-    Write-Host "waiting for docker backend to come online ..."  
     try {
         Start-Process "Docker Desktop.exe" -WindowStyle "Hidden"
     }
@@ -332,7 +323,20 @@ function require_docker_online {
             }
         }
     }
-    :nested_do do {    
+}
+
+function require_docker_online {
+    $docker_tries = 0
+    $docker_cycles = 0
+    $docker_online = $false
+    $docker_desktop_online = $false
+    $docker_settings_reset = $true
+    $host.UI.RawUI.ForegroundColor = "Black"
+    $host.UI.RawUI.BackgroundColor = "DarkRed"
+    Write-Host "`r`n`r`nloading docker desktop ..."
+    Write-Host "waiting for docker backend to come online ..."  
+    :nested_do do {   
+        start_docker_desktop 
         try {
             # launch docker desktop and keep it open 
             $docker_tries++
@@ -364,8 +368,7 @@ function require_docker_online {
                 if ( $docker_online -eq $true ) {
                     break nested_do
                 }
-            }
-            if ( $docker_tries -eq 1 ) {
+            } elseif ( $docker_tries -eq 1 -And $docker_cycles -eq 1 -And ($docker_online -eq $false -Or $docker_desktop_online -eq $false) ) {
                 Write-Host "error messages are expected when first starting docker. please wait ..."
             }
             if ($docker_online -eq $false -And (($docker_tries % 2) -eq 0)) {
@@ -410,30 +413,7 @@ function require_docker_online {
                 # try extraordinary measures
                 # $check_again = Read-Host "Try resetting default distro and restarting Docker? ([y]n)"
                 Write-Host ""
-                try {
-                    Start-Process "com.docker.proxy" -WindowStyle "Hidden"
-                } 
-                catch {
-                    try {
-                        Start-Process "Docker Desktop.exe" -WindowStyle "Hidden"
-                    }
-                    catch {
-                        try {
-                            Start-Process "c:\docker\Docker Desktop.exe" -WindowStyle "Hidden"
-                        }
-                        catch {
-                            try {
-                                Start-Process "c:\docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
-                            }
-                            catch {
-                                try {
-                                    Start-Process "C:\Program Files\Docker\Docker\Docker Desktop.exe" -WindowStyle "Hidden"
-                                }
-                                catch {} 
-                            }
-                        }
-                    }
-                }
+                start_docker_desktop
             }
             elseif (($docker_online -eq $false -And ($docker_cycles -eq 2 ) -And ($docker_tries -eq 10 )) -Or ($docker_online -eq $true -And $docker_desktop_online -eq $false)) {
                 reset_docker_wsl_settings
@@ -455,7 +435,7 @@ function require_docker_online {
         }
     } while ( -Not $docker_online -And ( $check_again -ine 'n' -And $check_again -ine 'no') )
     if ( -Not $docker_online -And ( $check_again -ine 'n' -Or $check_again -ine 'no') ) {
-        Write-Host "docker failed to start. if restarting WSL and your computer does not help you may need to use a different WSL default distro"
+        Write-Host "docker failed to start."
     }
     $docker_daemon_online = docker search scratch --limit 1 --format helloworld
     if ($docker_daemon_online -ne 'helloworld') {
