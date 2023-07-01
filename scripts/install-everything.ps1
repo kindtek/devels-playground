@@ -343,8 +343,8 @@ function require_docker_online {
     $docker_settings_reset = $true
     $orig_foreground = $host.UI.RawUI.ForegroundColor
     $orig_background = $host.UI.RawUI.ForegroundColor
-    $host.UI.RawUI.ForegroundColor = "Gray"
-    $host.UI.RawUI.BackgroundColor = "Black"
+    $host.UI.RawUI.ForegroundColor = "DarkGray"
+    $host.UI.RawUI.BackgroundColor = "Gray"
     . $env:USERPROFILE/repos/kindtek/dvlw/powerhell/download-everything-and-install.ps1
     Write-Host "`r`n`r`nloading docker desktop ..."
     Write-Host "waiting for docker backend to come online ..."  
