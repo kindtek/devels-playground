@@ -330,7 +330,7 @@ function start_docker_desktop {
 }
 
 function require_docker_online {
-    Set-PSDebug -Trace 2;
+    # Set-PSDebug -Trace 2;
     $docker_tries = 0
     $docker_cycles = 0
     $docker_settings_reset = $true
@@ -422,7 +422,7 @@ function require_docker_online {
     if ( ((is_docker_desktop_online) -eq $false) -And ( $check_again -ine 'n' -Or $check_again -ine 'no') ) {
         Write-Host "docker failed to start."
     }
-    Set-PSDebug -Trace 0;
+    # Set-PSDebug -Trace 0;
     return (is_docker_desktop_online)
 }
 
