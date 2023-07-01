@@ -193,10 +193,6 @@ function reset_docker_wsl_settings {
 }
 
 function docker_wsl_full_restart {
-    try { 
-        docker info
-    }
-    catch {}
     Write-Host "resetting Docker engine and data ..."
     try {
         docker update --restart=always docker-desktop
@@ -269,7 +265,7 @@ function wsl_docker_restart {
 }
 function is_docker_backend_online {
     try {
-        $docker_process = Get-Process 'com.docker.proxy' 
+        $docker_process = (Get-Process 'com.docker.proxy' )
     }
     catch {
         $docker_process = 'error'
