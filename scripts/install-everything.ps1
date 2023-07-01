@@ -401,16 +401,22 @@ function require_docker_online {
                 }
             
                 if ((($docker_tries % 7) -eq 0) ) {
-                    if ((is_docker_backend_online) -eq $true) {
+                    $wsl_docker_restart = $false
+                    if ((is_docker_backend_online) -eq $true -And (is_docker_desktop_online) -eq $false) {
                         # backend is online but desktop isn't
                         reset_wsl_settings
+                        $wsl_docker_restart = $true
                     }
                     if ( $docker_settings_reset -eq $true -And $docker_cycles -gt 1 ) {
-                            # only reset settings once and after trying 6 times
-                            reset_docker_settings
-                            $docker_settings_reset = $false
+                        # only reset settings once and after going thru 2 cycles with exactly 7 tries
+                        reset_docker_settings
+                        $docker_settings_reset = $false
+                        $wsl_docker_restart = $true
                     }
-                    wsl_docker_restart
+                    if ( $wsl_docker_restart -eq $true){
+                        wsl_docker_restart
+                        $wsl_docker_restart = $false
+                    }
                 }
                 elseif ($docker_cycles -eq 4 ) {
                     # give up
