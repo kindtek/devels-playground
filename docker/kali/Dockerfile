@@ -50,13 +50,18 @@ RUN \
     # clear docker-clean to flag for apt-get clean
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     # cache packages in docker builds as long as using apt-get
-    echo 'Binary::apt-get::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache 
+    echo 'Binary::apt-get::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
     # no suggests or recommends for apt-get
     # suggests and recommends for apt
-RUN echo "Binary::apt-get::APT::Install-Recommends '0'; \
-    Binary::apt-get::APT::Install-Suggests '0'; \
-    Binary::apt::APT::Install-Recommends '1'; \
-    Binary::apt::APT::Install-Suggests '1';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm 
+    echo 'Acquire::Retries "100";\
+    Acquire::https::Timeout "240";\
+    Acquire::http::Timeout "240";\
+    Debug::Acquire::https "true";\
+    Binary::apt-get::APT::Get::Assume-Yes "true";\
+    Binary::apt-get::APT::Install-Recommends "false"; \
+    Binary::apt-get::APT::Install-Suggests "false"; \
+    Binary::apt::APT::Install-Recommends "true"; \
+    Binary::apt::APT::Install-Suggests "true";' | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm 
     # use apt loading bar for apt-get by default
 # RUN echo 'Binary::apt-get::DPkg::Progress-Fancy "1"' | tee /etc/apt/apt.conf.d/99fancybar.conf
 # import/install basic utils from layer cache if possible and delete .deb archives from container when finished
