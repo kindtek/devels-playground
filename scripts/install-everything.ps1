@@ -270,9 +270,10 @@ function wsl_docker_restart {
 
 function is_docker_desktop_online {
     $docker_daemon_online = docker search scratch --limit 1 --format helloworld | Out-Null
-    if ($docker_daemon_online -eq 'helloworld'){
+    if ($docker_daemon_online -eq 'helloworld') {
         return $true
-    } else {
+    }
+    else {
         return $false
     }
 }
@@ -286,7 +287,8 @@ function is_docker_backend_online {
     }
     if ( $docker_process -ne 'error' ) {
         return $true
-    } else {
+    }
+    else {
         return $false
     }
 }
@@ -373,7 +375,8 @@ function require_docker_online {
                 if ( $docker_online -eq $true ) {
                     break nested_do
                 }
-            } elseif ( $docker_tries -eq 1 -And $docker_cycles -eq 1 -And ($docker_online -eq $false -Or $docker_desktop_online -eq $false) ) {
+            }
+            elseif ( $docker_tries -eq 1 -And $docker_cycles -eq 1 -And ($docker_online -eq $false -Or $docker_desktop_online -eq $false) ) {
                 Write-Host "error messages are expected when first starting docker. please wait ..."
             }
             if ($docker_online -eq $false -And (($docker_tries % 2) -eq 0)) {
