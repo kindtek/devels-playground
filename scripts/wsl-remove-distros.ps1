@@ -1,3 +1,4 @@
+$env:WSL_UTF8 = 1
 $distros = wsl.exe -l -v
 $count = 0
 
@@ -12,12 +13,12 @@ foreach ($distro in $distros) {
 
 
     if (($distro.IndexOf("*") -le 0) -And ($distro.IndexOf("docker-desktop") -lt 0)) {
-        $index_start = 3
+        $index_start = 2
         $warning_str = ""
     }
     else {
         continue
-        $index_start = 4
+        $index_start = 3
         $warning_str = "
 WARNING: removing this distro is not a good idea
 "
@@ -40,13 +41,13 @@ WARNING: removing this distro is not a good idea
     $removeDistro = Read-Host "`n`n`n`n`nDo you want to remove ${distroName}? $warning_str(Y/N)"
 
     if ($removeDistro.ToLower() -eq "y") {
-        $command_str = "wsl.exe --unregister $distroName"
+        wsl.exe --unregister $distroName
 
-        # Remove distro
-        Write-Host "$command_str"
-        $wsl_exe = 'wsl.exe --unregister'.Trim()
-        $unregister = "$distroName".Trim()
-        $command_string = "$wsl_exe `'$unregister`'".Trim()
-        & "$command_string"
+        # # Remove distro
+        # Write-Host "$command_str"
+        # $wsl_exe = 'wsl.exe --unregister'.Trim()
+        # $unregister = "$distroName".Trim()
+        # $command_string = "$wsl_exe `'$unregister`'".Trim()
+        # & "$command_string"
     }
 }
