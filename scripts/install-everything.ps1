@@ -404,7 +404,9 @@ function require_docker_online {
                     $wsl_docker_restart = $false
                     if ((is_docker_backend_online) -eq $true -And (is_docker_desktop_online) -eq $false) {
                         # backend is online but desktop isn't
-                        reset_wsl_settings
+                        if ($docker_cycles -gt 1){
+                            reset_wsl_settings
+                        }
                         $wsl_docker_restart = $true
                     }
                     if ( $docker_settings_reset -eq $true -And $docker_cycles -gt 1 ) {
