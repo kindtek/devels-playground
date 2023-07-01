@@ -335,7 +335,6 @@ function start_docker_desktop {
 function require_docker_online {
     $docker_tries = 0
     $docker_cycles = 0
-    $docker_online = $false
     $docker_desktop_online = $false
     $docker_settings_reset = $true
     $host.UI.RawUI.ForegroundColor = "Black"
@@ -362,7 +361,7 @@ function require_docker_online {
                     Write-Host ""
                 }
                 Write-Host "docker backend is online"
-                if ( $docker_desktop_online -eq $false) {
+                if ( is_docker_desktop_online -eq $false) {
                     $docker_online = $false
                     Write-Host "trying to connect to docker backend to docker desktop ..."
                     if ( $docker_settings_reset -eq $true -And $docker_cycles -gt 5 ) {
@@ -376,14 +375,14 @@ function require_docker_online {
                     $docker_desktop_online = $true
                     Write-Host "docker desktop is now online"
                 }
-                if ( $docker_online -eq $true ) {
+                if ( is_docker_backend_online -eq $true ) {
                     break nested_do
                 }
             }
-            elseif ( $docker_tries -eq 1 -And $docker_cycles -eq 1 -And ($docker_online -eq $false -Or $docker_desktop_online -eq $false) ) {
+            elseif ( $docker_tries -eq 1 -And $docker_cycles -eq 1 -And (is_docker_backend_online -eq $false -Or is_docker_desktop_online -eq $false) ) {
                 Write-Host "error messages are expected when first starting docker. please wait ..."
             }
-            if ($docker_online -eq $false -And (($docker_tries % 2) -eq 0)) {
+            if (is_docker_backend_online -eq $false -And (($docker_tries % 2) -eq 0)) {
                 write-host ""
                 $sleep_time += 1
                 Start-Sleep -s $sleep_time
@@ -416,25 +415,25 @@ function require_docker_online {
                     }
                 }
             }
-            elseif ($docker_online -eq $false -And (($docker_tries % 13) -eq 0)) {
+            elseif (is_docker_backend_online -eq $false -And (($docker_tries % 13) -eq 0)) {
                 wsl_docker_full_restart
                 $docker_tries = 1
                 $docker_cycles++
             }
-            if ($docker_online -eq $false -And ( $docker_tries -eq 1)) {
+            if (is_docker_backend_online -eq $false -And ( $docker_tries -eq 1)) {
                 # try extraordinary measures
                 # $check_again = Read-Host "Try resetting default distro and restarting Docker? ([y]n)"
                 Write-Host ""
                 start_docker_desktop
             }
-            elseif (($docker_online -eq $false -And ($docker_cycles -eq 2 ) -And ($docker_tries -eq 10 )) -Or ($docker_online -eq $true -And $docker_desktop_online -eq $false)) {
+            elseif ((is_docker_backend_online -eq $false -And ($docker_cycles -eq 2 ) -And ($docker_tries -eq 10 )) -Or (is_docker_backend_online -eq $true -And is_docker_desktop_online -eq $false)) {
                 reset_docker_wsl_settings
-                if ($docker_online -eq $true -And $docker_desktop_online -eq $false) {
+                if (is_docker_backend_online -eq $true -And is_docker_desktop_online -eq $false) {
                     # restart loop
                     $docker_online = $false
                 }
             }
-            elseif ($docker_online -eq $false -And ($docker_cycles -eq 4 )) {
+            elseif (is_docker_backend_online -eq $false -And ($docker_cycles -eq 4 )) {
                 # give up
                 $check_again = 'n'
             }
@@ -445,12 +444,12 @@ function require_docker_online {
         catch {
             $docker_online = $false
         }
-    } while ( -Not $docker_online -And ( $check_again -ine 'n' -And $check_again -ine 'no') )
-    if ( -Not $docker_online -And ( $check_again -ine 'n' -Or $check_again -ine 'no') ) {
+    } while ( -Not (is_docker_backend_online) -And ( $check_again -ine 'n' -And $check_again -ine 'no') )
+    if ( -Not (is_docker_backend_online) -And ( $check_again -ine 'n' -Or $check_again -ine 'no') ) {
         Write-Host "docker failed to start."
     }
 
-    return $docker_online
+    return is_docker_backend_online
 }
 
 function cleanup_installation {
