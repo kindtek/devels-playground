@@ -269,7 +269,7 @@ function wsl_docker_restart {
 }
 function is_docker_backend_online {
     try {
-        $docker_process = Get-Process 'com.docker.proxy' | Out-Null
+        $docker_process = Get-Process 'com.docker.proxy' 
     }
     catch {
         return $false
@@ -282,13 +282,18 @@ function is_docker_backend_online {
     }
 }
 function is_docker_desktop_online {
-    $docker_daemon_online = docker search scratch --limit 1 --format helloworld | Out-Null
-    if (($docker_daemon_online -eq 'helloworld') -And (is_docker_backend_online -eq $true)) {
-        return $true
-    }
-    else {
+    try {
+        $docker_daemon_online = docker search scratch --limit 1 --format helloworld 
+        if (($docker_daemon_online -eq 'helloworld') -And (is_docker_backend_online -eq $true)) {
+            return $true
+        }
+        else {
+            return $false
+        }
+    } catch {
         return $false
     }
+
 }
 
 
