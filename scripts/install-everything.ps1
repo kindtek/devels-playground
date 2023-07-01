@@ -183,7 +183,7 @@ function set_docker_config {
 
 function reset_docker_settings {
     # clear settings 
-    Write-Host "clearing docker settings and reverting wsl to $FAILSAFE_WSL_DISTRO"
+    Write-Host "clearing docker settings"
     Push-Location $env:APPDATA\Docker
     Delete-Item "settings.json.old" | Out-Null
     Move-Item -Path "settings.json" "settings.json.old" -Force | Out-Null
