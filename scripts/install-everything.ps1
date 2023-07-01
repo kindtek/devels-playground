@@ -344,35 +344,14 @@ function require_docker_online {
     Write-Host "waiting for docker backend to come online ..."  
     :nested_do do {   
         try {
-            if ( (is_docker_desktop_online) -eq $true ) {
+            if ( (is_docker_desktop_online) -eq $false ) {
                 start_docker_desktop 
             }
             # launch docker desktop and keep it open 
             $docker_tries++
             Write-Host "${docker_cycles}.${docker_tries}"
-            if ( (is_docker_backend_online) -eq $true ) {
-                Start-Sleep 2
-                # if service was already up continue right away otherwise sleep a bit
-                if ( $docker_tries -gt 1 ) {
-                    Start-Sleep -s $sleep_time
-                    Write-Host ""
-                }
-                Write-Host "docker backend is online"
-                if ( (is_docker_desktop_online) -eq $false) {
-                    Write-Host "trying to connect docker backend to docker desktop ..."
-                    if ( $docker_settings_reset -eq $true -And $docker_cycles -gt 5 ) {
-                        # only reset settings once and after trying 6 times
-                        reset_docker_wsl_settings
-                        $docker_settings_reset = $false
-                    }
-                }
-                else {
-                    Write-Host "docker desktop is now online"
-                    break nested_do
-                }
-            }
-            else {
-                if ( ($docker_tries -eq 1 -And $docker_cycles -eq 1) -And (((is_docker_backend_online) -eq $false) -Or ((is_docker_desktop_online) -eq $false)) ) {
+            if ( (is_docker_desktop_online) -eq $false ) {
+                if ( ($docker_tries -eq 1 -And $docker_cycles -eq 1) -And ((is_docker_backend_online) -eq $false)) {
                     Write-Host "error messages are expected when first starting docker. please wait ..."
                 }
                 if (($docker_tries % 2) -eq 0) {
@@ -415,8 +394,10 @@ function require_docker_online {
                 }
             
                 if (( $docker_cycles -eq 2 ) -Or (is_docker_backend_online) -eq $true ) {
-                    if ($docker_tries -eq 10 ) {
-                        reset_docker_wsl_settings
+                    if ( $docker_settings_reset -eq $true -And $docker_cycles -gt 1 -And $docker_tries -eq 10 ) {
+                            # only reset settings once and after trying 6 times
+                            reset_docker_wsl_settings
+                            $docker_settings_reset = $false
                     }
                 }
                 elseif ($docker_cycles -eq 4 ) {
@@ -426,6 +407,15 @@ function require_docker_online {
                 Write-Host ""
                 Start-Sleep 1
                 Write-Host ""
+            }
+            else {
+                # if service was already up continue right away otherwise sleep a bit
+                if ( $docker_tries -gt 1 ) {
+                    Start-Sleep -s $sleep_time
+                    Write-Host ""
+                }
+                Write-Host "docker desktop is now online"
+                break nested_do   
             }
             
         }
