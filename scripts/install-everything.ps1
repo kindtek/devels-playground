@@ -415,7 +415,7 @@ function require_docker_online {
                     Write-Host ""
                 }
                 Write-Host "docker desktop is now online"
-                break nested_do   
+                $check_again = 'n'
             }
             
         }
