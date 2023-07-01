@@ -368,7 +368,7 @@ function require_docker_online {
                     break nested_do
                 }
             }
-            elseif ( ($docker_tries -eq 1 -And $docker_cycles -eq 1) -And (((is_docker_backend_online) -eq $false) -Or (is_docker_desktop_online -eq $false)) ) {
+            elseif ( ($docker_tries -eq 1 -And $docker_cycles -eq 1) -And (((is_docker_backend_online) -eq $false) -Or ((is_docker_desktop_online) -eq $false)) ) {
                 Write-Host "error messages are expected when first starting docker. please wait ..."
             }
             if (((is_docker_desktop_online) -eq $false) -And (($docker_tries % 2) -eq 0)) {
@@ -403,14 +403,15 @@ function require_docker_online {
                         Write-Host "trying again to start docker desktop ..."
                     }
                 }
+                elseif (((is_docker_desktop_online) -eq $false) -And (($docker_tries % 15) -eq 0)) {
+                    $docker_tries = 1
+                    $docker_cycles++
+                }
             }
             elseif (((is_docker_desktop_online) -eq $false) -And (($docker_tries % 13) -eq 0)) {
                 wsl_docker_full_restart
             }
-            elseif (((is_docker_desktop_online) -eq $false) -And (($docker_tries % 15) -eq 0)) {
-                $docker_tries = 1
-                $docker_cycles++
-            }
+            
             if (((is_docker_desktop_online) -eq $false) -And ( $docker_tries -eq 1)) {
                 # try extraordinary measures
                 # $check_again = Read-Host "Try resetting default distro and restarting Docker? ([y]n)"
