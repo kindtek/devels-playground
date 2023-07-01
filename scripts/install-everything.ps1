@@ -194,7 +194,7 @@ function reset_docker_settings {
 function reset_wsl_settings {
     # clear settings 
     Write-Host "reverting wsl default distro to $FAILSAFE_WSL_DISTRO"
-    if ($FAILSAFE_WSL_DISTRO -ne ""){
+    if ($FAILSAFE_WSL_DISTRO -ne "") {
         wsl -s $FAILSAFE_WSL_DISTRO
     }
 }
@@ -271,37 +271,33 @@ function wsl_docker_restart {
     catch {}
 }
 function is_docker_backend_online {
-
-    & {    
-        try {
-            $docker_process = (Get-Process 'com.docker.proxy' )
-        }
-        catch {
-            $docker_process = 'error'
-            return $false
-        }
-        if ( $docker_process -ne 'error' ) {
+    try {
+        $docker_process = (Get-Process 'com.docker.proxy' )
+    }
+    catch {
+        $docker_process = 'error'
+        return $false
+    }
+    if ( $docker_process -ne 'error' ) {
+        return $true
+    }
+    else {
+        return $false
+    }
+}
+function is_docker_desktop_online {
+    try {
+        $docker_daemon_online = docker search scratch --limit 1 --format helloworld 
+        if (($docker_daemon_online -eq 'helloworld') -And (is_docker_backend_online -eq $true)) {
             return $true
         }
         else {
             return $false
         }
-    } 6>$null
-}
-function is_docker_desktop_online {
-    & {
-        try {
-            $docker_daemon_online = docker search scratch --limit 1 --format helloworld 
-            if (($docker_daemon_online -eq 'helloworld') -And (is_docker_backend_online -eq $true)) {
-                return $true
-            }
-            else {
-                return $false
-            }
-        } catch {
-            return $false
-        }
-    } 6>$null
+    }
+    catch {
+        return $false
+    }
 }
 
 
@@ -407,7 +403,7 @@ function require_docker_online {
                     $wsl_docker_restart = $false
                     if ((is_docker_backend_online) -eq $true -And (is_docker_desktop_online) -eq $false) {
                         # backend is online but desktop isn't
-                        if ($docker_cycles -gt 1){
+                        if ($docker_cycles -gt 1) {
                             reset_wsl_settings
                         }
                         $wsl_docker_restart = $true
@@ -418,7 +414,7 @@ function require_docker_online {
                         $docker_settings_reset = $false
                         $wsl_docker_restart = $true
                     }
-                    if ( $wsl_docker_restart -eq $true){
+                    if ( $wsl_docker_restart -eq $true) {
                         wsl_docker_restart
                         $wsl_docker_restart = $false
                     }
