@@ -234,9 +234,13 @@ function require_docker_online {
             }
             if ( $docker_process -ne 'error' ) {
                 $docker_online = $true
-                $docker_daemon_online = docker search scratch --limit 1 --format helloworld
-                if ($docker_daemon_online -eq 'helloworld') {
-                    $docker_desktop_online = $true
+                try {
+                    $docker_daemon_online = docker search scratch --limit 1 --format helloworld
+                    if ($docker_daemon_online -eq 'helloworld') {
+                        $docker_desktop_online = $true
+                    }
+                } catch {
+                    $docker_desktop_online = $false
                 }
                 # if service was already up continue right away otherwise sleep a bit
                 if ( $docker_tries -gt 1 ) {
@@ -244,7 +248,12 @@ function require_docker_online {
                     Start-Sleep -s $sleep_time
                     Write-Host ""
                 }
-                Write-Host "docker backend is now online"
+                Write-Host "docker backend is online"
+                if ( $docker_desktop_online -eq $false) {
+                    Write-Host "trying to connect to docker backend to docker desktop ..."
+                }  else {
+                    Write-Host "docker desktop is now online"
+                }
                 try {
                     docker info
                 } catch {}
