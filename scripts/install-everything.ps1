@@ -264,35 +264,37 @@ function wsl_docker_restart {
     catch {}
 }
 function is_docker_backend_online {
-    function Out-Default {}
-    try {
-        $docker_process = (Get-Process 'com.docker.proxy' )
-    }
-    catch {
-        $docker_process = 'error'
-        return $false
-    }
-    if ( $docker_process -ne 'error' ) {
-        return $true
-    }
-    else {
-        return $false
-    }
-    Remove-Item -Path function:Out-Default
-}
-function is_docker_desktop_online {
-    function Out-Default {}
-    try {
-        $docker_daemon_online = docker search scratch --limit 1 --format helloworld 
-        if (($docker_daemon_online -eq 'helloworld') -And (is_docker_backend_online -eq $true)) {
+
+    & {    
+        try {
+            $docker_process = (Get-Process 'com.docker.proxy' )
+        }
+        catch {
+            $docker_process = 'error'
+            return $false
+        }
+        if ( $docker_process -ne 'error' ) {
             return $true
         }
         else {
             return $false
         }
-    } catch {
-        return $false
-    }
+    } 6>$null
+}
+function is_docker_desktop_online {
+    & {
+        try {
+            $docker_daemon_online = docker search scratch --limit 1 --format helloworld 
+            if (($docker_daemon_online -eq 'helloworld') -And (is_docker_backend_online -eq $true)) {
+                return $true
+            }
+            else {
+                return $false
+            }
+        } catch {
+            return $false
+        }
+    } 6>$null
     Remove-Item -Path function:Out-Default
 }
 
