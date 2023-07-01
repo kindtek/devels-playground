@@ -181,6 +181,16 @@ function set_docker_config {
 
 }
 
+function reset_docker_wsl_settings {
+    # clear settings 
+    Write-Host "clearing settings and reverting wsl to $failsafe_wsl_distro"
+    Push-Location $env:APPDATA\Docker
+    Move-Item -Path "settings.json" "settings.json.old" -Force
+    Pop-Location
+    &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine -ResetToDefault;
+    wsl -s $failsafe_wsl_distro
+}
+
 function require_docker_online {
     $docker_tries = 0
     $docker_cycles = 0
@@ -238,9 +248,11 @@ function require_docker_online {
                     $docker_daemon_online = docker search scratch --limit 1 --format helloworld
                     if ($docker_daemon_online -eq 'helloworld') {
                         $docker_desktop_online = $true
+                    } else {
+                        reset_docker_wsl_settings
                     }
                 } catch {
-                    $docker_desktop_online = $false
+                    reset_docker_wsl_settings
                 }
                 # if service was already up continue right away otherwise sleep a bit
                 if ( $docker_tries -gt 1 ) {
@@ -381,13 +393,7 @@ function require_docker_online {
                 }
             }
             elseif (($docker_online -eq $false -And ($docker_cycles -eq 2 ) -And ($docker_tries -eq 10 )) -Or ($docker_online -eq $true -And $docker_desktop_online -eq $false)) {
-                # clear settings 
-                Write-Host "clearing settings and reverting wsl to $failsafe_wsl_distro"
-                Push-Location $env:APPDATA\Docker
-                Move-Item -Path "settings.json" "settings.json.old" -Force
-                Pop-Location
-                &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine -ResetToDefault;
-                wsl -s $failsafe_wsl_distro
+                reset_docker_wsl_settings
                 if ($docker_online -eq $true -And $docker_desktop_online -eq $false){
                     # restart loop
                     $docker_online = $false
