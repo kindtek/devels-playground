@@ -284,7 +284,7 @@ function is_docker_backend_online {
 }
 function is_docker_desktop_online {
     try {
-        $docker_daemon_online = docker search scratch --limit 1 --format helloworld 
+        $docker_daemon_online = docker search scratch --limit 1 --format helloworld | Out-Null
         if (($docker_daemon_online -eq 'helloworld') -And (is_docker_backend_online -eq $true)) {
             return $true
         }
@@ -344,7 +344,9 @@ function require_docker_online {
     Write-Host "waiting for docker backend to come online ..."  
     :nested_do do {   
         try {
-            start_docker_desktop 
+            if ( (is_docker_desktop_online) -eq $true ) {
+                start_docker_desktop 
+            }
             # launch docker desktop and keep it open 
             $docker_tries++
             Write-Host "${docker_cycles}.${docker_tries}"
