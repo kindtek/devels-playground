@@ -195,7 +195,7 @@ IF "!image_service_suffix!"=="kernel" (
     SET "build_repos=!build_repos! repo-kernel"
     @REM SET "build_args= !build_args! --build-arg KERNEL_FEATURE='zfs'"
 )
-IF "!image_service_suffix!" NEQ "test" (
+IF "!image_service!" NEQ "test" (
     ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !build_repos!
     docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !build_repos!
 )
