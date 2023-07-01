@@ -5,7 +5,7 @@ SETLOCAL EnableDelayedExpansion
 
 doskey /exename docker.exe docker=C:\Program Files\Docker\Docker\Docker Desktop.exe > nul 2> nul
 doskey /exename wsl.exe wsl=C:\Windows\System32\wsl.exe > nul 2> nul
-SET "DVLP_DEBUG=n"
+SET "DVLP_DEBUG=y"
 :redo
 SET "module=main"
 SET wsl_version_int=2
@@ -55,7 +55,7 @@ IF "!image_name_tag!"=="default" (
     SET "image_tag=%image_name_tag::=" & SET "image_tag=%"
 
 )
-IF "!image_repo!" == "kindtek" (
+IF "!image_name_tag!" NEQ "default" (
     SET "image_name_tag=!image_name!:!image_tag!"
 )
 SET "image_name_tag=!image_name!:!image_tag!"
@@ -149,8 +149,8 @@ FOR /F "tokens=1* delims=-" %%G IN (
     )
     SET "image_service=%%H"
 )
-@REM do not try to build sources that are official
-IF "!image_repo!"=="_" (
+@REM do not try to build sources that are not kindtek
+IF "!image_repo!" NEQ "kindtek" (
     SET "docker_image_do=docker_image_pull"
 )
 @REM ECHO "DOCKER_IMG_DO: !docker_image_do!"
