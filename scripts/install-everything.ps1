@@ -385,7 +385,7 @@ function require_docker_online {
                         Write-Host "trying again to start docker desktop ..."
                     }
                     elseif (($docker_tries % 15) -eq 0) {
-                        $docker_tries = 1
+                        $docker_tries = 0
                         $docker_cycles++
                     }
                 }
