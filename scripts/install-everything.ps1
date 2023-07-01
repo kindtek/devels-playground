@@ -335,7 +335,6 @@ function start_docker_desktop {
 function require_docker_online {
     $docker_tries = 0
     $docker_cycles = 0
-    $docker_desktop_online = $false
     $docker_settings_reset = $true
     $host.UI.RawUI.ForegroundColor = "Black"
     $host.UI.RawUI.BackgroundColor = "DarkRed"
@@ -347,14 +346,8 @@ function require_docker_online {
             # launch docker desktop and keep it open 
             $docker_tries++
             Write-Host "${docker_cycles}.${docker_tries}"
-            if ( is_docker_desktop_online ) {
-                $docker_online = $true
-                $docker_desktop_online = $true
-            }
-            elseif ( is_docker_backend_online ) {
-                $docker_online = $true
+            if ( is_docker_backend_online -eq $true -And is_docker_desktop_online -eq $false ) {
                 Start-Sleep 2
-                $docker_desktop_online = is_docker_desktop_online
                 # if service was already up continue right away otherwise sleep a bit
                 if ( $docker_tries -gt 1 ) {
                     Start-Sleep -s $sleep_time
@@ -362,7 +355,6 @@ function require_docker_online {
                 }
                 Write-Host "docker backend is online"
                 if ( is_docker_desktop_online -eq $false) {
-                    $docker_online = $false
                     Write-Host "trying to connect to docker backend to docker desktop ..."
                     if ( $docker_settings_reset -eq $true -And $docker_cycles -gt 5 ) {
                         # only reset settings once and after trying 6 times
@@ -371,15 +363,13 @@ function require_docker_online {
                     }
                 }
                 else {
-                    $docker_online = $true
-                    $docker_desktop_online = $true
                     Write-Host "docker desktop is now online"
                 }
                 if ( is_docker_desktop_online -eq $true ) {
                     break nested_do
                 }
             }
-            elseif ( $docker_tries -eq 1 -And $docker_cycles -eq 1 -And (is_docker_backend_online -eq $false -Or is_docker_desktop_online -eq $false) ) {
+            elseif ( ($docker_tries -eq 1 -And $docker_cycles -eq 1) -And (is_docker_backend_online -eq $false -Or is_docker_desktop_online -eq $false) ) {
                 Write-Host "error messages are expected when first starting docker. please wait ..."
             }
             if (is_docker_backend_online -eq $false -And (($docker_tries % 2) -eq 0)) {
