@@ -375,7 +375,7 @@ function require_docker_online {
                     $docker_desktop_online = $true
                     Write-Host "docker desktop is now online"
                 }
-                if ( is_docker_backend_online -eq $true ) {
+                if ( is_docker_desktop_online -eq $true ) {
                     break nested_do
                 }
             }
@@ -388,7 +388,7 @@ function require_docker_online {
                 Start-Sleep -s $sleep_time
                 Write-Host ""
             }
-            elseif (($docker_tries % 3) -eq 0) {
+            elseif (is_docker_backend_online -eq $false -And ($docker_tries % 3) -eq 0) {
                 # start count over
                 # $docker_attempt1 = $docker_attempt2 = $false
                 # automatically restart docker on try 3 then prompt for restart after that
@@ -426,9 +426,9 @@ function require_docker_online {
                 Write-Host ""
                 start_docker_desktop
             }
-            elseif ((is_docker_backend_online -eq $false -And ($docker_cycles -eq 2 ) -And ($docker_tries -eq 10 )) -Or (is_docker_backend_online -eq $true -And is_docker_desktop_online -eq $false)) {
+            elseif ((is_docker_backend_online -eq $false -And ($docker_cycles -eq 2 ) -And ($docker_tries -eq 10 )) -Or (is_docker_desktop_online -eq $false)) {
                 reset_docker_wsl_settings
-                if (is_docker_backend_online -eq $true -And is_docker_desktop_online -eq $false) {
+                if (is_docker_desktop_online -eq $false) {
                     # restart loop
                     $docker_online = $false
                 }
