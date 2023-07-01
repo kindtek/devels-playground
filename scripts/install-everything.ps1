@@ -413,13 +413,7 @@ function require_docker_online {
                 wsl_docker_full_restart
             }
             
-            if (((is_docker_desktop_online) -eq $false) -And ( $docker_tries -eq 1)) {
-                # try extraordinary measures
-                # $check_again = Read-Host "Try resetting default distro and restarting Docker? ([y]n)"
-                Write-Host ""
-                start_docker_desktop
-            }
-            elseif ((((is_docker_backend_online) -eq $false) -And ($docker_cycles -eq 2 )) -Or ((is_docker_backend_online) -eq $true -And (is_docker_desktop_online) -eq $false)) {
+            if ((((is_docker_backend_online) -eq $false) -And ($docker_cycles -eq 2 )) -Or ((is_docker_backend_online) -eq $true -And (is_docker_desktop_online) -eq $false)) {
                 if ($docker_tries -eq 10 ) {
                     reset_docker_wsl_settings
                 }
