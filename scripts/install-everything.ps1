@@ -343,8 +343,8 @@ function require_docker_online {
     Write-Host "`r`n`r`nloading docker desktop ..."
     Write-Host "waiting for docker backend to come online ..."  
     :nested_do do {   
-        start_docker_desktop 
         try {
+            start_docker_desktop 
             # launch docker desktop and keep it open 
             $docker_tries++
             Write-Host "${docker_cycles}.${docker_tries}"
