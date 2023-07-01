@@ -364,8 +364,6 @@ function require_docker_online {
                 }
                 else {
                     Write-Host "docker desktop is now online"
-                }
-                if ( is_docker_desktop_online -eq $true ) {
                     break nested_do
                 }
             }
