@@ -272,6 +272,7 @@ function require_docker_online {
     $docker_cycles = 0
     $docker_online = $false
     $docker_desktop_online = $false
+    $docker_settings_reset = $true
     $refresh_envs = "$env:USERPROFILE/repos/kindtek/RefreshEnv.cmd"
     $host.UI.RawUI.ForegroundColor = "Black"
     $host.UI.RawUI.BackgroundColor = "DarkRed"
@@ -328,12 +329,18 @@ function require_docker_online {
                     }
                     else {
                         $docker_online = $false
-                        reset_docker_wsl_settings
+                        if ( $docker_settings_reset -eq $true ){
+                            reset_docker_wsl_settings
+                            $docker_settings_reset = $false
+                        }
                     }
                 }
                 catch {
                     $docker_online = $false
-                    reset_docker_wsl_settings
+                    if ( $docker_settings_reset -eq $true ){
+                        reset_docker_wsl_settings
+                        $docker_settings_reset = $false
+                    }
                 }
                 # if service was already up continue right away otherwise sleep a bit
                 if ( $docker_tries -gt 1 ) {
