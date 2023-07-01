@@ -301,7 +301,7 @@ RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache
 RUN \
-    --mount=type=cache,target=/tmp/cache/useradd,sharing=private \
+    # --mount=type=cache,target=/tmp/cache/useradd,sharing=private \
     groupadd            r00t    && \
     groupadd            halo    && \
     groupadd            hell    && \
