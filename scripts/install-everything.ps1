@@ -42,56 +42,57 @@ function install_dependencies {
     if (!(Test-Path -Path "$git_path/.wterminal-installed" -PathType Leaf)) {
         # $windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
         # if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no') { 
-        Write-Host "Installing $software_name ..." 
+        Write-Host "Installing $software_name ..." -ForegroundColor DarkCyan
         winget install Microsoft.PowerShell
         winget install Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements
         winget upgrade Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements
         # }
-        Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.wterminal-installed"
+        Write-Host "$software_name installed" -ForegroundColor DarkCyan | Out-File -FilePath "$git_path/.wterminal-installed"
         $new_install = $true
     }
     else {
-        Write-Host "$software_name already installed"  
+        Write-Host "$software_name already installed" -ForegroundColor DarkCyan
     }    
 
     $software_name = "Visual Studio Code (VSCode)"
     if (!(Test-Path -Path "$git_path/.vscode-installed" -PathType Leaf)) {
-        Write-Host "Installing $software_name ..."
+        Write-Host "Installing $software_name ..." -ForegroundColor DarkCyan
         # Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --silent --locale en-US --accept-package-agreements --accept-source-agreements --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
         winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks="!runcode,addcontextmenufiles,addcontextmenufolders"'
         winget upgrade Microsoft.VisualStudioCode --override '/SILENT /mergetasks="!runcode,addcontextmenufiles,addcontextmenufolders"'
-        Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.vscode-installed"
+        Write-Host "$software_name installed" -ForegroundColor DarkCyan | Out-File -FilePath "$git_path/.vscode-installed"
         $new_install = $true
     }
     else {
-        Write-Host "$software_name already installed" 
+        Write-Host "$software_name already installed" -ForegroundColor DarkCyan
     }
 
     $software_name = "Docker Desktop"
     if (!(Test-Path -Path "$git_path/.docker-installed" -PathType Leaf)) {
-        Write-Host "Installing $software_name ..." 
+        Write-Host "Installing $software_name ..." -ForegroundColor DarkCyan
         # winget uninstall --id=Docker.DockerDesktop
         # winget install --id=Docker.DockerDesktop --location="c:\docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements
         # winget upgrade --id=Docker.DockerDesktop --location="c:\docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements
         winget install --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements
         winget upgrade --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements
         # update using rolling stable url
-        Write-Host "Downloading $software_name update installation file ..." 
+        Write-Host "Downloading $software_name update installation file ..." -ForegroundColor DarkCyan
         Invoke-WebRequest -Uri https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe -OutFile DockerDesktopInstaller.exe
         .\DockerDesktopInstaller.exe
         # & 'C:\Program Files\Docker\Docker\Docker Desktop.exe'
         # "Docker Desktop Installer.exe" install --accept-license --backend=wsl-2 --installation-dir=c:\docker 
-        Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.docker-installed"
+        Write-Host "$software_name installed" -ForegroundColor DarkCyan | Out-File -FilePath "$git_path/.docker-installed"
         Remove-Item "DockerDesktopInstaller.exe" -Force -ErrorAction SilentlyContinue
         $new_install = $true
     }
     else {
-        Write-Host "$software_name already installed"   
+        Write-Host "$software_name already installed"  -ForegroundColor DarkCyan 
     }
 
     $software_name = "Python"
     if (!(Test-Path -Path "$git_path/.python-installed" -PathType Leaf)) {
         $new_install = $true
+        Write-Host "Installing $software_name ..." -ForegroundColor DarkCyan
         # @TODO: add cdir and python to install with same behavior as other installs above
         # not eloquent at all but good for now
         winget install --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements
@@ -101,10 +102,10 @@ function install_dependencies {
         # $cmd_command = pip install cdir
         # Start-Process -FilePath PowerShell.exe -NoNewWindow -ArgumentList $cmd_command
     
-        Write-Host "$software_name installed" | Out-File -FilePath "$git_path/.python-installed"
+        Write-Host "$software_name installed" -ForegroundColor DarkCyan | Out-File -FilePath "$git_path/.python-installed"
     }
     else {
-        Write-Host "$software_name already installed" 
+        Write-Host "$software_name already installed" -ForegroundColor DarkCyan
     }
 
     return $new_install
