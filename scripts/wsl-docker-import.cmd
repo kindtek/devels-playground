@@ -186,6 +186,7 @@ docker pull !image_repo_name_tag!
 @REM re-building repo
 SET "build_args="
 SET "build_repos=repo"
+SET "!compose_services!=!image_service!"
 ECHO building image (!image_service!)...
 @REM build the image
 IF "!image_service_suffix!"=="kernel" (
