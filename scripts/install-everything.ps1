@@ -295,12 +295,10 @@ function is_docker_desktop_online {
             return $false
         }
     } 6>$null
-    Remove-Item -Path function:Out-Default
 }
 
 
 function start_docker_desktop {
-    function Out-Default {}
     $refresh_envs = "$env:USERPROFILE/repos/kindtek/RefreshEnv.cmd"
     try {
         Start-Process "Docker Desktop.exe" -WindowStyle "Hidden"
@@ -333,7 +331,6 @@ function start_docker_desktop {
             }
         }
     }
-    Remove-Item -Path function:Out-Default
 }
 
 function require_docker_online {
