@@ -323,6 +323,7 @@ function require_docker_online {
             if ( $docker_process -ne 'error' ) {
                 $docker_online = $true
                 try {
+                    Start-Sleep 2
                     $docker_daemon_online = docker search scratch --limit 1 --format helloworld
                     if ($docker_daemon_online -eq 'helloworld') {
                         $docker_desktop_online = $true
