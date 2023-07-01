@@ -426,8 +426,10 @@ function require_docker_online {
                 Write-Host ""
                 start_docker_desktop
             }
-            elseif ((is_docker_backend_online -eq $false -And ($docker_cycles -eq 2 ) -And ($docker_tries -eq 10 )) -Or (is_docker_desktop_online -eq $false)) {
-                reset_docker_wsl_settings
+            elseif ((is_docker_backend_online -eq $false -And ($docker_cycles -eq 2 )) -Or (is_docker_backend_online -eq $true -And is_docker_desktop_online -eq $false)) {
+                if ($docker_tries -eq 10 ) {
+                    reset_docker_wsl_settings
+                }
                 if (is_docker_desktop_online -eq $false) {
                     # restart loop
                     $docker_online = $false
