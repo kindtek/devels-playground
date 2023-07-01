@@ -113,18 +113,18 @@ services:
       - NET_BIND_SERVICE
     build:
       target: dvlp_skel-kernel
-      args:
-        - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
-        - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
-        - win_bind_tgt_user_dir_r00t=${USERNAME:+/r00t/host_win}
-        #  - win_bind_tgt_user_dir_g0d=${USERNAME:+/g0d/host_win}
-        - win_bind_tgt_user_dir_agl=${USERNAME:+/halo/host_win}
-        - win_bind_tgt_user_dir_dvl=${USERNAME:+/hell/host_win}:ro
-        - nix_bind_tgt_user_dir_r00t=${LOGNAME:+/r00t/host_nix}
-        #  - nix_bind_tgt_user_dir_g0d=${LOGNAME:+/g0d/host_nix}
-        - nix_bind_tgt_user_dir_agl=${LOGNAME:+/halo/host_nix}
-        - nix_bind_tgt_user_dir_dvl=${LOGNAME:+/hell/host_nix}:ro
-      #  - bind_src_dir=${bind_win_src_user_dir:-/dev/null}
+      # args:
+      #   - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
+      #   - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
+      #   - win_bind_tgt_user_dir_r00t=${USERNAME:+/r00t/host_win}
+      #   #  - win_bind_tgt_user_dir_g0d=${USERNAME:+/g0d/host_win}
+      #   - win_bind_tgt_user_dir_agl=${USERNAME:+/halo/host_win}
+      #   - win_bind_tgt_user_dir_dvl=${USERNAME:+/hell/host_win}:ro
+      #   - nix_bind_tgt_user_dir_r00t=${LOGNAME:+/r00t/host_nix}
+      #   #  - nix_bind_tgt_user_dir_g0d=${LOGNAME:+/g0d/host_nix}
+      #   - nix_bind_tgt_user_dir_agl=${LOGNAME:+/halo/host_nix}
+      #   - nix_bind_tgt_user_dir_dvl=${LOGNAME:+/hell/host_nix}:ro
+      # #  - bind_src_dir=${bind_win_src_user_dir:-/dev/null}
 
     volumes:
       - repo_agl-kernel:/repos/dvlw
@@ -142,14 +142,14 @@ services:
       - home_r00t:/r00t
       - home_r00t:/home/r00t
       - dls:/dls
-      - ${nix_bind_win_src_user_dir:-/dev/foo1/null}:${win_bind_tgt_user_dir_r00t:-/dev/bar1/null}
-      # - ${nix_bind_win_src_user_dir:-/dev/foo2/null}:${win_bind_tgt_user_dir_g0d:-/dev/bar2/null}
-      - ${nix_bind_win_src_user_dir:-/dev/foo3/null}:${win_bind_tgt_user_dir_agl:-/dev/bar3/null}
-      - ${nix_bind_win_src_user_dir:-/dev/foo4/null}:${win_bind_tgt_user_dir_dvl:-/dev/bar4/null}
-      - ${nix_bind_nix_src_user_dir:-/dev/foo5/null}:${nix_bind_tgt_user_dir_r00t:-/dev/bar5/null}
-      # - ${nix_bind_nix_src_user_dir:-/dev/foo6/null}:${nix_bind_tgt_user_dir_g0d:-/dev/bar6/null}
-      - ${nix_bind_nix_src_user_dir:-/dev/foo7/null}:${nix_bind_tgt_user_dir_agl:-/dev/bar7/null}
-      - ${nix_bind_nix_src_user_dir:-/dev/foo8/null}:${nix_bind_tgt_user_dir_dvl:-/dev/bar8/null}
+      # - ${nix_bind_win_src_user_dir:-/dev/foo1/null}:${win_bind_tgt_user_dir_r00t:-/dev/bar1/null}
+      # # - ${nix_bind_win_src_user_dir:-/dev/foo2/null}:${win_bind_tgt_user_dir_g0d:-/dev/bar2/null}
+      # - ${nix_bind_win_src_user_dir:-/dev/foo3/null}:${win_bind_tgt_user_dir_agl:-/dev/bar3/null}
+      # - ${nix_bind_win_src_user_dir:-/dev/foo4/null}:${win_bind_tgt_user_dir_dvl:-/dev/bar4/null}
+      # - ${nix_bind_nix_src_user_dir:-/dev/foo5/null}:${nix_bind_tgt_user_dir_r00t:-/dev/bar5/null}
+      # # - ${nix_bind_nix_src_user_dir:-/dev/foo6/null}:${nix_bind_tgt_user_dir_g0d:-/dev/bar6/null}
+      # - ${nix_bind_nix_src_user_dir:-/dev/foo7/null}:${nix_bind_tgt_user_dir_agl:-/dev/bar7/null}
+      # - ${nix_bind_nix_src_user_dir:-/dev/foo8/null}:${nix_bind_tgt_user_dir_dvl:-/dev/bar8/null}
     depends_on:
       skel-build-kernel:
         # Wait for the ownership to change
@@ -177,18 +177,18 @@ services:
       - NET_BIND_SERVICE
     build:
       target: dvlp_skel
-      args:
-        - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
-        - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
-        - win_bind_tgt_user_dir_r00t=${USERNAME:+/r00t/host_win}
-        #  - win_bind_tgt_user_dir_g0d=${USERNAME:+/g0d/host_win}
-        - win_bind_tgt_user_dir_agl=${USERNAME:+/halo/host_win}
-        - win_bind_tgt_user_dir_dvl=${USERNAME:+/hell/host_win}:ro
-        - nix_bind_tgt_user_dir_r00t=${LOGNAME:+/r00t/host_nix}
-        #  - nix_bind_tgt_user_dir_g0d=${LOGNAME:+/g0d/host_nix}
-        - nix_bind_tgt_user_dir_agl=${LOGNAME:+/halo/host_nix}
-        - nix_bind_tgt_user_dir_dvl=${LOGNAME:+/hell/host_nix}:ro
-      #  - bind_src_dir=${bind_win_src_user_dir:-/dev/null}
+      # args:
+      #   - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
+      #   - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
+      #   - win_bind_tgt_user_dir_r00t=${USERNAME:+/r00t/host_win}
+      #   #  - win_bind_tgt_user_dir_g0d=${USERNAME:+/g0d/host_win}
+      #   - win_bind_tgt_user_dir_agl=${USERNAME:+/halo/host_win}
+      #   - win_bind_tgt_user_dir_dvl=${USERNAME:+/hell/host_win}:ro
+      #   - nix_bind_tgt_user_dir_r00t=${LOGNAME:+/r00t/host_nix}
+      #   #  - nix_bind_tgt_user_dir_g0d=${LOGNAME:+/g0d/host_nix}
+      #   - nix_bind_tgt_user_dir_agl=${LOGNAME:+/halo/host_nix}
+      #   - nix_bind_tgt_user_dir_dvl=${LOGNAME:+/hell/host_nix}:ro
+      # #  - bind_src_dir=${bind_win_src_user_dir:-/dev/null}
     volumes:
       - repo_agl:/repos/dvlw
       - repo_agl:/r00t/dvlw
@@ -205,14 +205,14 @@ services:
       - home_r00t:/r00t
       - home_r00t:/home/r00t
       - dls:/dls
-      - ${nix_bind_win_src_user_dir:-/dev/foo1/null}:${win_bind_tgt_user_dir_r00t:-/dev/bar1/null}
-      # - ${nix_bind_win_src_user_dir:-/dev/foo2/null}:${win_bind_tgt_user_dir_g0d:-/dev/bar2/null}
-      - ${nix_bind_win_src_user_dir:-/dev/foo3/null}:${win_bind_tgt_user_dir_agl:-/dev/bar3/null}
-      - ${nix_bind_win_src_user_dir:-/dev/foo4/null}:${win_bind_tgt_user_dir_dvl:-/dev/bar4/null}
-      - ${nix_bind_nix_src_user_dir:-/dev/foo5/null}:${nix_bind_tgt_user_dir_r00t:-/dev/bar5/null}
-      # - ${nix_bind_nix_src_user_dir:-/dev/foo6/null}:${nix_bind_tgt_user_dir_g0d:-/dev/bar6/null}
-      - ${nix_bind_nix_src_user_dir:-/dev/foo7/null}:${nix_bind_tgt_user_dir_agl:-/dev/bar7/null}
-      - ${nix_bind_nix_src_user_dir:-/dev/foo8/null}:${nix_bind_tgt_user_dir_dvl:-/dev/bar8/null}
+      # - ${nix_bind_win_src_user_dir:-/dev/foo1/null}:${win_bind_tgt_user_dir_r00t:-/dev/bar1/null}
+      # # - ${nix_bind_win_src_user_dir:-/dev/foo2/null}:${win_bind_tgt_user_dir_g0d:-/dev/bar2/null}
+      # - ${nix_bind_win_src_user_dir:-/dev/foo3/null}:${win_bind_tgt_user_dir_agl:-/dev/bar3/null}
+      # - ${nix_bind_win_src_user_dir:-/dev/foo4/null}:${win_bind_tgt_user_dir_dvl:-/dev/bar4/null}
+      # - ${nix_bind_nix_src_user_dir:-/dev/foo5/null}:${nix_bind_tgt_user_dir_r00t:-/dev/bar5/null}
+      # # - ${nix_bind_nix_src_user_dir:-/dev/foo6/null}:${nix_bind_tgt_user_dir_g0d:-/dev/bar6/null}
+      # - ${nix_bind_nix_src_user_dir:-/dev/foo7/null}:${nix_bind_tgt_user_dir_agl:-/dev/bar7/null}
+      # - ${nix_bind_nix_src_user_dir:-/dev/foo8/null}:${nix_bind_tgt_user_dir_dvl:-/dev/bar8/null}
     depends_on:
       skel-build:
         # Wait for the ownership to change
@@ -512,6 +512,19 @@ services:
       target: dvlp_bare
       args:
         - JACKET=bare
+  kernel-make:
+    extends: jacket-kernel
+    entrypoint: /bin/bash -c
+    command: 
+    - sleep infinity
+    # command: "if [ -f 'start-kde.sh'' ]; then bash start.sh; fi; && sleep infinity;"
+    # - "if [ -f \"start-kde.sh\" ]; then bash start.sh; mv -vf start-kde.sh start.sh; else bash start.sh; fi; && sleep infinity;"
+    # - ["if [ -f \"start-kde.sh\" ]; then bash start.sh; mv -vf start-kde.sh start.sh; else bash start.sh; fi;", "sleep infinity"]
+    # image: kindtek/${HUB_REPO:-devels-playground}:kali-kernel-make
+    build:
+      target: dvlp_kernel-make
+      args:
+        - JACKET=kernel-make
   git:
     extends: jacket
     user: ${_AGL}
@@ -647,7 +660,7 @@ volumes:
   host_nix:
     # host_mac:
 
-networks:
-  "${COMPOSE_PROJECT_NAME}_default":
-    driver: overlay
-    attachable: true
+# networks:
+#   "${COMPOSE_PROJECT_NAME}_default":
+#     driver: overlay
+#     attachable: true
