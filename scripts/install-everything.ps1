@@ -191,6 +191,82 @@ function reset_docker_wsl_settings {
     wsl -s $failsafe_wsl_distro
 }
 
+function docker_wsl_full_restart {
+    try { 
+        docker info
+    }
+    catch {}
+    Write-Host "resetting Docker engine and data ..."
+    try {
+        docker update --restart=always docker-desktop
+    }
+    catch {}
+    try {
+        docker update --restart=always docker-desktop-data
+    }
+    catch {}
+    try {
+        &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine;
+    }
+    catch {}
+    Write-Output "restarting docker ..."
+    try {
+        cmd.exe /c net stop docker
+    }
+    catch {}
+    try {
+        cmd.exe /c net stop com.docker.service
+    }
+    catch {}
+    try {
+        cmd.exe /c taskkill /IM "dockerd.exe" /F
+    }
+    catch {}
+    try {
+        cmd.exe /c taskkill /IM "Docker Desktop.exe" /F
+    }
+    catch {}
+    try {
+        cmd.exe /c net start docker
+    }
+    catch {}
+    try {
+        cmd.exe /c net start com.docker.service
+    }
+    catch {}
+}
+
+function wsl_docker_restart {
+    aWrite-Output "stopping docker ..."
+    try {
+        powershell.exe -Command cmd.exe /c net stop com.docker.service
+    }
+    catch {}
+    try {
+        powershell.exe -Command cmd.exe /c taskkill /IM "'Docker Desktop.exe'" /F
+    }
+    catch {}
+    Write-Output "stopping wsl ..."
+    try {
+        powershell.exe -Command wsl.exe --shutdown; 
+    }
+    catch {}
+    Write-Output "starting wsl ..."
+    try {
+        powershell.exe -Command wsl.exe --exec echo 'wsl restarted';
+        Write-Output "starting docker ..."
+    }
+    catch {}
+    try {
+        powershell.exe -Command cmd.exe /c net start com.docker.service
+    }
+    catch {}
+    try {
+        powershell.exe -Command wsl.exe --exec echo 'docker restarted';
+    }
+    catch {}
+}
+
 function require_docker_online {
     $docker_tries = 0
     $docker_cycles = 0
@@ -239,7 +315,8 @@ function require_docker_online {
             Write-Host "${docker_cycles}.${docker_tries}"
             try {
                 $docker_process = Get-Process 'com.docker.proxy'
-            } catch {
+            }
+            catch {
                 $docker_process = 'error'
             }
             if ( $docker_process -ne 'error' ) {
@@ -248,11 +325,13 @@ function require_docker_online {
                     $docker_daemon_online = docker search scratch --limit 1 --format helloworld
                     if ($docker_daemon_online -eq 'helloworld') {
                         $docker_desktop_online = $true
-                    } else {
+                    }
+                    else {
                         $docker_online = $false
                         reset_docker_wsl_settings
                     }
-                } catch {
+                }
+                catch {
                     $docker_online = $false
                     reset_docker_wsl_settings
                 }
@@ -265,13 +344,15 @@ function require_docker_online {
                 Write-Host "docker backend is online"
                 if ( $docker_desktop_online -eq $false) {
                     Write-Host "trying to connect to docker backend to docker desktop ..."
-                }  else {
+                }
+                else {
                     Write-Host "docker desktop is now online"
                 }
                 try {
                     docker info
-                } catch {}
-                if ( $docker_online -eq $true ){
+                }
+                catch {}
+                if ( $docker_online -eq $true ) {
                     break nested_do
                 }
             }
@@ -296,28 +377,7 @@ function require_docker_online {
                     $restart = 'n'
                 }
                 if ( $restart -ine 'n' -And $restart -ine 'no' -And (($docker_tries % 9) -eq 0)) {
-                    Write-Output "stopping docker ..."
-                    try {
-                        powershell.exe -Command cmd.exe /c net stop com.docker.service
-                    } catch {}
-                    try {
-                        powershell.exe -Command cmd.exe /c taskkill /IM "'Docker Desktop.exe'" /F
-                    } catch {}
-                    Write-Output "stopping wsl ..."
-                    try {
-                        powershell.exe -Command wsl.exe --shutdown; 
-                    } catch {}
-                    Write-Output "starting wsl ..."
-                    try {
-                        powershell.exe -Command wsl.exe --exec echo 'wsl restarted';
-                    Write-Output "starting docker ..."
-                    } catch {}
-                    try {
-                        powershell.exe -Command cmd.exe /c net start com.docker.service
-                    } catch {}
-                    try {
-                        powershell.exe -Command wsl.exe --exec echo 'docker restarted';
-                    } catch {}
+                    wsl_docker_restart
                 }
                 elseif ( ($docker_tries % 6) -eq 0) {
                     # $check_again = Read-Host "Keep trying to connect to docker? ([y]n)"
@@ -326,44 +386,14 @@ function require_docker_online {
                         Write-Host "resetting docker engine ....."
                         try {
                             &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine;
-                        } catch {}
+                        }
+                        catch {}
                         Write-Host "trying again to start docker desktop ..."
                     }
                 }
             }
             elseif ($docker_online -eq $false -And (($docker_tries % 13) -eq 0)) {
-                try { 
-                    docker info
-                } catch {}
-                Write-Host "resetting Docker engine and data ..."
-                try {
-                    docker update --restart=always docker-desktop
-                } catch {}
-                try {
-                    docker update --restart=always docker-desktop-data
-                } catch {}
-                try {
-                    &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine;
-                } catch {}
-                Write-Output "restarting docker ..."
-                try {
-                        cmd.exe /c net stop docker
-                } catch {}
-                try {
-                        cmd.exe /c net stop com.docker.service
-                } catch {}
-                try {
-                    cmd.exe /c taskkill /IM "dockerd.exe" /F
-                } catch {}
-                try {
-                    cmd.exe /c taskkill /IM "Docker Desktop.exe" /F
-                } catch {}
-                try {
-                    cmd.exe /c net start docker
-                } catch {}
-                try {
-                    cmd.exe /c net start com.docker.service
-                } catch {}
+                wsl_docker_full_restart
                 $docker_tries = 1
                 $docker_cycles++
             }
@@ -398,7 +428,7 @@ function require_docker_online {
             }
             elseif (($docker_online -eq $false -And ($docker_cycles -eq 2 ) -And ($docker_tries -eq 10 )) -Or ($docker_online -eq $true -And $docker_desktop_online -eq $false)) {
                 reset_docker_wsl_settings
-                if ($docker_online -eq $true -And $docker_desktop_online -eq $false){
+                if ($docker_online -eq $true -And $docker_desktop_online -eq $false) {
                     # restart loop
                     $docker_online = $false
                 }
