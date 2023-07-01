@@ -5,7 +5,7 @@ SETLOCAL EnableDelayedExpansion
 
 doskey /exename docker.exe docker=C:\Program Files\Docker\Docker\Docker Desktop.exe > nul 2> nul
 doskey /exename wsl.exe wsl=C:\Windows\System32\wsl.exe > nul 2> nul
-SET "DVLP_DEBUG=y"
+SET "DVLP_DEBUG=n"
 :redo
 SET "module=main"
 SET wsl_version_int=2
@@ -515,6 +515,7 @@ IF "!wsl_out!"=="!test_string!" (
     SET "wsl_distro_test_pass=y"
     @REM add !wsl_distro! to Docker integrated WSL distro list
     @REM powershell -Command ". ..\..\dvlw\scripts\install-everything.ps1; set_docker_config('!wsl_distro!');"
+    powershell -Command ". ..\..\dvlw\scripts\install-everything.ps1;"
     ECHO !wsl_distro! was imported successfully!
 ) ELSE (
     SET "wsl_distro_test_pass=n"
