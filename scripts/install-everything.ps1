@@ -356,6 +356,8 @@ function require_docker_online {
                     }
                 }
                 else {
+                    $docker_online = $true
+                    $docker_desktop_online = $true
                     Write-Host "docker desktop is now online"
                 }
                 if ( $docker_online -eq $true ) {
