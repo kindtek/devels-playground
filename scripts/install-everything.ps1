@@ -429,7 +429,7 @@ function require_docker_online {
             Write-Host ""
         }
         catch {
-            Write-Host "error connecting to docker"
+            # Write-Host "error connecting to docker"
         }
     } while ( ((is_docker_desktop_online) -eq $false) -And ( $check_again -ine 'n' -And $check_again -ine 'no') )
     if ( ((is_docker_desktop_online) -eq $false) -And ( $check_again -ine 'n' -Or $check_again -ine 'no') ) {
