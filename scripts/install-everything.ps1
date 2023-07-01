@@ -237,7 +237,7 @@ function docker_wsl_full_restart {
 }
 
 function wsl_docker_restart {
-    aWrite-Output "stopping docker ..."
+    Write-Output "stopping docker ..."
     try {
         powershell.exe -Command cmd.exe /c net stop com.docker.service
     }
