@@ -371,10 +371,10 @@ function require_docker_online {
                     break nested_do
                 }
             }
-            elseif ( ($docker_tries -eq 1 -And $docker_cycles -eq 1) -And (((is_docker_backend_online) -eq $false) -Or ((is_docker_desktop_online) -eq $false)) ) {
-                Write-Host "error messages are expected when first starting docker. please wait ..."
-            }
-            if ((is_docker_desktop_online) -eq $false) {
+            else {
+                if ( ($docker_tries -eq 1 -And $docker_cycles -eq 1) -And (((is_docker_backend_online) -eq $false) -Or ((is_docker_desktop_online) -eq $false)) ) {
+                    Write-Host "error messages are expected when first starting docker. please wait ..."
+                }
                 if (($docker_tries % 2) -eq 0) {
                     write-host ""
                     $sleep_time += 1
@@ -397,17 +397,15 @@ function require_docker_online {
                     }
                     elseif ( ($docker_tries % 6) -eq 0) {
                         # $check_again = Read-Host "Keep trying to connect to docker? ([y]n)"
-                        $check_again = 'y'
-                        if ($check_again -ine 'n' -And $check_again -ine 'no') {
-                            Write-Host "resetting docker engine ....."
-                            try {
-                                &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine;
-                            }
-                            catch {}
-                            Write-Host "trying again to start docker desktop ..."
+
+                        Write-Host "resetting docker engine ....."
+                        try {
+                            &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine;
                         }
+                        catch {}
+                        Write-Host "trying again to start docker desktop ..."
                     }
-                    elseif (((is_docker_desktop_online) -eq $false) -And (($docker_tries % 15) -eq 0)) {
+                    elseif (($docker_tries % 15) -eq 0) {
                         $docker_tries = 1
                         $docker_cycles++
                     }
