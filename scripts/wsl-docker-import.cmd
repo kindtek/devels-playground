@@ -55,7 +55,9 @@ IF "!image_name_tag!"=="default" (
     SET "image_tag=%image_name_tag::=" & SET "image_tag=%"
 
 )
-
+IF "!image_repo!" == "kindtek" (
+    SET "image_name_tag=!image_name!:!image_tag!"
+)
 SET "image_name_tag=!image_name!:!image_tag!"
 SET "wsl_distro=!image_repo_mask!-!image_name!-!image_tag!"
 IF "!DVLP_DEBUG!"=="y" (
