@@ -345,8 +345,10 @@ function require_docker_online {
     $docker_tries = 0
     $docker_cycles = 0
     $docker_settings_reset = $true
-    $host.UI.RawUI.ForegroundColor = "Black"
-    $host.UI.RawUI.BackgroundColor = "DarkRed"
+    $orig_foreground = $host.UI.RawUI.ForegroundColor
+    $orig_background = $host.UI.RawUI.ForegroundColor
+    $host.UI.RawUI.ForegroundColor = "Gray"
+    $host.UI.RawUI.BackgroundColor = "Black"
     Write-Host "`r`n`r`nloading docker desktop ..."
     Write-Host "waiting for docker backend to come online ..."  
     :nested_do do {   
@@ -447,6 +449,8 @@ function require_docker_online {
         Write-Host "docker failed to start."
     }
     # Set-PSDebug -Trace 0;
+    $host.UI.RawUI.ForegroundColor = $orig_foreground
+    $host.UI.RawUI.BackgroundColor = $orig_background
     return (is_docker_desktop_online)
 }
 
