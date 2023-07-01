@@ -362,7 +362,7 @@ function require_docker_online {
             }
             elseif ($docker_online -eq $false -And ($docker_cycles -eq 2 ) -And ($docker_tries -eq 10 )) {
                 # clear settings 
-                Write-Host "clearing settings and reverting to $failsafe_wsl_distro"
+                Write-Host "clearing settings and reverting wsl to $failsafe_wsl_distro"
                 Push-Location $env:APPDATA\Docker
                 Move-Item -Path "settings.json" "settings.json.old" -Force
                 Pop-Location
