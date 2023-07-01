@@ -185,7 +185,7 @@ function reset_docker_wsl_settings {
     # clear settings 
     Write-Host "clearing settings and reverting wsl to $failsafe_wsl_distro"
     Push-Location $env:APPDATA\Docker
-    Move-Item -Path "settings.json" "settings.json.old" -Force
+    Move-Item -Path "settings.json" "settings.json.old" -Force | Out-Null
     Pop-Location
     &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine -ResetToDefault;
     wsl -s $failsafe_wsl_distro
