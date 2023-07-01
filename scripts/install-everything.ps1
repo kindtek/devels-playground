@@ -347,7 +347,7 @@ function require_docker_online {
             # launch docker desktop and keep it open 
             $docker_tries++
             Write-Host "${docker_cycles}.${docker_tries}"
-            if ( is_docker_backend_online -eq $true ) {
+            if ( (is_docker_backend_online) -eq $true ) {
                 Start-Sleep 2
                 # if service was already up continue right away otherwise sleep a bit
                 if ( $docker_tries -gt 1 ) {
