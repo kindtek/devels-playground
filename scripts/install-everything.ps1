@@ -249,9 +249,11 @@ function require_docker_online {
                     if ($docker_daemon_online -eq 'helloworld') {
                         $docker_desktop_online = $true
                     } else {
+                        $docker_online = $false
                         reset_docker_wsl_settings
                     }
                 } catch {
+                    $docker_online = $false
                     reset_docker_wsl_settings
                 }
                 # if service was already up continue right away otherwise sleep a bit
@@ -269,7 +271,9 @@ function require_docker_online {
                 try {
                     docker info
                 } catch {}
-                break nested_do
+                if ( $docker_online -eq $true ){
+                    break nested_do
+                }
             }
             if ( $docker_tries -eq 1 ) {
                 Write-Host "error messages are expected when first starting docker. please wait ..."
