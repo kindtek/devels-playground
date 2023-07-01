@@ -397,7 +397,7 @@ function require_docker_online {
                     wsl_docker_full_restart
                 }
             
-                if (( $docker_tries -eq 7 ) -Or (is_docker_backend_online) -eq $true ) {
+                if ((($docker_tries % 7) -eq 0) -Or ((is_docker_backend_online) -eq $true) ) {
                     reset_wsl_settings
                     if ( $docker_settings_reset -eq $true -And $docker_cycles -gt 1 ) {
                             # only reset settings once and after trying 6 times
