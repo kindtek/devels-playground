@@ -181,7 +181,7 @@ function set_docker_config {
 
 }
 
-function reset_docker_wsl_settings {
+function reset_docker_settings {
     # clear settings 
     Write-Host "clearing settings and reverting wsl to $FAILSAFE_WSL_DISTRO"
     Push-Location $env:APPDATA\Docker
@@ -189,6 +189,10 @@ function reset_docker_wsl_settings {
     Move-Item -Path "settings.json" "settings.json.old" -Force | Out-Null
     Pop-Location
     &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine -ResetToDefault;
+}
+
+function reset_wsl_settings {
+    # clear settings 
     wsl -s $FAILSAFE_WSL_DISTRO
 }
 
@@ -393,12 +397,14 @@ function require_docker_online {
                     wsl_docker_full_restart
                 }
             
-                if (( $docker_cycles -eq 2 ) -Or (is_docker_backend_online) -eq $true ) {
+                if (( $docker_tries -eq 7 ) -Or (is_docker_backend_online) -eq $true ) {
+                    reset_wsl_settings
                     if ( $docker_settings_reset -eq $true -And $docker_cycles -gt 1 -And $docker_tries -eq 10 ) {
                             # only reset settings once and after trying 6 times
-                            reset_docker_wsl_settings
+                            reset_docker_settings
                             $docker_settings_reset = $false
                     }
+                    wsl_docker_restart
                 }
                 elseif ($docker_cycles -eq 4 ) {
                     # give up
