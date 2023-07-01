@@ -272,6 +272,7 @@ function is_docker_backend_online {
         $docker_process = Get-Process 'com.docker.proxy' 
     }
     catch {
+        $docker_process = 'error'
         return $false
     }
     if ( $docker_process -ne 'error' ) {
