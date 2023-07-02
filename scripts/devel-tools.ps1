@@ -493,12 +493,12 @@ function run_installer {
 
 
     # Write-Host "$([char]27)[2J" 
-    if (!(Test-Path -Path "$git_path/.dvlp-installed" -PathType Leaf)) {
-        if (!(powershell ${function:require_docker_online} )) {
-            Write-Host "`r`nnot starting docker desktop.`r`n" 
-        }
-        # else {
-        #     ini_docker_config
-        # }
-    }
+    # if (!(Test-Path -Path "$git_path/.dvlp-installed" -PathType Leaf)) {
+    #     if (!(powershell ${function:require_docker_online} )) {
+    #         Write-Host "`r`nnot starting docker desktop.`r`n" 
+    #     }
+    #     # else {
+    #     #     ini_docker_config
+    #     # }
+    # }
 }
