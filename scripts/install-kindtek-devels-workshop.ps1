@@ -163,7 +163,7 @@ do {
 
         install_repo $git_parent_path $git_path $repo_src_owner $repo_src_name $repo_git_name $repo_src_branch  
 
-        powershell.exe -Command "$git_path/scripts/install-everything.ps1"
+        powershell.exe -Command "$git_path/scripts/devel-tools.ps1"
 
         $host.UI.RawUI.ForegroundColor = "Black"
         $host.UI.RawUI.BackgroundColor = "DarkRed"
