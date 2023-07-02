@@ -16,7 +16,8 @@
 4. WSL, PYTHON, DOCKER-IN-DOCKER, KERNEL, GUI, KALI, CUDA, ...
 
 ```bat
-powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell/dvl-works/devel-spawn.ps1 -OutFile install-kindtek-devels-workshop.ps1; powershell.exe -executionpolicy remotesigned -File install-kindtek-devels-workshop.ps1 kali-gui"
+powershell.exe -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell/dvl-works/devel-spawn.ps1 -OutFile dvlp.ps1;powershell.exe -ExecutionPolicy RemoteSigned -File dvlp.ps1 kali-gui-kernel"
+
 
 ```
 

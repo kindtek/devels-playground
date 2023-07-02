@@ -12,7 +12,7 @@ dvlp/docker/ubuntu/ubuntu22-kernel-linux-kernel-6-28.tar
 /.vscode-installed
 /.wterminal-installed
 /.github-installed
-**/install-kindtek-devels-workshop.ps1
+**/dvlp.ps1
 dvlp/kernels/linux/kache
 dvlp/kernels/linux-build*
 .dvlp-installed
