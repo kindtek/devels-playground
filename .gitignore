@@ -4,6 +4,6 @@
 kernels/linux/zfs-*
 kernels/linux/linux-*
 **/kali/make-kernel-*
-**/kali/install-kindtek-devels-workshop.ps1
+**/kali/dvlp.ps1
 docker/kali/logs*
 DockerDesktopInstaller.exe
