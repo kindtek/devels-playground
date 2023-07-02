@@ -341,6 +341,7 @@ function require_docker_online {
     $host.UI.RawUI.BackgroundColor = "Gray"
     Write-Host "`r`n`r`nloading docker desktop ..."
     Write-Host "waiting for docker backend to come online ..."  
+    . $env:USERPROFILE/repos/kindtek/dvlw/scripts/install-everything.ps1
     do {   
         try {
             if ( (is_docker_desktop_online) -eq $false ) {
