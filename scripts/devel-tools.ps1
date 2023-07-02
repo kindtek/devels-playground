@@ -232,7 +232,7 @@ function docker_wsl_full_restart {
 }
 
 function wsl_docker_restart_new_win {
-    Start-Process powershell -LoadUserProfile -WindowStyle hidden -ArgumentList ". $env:USERPROFILE/repos/kindtek/dvlw/scripts/install-everything.ps1;-command &{wsl_docker_restart;exit;}" -Wait
+    Start-Process powershell -LoadUserProfile -WindowStyle hidden -ArgumentList ". $env:USERPROFILE/repos/kindtek/dvlw/scripts/devel-tools.ps1;-command &{wsl_docker_restart;exit;}" -Wait
 }
 function wsl_docker_restart {
     Write-Output "stopping docker ..."
@@ -341,7 +341,7 @@ function require_docker_online {
     $host.UI.RawUI.BackgroundColor = "Gray"
     Write-Host "`r`n`r`nloading docker desktop ..."
     Write-Host "waiting for docker backend to come online ..."  
-    . $env:USERPROFILE/repos/kindtek/dvlw/scripts/install-everything.ps1
+    . $env:USERPROFILE/repos/kindtek/dvlw/scripts/devel-tools.ps1
     do {   
         try {
             if ( (is_docker_desktop_online) -eq $false ) {
