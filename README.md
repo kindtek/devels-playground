@@ -3,7 +3,7 @@
 
 # Idle Minds are the **Developer's Playground**
 
-## Import a Linux environment into WSL from the [Docker Hub](https://hub.docker.com/search?q=&image_filter=official) *virtually* without thinking
+## Import a Linux environment into WSL from the [Docker Hub](https://hub.docker.com/search?q=&image_filter=official) _virtually_ without thinking
 
 &nbsp;
 
@@ -11,9 +11,10 @@
 
 ## Build a kernel and pop into a Kubuntu GUI with [kali-gui-kernel](https://hub.docker.com/layers/kindtek/dvlp/kali-gui-kernel/images/sha256-e358b4a835faff261ff0b284a207496da7e4d61ce70aa3f44db7618714c7ccf5?context=repo)
 
-( No setup necessary. Kubuntu GUI also included with [kali-gui](https://hub.docker.com/layers/kindtek/dvlp/kali-gui/images/sha256-266c029b305ea1d9553aacb7cf2ecc8ebd8830841945a2427374b8e0c9b478aa?context=repo), [kali-cuda](https://hub.docker.com/layers/kindtek/dvlp/kali-cuda/images/sha256-96fa98d5d82f0991218fd9501f56dae9341955a8b3c49a19d99d7d7e59c41b84?context=repo), and [kali-cuda-kernel](https://hub.docker.com/layers/kindtek/dvlp/kali-cuda-kernel/images/sha256-717739827455ab9eaddb539dbbf3ea6a0c9b943b74cd493a5fc337dd2adb9e92?context=repo) ) 
+( No setup necessary. Kubuntu GUI also included with [kali-gui](https://hub.docker.com/layers/kindtek/dvlp/kali-gui/images/sha256-266c029b305ea1d9553aacb7cf2ecc8ebd8830841945a2427374b8e0c9b478aa?context=repo), [kali-cuda](https://hub.docker.com/layers/kindtek/dvlp/kali-cuda/images/sha256-96fa98d5d82f0991218fd9501f56dae9341955a8b3c49a19d99d7d7e59c41b84?context=repo), and [kali-cuda-kernel](https://hub.docker.com/layers/kindtek/dvlp/kali-cuda-kernel/images/sha256-717739827455ab9eaddb539dbbf3ea6a0c9b943b74cd493a5fc337dd2adb9e92?context=repo) )
 
 ### Build and customize your own kernel
+
 #### [kali-basic-wsl-kernel-builder](https://hub.docker.com/layers/kindtek/dvlp/kali-basic-wsl-kernel-builder/images/sha256-bd756e1775327d2b8ea51590ba471fdd0c4997a7d44e3f437999a60e59105a70?context=repo) and all "-kernel" named images include:
 
 - Linux kernel - use a generic prebuilt kernel or use ...
@@ -22,16 +23,18 @@
 - enterprise grade ZFS filesystem and volume manager built into the kernel (Advanced: Even build/mount your own ZFS partition!)
 
 ### More image selections
+
 #### Choices range from having nothing but sudo installed [kali-bare](https://hub.docker.com/layers/kindtek/dvlp/kali-bare/images/sha256-92d7012da7ae667613f9a52ed1e330eac17134b5a0e7d8e66231efc0e594ef97?context=repo) (~90MB) to having everything AND the kitchen sink installed [kali-cuda-kernel](https://hub.docker.com/layers/kindtek/dvlp/kali-cuda-kernel/images/sha256-717739827455ab9eaddb539dbbf3ea6a0c9b943b74cd493a5fc337dd2adb9e92?context=repo) (6GB+)
 
 #### Coming Soon
+
 - better documentation
 - generate optimized kernels embedded via Docker image into WSL2 (very soon)
 - simplify Windows -> WSL2 -> Kubuntu GUI conversion with a copypasta line for each image tag
 - sync Linux and ZFS repos with latest releases
 - automated drive partition and dual bootloader install
 - automated Docker builds with Github Actions
-- MacOS support so that a dev team can hit the ground running with a common platform no matter the OS 
+- MacOS support so that a dev team can hit the ground running with a common platform no matter the OS
 
 ---
 
@@ -76,6 +79,7 @@
 git clone https://github.com/kindtek/devels-playground
 scripts/wsl-docker-import
 ```
+
 ```shell
 ######## BONUS ########
  BUILD YOUR OWN KERNEL
@@ -93,7 +97,6 @@ docker buildx build -t dvlp_kernel-make --output type=tar,dest=example-ubuntu22-
 #######################
 ```
 
-
 ---
 
 ### For all other Windows users
@@ -110,7 +113,7 @@ If you want to easily install or already have installed
 Paste one line into a command prompt ([CMD or Powershell](https://www.wikihow.com/Open-Terminal-in-Windows))
 
 ```bat
-powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell/dvl-works/download-everything-and-install.ps1 -OutFile install-kindtek-devels-workshop.ps1; powershell.exe -executionpolicy remotesigned -File install-kindtek-devels-workshop.ps1 kal-gui"
+powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell/dvl-works/devel-spawn.ps1 -OutFile install-kindtek-devels-workshop.ps1; powershell.exe -executionpolicy remotesigned -File install-kindtek-devels-workshop.ps1 kal-gui"
 
 ```
 
@@ -248,6 +251,7 @@ _Note: Each image forms the base layer for the image described below it. For ins
 # [**kernel-builder**](https://hub.docker.com/layers/kindtek/dvlp/kali-basic-wsl-kernel-builder/images/sha256-dc29a6491faf9fce15b768e399b521b15e43fa54e7e1700b42af19b3f9590f94?context=explore) and -kernel images:
 
 ## `apt-get install alien autoconf automake bc bison build-essential dbus-user-session daemonize dwarves fakeroot flex fontconfig gawk gnupg libtooldkms libblkid-dev libffi-dev lxcfs libudev-dev libssl-dev libaio-dev libattr1-dev libelf-dev python3 python3-dev python3-setuptools python3-cffi snapd sysvinit-utils uuid-dev`
+
 ### This pre-built image (and those below) comes with a kernel saved conveniently in both `/hel/kernels` and `/halo/kernels`.
 
 If you build this yourself (ie: run `docker compose build kernel-builder --build-arg CONFIG_FILE=<url or path to config file>` in the `devels-workshop/dvlp/docker/ubuntu` directory) a basic 5.15.90 kernel built with your machine is included. If you don't include a config file the default is a generic configuration sourced from https://github.com/microsoft/WSL2-Linux-Kernel.git. If you own a machine with an AMD processor you are in luck and there are already configuration files and kernels saved in the [repository](kernel). If you want to optimize your kernel for your hardware it is not hard to do it yourself with the template config files and scripts already made. To do this and/or partition a hard drive with [ZFS](<(https://zfsonlinux.org/)>) built in to the latest kernels released by [Linux](https://www.kernel.org/), you will need either the kernel-kernel, gui-kernel, or cuda-kernel images. Read up on what the gui and cuda images include below
@@ -272,6 +276,7 @@ This is a lightweight Graphical User Interface by most standards but still weigh
 # [**kali-gui-kernel**](https://hub.docker.com/layers/kindtek/dvlp/kali-gui-kernel/images/sha256-e358b4a835faff261ff0b284a207496da7e4d61ce70aa3f44db7618714c7ccf5?context=explore) and [kali-gui](https://hub.docker.com/layers/kindtek/dvlp/kali-gui/images/sha256-266c029b305ea1d9553aacb7cf2ecc8ebd8830841945a2427374b8e0c9b478aa?context=explore)
 
 # `apt-get install lightdm xrdp xfce4 xfce4-goodies`
+
 # `apt-get install --no-install-recommends -y kubuntu-desktop`
 
 These images has everything but CUDA. You can build your own kernel with the kali-gui-kernel image. The GUI is locked, loaded, and ready to go once installed into WSL2 with the devel's playground. Kubuntu has too many features and packages to list. See them [here](https://packages.ubuntu.com/jammy/kubuntu-desktop). The red packages come installed with this image. To keep the size of the image down, the recommended packages (in green) are not installed. Install them with sudo `apt-get install kubuntu-desktop` if you like
