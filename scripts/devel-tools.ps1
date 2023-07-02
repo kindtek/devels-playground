@@ -190,7 +190,11 @@ function reset_wsl_settings {
     }
 }
 
-function docker_wsl_full_restart {
+function wsl_docker_full_restart_new_win {
+    Start-Process powershell -LoadUserProfile -WindowStyle hidden -ArgumentList ". $env:USERPROFILE/repos/kindtek/dvlw/scripts/devel-tools.ps1;-command &{wsl_docker_full_restart;exit;}" -Wait
+}
+
+function wsl_docker_full_restart {
     Write-Host "resetting Docker engine and data ..."
     try {
         docker update --restart=always docker-desktop
@@ -234,6 +238,7 @@ function docker_wsl_full_restart {
 function wsl_docker_restart_new_win {
     Start-Process powershell -LoadUserProfile -WindowStyle hidden -ArgumentList ". $env:USERPROFILE/repos/kindtek/dvlw/scripts/devel-tools.ps1;-command &{wsl_docker_restart;exit;}" -Wait
 }
+
 function wsl_docker_restart {
     Write-Output "stopping docker ..."
     try {
