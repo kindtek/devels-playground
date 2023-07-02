@@ -298,7 +298,7 @@ function is_docker_desktop_online {
 function start_docker_desktop {
     $refresh_envs = "$env:USERPROFILE/repos/kindtek/RefreshEnv.cmd"
     try {
-        Start-Process "Docker Desktop.exe" -WindowStyle "Hidden"
+        Start-Process "Docker Desktop.exe" -WindowStyle Hidden
     }
     catch {
         try {
@@ -306,7 +306,7 @@ function start_docker_desktop {
             ([void]( New-Item -path alias:'Docker Desktop' -Value 'C:\Program Files\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
             ([void]( New-Item -path alias:'Docker Desktop.exe' -Value 'C:\Program Files\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
             powershell.exe -Command $refresh_envs | Out-Null
-            Start-Process "C:\Program Files\docker\docker\Docker Desktop.exe" -WindowStyle "Hidden"
+            Start-Process "C:\Program Files\docker\docker\Docker Desktop.exe" -WindowStyle Hidden
         }
         catch {
             try {
@@ -314,7 +314,7 @@ function start_docker_desktop {
                 ([void]( New-Item -path alias:'Docker Desktop' -Value 'c:\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                 ([void]( New-Item -path alias:'Docker Desktop.exe' -Value 'c:\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                 powershell.exe -Command $refresh_envs | Out-Null
-                Start-Process "c:\docker\docker\Docker Desktop.exe" -WindowStyle "Hidden"
+                Start-Process "c:\docker\docker\Docker Desktop.exe" -WindowStyle Hidden
             }
             catch {
                 try {
@@ -322,7 +322,7 @@ function start_docker_desktop {
                     ([void]( New-Item -path alias:'Docker Desktop' -Value ':\docker\docker desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                     ([void]( New-Item -path alias:'Docker Desktop.exe' -Value 'c:\docker\docker desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                     powershell.exe -Command $refresh_envs | Out-Null
-                    Start-Process "c:\docker\docker desktop.exe" -WindowStyle "Hidden"
+                    Start-Process "c:\docker\docker desktop.exe" -WindowStyle Hidden
                 }
                 catch {} 
             }
