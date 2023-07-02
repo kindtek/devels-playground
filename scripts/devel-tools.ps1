@@ -395,7 +395,7 @@ function require_docker_online {
                     }
                 }
                 elseif (($docker_tries % 13) -eq 0) {
-                    wsl_docker_full_restart
+                    wsl_docker_full_restart_new_win
                 }
             
                 if ((($docker_tries % 7) -eq 0) ) {
