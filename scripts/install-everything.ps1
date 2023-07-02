@@ -231,6 +231,9 @@ function docker_wsl_full_restart {
     catch {}
 }
 
+function wsl_docker_restart_new_win {
+    Start-Process powershell -LoadUserProfile -ArgumentList ". $env:USERPROFILE/repos/kindtek/dvlw/scripts/install-everything.ps1;-command &{wsl_docker_restart;exit;}" -Wait
+}
 function wsl_docker_restart {
     Write-Output "stopping docker ..."
     try {
