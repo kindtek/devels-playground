@@ -1,7 +1,7 @@
 $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
 $env:WSL_UTF8 = 1
-$global:FAILSAFE_WSL_DISTRO = 'kalilinux-kali-rolling-latest'
+$env:FAILSAFE_WSL_DISTRO = 'kalilinux-kali-rolling-latest'
 
 function reboot_prompt {
     # Write-Host "`r`nA restart may be required for the changes to fully take effect. "
@@ -27,7 +27,6 @@ function install_windows_features {
 
 function install_dependencies {
     param ( $git_path )
-    set_dvlp_globals 1 | Out-Null
     Write-Host "`r`nThe following programs will be installed or updated`r`n`t- Windows Terminal`r`n`t- Visual Studio Code`r`n`t- Docker Desktop`r`n`t- Python 3.10`r`n`t" -ForegroundColor Magenta
     
     $software_name = "Windows Terminal"
@@ -35,7 +34,7 @@ function install_dependencies {
         # $windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
         # if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no') { 
         Write-Host "Installing $software_name ..." -ForegroundColor DarkCyan
-        Start-Process powershell -LoadUserProfile -WindowStyle $global:BG_WIN_STYLE -ArgumentList "-command &{winget install Microsoft.PowerShell;winget install Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;}" -Wait
+        Start-Process powershell -LoadUserProfile -WindowStyle $env:BG_WIN_STYLE -ArgumentList "-command &{winget install Microsoft.PowerShell;winget install Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;}" -Wait
 
         
         # }
@@ -50,7 +49,7 @@ function install_dependencies {
     if (!(Test-Path -Path "$git_path/.vscode-installed" -PathType Leaf)) {
         Write-Host "Installing $software_name ..." -ForegroundColor DarkCyan
         # Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --silent --locale en-US --accept-package-agreements --accept-source-agreements --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
-        Start-Process powershell -LoadUserProfile -WindowStyle $global:BG_WIN_STYLE -ArgumentList "-command &{winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode, addcontextmenufiles, addcontextmenufolders`"';winget upgrade Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode, addcontextmenufiles, addcontextmenufolders`"';exit;}" -Wait
+        Start-Process powershell -LoadUserProfile -WindowStyle $env:BG_WIN_STYLE -ArgumentList "-command &{winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode, addcontextmenufiles, addcontextmenufolders`"';winget upgrade Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode, addcontextmenufiles, addcontextmenufolders`"';exit;}" -Wait
         Write-Host "$software_name installed" -ForegroundColor DarkCyan | Out-File -FilePath "$git_path/.vscode-installed"
         $new_install = $true
     }
@@ -64,10 +63,10 @@ function install_dependencies {
         # winget uninstall --id=Docker.DockerDesktop
         # winget install --id=Docker.DockerDesktop --location="c:\docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements
         # winget upgrade --id=Docker.DockerDesktop --location="c:\docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements
-        Start-Process powershell -LoadUserProfile -WindowStyle $global:BG_WIN_STYLE -ArgumentList "-command &{winget install --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;}" -Wait
+        Start-Process powershell -LoadUserProfile -WindowStyle $env:BG_WIN_STYLE -ArgumentList "-command &{winget install --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;}" -Wait
         # update using rolling stable url
         Write-Host "Downloading $software_name update/installation file ..." -ForegroundColor DarkCyan
-        Start-Process powershell -LoadUserProfile -WindowStyle $global:BG_WIN_STYLE -ArgumentList "-command &{Invoke-WebRequest -Uri https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe -OutFile DockerDesktopInstaller.exe;.\DockerDesktopInstaller.exe;Remove-Item DockerDesktopInstaller.exe -Force -ErrorAction SilentlyContinue;exit;}" -Wait
+        Start-Process powershell -LoadUserProfile -WindowStyle $env:BG_WIN_STYLE -ArgumentList "-command &{Invoke-WebRequest -Uri https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe -OutFile DockerDesktopInstaller.exe;.\DockerDesktopInstaller.exe;Remove-Item DockerDesktopInstaller.exe -Force -ErrorAction SilentlyContinue;exit;}" -Wait
         # & 'C:\Program Files\Docker\Docker\Docker Desktop.exe'
         # "Docker Desktop Installer.exe" install --accept-license --backend=wsl-2 --installation-dir=c:\docker 
         Write-Host "$software_name installed" -ForegroundColor DarkCyan | Out-File -FilePath "$git_path/.docker-installed"
@@ -83,7 +82,7 @@ function install_dependencies {
         Write-Host "Installing $software_name ..." -ForegroundColor DarkCyan
         # @TODO: add cdir and python to install with same behavior as other installs above
         # not eloquent at all but good for now
-        Start-Process powershell -LoadUserProfile -WindowStyle $global:BG_WIN_STYLE -ArgumentList "-command &{winget install --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;}" -Wait
+        Start-Process powershell -LoadUserProfile -WindowStyle $env:BG_WIN_STYLE -ArgumentList "-command &{winget install --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;}" -Wait
         # ... even tho cdir does not appear to be working on windows
         # $cmd_command = pip install cdir
         # Start-Process -FilePath PowerShell.exe -NoNewWindow -ArgumentList $cmd_command
@@ -178,21 +177,18 @@ function reset_docker_settings {
 }
 
 function reset_wsl_settings {
-    set_dvlp_globals 1 | Out-Null
     # clear settings 
-    Write-Host "reverting wsl default distro to $global:FAILSAFE_WSL_DISTRO"
-    if ($global:FAILSAFE_WSL_DISTRO -ne "") {
-        wsl -s $global:FAILSAFE_WSL_DISTRO
+    Write-Host "reverting wsl default distro to $env:FAILSAFE_WSL_DISTRO"
+    if ($env:FAILSAFE_WSL_DISTRO -ne "") {
+        wsl -s $env:FAILSAFE_WSL_DISTRO
     }
 }
 
 function wsl_docker_full_restart_new_win {
-    set_dvlp_globals 1 | Out-Null
-    Start-Process powershell -LoadUserProfile -WindowStyle $global:BG_WIN_STYLE -ArgumentList "-command &{. $env:KINDTEK_WIN_GIT_PATH/dvlp.ps1 source;wsl_docker_full_restart;exit;}" -Wait
+    Start-Process powershell -LoadUserProfile -WindowStyle $env:BG_WIN_STYLE -ArgumentList "-command &{. $env:KINDTEK_WIN_GIT_PATH/dvlp.ps1 source;wsl_docker_full_restart;exit;}" -Wait
 }
 
 function wsl_docker_full_restart {
-    set_dvlp_globals 1 | Out-Null
     Write-Host "resetting Docker engine and data ..."
     try {
         docker update --restart=always docker-desktop
@@ -234,12 +230,10 @@ function wsl_docker_full_restart {
 }
 
 function wsl_docker_restart_new_win {
-    set_dvlp_globals 1 | Out-Null
-    Start-Process powershell -LoadUserProfile -WindowStyle $global:BG_WIN_STYLE -ArgumentList "-command &{. $env:KINDTEK_WIN_GIT_PATH/dvlp.ps1 source;wsl_docker_restart;exit;}" -Wait
+    Start-Process powershell -LoadUserProfile -WindowStyle $env:BG_WIN_STYLE -ArgumentList "-command &{. $env:KINDTEK_WIN_GIT_PATH/dvlp.ps1 source;wsl_docker_restart;exit;}" -Wait
 }
 
 function wsl_docker_restart {
-    set_dvlp_globals 1 | Out-Null
     Write-Output "stopping docker ..."
     try {
         powershell.exe -Command cmd.exe /c net stop com.docker.service
@@ -301,10 +295,9 @@ function is_docker_desktop_online {
 
 
 function start_docker_desktop {
-    set_dvlp_globals 1 | Out-Null
     $refresh_envs = "$env:KINDTEK_WIN_GIT_PATH/RefreshEnv.cmd"
     try {
-        Start-Process "Docker Desktop.exe" -WindowStyle $global:BG_WIN_STYLE
+        Start-Process "Docker Desktop.exe" -WindowStyle $env:BG_WIN_STYLE
     }
     catch {
         try {
@@ -312,7 +305,7 @@ function start_docker_desktop {
             ([void]( New-Item -path alias:'Docker Desktop' -Value 'C:\Program Files\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
             ([void]( New-Item -path alias:'Docker Desktop.exe' -Value 'C:\Program Files\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
             powershell.exe -Command $refresh_envs | Out-Null
-            Start-Process "C:\Program Files\docker\docker\Docker Desktop.exe" -WindowStyle $global:BG_WIN_STYLE
+            Start-Process "C:\Program Files\docker\docker\Docker Desktop.exe" -WindowStyle $env:BG_WIN_STYLE
         }
         catch {
             try {
@@ -320,7 +313,7 @@ function start_docker_desktop {
                 ([void]( New-Item -path alias:'Docker Desktop' -Value 'c:\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                 ([void]( New-Item -path alias:'Docker Desktop.exe' -Value 'c:\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                 powershell.exe -Command $refresh_envs | Out-Null
-                Start-Process "c:\docker\docker\Docker Desktop.exe" -WindowStyle $global:BG_WIN_STYLE
+                Start-Process "c:\docker\docker\Docker Desktop.exe" -WindowStyle $env:BG_WIN_STYLE
             }
             catch {
                 try {
@@ -328,7 +321,7 @@ function start_docker_desktop {
                     ([void]( New-Item -path alias:'Docker Desktop' -Value ':\docker\docker desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                     ([void]( New-Item -path alias:'Docker Desktop.exe' -Value 'c:\docker\docker desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                     powershell.exe -Command $refresh_envs | Out-Null
-                    Start-Process "c:\docker\docker desktop.exe" -WindowStyle $global:BG_WIN_STYLE
+                    Start-Process "c:\docker\docker desktop.exe" -WindowStyle $env:BG_WIN_STYLE
                 }
                 catch {} 
             }
@@ -337,8 +330,7 @@ function start_docker_desktop {
 }
 
 function require_docker_online_new_win {
-    set_dvlp_globals 1 | Out-Null
-    Start-Process powershell -LoadUserProfile -WindowStyle $global:BG_WIN_STYLE -ArgumentList "-command &{. $env:KINDTEK_WIN_DVLW_PATH/scripts/devel-tools.ps1 source;require_docker_online;exit;}" -Wait
+    Start-Process powershell -LoadUserProfile -WindowStyle $env:BG_WIN_STYLE -ArgumentList "-command &{. $env:KINDTEK_WIN_DVLW_PATH/scripts/devel-tools.ps1 source;require_docker_online;exit;}" -Wait
 }
 
 function require_docker_online {
@@ -352,7 +344,6 @@ function require_docker_online {
     $host.UI.RawUI.BackgroundColor = "Gray"
     Write-Host "`r`n`r`nloading docker desktop ..."
     Write-Host "waiting for docker backend to come online ..."  
-    set_dvlp_globals 1 | Out-Null
     . $env:KINDTEK_WIN_GIT_PATH/dvlp.ps1 source
     do {   
         try {
@@ -458,7 +449,6 @@ function cleanup_installation {
     param (
         # OptionalParameters
     )
-    set_dvlp_globals 1 | Out-Null
     try {
         Remove-Item "$env:KINDTEK_WIN_DVLW_PATH".replace($repo_src_name, "install-$repo_src_owner-$repo_src_name.ps1") -Force -ErrorAction SilentlyContinue
         Write-Host "`r`nCleaning up..  `r`n"
@@ -531,7 +521,7 @@ function run_installer {
 
     set_dvlp_globals 1 | Out-Null
     # log default distro
-    $global:ORIG_DEFAULT_WSL_DISTRO = get_default_wsl_distro
+    $env:ORIG_DEFAULT_WSL_DISTRO = get_default_wsl_distro
     # jump to bottom line without clearing scrollback
     # Write-Host "$([char]27)[2J" 
     $new_install = install_windows_features $env:KINDTEK_WIN_DVLW_PATH 
