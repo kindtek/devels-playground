@@ -958,12 +958,18 @@ COPY --from=dvlp_repo /repos/dvlw/dvlp/mnt/opt/* /opt/
 WORKDIR /hal
 USER ${_AGL}
 
+#############################
+# dvlp_base-gui-lite-kernel #
+#############################
 FROM dvlp_base-gui-lite AS dvlp_base-gui-lite-kernel
 USER r00t
 WORKDIR /
 COPY --from=dvlp_kernel-make ./boot/ ./boot/
 COPY --from=dvlp_kernel-make ./usr/src/ ./usr/src/
 COPY --from=dvlp_kernel-make ./usr/lib/modules/ ./usr/lib/modules/
+COPY --from=dvlp_kernel-make ./kache/ ./kache/
+COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/kache/ ./r00t/dvlw/dvlp/kernels/linux/kache/
+COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/kache/ ./hal/dvlw/dvlp/kernels/linux/kache/
 WORKDIR /hal
 USER ${_AGL}
 
@@ -1013,6 +1019,7 @@ RUN \
 COPY --from=dvlp_repo --chown=r00t:r00t /repos/dvlw/dvlp/mnt/etc/* /etc/
 WORKDIR /hal
 USER ${_AGL}
+
 #################
 # dvlp_base-gui #
 #################

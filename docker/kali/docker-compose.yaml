@@ -581,8 +581,17 @@ services:
       target: dvlp_msdot-lite
       args:
         - JACKET=msdot-lite
+  gui-lite-kernel:
+    working_dir: /hal
+    extends: jacket-kernel
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-gui-lite-kernel
+    # command: bash start-kde.sh
+    build:
+      target: dvlp_gui-lite-kernel
+      args:
+        - JACKET=gui-lite-kernel
   gui-lite:
-    extends: jacket
+    extends: gui-lite-kernel
     image: kindtek/${HUB_REPO:-devels-playground}:kali-gui-lite
     # command: bash start.sh && mv -fv start-kde.sh || export FIRST_LOGIN=false
     build:
