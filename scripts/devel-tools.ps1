@@ -34,9 +34,9 @@ function install_dependencies {
         # $windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
         # if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no') { 
         Write-Host "Installing $software_name ..." -ForegroundColor DarkCyan
-        winget install Microsoft.PowerShell
-        winget install Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements
-        winget upgrade Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements
+        Start-Process powershell -LoadUserProfile -WindowStyle hidden -ArgumentList "-command &{winget install Microsoft.PowerShell;winget install Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;}" -Wait
+
+        
         # }
         Write-Host "$software_name installed" -ForegroundColor DarkCyan | Out-File -FilePath "$git_path/.wterminal-installed"
         $new_install = $true
@@ -49,8 +49,7 @@ function install_dependencies {
     if (!(Test-Path -Path "$git_path/.vscode-installed" -PathType Leaf)) {
         Write-Host "Installing $software_name ..." -ForegroundColor DarkCyan
         # Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --silent --locale en-US --accept-package-agreements --accept-source-agreements --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
-        winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks="!runcode,addcontextmenufiles,addcontextmenufolders"'
-        winget upgrade Microsoft.VisualStudioCode --override '/SILENT /mergetasks="!runcode,addcontextmenufiles,addcontextmenufolders"'
+        Start-Process powershell -LoadUserProfile -WindowStyle hidden -ArgumentList "-command &{winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode, addcontextmenufiles, addcontextmenufolders`"';winget upgrade Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode, addcontextmenufiles, addcontextmenufolders`"';exit;}" -Wait
         Write-Host "$software_name installed" -ForegroundColor DarkCyan | Out-File -FilePath "$git_path/.vscode-installed"
         $new_install = $true
     }
@@ -64,16 +63,13 @@ function install_dependencies {
         # winget uninstall --id=Docker.DockerDesktop
         # winget install --id=Docker.DockerDesktop --location="c:\docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements
         # winget upgrade --id=Docker.DockerDesktop --location="c:\docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements
-        winget install --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements
-        winget upgrade --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements
+        Start-Process powershell -LoadUserProfile -WindowStyle hidden -ArgumentList "-command &{winget install --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;}" -Wait
         # update using rolling stable url
-        Write-Host "Downloading $software_name update installation file ..." -ForegroundColor DarkCyan
-        Invoke-WebRequest -Uri https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe -OutFile DockerDesktopInstaller.exe
-        .\DockerDesktopInstaller.exe
+        Write-Host "Downloading $software_name update/installation file ..." -ForegroundColor DarkCyan
+        Start-Process powershell -LoadUserProfile -WindowStyle hidden -ArgumentList "-command &{Invoke-WebRequest -Uri https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe -OutFile DockerDesktopInstaller.exe;.\DockerDesktopInstaller.exe;Remove-Item DockerDesktopInstaller.exe -Force -ErrorAction SilentlyContinue;exit;}" -Wait
         # & 'C:\Program Files\Docker\Docker\Docker Desktop.exe'
         # "Docker Desktop Installer.exe" install --accept-license --backend=wsl-2 --installation-dir=c:\docker 
         Write-Host "$software_name installed" -ForegroundColor DarkCyan | Out-File -FilePath "$git_path/.docker-installed"
-        Remove-Item "DockerDesktopInstaller.exe" -Force -ErrorAction SilentlyContinue
         $new_install = $true
     }
     else {
@@ -86,9 +82,7 @@ function install_dependencies {
         Write-Host "Installing $software_name ..." -ForegroundColor DarkCyan
         # @TODO: add cdir and python to install with same behavior as other installs above
         # not eloquent at all but good for now
-        winget install --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements
-        winget upgrade --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements
-
+        Start-Process powershell -LoadUserProfile -WindowStyle hidden -ArgumentList "-command &{winget install --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;}" -Wait
         # ... even tho cdir does not appear to be working on windows
         # $cmd_command = pip install cdir
         # Start-Process -FilePath PowerShell.exe -NoNewWindow -ArgumentList $cmd_command
@@ -191,7 +185,7 @@ function reset_wsl_settings {
 }
 
 function wsl_docker_full_restart_new_win {
-    Start-Process powershell -LoadUserProfile -WindowStyle hidden -ArgumentList ". $env:USERPROFILE/repos/kindtek/dvlw/scripts/devel-tools.ps1;-command &{wsl_docker_full_restart;exit;}" -Wait
+    Start-Process powershell -LoadUserProfile -WindowStyle hidden -ArgumentList "-command &{. $env:USERPROFILE/repos/kindtek/dvlw/scripts/devel-tools.ps1;wsl_docker_full_restart;exit;}" -Wait
 }
 
 function wsl_docker_full_restart {
@@ -236,7 +230,7 @@ function wsl_docker_full_restart {
 }
 
 function wsl_docker_restart_new_win {
-    Start-Process powershell -LoadUserProfile -WindowStyle hidden -ArgumentList ". $env:USERPROFILE/repos/kindtek/dvlw/scripts/devel-tools.ps1;-command &{wsl_docker_restart;exit;}" -Wait
+    Start-Process powershell -LoadUserProfile -WindowStyle hidden -ArgumentList "-command &{. $env:USERPROFILE/repos/kindtek/dvlw/scripts/devel-tools.ps1;wsl_docker_restart;exit;}" -Wait
 }
 
 function wsl_docker_restart {
