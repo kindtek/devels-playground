@@ -12,7 +12,7 @@ function reboot_prompt {
         Restart-Computer
     }
     # else {
-    #     # powershell.exe -Command "$git_path\choco\src\chocolatey.resources\redirects\RefreshEnv.cmd"
+    #     # powershell.exe -Command "$global:KINDTEK_WIN_DVLW_PATH\choco\src\chocolatey.resources\redirects\RefreshEnv.cmd"
     #     Write-Host "`r`n"
     # }
 }
@@ -454,16 +454,16 @@ function cleanup_installation {
     )
     
     try {
-        Remove-Item "$git_path".replace($repo_src_name, "install-$repo_src_owner-$repo_src_name.ps1") -Force -ErrorAction SilentlyContinue
+        Remove-Item "$global:KINDTEK_WIN_DVLW_PATH".replace($repo_src_name, "install-$repo_src_owner-$repo_src_name.ps1") -Force -ErrorAction SilentlyContinue
         Write-Host "`r`nCleaning up..  `r`n"
-        Remove-Item "$git_path".replace($repo_src_name, "DockerDesktopInstaller.exe") -Force -ErrorAction SilentlyContinue
+        Remove-Item "$global:KINDTEK_WIN_DVLW_PATH".replace($repo_src_name, "DockerDesktopInstaller.exe") -Force -ErrorAction SilentlyContinue
         # make extra sure this is not a folder that is not important (ie: system32 - which is a default location)
-        if ($git_path.Contains($repo_src_name) -And $git_path.NotContains("System32") ) {
-            Remove-Item $git_path -Recurse -Confirm -Force -ErrorAction SilentlyContinue
+        if ($global:KINDTEK_WIN_DVLW_PATH.Contains($repo_src_name) -And $global:KINDTEK_WIN_DVLW_PATH.NotContains("System32") ) {
+            Remove-Item $global:KINDTEK_WIN_DVLW_PATH -Recurse -Confirm -Force -ErrorAction SilentlyContinue
         }
     }
     catch {
-        Write-Host "Run the following command to delete the repo and setup files:`r`nRemove-Item $git_path -Recurse -Confirm -Force`r`n"
+        Write-Host "Run the following command to delete the repo and setup files:`r`nRemove-Item $global:KINDTEK_WIN_DVLW_PATH -Recurse -Confirm -Force`r`n"
     }
 }
 
@@ -519,22 +519,22 @@ function wsl_distro_menu_get {
     }
 }
 
+
+
 function run_installer {
 
-    $repo_src_owner = 'kindtek'
-    $repo_git_name = 'dvlw'
-    $git_path = "$env:USERPROFILE\repos\$repo_src_owner\$repo_git_name"
+    set_dvlp_globals
     # log default distro
     $global:ORIG_DEFAULT_WSL_DISTRO = get_default_wsl_distro
     # jump to bottom line without clearing scrollback
     # Write-Host "$([char]27)[2J" 
-    $new_install = install_windows_features $git_path 
+    $new_install = install_windows_features $global:KINDTEK_WIN_DVLW_PATH 
     if ($new_install -eq $true) {
         Write-Host "`r`nwindows features installations complete! restart may be needed to continue. `r`n`r`n" 
         reboot_prompt
     }
 
-    $new_install = install_dependencies $git_path
+    $new_install = install_dependencies $global:KINDTEK_WIN_DVLW_PATH
     if ($new_install -eq $true) {
         Write-Host "`r`nsoftware installations complete! restart(s) may be needed to begin WSL import phase. `r`n`r`n" 
         reboot_prompt
@@ -542,7 +542,7 @@ function run_installer {
 
 
     # Write-Host "$([char]27)[2J" 
-    # if (!(Test-Path -Path "$git_path/.dvlp-installed" -PathType Leaf)) {
+    # if (!(Test-Path -Path "$global:KINDTEK_WIN_DVLW_PATH/.dvlp-installed" -PathType Leaf)) {
     #     if (!(powershell ${function:require_docker_online} )) {
     #         Write-Host "`r`nnot starting docker desktop.`r`n" 
     #     }
