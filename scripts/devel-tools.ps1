@@ -173,7 +173,7 @@ function reset_docker_settings {
     Delete-Item "settings.json.old" | Out-Null
     Move-Item -Path "settings.json" "settings.json.old" -Force | Out-Null
     Pop-Location
-    &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine -ResetToDefault;
+    &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine;
 }
 
 function reset_wsl_settings {
@@ -377,16 +377,6 @@ function require_docker_online {
                     if ( $restart -ine 'n' -And $restart -ine 'no' -And (($docker_tries % 9) -eq 0)) {
                         wsl_docker_restart
                     }
-                    elseif ( ($docker_tries % 6) -eq 0) {
-                        # $check_again = Read-Host "Keep trying to connect to docker? ([y]n)"
-
-                        Write-Host "resetting docker engine ....."
-                        try {
-                            &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine;
-                        }
-                        catch {}
-                        Write-Host "trying again to start docker desktop ..."
-                    }
                     elseif (($docker_tries % 15) -eq 0) {
                         $docker_tries = 0
                         $docker_cycles++
@@ -397,7 +387,7 @@ function require_docker_online {
                 }
             
                 if ((($docker_tries % 7) -eq 0) ) {
-                    $wsl_docker_restart = $false
+                    $wsl_docker_restart = $false                 
                     if ((is_docker_backend_online) -eq $true -And (is_docker_desktop_online) -eq $false) {
                         # backend is online but desktop isn't
                         if ($docker_cycles -gt 1) {
@@ -410,6 +400,13 @@ function require_docker_online {
                         reset_docker_settings
                         $docker_settings_reset = $false
                         $wsl_docker_restart = $true
+                    }
+                    if ( $docker_cycles -gt 3 ) {
+                        Write-Host "resetting docker engine ....."
+                        try {
+                            &$Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchLinuxEngine -ResetToDefault;
+                        }
+                        catch {}
                     }
                     if ( $wsl_docker_restart -eq $true) {
                         wsl_docker_restart
