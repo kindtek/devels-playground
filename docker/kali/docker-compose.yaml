@@ -3,6 +3,7 @@ name: devels-playground-kali
 services:
   test:
     build:
+      context: .
       target: dvlp_testing
     image: kindtek/${HUB_REPO:-devels-playground}:kali-test
     entrypoint: /bin/bash -c
@@ -10,11 +11,13 @@ services:
       - sleep infinity
   repo:
     build:
+      context: .
       target: dvlp_repo
     # volumes:
     #   - repo:/repos/dvlw
   repo-kernel:
     build:
+      context: .
       target: dvlp_repo-kernel
     # volumes:
     #   - repo-kernel:/repos/dvlw
