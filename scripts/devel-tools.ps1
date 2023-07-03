@@ -329,6 +329,10 @@ function start_docker_desktop {
     }
 }
 
+function require_docker_online_new_win {
+    Start-Process powershell -LoadUserProfile -WindowStyle minimized -ArgumentList "-command &{. $env:USERPROFILE/dvlw/powerhell/devel-tools.ps1 source;require_docker_online;exit;}" -Wait
+}
+
 function require_docker_online {
     # Set-PSDebug -Trace 2;
     $docker_tries = 0
