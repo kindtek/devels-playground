@@ -185,7 +185,7 @@ function reset_wsl_settings {
 }
 
 function wsl_docker_full_restart_new_win {
-    Start-Process powershell -LoadUserProfile -WindowStyle minimized -ArgumentList "-command &{. $env:USERPROFILE/dvlp.ps1;wsl_docker_full_restart;exit;}" -Wait
+    Start-Process powershell -LoadUserProfile -WindowStyle minimized -ArgumentList "-command &{. $env:USERPROFILE/dvlp.ps1 source;wsl_docker_full_restart;exit;}" -Wait
 }
 
 function wsl_docker_full_restart {
@@ -230,7 +230,7 @@ function wsl_docker_full_restart {
 }
 
 function wsl_docker_restart_new_win {
-    Start-Process powershell -LoadUserProfile -WindowStyle minimized -ArgumentList "-command &{. $env:USERPROFILE/dvlp.ps1;wsl_docker_restart;exit;}" -Wait
+    Start-Process powershell -LoadUserProfile -WindowStyle minimized -ArgumentList "-command &{. $env:USERPROFILE/dvlp.ps1 source;wsl_docker_restart;exit;}" -Wait
 }
 
 function wsl_docker_restart {
@@ -340,7 +340,7 @@ function require_docker_online {
     $host.UI.RawUI.BackgroundColor = "Gray"
     Write-Host "`r`n`r`nloading docker desktop ..."
     Write-Host "waiting for docker backend to come online ..."  
-    . $env:USERPROFILE/dvlp.ps1
+    . $env:USERPROFILE/dvlp.ps1 source
     do {   
         try {
             if ( (is_docker_desktop_online) -eq $false ) {
