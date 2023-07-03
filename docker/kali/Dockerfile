@@ -554,7 +554,7 @@ RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get update -y && apt-get install -y libssl-dev git && apt-get clean 
 RUN \
-    --mount=type=cache,target=/var/cache/make-kernel/archives,sharing=locked \
+    --mount=type=cache,target=/var/cache/make-kernel/archives,sharing=private \
     bash build-import-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}" && \
     rm -rf /r00t/dvlw/dvlp/kernels/linux/linux-* && \
     rm -rf /r00t/dvlw/dvlp/kernels/linux/zfs-* && \
