@@ -523,7 +523,7 @@ function wsl_distro_menu_get {
 
 function run_installer {
 
-    set_dvlp_globals
+    set_dvlp_globals | Out-Null
     # log default distro
     $global:ORIG_DEFAULT_WSL_DISTRO = get_default_wsl_distro
     # jump to bottom line without clearing scrollback
