@@ -12,7 +12,7 @@ function reboot_prompt {
         Restart-Computer
     }
     # else {
-    #     # powershell.exe -Command "$global:KINDTEK_WIN_DVLW_PATH\choco\src\chocolatey.resources\redirects\RefreshEnv.cmd"
+    #     # powershell.exe -Command "$env:KINDTEK_WIN_DVLW_PATH\choco\src\chocolatey.resources\redirects\RefreshEnv.cmd"
     #     Write-Host "`r`n"
     # }
 }
@@ -188,7 +188,7 @@ function reset_wsl_settings {
 
 function wsl_docker_full_restart_new_win {
     set_dvlp_globals 1 | Out-Null
-    Start-Process powershell -LoadUserProfile -WindowStyle $global:BG_WIN_STYLE -ArgumentList "-command &{. $global:KINDTEK_WIN_GIT_PATH/dvlp.ps1 source;wsl_docker_full_restart;exit;}" -Wait
+    Start-Process powershell -LoadUserProfile -WindowStyle $global:BG_WIN_STYLE -ArgumentList "-command &{. $env:KINDTEK_WIN_GIT_PATH/dvlp.ps1 source;wsl_docker_full_restart;exit;}" -Wait
 }
 
 function wsl_docker_full_restart {
@@ -235,7 +235,7 @@ function wsl_docker_full_restart {
 
 function wsl_docker_restart_new_win {
     set_dvlp_globals 1 | Out-Null
-    Start-Process powershell -LoadUserProfile -WindowStyle $global:BG_WIN_STYLE -ArgumentList "-command &{. $global:KINDTEK_WIN_GIT_PATH/dvlp.ps1 source;wsl_docker_restart;exit;}" -Wait
+    Start-Process powershell -LoadUserProfile -WindowStyle $global:BG_WIN_STYLE -ArgumentList "-command &{. $env:KINDTEK_WIN_GIT_PATH/dvlp.ps1 source;wsl_docker_restart;exit;}" -Wait
 }
 
 function wsl_docker_restart {
@@ -302,7 +302,7 @@ function is_docker_desktop_online {
 
 function start_docker_desktop {
     set_dvlp_globals 1 | Out-Null
-    $refresh_envs = "$global:KINDTEK_WIN_GIT_PATH/RefreshEnv.cmd"
+    $refresh_envs = "$env:KINDTEK_WIN_GIT_PATH/RefreshEnv.cmd"
     try {
         Start-Process "Docker Desktop.exe" -WindowStyle $global:BG_WIN_STYLE
     }
@@ -338,7 +338,7 @@ function start_docker_desktop {
 
 function require_docker_online_new_win {
     set_dvlp_globals 1 | Out-Null
-    Start-Process powershell -LoadUserProfile -WindowStyle $global:BG_WIN_STYLE -ArgumentList "-command &{. $global:KINDTEK_WIN_DVLW_PATH/scripts/devel-tools.ps1 source;require_docker_online;exit;}" -Wait
+    Start-Process powershell -LoadUserProfile -WindowStyle $global:BG_WIN_STYLE -ArgumentList "-command &{. $env:KINDTEK_WIN_DVLW_PATH/scripts/devel-tools.ps1 source;require_docker_online;exit;}" -Wait
 }
 
 function require_docker_online {
@@ -353,7 +353,7 @@ function require_docker_online {
     Write-Host "`r`n`r`nloading docker desktop ..."
     Write-Host "waiting for docker backend to come online ..."  
     set_dvlp_globals 1 | Out-Null
-    . $global:KINDTEK_WIN_GIT_PATH/dvlp.ps1 source
+    . $env:KINDTEK_WIN_GIT_PATH/dvlp.ps1 source
     do {   
         try {
             if ( (is_docker_desktop_online) -eq $false ) {
@@ -460,16 +460,16 @@ function cleanup_installation {
     )
     set_dvlp_globals 1 | Out-Null
     try {
-        Remove-Item "$global:KINDTEK_WIN_DVLW_PATH".replace($repo_src_name, "install-$repo_src_owner-$repo_src_name.ps1") -Force -ErrorAction SilentlyContinue
+        Remove-Item "$env:KINDTEK_WIN_DVLW_PATH".replace($repo_src_name, "install-$repo_src_owner-$repo_src_name.ps1") -Force -ErrorAction SilentlyContinue
         Write-Host "`r`nCleaning up..  `r`n"
-        Remove-Item "$global:KINDTEK_WIN_DVLW_PATH".replace($repo_src_name, "DockerDesktopInstaller.exe") -Force -ErrorAction SilentlyContinue
+        Remove-Item "$env:KINDTEK_WIN_DVLW_PATH".replace($repo_src_name, "DockerDesktopInstaller.exe") -Force -ErrorAction SilentlyContinue
         # make extra sure this is not a folder that is not important (ie: system32 - which is a default location)
-        if ($global:KINDTEK_WIN_DVLW_PATH.Contains($repo_src_name) -And $global:KINDTEK_WIN_DVLW_PATH.NotContains("System32") ) {
-            Remove-Item $global:KINDTEK_WIN_DVLW_PATH -Recurse -Confirm -Force -ErrorAction SilentlyContinue
+        if ($env:KINDTEK_WIN_DVLW_PATH.Contains($repo_src_name) -And $env:KINDTEK_WIN_DVLW_PATH.NotContains("System32") ) {
+            Remove-Item $env:KINDTEK_WIN_DVLW_PATH -Recurse -Confirm -Force -ErrorAction SilentlyContinue
         }
     }
     catch {
-        Write-Host "Run the following command to delete the repo and setup files:`r`nRemove-Item $global:KINDTEK_WIN_DVLW_PATH -Recurse -Confirm -Force`r`n"
+        Write-Host "Run the following command to delete the repo and setup files:`r`nRemove-Item $env:KINDTEK_WIN_DVLW_PATH -Recurse -Confirm -Force`r`n"
     }
 }
 
@@ -534,13 +534,13 @@ function run_installer {
     $global:ORIG_DEFAULT_WSL_DISTRO = get_default_wsl_distro
     # jump to bottom line without clearing scrollback
     # Write-Host "$([char]27)[2J" 
-    $new_install = install_windows_features $global:KINDTEK_WIN_DVLW_PATH 
+    $new_install = install_windows_features $env:KINDTEK_WIN_DVLW_PATH 
     if ($new_install -eq $true) {
         Write-Host "`r`nwindows features installations complete! restart may be needed to continue. `r`n`r`n" 
         reboot_prompt
     }
 
-    $new_install = install_dependencies $global:KINDTEK_WIN_DVLW_PATH
+    $new_install = install_dependencies $env:KINDTEK_WIN_DVLW_PATH
     if ($new_install -eq $true) {
         Write-Host "`r`nsoftware installations complete! restart(s) may be needed to begin WSL import phase. `r`n`r`n" 
         reboot_prompt
@@ -548,7 +548,7 @@ function run_installer {
 
 
     # Write-Host "$([char]27)[2J" 
-    # if (!(Test-Path -Path "$global:KINDTEK_WIN_DVLW_PATH/.dvlp-installed" -PathType Leaf)) {
+    # if (!(Test-Path -Path "$env:KINDTEK_WIN_DVLW_PATH/.dvlp-installed" -PathType Leaf)) {
     #     if (!(powershell ${function:require_docker_online} )) {
     #         Write-Host "`r`nnot starting docker desktop.`r`n" 
     #     }
