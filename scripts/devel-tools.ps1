@@ -34,7 +34,7 @@ function install_dependencies {
         # $windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
         # if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no') { 
         Write-Host "Installing $software_name ..." -ForegroundColor DarkCyan
-        Start-Process powershell -LoadUserProfile -WindowStyle hidden -ArgumentList "-command &{winget install Microsoft.PowerShell;winget install Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;}" -Wait
+        Start-Process powershell -LoadUserProfile -WindowStyle minimized -ArgumentList "-command &{winget install Microsoft.PowerShell;winget install Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;}" -Wait
 
         
         # }
@@ -49,7 +49,7 @@ function install_dependencies {
     if (!(Test-Path -Path "$git_path/.vscode-installed" -PathType Leaf)) {
         Write-Host "Installing $software_name ..." -ForegroundColor DarkCyan
         # Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --silent --locale en-US --accept-package-agreements --accept-source-agreements --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
-        Start-Process powershell -LoadUserProfile -WindowStyle hidden -ArgumentList "-command &{winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode, addcontextmenufiles, addcontextmenufolders`"';winget upgrade Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode, addcontextmenufiles, addcontextmenufolders`"';exit;}" -Wait
+        Start-Process powershell -LoadUserProfile -WindowStyle minimized -ArgumentList "-command &{winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode, addcontextmenufiles, addcontextmenufolders`"';winget upgrade Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode, addcontextmenufiles, addcontextmenufolders`"';exit;}" -Wait
         Write-Host "$software_name installed" -ForegroundColor DarkCyan | Out-File -FilePath "$git_path/.vscode-installed"
         $new_install = $true
     }
@@ -63,10 +63,10 @@ function install_dependencies {
         # winget uninstall --id=Docker.DockerDesktop
         # winget install --id=Docker.DockerDesktop --location="c:\docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements
         # winget upgrade --id=Docker.DockerDesktop --location="c:\docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements
-        Start-Process powershell -LoadUserProfile -WindowStyle hidden -ArgumentList "-command &{winget install --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;}" -Wait
+        Start-Process powershell -LoadUserProfile -WindowStyle minimized -ArgumentList "-command &{winget install --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;}" -Wait
         # update using rolling stable url
         Write-Host "Downloading $software_name update/installation file ..." -ForegroundColor DarkCyan
-        Start-Process powershell -LoadUserProfile -WindowStyle hidden -ArgumentList "-command &{Invoke-WebRequest -Uri https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe -OutFile DockerDesktopInstaller.exe;.\DockerDesktopInstaller.exe;Remove-Item DockerDesktopInstaller.exe -Force -ErrorAction SilentlyContinue;exit;}" -Wait
+        Start-Process powershell -LoadUserProfile -WindowStyle minimized -ArgumentList "-command &{Invoke-WebRequest -Uri https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe -OutFile DockerDesktopInstaller.exe;.\DockerDesktopInstaller.exe;Remove-Item DockerDesktopInstaller.exe -Force -ErrorAction SilentlyContinue;exit;}" -Wait
         # & 'C:\Program Files\Docker\Docker\Docker Desktop.exe'
         # "Docker Desktop Installer.exe" install --accept-license --backend=wsl-2 --installation-dir=c:\docker 
         Write-Host "$software_name installed" -ForegroundColor DarkCyan | Out-File -FilePath "$git_path/.docker-installed"
@@ -82,7 +82,7 @@ function install_dependencies {
         Write-Host "Installing $software_name ..." -ForegroundColor DarkCyan
         # @TODO: add cdir and python to install with same behavior as other installs above
         # not eloquent at all but good for now
-        Start-Process powershell -LoadUserProfile -WindowStyle hidden -ArgumentList "-command &{winget install --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;}" -Wait
+        Start-Process powershell -LoadUserProfile -WindowStyle minimized -ArgumentList "-command &{winget install --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;}" -Wait
         # ... even tho cdir does not appear to be working on windows
         # $cmd_command = pip install cdir
         # Start-Process -FilePath PowerShell.exe -NoNewWindow -ArgumentList $cmd_command
@@ -118,16 +118,16 @@ function ini_docker_config {
     $config_json.skipWSLMountPerfWarning = $true
     $config_json.activeOrganizationName = "kindtek"
     if ("$new_integrated_distro" -ne "") {
-        $jcurrent = $config_json.integratedWslDistros
+        $jcurrent = $config_json.integratedWsldistro_list
         $new_distro = @"
 [
     {
-        "integratedWslDistros":"kalilinux-kali-rolling-latest"
+        "integratedWsldistro_list":"kalilinux-kali-rolling-latest"
     }
 ]
 "@
         $jnew = ConvertFrom-Json -InputObject $new_distro
-        $config_json.integratedWslDistros = $jcurrent + $jnew
+        $config_json.integratedWsldistro_list = $jcurrent + $jnew
     }
     ConvertTo-JSON $config_json -Depth 2 -Compress | Out-File $config_file -Encoding utf8 -Force
     (Get-Content $config_file) | Set-Content -Encoding utf8 $config_file
@@ -148,16 +148,16 @@ function set_docker_config {
     $config_json.skipWSLMountPerfWarning = $true
     $config_json.activeOrganizationName = "kindtek"
     if ("$new_integrated_distro" -ne "") {
-        $jcurrent = $config_json.integratedWslDistros
+        $jcurrent = $config_json.integratedWsldistro_list
         $new_distro = @"
 [
     {
-        "integratedWslDistros":"$new_integrated_distro"
+        "integratedWsldistro_list":"$new_integrated_distro"
     }
 ]
 "@
         $jnew = ConvertFrom-Json -InputObject $new_distro
-        $config_json.integratedWslDistros = $jcurrent + $jnew
+        $config_json.integratedWsldistro_list = $jcurrent + $jnew
     }
 
     ConvertTo-JSON $config_json -Depth 2 -Compress | Out-File $config_file -Encoding utf8 -Force
@@ -185,7 +185,7 @@ function reset_wsl_settings {
 }
 
 function wsl_docker_full_restart_new_win {
-    Start-Process powershell -LoadUserProfile -WindowStyle hidden -ArgumentList "-command &{. $env:USERPROFILE/repos/kindtek/dvlw/scripts/devel-tools.ps1;wsl_docker_full_restart;exit;}" -Wait
+    Start-Process powershell -LoadUserProfile -WindowStyle minimized -ArgumentList "-command &{. $env:USERPROFILE/repos/kindtek/dvlw/scripts/devel-tools.ps1;wsl_docker_full_restart;exit;}" -Wait
 }
 
 function wsl_docker_full_restart {
@@ -230,7 +230,7 @@ function wsl_docker_full_restart {
 }
 
 function wsl_docker_restart_new_win {
-    Start-Process powershell -LoadUserProfile -WindowStyle hidden -ArgumentList "-command &{. $env:USERPROFILE/repos/kindtek/dvlw/scripts/devel-tools.ps1;wsl_docker_restart;exit;}" -Wait
+    Start-Process powershell -LoadUserProfile -WindowStyle minimized -ArgumentList "-command &{. $env:USERPROFILE/repos/kindtek/dvlw/scripts/devel-tools.ps1;wsl_docker_restart;exit;}" -Wait
 }
 
 function wsl_docker_restart {
@@ -297,7 +297,7 @@ function is_docker_desktop_online {
 function start_docker_desktop {
     $refresh_envs = "$env:USERPROFILE/repos/kindtek/RefreshEnv.cmd"
     try {
-        Start-Process "Docker Desktop.exe" -WindowStyle Hidden
+        Start-Process "Docker Desktop.exe" -WindowStyle minimized
     }
     catch {
         try {
@@ -305,7 +305,7 @@ function start_docker_desktop {
             ([void]( New-Item -path alias:'Docker Desktop' -Value 'C:\Program Files\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
             ([void]( New-Item -path alias:'Docker Desktop.exe' -Value 'C:\Program Files\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
             powershell.exe -Command $refresh_envs | Out-Null
-            Start-Process "C:\Program Files\docker\docker\Docker Desktop.exe" -WindowStyle Hidden
+            Start-Process "C:\Program Files\docker\docker\Docker Desktop.exe" -WindowStyle minimized
         }
         catch {
             try {
@@ -313,7 +313,7 @@ function start_docker_desktop {
                 ([void]( New-Item -path alias:'Docker Desktop' -Value 'c:\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                 ([void]( New-Item -path alias:'Docker Desktop.exe' -Value 'c:\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                 powershell.exe -Command $refresh_envs | Out-Null
-                Start-Process "c:\docker\docker\Docker Desktop.exe" -WindowStyle Hidden
+                Start-Process "c:\docker\docker\Docker Desktop.exe" -WindowStyle minimized
             }
             catch {
                 try {
@@ -321,7 +321,7 @@ function start_docker_desktop {
                     ([void]( New-Item -path alias:'Docker Desktop' -Value ':\docker\docker desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                     ([void]( New-Item -path alias:'Docker Desktop.exe' -Value 'c:\docker\docker desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                     powershell.exe -Command $refresh_envs | Out-Null
-                    Start-Process "c:\docker\docker desktop.exe" -WindowStyle Hidden
+                    Start-Process "c:\docker\docker desktop.exe" -WindowStyle minimized
                 }
                 catch {} 
             }
@@ -360,7 +360,7 @@ function require_docker_online {
                     Write-Host ""
                 }
                 elseif (($docker_tries % 3) -eq 0) {
-                    # start count over
+                    # start distro_list_num over
                     # $docker_attempt1 = $docker_attempt2 = $false
                     # automatically restart docker on try 3 then prompt for restart after that
                     if ( $docker_tries -gt 8 ) {
@@ -464,9 +464,55 @@ function cleanup_installation {
 }
 
 function get_default_wsl_distro {
-    $default_wsl_distro = wsl --list | Where-Object { $_ -and $_ -ne '' -and $_ -match '(.*)\(' }
-    $default_wsl_distro = $default_wsl_distro -replace '^(.*)\s.*$', '$1'
+    $default_wsl_distro = wsl --list | Where-Object { $_ -and $_ -ne '' -and $_ -match '(.*)\s\(' }
     return $default_wsl_distro
+}
+
+function wsl_distro_list {
+    $env:WSL_UTF8 = 1
+    $distro_list = wsl --list | Where-Object { $_ -and $_ -ne 'Windows Subsystem for Linux Distributions:'  }
+    return $distro_list -replace '^(.*)\s.*$', '$1'
+}
+
+function wsl_distro_menu {
+    param (
+        $distro_list
+    )
+    $env:WSL_UTF8 = 1
+    $distro_list_num = 0
+
+    # Loop through each distro and prompt to remove
+    foreach ($distro in $distro_list) {
+    
+        if ($distro.IndexOf("docker-desktop") -lt 0) {
+            $distro_name = $distro_list -replace '^(.*)\s.*$', '$1'
+            $distro_list_num += 1
+            # $distro_name = $distro_name.Split('', [System.StringSplitOptions]::RemoveEmptyEntries) -join ''
+            # $distro_name -replace '\s', ''
+            Write-Host "$distro_list_num $distro_name"
+        }
+    }
+}
+
+function wsl_distro_menu_get {
+    param (
+        $distro_list,
+        $distro_num
+    )
+    $env:WSL_UTF8 = 1
+    $distro_list_num = 0
+
+    # Loop through each distro and prompt to remove
+    foreach ($distro in $distro_list) {
+    
+        if ($distro.IndexOf("docker-desktop") -lt 0) {
+            $distro_name = $distro_list -replace '^(.*)\s.*$', '$1'
+            $distro_list_num += 1
+            # $distro_name = $distro_name.Split('', [System.StringSplitOptions]::RemoveEmptyEntries) -join ''
+            # $distro_name -replace '\s', ''
+            return $distro_name
+        }
+    }
 }
 
 function run_installer {
