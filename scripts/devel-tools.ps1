@@ -178,14 +178,14 @@ function reset_docker_settings {
 
 function reset_wsl_settings {
     # clear settings 
-    Write-Host "reverting wsl default distro to $FAILSAFE_WSL_DISTRO"
-    if ($FAILSAFE_WSL_DISTRO -ne "") {
-        wsl -s $FAILSAFE_WSL_DISTRO
+    Write-Host "reverting wsl default distro to $global:FAILSAFE_WSL_DISTRO"
+    if ($global:FAILSAFE_WSL_DISTRO -ne "") {
+        wsl -s $global:FAILSAFE_WSL_DISTRO
     }
 }
 
 function wsl_docker_full_restart_new_win {
-    Start-Process powershell -LoadUserProfile -WindowStyle minimized -ArgumentList "-command &{. $env:USERPROFILE/dvlp.ps1 source;wsl_docker_full_restart;exit;}" -Wait
+    Start-Process powershell -LoadUserProfile -WindowStyle minimized -ArgumentList "-command &{. $global:KINDTEK_WIN_GIT_PATH/dvlp.ps1 source;wsl_docker_full_restart;exit;}" -Wait
 }
 
 function wsl_docker_full_restart {
@@ -230,7 +230,7 @@ function wsl_docker_full_restart {
 }
 
 function wsl_docker_restart_new_win {
-    Start-Process powershell -LoadUserProfile -WindowStyle minimized -ArgumentList "-command &{. $env:USERPROFILE/dvlp.ps1 source;wsl_docker_restart;exit;}" -Wait
+    Start-Process powershell -LoadUserProfile -WindowStyle minimized -ArgumentList "-command &{. $global:KINDTEK_WIN_GIT_PATH/dvlp.ps1 source;wsl_docker_restart;exit;}" -Wait
 }
 
 function wsl_docker_restart {
@@ -295,7 +295,7 @@ function is_docker_desktop_online {
 
 
 function start_docker_desktop {
-    $refresh_envs = "$env:USERPROFILE/repos/kindtek/RefreshEnv.cmd"
+    $refresh_envs = "$global:KINDTEK_WIN_GIT_PATH/RefreshEnv.cmd"
     try {
         Start-Process "Docker Desktop.exe" -WindowStyle minimized
     }
@@ -330,7 +330,7 @@ function start_docker_desktop {
 }
 
 function require_docker_online_new_win {
-    Start-Process powershell -LoadUserProfile -WindowStyle minimized -ArgumentList "-command &{. $env:USERPROFILE/dvlw/scripts/devel-tools.ps1 source;require_docker_online;exit;}" -Wait
+    Start-Process powershell -LoadUserProfile -WindowStyle minimized -ArgumentList "-command &{. $global:KINDTEK_WIN_DVLW_PATH/scripts/devel-tools.ps1 source;require_docker_online;exit;}" -Wait
 }
 
 function require_docker_online {
@@ -344,7 +344,7 @@ function require_docker_online {
     $host.UI.RawUI.BackgroundColor = "Gray"
     Write-Host "`r`n`r`nloading docker desktop ..."
     Write-Host "waiting for docker backend to come online ..."  
-    . $env:USERPROFILE/dvlp.ps1 source
+    . $global:KINDTEK_WIN_GIT_PATH/dvlp.ps1 source
     do {   
         try {
             if ( (is_docker_desktop_online) -eq $false ) {
