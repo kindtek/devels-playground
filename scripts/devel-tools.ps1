@@ -337,7 +337,7 @@ function start_docker_desktop {
 }
 
 function require_docker_online_new_win {
-    set_dvlp_envs 1 | Out-Null
+    Start-Process powershell -LoadUserProfile -WindowStyle $global:KINDTEK_NEW_PROC_STYLE -ArgumentList "-command &{. $env:KINDTEK_WIN_GIT_PATH/dvlp.ps1 source;require_docker_online;exit;}" -Wait
 }
 
 function require_docker_online {
