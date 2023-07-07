@@ -271,7 +271,7 @@ function wsl_docker_restart {
 }
 function is_docker_backend_online {
     try {
-        $docker_process = Get-Process -ErrorAction SilentlyContinue 'com.docker.proxy' 
+        $docker_process = (Get-Process -ErrorAction SilentlyContinue 'com.docker.proxy')
     }
     catch {
         $docker_process = 'error'
