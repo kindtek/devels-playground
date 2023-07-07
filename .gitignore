@@ -7,3 +7,4 @@ kernels/linux/linux-*
 **/kali/dvlp.ps1
 docker/kali/logs*
 DockerDesktopInstaller.exe
+.dvlp-installed
