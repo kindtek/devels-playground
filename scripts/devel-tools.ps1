@@ -1,8 +1,9 @@
 $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
-$env:WSL_UTF8 = 1
-$env:KINDTEK_FAILSAFE_WSL_DISTRO = 'kalilinux-kali-rolling-latest'
 
+function test_tools {
+    return $true
+}
 function reboot_prompt {
     # Write-Host "`r`nA restart may be required for the changes to fully take effect. "
     $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now`r`n`t ..or hit ENTER to skip" 
