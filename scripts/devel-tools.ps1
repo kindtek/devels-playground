@@ -97,7 +97,7 @@ function install_dependencies {
 
     return $new_install
     # this is used for x11 / gui stuff .. @TODO: add the option one day maybe
-    # choco install vcxsrv microsoft-windows-terminal wsl -y
+    # choco install vcxsrv microsoft-windows-terminal wsl.exe -y
     
 }
 
@@ -183,7 +183,7 @@ function reset_wsl_settings {
     # clear settings 
     Write-Host "reverting wsl default distro to $env:KINDTEK_FAILSAFE_WSL_DISTRO"
     if ($env:KINDTEK_FAILSAFE_WSL_DISTRO -ne "") {
-        wsl -s $env:KINDTEK_FAILSAFE_WSL_DISTRO
+        wsl.exe -s $env:KINDTEK_FAILSAFE_WSL_DISTRO
     }
 }
 
@@ -474,7 +474,7 @@ function cleanup_installation {
 
 function wsl_distro_list {
     $env:WSL_UTF8 = 1
-    $distro_list = wsl --list | Where-Object { $_ -and $_ -ne 'Windows Subsystem for Linux Distributions:' }
+    $distro_list = wsl.exe --list | Where-Object { $_ -and $_ -ne 'Windows Subsystem for Linux Distributions:' }
     return $distro_list -replace '^(.*)\s.*$', '$1'
 }
 
