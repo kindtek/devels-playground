@@ -42,8 +42,8 @@ IF "!command_arg!"=="" (
 
 :u
 @REM @REM force restart for docker containers
-wsl --unregister docker-desktop
-wsl --unregister docker-desktop-data
+wsl.exe --unregister docker-desktop
+wsl.exe --unregister docker-desktop-data
 @REM docker update --restart=always docker-desktop
 @REM docker update --restart=always docker-desktop-data
 & $Env:ProgramFiles\Docker\Docker\DockerCli.exe -SwitchWindowsEngine
@@ -65,7 +65,7 @@ IF "!command_arg!"=="" (
 
 @REM reset default wsl distro
 :r
-wsl -s kalilinux-kali-rolling-latest
+wsl.exe -s kalilinux-kali-rolling-latest
 IF "!command_arg!"=="" (
     goto prompt
 ) ELSE (

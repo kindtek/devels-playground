@@ -394,9 +394,9 @@ ECHO "docker system df" >> !diskshrink_file_path!
 ECHO "docker builder prune -af --volumes" >> !diskshrink_file_path!
 ECHO "docker system prune -af --volumes" >> !diskshrink_file_path!
 ECHO "stop-service -name docker* -force;"  >> !diskshrink_file_path!
-ECHO "# wsl --exec sudo shutdown -h now;" >> !diskshrink_file_path!
-ECHO "# wsl --exec sudo shutdown -r 0;" >> !diskshrink_file_path!
-ECHO "wsl --shutdown;" >> !diskshrink_file_path!
+ECHO "# wsl.exe --exec sudo shutdown -h now;" >> !diskshrink_file_path!
+ECHO "# wsl.exe --exec sudo shutdown -r 0;" >> !diskshrink_file_path!
+ECHO "wsl.exe --shutdown;" >> !diskshrink_file_path!
 ECHO "stop-service -name wsl* -force -ErrorAction SilentlyContinue;" >> !diskshrink_file_path!
 ECHO "stop-process -name docker* -force -ErrorAction SilentlyContinue;" >> !diskshrink_file_path!
 ECHO "stop-process -name wsl* -force -ErrorAction SilentlyContinue;" >> !diskshrink_file_path!
@@ -434,21 +434,21 @@ SET "handle=set_default_wsl_distro"
 IF "!wsl_distro!"=="kalilinux-kali-rolling-latest" (
     ECHO:
     ECHO deleting WSL distro !wsl_distro! if it exists...
-    ECHO wsl --unregister !wsl_distro!
-    wsl --unregister !wsl_distro!
+    ECHO wsl.exe --unregister !wsl_distro!
+    wsl.exe --unregister !wsl_distro!
     ECHO DONE
 )
 
 ECHO:
 ECHO importing !wsl_distro!.tar to !install_location! as !wsl_distro!...
-ECHO wsl --import !wsl_distro! !install_location! !image_save_path! --version !wsl_version!
+ECHO wsl.exe --import !wsl_distro! !install_location! !image_save_path! --version !wsl_version!
 @SET /A _tic=%time:~0,2%*3600^
             +%time:~3,1%*10*60^
             +%time:~4,1%*60^
             +%time:~6,1%*10^
             +%time:~7,1% >nul
 
-wsl --import !wsl_distro! !install_location! !image_save_path! --version !wsl_version!
+wsl.exe --import !wsl_distro! !install_location! !image_save_path! --version !wsl_version!
 
 @SET /A _toc=%time:~0,2%*3600^
             +%time:~3,1%*10*60^
@@ -462,7 +462,7 @@ wsl --import !wsl_distro! !install_location! !image_save_path! --version !wsl_ve
 @REM     GOTO error_restart_prompt
 @REM )
 IF "!image_service_suffix!"=="kernel" (
-    wsl -d !wsl_distro! --cd '/r00t/dvlw/dvlp/kernels/linux' --exec "bash install-kernel.sh ^^"%USERPROFILE%^^" latest"
+    wsl.exe -d !wsl_distro! --cd '/r00t/dvlw/dvlp/kernels/linux' --exec "bash install-kernel.sh ^^"%USERPROFILE%^^" latest"
 )
 
 ECHO DONE
@@ -482,13 +482,13 @@ IF "!default_wsl_distro!"=="y" (
 
     ECHO:
     ECHO setting default WSL distro as !wsl_distro!...
-    ECHO  wsl --set-default !wsl_distro! 
-    wsl --set-default !wsl_distro! 
+    ECHO  wsl.exe --set-default !wsl_distro! 
+    wsl.exe --set-default !wsl_distro! 
     ECHO DONE
     SET "options=options"
     ECHO:
     ECHO  ..if starting WSL results in an error, try converting the distro version to WSL1 by running:
-    ECHO wsl --set-version !wsl_distro! 1
+    ECHO wsl.exe --set-version !wsl_distro! 1
     ECHO:
     @REM reset default flag
     SET "default_wsl_distro=n"
@@ -500,9 +500,9 @@ SET "handle=wsl_distro_launch_prompt"
 @REM make sure windows paths transfer
 SET WSLENV=USERPROFILE/P
 ECHO Windows Subsystem for Linux Distributions:
-wsl -l -v
+wsl.exe -l -v
 ECHO:
-wsl --status
+wsl.exe --status
 ECHO:
 SET "wsl_launch="
 IF "!interactive!"=="y" (
@@ -581,7 +581,7 @@ IF "!wsl_distro_test_pass!"=="n" (
     SET "convert="
     ECHO ERROR DETECTED
     IF "!interactive!"=="y" (    
-        @REM wsl -d !wsl_distro!
+        @REM wsl.exe -d !wsl_distro!
         ECHO try to convert distro version to WSL!set_wsl_conv!? ^(y^)^/n
         SET /P "convert="
         IF /I "!convert!"=="" (
@@ -606,7 +606,7 @@ IF "!wsl_distro_test_pass!"=="n" (
 IF NOT DEFINED set_wsl_conv (
     GOTO wsl_set_conversion_version
 ) ELSE (
-    wsl --set-version !wsl_distro! !set_wsl_conv!
+    wsl.exe --set-version !wsl_distro! !set_wsl_conv!
     IF !set_wsl_conv! EQU 2 (
         SET set_wsl_conv=1
     ) ELSE (
@@ -635,14 +635,14 @@ IF "!interactive"=="y" (
 ) ELSE ( GOTO quit )
 
 :wsl_delete
-wsl --unregister !wsl_distro!
+wsl.exe --unregister !wsl_distro!
 GOTO redo
 
 :wsl_distro_launch
 IF "!wsl_distro_test_pass!"=="y" (
     ECHO launching WSL with !wsl_distro! distro...
-    ECHO wsl -d !wsl_distro!
-    wsl -d !wsl_distro!
+    ECHO wsl.exe -d !wsl_distro!
+    wsl.exe -d !wsl_distro!
 ) ELSE (
     GOTO wsl_distro_test
 )
