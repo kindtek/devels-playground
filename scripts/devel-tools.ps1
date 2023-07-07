@@ -27,7 +27,7 @@ function install_windows_features {
 
 function install_dependencies {
     param ( $git_path )
-    set_dvlp_envs 1 | Out-Null
+    
     Write-Host "`r`nThe following programs will be installed or updated`r`n`t- Windows Terminal`r`n`t- Visual Studio Code`r`n`t- Docker Desktop`r`n`t- Python 3.10`r`n`t" -ForegroundColor Magenta
     
     $software_name = "Windows Terminal"
@@ -178,7 +178,7 @@ function reset_docker_settings {
 }
 
 function reset_wsl_settings {
-    set_dvlp_envs 1 | Out-Null
+    
     # clear settings 
     Write-Host "reverting wsl default distro to $env:KINDTEK_FAILSAFE_WSL_DISTRO"
     if ($env:KINDTEK_FAILSAFE_WSL_DISTRO -ne "") {
@@ -187,12 +187,12 @@ function reset_wsl_settings {
 }
 
 function wsl_docker_full_restart_new_win {
-    set_dvlp_envs 1 | Out-Null
+    
     Start-Process powershell -LoadUserProfile -WindowStyle $global:KINDTEK_NEW_PROC_STYLE -ArgumentList "-command &{. $env:KINDTEK_WIN_GIT_PATH/dvlp.ps1 source;wsl_docker_full_restart;exit;}" -Wait
 }
 
 function wsl_docker_full_restart {
-    set_dvlp_envs 1 | Out-Null
+    
     Write-Host "resetting Docker engine and data ..."
     try {
         docker update --restart=always docker-desktop
@@ -234,12 +234,12 @@ function wsl_docker_full_restart {
 }
 
 function wsl_docker_restart_new_win {
-    set_dvlp_envs 1 | Out-Null
+    
     Start-Process powershell -LoadUserProfile -WindowStyle $global:KINDTEK_NEW_PROC_STYLE -ArgumentList "-command &{. $env:KINDTEK_WIN_GIT_PATH/dvlp.ps1 source;wsl_docker_restart;exit;}" -Wait
 }
 
 function wsl_docker_restart {
-    set_dvlp_envs 1 | Out-Null
+    
     Write-Output "stopping docker ..."
     try {
         powershell.exe -Command cmd.exe /c net stop com.docker.service
@@ -301,7 +301,7 @@ function is_docker_desktop_online {
 
 
 function start_docker_desktop {
-    set_dvlp_envs 1 | Out-Null
+    
     $refresh_envs = "$env:KINDTEK_WIN_GIT_PATH/RefreshEnv.cmd"
     try {
         Start-Process "Docker Desktop.exe" -WindowStyle $env:KINDTEK_NEW_PROC_STYLE
@@ -351,7 +351,7 @@ function require_docker_online {
     $host.UI.RawUI.BackgroundColor = "Gray"
     Write-Host "`r`n`r`nloading docker desktop ..."
     Write-Host "waiting for docker backend to come online ..."  
-    set_dvlp_envs 1 | Out-Null
+    set_dvlp_envs_new_win 1 | Out-Null
     . $env:KINDTEK_WIN_GIT_PATH/dvlp.ps1 source
     do {   
         try {
@@ -457,7 +457,7 @@ function cleanup_installation {
     param (
         # OptionalParameters
     )
-    set_dvlp_envs 1 | Out-Null
+    set_dvlp_envs_new_win 1 | Out-Null
     try {
         Remove-Item "$env:KINDTEK_WIN_DVLW_PATH".replace($repo_src_name, "install-$repo_src_owner-$repo_src_name.ps1") -Force -ErrorAction SilentlyContinue
         Write-Host "`r`nCleaning up..  `r`n"
@@ -528,7 +528,7 @@ function wsl_distro_menu_get {
 
 function run_installer {
 
-    set_dvlp_envs 1 | Out-Null
+    
     # log default distro
     $env:ORIG_DEFAULT_WSL_DISTRO = get_default_wsl_distro
     # jump to bottom line without clearing scrollback
