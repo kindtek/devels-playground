@@ -556,14 +556,14 @@ function run_installer {
 function dvlp_tools {
     
     try {
-        echo 'test_dvlp1'
-        # test_dvlp
+        echo 'test_dvlp_spawn1'
+        # test_dvlp_spawn
         set_dvlp_envs_new_win 1 
-        test_dvlp
+        test_dvlp_spawn
     
     }
     catch {
-        echo 'test_dvlp2'
+        echo 'test_dvlp_spawn2'
         $local_paths = [string][System.Environment]::GetEnvironmentVariable('path')
         $local_paths += ";$env:USERPROFILE/dvlp.ps1 source"
         $machine_paths = [string][System.Environment]::GetEnvironmentVariable('path', [System.EnvironmentVariableTarget]::Machine)
