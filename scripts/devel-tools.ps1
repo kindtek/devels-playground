@@ -519,8 +519,6 @@ function wsl_distro_menu_get {
     }
 }
 
-
-
 function run_installer {
 
     
@@ -553,12 +551,8 @@ function run_installer {
 }
 
 function dvlp_tools {
-    
     try {
-        echo 'test_dvlp_spawn1'
-        # test_dvlp_spawn
         set_dvlp_envs_new_win 1 
-        test_dvlp_spawn
     
     }
     catch {
@@ -572,7 +566,7 @@ function dvlp_tools {
         $set_machine_path_command = [string][System.Environment]::SetEnvironmentVariable('path', "$machine_paths", [System.EnvironmentVariableTarget]::Machine)
         Start-Process -FilePath powershell.exe -ArgumentList "-Command $set_local_path_command"
         Start-Process -FilePath powershell.exe -ArgumentList "-Command $set_machine_path_command"
-        
+        set_dvlp_envs_new_win 1 
     }
 }
 
