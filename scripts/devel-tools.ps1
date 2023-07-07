@@ -1,25 +1,6 @@
 $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
 
-try {
-    echo 'test_dvlp1'
-    # test_dvlp
-    test_dvlp
-
-}
-catch {
-    echo 'test_dvlp2'
-    $local_paths = [string][System.Environment]::GetEnvironmentVariable('path')
-    $local_paths += ";$env:KINDTEK_WIN_DVLW_PATH/scripts/devel-spawn.ps1 source"
-    $machine_paths = [string][System.Environment]::GetEnvironmentVariable('path', [System.EnvironmentVariableTarget]::Machine)
-    $machine_paths += ";$env:KINDTEK_WIN_DVLW_PATH/scripts/devel-spawn.ps1 source"
-        
-    $set_local_path_command = [string][System.Environment]::SetEnvironmentVariable('path', "$local_paths")
-    $set_machine_path_command = [string][System.Environment]::SetEnvironmentVariable('path', "$machine_paths", [System.EnvironmentVariableTarget]::Machine)
-    Start-Process -FilePath powershell.exe -ArgumentList "-Command $set_local_path_command"
-    Start-Process -FilePath powershell.exe -ArgumentList "-Command $set_machine_path_command"
-    
-}
 function test_tools {
     return $true
 }
@@ -571,3 +552,29 @@ function run_installer {
     #     # }
     # }
 }
+
+function dvlp_tools {
+    
+    try {
+        echo 'test_dvlp1'
+        # test_dvlp
+        set_dvlp_envs_new_win 1 
+        test_dvlp
+    
+    }
+    catch {
+        echo 'test_dvlp2'
+        $local_paths = [string][System.Environment]::GetEnvironmentVariable('path')
+        $local_paths += ";$env:KINDTEK_WIN_DVLW_PATH/scripts/devel-spawn.ps1 source"
+        $machine_paths = [string][System.Environment]::GetEnvironmentVariable('path', [System.EnvironmentVariableTarget]::Machine)
+        $machine_paths += ";$env:KINDTEK_WIN_DVLW_PATH/scripts/devel-spawn.ps1 source"
+            
+        $set_local_path_command = [string][System.Environment]::SetEnvironmentVariable('path', "$local_paths")
+        $set_machine_path_command = [string][System.Environment]::SetEnvironmentVariable('path', "$machine_paths", [System.EnvironmentVariableTarget]::Machine)
+        Start-Process -FilePath powershell.exe -ArgumentList "-Command $set_local_path_command"
+        Start-Process -FilePath powershell.exe -ArgumentList "-Command $set_machine_path_command"
+        
+    }
+}
+
+dvlp_tools
