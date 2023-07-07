@@ -472,11 +472,6 @@ function cleanup_installation {
     }
 }
 
-function get_default_wsl_distro {
-    $default_wsl_distro = wsl --list | Where-Object { $_ -and $_ -ne '' -and $_ -match '(.*)\s\(' }
-    return $default_wsl_distro
-}
-
 function wsl_distro_list {
     $env:WSL_UTF8 = 1
     $distro_list = wsl --list | Where-Object { $_ -and $_ -ne 'Windows Subsystem for Linux Distributions:' }
