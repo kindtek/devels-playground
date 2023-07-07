@@ -44,6 +44,7 @@ IF "!image_name_tag!"=="default" (
     SET "default_wsl_distro=y"
 
 ) ELSE (
+    
     SET "image_name_tag=%1"
     @REM ECHO IMG_NAME_TAG !image_name_tag!
     SET "image_name="
@@ -52,13 +53,28 @@ IF "!image_name_tag!"=="default" (
     ) DO (
         SET "image_name=%%a"
     )
-    SET "image_tag=%image_name_tag::=" & SET "image_tag=%"
-
+    SET "dvlp_path=repos/!image_repo!/dvlw/dvlp"
+    FOR /F "tokens=1* delims=-" %%a IN (
+        "%image_tag%" 
+    ) DO (
+        IF "!DVLP_DEBUG!"=="y" (
+            ECHO "parsed image distro: %%a"
+        )
+        SET "image_distro=%%a"
+    )
+    SET "image_service_suffix=%image_tag:-=" & SET "image_service=%"
+    FOR /F "tokens=1* delims=-" %%G IN (
+        "%image_tag%" 
+    ) DO (
+        IF "!DVLP_DEBUG!"=="y" (
+            ECHO "parsed image service: %%H"
+        )
+        SET "image_service=%%H"
+    )
 )
 IF "!image_name_tag!" NEQ "default" (
     SET "image_name_tag=!image_name!:!image_tag!"
 )
-SET "image_name_tag=!image_name!:!image_tag!"
 SET "wsl_distro=!image_repo_mask!-!image_name!-!image_tag!"
 IF "!DVLP_DEBUG!"=="y" (
     ECHO "image_name_tag set to !image_name_tag!"
