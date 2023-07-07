@@ -188,7 +188,7 @@ function reset_wsl_settings {
 
 function wsl_docker_full_restart_new_win {
     
-    Start-Process powershell -LoadUserProfile -WindowStyle $global:KINDTEK_NEW_PROC_STYLE -ArgumentList "-command &{. $env:KINDTEK_WIN_GIT_PATH/dvlp.ps1 source;wsl_docker_full_restart;exit;}" -Wait
+    Start-Process powershell -LoadUserProfile -WindowStyle $env:KINDTEK_NEW_PROC_STYLE -ArgumentList "-command &{. $env:KINDTEK_WIN_GIT_PATH/dvlp.ps1 source;wsl_docker_full_restart;exit;}" -Wait
 }
 
 function wsl_docker_full_restart {
@@ -235,7 +235,7 @@ function wsl_docker_full_restart {
 
 function wsl_docker_restart_new_win {
     
-    Start-Process powershell -LoadUserProfile -WindowStyle $global:KINDTEK_NEW_PROC_STYLE -ArgumentList "-command &{. $env:KINDTEK_WIN_GIT_PATH/dvlp.ps1 source;wsl_docker_restart;exit;}" -Wait
+    Start-Process powershell -LoadUserProfile -WindowStyle $env:KINDTEK_NEW_PROC_STYLE -ArgumentList "-command &{. $env:KINDTEK_WIN_GIT_PATH/dvlp.ps1 source;wsl_docker_restart;exit;}" -Wait
 }
 
 function wsl_docker_restart {
@@ -337,7 +337,7 @@ function start_docker_desktop {
 }
 
 function require_docker_online_new_win {
-    Start-Process powershell -LoadUserProfile -WindowStyle $global:KINDTEK_NEW_PROC_STYLE -ArgumentList "-command &{. $env:KINDTEK_WIN_GIT_PATH/dvlp.ps1 source;require_docker_online;exit;}" -Wait
+    Start-Process powershell -LoadUserProfile -WindowStyle $env:KINDTEK_NEW_PROC_STYLE -ArgumentList "-command &{. $env:KINDTEK_WIN_GIT_PATH/dvlp.ps1 source;require_docker_online;exit;}" -Wait
 }
 
 function require_docker_online {
