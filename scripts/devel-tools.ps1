@@ -33,13 +33,8 @@ function install_dependencies {
     
     $software_name = "Windows Terminal"
     if (!(Test-Path -Path "$git_path/.wterminal-installed" -PathType Leaf)) {
-        # $windows_terminal_install = Read-Host "`r`nInstall Windows Terminal? ([y]/n)"
-        # if ($windows_terminal_install -ine 'n' -And $windows_terminal_install -ine 'no') { 
         Write-Host "Installing $software_name ..." -ForegroundColor DarkCyan
-        Start-Process powershell -LoadUserProfile -WindowStyle $env:KINDTEK_NEW_PROC_STYLE -ArgumentList "-command &{winget install Microsoft.PowerShell;winget install Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;}" -Wait
-
-        
-        # }
+        [dvlp_norm_process]$dvlp_proc = [dvlp_norm_process]::new("winget install Microsoft.PowerShell;winget install Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;", 'wait')
         Write-Host "$software_name installed" -ForegroundColor DarkCyan | Out-File -FilePath "$git_path/.wterminal-installed"
         $new_install = $true
     }
@@ -50,8 +45,8 @@ function install_dependencies {
     $software_name = "Visual Studio Code (VSCode)"
     if (!(Test-Path -Path "$git_path/.vscode-installed" -PathType Leaf)) {
         Write-Host "Installing $software_name ..." -ForegroundColor DarkCyan
-        # Invoke-Expression -Command "winget install Microsoft.VisualStudioCode --silent --locale en-US --accept-package-agreements --accept-source-agreements --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
-        Start-Process powershell -LoadUserProfile -WindowStyle $env:KINDTEK_NEW_PROC_STYLE -ArgumentList "-command &{winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode, addcontextmenufiles, addcontextmenufolders`"';winget upgrade Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode, addcontextmenufiles, addcontextmenufolders`"';exit;}" -Wait
+        # Invoke-Expression [string]$env:KINDTEK_NEW_PROC_NOEXIT -command "winget install Microsoft.VisualStudioCode --silent --locale en-US --accept-package-agreements --accept-source-agreements --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
+        [dvlp_norm_process]$dvlp_proc = [dvlp_norm_process]::new("winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode, addcontextmenufiles, addcontextmenufolders`"';winget upgrade Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode, addcontextmenufiles, addcontextmenufolders`"';exit;", 'wait')
         Write-Host "$software_name installed" -ForegroundColor DarkCyan | Out-File -FilePath "$git_path/.vscode-installed"
         $new_install = $true
     }
@@ -65,10 +60,10 @@ function install_dependencies {
         # winget uninstall --id=Docker.DockerDesktop
         # winget install --id=Docker.DockerDesktop --location="c:\docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements
         # winget upgrade --id=Docker.DockerDesktop --location="c:\docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements
-        Start-Process powershell -LoadUserProfile -WindowStyle $env:KINDTEK_NEW_PROC_STYLE -ArgumentList "-command &{winget install --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;}" -Wait
+        [dvlp_norm_process]$dvlp_proc = [dvlp_norm_process]::new("winget install --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;", 'wait')
         # update using rolling stable url
         Write-Host "Downloading $software_name update/installation file ..." -ForegroundColor DarkCyan
-        Start-Process powershell -LoadUserProfile -WindowStyle $env:KINDTEK_NEW_PROC_STYLE -ArgumentList "-command &{Invoke-WebRequest -Uri https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe -OutFile DockerDesktopInstaller.exe;.\DockerDesktopInstaller.exe;Remove-Item DockerDesktopInstaller.exe -Force -ErrorAction SilentlyContinue;exit;}" -Wait
+        [dvlp_norm_process]$dvlp_proc = [dvlp_norm_process]::new("Invoke-WebRequest -Uri https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe -OutFile DockerDesktopInstaller.exe;.\DockerDesktopInstaller.exe;Remove-Item DockerDesktopInstaller.exe -Force -ErrorAction SilentlyContinue;exit;", 'wait')
         # & 'C:\Program Files\Docker\Docker\Docker Desktop.exe'
         # "Docker Desktop Installer.exe" install --accept-license --backend=wsl-2 --installation-dir=c:\docker 
         Write-Host "$software_name installed" -ForegroundColor DarkCyan | Out-File -FilePath "$git_path/.docker-installed"
@@ -84,7 +79,7 @@ function install_dependencies {
         Write-Host "Installing $software_name ..." -ForegroundColor DarkCyan
         # @TODO: add cdir and python to install with same behavior as other installs above
         # not eloquent at all but good for now
-        Start-Process powershell -LoadUserProfile -WindowStyle $env:KINDTEK_NEW_PROC_STYLE -ArgumentList "-command &{winget install --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;}" -Wait
+        [dvlp_norm_process]$dvlp_proc = [dvlp_norm_process]::new("winget install --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;", 'wait')
         # ... even tho cdir does not appear to be working on windows
         # $cmd_command = pip install cdir
         # Start-Process -FilePath PowerShell.exe -NoNewWindow -ArgumentList $cmd_command
@@ -188,8 +183,7 @@ function reset_wsl_settings {
 }
 
 function wsl_docker_full_restart_new_win {
-    
-    Start-Process powershell -LoadUserProfile -WindowStyle $env:KINDTEK_NEW_PROC_STYLE -ArgumentList "-command &{wsl_docker_full_restart;exit;}" -Wait
+    [dvlp_quiet_process]$dvlp_proc = [dvlp_quiet_process]::new("wsl_docker_full_restart;exit;", 'wait')
 }
 
 function wsl_docker_full_restart {
@@ -235,8 +229,7 @@ function wsl_docker_full_restart {
 }
 
 function wsl_docker_restart_new_win {
-    
-    Start-Process powershell -LoadUserProfile -WindowStyle $env:KINDTEK_NEW_PROC_STYLE -ArgumentList "-command &{wsl_docker_restart;exit;}" -Wait
+    [dvlp_quiet_process]$dvlp_proc = [dvlp_quiet_process]::new("wsl_docker_restart;exit;", 'wait')
 }
 
 function wsl_docker_restart {
@@ -305,7 +298,7 @@ function start_docker_desktop {
     
     $refresh_envs = "$env:KINDTEK_WIN_GIT_PATH/RefreshEnv.cmd"
     try {
-        Start-Process "Docker Desktop.exe" -WindowStyle $env:KINDTEK_NEW_PROC_STYLE
+        Start-Process "Docker Desktop.exe" 
     }
     catch {
         try {
@@ -313,7 +306,7 @@ function start_docker_desktop {
             ([void]( New-Item -path alias:'Docker Desktop' -Value 'C:\Program Files\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
             ([void]( New-Item -path alias:'Docker Desktop.exe' -Value 'C:\Program Files\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
             powershell.exe -Command $refresh_envs | Out-Null
-            Start-Process "C:\Program Files\docker\docker\Docker Desktop.exe" -WindowStyle $env:KINDTEK_NEW_PROC_STYLE
+            Start-Process "C:\Program Files\docker\docker\Docker Desktop.exe" 
         }
         catch {
             try {
@@ -321,7 +314,7 @@ function start_docker_desktop {
                 ([void]( New-Item -path alias:'Docker Desktop' -Value 'c:\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                 ([void]( New-Item -path alias:'Docker Desktop.exe' -Value 'c:\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                 powershell.exe -Command $refresh_envs | Out-Null
-                Start-Process "c:\docker\docker\Docker Desktop.exe" -WindowStyle $env:KINDTEK_NEW_PROC_STYLE
+                Start-Process "c:\docker\docker\Docker Desktop.exe"
             }
             catch {
                 try {
@@ -329,7 +322,7 @@ function start_docker_desktop {
                     ([void]( New-Item -path alias:'Docker Desktop' -Value ':\docker\docker desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                     ([void]( New-Item -path alias:'Docker Desktop.exe' -Value 'c:\docker\docker desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                     powershell.exe -Command $refresh_envs | Out-Null
-                    Start-Process "c:\docker\docker desktop.exe" -WindowStyle $env:KINDTEK_NEW_PROC_STYLE
+                    Start-Process "c:\docker\docker desktop.exe"
                 }
                 catch {} 
             }
@@ -338,7 +331,7 @@ function start_docker_desktop {
 }
 
 function require_docker_online_new_win {
-    Start-Process powershell -LoadUserProfile -WindowStyle $env:KINDTEK_NEW_PROC_STYLE -ArgumentList "-command &{require_docker_online;exit;}" -Wait
+    [dvlp_max_process]$dvlp_proc = [dvlp_max_process]::new("require_docker_online;exit;", 'wait')
 }
 
 function require_docker_online {
@@ -356,7 +349,7 @@ function require_docker_online {
     do {   
         try {
             if ( (is_docker_desktop_online) -eq $false ) {
-                start_docker_desktop 
+                start_docker_desktop_new_win
             }
             # launch docker desktop and keep it open 
             $docker_tries++
@@ -550,24 +543,21 @@ function run_installer {
     # }
 }
 
-function dvlp_tools {
-    try {
-        set_dvlp_envs_new_win 1 
-    
+$local_paths = [string][System.Environment]::GetEnvironmentVariable('path')
+if ($local_paths -split ";" -notcontains "$env:KINDTEK_WIN_DVLW_PATH/scripts" -and $local_paths -split ";" -notcontains "devel-tools.ps1") {
+    $local_paths += ";$env:KINDTEK_WIN_DVLW_PATH/scripts"
+    if ($local_paths -split ";" -notcontains "$env:KINDTEK_WIN_DVLP_PATH/scripts") {
+        $local_paths += ";$env:KINDTEK_WIN_DVLP_PATH/scripts"
     }
-    catch {
-        echo 'test_dvlp_spawn2'
-        $local_paths = [string][System.Environment]::GetEnvironmentVariable('path')
-        $local_paths += ";$env:USERPROFILE/dvlp.ps1 source"
-        $machine_paths = [string][System.Environment]::GetEnvironmentVariable('path', [System.EnvironmentVariableTarget]::Machine)
-        $machine_paths += ";$env:USERPROFILE/dvlp.ps1 source"
-            
-        $set_local_path_command = [string][System.Environment]::SetEnvironmentVariable('path', "$local_paths")
-        $set_machine_path_command = [string][System.Environment]::SetEnvironmentVariable('path', "$machine_paths", [System.EnvironmentVariableTarget]::Machine)
-        Start-Process -FilePath powershell.exe -ArgumentList "-Command $set_local_path_command" -wait
-        Start-Process -FilePath powershell.exe -ArgumentList "-Command $set_machine_path_command" -wait
-        set_dvlp_envs_new_win 1 
-    }
+    $cmd_str_local = "[System.Environment]::SetEnvironmentVariable('path', '$local_paths')"
+    [dvlp_min_process]$dvlp_proc = [dvlp_min_process]::new("$cmd_str_local", 'wait')
 }
-
-dvlp_tools
+$machine_paths = [string][System.Environment]::GetEnvironmentVariable('path', [System.EnvironmentVariableTarget]::Machine)
+if ($machine_paths -split ";" -notcontains "$env:KINDTEK_WIN_DVLW_PATH\scripts" -and $local_paths -split ";" -notcontains "devel-tools.ps1") {
+    $machine_paths += ";$env:KINDTEK_WIN_DVLW_PATH/scripts"
+    if ($machine_paths -split ";" -notcontains "$env:KINDTEK_WIN_DVLP_PATH\scripts") {
+        $machine_paths += ";$env:KINDTEK_WIN_DVLP_PATH/scripts"
+    }
+    $cmd_str_machine = "[System.Environment]::SetEnvironmentVariable('path', '$machine_paths')"
+    [dvlp_min_process]$dvlp_proc = [dvlp_min_process]::new("$cmd_str_machine", 'wait')
+}
