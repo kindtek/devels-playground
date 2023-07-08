@@ -44,7 +44,6 @@ IF "!image_name_tag!"=="default" (
     SET "default_wsl_distro=y"
 
 ) ELSE (
-    
     SET "image_name_tag=%1"
     @REM ECHO IMG_NAME_TAG !image_name_tag!
     SET "image_name="
@@ -53,24 +52,8 @@ IF "!image_name_tag!"=="default" (
     ) DO (
         SET "image_name=%%a"
     )
-    SET "dvlp_path=repos/!image_repo!/dvlw/dvlp"
-    FOR /F "tokens=1* delims=-" %%a IN (
-        "%image_tag%" 
-    ) DO (
-        IF "!DVLP_DEBUG!"=="y" (
-            ECHO "parsed image distro: %%a"
-        )
-        SET "image_distro=%%a"
-    )
-    SET "image_service_suffix=%image_tag:-=" & SET "image_service=%"
-    FOR /F "tokens=1* delims=-" %%G IN (
-        "%image_tag%" 
-    ) DO (
-        IF "!DVLP_DEBUG!"=="y" (
-            ECHO "parsed image service: %%H"
-        )
-        SET "image_service=%%H"
-    )
+    SET "image_tag=%image_name_tag::=" & SET "image_tag=%"
+
 )
 IF "!image_name_tag!" NEQ "default" (
     SET "image_name_tag=!image_name!:!image_tag!"
@@ -302,8 +285,17 @@ IF "!WSL_DOCKER_CONTAINER_ID!"=="" (
     SET "options=options"
     GOTO error_restart_prompt
 )
-IF "!wsl!" NEQ "y" (
-    GOTO home_banner
+IF "!wsl!" == "n" (
+    IF "!noninteractive!" == "y" (
+        GOTO exit
+    )
+    ELSE (
+        GOTO home_banner
+    )
+) ELSE (
+    IF "image_built"=="n" (
+        GOTO docker_image_export
+    )
 )
 
 :docker_image_run_from_build
