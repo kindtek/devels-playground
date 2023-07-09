@@ -183,7 +183,7 @@ function reset_wsl_settings {
 }
 
 function wsl_docker_full_restart_new_win {
-    [dvlp_quiet_process]$dvlp_proc = [dvlp_quiet_process]::new("wsl_docker_full_restart;exit;", 'wait')
+    [dvlp_quiet_process]::new("wsl_docker_full_restart;exit;", 'wait')::new("wsl_docker_full_restart;exit;", 'wait')
 }
 
 function wsl_docker_full_restart {
@@ -229,7 +229,7 @@ function wsl_docker_full_restart {
 }
 
 function wsl_docker_restart_new_win {
-    [dvlp_quiet_process]$dvlp_proc = [dvlp_quiet_process]::new("wsl_docker_restart;exit;", 'wait')
+    [dvlp_quiet_process]::new("wsl_docker_full_restart;exit;", 'wait')::new("wsl_docker_restart;exit;", 'wait')
 }
 
 function wsl_docker_restart {
@@ -263,6 +263,22 @@ function wsl_docker_restart {
     }
     catch {}
 }
+
+function env_refresh {
+    $orig_progress_flag = $global:progress_flag 
+    $refresh_envs = "$env:KINDTEK_WIN_GIT_PATH/RefreshEnv.cmd"
+    $global:progress_flag = 'silentlyContinue'
+    $progress_flag = 'SilentlyContinue'
+    Invoke-WebRequest "https://raw.githubusercontent.com/kindtek/choco/ac806ee5ce03dea28f01c81f88c30c17726cb3e9/src/chocolatey.resources/redirects/RefreshEnv.cmd" -OutFile $refresh_envs | Out-Null
+    $global:progress_flag = $orig_progress_flag
+    powershell.exe -Command $refresh_envs | Out-Null
+}
+
+function env_refresh_new_win {
+    [dvlp_quiet_process]::new("wsl_docker_full_restart;exit;", 'wait')::new("env_refresh;exit;", 'wait')
+}
+
+
 function is_docker_backend_online {
     try {
         $docker_process = (Get-Process -ErrorAction SilentlyContinue 'com.docker.proxy')
@@ -295,8 +311,6 @@ function is_docker_desktop_online {
 
 
 function start_docker_desktop {
-    
-    $refresh_envs = "$env:KINDTEK_WIN_GIT_PATH/RefreshEnv.cmd"
     try {
         Start-Process "Docker Desktop.exe" 
     }
@@ -331,7 +345,7 @@ function start_docker_desktop {
 }
 
 function require_docker_online_new_win {
-    [dvlp_max_process]$dvlp_proc = [dvlp_max_process]::new("require_docker_online;exit;", 'wait')
+    [dvlp_max_process]$dvlp_proc = [dvlp_max_process]::new("require_docker_online", 'wait')
 }
 
 function require_docker_online {
