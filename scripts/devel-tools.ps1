@@ -271,7 +271,7 @@ function env_refresh {
     $progress_flag = 'SilentlyContinue'
     Invoke-WebRequest "https://raw.githubusercontent.com/kindtek/choco/ac806ee5ce03dea28f01c81f88c30c17726cb3e9/src/chocolatey.resources/redirects/RefreshEnv.cmd" -OutFile $refresh_envs | Out-Null
     $global:progress_flag = $orig_progress_flag
-    powershell.exe -Command $refresh_envs | Out-Null
+    env_refresh | Out-Null
 }
 
 function env_refresh_new_win {
@@ -319,7 +319,7 @@ function start_docker_desktop {
             ([void]( New-Item -path alias:'docker' -Value 'C:\Program Files\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
             ([void]( New-Item -path alias:'Docker Desktop' -Value 'C:\Program Files\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
             ([void]( New-Item -path alias:'Docker Desktop.exe' -Value 'C:\Program Files\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
-            powershell.exe -Command $refresh_envs | Out-Null
+            env_refresh | Out-Null
             Start-Process "C:\Program Files\docker\docker\Docker Desktop.exe" 
         }
         catch {
@@ -327,7 +327,7 @@ function start_docker_desktop {
                 ([void]( New-Item -path alias:'docker' -Value 'c:\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                 ([void]( New-Item -path alias:'Docker Desktop' -Value 'c:\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                 ([void]( New-Item -path alias:'Docker Desktop.exe' -Value 'c:\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
-                powershell.exe -Command $refresh_envs | Out-Null
+                env_refresh | Out-Null
                 Start-Process "c:\docker\docker\Docker Desktop.exe"
             }
             catch {
@@ -335,7 +335,7 @@ function start_docker_desktop {
                     ([void]( New-Item -path alias:'docker' -Value ':\docker\docker desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                     ([void]( New-Item -path alias:'Docker Desktop' -Value ':\docker\docker desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                     ([void]( New-Item -path alias:'Docker Desktop.exe' -Value 'c:\docker\docker desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
-                    powershell.exe -Command $refresh_envs | Out-Null
+                    env_refresh | Out-Null
                     Start-Process "c:\docker\docker desktop.exe"
                 }
                 catch {} 
