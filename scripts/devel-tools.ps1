@@ -345,7 +345,7 @@ function start_docker_desktop {
 }
 
 function require_docker_online_new_win {
-    [dvlp_max_process]$dvlp_proc = [dvlp_max_process]::new("require_docker_online", 'wait')
+    [dvlp_max_process]$dvlp_proc = [dvlp_max_process]::new("require_docker_online", 'wait', 'noexit')
 }
 
 function require_docker_online {
