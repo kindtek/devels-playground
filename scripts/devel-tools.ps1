@@ -5,8 +5,8 @@ function test_tools {
     return $true
 }
 function reboot_prompt {
-    # Write-Host "`r`nA restart may be required for the changes to fully take effect. "
-    $confirmation = Read-Host "`r`nType 'reboot now' to reboot your computer now`r`n`t ..or hit ENTER to skip" 
+    Write-Host "`r`nA restart may be required for the changes to fully take effect. "
+    $confirmation = Read-Host "`r`nType 'reboot now'`r`n`t ..or hit ENTER to skip" 
 
     if ($confirmation -ieq 'reboot now') {
         Write-Host "`r`nRestarting computer ... r`n"
