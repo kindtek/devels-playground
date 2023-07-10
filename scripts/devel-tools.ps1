@@ -561,20 +561,28 @@ function run_installer {
 }
 
 $local_paths = [string][System.Environment]::GetEnvironmentVariable('path')
-if ($local_paths -split ";" -notcontains "$env:KINDTEK_WIN_DVLW_PATH/scripts" -and $local_paths -split ";" -notcontains "devel-tools.ps1") {
-    $local_paths += ";$env:KINDTEK_WIN_DVLW_PATH/scripts"
-    if ($local_paths -split ";" -notcontains "$env:KINDTEK_WIN_DVLP_PATH/scripts") {
-        $local_paths += ";$env:KINDTEK_WIN_DVLP_PATH/scripts"
+if ($local_paths -split ";" -notcontains "devel-tools.ps1") {
+    if ($local_paths -split ";" -notcontains "$env:KINDTEK_WIN_DVLW_PATH/scripts/"){
+        $local_paths += ";$env:KINDTEK_WIN_DVLW_PATH/scripts/"
+    }
+    $local_paths += ";$env:KINDTEK_WIN_DVLW_PATH/scripts/devel-tools.ps1"
+    
+    if ($local_paths -split ";" -notcontains "$env:KINDTEK_WIN_DVLP_PATH/scripts/") {
+        $local_paths += ";$env:KINDTEK_WIN_DVLP_PATH/scripts/"
     }
     $cmd_str_local = "[System.Environment]::SetEnvironmentVariable('path', '$local_paths')"
     [dvlp_process_popmin]$dvlp_proc_local_paths = [dvlp_process_popmin]::new("$cmd_str_local", 'wait')
 }
 $machine_paths = [string][System.Environment]::GetEnvironmentVariable('path', [System.EnvironmentVariableTarget]::Machine)
-if ($machine_paths -split ";" -notcontains "$env:KINDTEK_WIN_DVLW_PATH\scripts" -and $local_paths -split ";" -notcontains "devel-tools.ps1") {
-    $machine_paths += ";$env:KINDTEK_WIN_DVLW_PATH/scripts"
-    if ($machine_paths -split ";" -notcontains "$env:KINDTEK_WIN_DVLP_PATH\scripts") {
-        $machine_paths += ";$env:KINDTEK_WIN_DVLP_PATH/scripts"
+if ($machine_paths -split ";" -notcontains "devel-tools.ps1") {
+    if ($machine_paths -split ";" -notcontains "$env:KINDTEK_WIN_DVLW_PATH/scripts/"){
+        $machine_paths += ";$env:KINDTEK_WIN_DVLW_PATH/scripts/"
     }
-    $cmd_str_machine = "[System.Environment]::SetEnvironmentVariable('path', '$machine_paths')"
+    $machine_paths += ";$env:KINDTEK_WIN_DVLW_PATH/scripts/devel-tools.ps1"
+    
+    if ($machine_paths -split ";" -notcontains "$env:KINDTEK_WIN_DVLP_PATH/scripts/") {
+        $machine_paths += ";$env:KINDTEK_WIN_DVLP_PATH/scripts/"
+    }
+    $cmd_str_local = "[System.Environment]::SetEnvironmentVariable('path', '$machine_paths')"
     [dvlp_process_popmin]$dvlp_proc_machine_envs = [dvlp_process_popmin]::new("$cmd_str_machine", 'wait')
 }
