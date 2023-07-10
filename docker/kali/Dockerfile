@@ -421,12 +421,7 @@ COPY --from=dvlp_repo-kernel            --chown=r00t:halo    --chmod=1770    ./r
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
-RUN \
-    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh wget && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt/archives/*.deb
+
 WORKDIR /
 
 #############
@@ -454,6 +449,78 @@ WORKDIR /
 # dvlp_skel-kernel #
 ####################
 FROM dvlp_skel-build-kernel AS dvlp_skel-kernel
+RUN \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
+    apt-get install --no-install-recommends -y apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh wget && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb
+
+###################################################################
+########################### KERNEL KACHE ##########################
+###################################################################
+
+################
+# kernel-kache #
+################
+
+FROM scratch AS dvlp_kernel-kache
+ARG _AGL_USR
+ARG _DVL_USR
+ARG _ADM_USR
+ENV _AGL=$_AGL_USR
+ENV _DVL=$_DVL_USR
+ENV _ADM=$_ADM_USR
+ARG CONFIG_FILE
+ARG KERNEL_PACKAGE_NAME
+ARG DOCKER_BUILD_TIMESTAMP
+ENV DOCKER_BUILD_TIMESTAMP=${DOCKER_BUILD_TIMESTAMP}
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
+ARG WIN_USER
+USER r00t
+WORKDIR /
+COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/kache/ ./
+
+
+###################################################################
+########################### K-HOME ################################
+###################################################################
+############
+# get-home #
+############
+FROM scratch AS dvlp_k-home-nix
+# ARG WINDOWS
+# ARG LINUX
+# # determine which home dir to get -- default is HOME_NIX 
+ARG HOME_DIR='HOME_NIX'
+# # if WINDOWS argument is provided, use win home dir
+# ARG HOME_DIR="${WINDOWS:+'HOME_WIN'}"
+# # if LINUX argument is provided, use nix home dir
+# ARG HOME_DIR="${LINUX:+'HOME_NIX'}"
+USER r00t
+WORKDIR /
+COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
+# COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/${HOME_DIR}/ ./
+
+############
+# get-home #
+############
+FROM scratch AS dvlp_k-home-win
+# ARG WINDOWS
+# ARG LINUX
+# determine which home dir to get -- default is HOME_NIX 
+# ARG HOME_DIR='HOME_WIN'
+# # if WINDOWS argument is provided, use win home dir
+# ARG HOME_DIR="${WINDOWS:+'HOME_WIN'}"
+# # if LINUX argument is provided, use nix home dir
+# ARG HOME_DIR="${LINUX:+'HOME_NIX'}"
+USER r00t
+WORKDIR /
+COPY --from=dvlp_repo_kernel ./repos/dvlw/dvlp/mnt/HOME_WIN/ ./
+COPY --from=dvlp_repo_kernel ./repos/dvlw/ ./repos/kindtek/dvlw/
+COPY --from=dvlp_repo_kernel ./repos/dvlw/dvlp/kernels/linux/kache/ ./
+# COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/${HOME_DIR}/ ./
 
 #################################################################################
 ############################### IMAGE BASES #####################################
@@ -477,22 +544,6 @@ RUN echo "default = ${_AGL}" | tee --append /etc/wsl.conf
 WORKDIR /hal
 USER ${_AGL}
 
-################################### GIT #########################################
-#################
-# dvlp_base-git_lite #
-#################
-FROM dvlp_skel AS dvlp_base-git
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
-ENV _AGL=$_AGL_USR
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-ARG REFRESH_REPO
-WORKDIR /hal
-USER ${_AGL}
-
-
 ############################### KERNEL #########################################
 ##########################
 # dvlp_base-kernel-build #
@@ -504,11 +555,11 @@ RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
-    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=private \
     apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
     apt-get install --no-install-recommends -y alien autoconf bison bc build-essential cpio dbus-user-session daemonize dwarves fakeroot \ 
-    flex fontconfig gawk kmod libblkid-dev libffi-dev lxcfs libudev-dev libaio-dev libattr1-dev libelf-dev libpam-systemd \
-    python3-dev python3-setuptools python3-cffi net-tools rsync snapd systemd-sysv sysvinit-utils uuid-dev zstd && \
+    flex fontconfig gawk git kmod libblkid-dev libffi-dev lxcfs libudev-dev libaio-dev libattr1-dev libelf-dev libpam-systemd \
+    libssl-dev python3-dev python3-setuptools python3-cffi net-tools rsync snapd systemd-sysv sysvinit-utils uuid-dev zstd && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 # RUN apt-get -y install zfsutils-linux zlib1g-dev zfs-dkms zstd zsys zfs-dracut zfs-zed
@@ -521,14 +572,9 @@ USER ${_AGL}
 FROM dvlp_base-kernel-build AS dvlp_base-kernel-builder
 ARG CONFIG_FILE
 ARG KERNEL_TYPE
-USER r00t
-WORKDIR /
-# COPY --from=dvlp_base-python-build-lite ./ ./
-# COPY --from=dvlp_base-msdot-build-lite ./ ./
-# COPY --from=dvlp_base-dind-build ./ ./
-COPY --from=dvlp_base-kernel-build ./ ./
 WORKDIR /hal
 USER ${_AGL}
+
 
 ######################################################################################
 ########################  dvlp_kernel-make - KERNEL COMPILER  ########################
@@ -551,9 +597,6 @@ RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
-    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get install -y libssl-dev git && apt-get clean 
-RUN \
     --mount=type=cache,target=/var/cache/make-kernel/archives,sharing=private \
     bash build-import-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}" && \
     rm -rf /r00t/dvlw/dvlp/kernels/linux/linux-* && \
@@ -564,7 +607,20 @@ RUN \
 WORKDIR /hal
 USER ${_AGL}
 
-
+################################### GIT #########################################
+#################
+# dvlp_base-git #
+#################
+FROM dvlp_skel AS dvlp_base-git
+ARG _AGL_USR
+ARG _DVL_USR
+ARG _ADM_USR
+ENV _AGL=$_AGL_USR
+ENV _DVL=$_DVL_USR
+ENV _ADM=$_ADM_USR
+ARG REFRESH_REPO
+WORKDIR /hal
+USER ${_AGL}
 
 ########################
 # dvlp_base-git-kernel #
@@ -1110,71 +1166,6 @@ RUN \
     rm -rf /var/cache/apt/archives/*.deb   
 WORKDIR /hal
 USER ${_AGL}
-
-###################################################################
-########################### KERNEL KACHE ##########################
-###################################################################
-################
-# kernel-kache #
-################
-
-FROM scratch AS dvlp_kernel-kache
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
-ENV _AGL=$_AGL_USR
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-ARG CONFIG_FILE
-ARG KERNEL_PACKAGE_NAME
-ARG DOCKER_BUILD_TIMESTAMP
-ENV DOCKER_BUILD_TIMESTAMP=${DOCKER_BUILD_TIMESTAMP}
-ARG KERNEL_TYPE
-ARG KERNEL_FEATURE
-ARG WIN_USER
-USER r00t
-WORKDIR /
-COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/kache/ ./
-
-
-###################################################################
-########################### K-HOME ################################
-###################################################################
-############
-# get-home #
-############
-FROM scratch AS dvlp_k-home-nix
-# ARG WINDOWS
-# ARG LINUX
-# # determine which home dir to get -- default is HOME_NIX 
-ARG HOME_DIR='HOME_NIX'
-# # if WINDOWS argument is provided, use win home dir
-# ARG HOME_DIR="${WINDOWS:+'HOME_WIN'}"
-# # if LINUX argument is provided, use nix home dir
-# ARG HOME_DIR="${LINUX:+'HOME_NIX'}"
-USER r00t
-WORKDIR /
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
-# COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/${HOME_DIR}/ ./
-
-############
-# get-home #
-############
-FROM scratch AS dvlp_k-home-win
-# ARG WINDOWS
-# ARG LINUX
-# determine which home dir to get -- default is HOME_NIX 
-# ARG HOME_DIR='HOME_WIN'
-# # if WINDOWS argument is provided, use win home dir
-# ARG HOME_DIR="${WINDOWS:+'HOME_WIN'}"
-# # if LINUX argument is provided, use nix home dir
-# ARG HOME_DIR="${LINUX:+'HOME_NIX'}"
-USER r00t
-WORKDIR /
-COPY --from=dvlp_repo_kernel ./repos/dvlw/dvlp/mnt/HOME_WIN/ ./
-COPY --from=dvlp_repo_kernel ./repos/dvlw/ ./repos/kindtek/dvlw/
-COPY --from=dvlp_repo_kernel ./repos/dvlw/dvlp/kernels/linux/kache/ ./
-# COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/${HOME_DIR}/ ./
 
 #####################
 ## dvlp_jacket-kernel-kernel #
