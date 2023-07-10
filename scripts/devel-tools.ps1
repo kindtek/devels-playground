@@ -356,12 +356,12 @@ function require_docker_online {
     $docker_settings_reset = $true
     $orig_foreground = $host.UI.RawUI.ForegroundColor
     $orig_background = $host.UI.RawUI.ForegroundColor
-    $host.UI.RawUI.ForegroundColor = "DarkGray"
-    $host.UI.RawUI.BackgroundColor = "Gray"
     Write-Host "`r`n`r`nloading docker desktop ..."
     Write-Host "waiting for docker backend to come online ..."  
-    set_dvlp_envs_new_win 1 | Out-Null
+    set_dvlp_envs
     do {   
+        $host.UI.RawUI.ForegroundColor = "DarkGray"
+        $host.UI.RawUI.BackgroundColor = "Gray"
         try {
             if ( (is_docker_desktop_online) -eq $false ) {
                 start_docker_desktop_new_win
@@ -449,7 +449,9 @@ function require_docker_online {
             
         }
         catch {
-            # Write-Host "error connecting to docker"
+            Write-Host "error connecting to docker"
+            $host.UI.RawUI.ForegroundColor = $orig_foreground
+            $host.UI.RawUI.BackgroundColor = $orig_background
         }
     } while ( ((is_docker_desktop_online) -eq $false) -And ( $check_again -ine 'n' -And $check_again -ine 'no') )
     if ( ((is_docker_desktop_online) -eq $false) -And ( $check_again -ine 'n' -Or $check_again -ine 'no') ) {
