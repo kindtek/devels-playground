@@ -445,6 +445,8 @@ function require_docker_online {
                     Write-Host ""
                 }
                 Write-Host "docker desktop is now online"
+                $host.UI.RawUI.ForegroundColor = $orig_foreground
+                $host.UI.RawUI.BackgroundColor = $orig_background
                 $check_again = 'n'
             }
             
