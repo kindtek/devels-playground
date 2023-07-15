@@ -346,8 +346,8 @@ function start_docker_desktop {
 }
 
 function require_docker_online_new_win {
-    [dvlp_process_min]$dvlp_proc = [dvlp_process_min]::new("require_docker_online", 'wait')
-    # require_docker_online
+    # [dvlp_process_min]$dvlp_proc = [dvlp_process_min]::new("require_docker_online", 'wait')
+    require_docker_online
 }
 
 function require_docker_online {
@@ -355,10 +355,6 @@ function require_docker_online {
     $docker_tries = 0
     $docker_cycles = 0
     $docker_settings_reset = $true
-    $orig_foreground = $host.UI.RawUI.ForegroundColor
-    $orig_background = $host.UI.RawUI.ForegroundColor
-    $host.UI.RawUI.ForegroundColor = "DarkGray"
-    $host.UI.RawUI.BackgroundColor = "Gray"
     Write-Host "`r`n`r`nloading docker desktop ..."
     Write-Host "waiting for docker backend to come online ..."  
     set_dvlp_envs
@@ -445,24 +441,18 @@ function require_docker_online {
                     Write-Host ""
                 }
                 Write-Host "docker desktop is now online"
-                $host.UI.RawUI.ForegroundColor = $orig_foreground
-                $host.UI.RawUI.BackgroundColor = $orig_background
                 $check_again = 'n'
             }
             
         }
         catch {
             Write-Host "error connecting to docker"
-            $host.UI.RawUI.ForegroundColor = $orig_foreground
-            $host.UI.RawUI.BackgroundColor = $orig_background
         }
     } while ( ((is_docker_desktop_online) -eq $false) -And ( $check_again -ine 'n' -And $check_again -ine 'no') )
     if ( ((is_docker_desktop_online) -eq $false) -And ( $check_again -ine 'n' -Or $check_again -ine 'no') ) {
         Write-Host "docker failed to start."
     }
     # Set-PSDebug -Trace 0;
-    $host.UI.RawUI.ForegroundColor = $orig_foreground
-    $host.UI.RawUI.BackgroundColor = $orig_background
     return (is_docker_desktop_online)
 }
 
