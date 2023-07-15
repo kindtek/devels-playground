@@ -165,7 +165,8 @@ function set_docker_config {
 
 function reset_docker_settings {
     # clear settings 
-    cmd.exe /c net stop LxssManager && net start LxssManager
+    cmd.exe /c net stop LxssManager
+    cmd.exe /c net start LxssManager
     Write-Host "clearing docker settings"
     Push-Location $env:APPDATA\Docker
     Delete-Item "settings.json.old" | Out-Null
@@ -175,13 +176,15 @@ function reset_docker_settings {
 }
 
 function reset_wsl_settings {
-    cmd.exe /c net stop LxssManager && net start LxssManager
+    cmd.exe /c net stop LxssManager
+    cmd.exe /c net start LxssManager
     # clear settings 
     Write-Host "reverting wsl default distro to $env:KINDTEK_FAILSAFE_WSL_DISTRO"
     if ($env:KINDTEK_FAILSAFE_WSL_DISTRO -ne "") {
         wsl.exe -s $env:KINDTEK_FAILSAFE_WSL_DISTRO
     }
-    cmd.exe /c net stop LxssManager && net start LxssManager
+    cmd.exe /c net stop LxssManager
+    cmd.exe /c net start LxssManager
 }
 
 function wsl_docker_full_restart_new_win {
