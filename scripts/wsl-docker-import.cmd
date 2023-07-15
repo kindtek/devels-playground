@@ -456,7 +456,9 @@ wsl.exe --import !wsl_distro! !install_location! !image_save_path! --version !ws
 IF "!image_service_suffix!"=="kernel" (
     wsl.exe -d !wsl_distro! --cd '/r00t/dvlw/dvlp/kernels/linux' --exec "bash install-kernel.sh ^^"%USERPROFILE%^^" latest"
 )
-
+@REM restart lxss manager
+net stop LxssManager
+net start LxssManager
 ECHO DONE
 IF "!default_wsl_distro!"=="y" (
     GOTO set_default_wsl_distro
