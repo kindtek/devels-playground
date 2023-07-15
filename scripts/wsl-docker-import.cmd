@@ -538,8 +538,8 @@ IF "!wsl_out!"=="!test_string!" (
     @REM powershell -Command ". ..\..\dvlw\scripts\devel-tools.ps1; set_docker_config('!wsl_distro!');"
     ECHO !wsl_distro! was imported successfully!
     ECHO updating !wsl_distro! ...
-    wsl.exe -d !wsl_distro! --exec sudo apt update -y && sudo apt upgrade -y
-    wsl.exe -d !wsl_distro! --exec apt update -y && apt upgrade -y
+    wsl.exe -d !wsl_distro! --exec sudo apt-get update -y && sudo apt-get upgrade -y
+    wsl.exe -d !wsl_distro! --exec apt-get update -y && apt-get upgrade -y
 ) ELSE (
     SET "wsl_distro_test_pass=n"
     ECHO !wsl_distro! did not boot.
