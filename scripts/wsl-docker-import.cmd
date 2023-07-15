@@ -537,6 +537,9 @@ IF "!wsl_out!"=="!test_string!" (
     @REM add !wsl_distro! to Docker integrated WSL distro list
     @REM powershell -Command ". ..\..\dvlw\scripts\devel-tools.ps1; set_docker_config('!wsl_distro!');"
     ECHO !wsl_distro! was imported successfully!
+    ECHO updating !wsl_distro! ...
+    wsl.exe -d !wsl_distro! --exec sudo apt update -y && sudo apt upgrade -y
+
 ) ELSE (
     SET "wsl_distro_test_pass=n"
     ECHO !wsl_distro! did not boot.
@@ -544,7 +547,6 @@ IF "!wsl_out!"=="!test_string!" (
 IF "!DVLP_DEBUG!"=="y" (
     ECHO "wsl_distro_test_pass: !wsl_distro_test_pass!"
 )
-wsl.exe -d !wsl_distro! --exec sudo apt update -y && sudo apt upgrade -y
 @REM @echo oFF
 
 :wsl_set_conversion_version
