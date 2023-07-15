@@ -271,11 +271,11 @@ function env_refresh {
     $progress_flag = 'SilentlyContinue'
     Invoke-WebRequest "https://raw.githubusercontent.com/kindtek/choco/ac806ee5ce03dea28f01c81f88c30c17726cb3e9/src/chocolatey.resources/redirects/RefreshEnv.cmd" -OutFile $refresh_envs | Out-Null
     $global:progress_flag = $orig_progress_flag
-    env_refresh | Out-Null
 }
 
 function env_refresh_new_win {
-    [dvlp_process_quiet]$dvlp_proc =[dvlp_process_quiet]::new("wsl_docker_full_restart;exit;", 'wait')
+    # [dvlp_process_quiet]$dvlp_proc =[dvlp_process_quiet]::new("wsl_docker_full_restart;exit;", 'wait')
+    env_refresh
 }
 
 
@@ -312,6 +312,7 @@ function is_docker_desktop_online {
 
 function start_docker_desktop {
     try {
+        env_refresh 
         Start-Process "Docker Desktop.exe" 
     }
     catch {
@@ -319,7 +320,7 @@ function start_docker_desktop {
             ([void]( New-Item -path alias:'docker' -Value 'C:\Program Files\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
             ([void]( New-Item -path alias:'Docker Desktop' -Value 'C:\Program Files\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
             ([void]( New-Item -path alias:'Docker Desktop.exe' -Value 'C:\Program Files\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
-            env_refresh | Out-Null
+            env_refresh 
             Start-Process "C:\Program Files\docker\docker\Docker Desktop.exe" 
         }
         catch {
@@ -327,7 +328,7 @@ function start_docker_desktop {
                 ([void]( New-Item -path alias:'docker' -Value 'c:\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                 ([void]( New-Item -path alias:'Docker Desktop' -Value 'c:\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                 ([void]( New-Item -path alias:'Docker Desktop.exe' -Value 'c:\docker\docker\Docker Desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
-                env_refresh | Out-Null
+                env_refresh 
                 Start-Process "c:\docker\docker\Docker Desktop.exe"
             }
             catch {
@@ -335,7 +336,7 @@ function start_docker_desktop {
                     ([void]( New-Item -path alias:'docker' -Value ':\docker\docker desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                     ([void]( New-Item -path alias:'Docker Desktop' -Value ':\docker\docker desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
                     ([void]( New-Item -path alias:'Docker Desktop.exe' -Value 'c:\docker\docker desktop.exe' -ErrorAction SilentlyContinue | Out-Null ))
-                    env_refresh | Out-Null
+                    env_refresh 
                     Start-Process "c:\docker\docker desktop.exe"
                 }
                 catch {} 
