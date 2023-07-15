@@ -44,7 +44,7 @@ IF "!image_name_tag!"=="default" (
     SET "default_wsl_distro=y"
 
 ) ELSE (
-    SET "image_name_tag=%1"
+    SET "image_name_tag=%~1"
     @REM ECHO IMG_NAME_TAG !image_name_tag!
     SET "image_name="
     FOR /F "tokens=1 delims=:" %%a IN ( 
@@ -64,8 +64,8 @@ IF "!DVLP_DEBUG!"=="y" (
     ECHO IMG_NAME !image_name!
     ECHO IMG_TAG !image_tag!
     ECHO IMG_NAME_TAG !image_name_tag!
-    ECHO OLD_IMG_NAME_TAG %1
-    ECHO WSL_DISTRO %1
+    ECHO OLD_IMG_NAME_TAG %~1
+    ECHO WSL_DISTRO %~1
     @REM ECHO "image_tag set to arg: '%1'  ('%~1') as !image_tag!"
 )
 
