@@ -588,7 +588,7 @@ IF "!wsl_distro_test_pass!"=="n" (
             GOTO wsl_delete_prompt
         )
     )  ELSE (
-        GOTO quit
+        GOTO wsl_delete
     )  
 ) ELSE (
     GOTO quit
@@ -628,7 +628,9 @@ IF "!interactive"=="y" (
 
 :wsl_delete
 wsl.exe --unregister !wsl_distro!
-GOTO redo
+IF "!interactive"=="y" (
+    GOTO redo
+) ELSE ( GOTO quit )
 
 :wsl_distro_launch
 IF "!wsl_distro_test_pass!"=="y" (
