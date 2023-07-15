@@ -418,9 +418,6 @@ WORKDIR ${_MNT}
 COPY --from=dvlp_base-r00t-kernel-dirs  --chown=r00t:r00t    --chmod=1770    ./mnt/                  ./
 COPY --from=dvlp_base-devel-kernel-dirs --chown=r00t:r00t    --chmod=1770    ./mnt/                  ./
 COPY --from=dvlp_repo-kernel            --chown=r00t:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/        ./
-RUN \
-    rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 
 WORKDIR /
 
@@ -434,9 +431,9 @@ ARG _ADM_USR
 ENV _AGL=$_AGL_USR
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
-RUN \
-    rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
+# RUN \
+#     rm -f /etc/apt/apt.conf.d/docker-clean && \
+#     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
@@ -449,12 +446,75 @@ WORKDIR /
 # dvlp_skel-kernel #
 ####################
 FROM dvlp_skel-build-kernel AS dvlp_skel-kernel
+
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
     apt-get install --no-install-recommends -y apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh wget && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
+    
+############################### KERNEL #########################################
+##########################
+# dvlp_base-kernel-build #
+##########################
+FROM dvlp_skel-kernel AS dvlp_base-kernel-build
+USER r00t
+# RUN echo exit 0 > /usr/sbin/policy-rc.d 
+# RUN \
+#     rm -f /etc/apt/apt.conf.d/docker-clean && \
+#     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
+RUN \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=private \
+    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
+    apt-get install --no-install-recommends -y apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh wget \
+    alien autoconf bison bc build-essential cpio dbus-user-session daemonize dwarves fakeroot \ 
+    flex fontconfig gawk git kmod libblkid-dev libffi-dev lxcfs libudev-dev libaio-dev libattr1-dev libelf-dev libpam-systemd \
+    libssl-dev python3-dev python3-setuptools python3-cffi net-tools rsync snapd systemd-sysv sysvinit-utils uuid-dev zstd && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb
+# RUN apt-get -y install zfsutils-linux zlib1g-dev zfs-dkms zstd zsys zfs-dracut zfs-zed
+WORKDIR /hal
+USER ${_AGL}
+
+######################################################################################
+###################  dvlp_base-kernel-builder - KERNEL BUILDER  ######################
+######################################################################################
+FROM dvlp_base-kernel-build AS dvlp_base-kernel-builder
+ARG CONFIG_FILE
+ARG KERNEL_TYPE
+WORKDIR /hal
+USER ${_AGL}
+
+
+######################################################################################
+########################  dvlp_kernel-make - KERNEL COMPILER  ########################
+######################################################################################
+FROM dvlp_base-kernel-builder AS dvlp_kernel-make
+ARG CONFIG_FILE
+ARG KERNEL_PACKAGE_NAME
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
+ARG DOCKER_BUILD_TIMESTAMP
+ENV DOCKER_BUILD_TIMESTAMP=${DOCKER_BUILD_TIMESTAMP}
+ARG WIN_USER
+USER r00t
+# WORKDIR /
+# COPY --from=dvlp_skel-build-kernel ./ ./
+WORKDIR /r00t/dvlw/dvlp/kernels/linux
+SHELL ["/bin/bash", "-c"]
+# RUN chmod o+x make-kernel.sh 
+# RUN \
+#     rm -f /etc/apt/apt.conf.d/docker-clean && \
+#     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
+RUN \
+    --mount=type=cache,target=/var/cache/make-kernel/archives,sharing=private \
+    bash build-import-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}" 
+    # # rm -rf /boot && \
+    # rm -rf /var/lib/apt/lists && \
+    # rm -rf /var/cache/apt/archives/*.deb
+# WORKDIR /hal
+# USER ${_AGL}
 
 ###################################################################
 ########################### KERNEL KACHE ##########################
@@ -481,7 +541,34 @@ ARG WIN_USER
 USER r00t
 WORKDIR /
 COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/kache/ ./
+RUN rm -rf /r00t/dvlw/dvlp/kernels/linux/linux-* && \
+    rm -rf /r00t/dvlw/dvlp/kernels/linux/zfs-* 
 
+################
+# kernel-kache #
+################
+
+FROM scratch AS dvlp_kernel-install
+ARG _AGL_USR
+ARG _DVL_USR
+ARG _ADM_USR
+ENV _AGL=$_AGL_USR
+ENV _DVL=$_DVL_USR
+ENV _ADM=$_ADM_USR
+ARG CONFIG_FILE
+ARG KERNEL_PACKAGE_NAME
+ARG DOCKER_BUILD_TIMESTAMP
+ENV DOCKER_BUILD_TIMESTAMP=${DOCKER_BUILD_TIMESTAMP}
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
+ARG WIN_USER
+USER r00t
+WORKDIR /
+COPY --from=dvlp_kernel-make ./boot/ ./boot/
+COPY --from=dvlp_kernel-make ./usr/src/ ./usr/src/
+COPY --from=dvlp_kernel-make ./usr/lib/modules/ ./usr/lib/modules/
+COPY --from=dvlp_kernel-make ./kache/ ./kache/
+COPY --from=dvlp_kernel-make ./r00t/dvlw/ ./r00t/dvlw/
 
 ###################################################################
 ########################### K-HOME ################################
@@ -544,68 +631,6 @@ RUN echo "default = ${_AGL}" | tee --append /etc/wsl.conf
 WORKDIR /hal
 USER ${_AGL}
 
-############################### KERNEL #########################################
-##########################
-# dvlp_base-kernel-build #
-##########################
-FROM dvlp_skel-kernel AS dvlp_base-kernel-build
-USER r00t
-# RUN echo exit 0 > /usr/sbin/policy-rc.d 
-RUN \
-    rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
-RUN \
-    --mount=type=cache,target=/var/cache/apt/archives,sharing=private \
-    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y alien autoconf bison bc build-essential cpio dbus-user-session daemonize dwarves fakeroot \ 
-    flex fontconfig gawk git kmod libblkid-dev libffi-dev lxcfs libudev-dev libaio-dev libattr1-dev libelf-dev libpam-systemd \
-    libssl-dev python3-dev python3-setuptools python3-cffi net-tools rsync snapd systemd-sysv sysvinit-utils uuid-dev zstd && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt/archives/*.deb
-# RUN apt-get -y install zfsutils-linux zlib1g-dev zfs-dkms zstd zsys zfs-dracut zfs-zed
-WORKDIR /hal
-USER ${_AGL}
-
-######################################################################################
-###################  dvlp_base-kernel-builder - KERNEL BUILDER  ######################
-######################################################################################
-FROM dvlp_base-kernel-build AS dvlp_base-kernel-builder
-ARG CONFIG_FILE
-ARG KERNEL_TYPE
-WORKDIR /hal
-USER ${_AGL}
-
-
-######################################################################################
-########################  dvlp_kernel-make - KERNEL COMPILER  ########################
-######################################################################################
-FROM dvlp_base-kernel-builder AS dvlp_kernel-make
-ARG CONFIG_FILE
-ARG KERNEL_PACKAGE_NAME
-ARG KERNEL_TYPE
-ARG KERNEL_FEATURE
-ARG DOCKER_BUILD_TIMESTAMP
-ENV DOCKER_BUILD_TIMESTAMP=${DOCKER_BUILD_TIMESTAMP}
-ARG WIN_USER
-USER r00t
-WORKDIR /
-# COPY --from=dvlp_skel-build-kernel ./ ./
-WORKDIR /r00t/dvlw/dvlp/kernels/linux
-SHELL ["/bin/bash", "-c"]
-# RUN chmod o+x make-kernel.sh 
-RUN \
-    rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
-RUN \
-    --mount=type=cache,target=/var/cache/make-kernel/archives,sharing=private \
-    bash build-import-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}" && \
-    rm -rf /r00t/dvlw/dvlp/kernels/linux/linux-* && \
-    rm -rf /r00t/dvlw/dvlp/kernels/linux/zfs-* && \
-    # rm -rf /boot && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt/archives/*.deb
-WORKDIR /hal
-USER ${_AGL}
 
 ################################### GIT #########################################
 #################
@@ -974,36 +999,36 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NONINTERACTIVE_SEEN=true
 ARG REFRESH_REPO=${REFRESH_REPO:-yes}
 WORKDIR /
-COPY --from=dvlp_base-python-build-lite ./ ./
-COPY --from=dvlp_base-msdot-build-lite ./ ./
-COPY --from=dvlp_base-dind-build ./ ./
-WORKDIR /
-RUN \
-    rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    echo 'Acquire::Retries "30";' | tee /etc/apt/apt.conf.d/50kali
-RUN \
-    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y curl && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt/archives/*.deb
-# for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
-RUN \
-    --mount=type=cache,target=/var/cache/curl \
-    curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg 
-RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | tee /etc/apt/sources.list.d/brave-browser-release.list 
-RUN \
-    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y brave-browser dolphin virtualbox vlc x11-apps  && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt/archives/*.deb
-# change last line of this file - fix for brave-browser displaying empty windows
-RUN cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
-    head -n -1 /opt/brave.com/brave/brave-browser.old | tee /opt/brave.com/brave/brave-browser > /dev/null && \
-    # now no longeer need to add --disable-gpu flag everytime
-    echo '"$HERE/brave" "$@" " --disable-gpu " || true' | tee --append /opt/brave.com/brave/brave-browser > /dev/null
+# COPY --from=dvlp_base-python-build-lite ./ ./
+# COPY --from=dvlp_base-msdot-build-lite ./ ./
+# COPY --from=dvlp_base-dind-build ./ ./
+# WORKDIR /
+# RUN \
+#     rm -f /etc/apt/apt.conf.d/docker-clean && \
+#     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
+#     echo 'Acquire::Retries "30";' | tee /etc/apt/apt.conf.d/50kali
+# RUN \
+#     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+#     apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
+#     apt-get install --no-install-recommends -y curl && \
+#     rm -rf /var/lib/apt/lists && \
+#     rm -rf /var/cache/apt/archives/*.deb
+# # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
+# RUN \
+#     --mount=type=cache,target=/var/cache/curl \
+#     curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg 
+# RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | tee /etc/apt/sources.list.d/brave-browser-release.list 
+# RUN \
+#     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+#     apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
+#     apt-get install --no-install-recommends -y brave-browser dolphin virtualbox vlc x11-apps  && \
+#     rm -rf /var/lib/apt/lists && \
+#     rm -rf /var/cache/apt/archives/*.deb
+# # change last line of this file - fix for brave-browser displaying empty windows
+# RUN cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
+#     head -n -1 /opt/brave.com/brave/brave-browser.old | tee /opt/brave.com/brave/brave-browser > /dev/null && \
+#     # now no longeer need to add --disable-gpu flag everytime
+#     echo '"$HERE/brave" "$@" " --disable-gpu " || true' | tee --append /opt/brave.com/brave/brave-browser > /dev/null
 COPY --from=dvlp_repo /repos/dvlw/dvlp/mnt/opt/* /opt/
 
 # # # this is a better way to do this but needs work
@@ -1020,12 +1045,7 @@ USER ${_AGL}
 FROM dvlp_base-gui-lite AS dvlp_base-gui-lite-kernel
 USER r00t
 WORKDIR /
-COPY --from=dvlp_kernel-make ./boot/ ./boot/
-COPY --from=dvlp_kernel-make ./usr/src/ ./usr/src/
-COPY --from=dvlp_kernel-make ./usr/lib/modules/ ./usr/lib/modules/
-COPY --from=dvlp_kernel-make ./kache/ ./kache/
-COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/kache/ ./r00t/dvlw/dvlp/kernels/linux/kache/
-COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/kache/ ./hal/dvlw/dvlp/kernels/linux/kache/
+COPY --from=dvlp_kernel-install ./ ./
 WORKDIR /hal
 USER ${_AGL}
 
@@ -1057,21 +1077,21 @@ RUN apt-get -y update && apt-get -y upgrade && \
 #     dpkg-reconfigure --frontend noninteractive locales && \
 #     echo "/usr/sbin/lightdm" | tee /etc/X11/default-display-manager && \
 #     locale-gen && update-locale 
-RUN \
-    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y xrdp xfce4 xfce4-goodies && \
-    # MUST install this separately and AFTER xfce or xfce prompting to choose default dm will hang/break build
-    apt-get install --no-install-recommends -y lightdm && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt/archives/*.deb
-RUN \
-    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-    # echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
-    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y kali-defaults kali-root-login desktop-base kali-win-kex && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt/archives/*.deb
+# RUN \
+#     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+#     apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
+#     apt-get install --no-install-recommends -y xrdp xfce4 xfce4-goodies && \
+#     # MUST install this separately and AFTER xfce or xfce prompting to choose default dm will hang/break build
+#     apt-get install --no-install-recommends -y lightdm && \
+#     rm -rf /var/lib/apt/lists && \
+#     rm -rf /var/cache/apt/archives/*.deb
+# RUN \
+#     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+#     # echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
+#     apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
+#     apt-get install --no-install-recommends -y kali-defaults kali-root-login desktop-base kali-win-kex && \
+#     rm -rf /var/lib/apt/lists && \
+#     rm -rf /var/cache/apt/archives/*.deb
 COPY --from=dvlp_repo --chown=r00t:r00t /repos/dvlw/dvlp/mnt/etc/* /etc/
 WORKDIR /hal
 USER ${_AGL}
@@ -1083,13 +1103,7 @@ USER ${_AGL}
 FROM dvlp_base-gui AS dvlp_base-gui-kernel
 USER r00t
 WORKDIR /
-COPY --from=dvlp_kernel-make ./boot/ ./boot/
-COPY --from=dvlp_kernel-make ./usr/src/ ./usr/src/
-COPY --from=dvlp_kernel-make ./usr/lib/modules/ ./usr/lib/modules/
-COPY --from=dvlp_kernel-make ./kache/ ./kache/
-COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/kache/ ./r00t/dvlw/dvlp/kernels/linux/kache/
-COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/kache/ ./hal/dvlw/dvlp/kernels/linux/kache/
-
+COPY --from=dvlp_kernel-install ./ ./
 WORKDIR /hal
 USER ${_AGL}
 
@@ -1155,6 +1169,9 @@ COPY --from=dvlp_base-msdot-build ./ ./
 COPY --from=dvlp_base-dind-build ./ ./
 COPY --from=dvlp_base-kernel-builder ./ ./
 COPY --from=dvlp_base-cuda ./ ./
+COPY --from=dvlp_kernel-install ./ ./
+WORKDIR /hal
+USER ${_AGL}
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
