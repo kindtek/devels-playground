@@ -539,7 +539,7 @@ IF "!wsl_out!"=="!test_string!" (
     ECHO !wsl_distro! was imported successfully!
     ECHO updating !wsl_distro! ...
     wsl.exe -d !wsl_distro! --exec sudo apt update -y && sudo apt upgrade -y
-
+    wsl.exe -d !wsl_distro! --exec apt update -y && apt upgrade -y
 ) ELSE (
     SET "wsl_distro_test_pass=n"
     ECHO !wsl_distro! did not boot.
