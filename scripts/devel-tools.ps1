@@ -364,7 +364,7 @@ function require_docker_online {
         $host.UI.RawUI.BackgroundColor = "Gray"
         try {
             if ( (is_docker_desktop_online) -eq $false ) {
-                start_docker_desktop_new_win
+                start_docker_desktop
             }
             # launch docker desktop and keep it open 
             $docker_tries++
