@@ -595,7 +595,12 @@ IF "!wsl_distro_test_pass!"=="n" (
             GOTO wsl_delete_prompt
         )
     )  ELSE (
-        GOTO wsl_delete
+        IF /I "!convert!"=="y" (
+            SET "convert=n"
+            GOTO wsl_delete
+        ) ELSE (
+            SET "convert=y"
+        )
     )  
 ) ELSE (
     GOTO quit
