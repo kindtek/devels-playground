@@ -286,7 +286,7 @@ IF "!WSL_DOCKER_CONTAINER_ID!"=="" (
     GOTO error_restart_prompt
 )
 IF "!wsl!" == "n" (
-    IF "!noninteractive!" == "y" (
+    IF "!interactive!" == "n" (
         GOTO exit
     )
     ELSE (
@@ -309,6 +309,9 @@ SET "docker_image_do="
 ECHO initializing the image container...
 ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml up !image_service! --detach
 docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml up !image_service! --detach
+ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo apt update -y && sudo apt upgrade -y
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo apt update -y && sudo apt upgrade -y
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! apt update -y && apt upgrade -y
 @REM @TODO: handle WSL_DOCKER_IMG_ID case of multiple ids returned from docker images query
 ECHO "docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml images -q !image_service! > !docker_image_id_path!"
 docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml images -q !image_service! > !docker_image_id_path!
@@ -539,12 +542,10 @@ IF "!wsl_out!"=="!test_string!" (
     @REM add !wsl_distro! to Docker integrated WSL distro list
     @REM powershell -Command ". ..\..\dvlw\scripts\devel-tools.ps1; set_docker_config('!wsl_distro!');"
     ECHO !wsl_distro! was imported successfully!
-    ECHO updating !wsl_distro! ...
-    wsl.exe -d !wsl_distro! --exec sudo apt-get update -y
-    wsl.exe -d !wsl_distro! --exec sudo sudo apt-get upgrade -y
+    @REM ECHO updating !wsl_distro! ...
+    @REM wsl.exe -d !wsl_distro! --exec sudo apt-get update -y && sudo apt-get upgrade -y
 
-    wsl.exe -d !wsl_distro! --exec apt update -y
-    wsl.exe -d !wsl_distro! --exec apt-get upgrade -y
+    @REM wsl.exe -d !wsl_distro! --exec apt update -y && apt-get upgrade -y
 
 ) ELSE (
     SET "wsl_distro_test_pass=n"
