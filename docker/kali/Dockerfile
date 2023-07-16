@@ -88,7 +88,9 @@ RUN \
     git config --global --add safe.directory /repos/dvlw && \
     git config --global --add safe.directory /tmp/git/cache && \
     git config --global user.name 'Snail Mail' && \
-    git config --global user.email '<>'
+    git config --global user.email '<>' && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb
 
 ########################
 # dvlp_repo-build #
@@ -348,14 +350,14 @@ RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
     apt-get install --no-install-recommends -y sudo && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt/archives/*.deb && \
     usermod -aG docker root && \
     usermod -aG docker r00t && \
     usermod -aG sudo ${_AGL} && \
     usermod -aG docker ${_AGL} && \
     mkdir -p /usr/lib/binfmt.d && \
-    echo :WSLInterop:M::MZ::/init:PF > /usr/lib/binfmt.d/WSLInterop.conf
+    echo :WSLInterop:M::MZ::/init:PF > /usr/lib/binfmt.d/WSLInterop.conf && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb
 WORKDIR /
 
 ############################## SKELETON ###################################
@@ -437,7 +439,7 @@ ENV _ADM=$_ADM_USR
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh wget && \
+    apt-get install --no-install-recommends -y apt-utils apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh systemd-sysv sysvinit-utils wget && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 WORKDIR /
@@ -450,7 +452,7 @@ FROM dvlp_skel-build-kernel AS dvlp_skel-kernel
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
     apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh wget && \
+    apt-get install --no-install-recommends -y apt-utils apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh systemd-sysv sysvinit-utils wget && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
     
@@ -467,7 +469,7 @@ USER r00t
 RUN \
     --mount=type=cache,target=/var/cache/apt/archives,sharing=private \
     apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
-    apt-get install --no-install-recommends -y apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh wget \
+    apt-get install --no-install-recommends -y apt-utils apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh systemd-sysv sysvinit-utils wget \
     alien autoconf bison bc build-essential cpio dbus-user-session daemonize dwarves fakeroot \ 
     flex fontconfig gawk git kmod libblkid-dev libffi-dev lxcfs libudev-dev libaio-dev libattr1-dev libelf-dev libpam-systemd \
     libssl-dev python3-dev python3-setuptools python3-cffi net-tools rsync snapd systemd-sysv sysvinit-utils uuid-dev zstd && \
@@ -764,6 +766,9 @@ RUN \
     --mount=type=cache,target=/var/cache/pip,sharing=private \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps 
+RUN \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb
 # RUN \
 #     apt-get --no-install-recommends -y remove libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev 
 
@@ -805,7 +810,9 @@ RUN \
     pip3 install cdir --user || devel_exists=false 
 
 USER r00t
-RUN rm -rf /var/cache/pip/*
+RUN rm -rf /var/cache/pip/* && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb
 WORKDIR /
 
 #########################
@@ -987,7 +994,7 @@ USER ${_AGL}
 # dvlp_base-gui-lite #USER ${_AGL}
 ######################
 # wsl2 required
-FROM dvlp_base-git AS dvlp_base-gui-lite
+FROM dvlp_skel-build AS dvlp_base-gui-lite
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -998,36 +1005,40 @@ USER r00t
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NONINTERACTIVE_SEEN=true
 ARG REFRESH_REPO=${REFRESH_REPO:-yes}
-WORKDIR /
-# COPY --from=dvlp_base-python-build-lite ./ ./
-# COPY --from=dvlp_base-msdot-build-lite ./ ./
-# COPY --from=dvlp_base-dind-build ./ ./
 # WORKDIR /
-# RUN \
-#     rm -f /etc/apt/apt.conf.d/docker-clean && \
-#     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-#     echo 'Acquire::Retries "30";' | tee /etc/apt/apt.conf.d/50kali
-# RUN \
-#     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-#     apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
-#     apt-get install --no-install-recommends -y curl && \
-#     rm -rf /var/lib/apt/lists && \
-#     rm -rf /var/cache/apt/archives/*.deb
-# # for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
-# RUN \
-#     --mount=type=cache,target=/var/cache/curl \
-#     curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg 
-# RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | tee /etc/apt/sources.list.d/brave-browser-release.list 
-# RUN \
-#     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-#     apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
-#     apt-get install --no-install-recommends -y brave-browser dolphin virtualbox vlc x11-apps  && \
-#     rm -rf /var/lib/apt/lists && \
-#     rm -rf /var/cache/apt/archives/*.deb
-# # change last line of this file - fix for brave-browser displaying empty windows
+COPY --from=dvlp_skel ./ ./
+COPY --from=dvlp_base-python-build-lite ./ ./
+COPY --from=dvlp_base-msdot-build-lite ./ ./
+COPY --from=dvlp_base-dind-build ./ ./
+
+WORKDIR /
+RUN \
+    rm -f /etc/apt/apt.conf.d/docker-clean && \
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
+    echo 'Acquire::Retries "30";' | tee /etc/apt/apt.conf.d/50kali
+RUN \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
+    apt-get install --install-recommends -y apt-transport-https curl 
+# for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
+RUN \
+    --mount=type=cache,target=/var/cache/curl \
+    curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg 
+RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | tee /etc/apt/sources.list.d/brave-browser-release.list 
+RUN \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    apt-get update -y && apt-get upgrade -y && \
+    # apt-get install --no-install-recommends -y brave-browser dolphin virtualbox vlc x11-apps  && \
+    # apt-get install  --install-recommends -y dolphin && \
+    apt-get install --install-recommends -y virtualbox && \
+    apt-get install --install-recommends -y brave-browser && \
+    apt-get install --install-recommends -y vlc && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb
+# change last line of this file - fix for brave-browser displaying empty windows
 # RUN cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
 #     head -n -1 /opt/brave.com/brave/brave-browser.old | tee /opt/brave.com/brave/brave-browser > /dev/null && \
-#     # now no longeer need to add --disable-gpu flag everytime
+#     # now no longer need to add --disable-gpu flag everytime
 #     echo '"$HERE/brave" "$@" " --disable-gpu " || true' | tee --append /opt/brave.com/brave/brave-browser > /dev/null
 COPY --from=dvlp_repo /repos/dvlw/dvlp/mnt/opt/* /opt/
 
@@ -1073,26 +1084,26 @@ RUN apt-get -y update && apt-get -y upgrade && \
     update-locale LANG="C" && \
     update-locale LC_ALL="C" && \
     ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime  
-# RUN apt-get install -y locales && \
-#     dpkg-reconfigure --frontend noninteractive locales && \
-#     echo "/usr/sbin/lightdm" | tee /etc/X11/default-display-manager && \
-#     locale-gen && update-locale 
-# RUN \
-#     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-#     apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
-#     apt-get install --no-install-recommends -y xrdp xfce4 xfce4-goodies && \
-#     # MUST install this separately and AFTER xfce or xfce prompting to choose default dm will hang/break build
-#     apt-get install --no-install-recommends -y lightdm && \
-#     rm -rf /var/lib/apt/lists && \
-#     rm -rf /var/cache/apt/archives/*.deb
-# RUN \
-#     --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
-#     # echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
-#     apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
-#     apt-get install --no-install-recommends -y kali-defaults kali-root-login desktop-base kali-win-kex && \
-#     rm -rf /var/lib/apt/lists && \
-#     rm -rf /var/cache/apt/archives/*.deb
-COPY --from=dvlp_repo --chown=r00t:r00t /repos/dvlw/dvlp/mnt/etc/* /etc/
+RUN apt-get install -y locales && \
+    dpkg-reconfigure --frontend noninteractive locales && \
+    echo "/usr/sbin/lightdm" | tee /etc/X11/default-display-manager && \
+    locale-gen && update-locale 
+RUN \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
+    apt-get install --no-install-recommends -y xrdp xfce4 xfce4-goodies && \
+    # MUST install this separately and AFTER xfce or xfce prompting to choose default dm will hang/break build
+    apt-get install --no-install-recommends -y lightdm && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb
+RUN \
+    --mount=type=cache,target=/var/cache/apt/archives,sharing=locked \
+    # echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
+    apt-get update -y && apt-get upgrade -y && apt-get autoremove -y && \
+    # apt-get install --no-install-recommends -y kali-defaults kali-root-login desktop-base kali-win-kex && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb
+COPY --from=dvlp_repo --chmod=755 /repos/dvlw/dvlp/mnt/etc/* /etc/
 WORKDIR /hal
 USER ${_AGL}
 
