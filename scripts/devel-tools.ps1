@@ -234,7 +234,7 @@ function wsl_docker_full_restart {
 }
 
 function wsl_docker_restart_new_win {
-    [dvlp_process_quiet]$dvlp_proc = [dvlp_process_same]::new("wsl_docker_restart;exit;")
+    [dvlp_process_same]$dvlp_proc = [dvlp_process_same]::new("wsl_docker_restart;exit;")
 }
 
 function wsl_docker_restart {
