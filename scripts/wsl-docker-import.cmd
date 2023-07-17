@@ -155,6 +155,15 @@ FOR /F "tokens=1* delims=-" %%G IN (
     )
     SET "image_service=%%H"
 )
+SET "image_service_base="
+FOR /F "tokens=1* delims=-" %%G IN (
+    "%image_service%" 
+) DO (
+    IF "!DVLP_DEBUG!"=="y" (
+        ECHO "parsed image service: %%H"
+    )
+    SET "image_service_base=%%H"
+)
 FOR /f "tokens=2 delims=-" %%a in ("%image_service%") do (
   SET image_service_suffix=%%a
 )
@@ -206,7 +215,7 @@ IF "!image_service_suffix!"=="kernel" (
     SET "build_args=--build-arg WIN_USER=%USERNAME%"
     SET "build_args=!build_args! --build-arg KERNEL_TYPE=basic"
     SET "build_repos=!build_repos! repo-kernel"
-    SET "!compose_services!=!image_service! kernel-make"
+    SET "!compose_services!=kernel-make !image_service_base! !image_service!"
     @REM SET "build_args= !build_args! --build-arg KERNEL_FEATURE='zfs'"
 )
 IF "!image_service!" NEQ "test" (
