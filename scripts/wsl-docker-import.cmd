@@ -160,9 +160,9 @@ FOR /F "tokens=1* delims=-" %%G IN (
     "%image_service%" 
 ) DO (
     IF "!DVLP_DEBUG!"=="y" (
-        ECHO "parsed image service: %%H"
+        ECHO "parsed image service: %%G"
     )
-    SET "image_service_base=%%H"
+    SET "image_service_base=%%G"
 )
 FOR /f "tokens=2 delims=-" %%a in ("%image_service%") do (
   SET image_service_suffix=%%a
