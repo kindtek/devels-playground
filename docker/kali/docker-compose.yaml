@@ -222,7 +222,15 @@ services:
         condition: service_completed_successfully
     labels:
       com.dvlp_skel-kernel.description: "skeleton"
-
+  kernel-maker:
+    extends: skel-build-kernel
+    build:
+      context: .
+      target: dvlp_kernel-make
+    depends_on:
+      skel-kernel:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
   base-bare:
     entrypoint: /bin/bash -c
     command:
@@ -255,6 +263,10 @@ services:
     image: kindtek/${HUB_REPO:-devels-playground}:kali-base-git
     labels:
       com.devels-playground.description: "basics + git"
+    depends_on:
+      kernel-maker:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
 
   base-git-kernel:
     entrypoint: /bin/bash -c
@@ -272,8 +284,7 @@ services:
       context: .
       target: dvlp_base-git-kernel
     depends_on:
-      skel-kernel:
-        # Wait for the ownership to change
+      kernel-maker:
         condition: service_completed_successfully
     labels:
       com.devels-playground.description: "basics + git"
