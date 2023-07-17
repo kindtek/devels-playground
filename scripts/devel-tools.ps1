@@ -563,7 +563,7 @@ if (!(Test-Path -Path "$env:KINDTEK_WIN_DVLW_PATH/powerhell/devel-spawn.ps1" -Pa
 }
 
 $local_paths = [string][System.Environment]::GetEnvironmentVariable('path')
-if ($local_paths -split ";" -notcontains "devel-tools.ps1") {
+if ($local_paths -split ";" -notcontains "devel-tools.ps1" ) {
     if ($local_paths -split ";" -notcontains "$env:KINDTEK_WIN_DVLW_PATH/scripts/"){
         $local_paths += ";$env:KINDTEK_WIN_DVLW_PATH/scripts/"
     }
