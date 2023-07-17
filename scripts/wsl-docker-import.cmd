@@ -5,7 +5,7 @@ SETLOCAL EnableDelayedExpansion
 
 doskey /exename docker.exe docker=C:\Program Files\Docker\Docker\Docker Desktop.exe > nul 2> nul
 doskey /exename wsl.exe wsl=C:\Windows\System32\wsl.exe > nul 2> nul
-SET "DVLP_DEBUG=n"
+SET "DVLP_DEBUG=y"
 :redo
 SET "module=main"
 SET wsl_version_int=2
@@ -18,8 +18,8 @@ SET mount_drive=C
 SET image_repo=kindtek
 SET image_repo_mask=kindtek
 SET "image_name_tag=%~1"
-SET "non_interactive_distro_name=%~2"
-SET "options=%~3"
+SET "non_interactive_distro_name=%2"
+SET "options=%3"
 SET "display_options=n"
 IF "!options!"=="default" (
     SET "default_wsl_distro=y"
@@ -64,8 +64,8 @@ IF "!DVLP_DEBUG!"=="y" (
     ECHO IMG_NAME !image_name!
     ECHO IMG_TAG !image_tag!
     ECHO IMG_NAME_TAG !image_name_tag!
-    ECHO OLD_IMG_NAME_TAG %~1
-    ECHO WSL_DISTRO %~1
+    ECHO WSL_DISTRO_NAME %~2
+    ECHO DOCKER_HUB %~1
     @REM ECHO "image_tag set to arg: '%1'  ('%~1') as !image_tag!"
 )
 
@@ -82,6 +82,7 @@ IF "!non_interactive_distro_name!"=="" (
 ) ELSE (
     IF "!DVLP_DEBUG!"=="y" (
         ECHO "NON-interactive session"
+        ECHO "!non_interactive_distro_name!"
     )
     SET "interactive=n"
     @REM SET "wsl_distro=!non_interactive_distro_name!"
@@ -153,16 +154,6 @@ FOR /F "tokens=1* delims=-" %%G IN (
         ECHO "parsed image service: %%H"
     )
     SET "image_service=%%H"
-    FOR /F "tokens=1* delims=-" %%A IN (
-        "%image_tag%" 
-    ) DO (
-        IF %%B NEQ !image_service! (
-            SET "image_service_base=%%B"
-        )
-        IF "!DVLP_DEBUG!"=="y" (
-            ECHO "parsed image service base: %%H"
-        )
-    )
 )
 FOR /f "tokens=2 delims=-" %%a in ("%image_service%") do (
   SET image_service_suffix=%%a
@@ -214,7 +205,7 @@ IF "!image_service_suffix!"=="kernel" (
     @REM TODO: add prompt (when noninteractive) for kernel type/feature
     SET "build_args=--build-arg WIN_USER=%USERNAME%"
     SET "build_args=!build_args! --build-arg KERNEL_TYPE=basic"
-    SET "build_repos=!build_repos! repo-kernel kernel-make"
+    SET "build_repos=!build_repos! repo-kernel"
     SET "!compose_services!=!image_service! kernel-make"
     @REM SET "build_args= !build_args! --build-arg KERNEL_FEATURE='zfs'"
 )
@@ -223,12 +214,6 @@ IF "!image_service!" NEQ "test" (
     docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !build_repos!
 )
 ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
-docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
-docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
-docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
-docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
-docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
-docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
 docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
 
 SET "image_built=y"
@@ -330,9 +315,13 @@ SET "docker_image_do="
 ECHO initializing the image container...
 ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml up !image_service! --detach
 docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml up !image_service! --detach
-ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo apt update -y && sudo apt upgrade -y
-docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo apt update -y && sudo apt upgrade -y
-docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! apt update -y && apt upgrade -y
+ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives && sudo apt update -y && sudo apt upgrade -y
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo apt update -y
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo apt upgrade -y
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! rm -vrf /var/cache/dvlp/archives
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! apt update -y
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! apt upgrade -y
 @REM @TODO: handle WSL_DOCKER_IMG_ID case of multiple ids returned from docker images query
 ECHO "docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml images -q !image_service! > !docker_image_id_path!"
 docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml images -q !image_service! > !docker_image_id_path!
@@ -888,7 +877,6 @@ IF "!interactive!"=="n" (
     SET "quiet_home_prompt=y"
 ) ELSE (
     IF "!options!"=="options" (
-        SET "quiet_home_prompt=y"
         SET "quiet_home_prompt=n"
     ) ELSE (
         SET "quiet_home_prompt=n"
