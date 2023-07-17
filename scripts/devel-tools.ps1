@@ -1,5 +1,8 @@
 $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
+if ((Test-Path -Path "$env:KINDTEK_WIN_DVLW_PATH/powerhell/devel-spawn.ps1" -PathType Leaf)) {
+    . $env:KINDTEK_WIN_DVLW_PATH/powerhell/devel-spawn.ps1
+}
 
 function test_tools {
     return $true
@@ -558,14 +561,13 @@ function run_installer {
     # }
 }
 
-if (!(Test-Path -Path "$env:KINDTEK_WIN_DVLW_PATH/powerhell/devel-spawn.ps1" -PathType Leaf)) {
-    . $env:KINDTEK_WIN_DVLW_PATH/scripts/devel-spawn.ps1
-}
-
 $local_paths = [string][System.Environment]::GetEnvironmentVariable('path')
 if ($local_paths -split ";" -notcontains "devel-tools.ps1" ) {
     if ($local_paths -split ";" -notcontains "$env:KINDTEK_WIN_DVLW_PATH/scripts/"){
         $local_paths += ";$env:KINDTEK_WIN_DVLW_PATH/scripts/"
+    }
+    if ($local_paths -split ";" -notcontains "$env:KINDTEK_WIN_DVLW_PATH/powerhell/devel-spawn.ps1"){
+        $local_paths += ";$env:KINDTEK_WIN_DVLW_PATH/powerhell/devel-spawn.ps1"
     }
     $local_paths += ";$env:KINDTEK_WIN_DVLW_PATH/scripts/devel-tools.ps1"
     
@@ -579,6 +581,9 @@ $machine_paths = [string][System.Environment]::GetEnvironmentVariable('path', [S
 if ($machine_paths -split ";" -notcontains "devel-tools.ps1") {
     if ($machine_paths -split ";" -notcontains "$env:KINDTEK_WIN_DVLW_PATH/scripts/"){
         $machine_paths += ";$env:KINDTEK_WIN_DVLW_PATH/scripts/"
+    }
+    if ($machine_paths -split ";" -notcontains "$env:KINDTEK_WIN_DVLW_PATH/powerhell/devel-spawn.ps1"){
+        $machine_paths += ";$env:KINDTEK_WIN_DVLW_PATH/powerhell/devel-spawn.ps1"
     }
     $machine_paths += ";$env:KINDTEK_WIN_DVLW_PATH/scripts/devel-tools.ps1"
     
