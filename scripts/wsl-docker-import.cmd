@@ -146,7 +146,6 @@ FOR /F "tokens=1* delims=-" %%a IN (
     )
     SET "image_distro=%%a"
 )
-SET "image_service_suffix=%image_tag:-=" & SET "image_service=%"
 FOR /F "tokens=1* delims=-" %%G IN (
     "%image_tag%" 
 ) DO (
@@ -154,6 +153,22 @@ FOR /F "tokens=1* delims=-" %%G IN (
         ECHO "parsed image service: %%H"
     )
     SET "image_service=%%H"
+    FOR /F "tokens=1* delims=-" %%A IN (
+        "%image_tag%" 
+    ) DO (
+        IF %%B NEQ !image_service! (
+            SET "image_service_base=%%B"
+        )
+        IF "!DVLP_DEBUG!"=="y" (
+            ECHO "parsed image service base: %%H"
+        )
+    )
+)
+FOR /f "tokens=2 delims=-" %%a in ("%image_service%") do (
+  SET image_service_suffix=%%a
+)
+IF "!DVLP_DEBUG!"=="y" (
+    ECHO "parsed image service suffix: !image_service_suffix!"
 )
 @REM do not try to build sources that are not kindtek
 IF "!image_repo!" NEQ "kindtek" (
@@ -199,7 +214,7 @@ IF "!image_service_suffix!"=="kernel" (
     @REM TODO: add prompt (when noninteractive) for kernel type/feature
     SET "build_args=--build-arg WIN_USER=%USERNAME%"
     SET "build_args=!build_args! --build-arg KERNEL_TYPE=basic"
-    SET "build_repos=!build_repos! repo-kernel"
+    SET "build_repos=!build_repos! repo-kernel kernel-make"
     SET "!compose_services!=!image_service! kernel-make"
     @REM SET "build_args= !build_args! --build-arg KERNEL_FEATURE='zfs'"
 )
@@ -208,6 +223,12 @@ IF "!image_service!" NEQ "test" (
     docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !build_repos!
 )
 ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
 docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
 
 SET "image_built=y"
