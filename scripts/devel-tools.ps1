@@ -2,6 +2,8 @@ $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
 if ((Test-Path -Path "$env:KINDTEK_WIN_DVLW_PATH/powerhell/devel-spawn.ps1" -PathType Leaf)) {
     . $env:KINDTEK_WIN_DVLW_PATH/powerhell/devel-spawn.ps1
+} elseif ((Test-Path -Path "${USERPROFILE}/devel-spawn.ps1" -PathType Leaf)) {
+    . ${USERPROFILE}/devel-spawn.ps1
 }
 
 function test_tools {
