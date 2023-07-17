@@ -483,9 +483,6 @@ wsl.exe --import !wsl_distro! !install_location! !image_save_path! --version !ws
 @REM     SET "failed_before=y"
 @REM     GOTO error_restart_prompt
 @REM )
-IF "!image_repo!"=="kindtek" (
-    wsl.exe -d !wsl_distro! --exec "sudo reclone-gh.sh"
-)
 IF "!image_service_suffix!"=="kernel" (
     wsl.exe -d !wsl_distro! --cd '/r00t/dvlw/dvlp/kernels/linux' --exec "bash install-kernel.sh ^^"%USERPROFILE%^^" latest"
 )
