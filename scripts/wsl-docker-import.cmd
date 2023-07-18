@@ -5,7 +5,7 @@ SETLOCAL EnableDelayedExpansion
 
 doskey /exename docker.exe docker=C:\Program Files\Docker\Docker\Docker Desktop.exe > nul 2> nul
 doskey /exename wsl.exe wsl=C:\Windows\System32\wsl.exe > nul 2> nul
-SET "DVLP_DEBUG=y"
+SET "DVLP_DEBUG=n"
 :redo
 SET "module=main"
 SET wsl_version_int=2
@@ -539,7 +539,7 @@ IF "!interactive!"=="y" (
     @REM make sure windows paths transfer
     SET /P "wsl_launch=$ "
     IF /I "!wsl_launch!"=="" (
-        wsl.exe -d !wsl_distro! --cd /
+        wsl -d !wsl_distro! --cd /
     ) 
 )
 
