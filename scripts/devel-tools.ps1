@@ -1,17 +1,23 @@
 $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
 
+$global:devel_tools = 'sourced'
 try {
     set_dvlp_envs
 } catch {
     if ((Test-Path -Path "$env:KINDTEK_WIN_DVLW_PATH/powerhell/devel-spawn.ps1" -PathType Leaf)) {
         write-output "dvltls 8: dot sourcing devel-spawn"
         . $env:KINDTEK_WIN_DVLW_PATH/powerhell/devel-spawn.ps1
+        $global:devel_spawn = 'sourced'
+        echo 'devel_spawn sourced'
     } elseif ((Test-Path -Path "${USERPROFILE}/dvlp.ps1" -PathType Leaf)) {
         write-output "dvltls 11: dot sourcing dvlp"
         . ${USERPROFILE}/dvlp.ps1
+        $global:devel_spawn = 'sourced'
+        echo 'devel_spawn sourced'
     }    
 }
+echo 'devel_tools sourced'
 
 function test_tools {
     return $true
