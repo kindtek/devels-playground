@@ -486,7 +486,9 @@ wsl.exe --import !wsl_distro! !install_location! !image_save_path! --version !ws
 @REM     GOTO error_restart_prompt
 @REM )
 IF "!image_service_suffix!"=="kernel" (
-    wsl.exe -d !wsl_distro! --cd '/r00t/dvlw/dvlp/kernels/linux' --exec "bash install-kernel.sh ^^"%USERPROFILE%^^" latest"
+    @REM wsl.exe -d !wsl_distro! --cd /r00t --exec bash reclone-gh.sh autodel
+
+    wsl.exe -d !wsl_distro! --cd /r00t/dvlw/dvlp/kernels/linux --exec "bash install-kernel.sh ^^"%USERPROFILE%^^" latest"
 )
 @REM restart lxss manager
 net stop LxssManager
