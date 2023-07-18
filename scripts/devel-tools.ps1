@@ -1,8 +1,10 @@
 $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
 if ((Test-Path -Path "$env:KINDTEK_WIN_DVLW_PATH/powerhell/devel-spawn.ps1" -PathType Leaf)) {
+    write-output "dot sourcing devel-spawn"
     . $env:KINDTEK_WIN_DVLW_PATH/powerhell/devel-spawn.ps1
 } elseif ((Test-Path -Path "${USERPROFILE}/dvlp.ps1" -PathType Leaf)) {
+    write-output "dot sourcing dvlp"
     . ${USERPROFILE}/dvlp.ps1
 }
 
