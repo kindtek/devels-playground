@@ -1,11 +1,16 @@
 $host.UI.RawUI.ForegroundColor = "White"
 $host.UI.RawUI.BackgroundColor = "Black"
-if ((Test-Path -Path "$env:KINDTEK_WIN_DVLW_PATH/powerhell/devel-spawn.ps1" -PathType Leaf)) {
-    write-output "dot sourcing devel-spawn"
-    . $env:KINDTEK_WIN_DVLW_PATH/powerhell/devel-spawn.ps1
-} elseif ((Test-Path -Path "${USERPROFILE}/dvlp.ps1" -PathType Leaf)) {
-    write-output "dot sourcing dvlp"
-    . ${USERPROFILE}/dvlp.ps1
+
+try {
+    set_dvlp_envs
+} catch {
+    if ((Test-Path -Path "$env:KINDTEK_WIN_DVLW_PATH/powerhell/devel-spawn.ps1" -PathType Leaf)) {
+        write-output "dvltls 8: dot sourcing devel-spawn"
+        . $env:KINDTEK_WIN_DVLW_PATH/powerhell/devel-spawn.ps1
+    } elseif ((Test-Path -Path "${USERPROFILE}/dvlp.ps1" -PathType Leaf)) {
+        write-output "dvltls 11: dot sourcing dvlp"
+        . ${USERPROFILE}/dvlp.ps1
+    }    
 }
 
 function test_tools {
@@ -369,7 +374,6 @@ function require_docker_online {
     $docker_settings_reset = $true
     Write-Host "`r`n`r`nloading docker desktop ..."
     Write-Host "waiting for docker backend to come online ..."  
-    set_dvlp_envs
     do {   
         try {
             if ( (is_docker_desktop_online) -eq $false ) {
@@ -564,4 +568,3 @@ function run_installer {
     #     # }
     # }
 }
-
