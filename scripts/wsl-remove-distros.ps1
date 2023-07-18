@@ -37,7 +37,8 @@ WARNING: removing this distro is not a good idea
     $distroName = $distro.Substring($index_start, $index_stop)
     $distroName = $distroName.Split('', [System.StringSplitOptions]::RemoveEmptyEntries) -join ''
     $distroName -replace '\s', ''
-
+    Write-Host `r`n`r`n`r`n`t
+    wsl -l -v
     $removeDistro = Read-Host "`n`n`n`n`nDo you want to remove ${distroName}? $warning_str(Y/N)"
 
     if ($removeDistro.ToLower() -eq "y") {
