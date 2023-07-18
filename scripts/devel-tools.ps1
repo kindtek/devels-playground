@@ -559,9 +559,23 @@ function run_installer {
 
     $new_install = install_dependencies $env:KINDTEK_WIN_DVLW_PATH
     if ($new_install -eq $true) {
-        Write-Host "`r`nsoftware installations complete! restart(s) may be needed to begin WSL import phase. `r`n`r`n" 
+        Write-Host -NoNewline "`r`nwaiting for installation processes to complete ..."
+
+        while ((!(Test-Path -Path "$env:KINDTEK_WIN_DVLW_PATH/.docker-installed" -PathType Leaf)) -and (!(Test-Path -Path "$env:KINDTEK_WIN_DVLW_PATH/.vscode-installed" -PathType Leaf)) -and (!(Test-Path -Path "$env:KINDTEK_WIN_DVLW_PATH/.wterminal-installed" -PathType Leaf)) -and (!(Test-Path -Path "$env:KINDTEK_WIN_DVLW_PATH/.python-installed" -PathType Leaf))) {
+            Start-Sleep 10
+            Write-Host -NoNewline "."
+            Start-Sleep 1
+            Write-Host -NoNewline "."
+            Start-Sleep 1
+            Write-Host -NoNewline "."
+        }
+
+        Write-Host "`r`n`r`nsoftware installations complete! restart(s) may be needed to begin WSL import phase. `r`n`r`n" 
+
         reboot_prompt
     }
+
+    
 
 
     # Write-Host "$([char]27)[2J" 
