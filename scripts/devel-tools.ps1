@@ -5,9 +5,9 @@ $global:devel_tools = 'sourced'
 try {
     set_dvlp_envs
 } catch {
-    if ((Test-Path -Path "$env:KINDTEK_WIN_DVLW_PATH/powerhell/devel-spawn.ps1" -PathType Leaf)) {
+    if ((Test-Path -Path "$env:KINDTEK_DEVEL_SPAWN" -PathType Leaf)) {
         write-output "dvltls 8: dot sourcing devel-spawn"
-        . $env:KINDTEK_WIN_DVLW_PATH/powerhell/devel-spawn.ps1
+        . $env:KINDTEK_DEVEL_SPAWN
         $global:devel_spawn = 'sourced'
         echo 'devel_spawn sourced'
     } elseif ((Test-Path -Path "${USERPROFILE}/dvlp.ps1" -PathType Leaf)) {
