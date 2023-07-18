@@ -399,36 +399,36 @@ IF "!wsl!" NEQ "y" (
 SET "module=docker_image_export"
 ECHO:
 @REM create diskman.ps1 file
-ECHO "select vdisk file=!install_location!\ext4.vhdx" > !diskman_file_path!
-ECHO "attach vdisk readonly" >> !diskman_file_path!
-ECHO "compact vdisk" >> !diskman_file_path!
-ECHO "detach vdisk" >> !diskman_file_path!
+ECHO select vdisk file^=!install_location!\\ext4\.vhdx > !diskman_file_path!
+ECHO attach vdisk readonly >> !diskman_file_path!
+ECHO compact vdisk >> !diskman_file_path!
+ECHO detach vdisk >> !diskman_file_path!
 @REM create diskshrink.ps1 file
-ECHO "try {" > !diskshrink_file_path!
-ECHO "   # Self-elevate the privileges" >> !diskshrink_file_path!
-ECHO "   if (-Not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] 'Administrator')) {" >> !diskshrink_file_path!
-ECHO "       if ([int](Get-CimInstance -Class Win32_OperatingSystem | Select-Object -ExpandProperty BuildNumber) -ge 6000) {" >> !diskshrink_file_path!
-ECHO "           $CommandLine = -File " + $MyInvocation.MyCommand.Path + " " + $MyInvocation.UnboundArguments >> !diskshrink_file_path!
-ECHO "           Start-Process -FilePath PowerShell.exe -Verb Runas -WindowStyle 'Maximized' -ArgumentList $CommandLine" >> !diskshrink_file_path!
-ECHO "           Exit" >> !diskshrink_file_path!
-ECHO "       }" >> !diskshrink_file_path!
-ECHO "   }" >> !diskshrink_file_path!
-ECHO "}  catch {}" >> !diskshrink_file_path!
-ECHO "docker system df" >> !diskshrink_file_path!
-ECHO "docker builder prune -af --volumes" >> !diskshrink_file_path!
-ECHO "docker system prune -af --volumes" >> !diskshrink_file_path!
-ECHO "stop-service -name docker* -force;"  >> !diskshrink_file_path!
-ECHO "# wsl.exe --exec sudo shutdown -h now;" >> !diskshrink_file_path!
-ECHO "# wsl.exe --exec sudo shutdown -r 0;" >> !diskshrink_file_path!
-ECHO "wsl.exe --shutdown;" >> !diskshrink_file_path!
-ECHO "stop-service -name wsl* -force -ErrorAction SilentlyContinue;" >> !diskshrink_file_path!
-ECHO "stop-process -name docker* -force -ErrorAction SilentlyContinue;" >> !diskshrink_file_path!
-ECHO "stop-process -name wsl* -force -ErrorAction SilentlyContinue;" >> !diskshrink_file_path!
-ECHO "Invoke-Command -ScriptBlock { diskpart /s !install_location!\diskman.ps1 } -ArgumentList '-Wait -Verbose';" >> !diskshrink_file_path!
-ECHO "start-service wsl*;" >> !diskshrink_file_path!
-ECHO "start-service docker*;" >> !diskshrink_file_path!
-ECHO "write-host 'done.';" >> !diskshrink_file_path!
-ECHO "read-host" >> !diskshrink_file_path!
+ECHO try { > !diskshrink_file_path!
+ECHO    # Self-elevate the privileges >> !diskshrink_file_path!
+ECHO    if (-Not ^([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent^(^)^).IsInRole^([Security.Principal.WindowsBuiltInRole] ^'Administrator^')^) { >> !diskshrink_file_path!
+ECHO        if ^([int]^(Get-CimInstance -Class Win32_OperatingSystem ^| Select-Object -ExpandProperty BuildNumber^) -ge 6000^) { >> !diskshrink_file_path!
+ECHO            $CommandLine ^= -File $MyInvocation.MyCommand.Path + ^" ^" + $MyInvocation.UnboundArguments >> !diskshrink_file_path!
+ECHO            Start-Process -FilePath PowerShell.exe -Verb Runas -WindowStyle ^'Maximized^' -ArgumentList $CommandLine >> !diskshrink_file_path!
+ECHO            Exit >> !diskshrink_file_path!
+ECHO        } >> !diskshrink_file_path!
+ECHO    } >> !diskshrink_file_path!
+ECHO }  catch {} >> !diskshrink_file_path!
+ECHO docker system df >> !diskshrink_file_path!
+ECHO docker builder prune -af --volumes >> !diskshrink_file_path!
+ECHO docker system prune -af --volumes >> !diskshrink_file_path!
+ECHO stop-service -name docker* -force;  >> !diskshrink_file_path!
+ECHO # wsl.exe --exec sudo shutdown -h now^; >> !diskshrink_file_path!
+ECHO # wsl.exe --exec sudo shutdown -r 0^; >> !diskshrink_file_path!
+ECHO wsl\.exe --shutdown^; >> !diskshrink_file_path!
+ECHO stop-service -name wsl* -force -ErrorAction SilentlyContinue^; >> !diskshrink_file_path!
+ECHO stop-process -name docker* -force -ErrorAction SilentlyContinue^; >> !diskshrink_file_path!
+ECHO stop-process -name wsl* -force -ErrorAction SilentlyContinue^; >> !diskshrink_file_path!
+ECHO Invoke-Command -ScriptBlock { diskpart /s !install_location!\diskman\.ps1 } -ArgumentList ^'-Wait -Verbose^'^; >> !diskshrink_file_path!
+ECHO start-service wsl*^; >> !diskshrink_file_path!
+ECHO start-service docker*^; >> !diskshrink_file_path!
+ECHO write-host 'done.'^; >> !diskshrink_file_path!
+ECHO read-host >> !diskshrink_file_path!
 ECHO exporting image (!WSL_DOCKER_IMG_ID!) as container (!WSL_DOCKER_CONTAINER_ID!)...
 ECHO docker export !WSL_DOCKER_CONTAINER_ID! ^> !image_save_path!
 @SET /A _tic=%time:~0,2%*3600^
