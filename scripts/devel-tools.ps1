@@ -52,7 +52,7 @@ function install_dependencies {
     $software_name = "Windows Terminal"
     if (!(Test-Path -Path "$git_path/.wterminal-installed" -PathType Leaf)) {
         Write-Host "Installing $software_name ..." -ForegroundColor DarkCyan
-        [dvlp_process_same]$dvlp_proc_winget = [dvlp_process_same]::new("winget install Microsoft.PowerShell;winget install Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;", 'wait')
+        [dvlp_process_embed]$dvlp_proc_winget = [dvlp_process_embed]::new("winget install Microsoft.PowerShell;winget install Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade Microsoft.WindowsTerminal --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;", 'wait')
         Write-Host "$software_name installed" -ForegroundColor DarkCyan | Out-File -FilePath "$git_path/.wterminal-installed"
         $new_install = $true
     }
@@ -64,7 +64,7 @@ function install_dependencies {
     if (!(Test-Path -Path "$git_path/.vscode-installed" -PathType Leaf)) {
         Write-Host "Installing $software_name ..." -ForegroundColor DarkCyan
         # Invoke-Expression [string]$env:KINDTEK_NEW_PROC_NOEXIT -command "winget install Microsoft.VisualStudioCode --silent --locale en-US --accept-package-agreements --accept-source-agreements --override '/SILENT /mergetasks=`"!runcode,addcontextmenufiles,addcontextmenufolders`"'" 
-        [dvlp_process_same]$dvlp_proc_vscode = [dvlp_process_same]::new("winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode, addcontextmenufiles, addcontextmenufolders`"';winget upgrade Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode, addcontextmenufiles, addcontextmenufolders`"';exit;", 'wait')
+        [dvlp_process_embed]$dvlp_proc_vscode = [dvlp_process_embed]::new("winget install Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode, addcontextmenufiles, addcontextmenufolders`"';winget upgrade Microsoft.VisualStudioCode --override '/SILENT /mergetasks=`"!runcode, addcontextmenufiles, addcontextmenufolders`"';exit;", 'wait')
         Write-Host "$software_name installed" -ForegroundColor DarkCyan | Out-File -FilePath "$git_path/.vscode-installed"
         $new_install = $true
     }
@@ -78,10 +78,10 @@ function install_dependencies {
         # winget uninstall --id=Docker.DockerDesktop
         # winget install --id=Docker.DockerDesktop --location="c:\docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements
         # winget upgrade --id=Docker.DockerDesktop --location="c:\docker" --silent --locale en-US --accept-package-agreements --accept-source-agreements
-        [dvlp_process_same]$dvlp_proc = [dvlp_process_same]::new("winget install --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;", 'wait')
+        [dvlp_process_embed]$dvlp_proc = [dvlp_process_embed]::new("winget install --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade --id=Docker.DockerDesktop --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;", 'wait')
         # update using rolling stable url
         Write-Host "Downloading $software_name update/installation file ..." -ForegroundColor DarkCyan
-        [dvlp_process_same]$dvlp_proc_docker = [dvlp_process_same]::new("Invoke-WebRequest -Uri https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe -OutFile DockerDesktopInstaller.exe;.\DockerDesktopInstaller.exe;Remove-Item DockerDesktopInstaller.exe -Force -ErrorAction SilentlyContinue;exit;", 'wait')
+        [dvlp_process_embed]$dvlp_proc_docker = [dvlp_process_embed]::new("Invoke-WebRequest -Uri https://desktop.docker.com/win/stable/Docker%20Desktop%20Installer.exe -OutFile DockerDesktopInstaller.exe;.\DockerDesktopInstaller.exe;Remove-Item DockerDesktopInstaller.exe -Force -ErrorAction SilentlyContinue;exit;", 'wait')
         # & 'C:\Program Files\Docker\Docker\Docker Desktop.exe'
         # "Docker Desktop Installer.exe" install --accept-license --backend=wsl-2 --installation-dir=c:\docker 
         Write-Host "$software_name installed" -ForegroundColor DarkCyan | Out-File -FilePath "$git_path/.docker-installed"
@@ -97,7 +97,7 @@ function install_dependencies {
         Write-Host "Installing $software_name ..." -ForegroundColor DarkCyan
         # @TODO: add cdir and python to install with same behavior as other installs above
         # not eloquent at all but good for now
-        [dvlp_process_same]$dvlp_proc_python = [dvlp_process_same]::new("winget install --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;", 'wait')
+        [dvlp_process_embed]$dvlp_proc_python = [dvlp_process_embed]::new("winget install --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements;winget upgrade --id=Python.Python.3.10  --silent --locale en-US --accept-package-agreements --accept-source-agreements;exit;", 'wait')
         # ... even tho cdir does not appear to be working on windows
         # $cmd_command = pip install cdir
         # Start-Process -FilePath PowerShell.exe -NoNewWindow -ArgumentList $cmd_command
@@ -206,7 +206,7 @@ function reset_wsl_settings {
 }
 
 function wsl_docker_full_restart_new_win {
-    [dvlp_process_same]$dvlp_proc = [dvlp_process_same]::new("wsl_docker_full_restart;exit;", 'wait')
+    [dvlp_process_embed]$dvlp_proc = [dvlp_process_embed]::new("wsl_docker_full_restart;exit;", 'wait')
 }
 
 function wsl_docker_full_restart {
@@ -252,7 +252,7 @@ function wsl_docker_full_restart {
 }
 
 function wsl_docker_restart_new_win {
-    [dvlp_process_same]$dvlp_proc = [dvlp_process_same]::new("wsl_docker_restart;exit;")
+    [dvlp_process_embed]$dvlp_proc = [dvlp_process_embed]::new("wsl_docker_restart;exit;")
 }
 
 function wsl_docker_restart {
@@ -297,7 +297,7 @@ function env_refresh {
 }
 
 function env_refresh_new_win {
-    [dvlp_process_same]$dvlp_proc =[dvlp_process_same]::new("wsl_docker_full_restart;exit;", 'wait')
+    [dvlp_process_embed]$dvlp_proc =[dvlp_process_embed]::new("wsl_docker_full_restart;exit;", 'wait')
     # env_refresh
 }
 
@@ -369,7 +369,7 @@ function start_docker_desktop {
 }
 
 function require_docker_online_new_win {
-    [dvlp_process_same]$dvlp_proc = [dvlp_process_same]::new("require_docker_online", 'wait')
+    [dvlp_process_embed]$dvlp_proc = [dvlp_process_embed]::new("require_docker_online", 'wait')
     # require_docker_online
 }
 
