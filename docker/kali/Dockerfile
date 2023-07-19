@@ -677,7 +677,7 @@ USER ${_AGL}
 ########################
 # dvlp_base-git-kernel #
 ########################
-FROM dvlp_base-git AS dvlp_base-git-kernel
+FROM scratch AS dvlp_base-git-kernel
 # COPY --from=dvlp_skel-build-kernel         ./      ./
 ARG _AGL_USR
 ARG _DVL_USR
@@ -689,6 +689,7 @@ ARG REFRESH_REPO
 USER r00t
 WORKDIR /
 COPY --from=dvlp_kernel-install ./ ./
+COPY --from=dvlp_skel-kernel ./ ./
 WORKDIR /hal
 USER ${_AGL}
 
@@ -776,7 +777,7 @@ USER ${_AGL}
 #####################
 # dvlp_base-python-build #
 #####################
-FROM dvlp_base-git AS dvlp_base-python-build
+FROM dvlp_skel AS dvlp_base-python-build
 ARG _AGL_USR
 ARG _DVL_USR
 ENV _AGL=$_AGL_USR
@@ -805,7 +806,7 @@ RUN \
 ###############################
 # dvlp_base-python-build-lite #
 ###############################
-FROM dvlp_base-git AS dvlp_base-python-build-lite
+FROM dvlp_skel AS dvlp_base-python-build-lite
 USER r00t
 ARG angel_exists=true
 ARG devel_exists=true
@@ -849,9 +850,10 @@ WORKDIR /
 #########################
 # dvlp_base-python-lite #
 #########################
-FROM dvlp_base-git AS dvlp_base-python-lite
+FROM scratch AS dvlp_base-python-lite
 USER r00t
 WORKDIR / 
+COPY --from=dvlp_skel-kernel-lite ./ ./
 COPY --from=dvlp_base-python-build-lite ./ ./
 WORKDIR /hal
 USER ${_AGL}
@@ -859,7 +861,7 @@ USER ${_AGL}
 ####################
 # dvlp_base-python #
 ###################
-FROM dvlp_base-git AS dvlp_base-python
+FROM scratch AS dvlp_base-python
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -868,8 +870,29 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 USER r00t
 WORKDIR / 
+COPY --from=dvlp_skel ./ ./
+COPY --from=dvlp_skel-kernel ./ ./
 COPY --from=dvlp_base-python-build ./ ./
 COPY --from=dvlp_base-python-build-lite ./ ./
+WORKDIR /hal
+USER ${_AGL}
+
+########################
+# dvlp_base-python-kernel #
+########################
+FROM scratch AS dvlp_base-python-kernel
+# COPY --from=dvlp_skel-build-kernel         ./      ./
+ARG _AGL_USR
+ARG _DVL_USR
+ARG _ADM_USR
+ENV _AGL=$_AGL_USR
+ENV _DVL=$_DVL_USR
+ENV _ADM=$_ADM_USR
+ARG REFRESH_REPO
+USER r00t
+WORKDIR /
+COPY --from=dvlp_kernel-install ./ ./
+COPY --from=dvlp_base-python-build ./ ./
 WORKDIR /hal
 USER ${_AGL}
 
@@ -878,7 +901,7 @@ USER ${_AGL}
 ##############################
 # dvlp_base-msdot-build-lite #
 #############################
-FROM dvlp_base-git AS dvlp_base-msdot-build-lite
+FROM dvlp_skel AS dvlp_base-msdot-build-lite
 USER r00t
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
@@ -930,7 +953,7 @@ USER ${_AGL}
 ########################
 # dvlp_base-msdot-lite #
 ########################
-FROM dvlp_base-git AS dvlp_base-msdot-lite
+FROM scratch AS dvlp_base-msdot-lite
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -939,6 +962,8 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 USER r00t
 WORKDIR /
+COPY --from=dvlp_skel ./ ./
+COPY --from=dvlp_base-git ./ ./
 COPY --from=dvlp_base-python-build-lite ./ ./
 COPY --from=dvlp_base-msdot-build-lite ./ ./
 WORKDIR /hal
@@ -947,7 +972,7 @@ USER ${_AGL}
 ###################
 # dvlp_base-msdot #
 ###################
-FROM dvlp_base-git AS dvlp_base-msdot
+FROM scratch AS dvlp_base-msdot
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -956,6 +981,29 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 USER r00t
 WORKDIR /
+COPY --from=dvlp_skel ./ ./
+COPY --from=dvlp_base-git ./ ./
+COPY --from=dvlp_base-python-build ./ ./
+COPY --from=dvlp_base-msdot-build ./ ./
+WORKDIR /hal
+USER ${_AGL}
+
+########################
+# dvlp_base-msdot-kernel #
+########################
+FROM scratch AS dvlp_base-msdot-kernel
+# COPY --from=dvlp_skel-build-kernel         ./      ./
+ARG _AGL_USR
+ARG _DVL_USR
+ARG _ADM_USR
+ENV _AGL=$_AGL_USR
+ENV _DVL=$_DVL_USR
+ENV _ADM=$_ADM_USR
+ARG REFRESH_REPO
+USER r00t
+WORKDIR /
+COPY --from=dvlp_kernel-install ./ ./
+COPY --from=dvlp_skel-kernel ./ ./
 COPY --from=dvlp_base-python-build ./ ./
 COPY --from=dvlp_base-msdot-build ./ ./
 WORKDIR /hal
@@ -997,11 +1045,13 @@ USER ${_AGL}
 #######################
 # dvlp_base-dind-lite #
 #######################
-FROM dvlp_base-git AS dvlp_base-dind-lite
+FROM scratch AS dvlp_base-dind-lite
 USER r00t
 WORKDIR /
-COPY --from=dvlp_base-python-build-lite ./ ./
-COPY --from=dvlp_base-msdot-build-lite ./ ./
+
+COPY --from=dvlp_skel ./ ./
+COPY --from=dvlp_base-python-build ./ ./
+COPY --from=dvlp_base-msdot-build ./ ./
 COPY --from=dvlp_base-dind-build ./ ./
 WORKDIR /hal
 USER ${_AGL}
@@ -1009,7 +1059,7 @@ USER ${_AGL}
 ##################
 # dvlp_base-dind #
 ##################
-FROM dvlp_base-git AS dvlp_base-dind
+FROM scratch AS dvlp_base-dind
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -1018,10 +1068,33 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 USER r00t
 WORKDIR /
+COPY --from=dvlp_skel ./ ./
 COPY --from=dvlp_base-python-build ./ ./
 COPY --from=dvlp_base-msdot-build ./ ./
 COPY --from=dvlp_base-dind-build ./ ./
 RUN systemctl start docker
+WORKDIR /hal
+USER ${_AGL}
+
+########################
+# dvlp_base-dind-kernel #
+########################
+FROM scratch AS dvlp_base-dind-kernel
+# COPY --from=dvlp_skel-build-kernel         ./      ./
+ARG _AGL_USR
+ARG _DVL_USR
+ARG _ADM_USR
+ENV _AGL=$_AGL_USR
+ENV _DVL=$_DVL_USR
+ENV _ADM=$_ADM_USR
+ARG REFRESH_REPO
+USER r00t
+WORKDIR /
+COPY --from=dvlp_kernel-install ./ ./
+COPY --from=dvlp_skel-kernel ./ ./
+COPY --from=dvlp_base-python-build ./ ./
+COPY --from=dvlp_base-msdot-build ./ ./
+COPY --from=dvlp_base-dind-build ./ ./
 WORKDIR /hal
 USER ${_AGL}
 
@@ -1030,7 +1103,7 @@ USER ${_AGL}
 # dvlp_base-gui-lite #USER ${_AGL}
 ######################
 # wsl2 required
-FROM dvlp_base-git AS dvlp_base-gui-lite
+FROM scratch AS dvlp_base-gui-lite
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -1042,8 +1115,9 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NONINTERACTIVE_SEEN=true
 ARG REFRESH_REPO=${REFRESH_REPO:-yes}
 # WORKDIR /
+COPY --from=dvlp_skel ./ ./
 COPY --from=dvlp_base-python-build-lite ./ ./
-COPY --from=dvlp_base-msdot-build-lite ./ ./
+COPY --from=dvlp_base-msdot-build ./ ./
 COPY --from=dvlp_base-dind-build ./ ./
 
 WORKDIR /
@@ -1090,10 +1164,14 @@ USER ${_AGL}
 #############################
 # dvlp_base-gui-lite-kernel #
 #############################
-FROM dvlp_base-git-kernel AS dvlp_base-gui-lite-kernel
+FROM scratch AS dvlp_base-gui-lite-kernel
 # USER r00t
 # WORKDIR /
-# COPY --from=dvlp_kernel-install ./ ./
+COPY --from=dvlp_kernel-install ./ ./
+COPY --from=dvlp_skel-kernel ./ ./
+COPY --from=dvlp_base-python-build ./ ./
+COPY --from=dvlp_base-msdot-build ./ ./
+COPY --from=dvlp_base-dind-build ./ ./
 COPY --from=dvlp_base-gui-lite ./ ./
 WORKDIR /hal
 USER ${_AGL}
@@ -1156,9 +1234,14 @@ USER ${_AGL}
 # dvlp_base-gui #
 #################
 # building this will compile a kernel saved to /kache
-FROM dvlp_base-git-kernel AS dvlp_base-gui-kernel
+FROM scratch AS dvlp_base-gui-kernel
 USER r00t
 WORKDIR /
+COPY --from=dvlp_kernel-install ./ ./
+COPY --from=dvlp_skel-kernel ./ ./
+COPY --from=dvlp_base-python-build ./ ./
+COPY --from=dvlp_base-msdot-build ./ ./
+COPY --from=dvlp_base-dind-build ./ ./
 COPY --from=dvlp_base-gui-lite ./ ./
 COPY --from=dvlp_base-gui ./ ./
 WORKDIR /hal
@@ -1213,7 +1296,7 @@ USER ${_AGL}
 #######################
 # dvlp_base-cuda-kernel #
 #######################
-FROM dvlp_base-git-kernel AS dvlp_base-cuda-kernel
+FROM scratch AS dvlp_base-cuda-kernel
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -1222,12 +1305,14 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 USER r00t
 WORKDIR /
+COPY --from=dvlp_kernel-install ./ ./
+COPY --from=dvlp_skel-kernel ./ ./
 COPY --from=dvlp_base-python-build ./ ./
 COPY --from=dvlp_base-msdot-build ./ ./
 COPY --from=dvlp_base-dind-build ./ ./
-COPY --from=dvlp_base-kernel-builder ./ ./
+COPY --from=dvlp_base-gui-lite ./ ./
+COPY --from=dvlp_base-gui ./ ./
 COPY --from=dvlp_base-cuda ./ ./
-COPY --from=dvlp_kernel-install ./ ./
 WORKDIR /hal
 USER ${_AGL}
 RUN \
