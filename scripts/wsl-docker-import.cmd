@@ -5,7 +5,7 @@ SETLOCAL EnableDelayedExpansion
 
 doskey /exename docker.exe docker=C:\Program Files\Docker\Docker\Docker Desktop.exe > nul 2> nul
 doskey /exename wsl.exe wsl=C:\Windows\System32\wsl.exe > nul 2> nul
-SET "DVLP_DEBUG=n"
+SET "DVLP_DEBUG=y"
 :redo
 SET "module=main"
 SET wsl_version_int=2
@@ -160,7 +160,7 @@ FOR /F "tokens=1* delims=-" %%G IN (
     "%image_service%" 
 ) DO (
     IF "!DVLP_DEBUG!"=="y" (
-        ECHO "parsed image service: %%G"
+        ECHO "parsed image service base: %%G"
     )
     SET "image_service_base=%%G"
 )
@@ -172,7 +172,12 @@ IF "!DVLP_DEBUG!"=="y" (
 )
 @REM do not try to build sources that are not kindtek
 IF "!image_repo!" NEQ "kindtek" (
+    ECHO "not kindtek go to docker image pull"
     SET "docker_image_do=docker_image_pull"
+) 
+IF "!interactive!"=="y" (
+    ECHO "noninteractive go home"
+    GOTO home_banner
 )
 @REM ECHO "DOCKER_IMG_DO: !docker_image_do!"
 SET "docker_image_doing=!docker_image_do!"
@@ -228,7 +233,9 @@ ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-co
 docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
 
 SET "image_built=y"
-IF "!wsl!"=="n" || "!interactive!"=="y" (
+ECHO interactive: !interactive!
+ECHO WSL: !wsl!
+IF "!wsl!"=="n" (
     SET "options=options"
     GOTO home_banner
 ) ELSE (
