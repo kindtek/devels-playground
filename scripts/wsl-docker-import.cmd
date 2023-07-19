@@ -176,8 +176,10 @@ IF "!image_repo!" NEQ "kindtek" (
     SET "docker_image_do=docker_image_pull"
 ) 
 IF "!interactive!"=="y" (
-    ECHO "noninteractive go home"
+    ECHO "interactive go home"
     GOTO home_banner
+) ELSE (
+    ECHO "NONinteractive keep going"
 )
 @REM ECHO "DOCKER_IMG_DO: !docker_image_do!"
 SET "docker_image_doing=!docker_image_do!"
