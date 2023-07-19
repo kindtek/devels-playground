@@ -228,7 +228,7 @@ ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-co
 docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
 
 SET "image_built=y"
-IF "!wsl!"=="n" (
+IF "!wsl!"=="n" || "!interactive!"=="y" (
     SET "options=options"
     GOTO home_banner
 ) ELSE (
