@@ -589,7 +589,6 @@ IF "!wsl_out!"=="!test_string!" (
 IF "!DVLP_DEBUG!"=="y" (
     ECHO "wsl_distro_test_pass: !wsl_distro_test_pass!"
 )
-@REM @echo oFF
 
 :wsl_set_conversion_version
 IF "!handle!" NEQ "wsl_distro_launch" (
@@ -1471,7 +1470,7 @@ ECHO:
 ECHO:
 ECHO:
 ECHO:
-ECHO !prompt_error_msg!
+ECHO: !prompt_error_msg!
 ECHO:
 ECHO:
 ECHO Press ENTER to exit program
