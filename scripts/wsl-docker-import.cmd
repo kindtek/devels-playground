@@ -60,6 +60,7 @@ IF "!image_name_tag!" NEQ "default" (
 )
 SET "wsl_distro=!image_repo_mask!-!image_name!-!image_tag!"
 IF "!DVLP_DEBUG!"=="y" (
+    ECHO ARGS: %*
     ECHO "image_name_tag set to !image_name_tag!"
     ECHO IMG_NAME !image_name!
     ECHO IMG_TAG !image_tag!
