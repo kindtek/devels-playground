@@ -490,9 +490,10 @@ wsl.exe --import !wsl_distro! !install_location! !image_save_path! --version !ws
 @REM     GOTO error_restart_prompt
 @REM )
 IF "!image_service_suffix!"=="kernel" (
-    @REM wsl.exe -d !wsl_distro! --cd /r00t --exec bash reclone-gh.sh autodel
-    @REM wsl -d !wsl_distro! --cd /r00t/dvlw/dvlp/kernels/linux --exec "bash install-kernel.sh ^^"%USERPROFILE%^^" latest"
-    wsl -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec bash install-kernel.sh %USERNAME% latest
+    wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec cp -rf kache/. /mnt/c/users/%USERNAME%/kache/.
+    wsl.exe -d !wsl_distro! --cd /hal --user agl --exec sudo apt-get install -y powershell
+    wsl.exe -d !wsl_distro! --cd /hal --user agl --exec sudo bash reclone-gh.sh autodel
+    wsl.exe -d %wsl_distro% --cd /hal/dvlw/dvlp/kernels/linux --user agl --exec bash install-kernel.sh %USERNAME% latest
 )
 @REM restart lxss manager
 net stop LxssManager
@@ -537,7 +538,7 @@ ECHO:
 wsl.exe --status
 ECHO:
 SET "wsl_launch="
-IF "!interactive!"=="y" (
+IF "!image_repo!" NEQ "kalilinux" (
     ECHO press ENTER to open !wsl_distro! in WSL
     ECHO  ..or enter any character to skip 
     @REM make sure windows paths transfer
