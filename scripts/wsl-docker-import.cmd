@@ -489,12 +489,20 @@ wsl.exe --import !wsl_distro! !install_location! !image_save_path! --version !ws
 @REM     SET "failed_before=y"
 @REM     GOTO error_restart_prompt
 IF "!image_service_suffix!"=="kernel" (
-    wsl.exe -d !wsl_distro! --cd /hal --user agl --exec sudo apt-get install -y powershell initramfs-tools
-    wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec update-initramfs -u -k $(uname -r)
+    SET "wsl_default_distro="
+    SET "wsl_default_distro_path=%SystemDrive%\docker2wsl\.default_distro"
+    SET "wsl_default_kernel="
+    SET "wsl_default_kernel_path=%SystemDrive%\docker2wsl\.default_kernel"
+    wsl.exe -d %wsl_distro% --user r00t --exec uname -r > !wsl_default_kernel_path!
+    SET /P wsl_default_kernel=<!wsl_default_kernel_path!
+    wsl.exe -d %wsl_distro% --cd /hal --user agl --exec sudo apt-get install -y powershell initramfs-tools
+    ECHO: wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec update-initramfs -u -k !wsl_default_kernel!
+    wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec update-initramfs -u -k !wsl_default_kernel!
     wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec cp -rf kache/. /mnt/c/users/%USERNAME%/kache/.
-    wsl.exe -d %wsl_distro% --user r00t --exec update-initramfs -u -k $(uname -r)
-    wsl.exe -d !wsl_distro! --cd /hal --user agl --exec sudo bash reclone-gh.sh autodel
-    wsl.exe -d %wsl_distro% --cd /hal/dvlw/dvlp/kernels/linux --user agl --exec bash install-kernel.sh %USERNAME% latest
+    ECHO: default kernel !wsl_default_kernel!
+    wsl.exe -d %wsl_distro% --user r00t --exec update-initramfs -u -k !wsl_default_kernel!
+    wsl.exe -d %wsl_distro% --cd /hal --user agl --exec sudo bash reclone-gh.sh autodel
+    wsl.exe -d %wsl_distro% --cd /hal/dvlw/dvlp/kernels/linux --user agl --exec bash install-kernel.sh %USERNAME% latest latest
 )
 net stop LxssManager
 net start LxssManager
