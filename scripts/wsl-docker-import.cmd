@@ -403,7 +403,7 @@ IF "!wsl!" NEQ "y" (
 SET "module=docker_image_export"
 ECHO:
 @REM create diskman.ps1 file
-ECHO select vdisk file^=!install_location!\ext4\.vhdx > !diskman_file_path!
+ECHO select vdisk file^=!install_location!\ext4.vhdx > !diskman_file_path!
 ECHO attach vdisk readonly >> !diskman_file_path!
 ECHO compact vdisk >> !diskman_file_path!
 ECHO detach vdisk >> !diskman_file_path!
@@ -422,8 +422,8 @@ ECHO docker system df >> !diskshrink_file_path!
 ECHO docker builder prune -af --volumes >> !diskshrink_file_path!
 ECHO docker system prune -af --volumes >> !diskshrink_file_path!
 ECHO stop-service -name docker* -force;  >> !diskshrink_file_path!
-ECHO # wsl.exe --exec sudo shutdown -h now^; >> !diskshrink_file_path!
-ECHO # wsl.exe --exec sudo shutdown -r 0^; >> !diskshrink_file_path!
+ECHO # wsl.exe -- sudo shutdown -h now^; >> !diskshrink_file_path!
+ECHO # wsl.exe -- sudo shutdown -r 0^; >> !diskshrink_file_path!
 ECHO wsl.exe --shutdown^; >> !diskshrink_file_path!
 ECHO stop-service -name wsl* -force -ErrorAction SilentlyContinue^; >> !diskshrink_file_path!
 ECHO stop-process -name docker* -force -ErrorAction SilentlyContinue^; >> !diskshrink_file_path!
