@@ -119,6 +119,7 @@ SET "timestamp_time=%Hour%%Minute%%Second%%TIME:*.=%"
 SET "install_location=!install_root_dir!\!timestamp_date!\!timestamp_time!"
 SET "save_location=!save_location!"
 IF "!wsl_distro!" NEQ "kalilinux-kali-rolling-latest" (
+    SET "wsl_distro=!wsl_distro!-!timestamp_time:~-4!"
     SET test_string=helloworld
     SET "test_string_path=%USERPROFILE%\kache\tst"
     @REM need better check for duplicate distro - use randomization for now
@@ -126,7 +127,7 @@ IF "!wsl_distro!" NEQ "kalilinux-kali-rolling-latest" (
     SET /P wsl_out=<!test_string_path!
     DEL !test_string_path!
     IF "!wsl_out!"=="!test_string!" (
-        SET "wsl_distro=!wsl_distro!-!timestamp_time:~-4!"
+        SET "wsl_distro=!wsl_distro!-!timestamp_time:~-5!"
     ) 
 )
 SET "docker_image_id_path=!install_location!\.image_id"
