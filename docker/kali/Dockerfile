@@ -369,10 +369,12 @@ RUN \
     Acquire::https::Timeout "240";\
     Acquire::http::Timeout "240";\
     Acquire::http::No-Cache="true"; \ 
-    Acquire::http::Pipeline-Depth="0";\
-    Acquire::BrokenProxy="true";\
-    Debug::Acquire::https "true";\
-    Binary::apt-get::APT::Get::Assume-Yes "true";\
+    Acquire::http::Pipeline-Depth="0"; \
+    Acquire::BrokenProxy="true"; \
+    Acquire::Check-Valid-Until="false"; \
+    Acquire::Check-Date="false"; \
+    Debug::Acquire::https "true"; \
+    Binary::apt-get::APT::Get::Assume-Yes "true"; \
     Binary::apt-get::APT::Install-Recommends "false"; \
     Binary::apt-get::APT::Install-Suggests "false"; \
     Binary::apt::APT::Install-Recommends "true"; \
