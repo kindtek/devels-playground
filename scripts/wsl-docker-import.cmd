@@ -1,11 +1,11 @@
-@echo oFF
+@echo on
 @REM this file is solid but will be deprecated once wsl-import.ps1 is fixed
 color 0F
 SETLOCAL EnableDelayedExpansion
 
 doskey /exename docker.exe docker=C:\Program Files\Docker\Docker\Docker Desktop.exe > nul 2> nul
 doskey /exename wsl.exe wsl=C:\Windows\System32\wsl.exe > nul 2> nul
-SET "DVLP_DEBUG=n"
+SET "DVLP_DEBUG=y"
 :redo
 SET "module=main"
 SET wsl_version_int=2
@@ -334,15 +334,22 @@ docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose
 SET "test_string=helloworld"
 SET "wsl_distro_test_pass=n"
 SET "test_string_path=%USERPROFILE%\kache\tst"
-docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec "sudo echo '!test_string!'" > !test_string_path!
-SET /P wsl_out=<!test_string_path!
+ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo echo !test_string!
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo echo !test_string! > !test_string_path!
+SET /P wsl_out=<%test_string_path%
 IF "!wsl_out!" == "!test_string!" (
+    ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
     docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
+    ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo apt update -y
     docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo apt update -y
+    ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo apt upgrade -y
     docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo apt upgrade -y
 ) ELSE (
+    ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! rm -vrf /var/cache/dvlp/archives
     docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! rm -vrf /var/cache/dvlp/archives
+    ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! apt update -y
     docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! apt update -y
+    ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! apt upgrade -y
     docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! apt upgrade -y
 )
 @REM @TODO: handle WSL_DOCKER_IMG_ID case of multiple ids returned from docker images query
@@ -496,29 +503,31 @@ IF "!image_service_suffix!"=="kernel" (
     SET "wsl_default_kernel_config_version="
     SET "wsl_default_kernel_path=%SystemDrive%\docker2wsl\.default_kernel"
     SET "wsl_default_kernel_config_version_path=%SystemDrive%\docker2wsl\.default_kernel_version"
+    ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t -- uname -r > !wsl_default_kernel_path!
     wsl.exe -d %wsl_distro% --cd /boot --user r00t -- uname -r > !wsl_default_kernel_path!
+    ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t -- ls -tx1 config* ^| tail -n 1 > %wsl_default_kernel_config_version_path%
     wsl.exe -d %wsl_distro% --cd /boot --user r00t -- ls -tx1 config* ^| tail -n 1 > %wsl_default_kernel_config_version_path%
     SET /P wsl_default_kernel=<!wsl_default_kernel_path!
     SET /P wsl_default_kernel_config_version=<%wsl_default_kernel_config_version_path%
     FOR /F "tokens=1* delims=-" %%G IN ( "%wsl_default_kernel_config_version%" ) DO (
         SET "wsl_default_kernel_version=%%G"
-        ECHO; kernel version: %wsl_default_kernel_version% 
+        ECHO kernel version: %wsl_default_kernel_version% 
     )
     ECHO %wsl_default_kernel_version% 
     ECHO %wsl_default_kernel_version% > %wsl_default_kernel_config_version_path%
 
     net stop docker
     net stop com.docker.service
-    wsl.exe -d %wsl_distro% --cd /hal --user agl -- sudo apt-get install -y powershell initramfs-tools firmware-linux
-    wsl.exe -d %wsl_distro% --cd /boot --user r00t -- cp System.map-!wsl_default_kernel_version! System.map-!wsl_default_kernel_version!-!wsl_default_kernel!
-    wsl.exe -d %wsl_distro% --cd /boot --user r00t -- cp config-!wsl_default_kernel_version! config-!wsl_default_kernel_version!-!wsl_default_kernel!
+    wsl.exe -d %wsl_distro% --cd /hal --user agl --exec sudo apt-get install -y powershell initramfs-tools firmware-linux
+    wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec cp System.map-!wsl_default_kernel_version! System.map-!wsl_default_kernel_version!-!wsl_default_kernel!
+    wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec cp config-!wsl_default_kernel_version! config-!wsl_default_kernel_version!-!wsl_default_kernel!
     @REM ECHO: wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t -- update-initramfs -u -k !wsl_default_kernel!
-    wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t -- update-initramfs -u -k !wsl_default_kernel!
-    wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t -- cp -rf kache/. /mnt/c/users/%USERNAME%/kache/.
+    wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t -exec- update-initramfs -u -k !wsl_default_kernel!
+    wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec cp -rf kache/. /mnt/c/users/%USERNAME%/kache/.
     ECHO: default kernel !wsl_default_kernel!
-    wsl.exe -d %wsl_distro% --user r00t -- update-initramfs -u -k !wsl_default_kernel!
-    wsl.exe -d %wsl_distro% --cd /hal --user agl -- sudo bash reclone-gh.sh autodel
-    wsl.exe -d %wsl_distro% --cd /hal/dvlw/dvlp/kernels/linux --user agl -- bash install-kernel.sh %USERNAME% latest latest
+    wsl.exe -d %wsl_distro% --user r00t --exec update-initramfs -u -k !wsl_default_kernel!
+    wsl.exe -d %wsl_distro% --cd /hal --user agl --exec sudo bash reclone-gh.sh autodel
+    wsl.exe -d %wsl_distro% --cd /hal/dvlw/dvlp/kernels/linux --user agl --exec bash install-kernel.sh %USERNAME% latest latest
 )
 net stop LxssManager
 net start LxssManager
@@ -580,7 +589,7 @@ SET "handle=wsl_distro_test"
 SET test_string=helloworld
 SET "wsl_distro_test_pass=n"
 SET "test_string_path=%USERPROFILE%\kache\tst"
-wsl.exe -d !wsl_distro! -- echo !test_string! > !test_string_path!
+wsl.exe -d !wsl_distro! --exec echo !test_string! > !test_string_path!
 SET /P wsl_out=<!test_string_path!
 DEL !test_string_path!
 @REM SET "wsl_out="
