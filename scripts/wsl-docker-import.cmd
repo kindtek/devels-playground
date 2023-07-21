@@ -1,4 +1,4 @@
-@echo on
+@echo off
 @REM this file is solid but will be deprecated once wsl-import.ps1 is fixed
 color 0F
 SETLOCAL EnableDelayedExpansion
@@ -338,7 +338,7 @@ SET "wsl_distro_test_pass=n"
 SET "test_string_path=%USERPROFILE%\kache\tst"
 ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo echo !test_string!
 docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo echo !test_string! > !test_string_path!
-SET /P wsl_out=<%test_string_path%
+SET /P wsl_out=<!test_string_path!
 IF "!wsl_out!" == "!test_string!" (
     ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
     docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
@@ -504,21 +504,22 @@ IF "!image_service_suffix!"=="kernel" (
     SET "wsl_default_kernel_version="
     SET "wsl_default_kernel_config_version="
     SET "wsl_default_kernel_path=%SystemDrive%\docker2wsl\.default_kernel"
-    SET "wsl_default_kernel_config_version_path=%SystemDrive%\docker2wsl\.default_kernel_version"
+        SET "wsl_default_kernel_version_path=%SystemDrive%\docker2wsl\.default_kernel_version"
+    SET "wsl_default_kernel_config_version_path=%SystemDrive%\docker2wsl\.default_kernel_config_version"
     @REM ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec uname -r ^> !wsl_default_kernel_path!
     wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec uname -r > !wsl_default_kernel_path!
     @REM ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec echo ls -tx1 config* ^| tail -n 1 ^> %wsl_default_kernel_config_version_path%
     wsl.exe -d %wsl_distro% --cd /boot --user r00t -- ls -tx1 config* ^| tail -n 1 > !wsl_default_kernel_config_version_path!
     SET /P wsl_default_kernel=<!wsl_default_kernel_path!
     SET /P wsl_default_kernel_config_version=<!wsl_default_kernel_config_version_path!
-    FOR /F "tokens=1* delims=-" %%G IN (        
-        "%wsl_default_kernel_config_version%" 
+    FOR /F "tokens=1* delims=-" %%a IN (        
+        "!wsl_default_kernel_config_version!" 
     ) DO (
-        SET "wsl_default_kernel_version=%%G"
-        ECHO kernel version: %wsl_default_kernel_version% 
+        SET "wsl_default_kernel_version=%%a"
+        ECHO %%a > !wsl_default_kernel_config_path! 
     )
-    ECHO %wsl_default_kernel_version% 
-    ECHO %wsl_default_kernel_version% > %wsl_default_kernel_config_version_path%
+    SET "wsl_default_kernel_version=6.1.21.2"
+
 
     @REM net stop docker
     @REM net stop com.docker.service
@@ -526,7 +527,7 @@ IF "!image_service_suffix!"=="kernel" (
     wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec cp System.map-!wsl_default_kernel_version! System.map-!wsl_default_kernel_version!-!wsl_default_kernel!
     wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec cp config-!wsl_default_kernel_version! config-!wsl_default_kernel_version!-!wsl_default_kernel!
     @REM ECHO: wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t -- update-initramfs -u -k !wsl_default_kernel!
-    wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t -exec- update-initramfs -u -k !wsl_default_kernel!
+    wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec update-initramfs -u -k !wsl_default_kernel!
     wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec cp -rf kache/. /mnt/c/users/%USERNAME%/kache/.
     ECHO: default kernel !wsl_default_kernel!
     wsl.exe -d %wsl_distro% --user r00t --exec update-initramfs -u -k !wsl_default_kernel!
