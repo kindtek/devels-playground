@@ -121,7 +121,7 @@ SET "save_location=!save_location!"
 IF "!wsl_distro!" NEQ "kalilinux-kali-rolling-latest" (
     SET test_string=helloworld
     SET "test_string_path=%USERPROFILE%\kache\tst"
-    wsl.exe -d !wsl_distro! --exec echo !test_string! > !test_string_path!
+    wsl.exe -d !wsl_distro! -- echo !test_string! > !test_string_path!
     SET /P wsl_out=<!test_string_path!
     DEL !test_string_path!
     IF "!wsl_out!"=="!test_string!" (
@@ -330,7 +330,7 @@ SET "docker_image_do="
 ECHO initializing the image container...
 ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml up !image_service! --detach
 docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml up !image_service! --detach
-ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives && sudo apt update -y && sudo apt upgrade -y
+@REM ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml -- !image_service! sudo rm -vrf /var/cache/dvlp/archives && sudo apt update -y && sudo apt upgrade -y
 SET "test_string=helloworld"
 SET "wsl_distro_test_pass=n"
 SET "test_string_path=%USERPROFILE%\kache\tst"
@@ -580,7 +580,7 @@ SET "handle=wsl_distro_test"
 SET test_string=helloworld
 SET "wsl_distro_test_pass=n"
 SET "test_string_path=%USERPROFILE%\kache\tst"
-wsl.exe -d !wsl_distro! --exec echo !test_string! > !test_string_path!
+wsl.exe -d !wsl_distro! -- echo !test_string! > !test_string_path!
 SET /P wsl_out=<!test_string_path!
 DEL !test_string_path!
 @REM SET "wsl_out="
@@ -603,9 +603,9 @@ IF "!wsl_out!"=="!test_string!" (
     @REM powershell -Command ". ..\..\dvlw\scripts\devel-tools.ps1; set_docker_config('!wsl_distro!');"
     ECHO !wsl_distro! was imported successfully!
     @REM ECHO updating !wsl_distro! ...
-    @REM wsl.exe -d !wsl_distro! --exec sudo apt-get update -y && sudo apt-get upgrade -y
+    @REM wsl.exe -d !wsl_distro! -- sudo apt-get update -y && sudo apt-get upgrade -y
 
-    @REM wsl.exe -d !wsl_distro! --exec apt update -y && apt-get upgrade -y
+    @REM wsl.exe -d !wsl_distro! -- apt update -y && apt-get upgrade -y
 
 ) ELSE (
     SET "wsl_distro_test_pass=n"
