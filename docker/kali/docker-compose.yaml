@@ -528,6 +528,10 @@ services:
         - JACKET=bare
   kernel-make:
     extends: jacket-kernel
+    build:
+      target: dvlp_kernel-make
+      args:
+        - JACKET=kernel-make
     entrypoint: /bin/bash -c
     command: 
     - sleep infinity
@@ -535,10 +539,7 @@ services:
     # - "if [ -f \"start-kde.sh\" ]; then bash start.sh; mv -vf start-kde.sh start.sh; else bash start.sh; fi; && sleep infinity;"
     # - ["if [ -f \"start-kde.sh\" ]; then bash start.sh; mv -vf start-kde.sh start.sh; else bash start.sh; fi;", "sleep infinity"]
     # image: kindtek/${HUB_REPO:-devels-playground}:kali-kernel-make
-    build:
-      target: dvlp_kernel-make
-      args:
-        - JACKET=kernel-make
+
   git:
     extends: jacket
     user: ${_AGL}

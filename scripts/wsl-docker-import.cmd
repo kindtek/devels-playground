@@ -5,7 +5,7 @@ SETLOCAL EnableDelayedExpansion
 
 doskey /exename docker.exe docker=C:\Program Files\Docker\Docker\Docker Desktop.exe > nul 2> nul
 doskey /exename wsl.exe wsl=C:\Windows\System32\wsl.exe > nul 2> nul
-SET "DVLP_DEBUG=y"
+SET "DVLP_DEBUG=n"
 :redo
 SET "module=main"
 SET wsl_version_int=2
@@ -121,11 +121,12 @@ SET "save_location=!save_location!"
 IF "!wsl_distro!" NEQ "kalilinux-kali-rolling-latest" (
     SET test_string=helloworld
     SET "test_string_path=%USERPROFILE%\kache\tst"
+    @REM need better check for duplicate distro - use randomization for now
     wsl.exe -d !wsl_distro! -- echo !test_string! > !test_string_path!
     SET /P wsl_out=<!test_string_path!
     DEL !test_string_path!
     IF "!wsl_out!"=="!test_string!" (
-        SET "wsl_distro=!wsl_distro!-!timestamp_time:~-3!"
+        SET "wsl_distro=!wsl_distro!-!timestamp_time:~-4!"
     ) 
 )
 SET "docker_image_id_path=!install_location!\.image_id"
@@ -503,21 +504,23 @@ IF "!image_service_suffix!"=="kernel" (
     SET "wsl_default_kernel_config_version="
     SET "wsl_default_kernel_path=%SystemDrive%\docker2wsl\.default_kernel"
     SET "wsl_default_kernel_config_version_path=%SystemDrive%\docker2wsl\.default_kernel_version"
-    ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t -- uname -r > !wsl_default_kernel_path!
-    wsl.exe -d %wsl_distro% --cd /boot --user r00t -- uname -r > !wsl_default_kernel_path!
-    ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t -- ls -tx1 config* ^| tail -n 1 > %wsl_default_kernel_config_version_path%
-    wsl.exe -d %wsl_distro% --cd /boot --user r00t -- ls -tx1 config* ^| tail -n 1 > %wsl_default_kernel_config_version_path%
+    @REM ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec uname -r ^> !wsl_default_kernel_path!
+    wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec uname -r > !wsl_default_kernel_path!
+    @REM ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec echo ls -tx1 config* ^| tail -n 1 ^> %wsl_default_kernel_config_version_path%
+    wsl.exe -d %wsl_distro% --cd /boot --user r00t -- ls -tx1 config* ^| tail -n 1 > !wsl_default_kernel_config_version_path!
     SET /P wsl_default_kernel=<!wsl_default_kernel_path!
-    SET /P wsl_default_kernel_config_version=<%wsl_default_kernel_config_version_path%
-    FOR /F "tokens=1* delims=-" %%G IN ( "%wsl_default_kernel_config_version%" ) DO (
+    SET /P wsl_default_kernel_config_version=<!wsl_default_kernel_config_version_path!
+    FOR /F "tokens=1* delims=-" %%G IN (        
+        "%wsl_default_kernel_config_version%" 
+    ) DO (
         SET "wsl_default_kernel_version=%%G"
         ECHO kernel version: %wsl_default_kernel_version% 
     )
     ECHO %wsl_default_kernel_version% 
     ECHO %wsl_default_kernel_version% > %wsl_default_kernel_config_version_path%
 
-    net stop docker
-    net stop com.docker.service
+    @REM net stop docker
+    @REM net stop com.docker.service
     wsl.exe -d %wsl_distro% --cd /hal --user agl --exec sudo apt-get install -y powershell initramfs-tools firmware-linux
     wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec cp System.map-!wsl_default_kernel_version! System.map-!wsl_default_kernel_version!-!wsl_default_kernel!
     wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec cp config-!wsl_default_kernel_version! config-!wsl_default_kernel_version!-!wsl_default_kernel!
