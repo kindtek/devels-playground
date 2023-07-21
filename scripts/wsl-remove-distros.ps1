@@ -12,7 +12,7 @@ foreach ($distro in $distros) {
    
 
 
-    if (($distro.IndexOf("*") -le 0) -And ($distro.IndexOf("docker-desktop") -lt 0)) {
+    if (($distro.IndexOf("*") -le 0) -And ($distro.IndexOf("docker-desktop") -lt 0) -And ($distro.IndexOf("kalilinux-kali-rolling-latest") -lt 0)) {
         $index_start = 2
         $warning_str = ""
     }
@@ -52,3 +52,11 @@ WARNING: removing this distro is not a good idea
         # & "$command_string"
     }
 }
+
+Write-Host "`r`n`r`n`r`n"
+
+wsl -l -v
+
+Write-Host "`r`n`r`nend of distro list`r`n`r`n"
+
+
