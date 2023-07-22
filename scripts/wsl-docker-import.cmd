@@ -496,7 +496,7 @@ wsl.exe --import !wsl_distro! !install_location! !image_save_path! --version !ws
 @REM     SET "failed_before=y"
 @REM     GOTO error_restart_prompt
 IF "!image_service_suffix!"=="kernel" (
-    SET "wsl_default_distro="
+	SET "wsl_default_distro="
     SET "wsl_default_distro_path=%SystemDrive%\docker2wsl\.default_distro"
     SET "wsl_default_kernel="
     SET "wsl_default_kernel_version="
@@ -510,19 +510,17 @@ IF "!image_service_suffix!"=="kernel" (
     wsl.exe -d %wsl_distro% --cd /boot --user r00t -- ls -tx1 config* ^| tail -n 1 > !wsl_default_kernel_config_version_path!
     SET /P wsl_default_kernel=<!wsl_default_kernel_path!
     SET /P wsl_default_kernel_config_version=<!wsl_default_kernel_config_version_path!
-    @REM FOR /F "tokens=1* delims=-" %%a IN (        
-    @REM     "!wsl_default_kernel_config_version!" 
-    @REM ) DO (
-    @REM     SET "wsl_default_kernel_version=%%a"
-    @REM     ECHO %%a > !wsl_default_kernel_path! 
-    @REM )
-    SET "wsl_default_kernel_version=6.1.21.2"
-    ECHO !wsl_default_kernel_version! > !wsl_default_kernel_version_path! 
+    FOR /F "tokens=2* delims=-" %%a IN (        
+        "!wsl_default_kernel_config_version!" 
+    ) DO (
+        SET "wsl_default_kernel_version=%%a"
+        ECHO %%a > !wsl_default_kernel_path! 
+    )
     @REM net stop docker
     @REM net stop com.docker.service
     wsl.exe -d %wsl_distro% --cd /hal --user agl --exec sudo apt-get install -y powershell initramfs-tools firmware-linux zstd
-    wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec cp System.map-!wsl_default_kernel_version! System.map-!wsl_default_kernel_version!-!wsl_default_kernel!
-    wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec cp config-!wsl_default_kernel_version! config-!wsl_default_kernel_version!-!wsl_default_kernel!
+    wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec cp System.map-!wsl_default_kernel_version! System.map-!wsl_default_kernel!
+    wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec cp config-!wsl_default_kernel_version! config-!wsl_default_kernel!
     @REM ECHO: wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t -- update-initramfs -u -k !wsl_default_kernel!
     wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec update-initramfs -u -k !wsl_default_kernel!
     wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec cp -rf kache/. /mnt/c/users/%USERNAME%/kache/.
