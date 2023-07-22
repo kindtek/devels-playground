@@ -219,7 +219,7 @@ IF "!image_service_suffix!"=="kernel" (
     SET "build_args=--build-arg WIN_USER=%USERNAME%"
     SET "build_args=!build_args! --build-arg KERNEL_TYPE=basic --build-arg KERNEL_FEATURE=zfs"
     SET "build_repos=!build_repos! repo-kernel"
-    SET "compose_services=kernel-make !image_service!"
+    SET "compose_services=!image_service!"
     @REM SET "compose_services=kernel-make !image_service_base! !image_service!"
 
     @REM SET "build_args= !build_args! --build-arg KERNEL_FEATURE='zfs'"
@@ -512,15 +512,14 @@ IF "!image_service_suffix!"=="kernel" (
     wsl.exe -d %wsl_distro% --cd /boot --user r00t -- ls -tx1 config* ^| tail -n 1 > !wsl_default_kernel_config_version_path!
     SET /P wsl_default_kernel=<!wsl_default_kernel_path!
     SET /P wsl_default_kernel_config_version=<!wsl_default_kernel_config_version_path!
-    FOR /F "tokens=1* delims=-" %%a IN (        
-        "!wsl_default_kernel_config_version!" 
-    ) DO (
-        SET "wsl_default_kernel_version=%%a"
-        ECHO %%a > !wsl_default_kernel_config_path! 
-    )
+    @REM FOR /F "tokens=1* delims=-" %%a IN (        
+    @REM     "!wsl_default_kernel_config_version!" 
+    @REM ) DO (
+    @REM     SET "wsl_default_kernel_version=%%a"
+    @REM     ECHO %%a > !wsl_default_kernel_path! 
+    @REM )
     SET "wsl_default_kernel_version=6.1.21.2"
-
-
+    ECHO !wsl_default_kernel_version! > !wsl_default_kernel_path! 
     @REM net stop docker
     @REM net stop com.docker.service
     wsl.exe -d %wsl_distro% --cd /hal --user agl --exec sudo apt-get install -y powershell initramfs-tools firmware-linux
@@ -534,8 +533,8 @@ IF "!image_service_suffix!"=="kernel" (
     wsl.exe -d %wsl_distro% --cd /hal --user agl --exec sudo bash reclone-gh.sh autodel
     wsl.exe -d %wsl_distro% --cd /hal/dvlw/dvlp/kernels/linux --user agl --exec bash install-kernel.sh %USERNAME% latest latest
 )
-net stop LxssManager
-net start LxssManager
+net stop LxssManager >nul
+net start LxssManager >nul
 ECHO DONE
 IF "!default_wsl_distro!"=="y" (
     GOTO set_default_wsl_distro
