@@ -220,9 +220,7 @@ IF "!image_service_suffix!"=="kernel" (
     SET "build_args=!build_args! --build-arg KERNEL_TYPE=basic --build-arg KERNEL_FEATURE=zfs"
     SET "compose_services_nocache=!compose_services_nocache! repo-kernel kernel-maker"
     SET "compose_services=kernel-maker !image_service!"
-    @REM SET "compose_services=kernel-make !image_service_base! !image_service!"
-
-    @REM SET "build_args= !build_args! --build-arg KERNEL_FEATURE='zfs'"
+    @REM SET "compose_services=kernel-maker !image_service_base! !image_service!"
 )
 IF "!image_service!" NEQ "test" (
     ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !compose_services_nocache!
