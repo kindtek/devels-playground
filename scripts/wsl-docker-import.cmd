@@ -522,7 +522,7 @@ IF "!image_service_suffix!"=="kernel" (
     ECHO !wsl_default_kernel_version! > !wsl_default_kernel_path! 
     @REM net stop docker
     @REM net stop com.docker.service
-    wsl.exe -d %wsl_distro% --cd /hal --user agl --exec sudo apt-get install -y powershell initramfs-tools firmware-linux
+    wsl.exe -d %wsl_distro% --cd /hal --user agl --exec sudo apt-get install -y powershell initramfs-tools firmware-linux zstd
     wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec cp System.map-!wsl_default_kernel_version! System.map-!wsl_default_kernel_version!-!wsl_default_kernel!
     wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec cp config-!wsl_default_kernel_version! config-!wsl_default_kernel_version!-!wsl_default_kernel!
     @REM ECHO: wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t -- update-initramfs -u -k !wsl_default_kernel!
