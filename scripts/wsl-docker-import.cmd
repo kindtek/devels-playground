@@ -519,7 +519,7 @@ IF "!image_service_suffix!"=="kernel" (
     @REM     ECHO %%a > !wsl_default_kernel_path! 
     @REM )
     SET "wsl_default_kernel_version=6.1.21.2"
-    ECHO !wsl_default_kernel_version! > !wsl_default_kernel_path! 
+    ECHO !wsl_default_kernel_version! > !wsl_default_kernel_version_path! 
     @REM net stop docker
     @REM net stop com.docker.service
     wsl.exe -d %wsl_distro% --cd /hal --user agl --exec sudo apt-get install -y powershell initramfs-tools firmware-linux zstd
