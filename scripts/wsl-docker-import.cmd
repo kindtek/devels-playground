@@ -210,7 +210,7 @@ ECHO docker pull !image_repo_name_tag!
 docker pull !image_repo_name_tag!
 @REM re-building repo
 SET "build_args="
-SET "build_repos=repo"
+SET "compose_services_nocache=repo"
 SET "compose_services=!image_service!"
 ECHO building image (!image_service!)...
 @REM build the image
@@ -218,15 +218,15 @@ IF "!image_service_suffix!"=="kernel" (
     @REM TODO: add prompt (when noninteractive) for kernel type/feature
     SET "build_args=--build-arg WIN_USER=%USERNAME%"
     SET "build_args=!build_args! --build-arg KERNEL_TYPE=basic --build-arg KERNEL_FEATURE=zfs"
-    SET "build_repos=!build_repos! repo-kernel"
-    SET "compose_services=!image_service!"
+    SET "compose_services_nocache=!compose_services_nocache! repo-kernel kernel-maker"
+    SET "compose_services=kernel-make !image_service!"
     @REM SET "compose_services=kernel-make !image_service_base! !image_service!"
 
     @REM SET "build_args= !build_args! --build-arg KERNEL_FEATURE='zfs'"
 )
 IF "!image_service!" NEQ "test" (
-    ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !build_repos!
-    docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !build_repos!
+    ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !compose_services_nocache!
+    docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !compose_services_nocache!
 )
 ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
 docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
@@ -504,7 +504,7 @@ IF "!image_service_suffix!"=="kernel" (
     SET "wsl_default_kernel_version="
     SET "wsl_default_kernel_config_version="
     SET "wsl_default_kernel_path=%SystemDrive%\docker2wsl\.default_kernel"
-        SET "wsl_default_kernel_version_path=%SystemDrive%\docker2wsl\.default_kernel_version"
+    SET "wsl_default_kernel_version_path=%SystemDrive%\docker2wsl\.default_kernel_version"
     SET "wsl_default_kernel_config_version_path=%SystemDrive%\docker2wsl\.default_kernel_config_version"
     @REM ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec uname -r ^> !wsl_default_kernel_path!
     wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec uname -r > !wsl_default_kernel_path!
