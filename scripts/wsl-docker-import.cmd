@@ -514,7 +514,7 @@ IF "!image_service_suffix!"=="kernel" (
         "!wsl_default_kernel_config_version!" 
     ) DO (
         SET "wsl_default_kernel_version=%%a"
-        ECHO %%a > !wsl_default_kernel_path! 
+        ECHO %%a > !wsl_default_kernel_version_path! 
     )
     @REM net stop docker
     @REM net stop com.docker.service
