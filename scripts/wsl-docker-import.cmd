@@ -505,7 +505,9 @@ IF "!image_service_suffix!"=="kernel" (
     SET "wsl_default_kernel_version_path=%SystemDrive%\docker2wsl\.default_kernel_version"
     SET "wsl_default_kernel_config_version_path=%SystemDrive%\docker2wsl\.default_kernel_config_version"
     @REM ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec uname -r ^> !wsl_default_kernel_path!
-    wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec uname -r > !wsl_default_kernel_path!
+    @REM wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec uname -r > !wsl_default_kernel_path!
+    @REM kindtek-kernel-6L1WZB-gf53bd0a62a32
+    echo 6.1.21.2-kindtek-kernel-6L1WBZ-gf53bd0a62a32-dirty > !wsl_default_kernel_path!
     @REM ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec echo ls -tx1 config* ^| tail -n 1 ^> %wsl_default_kernel_config_version_path%
     wsl.exe -d %wsl_distro% --cd /boot --user r00t -- ls -tx1 config* ^| tail -n 1 > !wsl_default_kernel_config_version_path!
     SET /P wsl_default_kernel=<!wsl_default_kernel_path!
