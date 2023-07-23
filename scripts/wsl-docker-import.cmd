@@ -28,13 +28,11 @@ IF "!options!"=="default" (
 )
 @REM ECHO IMG_NAME_TAG !image_name_tag!
 
-IF "!image_name_tag!"=="" (
-    SET "image_name_tag=default"
-    ECHO "default image set"
-)
-IF "!image_name_tag!"=="default" (
-        ECHO "default image set"
 
+IF "!image_name_tag!"=="default" (
+    IF "!DVLP_DEBUG!"=="y" (
+        ECHO "default image set"
+    )
     SET "image_repo=kalilinux"
     SET "image_repo_mask=kalilinux"
     SET "image_tag=latest"
@@ -44,21 +42,40 @@ IF "!image_name_tag!"=="default" (
     SET "default_wsl_distro=y"
 
 ) ELSE (
-    SET "image_name_tag=%~1"
-    @REM ECHO IMG_NAME_TAG !image_name_tag!
-    SET "image_name="
-    FOR /F "tokens=1 delims=:" %%a IN ( 
-        "%image_name_tag%"
-    ) DO (
-        SET "image_name=%%a"
+    IF "!image_name_tag!"=="devels-playground:" (
+        SET "image_name_tag="
     )
-    SET "image_tag=%image_name_tag::=" & SET "image_tag=%"
+    IF "!image_name_tag!"=="" (
+        IF "!DVLP_DEBUG!"=="y" (
+            ECHO "default kindtek image set"
+        )
+        SET "image_repo=kindtek"
+        SET "image_repo_mask=kindtek"
+        SET "image_tag=devels-playground"
+        SET "image_name=kali-git-kernel"
+        @REM SET "non_interactive_distro_name="
+        SET "default_wsl_distro=n"
+        SET "image_name_tag=!image_tag!:!image_name!"
+        SET "wsl_distro=!image_repo!-!image_tag!-!image_name!"
+    ) ELSE ( 
+        IF "!DVLP_DEBUG!"=="y" (
+            ECHO "custom image set with !image_name_tag!"
+        )
+        SET "image_name_tag=%~1"
+        @REM ECHO IMG_NAME_TAG !image_name_tag!
+        SET "image_name="
+        FOR /F "tokens=1 delims=:" %%a IN ( 
+            "%image_name_tag%"
+        ) DO (
+            SET "image_name=%%a"
+        )
+        SET "image_tag=%image_name_tag::=" & SET "image_tag=%"
+        SET "image_name_tag=!image_name!:!image_tag!"
+        SET "wsl_distro=!image_repo!-!image_tag!-!image_name!"
 
+    )
 )
-IF "!image_name_tag!" NEQ "default" (
-    SET "image_name_tag=!image_name!:!image_tag!"
-)
-SET "wsl_distro=!image_repo_mask!-!image_name!-!image_tag!"
+
 IF "!DVLP_DEBUG!"=="y" (
     ECHO ARGS: %*
     ECHO "image_name_tag set to !image_name_tag!"
@@ -484,7 +501,6 @@ ECHO wsl.exe --import !wsl_distro! !install_location! !image_save_path! --versio
             +%time:~7,1% >nul
 
 wsl.exe --import !wsl_distro! !install_location! !image_save_path! --version !wsl_version!
-
 @SET /A _toc=%time:~0,2%*3600^
             +%time:~3,1%*10*60^
             +%time:~4,1%*60^
@@ -495,6 +511,7 @@ wsl.exe --import !wsl_distro! !install_location! !image_save_path! --version !ws
 @REM     ECHO WSL import failure
 @REM     SET "failed_before=y"
 @REM     GOTO error_restart_prompt
+DEL !image_save_path!
 IF "!image_service_suffix!"=="kernel" (
 	SET "wsl_default_distro="
     SET "wsl_default_distro_path=%SystemDrive%\docker2wsl\.default_distro"
@@ -506,11 +523,13 @@ IF "!image_service_suffix!"=="kernel" (
     SET "wsl_default_kernel_config_version_path=%SystemDrive%\docker2wsl\.default_kernel_config_version"
     @REM ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec uname -r ^> !wsl_default_kernel_path!
     @REM wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec uname -r > !wsl_default_kernel_path!
+    docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec uname -r > !wsl_default_kernel_path!
     @REM kindtek-kernel-6L1WZB-gf53bd0a62a32
     @REM echo 6.1.21.2-kindtek-kernel-6L1WBZ-gf53bd0a62a32-dirty > !wsl_default_kernel_path!
     @REM ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec echo ls -tx1 config* ^| tail -n 1 ^> %wsl_default_kernel_config_version_path%
     wsl.exe -d %wsl_distro% --cd /boot --user r00t -- ls -tx1 config* ^| tail -n 1 > !wsl_default_kernel_config_version_path!
     SET /P wsl_default_kernel=<!wsl_default_kernel_path!
+    SET /P wsl_default_kernel=<!wsl_default_kernel!
     SET /P wsl_default_kernel_config_version=<!wsl_default_kernel_config_version_path!
     FOR /F "tokens=2* delims=-" %%a IN (        
         "!wsl_default_kernel_config_version!" 
