@@ -631,12 +631,23 @@ FROM scratch AS dvlp_k-home-win
 # ARG HOME_DIR="${WINDOWS:+'HOME_WIN'}"
 # # if LINUX argument is provided, use nix home dir
 # ARG HOME_DIR="${LINUX:+'HOME_NIX'}"
+ARG _AGL
+ARG _DVL
 USER r00t
 WORKDIR /
 COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/mnt/HOME_WIN/ ./
 COPY --from=dvlp_repo-kernel ./repos/dvlw/ ./repos/kindtek/dvlw/
 COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/kernels/linux/kache/ ./
 # COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/${HOME_DIR}/ ./
+
+# add custom user
+FROM scratch AS dvlp_k-home-win-user
+COPY --from=dvlp_k-home-win-user ./ ./
+RUN head -n -1 /KDE-GUI.rdp > /KDE-GUI.rdp && \
+RUN head -n -1 /KDE-GUI.rdp > /KDE-GUI.rdp && \
+username:s:${_AGL:-agl} >> /KDE-GUI.rdp && \
+username:s:${_AGL:-agl} >> /KEX-GUI.rdp 
+
 
 #################################################################################
 ############################### IMAGE BASES #####################################
@@ -737,7 +748,7 @@ RUN \
 WORKDIR /usr/share
 RUN git clone https://github.com/beefproject/beef beef
 WORKDIR /usr/share/beef
-USER agl
+USER ${_AGL:-agl}
 RUN \
     gem install bundler
 # RUN \
