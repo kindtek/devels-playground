@@ -152,8 +152,12 @@ SET "docker_container_id_path=!install_location!\.container_id"
 SET "image_save_path=!save_location!\!wsl_distro!.tar"
 SET "diskman_file_path=!install_location!\diskman.ps1"
 SET "diskshrink_file_path=!install_location!\diskshrink.ps1"
-
 SET "image_save_path=!save_location!\!wsl_distro!.tar"
+SET "wsl_default_distro_path=%SystemDrive%\docker2wsl\.default_distro"
+SET "wsl_default_kernel_path=%SystemDrive%\docker2wsl\.default_kernel"
+SET "wsl_default_kernel_version_path=%SystemDrive%\docker2wsl\.default_kernel_version"
+SET "wsl_default_kernel_config_version_path=%SystemDrive%\docker2wsl\.default_kernel_config_version"
+
 @REM directory structure: 
 @REM !mount_drive!:\!install_directory!\!save_directory!
 @REM ie: C:\wsl-wsl_distros\docker
@@ -380,6 +384,8 @@ SET WSL_DOCKER_CTR_ID=!WSL_DOCKER_CTR_ID_RAW!
 SET WSL_DOCKER_IMG_ID=!WSL_DOCKER_IMG_ID_RAW!
 ECHO WSL_DOCKER_IMG_ID_RAW: !WSL_DOCKER_IMG_ID_RAW!
 ECHO WSL_DOCKER_CTR_ID_RAW: !WSL_DOCKER_CTR_ID_RAW!
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec uname -r > !wsl_default_kernel_path!
+
 
 @REM del !docker_container_id_path! > nul 2> nul
 IF /I "!options!"=="c" (
@@ -514,22 +520,16 @@ wsl.exe --import !wsl_distro! !install_location! !image_save_path! --version !ws
 DEL !image_save_path!
 IF "!image_service_suffix!"=="kernel" (
 	SET "wsl_default_distro="
-    SET "wsl_default_distro_path=%SystemDrive%\docker2wsl\.default_distro"
     SET "wsl_default_kernel="
     SET "wsl_default_kernel_version="
     SET "wsl_default_kernel_config_version="
-    SET "wsl_default_kernel_path=%SystemDrive%\docker2wsl\.default_kernel"
-    SET "wsl_default_kernel_version_path=%SystemDrive%\docker2wsl\.default_kernel_version"
-    SET "wsl_default_kernel_config_version_path=%SystemDrive%\docker2wsl\.default_kernel_config_version"
     @REM ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec uname -r ^> !wsl_default_kernel_path!
     @REM wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec uname -r > !wsl_default_kernel_path!
-    docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec uname -r > !wsl_default_kernel_path!
     @REM kindtek-kernel-6L1WZB-gf53bd0a62a32
     @REM echo 6.1.21.2-kindtek-kernel-6L1WBZ-gf53bd0a62a32-dirty > !wsl_default_kernel_path!
     @REM ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec echo ls -tx1 config* ^| tail -n 1 ^> %wsl_default_kernel_config_version_path%
     wsl.exe -d %wsl_distro% --cd /boot --user r00t -- ls -tx1 config* ^| tail -n 1 > !wsl_default_kernel_config_version_path!
     SET /P wsl_default_kernel=<!wsl_default_kernel_path!
-    SET /P wsl_default_kernel=<!wsl_default_kernel!
     SET /P wsl_default_kernel_config_version=<!wsl_default_kernel_config_version_path!
     FOR /F "tokens=2* delims=-" %%a IN (        
         "!wsl_default_kernel_config_version!" 
