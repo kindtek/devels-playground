@@ -633,9 +633,9 @@ FROM scratch AS dvlp_k-home-win
 # ARG HOME_DIR="${LINUX:+'HOME_NIX'}"
 USER r00t
 WORKDIR /
-COPY --from=dvlp_repo_kernel ./repos/dvlw/dvlp/mnt/HOME_WIN/ ./
-COPY --from=dvlp_repo_kernel ./repos/dvlw/ ./repos/kindtek/dvlw/
-COPY --from=dvlp_repo_kernel ./repos/dvlw/dvlp/kernels/linux/kache/ ./
+COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/mnt/HOME_WIN/ ./
+COPY --from=dvlp_repo-kernel ./repos/dvlw/ ./repos/kindtek/dvlw/
+COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/kernels/linux/kache/ ./
 # COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/${HOME_DIR}/ ./
 
 #################################################################################
