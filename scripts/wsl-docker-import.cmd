@@ -226,8 +226,8 @@ IF "!image_service!" NEQ "test" (
     ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !compose_services_nocache!
     docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !compose_services_nocache!
 )
-ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !build_args! !compose_services!
-docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !build_args! !compose_services!
+ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
+docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
 
 SET "image_built=y"
 ECHO interactive: !interactive!
