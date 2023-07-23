@@ -409,7 +409,7 @@ COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770
 COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                   ./hel/dvlw/
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
-COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1774    /repos/dvlw/dvlp/mnt/etc/*      /etc/
+COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1774    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
 COPY --from=dvlp_repo                       --chown=r00t:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/
 RUN rm -rf /var/cache/apt
 WORKDIR /
@@ -439,7 +439,7 @@ COPY --from=dvlp_repo-kernel                  --chown=${_AGL}:halo  --chmod=1770
 COPY --from=dvlp_repo-kernel                  --chown=${_DVL}:hell  --chmod=1770    ./repos/dvlw/                ./hel/dvlw/
 COPY --from=dvlp_repo-kernel                  --chown=${_AGL}:halo  --chmod=1770    ./repos/dvlw/                ./hal/dvlw/
 COPY --from=dvlp_repo-kernel                  --chown=${_AGL}:halo  --chmod=1770    ./repos/dvlw/                ./r00t/dvlw/
-COPY --from=dvlp_repo-kernel                  --chown=r00t:r00t     --chmod=1774    /repos/dvlw/dvlp/mnt/etc/*   /etc/
+COPY --from=dvlp_repo-kernel                  --chown=r00t:r00t     --chmod=1774    /repos/dvlw/dvlp/mnt/etc/*   ./etc/
 WORKDIR ${_MNT}
 COPY --from=dvlp_base-r00t-kernel-dirs  --chown=r00t:r00t    --chmod=1770    ./mnt/                  ./
 COPY --from=dvlp_base-devel-kernel-dirs --chown=r00t:r00t    --chmod=1770    ./mnt/                  ./
