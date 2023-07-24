@@ -138,7 +138,7 @@ SET "save_location=!save_location!"
 IF "!wsl_distro!" NEQ "kalilinux-kali-rolling-latest" (
     SET "wsl_distro=!wsl_distro!-!timestamp_time:~-4!"
     SET test_string=helloworld
-    SET "test_string_path=%USERPROFILE%\kali_test"
+    SET "test_string_path=%USERPROFILE%\.kali_test"
     @REM need better check for duplicate distro - use randomization for now
     wsl.exe -d !wsl_distro! -- echo !test_string! > !test_string_path!
     SET /P wsl_out=<!test_string_path!
@@ -350,7 +350,7 @@ docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose
 @REM ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml -- !image_service! sudo rm -vrf /var/cache/dvlp/archives && sudo apt update -y && sudo apt upgrade -y
 SET "test_string=helloworld"
 SET "wsl_distro_test_pass=n"
-SET "test_string_path=%USERPROFILE%\distro_test"
+SET "test_string_path=%USERPROFILE%\.distro_test"
 ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo echo !test_string!
 docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo echo !test_string! > !test_string_path!
 SET /P wsl_out=<!test_string_path!
@@ -608,7 +608,7 @@ SET "module=wsl_distro_test"
 SET "handle=wsl_distro_test"
 SET test_string=helloworld
 SET "wsl_distro_test_pass=n"
-SET "test_string_path=%USERPROFILE%/wsl_test"
+SET "test_string_path=%USERPROFILE%/.wsl_test"
 wsl.exe -d !wsl_distro! --exec echo !test_string! > !test_string_path!
 SET /P wsl_out=<!test_string_path!
 DEL !test_string_path!
