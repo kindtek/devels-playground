@@ -642,7 +642,7 @@ COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/kernels/linux/kache/ ./
 
 # add custom user
 FROM scratch AS dvlp_k-home-win-user
-COPY --from=dvlp_k-home-win-user ./ ./
+COPY --from=dvlp_k-home-win ./ ./
 RUN head -n -1 /KDE-GUI.rdp > /KDE-GUI.rdp && \
 RUN head -n -1 /KDE-GUI.rdp > /KDE-GUI.rdp && \
 username:s:${_AGL:-agl} >> /KDE-GUI.rdp && \
@@ -748,7 +748,7 @@ RUN \
 WORKDIR /usr/share
 RUN git clone https://github.com/beefproject/beef beef
 WORKDIR /usr/share/beef
-USER ${_AGL:-agl}
+USER agl
 RUN \
     gem install bundler
 # RUN \

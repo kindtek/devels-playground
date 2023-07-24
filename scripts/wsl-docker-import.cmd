@@ -251,8 +251,6 @@ ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-co
 docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
 
 SET "image_built=y"
-ECHO interactive: !interactive!
-ECHO WSL: !wsl!
 IF "!wsl!"=="n" (
     SET "options=options"
     GOTO home_banner
@@ -539,7 +537,7 @@ IF "!image_service_suffix!"=="kernel" (
     )
     @REM net stop docker
     @REM net stop com.docker.service
-    wsl.exe -d %wsl_distro% --cd /hal --user %_AGL% --exec sudo apt-get install -y powershell dwarves initramfs-tools firmware-linux zstd
+    wsl.exe -d %wsl_distro% --cd /hal --user agl --exec sudo apt-get install -y powershell dwarves initramfs-tools firmware-linux zstd
     wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec cp System.map-!wsl_default_kernel_version! System.map-!wsl_default_kernel!
     wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec cp config-!wsl_default_kernel_version! config-!wsl_default_kernel!
     @REM ECHO: wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t -- update-initramfs -u -k !wsl_default_kernel!
@@ -547,8 +545,8 @@ IF "!image_service_suffix!"=="kernel" (
     wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec cp -rf kache/. /mnt/c/users/%USERNAME%/kache/.
     ECHO: default kernel !wsl_default_kernel!
     @REM wsl.exe -d %wsl_distro% --user r00t --exec update-initramfs -u -k !wsl_default_kernel!
-    wsl.exe -d %wsl_distro% --cd /hal --user %_AGL% --exec sudo bash reclone-gh.sh autodel
-    wsl.exe -d %wsl_distro% --cd /hal/dvlw/dvlp/kernels/linux --user %_AGL% --exec bash install-kernel.sh %USERNAME% latest latest
+    wsl.exe -d %wsl_distro% --cd /hal --user agl --exec sudo bash reclone-gh.sh autodel
+    wsl.exe -d %wsl_distro% --cd /hal/dvlw/dvlp/kernels/linux --user agl --exec bash install-kernel.sh %USERNAME% latest latest
 )
 net stop LxssManager >nul
 net start LxssManager >nul
