@@ -37,7 +37,8 @@ ARG _MNT
 ARG REFRESH_REPO
 ARG _AGL_USR
 ARG _DVL_USR
-ENV _AGL=$_AGL_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 # USER r00t
 WORKDIR /
@@ -320,7 +321,8 @@ ARG _DVL_USR
 ARG _ADM_USR
 ARG CONFIG_FILE
 ARG DEBIAN_FRONTEND=noninteractive
-ENV _AGL=$_AGL_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 WORKDIR /
@@ -394,7 +396,8 @@ ARG _MNT
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
-ENV _AGL=$_AGL_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ENV DEBIAN_FRONTEND=noninteractive
@@ -423,7 +426,8 @@ ARG _MNT
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
-ENV _AGL=$_AGL_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ENV DEBIAN_FRONTEND=noninteractive
@@ -454,7 +458,8 @@ FROM dvlp_skel-build AS dvlp_skel
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
-ENV _AGL=$_AGL_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 # RUN \
@@ -559,7 +564,8 @@ FROM scratch AS dvlp_kernel-kache
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
-ENV _AGL=$_AGL_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG CONFIG_FILE
@@ -581,7 +587,8 @@ FROM scratch AS dvlp_kernel-install
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
-ENV _AGL=$_AGL_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG CONFIG_FILE
@@ -631,7 +638,8 @@ FROM scratch AS dvlp_k-home-win
 # ARG HOME_DIR="${WINDOWS:+'HOME_WIN'}"
 # # if LINUX argument is provided, use nix home dir
 # ARG HOME_DIR="${LINUX:+'HOME_NIX'}"
-ARG _AGL
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL=${_AGL:-agl}
 ARG _DVL
 USER r00t
 WORKDIR /
@@ -642,6 +650,8 @@ COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/kernels/linux/kache/ ./
 
 # add custom user
 FROM scratch AS dvlp_k-home-win-user
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL=${_AGL:-agl}
 COPY --from=dvlp_k-home-win ./ ./
 RUN head -n -1 /KDE-GUI.rdp > /KDE-GUI.rdp && \
 RUN head -n -1 /KDE-GUI.rdp > /KDE-GUI.rdp && \
@@ -661,7 +671,8 @@ FROM dvlp_skel-build AS dvlp_base-bare
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
-ENV _AGL=$_AGL_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
@@ -680,7 +691,8 @@ FROM dvlp_skel AS dvlp_base-git
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
-ENV _AGL=$_AGL_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
@@ -695,7 +707,8 @@ FROM scratch AS dvlp_base-git-kernel
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
-ENV _AGL=$_AGL_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
@@ -793,7 +806,8 @@ USER ${_AGL}
 FROM dvlp_skel AS dvlp_base-python-build
 ARG _AGL_USR
 ARG _DVL_USR
-ENV _AGL=$_AGL_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 USER r00t
 RUN \
@@ -878,7 +892,8 @@ FROM scratch AS dvlp_base-python
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
-ENV _AGL=$_AGL_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 USER r00t
@@ -898,7 +913,8 @@ FROM scratch AS dvlp_base-python-kernel
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
-ENV _AGL=$_AGL_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
@@ -970,7 +986,8 @@ FROM scratch AS dvlp_base-msdot-lite
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
-ENV _AGL=$_AGL_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 USER r00t
@@ -989,7 +1006,8 @@ FROM scratch AS dvlp_base-msdot
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
-ENV _AGL=$_AGL_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 USER r00t
@@ -1009,7 +1027,8 @@ FROM scratch AS dvlp_base-msdot-kernel
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
-ENV _AGL=$_AGL_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
@@ -1076,7 +1095,8 @@ FROM scratch AS dvlp_base-dind
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
-ENV _AGL=$_AGL_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 USER r00t
@@ -1097,7 +1117,8 @@ FROM scratch AS dvlp_base-dind-kernel
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
-ENV _AGL=$_AGL_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
@@ -1120,7 +1141,8 @@ FROM scratch AS dvlp_base-gui-lite
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
-ENV _AGL=$_AGL_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 USER r00t
@@ -1197,7 +1219,8 @@ FROM dvlp_base-gui-lite AS dvlp_base-gui
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
-ENV _AGL=$_AGL_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
@@ -1267,7 +1290,8 @@ USER ${_AGL}
 # ARG _AGL_USR
 # ARG _DVL_USR
 # ARG _ADM_USR
-# ENV _AGL=$_AGL_USR
+# ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
 # ENV _DVL=$_DVL_USR
 # ENV _ADM=$_ADM_USR
 # ARG REFRESH_REPO
@@ -1284,7 +1308,8 @@ FROM dvlp_base-gui-kernel AS dvlp_base-cuda
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
-ENV _AGL=$_AGL_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 USER r00t
@@ -1313,7 +1338,8 @@ FROM scratch AS dvlp_base-cuda-kernel
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
-ENV _AGL=$_AGL_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 USER r00t
