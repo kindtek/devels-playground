@@ -333,9 +333,7 @@ IF "!wsl!" == "n" (
         GOTO home_banner
     )
 ) ELSE (
-    IF "image_built"=="n" (
-        GOTO docker_image_export
-    )
+    GOTO docker_image_export
 )
 
 :docker_image_run_from_build
@@ -356,20 +354,22 @@ SET "test_string_path=%USERPROFILE%\kache\tst"
 ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo echo !test_string!
 docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo echo !test_string! > !test_string_path!
 SET /P wsl_out=<!test_string_path!
-IF "!wsl_out!" == "!test_string!" (
-    ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
-    docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
-    ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo apt update -y
-    docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo apt update -y
-    ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo apt upgrade -y
-    docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo apt upgrade -y
-) ELSE (
-    ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! rm -vrf /var/cache/dvlp/archives
-    docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! rm -vrf /var/cache/dvlp/archives
-    ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! apt update -y
-    docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! apt update -y
-    ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! apt upgrade -y
-    docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! apt upgrade -y
+IF "!image_repo!" == "kindtek" (
+    IF "!wsl_out!" == "!test_string!" (
+        ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
+        docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
+        ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo apt update -y
+        docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo apt update -y
+        ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo apt upgrade -y
+        docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo apt upgrade -y
+    ) ELSE (
+        ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! rm -vrf /var/cache/dvlp/archives
+        docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! rm -vrf /var/cache/dvlp/archives
+        ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! apt update -y
+        docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! apt update -y
+        ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! apt upgrade -y
+        docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! apt upgrade -y
+    )
 )
 @REM @TODO: handle WSL_DOCKER_IMG_ID case of multiple ids returned from docker images query
 ECHO "docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml images -q !image_service! > !docker_image_id_path!"
