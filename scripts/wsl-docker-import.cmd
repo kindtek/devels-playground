@@ -45,21 +45,23 @@ IF "!image_name_tag!"=="default" (
     IF "!image_name_tag!"=="devels-playground:" (
         SET "image_name_tag="
     )
+    SET "image_repo=kindtek"
+    SET "image_repo_mask=kindtek"
+    SET "image_tag=devels-playground"
     IF "!image_name_tag!"=="" (
         IF "!DVLP_DEBUG!"=="y" (
             ECHO "default kindtek image set"
         )
-        SET "image_repo=kindtek"
-        SET "image_repo_mask=kindtek"
-        SET "image_tag=devels-playground"
+
         SET "image_name=kali-git-kernel"
         @REM SET "non_interactive_distro_name="
         SET "default_wsl_distro=n"
-        SET "image_name_tag=!image_tag!:!image_name!"
-        SET "wsl_distro=!image_repo!-!image_tag!-!image_name!"
+        SET "image_name_tag=!image_name!:!image_tag!"
+        SET "wsl_distro=!image_repo_mask!-!image_tag!-!image_name!"
     ) ELSE ( 
         IF "!DVLP_DEBUG!"=="y" (
             ECHO "custom image set with !image_name_tag!"
+            @ECHO ON
         )
         SET "image_name_tag=%~1"
         @REM ECHO IMG_NAME_TAG !image_name_tag!
@@ -71,10 +73,17 @@ IF "!image_name_tag!"=="default" (
         )
         SET "image_tag=%image_name_tag::=" & SET "image_tag=%"
         SET "image_name_tag=!image_name!:!image_tag!"
-        SET "wsl_distro=!image_repo!-!image_tag!-!image_name!"
+        SET "wsl_distro=!image_repo_mask!-!image_tag!-!image_name!"
+        IF "!DVLP_DEBUG!"=="y" (
+            ECHO "custom image set with !image_name_tag!"
+            @ECHO OFF
 
+        )
     )
 )
+
+SET "image_repo_name_tag=!image_repo_mask!/!image_name!:!image_tag!"
+
 
 IF "!DVLP_DEBUG!"=="y" (
     ECHO ARGS: %*
@@ -848,7 +857,7 @@ SET "save_location=!mount_drive!:\!save_directory!"
 SET "install_root_dir=!save_location!\!wsl_distro!"
 SET "image_save_path=!save_location!\!wsl_distro!.tar"
 SET "install_root_dir=!save_location!\!wsl_distro!"
-SET "image_repo_name_tag=!image_repo!/!image_name!:!image_tag!"
+SET "image_repo_name_tag=!image_repo_mask!/!image_name!:!image_tag!"
 @REM special rule for official distros on docker hub
 @REM replaces '_' with 'official' for printing
 IF "!image_repo!"=="_" (
@@ -1054,7 +1063,7 @@ IF "!interactive!"=="y" (
         ECHO "options3: !options!"
     )
     IF "!display_options!"=="y" (
-        ECHO   Options:
+        ECHO   options:
         ECHO:
         ECHO        [h]ome      go to home screen
 
@@ -1467,7 +1476,7 @@ GOTO home_banner
 :error_restart_prompt:
 SET "handle=error_restart_prompt"
 SET "prompt_type=error_restart_prompt"
-SET "prompt_error_msg=Sorry - import failed. "
+SET "prompt_error_msg=sorry - import failed. "
 
 IF "!interactive!"=="n" (
     GOTO quit
