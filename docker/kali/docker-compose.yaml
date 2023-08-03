@@ -13,12 +13,16 @@ services:
     build:
       context: .
       target: dvlp_repo
+    env_file:
+      - .env
     # volumes:
     #   - repo:/repos/dvlw
   repo-kernel:
     build:
       context: .
       target: dvlp_repo-kernel
+    env_file:
+      - .env
     # volumes:
     #   - repo-kernel:/repos/dvlw
   base:
@@ -26,7 +30,7 @@ services:
       target: dvlp_base
       context: .
       args:
-        - _AGL=${_AGL_USR:-$_AGL}
+        - _AGL=${_AGL:-agl}
         - _DVL=${_DVL_USR:-$_DVL}
         - _MNT=${_MNT:-/mnt/data}
         - CONFIG_FILE
@@ -55,7 +59,7 @@ services:
     #     context: .
     #     target: dvlp_base-angel-dirs
     #     args:
-    #       - _AGL=${_AGL_USR:-$_AGL}
+    #       - _AGL=${_AGL:-agl}
     #   volumes:
     #     - home_agl:/home/${_AGL_USR}
     #   init: true
@@ -267,6 +271,8 @@ services:
       kernel-maker:
         # Wait for the ownership to change
         condition: service_completed_successfully
+    env_file:
+      - .env
 
   base-git-kernel:
     entrypoint: /bin/bash -c
@@ -436,7 +442,7 @@ services:
       context: .
       target: dvlp_base-gui
       args:
-        - _AGL=${_AGL_USR:-$_AGL}
+        - _AGL=${_AGL:-agl}
         - _DVL=${_DVL_USR:-$_DVL}
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
@@ -474,11 +480,13 @@ services:
       target: dvlp_jacket-kernel-${JACKET:-bare}
       args:
         - JACKET=bare
-        - _AGL=${_AGL_USR:-$_AGL}
+        - _AGL=${_AGL:-agl}
         - _DVL=${_DVL_USR:-$_DVL}
         - _MNT=${_MNT_USR:-$_MNT}
       labels:
         com.devels-playground.description: "hello jacket-kernel"
+    env_file:
+      - .env
     volumes:
       - repo_agl-kernel:/repos/dvlw
       - repo_agl-kernel:/r00t/dvlw
@@ -528,6 +536,10 @@ services:
         - JACKET=bare
   kernel-make:
     extends: jacket-kernel
+    build:
+      target: dvlp_kernel-make
+      args:
+        - JACKET=kernel-make
     entrypoint: /bin/bash -c
     command: 
     - sleep infinity
@@ -535,10 +547,7 @@ services:
     # - "if [ -f \"start-kde.sh\" ]; then bash start.sh; mv -vf start-kde.sh start.sh; else bash start.sh; fi; && sleep infinity;"
     # - ["if [ -f \"start-kde.sh\" ]; then bash start.sh; mv -vf start-kde.sh start.sh; else bash start.sh; fi;", "sleep infinity"]
     # image: kindtek/${HUB_REPO:-devels-playground}:kali-kernel-make
-    build:
-      target: dvlp_kernel-make
-      args:
-        - JACKET=kernel-make
+
   git:
     extends: jacket
     user: ${_AGL}
