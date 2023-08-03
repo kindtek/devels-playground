@@ -7,6 +7,11 @@ doskey /exename docker.exe docker=C:\Program Files\Docker\Docker\Docker Desktop.
 doskey /exename wsl.exe wsl=C:\Windows\System32\wsl.exe > nul 2> nul
 SET "DVLP_DEBUG=y"
 :redo
+IF "!DVLP_DEBUG!"=="y" (
+    ECHO "custom image set with !image_name_tag!"
+    @ECHO ON
+
+)
 SET "module=main"
 SET wsl_version_int=2
 SET "wsl_version=!wsl_version_int!"
@@ -47,39 +52,26 @@ IF "!image_name_tag!"=="default" (
     )
     SET "image_repo=kindtek"
     SET "image_repo_mask=kindtek"
-    SET "image_tag=devels-playground"
+    SET "image_tag=kali-git-kernel"
+    SET "image_name=devels-playground"
+
     IF "!image_name_tag!"=="" (
         IF "!DVLP_DEBUG!"=="y" (
             ECHO "default kindtek image set"
         )
 
-        SET "image_name=kali-git-kernel"
         @REM SET "non_interactive_distro_name="
         SET "default_wsl_distro=n"
-        SET "image_name_tag=!image_name!:!image_tag!"
-        SET "wsl_distro=!image_repo_mask!-!image_tag!-!image_name!"
     ) ELSE ( 
         IF "!DVLP_DEBUG!"=="y" (
             ECHO "custom image set with !image_name_tag!"
-            @ECHO ON
         )
-        SET "image_name_tag=%~1"
+        SET "image_tag=%~1"
         @REM ECHO IMG_NAME_TAG !image_name_tag!
-        SET "image_name="
-        FOR /F "tokens=1 delims=:" %%a IN ( 
-            "%image_name_tag%"
-        ) DO (
-            SET "image_name=%%a"
-        )
-        SET "image_tag=%image_name_tag::=" & SET "image_tag=%"
-        SET "image_name_tag=!image_name!:!image_tag!"
-        SET "wsl_distro=!image_repo_mask!-!image_tag!-!image_name!"
-        IF "!DVLP_DEBUG!"=="y" (
-            ECHO "custom image set with !image_name_tag!"
-            @ECHO OFF
-
-        )
     )
+    SET "image_name_tag=!image_name!:!image_tag!"
+    SET "wsl_distro=!image_repo_mask!-!image_name!-!image_tag!"
+
 )
 
 SET "image_repo_name_tag=!image_repo_mask!/!image_name!:!image_tag!"
@@ -117,9 +109,10 @@ IF "!non_interactive_distro_name!"=="" (
     
 )
 
-IF "DVLP_DEBUG"=="y" (
+IF "!DVLP_DEBUG!"=="y" (
     ECHO WSL_IMPORT !wsl!
-)
+    @ECHO off
+) 
 GOTO config
 
 
