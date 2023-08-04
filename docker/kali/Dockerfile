@@ -93,6 +93,7 @@ RUN \
     git config --global --add safe.directory /r00t && \
     git config --global --add safe.directory /repos/dvlw && \
     git config --global --add safe.directory /var/cache/dvlp/archives && \
+    git config --global core.autocrlf input && \
     git config --global user.name 'Snail Mail' && \
     git config --global user.email '<>' && \
     rm -rf /var/lib/apt/lists && \
