@@ -241,7 +241,7 @@ IF "!image_service_suffix!"=="kernel" (
     @REM TODO: add prompt (when noninteractive) for kernel type/feature
     SET "build_args=--build-arg WIN_USER=%USERNAME%"
     SET "build_args=!build_args! --build-arg KERNEL_TYPE=stable --build-arg KERNEL_FEATURE=zfs"
-    SET "compose_services_nocache=!compose_services_nocache! repo-kernel kernel-make"
+    SET "compose_services_nocache=!compose_services_nocache! repo-kernel"
     SET "compose_services=kernel-make !image_service!"
     @REM SET "compose_services=kernel-maker !image_service_base! !image_service!"
 )
