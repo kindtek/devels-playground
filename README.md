@@ -113,7 +113,7 @@ If you want to easily install or already have installed
 Paste one line into a command prompt ([CMD or Powershell](https://www.wikihow.com/Open-Terminal-in-Windows))
 
 ```bat
-powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell/dvl-works/devel-spawn.ps1 -OutFile dvlp.ps1; powershell.exe -executionpolicy remotesigned -File dvlp.ps1 kal-gui"
+powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell/dvl-works/devel-spawn.ps1 -OutFile dvlp.ps1; powershell.exe -executionpolicy remotesigned -File $env:USERPROFILE/dvlp.ps1 kal-gui"
 
 ```
 
