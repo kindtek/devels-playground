@@ -27,8 +27,8 @@ while [ "$win_user" = "" ] || [ ! -d "/mnt/c/users/$win_user" ]; do
 done
 
 # log save location 
-mkdir -pv logs
-tee "logs/$filename.sh" <<'TXT'
+mkdir -pv "$(pwd)/logs"
+tee "$(pwd)/logs/$filename.sh" <<'TXT'
 #!/bin/bash
 win_user=${1}
 kernel_type=${2:-basic}
