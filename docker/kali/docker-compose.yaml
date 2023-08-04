@@ -231,6 +231,7 @@ services:
     build:
       context: .
       target: dvlp_kernel-make
+      no_cache: true
     depends_on:
       skel-kernel:
         # Wait for the ownership to change
@@ -538,6 +539,7 @@ services:
     extends: jacket-kernel
     build:
       target: dvlp_kernel-make
+      no_cache: true
       args:
         - JACKET=kernel-make
     entrypoint: /bin/bash -c
