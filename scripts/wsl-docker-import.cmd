@@ -241,13 +241,18 @@ IF "!image_service_suffix!"=="kernel" (
     @REM TODO: add prompt (when noninteractive) for kernel type/feature
     SET "build_args=--build-arg WIN_USER=%USERNAME%"
     SET "build_args=!build_args! --build-arg KERNEL_TYPE=stable --build-arg KERNEL_FEATURE=zfs"
-    SET "compose_services_nocache=!compose_services_nocache! repo-kernel"
+    SET "compose_services_nocache=!compose_services_nocache! repo-kernel kernel-make"
     SET "compose_services=kernel-make !image_service!"
     @REM SET "compose_services=kernel-maker !image_service_base! !image_service!"
 )
 IF "!image_service!" NEQ "test" (
     ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !compose_services_nocache!
     docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !compose_services_nocache!
+)
+IF "!image_service_suffix!"=="kernel" (
+    @REM force rebuild of kernel
+    ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! kernel-make
+    docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! kernel-make
 )
 ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
 docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
