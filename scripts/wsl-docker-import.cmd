@@ -249,11 +249,12 @@ IF "!image_service!" NEQ "test" (
     ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !compose_services_nocache!
     docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !compose_services_nocache!
 )
-IF "!image_service_suffix!"=="kernel" (
-    @REM force rebuild of kernel
-    ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! kernel-make
-    docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! kernel-make
-)
+@REM force no cache when testing different kernel types
+@REM IF "!image_service_suffix!"=="kernel" (
+@REM     @REM force rebuild of kernel
+@REM     @REM ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! kernel-make
+@REM     @REM docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! kernel-make
+@REM )
 ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
 docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
 
