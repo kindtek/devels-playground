@@ -51,7 +51,8 @@ IF "!image_name_tag!"=="default" (
 
 ) ELSE (
     IF "%~1" NEQ "" (
-        SET "image_tag="
+        @REM SET "image_tag="
+        @REM SET "image_name="
         ECHO !image_name_tag!|find "/" >NUL
         IF errorlevel 1 (
             ECHO !image_name_tag!|find ":" >NUL
@@ -126,7 +127,7 @@ IF "!image_name_tag!"=="default" (
                 )
                 SET "image_tag=%%a"
             )
-            SET "image_name="
+            @REM SET "image_name="
             FOR /F "tokens=1* delims=:" %%a IN (
                 "!name_tag!" 
             ) DO (
