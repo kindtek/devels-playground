@@ -56,8 +56,8 @@ IF "!image_name_tag!"=="default" (
         IF errorlevel 1 (
             ECHO !image_name_tag!|find ":" >NUL
             IF errorlevel 1 (
-                SET "image_repo=!image_name_tag!"
-                SET "image_repo_mask=!image_name_tag!"
+                SET "image_repo="
+                SET "image_repo_mask="
             ) ELSE (
                 FOR /F "tokens=1* delims=:" %%a IN (
                 "%image_name_tag%" 
@@ -107,22 +107,28 @@ IF "!image_name_tag!"=="default" (
                 SET "name_tag=%%a"
             )
         )
-        FOR /F "tokens=2 delims=:" %%a IN (
+        ECHO !image_name_tag!|find ":" >NUL
+        IF errorlevel 1 (
+                SET "image_name=!image_name_tag!"
+                SET "image_tag="
+        ) ELSE (
+            FOR /F "tokens=2 delims=:" %%a IN (
             "!name_tag!" 
-        ) DO (
-            IF "!DVLP_DEBUG!"=="y" (
-                ECHO "parsed tag: %%a"
+            ) DO (
+                IF "!DVLP_DEBUG!"=="y" (
+                    ECHO "parsed tag: %%a"
+                )
+                SET "image_tag=%%a"
             )
-            SET "image_tag=%%a"
-        )
-        SET "image_name="
-        FOR /F "tokens=1* delims=:" %%a IN (
-            "!name_tag!" 
-        ) DO (
-            IF "!DVLP_DEBUG!"=="y" (
-                ECHO "parsed image name: %%a"
+            SET "image_name="
+            FOR /F "tokens=1* delims=:" %%a IN (
+                "!name_tag!" 
+            ) DO (
+                IF "!DVLP_DEBUG!"=="y" (
+                    ECHO "parsed image name: %%a"
+                )
+                SET "image_name=%%a"
             )
-            SET "image_name=%%a"
         )
     )
     @REM set image attribute strings using parsed args
