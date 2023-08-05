@@ -249,9 +249,12 @@ SET "Second=0%Second%"
 SET "Second=%Second:~-2%"
 set "timestamp_date=%Year%%Month%%Day%"
 SET "timestamp_time=%Hour%%Minute%%Second%%TIME:*.=%"
-SET "install_location=!install_root_dir!\!timestamp_date!\!timestamp_time!"
-SET "save_location=!save_location!"
-IF "!wsl_distro!" NEQ "kalilinux-kali-rolling-latest" (
+
+SET "install_location=!install_root_dir!"
+IF "!wsl_distro!" == "kalilinux-kali-rolling-latest" (
+    SET "install_location=!install_root_dir!\!timestamp_date!\!timestamp_time!"
+
+) ELSE (
     SET "wsl_distro=!wsl_distro!-!timestamp_time:~-4!"
     SET test_string=helloworld
     SET "test_string_path=%USERPROFILE%\.kali_test"
@@ -261,8 +264,10 @@ IF "!wsl_distro!" NEQ "kalilinux-kali-rolling-latest" (
     DEL !test_string_path!
     IF "!wsl_out!"=="!test_string!" (
         SET "wsl_distro=!wsl_distro!-!timestamp_time:~-5!"
+        SET "install_location=!install_root_dir!\!timestamp_time:~-5!"
     ) 
 )
+@REM SET "save_location=!save_location!"
 SET "docker_image_id_path=!install_location!\.image_id"
 SET "docker_container_id_path=!install_location!\.container_id"
 SET "image_save_path=!save_location!\!wsl_distro!.tar"
