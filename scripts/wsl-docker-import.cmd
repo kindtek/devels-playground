@@ -67,7 +67,7 @@ IF "!image_name_tag!"=="default" (
             )
             SET "name_tag=%%a"
         )
-        FOR /F "tokens=1* delims=:" %%G IN (
+        FOR /F "tokens=2 delims=:" %%G IN (
             "%name_tag%" 
         ) DO (
             IF "!DVLP_DEBUG!"=="y" (
@@ -80,9 +80,9 @@ IF "!image_name_tag!"=="default" (
             "%name_tag%" 
         ) DO (
             IF "!DVLP_DEBUG!"=="y" (
-                ECHO "parsed image tag: %%G"
+                ECHO "parsed image name: %%G"
             )
-            SET "image_tag=%%G"
+            SET "image_name=%%G"
         )
 
     IF "!image_name_tag!"=="devels-playground:" (
