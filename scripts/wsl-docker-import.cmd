@@ -5,7 +5,7 @@ SETLOCAL EnableDelayedExpansion
 
 doskey /exename docker.exe docker=C:\Program Files\Docker\Docker\Docker Desktop.exe > nul 2> nul
 doskey /exename wsl.exe wsl=C:\Windows\System32\wsl.exe > nul 2> nul
-SET "DVLP_DEBUG=N"
+SET "DVLP_DEBUG=y"
 :redo
 IF "!DVLP_DEBUG!"=="y" (
     ECHO "custom image set with !image_name_tag!"
@@ -89,7 +89,10 @@ IF "!image_name_tag!"=="default" (
             SET "image_name=%%a"
         )
 
-    IF "!image_name_tag!"=="devels-playground:" (
+    IF "!image_name!"=="" (
+        SET "image_name_tag="
+    )
+    IF "!image_tag!"=="" (
         SET "image_name_tag="
     )
 
