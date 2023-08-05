@@ -51,11 +51,24 @@ IF "!image_name_tag!"=="default" (
 
 ) ELSE (
     IF "%~1" NEQ "" (
-        SET "image_tag=latest"
-        echo %%a|find "/" >nul
+        SET "image_tag="
+        ECHO !image_name_tag!|find "/" >NUL
         IF errorlevel 1 (
-            SET "image_repo=%%a"
-            SET "image_repo_mask=%%a"
+            ECHO !image_name_tag!|find ":" >NUL
+            IF errorlevel 1 (
+                SET "image_repo=!image_name_tag!"
+                SET "image_repo_mask=!image_name_tag!"
+            ) ELSE (
+                FOR /F "tokens=1* delims=:" %%a IN (
+                "%image_name_tag%" 
+                ) DO (
+                    IF "!DVLP_DEBUG!"=="y" (
+                        ECHO "parsed image repo: %%a"
+                    )
+                    SET "image_repo=%%a"
+                    SET "image_repo_mask=%%a"                    
+                )
+            )
         ) ELSE (
             FOR /F "tokens=1* delims=/" %%a IN (
             "%image_name_tag%" 
@@ -69,16 +82,30 @@ IF "!image_name_tag!"=="default" (
         )    
             
         SET "name_tag="
-        FOR /F "tokens=2 delims=/" %%a IN (
-        "%image_name_tag%" 
-        ) DO (
-            IF "!DVLP_DEBUG!"=="y" (
-                ECHO "parsed image/tag: %%a"
+        ECHO !image_name_tag!|find "/" >NUL
+        IF errorlevel 1 (
+            ECHO !image_name_tag!|find ":" >NUL
+            IF errorlevel 1 (
+                 SET "image_tag="
+            ) ELSE (
+                FOR /F "tokens=2 delims=:" %%a IN (
+                "!name_tag!" 
+                ) DO (
+                    IF "!DVLP_DEBUG!"=="y" (
+                        ECHO "parsed tag: %%a"
+                    )
+                    SET "image_tag=%%a"
+                )
             )
-            SET "name_tag=%%a"
-        )
-        IF "%~1" NEQ "" (
-            SET "image_tag=latest"
+        ) ELSE (
+            FOR /F "tokens=2 delims=/" %%a IN (
+            "%image_name_tag%" 
+            ) DO (
+                IF "!DVLP_DEBUG!"=="y" (
+                    ECHO "parsed image/tag: %%a"
+                )
+                SET "name_tag=%%a"
+            )
         )
         FOR /F "tokens=2 delims=:" %%a IN (
             "!name_tag!" 
