@@ -98,8 +98,29 @@ IF "!image_name_tag!"=="default" (
             SET "image_name=%%a"
         )
     )
-    SET "image_name_tag=!image_name!:!image_tag!"
-    SET "wsl_distro=!image_repo_mask!-!image_name!-!image_tag!"
+    @REM set image attribute strings using parsed args
+    IF !image_repo! NEQ "" (
+        IF !image_tag! NEQ "" (
+            SET "image_repo_name_tag=!image_repo_mask!/!image_name!:!image_tag!"
+            SET "image_name_tag=!image_name!:!image_tag!"
+            SET "wsl_distro=!image_repo_mask!-!image_name!-!image_tag!"
+        ) ELSE (
+            SET "image_repo_name_tag=!image_repo_mask!/!image_name!"
+            SET "image_name_tag=!image_name!"
+            SET "wsl_distro=!image_repo_mask!-!image_name!"
+        )
+    ) ELSE (
+        IF !image_tag! NEQ "" (
+            SET "image_repo_name_tag=!image_name!:!image_tag!"
+            SET "image_name_tag=!image_tag!"
+            SET "wsl_distro=!image_name!-!image_tag!"
+        )  ELSE (
+            SET "image_repo_name_tag=!image_name!"
+            SET "image_name_tag=!image_name!"
+            SET "wsl_distro=!image_repo_mask!-!image_name!"
+        )
+    )
+
     IF "!image_name_tag!"=="" (
         IF "!DVLP_DEBUG!"=="y" (
             ECHO "default kindtek image set"
@@ -116,20 +137,6 @@ IF "!image_name_tag!"=="default" (
     )
 
 
-)
-
-IF !image_repo! NEQ "" (
-    IF !image_tag! NEQ "" (
-        SET "image_repo_name_tag=!image_repo_mask!/!image_name!:!image_tag!"
-    ) ELSE (
-        SET "image_repo_name_tag=!image_repo_mask!/!image_name!"
-    )
-) ELSE (
-    IF !image_tag! NEQ "" (
-        SET "image_repo_name_tag=!image_name!:!image_tag!"
-    )  ELSE (
-        SET "image_repo_name_tag=!image_name!"
-    )
 )
 
 IF "!DVLP_DEBUG!"=="y" (
