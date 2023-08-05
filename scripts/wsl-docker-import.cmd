@@ -255,7 +255,7 @@ IF "!wsl_distro!" == "kalilinux-kali-rolling-latest" (
     SET "install_location=!install_root_dir!\!timestamp_date!\!timestamp_time!"
 
 ) ELSE (
-    SET "wsl_distro=!wsl_distro!-!timestamp_time:~-4!"
+    SET "wsl_distro=!wsl_distro!-!timestamp_time:~-5!"
     SET test_string=helloworld
     SET "test_string_path=%USERPROFILE%\.kali_test"
     @REM need better check for duplicate distro - use randomization for now
