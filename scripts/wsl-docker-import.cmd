@@ -266,7 +266,7 @@ IF "!wsl_distro!" == "kalilinux-kali-rolling-latest" (
         @REM we have a duplicate
         SET "wsl_distro_base=!wsl_distro!"
         SET "wsl_distro=!wsl_distro!-!timestamp_time:~-5!"
-        SET "save_location=!mount_drive!:\!save_directory!"
+        SET "save_location=!mount_drive!:\!save_directory!\!wsl_distro_base!"
         SET "install_root_dir=!save_location!\!wsl_distro_base!\!timestamp_time:~-5!"
         SET "image_save_path=!save_location!\!wsl_distro_base!\!timestamp_time:~-5!\!wsl_distro!.tar"
         SET "install_location=!install_root_dir!"
@@ -652,7 +652,7 @@ wsl.exe --import !wsl_distro! !install_location! !image_save_path! --version !ws
 @REM     ECHO WSL import failure
 @REM     SET "failed_before=y"
 @REM     GOTO error_restart_prompt
-@REM DEL !image_save_path!
+DEL !image_save_path!
 IF "!image_service_suffix!"=="kernel" (
 	SET "wsl_default_distro="
     SET "wsl_default_kernel="
