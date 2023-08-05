@@ -138,25 +138,25 @@ IF "!image_name_tag!"=="default" (
         )
     )
     @REM set image attribute strings using parsed args
-    IF "!image_repo!" NEQ "" (
-        IF "!image_tag!" NEQ "" (
-            SET "image_repo_name_tag=!image_repo_mask!/!image_name!:!image_tag!"
-            SET "image_name_tag=!image_name!:!image_tag!"
-            SET "wsl_distro=!image_repo_mask!-!image_name!-!image_tag!"
-        ) ELSE (
-            SET "image_repo_name_tag=!image_repo_mask!/!image_name!"
+    IF "!image_repo!" == "" (
+        IF "!image_tag!" == "" (
+            SET "image_repo_name_tag=!image_name!"
             SET "image_name_tag=!image_name!"
-            SET "wsl_distro=!image_repo_mask!-!image_name!"
-        )
-    ) ELSE (
-        IF "!image_tag!" NEQ "" (
+            SET "wsl_distro=!image_name!"
+        )  ELSE (
             SET "image_repo_name_tag=!image_name!:!image_tag!"
             SET "image_name_tag=!image_name!:!image_tag!"
             SET "wsl_distro=!image_name!-!image_tag!"
-        )  ELSE (
-            SET "image_repo_name_tag=!image_name!"
+        )
+    ) ELSE (
+        IF "!image_tag!" == "" (
+            SET "image_repo_name_tag=!image_repo_mask!/!image_name!"
             SET "image_name_tag=!image_name!"
             SET "wsl_distro=!image_repo_mask!-!image_name!"
+        ) ELSE (
+            SET "image_repo_name_tag=!image_repo_mask!/!image_name!:!image_tag!"
+            SET "image_name_tag=!image_name!:!image_tag!"
+            SET "wsl_distro=!image_repo_mask!-!image_name!-!image_tag!"
         )
     )
 
