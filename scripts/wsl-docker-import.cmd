@@ -267,7 +267,10 @@ IF "!wsl_distro!" == "kalilinux-kali-rolling-latest" (
         SET "install_location=!install_root_dir!\!timestamp_time:~-5!"
         mkdir !save_location! > nul 2> nul
         mkdir !install_location! > nul 2> nul
+        ECHO "install location: !install_location!"
     ) 
+    ECHO "install location: !install_location!"
+
 )
 @REM SET "save_location=!save_location!"
 SET "docker_image_id_path=!install_location!\.image_id"
