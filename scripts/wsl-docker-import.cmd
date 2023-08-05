@@ -265,6 +265,8 @@ IF "!wsl_distro!" == "kalilinux-kali-rolling-latest" (
     IF "!wsl_out!"=="!test_string!" (
         SET "wsl_distro=!wsl_distro!-!timestamp_time:~-5!"
         SET "install_location=!install_root_dir!\!timestamp_time:~-5!"
+        mkdir !save_location! > nul 2> nul
+        mkdir !install_location! > nul 2> nul
     ) 
 )
 @REM SET "save_location=!save_location!"
