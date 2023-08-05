@@ -50,6 +50,8 @@ IF "!image_name_tag!"=="default" (
     SET "default_wsl_distro=y"
 
 ) ELSE (
+    IF "%~1" NEQ "" (
+            SET "image_tag=latest"
         FOR /F "tokens=1* delims=/" %%a IN (
         "%image_name_tag%" 
         ) DO (
@@ -88,14 +90,9 @@ IF "!image_name_tag!"=="default" (
             )
             SET "image_name=%%a"
         )
-
-    IF "!image_name!"=="" (
-        SET "image_name_tag="
     )
-    IF "!image_tag!"=="" (
-        SET "image_name_tag="
-    )
-
+    SET "image_name_tag=!image_name!:!image_tag!"
+    SET "wsl_distro=!image_repo_mask!-!image_name!-!image_tag!"
     IF "!image_name_tag!"=="" (
         IF "!DVLP_DEBUG!"=="y" (
             ECHO "default kindtek image set"
@@ -105,13 +102,12 @@ IF "!image_name_tag!"=="default" (
         SET "default_wsl_distro=n"
     ) ELSE ( 
         IF "!DVLP_DEBUG!"=="y" (
-            ECHO "custom image set with !image_name_tag!"
+            ECHO "custom image set as !image_name_tag! using args '%~1%'"
         )
         @REM SET "image_tag=%~1"
         @REM ECHO IMG_NAME_TAG !image_name_tag!
     )
-    SET "image_name_tag=!image_name!:!image_tag!"
-    SET "wsl_distro=!image_repo_mask!-!image_name!-!image_tag!"
+
 
 )
 
