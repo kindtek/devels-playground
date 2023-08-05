@@ -263,8 +263,12 @@ IF "!wsl_distro!" == "kalilinux-kali-rolling-latest" (
     SET /P wsl_out=<!test_string_path!
     DEL !test_string_path!
     IF "!wsl_out!"=="!test_string!" (
+        @REM we have a duplicate
         SET "wsl_distro=!wsl_distro!-!timestamp_time:~-5!"
-        SET "install_location=!install_root_dir!\!timestamp_time:~-5!"
+        SET "save_location=!mount_drive!:\!save_directory!"
+        SET "install_root_dir=!save_location!\!wsl_distro!\!timestamp_time:~-5!"
+        SET "image_save_path=!save_location!\!wsl_distro!\!timestamp_time:~-5!\!wsl_distro!.tar"
+        SET "install_location=!install_root_dir!"
         mkdir !save_location! > nul 2> nul
         mkdir !install_location! > nul 2> nul
         ECHO "install location: !install_location!"
@@ -979,7 +983,6 @@ IF "!handle!"=="custom_config" (
 SET "save_location=!mount_drive!:\!save_directory!"
 SET "install_root_dir=!save_location!\!wsl_distro!"
 SET "image_save_path=!save_location!\!wsl_distro!.tar"
-SET "install_root_dir=!save_location!\!wsl_distro!"
 SET "image_repo_name_tag=!image_repo_mask!/!image_name!:!image_tag!"
 IF "!image_tag!" == "" (
     SET "image_repo_name_tag=!image_repo_mask!/!image_name!"
