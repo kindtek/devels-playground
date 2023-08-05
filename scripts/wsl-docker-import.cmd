@@ -262,6 +262,7 @@ IF "!wsl_distro!" == "kalilinux-kali-rolling-latest" (
     wsl.exe -d !wsl_distro! -- echo !test_string! > !test_string_path!
     SET /P wsl_out=<!test_string_path!
     DEL !test_string_path!
+    ECHO wsl test string: !wsl_out! (!test_string_path!)
     IF "!wsl_out!"=="!test_string!" (
         @REM we have a duplicate
         SET "wsl_distro=!wsl_distro!-!timestamp_time:~-5!"
