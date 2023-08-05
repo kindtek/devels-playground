@@ -263,7 +263,7 @@ IF "!wsl_distro!" == "kalilinux-kali-rolling-latest" (
     SET /P wsl_out=<!test_string_path!
     DEL !test_string_path!
     ECHO wsl test string: !wsl_out! (!test_string_path!)
-    IF "!wsl_out!"=="!test_string!" (
+    @REM IF "!wsl_out!"=="!test_string!" (
         @REM we have a duplicate
         SET "wsl_distro=!wsl_distro!-!timestamp_time:~-5!"
         SET "save_location=!mount_drive!:\!save_directory!"
@@ -273,7 +273,7 @@ IF "!wsl_distro!" == "kalilinux-kali-rolling-latest" (
         mkdir !save_location! > nul 2> nul
         mkdir !install_location! > nul 2> nul
         ECHO "install location: !install_location!"
-    ) 
+    @REM ) 
     ECHO "install location: !install_location!"
 
 )
