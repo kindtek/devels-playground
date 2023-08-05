@@ -664,8 +664,8 @@ RUN echo "username:s:${_AGL}" >> KDE-GUI.rdp
 
 # add custom user
 FROM scratch AS dvlp_k-home-win-user
-COPY --from=dvlp_k-home-win-user-mod ./build/ ./
-
+# # # # TODO: debug COPY --from=dvlp_k-home-win-user-mod ./build/ ./
+COPY --from=dvlp_k-home-win ./ ./
 
 
 #################################################################################
