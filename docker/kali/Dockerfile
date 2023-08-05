@@ -657,8 +657,8 @@ WORKDIR /build
 RUN ls -al
 RUN head -n -1 KEX-GUI.rdp > KEX-GUI.rdp
 RUN head -n -1 KDE-GUI.rdp > KDE-GUI.rdp 
-RUN username:s:${_AGL:-agl} >> KEX-GUI.rdp 
-RUN username:s:${_AGL:-agl} >> KDE-GUI.rdp 
+RUN echo "username:s:${_AGL:-agl}" >> KEX-GUI.rdp 
+RUN echo "username:s:${_AGL:-agl}" >> KDE-GUI.rdp 
 
 # add custom user
 FROM scratch AS dvlp_k-home-win-user
