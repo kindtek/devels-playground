@@ -650,6 +650,8 @@ COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/kernels/linux/kache/ ./
 # COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/${HOME_DIR}/ ./
 
 FROM kalilinux/kali-rolling:latest AS dvlp_k-home-win-user-mod
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL=${_AGL:-agl}
 COPY --from=dvlp_k-home-win ./ ./build/
 WORKDIR /build
 RUN head -n -1 KEX-GUI.rdp > KEX-GUI.rdp && \
@@ -659,8 +661,6 @@ username:s:${_AGL:-agl} >> KDE-GUI.rdp
 
 # add custom user
 FROM scratch AS dvlp_k-home-win-user
-ARG _AGL=${_AGL:-agl}
-ENV _AGL=$_AGL=${_AGL:-agl}
 COPY --from=dvlp_k-home-win-user-mod ./build/ ./
 
 
