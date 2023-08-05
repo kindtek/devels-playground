@@ -5,7 +5,7 @@ SETLOCAL EnableDelayedExpansion
 
 doskey /exename docker.exe docker=C:\Program Files\Docker\Docker\Docker Desktop.exe > nul 2> nul
 doskey /exename wsl.exe wsl=C:\Windows\System32\wsl.exe > nul 2> nul
-SET "DVLP_DEBUG=n"
+SET "DVLP_DEBUG=y"
 :redo
 IF "!DVLP_DEBUG!"=="y" (
     ECHO "custom image set with !image_name_tag!"
@@ -68,7 +68,7 @@ IF "!image_name_tag!"=="default" (
             )
             SET "name_tag=%%a"
         )
-        SET "image_tag="
+        SET "image_tag=latest"
         FOR /F "tokens=2 delims=:" %%a IN (
             "!name_tag!" 
         ) DO (
