@@ -151,7 +151,7 @@ IF "!image_name_tag!"=="default" (
     ) ELSE (
         IF "!image_tag!" NEQ "" (
             SET "image_repo_name_tag=!image_name!:!image_tag!"
-            SET "image_name_tag=!image_tag!"
+            SET "image_name_tag=!image_name!:!image_tag!"
             SET "wsl_distro=!image_name!-!image_tag!"
         )  ELSE (
             SET "image_repo_name_tag=!image_name!"
