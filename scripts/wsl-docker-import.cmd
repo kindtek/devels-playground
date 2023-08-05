@@ -59,12 +59,20 @@ IF "!image_name_tag!"=="default" (
             SET "image_repo_mask="
             IF errorlevel 0 (
                 FOR /F "tokens=1* delims=:" %%a IN (
-                "%image_name_tag%" 
+                "!image_name_tag!" 
                 ) DO (
                     IF "!DVLP_DEBUG!"=="y" (
-                        ECHO "parsed image repo: %%a"
+                        ECHO "parsed image name: %%a"
                     )
                     SET "image_name=%%a"
+                )
+                FOR /F "tokens=2 delims=:" %%a IN (
+                "!image_name_tag!" 
+                ) DO (
+                    IF "!DVLP_DEBUG!"=="y" (
+                        ECHO "parsed tag: %%a"
+                    )
+                    SET "image_tag=%%a"
                 )
             )
         ) ELSE (
