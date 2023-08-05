@@ -51,16 +51,23 @@ IF "!image_name_tag!"=="default" (
 
 ) ELSE (
     IF "%~1" NEQ "" (
-            SET "image_tag=latest"
-        FOR /F "tokens=1* delims=/" %%a IN (
-        "%image_name_tag%" 
-        ) DO (
-            IF "!DVLP_DEBUG!"=="y" (
-                ECHO "parsed image repo: %%a"
-            )
+        SET "image_tag=latest"
+        echo %%a|find "/" >nul
+        IF errorlevel 1 (
             SET "image_repo=%%a"
             SET "image_repo_mask=%%a"
-        )
+        ) ELSE (
+            FOR /F "tokens=1* delims=/" %%a IN (
+            "%image_name_tag%" 
+            ) DO (
+                IF "!DVLP_DEBUG!"=="y" (
+                    ECHO "parsed image repo: %%a"
+                )
+                SET "image_repo=%%a"
+                SET "image_repo_mask=%%a"
+            )
+        )    
+            
         SET "name_tag="
         FOR /F "tokens=2 delims=/" %%a IN (
         "%image_name_tag%" 
@@ -111,8 +118,19 @@ IF "!image_name_tag!"=="default" (
 
 )
 
-SET "image_repo_name_tag=!image_repo_mask!/!image_name!:!image_tag!"
-
+IF !image_repo! NEQ "" (
+    IF !image_tag! NEQ "" (
+        SET "image_repo_name_tag=!image_repo_mask!/!image_name!:!image_tag!"
+    ) ELSE (
+        SET "image_repo_name_tag=!image_repo_mask!/!image_name!"
+    )
+) ELSE (
+    IF !image_tag! NEQ "" (
+        SET "image_repo_name_tag=!image_name!:!image_tag!"
+    )  ELSE (
+        SET "image_repo_name_tag=!image_name!"
+    )
+)
 
 IF "!DVLP_DEBUG!"=="y" (
     ECHO ARGS: %*
