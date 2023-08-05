@@ -652,7 +652,7 @@ wsl.exe --import !wsl_distro! !install_location! !image_save_path! --version !ws
 @REM     ECHO WSL import failure
 @REM     SET "failed_before=y"
 @REM     GOTO error_restart_prompt
-DEL !image_save_path!
+@REM DEL !image_save_path!
 IF "!image_service_suffix!"=="kernel" (
 	SET "wsl_default_distro="
     SET "wsl_default_kernel="
