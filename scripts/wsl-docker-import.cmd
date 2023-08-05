@@ -886,10 +886,10 @@ SET "image_tag=%image_name_tag::=" & SET "image_tag=%"
 @REM replaces '_' with 'official' for printing
 IF "!image_repo!"=="_" (
     SET "image_repo_name_tag=!image_name!:!image_tag!"
-) ELSE (
-    SET "image_repo_mask=!image_repo!"
-    SET "image_repo_name_tag=!image_repo_mask!/!image_name!:!image_tag!"
-)
+    IF "!image_tag!"=="" (
+        SET "image_repo_name_tag=!image_name!"
+    )
+) 
 IF "!wsl!"=="y" (
     SET /P "save_directory=download folder: !mount_drive!:\(!save_directory!) $ "
 )
@@ -953,6 +953,18 @@ SET "install_root_dir=!save_location!\!wsl_distro!"
 SET "image_save_path=!save_location!\!wsl_distro!.tar"
 SET "install_root_dir=!save_location!\!wsl_distro!"
 SET "image_repo_name_tag=!image_repo_mask!/!image_name!:!image_tag!"
+IF "!image_tag!" == "" (
+    SET "image_repo_name_tag=!image_repo_mask!/!image_name!"
+    IF "!image_repo!" == "" (
+        SET "image_repo_name_tag=!image_name!"
+    )
+)
+IF "!image_repo!" == "" (
+    SET "image_repo_name_tag=!image_name!:!image_tag!"
+    IF "!image_tag!" == "" (
+        SET "image_repo_name_tag=!image_name!"
+    )
+)
 @REM special rule for official distros on docker hub
 @REM replaces '_' with 'official' for printing
 IF "!image_repo!"=="_" (
