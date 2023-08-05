@@ -70,7 +70,7 @@ IF "!image_name_tag!"=="default" (
         )
         SET "image_tag="
         FOR /F "tokens=2 delims=:" %%a IN (
-            "%name_tag%" 
+            "!name_tag!" 
         ) DO (
             IF "!DVLP_DEBUG!"=="y" (
                 ECHO "parsed tag: %%a"
@@ -79,7 +79,7 @@ IF "!image_name_tag!"=="default" (
         )
         SET "image_name="
         FOR /F "tokens=1* delims=:" %%a IN (
-            "%name_tag%" 
+            "!name_tag!" 
         ) DO (
             IF "!DVLP_DEBUG!"=="y" (
                 ECHO "parsed image name: %%a"
