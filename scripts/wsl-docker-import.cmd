@@ -137,6 +137,17 @@ IF "!image_name_tag!"=="default" (
             )
         )
     )
+    IF "!DVLP_DEBUG!"=="y" (
+        ECHO ARGS: %*
+        ECHO "image_name_tag currently is !image_name_tag!"
+        ECHO IMG_NAME !image_name!
+        ECHO IMG_TAG !image_tag!
+        ECHO IMG_NAME_TAG !image_name_tag!
+        ECHO IMG_REPO_NAME_TAG !image_repo_name_tag!
+        ECHO WSL_DISTRO_NAME %~2
+        ECHO DOCKER_HUB %~1
+        @REM ECHO "image_tag set to arg: '%1'  ('%~1') as !image_tag!"
+    )
     @REM set image attribute strings using parsed args
     IF "!image_repo!" == "" (
         IF "!image_tag!" == "" (
@@ -156,7 +167,7 @@ IF "!image_name_tag!"=="default" (
         ) ELSE (
             SET "image_repo_name_tag=!image_repo_mask!/!image_name!:!image_tag!"
             SET "image_name_tag=!image_name!:!image_tag!"
-            SET "wsl_distro=!image_repo_mask!-!image_name!-!image_tag!"
+            SET "wsl_distro=!image_name!-!image_tag!"
         )
     )
 
