@@ -658,12 +658,12 @@ IF "!image_service_suffix!"=="kernel" (
     SET "wsl_default_kernel="
     SET "wsl_default_kernel_version="
     SET "wsl_default_kernel_config_version="
-    @REM ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec uname -r ^> !wsl_default_kernel_path!
-    @REM wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec uname -r > !wsl_default_kernel_path!
+    @REM ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash uname -r ^> !wsl_default_kernel_path!
+    @REM wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash uname -r > !wsl_default_kernel_path!
     @REM kindtek-kernel-6L1WZB-gf53bd0a62a32
     @REM echo 6.1.21.2-kindtek-kernel-6L1WBZ-gf53bd0a62a32-dirty > !wsl_default_kernel_path!
-    @REM ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec echo ls -tx1 config* ^| tail -n 1 ^> %wsl_default_kernel_config_version_path%
-    wsl.exe -d %wsl_distro% --cd /boot --user r00t -- ls -tx1 config* ^| tail -n 1 > !wsl_default_kernel_config_version_path!
+    @REM ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash ls -tx1 config* ^| tail -n 1 ^> %wsl_default_kernel_config_version_path%
+    wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash ls -tx1 config* ^| tail -n 1 > !wsl_default_kernel_config_version_path!
     SET /P wsl_default_kernel=<!wsl_default_kernel_path!
     SET /P wsl_default_kernel_config_version=<!wsl_default_kernel_config_version_path!
     FOR /F "tokens=2* delims=-" %%a IN (        
@@ -674,16 +674,16 @@ IF "!image_service_suffix!"=="kernel" (
     )
     @REM net stop docker
     @REM net stop com.docker.service
-    wsl.exe -d %wsl_distro% --cd /hal --user agl --exec sudo apt-get install -y powershell dwarves initramfs-tools firmware-linux zstd
-    wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec cp System.map-!wsl_default_kernel_version! System.map-!wsl_default_kernel!
-    wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec cp config-!wsl_default_kernel_version! config-!wsl_default_kernel!
+    wsl.exe -d %wsl_distro% --cd /hal --user agl --exec bash sudo apt-get install -y powershell dwarves initramfs-tools firmware-linux zstd
+    wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash cp System.map-!wsl_default_kernel_version! System.map-!wsl_default_kernel!
+    wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash cp config-!wsl_default_kernel_version! config-!wsl_default_kernel!
     @REM ECHO: wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t -- update-initramfs -u -k !wsl_default_kernel!
     @REM wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec update-initramfs -u -k !wsl_default_kernel!
-    wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec mkdir -p /mnt/c/users/%USERNAME%/kache
-    wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec cp -rf kache/. /mnt/c/users/%USERNAME%/kache/.
+    wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec bash mkdir -p /mnt/c/users/%USERNAME%/kache
+    wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec bash cp -rf kache/. /mnt/c/users/%USERNAME%/kache/.
     ECHO: default kernel !wsl_default_kernel!
-    @REM wsl.exe -d %wsl_distro% --user r00t --exec update-initramfs -u -k !wsl_default_kernel!
-    wsl.exe -d %wsl_distro% --cd /hal --user agl --exec sudo bash reclone-gh.sh autodel
+    @REM wsl.exe -d %wsl_distro% --user r00t --exec bash update-initramfs -u -k !wsl_default_kernel!
+    wsl.exe -d %wsl_distro% --cd /hal --user agl --exec bash reclone-gh.sh autodel
     wsl.exe -d %wsl_distro% --cd /hal/dvlw/dvlp/kernels/linux --user agl --exec bash install-kernel.sh %USERNAME% latest latest
 )
 net stop LxssManager >nul
@@ -734,7 +734,7 @@ IF "!image_repo!" NEQ "kalilinux" (
     @REM make sure windows paths transfer
     SET /P "wsl_launch=$ "
     IF /I "!wsl_launch!"=="" (
-        wsl -d !wsl_distro! --cd /
+        wsl -d !wsl_distro! --cd / --exec bash
     ) 
 )
 
@@ -769,9 +769,9 @@ IF "!wsl_out!"=="!test_string!" (
     @REM powershell -Command ". ..\..\dvlw\scripts\devel-tools.ps1; set_docker_config('!wsl_distro!');"
     ECHO !wsl_distro! was imported successfully!
     @REM ECHO updating !wsl_distro! ...
-    @REM wsl.exe -d !wsl_distro! -- sudo apt-get update -y && sudo apt-get upgrade -y
+    @REM wsl.exe -d !wsl_distro! -- bash sudo apt-get update -y && sudo apt-get upgrade -y
 
-    @REM wsl.exe -d !wsl_distro! -- apt update -y && apt-get upgrade -y
+    @REM wsl.exe -d !wsl_distro! -- bash apt update -y && apt-get upgrade -y
 
 ) ELSE (
     SET "wsl_distro_test_pass=n"
