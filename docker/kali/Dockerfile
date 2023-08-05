@@ -654,7 +654,8 @@ ARG _AGL=${_AGL:-agl}
 ENV _AGL=$_AGL=${_AGL:-agl}
 COPY --from=dvlp_k-home-win ./ ./build/
 WORKDIR /build
-RUN head -n -1 KEX-GUI.rdp > KEX-GUI.rdp && \
+RUN ls -al
+RUN ls-al && head -n -1 KEX-GUI.rdp > KEX-GUI.rdp && \
 head -n -1 KDE-GUI.rdp > KDE-GUI.rdp && \
 username:s:${_AGL:-agl} >> KEX-GUI.rdp && \
 username:s:${_AGL:-agl} >> KDE-GUI.rdp 
