@@ -95,7 +95,7 @@ IF "!image_name_tag!"=="default" (
                  SET "image_tag="
             ) ELSE (
                 FOR /F "tokens=2 delims=:" %%a IN (
-                "!name_tag!" 
+                "!image_name_tag!" 
                 ) DO (
                     IF "!DVLP_DEBUG!"=="y" (
                         ECHO "parsed tag: %%a"
