@@ -68,7 +68,9 @@ IF "!image_name_tag!"=="default" (
             )
             SET "name_tag=%%a"
         )
-        SET "image_tag=latest"
+        IF !image_name_tag! != "" (
+            SET "image_tag=latest"
+        )
         FOR /F "tokens=2 delims=:" %%a IN (
             "!name_tag!" 
         ) DO (
