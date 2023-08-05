@@ -5,7 +5,7 @@ SETLOCAL EnableDelayedExpansion
 
 doskey /exename docker.exe docker=C:\Program Files\Docker\Docker\Docker Desktop.exe > nul 2> nul
 doskey /exename wsl.exe wsl=C:\Windows\System32\wsl.exe > nul 2> nul
-SET "DVLP_DEBUG=n"
+SET "DVLP_DEBUG=y"
 :redo
 IF "!DVLP_DEBUG!"=="y" (
     ECHO "custom image set with !image_name_tag!"
@@ -33,7 +33,10 @@ IF "!options!"=="default" (
 )
 @REM ECHO IMG_NAME_TAG !image_name_tag!
 
-
+SET "image_repo=kindtek"
+SET "image_repo_mask=kindtek"
+SET "image_tag=kali-git-kernel"
+SET "image_name=devels-playground"
 IF "!image_name_tag!"=="default" (
     IF "!DVLP_DEBUG!"=="y" (
         ECHO "default image set"
@@ -47,13 +50,44 @@ IF "!image_name_tag!"=="default" (
     SET "default_wsl_distro=y"
 
 ) ELSE (
+        FOR /F "tokens=1* delims=/" %%a IN (
+        "%image_name_tag%" 
+        ) DO (
+            IF "!DVLP_DEBUG!"=="y" (
+                ECHO "parsed image repo: %%a"
+            )
+            SET "image_repo=%%a"
+            SET "image_repo_mask=%%a"
+        )
+        FOR /F "tokens=2 delims=/" %%a IN (
+        "%image_name_tag%" 
+        ) DO (
+            IF "!DVLP_DEBUG!"=="y" (
+                ECHO "parsed image/tag: %%a"
+            )
+            SET "name_tag=%%a"
+        )
+        FOR /F "tokens=1* delims=:" %%G IN (
+            "%name_tag%" 
+        ) DO (
+            IF "!DVLP_DEBUG!"=="y" (
+                ECHO "parsed tag: %%H"
+            )
+            SET "image_tag=%%H"
+        )
+        SET "image_service_base="
+        FOR /F "tokens=1* delims=:" %%G IN (
+            "%name_tag%" 
+        ) DO (
+            IF "!DVLP_DEBUG!"=="y" (
+                ECHO "parsed image tag: %%G"
+            )
+            SET "image_tag=%%G"
+        )
+
     IF "!image_name_tag!"=="devels-playground:" (
         SET "image_name_tag="
     )
-    SET "image_repo=kindtek"
-    SET "image_repo_mask=kindtek"
-    SET "image_tag=kali-git-kernel"
-    SET "image_name=devels-playground"
 
     IF "!image_name_tag!"=="" (
         IF "!DVLP_DEBUG!"=="y" (
