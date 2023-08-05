@@ -729,6 +729,9 @@ wsl.exe --status
 ECHO:
 SET "wsl_launch="
 IF "!image_repo!" NEQ "kalilinux" (
+    IF "!image_repo!" == "kindtek" (
+        wsl -d !wsl_distro! --cd /hal --exec bash setup.sh $env:USERNAME
+    )
     ECHO press ENTER to open !wsl_distro! in WSL
     ECHO  ..or enter any character to skip 
     @REM make sure windows paths transfer
