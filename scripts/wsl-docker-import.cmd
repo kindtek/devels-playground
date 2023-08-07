@@ -251,7 +251,7 @@ set "timestamp_date=%Year%%Month%%Day%"
 SET "timestamp_time=%Hour%%Minute%%Second%%TIME:*.=%"
 
 SET "install_location=!install_root_dir!"
-IF "!wsl_distro!" == "kalilinux-kali-rolling-latest" (
+IF "!non_interactive_distro_name!" == "kalilinux-kali-rolling-latest" (
     SET "install_location=!install_root_dir!\!timestamp_date!\!timestamp_time!"
 
 ) ELSE (
