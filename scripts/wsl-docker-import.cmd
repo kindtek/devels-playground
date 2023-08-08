@@ -265,13 +265,13 @@ IF "!wsl_distro!" == "!failsafe_wsl_distro!" (
     SET "install_location=!save_location!"
     SET "image_save_path=!save_location!\!wsl_distro!.tar"
     IF "!DVLP_DEBUG!" == "y" (
-        ECHO failsafe distro
+        ECHO wsl distro is failsafe distro
         ECHO image_save_path: !image_save_path!
         ECHO image_install_location: !install_location!
     )
 ) ELSE (
     IF "!DVLP_DEBUG!" == "y" (
-        ECHO not failsafe distro
+        ECHO wsl distro is not failsafe distro
         ECHO image_save_path: !image_save_path!
         ECHO image_install_location: !install_location!
     )
@@ -284,6 +284,7 @@ IF "!wsl_distro!" == "!failsafe_wsl_distro!" (
     ECHO wsl test string^: !wsl_out! (!test_string_path!)
     IF "!wsl_out!" == "!test_string!" (
         @REM we have a duplicate
+
         SET "wsl_distro_base=!wsl_distro!"
         SET "wsl_distro=!wsl_distro!-!timestamp_time:~-5!"
         SET "save_location=!mount_drive!:\!save_directory!\!wsl_distro_base!"
@@ -292,18 +293,22 @@ IF "!wsl_distro!" == "!failsafe_wsl_distro!" (
         SET "install_location=!install_root_dir!"
         mkdir !save_location! > nul 2> nul
         mkdir !install_location! > nul 2> nul
-        ECHO "install location: !install_location!"
+        IF "!DVLP_DEBUG!" == "y" (
+            ECHO duplicate distro found for !wsl_distro!
+            ECHO "install location: !install_location!"
+        )
     ) 
-    ECHO "install location: !install_location!"
-
+    IF "!DVLP_DEBUG!" == "y" (
+        ECHO "install location: !install_location!"
+    )
 )
 @REM SET "save_location=!save_location!"
 SET "docker_image_id_path=!install_location!\.image_id"
 SET "docker_container_id_path=!install_location!\.container_id"
-SET "image_save_path=!save_location!\!wsl_distro!.tar"
+@REM SET "image_save_path=!save_location!\!wsl_distro!.tar"
 SET "diskman_file_path=!install_location!\diskman.ps1"
 SET "diskshrink_file_path=!install_location!\diskshrink.ps1"
-SET "image_save_path=!save_location!\!wsl_distro!.tar"
+@REM SET "image_save_path=!save_location!\!wsl_distro!.tar"
 SET "wsl_default_distro_path=%SystemDrive%\docker2wsl\.default_distro"
 SET "wsl_default_kernel_path=%SystemDrive%\docker2wsl\.default_kernel"
 SET "wsl_default_kernel_version_path=%SystemDrive%\docker2wsl\.default_kernel_version"
