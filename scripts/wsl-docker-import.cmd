@@ -156,8 +156,8 @@ IF "%~1"=="default" (
         @REM ECHO "image_tag set to arg: '%1'  ('%~1') as !image_tag!"
     )
     @REM set image attribute strings using parsed args
-    IF "!image_repo!" == "" (
-        IF "!image_tag!" == "" (
+    IF "!image_repo!"=="" (
+        IF "!image_tag!"=="" (
             SET "image_repo_name_tag=!image_name!"
             SET "image_name_tag=!image_name!"
             SET "wsl_distro=!image_name!"
@@ -167,7 +167,7 @@ IF "%~1"=="default" (
             SET "wsl_distro=!image_name!-!image_tag!"
         )
     ) ELSE (
-        IF "!image_tag!" == "" (
+        IF "!image_tag!"=="" (
             SET "image_repo_name_tag=!image_repo_mask!/!image_name!"
             SET "image_name_tag=!image_name!"
             SET "wsl_distro=!image_repo_mask!-!image_name!"
@@ -260,7 +260,7 @@ IF "!DVLP_DEBUG!"=="y" (
     ECHO "wsl_distro: !wsl_distro!"
     ECHO "failsafe_wsl_distro: !failsafe_wsl_distro!"
 )
-IF "!wsl_distro!" == "!failsafe_wsl_distro!" (
+IF "!wsl_distro!"=="!failsafe_wsl_distro!" (
     SET "install_root_dir=!save_location!"
     SET "install_location=!install_save_location!"
     SET "image_save_path=!save_location!\!wsl_distro!.tar"
@@ -472,8 +472,8 @@ IF "!WSL_DOCKER_CONTAINER_ID!"=="" (
     SET "options=options"
     GOTO error_restart_prompt
 )
-IF "!wsl!" == "n" (
-    IF "!interactive!" == "n" (
+IF "!wsl!"=="n" (
+    IF "!interactive!"=="n" (
         GOTO exit
     )
     ELSE (
@@ -501,8 +501,8 @@ SET "test_string_path=%USERPROFILE%\.distro_test"
 ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo echo !test_string!
 docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo echo !test_string! > !test_string_path!
 SET /P wsl_out=<!test_string_path!
-IF "!image_repo!" == "kindtek" (
-    IF "!wsl_out!" == "!test_string!" (
+IF "!image_repo!"=="kindtek" (
+    IF "!wsl_out!"=="!test_string!" (
         ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
         docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
         ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo apt update -y
@@ -739,7 +739,7 @@ wsl.exe --status
 ECHO:
 SET "wsl_launch="
 IF "!image_repo!" NEQ "kalilinux" (
-    IF "!image_repo!" == "kindtek" (
+    IF "!image_repo!"=="kindtek" (
         echo wsl -d !wsl_distro! cd $HOME; bash setup.sh %USERNAME%
         wsl.exe -d !wsl_distro! cd $HOME; bash setup.sh %USERNAME%
     )
@@ -1002,15 +1002,15 @@ SET "save_location=!mount_drive!:\!save_directory!"
 SET "install_root_dir=!save_location!\!wsl_distro!"
 SET "image_save_path=!save_location!\!wsl_distro!.tar"
 SET "image_repo_name_tag=!image_repo_mask!/!image_name!:!image_tag!"
-IF "!image_tag!" == "" (
+IF "!image_tag!"=="" (
     SET "image_repo_name_tag=!image_repo_mask!/!image_name!"
-    IF "!image_repo!" == "" (
+    IF "!image_repo!"=="" (
         SET "image_repo_name_tag=!image_name!"
     )
 )
-IF "!image_repo!" == "" (
+IF "!image_repo!"=="" (
     SET "image_repo_name_tag=!image_name!:!image_tag!"
-    IF "!image_tag!" == "" (
+    IF "!image_tag!"=="" (
         SET "image_repo_name_tag=!image_name!"
     )
 )
