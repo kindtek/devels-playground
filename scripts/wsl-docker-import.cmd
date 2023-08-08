@@ -265,23 +265,25 @@ IF "!wsl_distro!" == "!failsafe_wsl_distro!" (
     SET "install_location=!save_location!"
     SET "image_save_path=!save_location!\!wsl_distro!.tar"
     IF "!DVLP_DEBUG!" == "y" (
-        ECHO wsl distro is failsafe distro
+        ECHO !wsl_distro! is failsafe distro
         ECHO image_save_path: !image_save_path!
         ECHO image_install_location: !install_location!
     )
 ) ELSE (
-    IF "!DVLP_DEBUG!" == "y" (
-        ECHO wsl distro is not failsafe distro
-        ECHO image_save_path: !image_save_path!
-        ECHO image_install_location: !install_location!
-    )
+
     SET test_string=helloworld
     SET "test_string_path=%USERPROFILE%\.kali_test"
     @REM need better check for duplicate distro - use randomization for now
     wsl.exe -d !wsl_distro! -- echo !test_string! > !test_string_path!
     SET /P wsl_out=<!test_string_path!
+    IF "!DVLP_DEBUG!" == "y" (
+        ECHO !wsl_distro! is not failsafe distro
+        ECHO image_save_path: !image_save_path!
+        ECHO image_install_location: !install_location!
+        ECHO wsl test string: !wsl_out! ^(!test_string_path!^)
+    )
     DEL !test_string_path!
-    ECHO wsl test string^: !wsl_out! (!test_string_path!)
+
     IF "!wsl_out!" == "!test_string!" (
         @REM we have a duplicate
 
