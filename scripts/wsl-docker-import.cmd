@@ -49,7 +49,7 @@ IF "%~1" == "default" (
     SET "wsl_distro=!failsafe_wsl_distro!"
     SET "non_interactive_distro_name=!wsl_distro!"
     SET "image_name_tag=!image_name!:!image_tag!"
-    SET "image_repo_name_tag=!image_repo!\!image_name!:!image_tag!"
+    SET "image_repo_name_tag=!image_repo!/!image_name!:!image_tag!"
     SET "default_wsl_distro=y"
 
 ) ELSE (
@@ -1021,9 +1021,9 @@ IF "!handle!" == "custom_config" (
 SET "save_location=!mount_drive!:\!save_directory!"
 SET "install_root_dir=!save_location!\!wsl_distro!"
 SET "image_save_path=!save_location!\!wsl_distro!.tar"
-SET "image_repo_name_tag=!image_repo_mask!\!image_name!:!image_tag!"
+SET "image_repo_name_tag=!image_repo_mask!/!image_name!:!image_tag!"
 IF "!image_tag!" == "" (
-    SET "image_repo_name_tag=!image_repo_mask!\!image_name!"
+    SET "image_repo_name_tag=!image_repo_mask!/!image_name!"
     IF "!image_repo!" == "" (
         SET "image_repo_name_tag=!image_name!"
     )
