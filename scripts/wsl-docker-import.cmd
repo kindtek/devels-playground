@@ -730,15 +730,19 @@ ECHO:
 SET "wsl_launch="
 IF "!image_repo!" NEQ "kalilinux" (
     IF "!image_repo!" == "kindtek" (
-        wsl -d !wsl_distro! --cd /hal --exec bash setup.sh $env:USERNAME
+        echo wsl -d !wsl_distro! cd $HOME; bash setup.sh %USERNAME%
+        wsl.exe -d !wsl_distro! cd $HOME; bash setup.sh %USERNAME%
     )
-    ECHO press ENTER to open !wsl_distro! in WSL
+    ECHO press ENTER to open terminal for newly created !wsl_distro!
     ECHO  ..or enter any character to skip 
+    ECHO|set /p="(open !wsl_distro! terminal):"
     @REM make sure windows paths transfer
     SET /P "wsl_launch=$ "
     IF /I "!wsl_launch!"=="" (
-        wsl -d !wsl_distro! --cd / --exec bash
-    ) 
+        wsl.exe -d !wsl_distro! cd /; bash
+    ) ELSE (
+        ECHO "skipping preview for !wsl_distro! ..."
+    )
 )
 
 :wsl_distro_test
