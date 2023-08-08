@@ -7,7 +7,7 @@ doskey /exename docker.exe docker=C:\Program Files\Docker\Docker\Docker Desktop.
 doskey /exename wsl.exe wsl=C:\Windows\System32\wsl.exe > nul 2> nul
 SET "DVLP_DEBUG=y"
 :redo
-IF "!DVLP_DEBUG!"=="y" (
+IF "!DVLP_DEBUG!" == "y" (
     ECHO "custom image set with !image_name_tag!"
     @ECHO ON
 
@@ -27,7 +27,7 @@ SET "image_name_tag=%~1"
 SET "non_interactive_distro_name=%2"
 SET "options=%3"
 SET "display_options=n"
-IF "!options!"=="default" (
+IF "!options!" == "default" (
     SET "default_wsl_distro=y"
 ) ELSE (
     SET "default_wsl_distro=n"
@@ -38,8 +38,8 @@ SET "image_repo=kindtek"
 SET "image_repo_mask=kindtek"
 SET "image_tag=kali-git-kernel"
 SET "image_name=devels-playground"
-IF "%~1"=="default" (
-    IF "!DVLP_DEBUG!"=="y" (
+IF "%~1" == "default" (
+    IF "!DVLP_DEBUG!" == "y" (
         ECHO "default image set"
     )
     SET "image_repo=kalilinux"
@@ -53,8 +53,8 @@ IF "%~1"=="default" (
     SET "default_wsl_distro=y"
 
 ) ELSE (
-    IF "%~1" NEQ "" (
-        IF "!DVLP_DEBUG!"=="y" (
+    IF NOT "%~1" == "" (
+        IF "!DVLP_DEBUG!" == "y" (
             ECHO "non_interactive_distro_name set to !non_interactive_distro_name!"
         )
         @REM SET "image_tag="
@@ -68,7 +68,7 @@ IF "%~1"=="default" (
                 FOR /F "tokens=1* delims=:" %%a IN (
                 "!image_name_tag!" 
                 ) DO (
-                    IF "!DVLP_DEBUG!"=="y" (
+                    IF "!DVLP_DEBUG!" == "y" (
                         ECHO "parsed image name: %%a"
                     )
                     SET "image_name=%%a"
@@ -76,7 +76,7 @@ IF "%~1"=="default" (
                 FOR /F "tokens=2 delims=:" %%a IN (
                 "!image_name_tag!" 
                 ) DO (
-                    IF "!DVLP_DEBUG!"=="y" (
+                    IF "!DVLP_DEBUG!" == "y" (
                         ECHO "parsed tag: %%a"
                     )
                     SET "image_tag=%%a"
@@ -86,7 +86,7 @@ IF "%~1"=="default" (
             FOR /F "tokens=1* delims=/" %%a IN (
             "%image_name_tag%" 
             ) DO (
-                IF "!DVLP_DEBUG!"=="y" (
+                IF "!DVLP_DEBUG!" == "y" (
                     ECHO "parsed image repo: %%a"
                 )
                 SET "image_repo=%%a"
@@ -104,7 +104,7 @@ IF "%~1"=="default" (
                 FOR /F "tokens=2 delims=:" %%a IN (
                 "!image_name_tag!" 
                 ) DO (
-                    IF "!DVLP_DEBUG!"=="y" (
+                    IF "!DVLP_DEBUG!" == "y" (
                         ECHO "parsed tag: %%a"
                     )
                     SET "image_tag=%%a"
@@ -114,7 +114,7 @@ IF "%~1"=="default" (
             FOR /F "tokens=2 delims=/" %%a IN (
             "!image_name_tag!" 
             ) DO (
-                IF "!DVLP_DEBUG!"=="y" (
+                IF "!DVLP_DEBUG!" == "y" (
                     ECHO "parsed image/tag: %%a"
                 )
                 SET "name_tag=%%a"
@@ -128,7 +128,7 @@ IF "%~1"=="default" (
             FOR /F "tokens=2 delims=:" %%a IN (
             "!name_tag!" 
             ) DO (
-                IF "!DVLP_DEBUG!"=="y" (
+                IF "!DVLP_DEBUG!" == "y" (
                     ECHO "parsed tag: %%a"
                 )
                 SET "image_tag=%%a"
@@ -137,14 +137,14 @@ IF "%~1"=="default" (
             FOR /F "tokens=1* delims=:" %%a IN (
                 "!name_tag!" 
             ) DO (
-                IF "!DVLP_DEBUG!"=="y" (
+                IF "!DVLP_DEBUG!" == "y" (
                     ECHO "parsed image name: %%a"
                 )
                 SET "image_name=%%a"
             )
         )
     )
-    IF "!DVLP_DEBUG!"=="y" (
+    IF "!DVLP_DEBUG!" == "y" (
         ECHO ARGS: %*
         ECHO "image_name_tag currently is !image_name_tag!"
         ECHO IMG_NAME !image_name!
@@ -156,8 +156,8 @@ IF "%~1"=="default" (
         @REM ECHO "image_tag set to arg: '%1'  ('%~1') as !image_tag!"
     )
     @REM set image attribute strings using parsed args
-    IF "!image_repo!"=="" (
-        IF "!image_tag!"=="" (
+    IF "!image_repo!" == "" (
+        IF "!image_tag!" == "" (
             SET "image_repo_name_tag=!image_name!"
             SET "image_name_tag=!image_name!"
             SET "wsl_distro=!image_name!"
@@ -167,7 +167,7 @@ IF "%~1"=="default" (
             SET "wsl_distro=!image_name!-!image_tag!"
         )
     ) ELSE (
-        IF "!image_tag!"=="" (
+        IF "!image_tag!" == "" (
             SET "image_repo_name_tag=!image_repo_mask!/!image_name!"
             SET "image_name_tag=!image_name!"
             SET "wsl_distro=!image_repo_mask!-!image_name!"
@@ -178,15 +178,15 @@ IF "%~1"=="default" (
         )
     )
 
-    IF "!image_name_tag!"=="" (
-        IF "!DVLP_DEBUG!"=="y" (
+    IF "!image_name_tag!" == "" (
+        IF "!DVLP_DEBUG!" == "y" (
             ECHO "default kindtek image set"
         )
 
         @REM SET "non_interactive_distro_name="
         SET "default_wsl_distro=n"
     ) ELSE ( 
-        IF "!DVLP_DEBUG!"=="y" (
+        IF "!DVLP_DEBUG!" == "y" (
             ECHO "custom image set as !image_name_tag! using args '%~1%'"
         )
         @REM SET "image_tag=%~1"
@@ -196,7 +196,7 @@ IF "%~1"=="default" (
 
 )
 
-IF "!DVLP_DEBUG!"=="y" (
+IF "!DVLP_DEBUG!" == "y" (
     ECHO ARGS: %*
     ECHO "image_name_tag set to !image_name_tag!"
     ECHO IMG_NAME !image_name!
@@ -209,18 +209,18 @@ IF "!DVLP_DEBUG!"=="y" (
     @REM ECHO "image_tag set to arg: '%1'  ('%~1') as !image_tag!"
 )
 
-IF "!non_interactive_distro_name!"=="" (
-    IF "!DVLP_DEBUG!"=="y" (
+IF "!non_interactive_distro_name!" == "" (
+    IF "!DVLP_DEBUG!" == "y" (
         ECHO "interactive session"
     )
     SET "interactive=y"
-    IF "!image_repo!"=="kindtek" (
+    IF "!image_repo!" == "kindtek" (
         SET "wsl=y"
     ) ELSE (
         SET "wsl=n"
     )
 ) ELSE (
-    IF "!DVLP_DEBUG!"=="y" (
+    IF "!DVLP_DEBUG!" == "y" (
         ECHO "NON-interactive session"
         ECHO "!non_interactive_distro_name!"
     )
@@ -230,7 +230,7 @@ IF "!non_interactive_distro_name!"=="" (
     
 )
 
-IF "!DVLP_DEBUG!"=="y" (
+IF "!DVLP_DEBUG!" == "y" (
     ECHO WSL_IMPORT !wsl!
     @ECHO off
 ) 
@@ -256,15 +256,15 @@ SET "Second=0%Second%"
 SET "Second=%Second:~-2%"
 set "timestamp_date=%Year%%Month%%Day%"
 SET "timestamp_time=%Hour%%Minute%%Second%%TIME:*.=%"
-IF "!DVLP_DEBUG!"=="y" (
+IF "!DVLP_DEBUG!" == "y" (
     ECHO wsl_distro: !wsl_distro!
     ECHO failsafe_wsl_distro: !failsafe_wsl_distro!
 )
-IF "!wsl_distro!"=="!failsafe_wsl_distro!" (
+IF "!wsl_distro!" == "!failsafe_wsl_distro!" (
     SET "install_root_dir=!save_location!"
     SET "install_location=!save_location!"
     SET "image_save_path=!save_location!\!wsl_distro!.tar"
-    IF "!DVLP_DEBUG!"=="y" (
+    IF "!DVLP_DEBUG!" == "y" (
         ECHO failsafe distro
         ECHO image_save_path: !image_save_path!
     )
@@ -276,7 +276,7 @@ IF "!wsl_distro!"=="!failsafe_wsl_distro!" (
     SET /P wsl_out=<!test_string_path!
     DEL !test_string_path!
     ECHO wsl test string^: !wsl_out! (!test_string_path!)
-    IF "!wsl_out!"=="!test_string!" (
+    IF "!wsl_out!" == "!test_string!" (
         @REM we have a duplicate
         SET "wsl_distro_base=!wsl_distro!"
         SET "wsl_distro=!wsl_distro!-!timestamp_time:~-5!"
@@ -311,7 +311,7 @@ SET "dvlp_path=repos/!image_repo!/dvlw/dvlp"
 FOR /F "tokens=1* delims=-" %%a IN (
     "%image_tag%" 
 ) DO (
-    IF "!DVLP_DEBUG!"=="y" (
+    IF "!DVLP_DEBUG!" == "y" (
         ECHO "parsed image distro: %%a"
     )
     SET "image_distro=%%a"
@@ -319,7 +319,7 @@ FOR /F "tokens=1* delims=-" %%a IN (
 FOR /F "tokens=1* delims=-" %%G IN (
     "%image_tag%" 
 ) DO (
-    IF "!DVLP_DEBUG!"=="y" (
+    IF "!DVLP_DEBUG!" == "y" (
         ECHO "parsed image service: %%H"
     )
     SET "image_service=%%H"
@@ -328,7 +328,7 @@ SET "image_service_base="
 FOR /F "tokens=1* delims=-" %%G IN (
     "%image_service%" 
 ) DO (
-    IF "!DVLP_DEBUG!"=="y" (
+    IF "!DVLP_DEBUG!" == "y" (
         ECHO "parsed image service base: %%G"
     )
     SET "image_service_base=%%G"
@@ -336,11 +336,11 @@ FOR /F "tokens=1* delims=-" %%G IN (
 FOR /f "tokens=2 delims=-" %%a in ("%image_service%") do (
   SET image_service_suffix=%%a
 )
-IF "!DVLP_DEBUG!"=="y" (
+IF "!DVLP_DEBUG!" == "y" (
     ECHO "parsed image service suffix: !image_service_suffix!"
 )
 @REM do not try to build sources that are not kindtek
-IF "!image_repo!" NEQ "kindtek" (
+IF NOT "!image_repo!" == "kindtek" (
     ECHO "not kindtek go to docker image pull"
     SET "docker_image_do=docker_image_pull"
 ) 
@@ -358,7 +358,7 @@ ECHO pulling image (!image_repo_name_tag!)...
 ECHO docker pull !image_repo_name_tag!
 @REM pull the image
 docker pull !image_repo_name_tag!
-IF "!wsl!"=="n" (
+IF "!wsl!" == "n" (
     SET "options=options"
     GOTO home_banner
 ) ELSE (
@@ -380,7 +380,7 @@ SET "compose_services_nocache=repo"
 SET "compose_services=!image_service!"
 ECHO building image (!image_service!)...
 @REM build the image
-IF "!image_service_suffix!"=="kernel" (
+IF "!image_service_suffix!" == "kernel" (
     @REM TODO: add prompt (when noninteractive) for kernel type/feature
     SET "build_args=--build-arg WIN_USER=%USERNAME%"
     SET "build_args=!build_args! --build-arg KERNEL_TYPE=basic --build-arg KERNEL_FEATURE=zfs"
@@ -388,12 +388,12 @@ IF "!image_service_suffix!"=="kernel" (
     SET "compose_services=!image_service!"
     @REM SET "compose_services=kernel-maker !image_service_base! !image_service!"
 )
-IF "!image_service!" NEQ "test" (
+IF NOT "!image_service!" == "test" (
     ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !compose_services_nocache!
     docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build --no-cache !compose_services_nocache!
 )
 @REM force no cache when testing different kernel types
-@REM IF "!image_service_suffix!"=="kernel" (
+@REM IF "!image_service_suffix!" == "kernel" (
 @REM     @REM force rebuild of kernel
 @REM     @REM ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! kernel-make
 @REM     @REM docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! kernel-make
@@ -402,7 +402,7 @@ ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-co
 docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml build !build_args! !compose_services!
 
 SET "image_built=y"
-IF "!wsl!"=="n" (
+IF "!wsl!" == "n" (
     SET "options=options"
     GOTO home_banner
 ) ELSE (
@@ -437,10 +437,10 @@ SET /P WSL_DOCKER_IMG_ID_RAW=< !docker_image_id_path!
 @REM ECHO WSL_DOCKER_IMG_ID_RAW: !WSL_DOCKER_IMG_ID_RAW!
 SET WSL_DOCKER_IMG_ID=!WSL_DOCKER_IMG_ID_RAW!
 del !docker_container_id_path! > nul 2> nul
-IF /I "!options!"=="c" (
+IF /I "!options!" == "c" (
     SET "options=config"
 )
-IF /I "!options!"=="config" (
+IF /I "!options!" == "config" (
     ECHO: 
     ECHO ========================================================================
     ECHO:
@@ -468,7 +468,7 @@ IF /I "!options!"=="config" (
     docker run -dit --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID! 
 )
 SET /P WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path! > nul
-IF "!WSL_DOCKER_CONTAINER_ID!"=="" (
+IF "!WSL_DOCKER_CONTAINER_ID!" == "" (
     ECHO An error occurred. Missing container ID. Please try again
     docker pull !image_repo_name_tag!
     SET above=previous
@@ -476,8 +476,8 @@ IF "!WSL_DOCKER_CONTAINER_ID!"=="" (
     SET "options=options"
     GOTO error_restart_prompt
 )
-IF "!wsl!"=="n" (
-    IF "!interactive!"=="n" (
+IF "!wsl!" == "n" (
+    IF "!interactive!" == "n" (
         GOTO exit
     )
     ELSE (
@@ -505,8 +505,8 @@ SET "test_string_path=%USERPROFILE%\.distro_test"
 ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo echo !test_string!
 docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo echo !test_string! > !test_string_path!
 SET /P wsl_out=<!test_string_path!
-IF "!image_repo!"=="kindtek" (
-    IF "!wsl_out!"=="!test_string!" (
+IF "!image_repo!" == "kindtek" (
+    IF "!wsl_out!" == "!test_string!" (
         ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
         docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
         ECHO docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose.yaml exec !image_service! sudo apt update -y
@@ -537,10 +537,10 @@ docker compose -f %USERPROFILE%/!dvlp_path!/docker/!image_distro!/docker-compose
 
 
 @REM del !docker_container_id_path! > nul 2> nul
-IF /I "!options!"=="c" (
+IF /I "!options!" == "c" (
     SET "options=config"
 )
-IF /I "!options!"=="config" (
+IF /I "!options!" == "config" (
     ECHO: 
     ECHO ========================================================================
     ECHO:
@@ -566,7 +566,7 @@ IF /I "!options!"=="config" (
 )
 
 SET /P WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path! > nul
-IF "!WSL_DOCKER_CONTAINER_ID!"=="" (
+IF "!WSL_DOCKER_CONTAINER_ID!" == "" (
     ECHO An error occurred. Missing container ID. Please try again
     docker pull !image_repo_name_tag!
     SET above=previous
@@ -574,7 +574,7 @@ IF "!WSL_DOCKER_CONTAINER_ID!"=="" (
     SET "options=options"
     GOTO error_restart_prompt
 )
-IF "!wsl!" NEQ "y" (
+IF NOT "!wsl!" == "y" (
     GOTO home_banner
 )
 
@@ -638,7 +638,7 @@ docker export !WSL_DOCKER_CONTAINER_ID! > !image_save_path!
 SET "module=wsl_import"
 SET "handle=set_default_wsl_distro"
 
-IF "!wsl_distro!"=="kalilinux-kali-rolling-latest" (
+IF "!wsl_distro!" == "kalilinux-kali-rolling-latest" (
     ECHO:
     ECHO deleting WSL distro !wsl_distro! if it exists...
     ECHO wsl.exe --unregister !wsl_distro!
@@ -667,7 +667,7 @@ wsl.exe --import !wsl_distro! !install_location! !image_save_path! --version !ws
 @REM     SET "failed_before=y"
 @REM     GOTO error_restart_prompt
 DEL !image_save_path!
-IF "!image_service_suffix!"=="kernel" (
+IF "!image_service_suffix!" == "kernel" (
 	SET "wsl_default_distro="
     SET "wsl_default_kernel="
     SET "wsl_default_kernel_version="
@@ -703,7 +703,7 @@ IF "!image_service_suffix!"=="kernel" (
 net stop LxssManager >nul
 net start LxssManager >nul
 ECHO DONE
-IF "!default_wsl_distro!"=="y" (
+IF "!default_wsl_distro!" == "y" (
     GOTO set_default_wsl_distro
 ) ELSE (
     GOTO wsl_distro_launch_prompt
@@ -712,10 +712,10 @@ IF "!default_wsl_distro!"=="y" (
 
 :set_default_wsl_distro
 SET "module=set_default_wsl_distro"
-IF "!handle!"=="wsl_import" (
+IF "!handle!" == "wsl_import" (
     SET "handle=set_default_wsl_distro"
 )
-IF "!default_wsl_distro!"=="y" (
+IF "!default_wsl_distro!" == "y" (
 
     ECHO:
     ECHO setting default WSL distro as !wsl_distro!...
@@ -742,8 +742,8 @@ ECHO:
 wsl.exe --status
 ECHO:
 SET "wsl_launch="
-IF "!image_repo!" NEQ "kalilinux" (
-    IF "!image_repo!"=="kindtek" (
+IF NOT "!image_repo!" == "kalilinux" (
+    IF "!image_repo!" == "kindtek" (
         echo wsl -d !wsl_distro! cd $HOME; bash setup.sh %USERNAME%
         wsl.exe -d !wsl_distro! cd $HOME; bash setup.sh %USERNAME%
     )
@@ -752,7 +752,7 @@ IF "!image_repo!" NEQ "kalilinux" (
     ECHO|set /p="(open !wsl_distro! terminal):"
     @REM make sure windows paths transfer
     SET /P "wsl_launch=$ "
-    IF /I "!wsl_launch!"=="" (
+    IF /I "!wsl_launch!" == "" (
         wsl.exe -d !wsl_distro! cd /; bash
     ) ELSE (
         ECHO "skipping preview for !wsl_distro! ..."
@@ -773,18 +773,18 @@ DEL !test_string_path!
 @REM SET "wsl_out="
 @REM FOR /F %%g IN (!wsl_in!) DO (
 @REM     @SET "wsl_out=%%g"
-@REM     IF "!DVLP_DEBUG!"=="y" (
+@REM     IF "!DVLP_DEBUG!" == "y" (
 @REM         ECHO "wsl_in: !wsl_in!"
 @REM         ECHO "wsl_out: : !wsl_out!"
 @REM         ECHO "test_string: !test_string!"
 @REM     )
 @REM )
 
-IF "!DVLP_DEBUG!"=="y" (
-    ECHO wsl_out^: !wsl_out!
+IF "!DVLP_DEBUG!" == "y" (
+    ECHO "wsl_out^: !wsl_out!
     ECHO test_string^: !test_string!
 )
-IF "!wsl_out!"=="!test_string!" (
+IF "!wsl_out!" == "!test_string!" (
     SET "wsl_distro_test_pass=y"
     @REM add !wsl_distro! to Docker integrated WSL distro list
     @REM powershell -Command ". ..\..\dvlw\scripts\devel-tools.ps1; set_docker_config('!wsl_distro!');"
@@ -798,12 +798,12 @@ IF "!wsl_out!"=="!test_string!" (
     SET "wsl_distro_test_pass=n"
     ECHO !wsl_distro! did not boot.
 )
-IF "!DVLP_DEBUG!"=="y" (
+IF "!DVLP_DEBUG!" == "y" (
     ECHO "wsl_distro_test_pass: !wsl_distro_test_pass!"
 )
 
 :wsl_set_conversion_version
-IF "!handle!" NEQ "wsl_distro_launch" (
+IF NOT "!handle!" == "wsl_distro_launch" (
     SET "handle=wsl_set_conversion_version"
 )
 SET "module=wsl_set_conversion_version"
@@ -815,7 +815,7 @@ IF !set_wsl_conv! NEQ 1 (
 
 :wsl_distro_error_handler
 SET "module=wsl_distro_error_handler"
-IF "!handle!" NEQ "wsl_distro_test" (
+IF NOT "!handle!" == "wsl_distro_test" (
     SET "handle=wsl_distro_error_handler"
 )
 IF !set_wsl_conv! EQU 0 (
@@ -825,26 +825,26 @@ IF !set_wsl_conv! EQU 0 (
         )
     )
 )
-IF "!wsl_distro_test_pass!"=="n" (
+IF "!wsl_distro_test_pass!" == "n" (
     SET "convert="
     ECHO ERROR DETECTED
-    IF "!interactive!"=="y" (    
+    IF "!interactive!" == "y" (    
         @REM wsl.exe -d !wsl_distro!
         ECHO try to convert distro version to WSL!set_wsl_conv!? ^(y^)^/n
         SET /P "convert="
-        IF /I "!convert!"=="" (
+        IF /I "!convert!" == "" (
             SET "convert=y"
         )
-        IF /I "!convert!"=="yes" (
+        IF /I "!convert!" == "yes" (
             SET "convert=y"
         )
-        IF "!convert!" NEQ "y" (
+        IF NOT "!convert!" == "y" (
             ECHO !wsl_distro! failed to import.
             SET "options=options"
             GOTO wsl_delete_prompt
         )
     )  ELSE (
-        IF /I "!convert!"=="y" (
+        IF /I "!convert!" == "y" (
             SET "convert=n"
             GOTO wsl_delete
         ) ELSE (
@@ -872,29 +872,29 @@ IF NOT DEFINED set_wsl_conv (
 SET "module=wsl_delete_prompt"
 ECHO Delete !wsl_distro!? (y^^^)^^/^^n
 SET /P "delete="
-IF /I "!delete!"=="" (
+IF /I "!delete!" == "" (
     SET "delete=yes"
 )
-IF /I "!delete!"=="y" (
+IF /I "!delete!" == "y" (
     SET "delete=yes"
 )
-IF /I "!delete!"=="yes" (
+IF /I "!delete!" == "yes" (
     SET "delete=yes"
     GOTO wsl_delete 
 )
 SET "options=options" 
-IF "!interactive"=="y" (
+IF "!interactive" == "y" (
     GOTO home_banner
 ) ELSE ( GOTO quit )
 
 :wsl_delete
 wsl.exe --unregister !wsl_distro!
-IF "!interactive"=="y" (
+IF "!interactive" == "y" (
     GOTO redo
 ) ELSE ( GOTO quit )
 
 :wsl_distro_launch
-IF "!wsl_distro_test_pass!"=="y" (
+IF "!wsl_distro_test_pass!" == "y" (
     ECHO launching WSL with !wsl_distro! distro...
     ECHO wsl.exe -d !wsl_distro!
     wsl.exe -d !wsl_distro!
@@ -905,7 +905,7 @@ IF "!wsl_distro_test_pass!"=="y" (
 :custom_config
 SET "module=custom_config"
 SET "handle=custom_config"
-IF "!interactive!"=="n" (
+IF "!interactive!" == "n" (
     GOTO quit
 )
 
@@ -917,10 +917,10 @@ SET /P "image_repo=image repository: (!image_repo_mask!) $ "
 SET "old_image_name_tag=!image_name_tag!"
 SET /P "image_name_tag=image name/tag in !image_repo!: (!image_name!:!image_tag!) $ "
 @REM reset image_built flag if the image_name_tag changes
-IF "!old_image_name_tag!" NEQ "!image_name_tag!" (
+IF NOT "!old_image_name_tag!" == "!image_name_tag!" (
     SET "docker_image_built=n"
 )
-IF "!DVLP_DEBUG!"=="y" (
+IF "!DVLP_DEBUG!" == "y" (
     @REM SET "image_name="
     @REM SET "image_tag="
     @REM SET "image_name="
@@ -938,18 +938,18 @@ SET "image_tag=%image_name_tag::=" & SET "image_tag=%"
 @REM SET "image_name_tag=!image_name!:!image_tag!"
 @REM special rule for official distros on docker hub
 @REM replaces '_' with 'official' for printing
-IF "!image_repo!"=="_" (
+IF "!image_repo!" == "_" (
     SET "image_repo_name_tag=!image_name!:!image_tag!"
-    IF "!image_tag!"=="" (
+    IF "!image_tag!" == "" (
         SET "image_repo_name_tag=!image_name!"
     )
 ) 
-IF "!wsl!"=="y" (
+IF "!wsl!" == "y" (
     SET /P "save_directory=download folder: !mount_drive!:\(!save_directory!) $ "
 )
 SET install_directory=!image_repo_name_tag:/=-!
 SET install_directory=!install_directory::=-!
-IF "!wsl!"=="y" (
+IF "!wsl!" == "y" (
     SET /P "install_directory=install folder: !mount_drive!:\!save_directory!\(!install_directory!) $ "
 )
 SET install_directory=!install_directory:/=-!
@@ -958,19 +958,19 @@ SET install_directory=!install_directory::=-!
 SET save_location=!mount_drive!:\!save_directory!
 SET install_root_dir=!save_location!\!install_directory!
 @REM special rule for official distro
-IF "!image_repo!"=="_" (
+IF "!image_repo!" == "_" (
     SET "wsl_distro=official-!install_directory!"
 ) ELSE (
     SET "wsl_distro=!install_directory!" 
 )
-IF "!wsl!"=="y" (
+IF "!wsl!" == "y" (
     SET /P "wsl_distro=distro name in WSL: (!wsl_distro!) $ "
 )
 SET "wsl_distro=!wsl_distro::=-!"
 SET "wsl_distro=!wsl_distro:/=-!"
-IF "!wsl!"=="y" (
+IF "!wsl!" == "y" (
     SET /P "wsl_version=WSL version: (!wsl_version_int!) $ "
-    IF "!wsl_version!"=="2" (
+    IF "!wsl_version!" == "2" (
         SET wsl_version_int=2
     ) ELSE (
         SET wsl_version_int=1 
@@ -983,14 +983,14 @@ ECHO:
 @REM ECHO Press ENTER to import !wsl_distro! as a distro into WSL
 @REM ECHO:   or enter [o]ptions to see more options
 @REM SET /P "options=$ "
-@REM IF "!options!"=="" (
+@REM IF "!options!" == "" (
 @REM     SET "options=import"
 @REM     GOTO set_paths
 @REM )
-@REM IF "!options!"=="o" (
+@REM IF "!options!" == "o" (
 @REM     SET "options=options"
 @REM )
-@REM IF "!options!"=="options" (
+@REM IF "!options!" == "options" (
 @REM     GOTO home_banner
 @REM ) ELSE (
 @REM     GOTO options_parse
@@ -999,28 +999,28 @@ color 0F
 
 :config
 SET "module=config"
-IF "!handle!"=="custom_config" (
+IF "!handle!" == "custom_config" (
     SET "handle=config"
 )
 SET "save_location=!mount_drive!:\!save_directory!"
 SET "install_root_dir=!save_location!\!wsl_distro!"
 SET "image_save_path=!save_location!\!wsl_distro!.tar"
 SET "image_repo_name_tag=!image_repo_mask!/!image_name!:!image_tag!"
-IF "!image_tag!"=="" (
+IF "!image_tag!" == "" (
     SET "image_repo_name_tag=!image_repo_mask!/!image_name!"
-    IF "!image_repo!"=="" (
+    IF "!image_repo!" == "" (
         SET "image_repo_name_tag=!image_name!"
     )
 )
-IF "!image_repo!"=="" (
+IF "!image_repo!" == "" (
     SET "image_repo_name_tag=!image_name!:!image_tag!"
-    IF "!image_tag!"=="" (
+    IF "!image_tag!" == "" (
         SET "image_repo_name_tag=!image_name!"
     )
 )
 @REM special rule for official distros on docker hub
 @REM replaces '_' with 'official' for printing
-IF "!image_repo!"=="_" (
+IF "!image_repo!" == "_" (
     @REM official repo has no repo name in address/url
     SET "image_repo_name_tag=!image_name!:!image_tag!"
 
@@ -1044,7 +1044,7 @@ ECHO        ............                                           ............
 ECHO        ............    name/tag:                              ............
 ECHO        ............      !image_name!:!image_tag!                   
 
-IF "!wsl!"=="y" (
+IF "!wsl!" == "y" (
     ECHO        ............                                           ............
     ECHO        ............    import into WSL:                       ............
     ECHO        ............      yes                                  ............
@@ -1054,7 +1054,7 @@ IF "!wsl!"=="y" (
     ECHO        ............                                           ............
     ECHO        ............    WSL alias:                             ............
     ECHO        ............       !wsl_distro!          
-    IF "!default_wsl_distro!"=="y" (
+    IF "!default_wsl_distro!" == "y" (
         ECHO       ..............                                         ..............
         ECHO       ..............    default:                             ..............
         ECHO       ..............      yes                                ..............
@@ -1079,15 +1079,15 @@ ECHO:
 SET "module=home_prompt"
 SET "prompt_type=home"
 SET "docker_do="
-IF "!handle!" NEQ "home_banner" (
+IF NOT "!handle!" == "home_banner" (
     SET "handle=home_prompt"
 )
 SET above=above
-IF "!interactive!"=="n" (
-    IF "!image_repo!" NEQ "kalilinux" (
+IF "!interactive!" == "n" (
+    IF NOT "!image_repo!" == "kalilinux" (
         @REM official repo has no repo name in address/url
         SET "options=build"
-        IF "!DVLP_DEBUG!"=="y" (
+        IF "!DVLP_DEBUG!" == "y" (
             ECHO "options0: !options!"
             ECHO "image_name_tag: !image_name_tag!"
         )
@@ -1119,10 +1119,10 @@ IF DEFINED failed_before (
 ECHO:
 ECHO:
 
-IF "!interactive!"=="n" (
+IF "!interactive!" == "n" (
     SET "quiet_home_prompt=y"
 ) ELSE (
-    IF "!options!"=="options" (
+    IF "!options!" == "options" (
         SET "quiet_home_prompt=n"
     ) ELSE (
         SET "quiet_home_prompt=n"
@@ -1135,72 +1135,72 @@ IF "!interactive!"=="n" (
 
 SET "home_default_option=build"
 
-IF "!wsl!"=="y" (
-    IF "!image_repo!"=="kindtek" (
-        IF "!image_built!"=="y" ( 
-            IF "!quiet_home_prompt!"=="n" (
+IF "!wsl!" == "y" (
+    IF "!image_repo!" == "kindtek" (
+        IF "!image_built!" == "y" ( 
+            IF "!quiet_home_prompt!" == "n" (
                 ECHO    Press ENTER to import locally built !image_name! into WSL
                 @REM SET "options=build"
             )
         ) ELSE (
             SET "home_default_option=pull"
-            IF "!quiet_home_prompt!"=="n" (
+            IF "!quiet_home_prompt!" == "n" (
                 ECHO    Press ENTER to pull !image_name! and import into WSL as !wsl_distro!
             )
         )
     ) ELSE (
-        IF "!quiet_home_prompt!"=="n" (
+        IF "!quiet_home_prompt!" == "n" (
             ECHO    Press ENTER to pull !image_name! and import into WSL as !wsl_distro!
             @REM SET "options=build"
         )
     )
 ) ELSE (
-    IF "!image_repo!"=="kindtek" (
-        IF "!quiet_home_prompt!"=="n" (
+    IF "!image_repo!" == "kindtek" (
+        IF "!quiet_home_prompt!" == "n" (
             ECHO    Press ENTER to build !image_name! in Docker
             @REM SET "options=build"
         )
     ) ELSE (
-        IF "!quiet_home_prompt!"=="n" (
+        IF "!quiet_home_prompt!" == "n" (
             ECHO    Press ENTER to pull !image_name! in Docker
         )
         SET "home_default_option=pull"
     )
 )
-IF "!quiet_home_prompt!"=="n" (
+IF "!quiet_home_prompt!" == "n" (
     ECHO        ..or type [o]ptions
 )
 ECHO:
-@REM IF "!options!"=="options" (
-IF "!DVLP_DEBUG!"=="y" (
+@REM IF "!options!" == "options" (
+IF "!DVLP_DEBUG!" == "y" (
     ECHO "options1: !options!"
     ECHO "home_default_option1: !home_default_option!"
 )
 @REM avoid building official sources
-IF "!image_repo!"=="_" (
+IF "!image_repo!" == "_" (
     SET "home_default_option=pull"
 )
-@REM IF "!quiet_home_prompt!"=="n" (
-@REM     IF "!DVLP_DEBUG!"=="y" (
+@REM IF "!quiet_home_prompt!" == "n" (
+@REM     IF "!DVLP_DEBUG!" == "y" (
 @REM         ECHO "no quiet prompt"
 @REM     )
 @REM     SET "options=!home_default_option!"
 @REM     SET "confirm="
 @REM     SET /P "confirm=$ "
-@REM     IF "!confirm!" NEQ "" (
+@REM     IF NOT "!confirm!" == "" (
 @REM         SET "options=!confirm!"
-@REM         IF "!DVLP_DEBUG!"=="y" (
+@REM         IF "!DVLP_DEBUG!" == "y" (
 @REM             ECHO "options set to !confirm! (confirm)"
 @REM         )
 @REM         @REM SET "confirm="
 @REM     ) ELSE (
 @REM         SET "options=!home_default_option!"
-@REM         IF "!DVLP_DEBUG!"=="y" (
+@REM         IF "!DVLP_DEBUG!" == "y" (
 @REM             ECHO "options set to !home_default_option! (home_default_option)"
 @REM         )
 @REM     )
 @REM )
-IF "!DVLP_DEBUG!"=="y" (
+IF "!DVLP_DEBUG!" == "y" (
     ECHO "options2: !options!"
     ECHO "home_default_option2: !home_default_option!"
 )
@@ -1210,43 +1210,43 @@ IF "!DVLP_DEBUG!"=="y" (
 SET "prompt_type=options_prompt"
 SET "handle=options_prompt"
 
-IF /I "!options!"=="o" (
+IF /I "!options!" == "o" (
     SET "options=options"
 )
-IF /I "!options!"=="options" (
+IF /I "!options!" == "options" (
     SET "display_options=y"
 
 )
-IF "!interactive!"=="y" (
-    IF "!DVLP_DEBUG!"=="y" (
+IF "!interactive!" == "y" (
+    IF "!DVLP_DEBUG!" == "y" (
         ECHO "interactive session"
         ECHO "options3: !options!"
     )
-    IF "!display_options!"=="y" (
+    IF "!display_options!" == "y" (
         ECHO   options:
         ECHO:
         ECHO        [h]ome      go to home screen
 
-        IF "!module!"=="wsl_distro_launch_prompt" (
+        IF "!module!" == "wsl_distro_launch_prompt" (
             ECHO        [c]onfig    configure import settings
             ECHO        [d]efault   !default_wsl_distro! toggle !image_repo_name_tag! image as default WSL distro 
         ) ELSE (
-            IF "!module!"=="custom_config" (
+            IF "!module!" == "custom_config" (
                 ECHO        [c]onfig    edit !image_repo_name_tag! import configuration
             ) ELSE (
                 ECHO        [c]onfig    configure import settings
             )
 
-            IF "!wsl!"=="y" (
+            IF "!wsl!" == "y" (
                 ECHO        [l]aunch    launch !wsl_distro! if it exists in WSL
                 ECHO        [p]ull      pull and import !image_name_tag! image into WSL
                 ECHO        [b]uild     build and import !wsl_distro! into WSL
                 ECHO        [P]ush      push a built image to Hub
-                IF "!image_built!"=="y" (
+                IF "!image_built!" == "y" (
                     ECHO        [i]nstall[P]   [i]nstall[b] ^^+ push to !to image_repo!
                 )
                 ECHO [ON]   [w]sl       toggle - import !image_repo_name_tag! into WSL 
-                IF "!default_wsl_distro!"=="y" (
+                IF "!default_wsl_distro!" == "y" (
                     ECHO [ON]    [d]wsl      toggle - designate !image_repo_name_tag! as default WSL distro 
                 ) ELSE (
                     ECHO [OFF]  [d]wsl      toggle - designate !image_repo_name_tag! as default WSL distro  
@@ -1263,9 +1263,9 @@ IF "!interactive!"=="y" (
         ECHO [ ^^! ]  [r]estart   restart computer
         ECHO        e[x]it      exit
         ECHO:
-        IF /I "!options!"=="options" (
-            IF "!home_default_option!" NEQ "" (
-                IF "DVLP_DEBUG"=="y" (
+        IF /I "!options!" == "options" (
+            IF NOT "!home_default_option!" == "" (
+                IF "DVLP_DEBUG" == "y" (
                     ECHO "options=home_default_option: !options!"
                 )
                 @REM post option (don't discard)
@@ -1273,7 +1273,7 @@ IF "!interactive!"=="y" (
                 @REM SET "home_default_option="
             )
         ) 
-        IF "DVLP_DEBUG"=="y" (
+        IF "DVLP_DEBUG" == "y" (
             ECHO "MAIN OPTS: !home_default_option!"
             ECHO "OPTIONS: !options!"
         )
@@ -1282,22 +1282,22 @@ IF "!interactive!"=="y" (
     ECHO (!home_default_option!^^^)
     SET "confirm="
     SET /P "confirm="
-    IF "!confirm!" NEQ "" (
+    IF NOT "!confirm!" == "" (
         SET "options=!confirm!"
-        IF "!DVLP_DEBUG!"=="y" (
+        IF "!DVLP_DEBUG!" == "y" (
             ECHO "options set to !confirm! (confirm)"
         )
         @REM SET "confirm="
     ) ELSE (
         SET "options=!home_default_option!"
-        IF "!DVLP_DEBUG!"=="y" (
+        IF "!DVLP_DEBUG!" == "y" (
             ECHO "options set to !home_default_option! (home_default_option)"
         )
     )
-    IF "!options!"=="o" (
+    IF "!options!" == "o" (
         SET "options=options"
     )
-    IF "!options!"=="options" ( 
+    IF "!options!" == "options" ( 
         @REM SET "options="
         GOTO options_prompt
     )
@@ -1305,13 +1305,13 @@ IF "!interactive!"=="y" (
     SET "options=!home_default_option!"
 )
 :options_parse
-IF "!handle!" NEQ "options_prompt" (
+IF NOT "!handle!" == "options_prompt" (
     SET "handle=options_parse"
 )
 color 0F
 SET "handle=options_parse"
 SET "opti0ns=!options!"
-IF "!DVLP_DEBUG!"=="y" (
+IF "!DVLP_DEBUG!" == "y" (
     ECHO "OPTIONS PARSE: !options!"
     ECHO "OPTI0NS PARSE: !opti0ns!"
     ECHO "go2 PARSE: !go2!"
@@ -1321,11 +1321,11 @@ IF "!DVLP_DEBUG!"=="y" (
     ECHO "WSL: !wsl!"
 )
 
-IF /I "!opti0ns!"=="b" (
+IF /I "!opti0ns!" == "b" (
     SET "opti0ns=build"
 )
-IF /I "!opti0ns!"=="build" (
-    IF /I "!image_name_tag!"=="default" (
+IF /I "!opti0ns!" == "build" (
+    IF /I "!image_name_tag!" == "default" (
         SET "docker_image_do=docker_image_pull"
         @REM ECHO option 'build' selected
         SET "opti0ns=pull"
@@ -1339,66 +1339,66 @@ IF /I "!opti0ns!"=="build" (
     )
 )
 @REM p -> pull
-IF "!opti0ns!"=="p" (
+IF "!opti0ns!" == "p" (
     SET "opti0ns=pull"
 )
-IF /I "!opti0ns!"=="pull" (
+IF /I "!opti0ns!" == "pull" (
     SET "docker_image_do=docker_image_pull"
     SET "go2=set_paths"
     GOTO switchboard
 )
 @REM P -> push
-IF /I "!image_built!"=="y" (
-    IF "!opti0ns!"=="P" (
+IF /I "!image_built!" == "y" (
+    IF "!opti0ns!" == "P" (
         SET "opti0ns=push"
     )
-    IF /I "!opti0ns!"=="push" (
+    IF /I "!opti0ns!" == "push" (
         SET "docker_image_do=docker_image_push"
         SET "go2=set_paths"
         GOTO switchboard
     )
 )
-IF /I "!opti0ns!"=="c" (
+IF /I "!opti0ns!" == "c" (
     SET "opti0ns=config"
 )
-IF /I "!opti0ns!"=="config" (
+IF /I "!opti0ns!" == "config" (
     @REM ECHO option 'config' selected
     SET "go2=custom_config"
     GOTO switchboard
 )
-IF /I "!opti0ns!"=="h" (
+IF /I "!opti0ns!" == "h" (
     SET "opti0ns=home"
 )
-IF /I "!opti0ns!"=="home" (
+IF /I "!opti0ns!" == "home" (
     @REM ECHO option 'config' selected
     SET "go2=home_banner"
     GOTO switchboard
 )
-@REM IF "!module!"=="wsl_distro_launch_prompt" (
-@REM     IF "!opti0ns!"=="d" (
+@REM IF "!module!" == "wsl_distro_launch_prompt" (
+@REM     IF "!opti0ns!" == "d" (
 @REM         SET "default_wsl_distro=y"
 @REM         ECHO option 'default' selected
 @REM         GOTO set_default_wsl_distro
 @REM     )
-@REM     IF "!opti0ns!"=="default" (
+@REM     IF "!opti0ns!" == "default" (
 @REM         SET "default_wsl_distro=y"
 @REM         ECHO option 'default' selected
 @REM         SET "go2= set_default_wsl_distro"
 @REM     )
 @REM ) ELSE (
-    IF /I "!opti0ns!"=="dw" (
+    IF /I "!opti0ns!" == "dw" (
         @REM ECHO option 'default' selected
         SET "opti0ns=dwsl"
     )
-    IF /I "!opti0ns!"=="d" (
+    IF /I "!opti0ns!" == "d" (
         @REM ECHO option 'default' selected
         SET "opti0ns=dwsl"
     )
-    IF /I "!opti0ns!"=="dwsl" (
+    IF /I "!opti0ns!" == "dwsl" (
         SET "default=default"
         @REM ECHO option 'default' selected
         ECHO flag changed
-        IF "!default_wsl_distro!"=="y" (
+        IF "!default_wsl_distro!" == "y" (
             SET "default_wsl_distro=n"
             ECHO " [ON]  default distro
         ) ELSE (
@@ -1412,49 +1412,49 @@ IF /I "!opti0ns!"=="home" (
         GOTO switchboard
     )
 @REM )
-IF /I "!opti0ns!"=="l" (
+IF /I "!opti0ns!" == "l" (
     SET "opti0ns=launch"
 )
-IF /I "!opti0ns!"=="launch" (
+IF /I "!opti0ns!" == "launch" (
     SET "go2=wsl_distro_launch_prompt"
     GOTO switchboard
 )
-IF /I "!opti0ns!"=="o" (
+IF /I "!opti0ns!" == "o" (
     SET "opti0ns=options"
 )
-IF /I "!opti0ns!"=="options" (
-    IF "!handle!"=="error_restart_prompt" (
+IF /I "!opti0ns!" == "options" (
+    IF "!handle!" == "error_restart_prompt" (
         GOTO options_prompt
     ) ELSE (
-        IF "!handle!"=="options_prompt" (
+        IF "!handle!" == "options_prompt" (
             GOTO options_prompt
         ) ELSE (
             GOTO home_banner
         )
     )
 )
-IF /I "!opti0ns!"=="r" (
+IF /I "!opti0ns!" == "r" (
     ECHO "RESTART COMPUTER 1"
     SET "opti0ns=restart"
 )
-IF /I "!opti0ns!"=="restart" (
+IF /I "!opti0ns!" == "restart" (
     ECHO "RESTART COMPUTER 2"
 
     ECHO option 'restart' selected
     SET "go2=computer_restart_prompt"
     GOTO switchboard
 )
-IF /I "!opti0ns!"=="w" (
+IF /I "!opti0ns!" == "w" (
     SET "opti0ns=wsl"
-    IF "!DVLP_DEBUG!"=="y" (
+    IF "!DVLP_DEBUG!" == "y" (
         ECHO "opti0ns: !opti0ns!"
         ECHO "wsl: !wsl!"
     )
 )
-IF /I "!opti0ns!"=="wsl" (
+IF /I "!opti0ns!" == "wsl" (
     @REM ECHO option 'default' selected
     ECHO default flag changed
-    IF "!wsl!"=="y" (
+    IF "!wsl!" == "y" (
         SET "wsl=n"
         ECHO "toggle wsl import [OFF]"
     ) ELSE (
@@ -1464,16 +1464,16 @@ IF /I "!opti0ns!"=="wsl" (
     SET "opti0ns=options"
     @REM SET "go2=docker_image_pull"
     SET "go2=home_banner"
-    IF "!DVLP_DEBUG!"=="y" (
+    IF "!DVLP_DEBUG!" == "y" (
         ECHO "opti0ns: !opti0ns!"
         ECHO "wsl: !wsl!"
     )
     GOTO switchboard
 )
 
-IF /I "!opti0ns!"=="debug" (
+IF /I "!opti0ns!" == "debug" (
     SET "DVLP_DEBUG=n"
-    IF "!DVLP_DEBUG!"=="y" (
+    IF "!DVLP_DEBUG!" == "y" (
         SET "DVLP_DEBUG=n"
         ECHO "toggle debug output [OFF]"
     ) ELSE (
@@ -1486,16 +1486,16 @@ IF /I "!opti0ns!"=="debug" (
     GOTO switchboard
 )
 
-IF /I "!opti0ns!"=="x" (
+IF /I "!opti0ns!" == "x" (
     SET "go2=program_restart_prompt"
-    IF "!DVLP_DEBUG!"=="y" (
+    IF "!DVLP_DEBUG!" == "y" (
         ECHO "x-opti0ns: !opti0ns!"
     )
     GOTO switchboard
 )
-IF /I "!opti0ns!"=="exit" (
+IF /I "!opti0ns!" == "exit" (
     SET "go2=quit"
-    IF "!DVLP_DEBUG!"=="y" (
+    IF "!DVLP_DEBUG!" == "y" (
         ECHO "exit-opti0ns: !opti0ns!"
     )
     GOTO switchboard
@@ -1505,7 +1505,7 @@ IF /I "!opti0ns!"=="exit" (
 @REM 
 @REM SET "exit_module=switchboard"
 SET "handle=switchboard"
-IF "!DVLP_DEBUG!"=="y" (
+IF "!DVLP_DEBUG!" == "y" (
     ECHO "OPTIONS PARSE: !options!"
     ECHO "OPTI0NS PARSE: !opti0ns!"
     ECHO "go2 PARSE: !go2!"
@@ -1513,11 +1513,11 @@ IF "!DVLP_DEBUG!"=="y" (
     ECHO "EXIT_MOD: !exit_module!"
     ECHO HANDLE !handle!
 )
-IF "!opti0ns!" NEQ "" (
+IF NOT "!opti0ns!" == "" (
     SET "options=!opti0ns!"
 )
 
-IF "!go2!" NEQ "" (
+IF NOT "!go2!" == "" (
     GOTO !go2!
 ) ELSE (
     GOTO home_banner
@@ -1528,7 +1528,7 @@ IF "!go2!" NEQ "" (
 :computer_restart_prompt
 SET "handle=computer_restart_prompt"
 SET "prompt_type=computer_restart_prompt"
-IF "!interactive!"=="n" (
+IF "!interactive!" == "n" (
     GOTO quit
 )
 @REM SET "module=program_restart_prompt"
@@ -1597,7 +1597,7 @@ ECHO:
 ECHO:
 ECHO:
 SET /P "options=$ "
-IF "!options!"=="" (
+IF "!options!" == "" (
 @REM dism /Online /Cleanup-Image /RestoreHealth
     ECHO "initializing restart ..."
     SET "options=restart_now"
@@ -1605,21 +1605,21 @@ IF "!options!"=="" (
     @REM GOTO quit
     @REM exit
 )
-IF /I "!options!"=="o" (
+IF /I "!options!" == "o" (
     SET "options=options"
 )
-IF /I "!options!"=="options" (
+IF /I "!options!" == "options" (
     COLOR 0F
     SET "docker_do="
     GOTO home_banner
 ) ELSE (
-    IF /I "!options!"=="r" (
+    IF /I "!options!" == "r" (
         SET "options=restart_now"
     )
-    IF /I "!options!"=="restart" (
+    IF /I "!options!" == "restart" (
         SET "options=restart_now"
     )
-    IF /I "!options!"=="restart_now" (
+    IF /I "!options!" == "restart_now" (
         shutdown /r
         GOTO quit
     ) ELSE (
@@ -1638,18 +1638,18 @@ SET "handle=error_restart_prompt"
 SET "prompt_type=error_restart_prompt"
 SET "prompt_error_msg=sorry - import failed. "
 
-IF "!interactive!"=="n" (
+IF "!interactive!" == "n" (
     GOTO quit
 )
 SET "failed_before=y"
 ECHO:
 :program_restart_prompt
-IF "!handle!" NEQ "error_restart_prompt" (
+IF NOT "!handle!" == "error_restart_prompt" (
     SET "handle=program_restart_prompt"
 )
 SET "prompt_type=program_restart_prompt"
 
-IF "!interactive!"=="n" (
+IF "!interactive!" == "n" (
     GOTO quit
 )
 @REM SET "module=program_restart_prompt"
@@ -1709,7 +1709,7 @@ SET "exit_devels_playground="
 SET /P "exit_devels_playground="
 COLOR 0F
 
-IF "!exit_devels_playground!"=="" (
+IF "!exit_devels_playground!" == "" (
     SET "exit_devels_playground=exit"
 )
 SET "options=!exit_devels_playground!"
@@ -1718,7 +1718,7 @@ GOTO options_parse
 
 :quit
 :exit
-IF "!interactive!"=="y" (
+IF "!interactive!" == "y" (
     ECHO:
 ) ELSE (
     @REM ECHO exiting from module !module!
