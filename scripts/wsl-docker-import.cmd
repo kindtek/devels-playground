@@ -262,7 +262,7 @@ IF "!DVLP_DEBUG!"=="y" (
 )
 IF "!wsl_distro!" == "!failsafe_wsl_distro!" (
     SET "install_root_dir=!save_location!"
-    SET "install_location=!install_save_location!"
+    SET "install_location=!save_location!"
     SET "image_save_path=!save_location!\!wsl_distro!.tar"
 ) ELSE (
     SET test_string=helloworld
