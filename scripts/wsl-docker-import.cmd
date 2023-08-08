@@ -767,7 +767,7 @@ IF NOT "!image_repo!" == "kalilinux" (
     ECHO  ..or enter any character to skip 
     ECHO|set /p="(open !wsl_distro! terminal):"
     @REM make sure windows paths transfer
-    SET /P "wsl_launch=$ "
+    SET /P "wsl_launch=> "
     IF /I "!wsl_launch!" == "" (
         wsl.exe -d !wsl_distro! cd /; bash
     ) ELSE (
@@ -929,9 +929,9 @@ color 0B
 
 @REM @TODO: filter/safeguard user input
 ECHO:
-SET /P "image_repo=image repository: (!image_repo_mask!) $ "
+SET /P "image_repo=image repository: (!image_repo_mask!) > "
 SET "old_image_name_tag=!image_name_tag!"
-SET /P "image_name_tag=image name/tag in !image_repo!: (!image_name!:!image_tag!) $ "
+SET /P "image_name_tag=image name/tag in !image_repo!: (!image_name!:!image_tag!) > "
 @REM reset image_built flag if the image_name_tag changes
 IF NOT "!old_image_name_tag!" == "!image_name_tag!" (
     SET "docker_image_built=n"
@@ -961,12 +961,12 @@ IF "!image_repo!" == "_" (
     )
 ) 
 IF "!wsl!" == "y" (
-    SET /P "save_directory=download folder: !mount_drive!:\(!save_directory!) $ "
+    SET /P "save_directory=download folder: !mount_drive!:\(!save_directory!) > "
 )
 SET install_directory=!image_repo_name_tag:/=-!
 SET install_directory=!install_directory::=-!
 IF "!wsl!" == "y" (
-    SET /P "install_directory=install folder: !mount_drive!:\!save_directory!\(!install_directory!) $ "
+    SET /P "install_directory=install folder: !mount_drive!:\!save_directory!\(!install_directory!) > "
 )
 SET install_directory=!install_directory:/=-!
 SET install_directory=!install_directory::=-!
@@ -980,12 +980,12 @@ IF "!image_repo!" == "_" (
     SET "wsl_distro=!install_directory!" 
 )
 IF "!wsl!" == "y" (
-    SET /P "wsl_distro=distro name in WSL: (!wsl_distro!) $ "
+    SET /P "wsl_distro=distro name in WSL: (!wsl_distro!) > "
 )
 SET "wsl_distro=!wsl_distro::=-!"
 SET "wsl_distro=!wsl_distro:/=-!"
 IF "!wsl!" == "y" (
-    SET /P "wsl_version=WSL version: (!wsl_version_int!) $ "
+    SET /P "wsl_version=WSL version: (!wsl_version_int!) > "
     IF "!wsl_version!" == "2" (
         SET wsl_version_int=2
     ) ELSE (
@@ -1612,7 +1612,7 @@ ECHO:
 ECHO:
 ECHO:
 ECHO:
-SET /P "options=$ "
+SET /P "options=> "
 IF "!options!" == "" (
 @REM dism /Online /Cleanup-Image /RestoreHealth
     ECHO "initializing restart ..."
