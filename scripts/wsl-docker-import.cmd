@@ -680,7 +680,9 @@ wsl.exe --import !wsl_distro! !install_location! !image_save_path! --version !ws
 @REM     ECHO WSL import failure
 @REM     SET "failed_before=y"
 @REM     GOTO error_restart_prompt
+ECHO deleting !image_save_path! ...
 DEL !image_save_path!
+ECHO !image_save_path! deleted
 IF "!image_service_suffix!" == "kernel" (
 	SET "wsl_default_distro="
     SET "wsl_default_kernel="
@@ -714,8 +716,8 @@ IF "!image_service_suffix!" == "kernel" (
     wsl.exe -d %wsl_distro% --cd /hal --user agl --exec bash reclone-gh.sh autodel
     wsl.exe -d %wsl_distro% --cd /hal/dvlw/dvlp/kernels/linux --user agl --exec bash install-kernel.sh %USERNAME% latest latest
 )
-net stop LxssManager >nul
-net start LxssManager >nul
+NET STOP LxssManager >NUL
+NET START LxssManager >NUL
 ECHO DONE
 IF "!default_wsl_distro!" == "y" (
     GOTO set_default_wsl_distro
