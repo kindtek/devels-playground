@@ -52,6 +52,9 @@ IF "%~1"=="default" (
 
 ) ELSE (
     IF "%~1" NEQ "" (
+        IF "!DVLP_DEBUG!"=="y" (
+            ECHO "non_interactive_distro_name set to !non_interactive_distro_name!"
+        )
         @REM SET "image_tag="
         @REM SET "image_name="
         ECHO !image_name_tag!|find "/" >NUL
