@@ -251,10 +251,10 @@ SET "Second=%Second:~-2%"
 set "timestamp_date=%Year%%Month%%Day%"
 SET "timestamp_time=%Hour%%Minute%%Second%%TIME:*.=%"
 
-SET "install_location=!install_root_dir!"
 IF "!non_interactive_distro_name!" == "kalilinux-kali-rolling-latest" (
     SET "install_root_dir=!save_location!"
-
+    SET "install_location=!install_save_location!"
+    SET "image_save_path=!save_location!\!wsl_distro!.tar"
 ) ELSE (
     SET test_string=helloworld
     SET "test_string_path=%USERPROFILE%\.kali_test"
