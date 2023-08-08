@@ -267,6 +267,7 @@ IF "!wsl_distro!" == "!failsafe_wsl_distro!" (
     IF "!DVLP_DEBUG!" == "y" (
         ECHO failsafe distro
         ECHO image_save_path: !image_save_path!
+        ECHO image_install_location: !install_location!
     )
 ) ELSE (
     SET test_string=helloworld
