@@ -270,6 +270,11 @@ IF "!wsl_distro!" == "!failsafe_wsl_distro!" (
         ECHO image_install_location: !install_location!
     )
 ) ELSE (
+    IF "!DVLP_DEBUG!" == "y" (
+        ECHO not failsafe distro
+        ECHO image_save_path: !image_save_path!
+        ECHO image_install_location: !install_location!
+    )
     SET test_string=helloworld
     SET "test_string_path=%USERPROFILE%\.kali_test"
     @REM need better check for duplicate distro - use randomization for now
