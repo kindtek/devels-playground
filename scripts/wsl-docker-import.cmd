@@ -201,9 +201,10 @@ IF "!DVLP_DEBUG!"=="y" (
     ECHO "image_name_tag set to !image_name_tag!"
     ECHO IMG_NAME !image_name!
     ECHO IMG_TAG !image_tag!
+    ECHO IMG_REPO !image_repo!
     ECHO IMG_NAME_TAG !image_name_tag!
     ECHO IMG_REPO_NAME_TAG !image_repo_name_tag!
-    ECHO WSL_DISTRO_NAME %~2
+    ECHO WSL_DISTRO_NAME %~2 / !non_interactive_distro_name!
     ECHO DOCKER_HUB %~1
     @REM ECHO "image_tag set to arg: '%1'  ('%~1') as !image_tag!"
 )
