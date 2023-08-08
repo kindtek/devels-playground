@@ -48,7 +48,8 @@ IF "%~1"=="default" (
     SET "image_name=kali-rolling"
     SET "wsl_distro=!failsafe_wsl_distro!"
     SET "non_interactive_distro_name=!wsl_distro!"
-    SET "image_name_tag=!image_repo!\!image_name!:!image_tag!"
+    SET "image_name_tag=!image_name!:!image_tag!"
+    SET "image_repo_name_tag=!image_repo!\!image_name!:!image_tag!"
     SET "default_wsl_distro=y"
 
 ) ELSE (
