@@ -20,6 +20,7 @@ SET mount_drive=C
 @REM SET image_repo=_
 @REM SET image_repo_mask=official
 @REM SET image_name=kali:latest
+SET failsafe_wsl_distro=kalilinux-kali-rolling-latest
 SET image_repo=kindtek
 SET image_repo_mask=kindtek
 SET "image_name_tag=%~1"
@@ -45,7 +46,7 @@ IF "%~1"=="default" (
     SET "image_repo_mask=kalilinux"
     SET "image_tag=latest"
     SET "image_name=kali-rolling"
-    SET "wsl_distro=kalilinux-kali-rolling-latest"
+    SET "wsl_distro=!failsafe_wsl_distro!"
     SET "non_interactive_distro_name=!wsl_distro!"
     SET "image_name_tag=%image_repo%\%image_name%:%image_tag%"
     SET "default_wsl_distro=y"
@@ -254,7 +255,7 @@ SET "Second=%Second:~-2%"
 set "timestamp_date=%Year%%Month%%Day%"
 SET "timestamp_time=%Hour%%Minute%%Second%%TIME:*.=%"
 
-IF "!non_interactive_distro_name!" == "kalilinux-kali-rolling-latest" (
+IF "!wsl_distro!" == "!failsafe_wsl_distro!" (
     SET "install_root_dir=!save_location!"
     SET "install_location=!install_save_location!"
     SET "image_save_path=!save_location!\!wsl_distro!.tar"
