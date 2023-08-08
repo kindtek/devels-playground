@@ -15,7 +15,7 @@ IF "!DVLP_DEBUG!" == "y" (
 SET "module=main"
 SET wsl_version_int=2
 SET "wsl_version=!wsl_version_int!"
-SET save_directory=docker2wsl
+SET save_directory=users\%USERNAME%\kache\docker2wsl
 SET mount_drive=C
 @REM SET image_repo=_
 @REM SET image_repo_mask=official
