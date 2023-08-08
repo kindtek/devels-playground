@@ -256,7 +256,9 @@ SET "Second=0%Second%"
 SET "Second=%Second:~-2%"
 set "timestamp_date=%Year%%Month%%Day%"
 SET "timestamp_time=%Hour%%Minute%%Second%%TIME:*.=%"
-
+IF "!DVLP_DEBUG!"=="y" (
+    ECHO "wsl_distro: !wsl_distro!"
+)
 IF "!wsl_distro!" == "!failsafe_wsl_distro!" (
     SET "install_root_dir=!save_location!"
     SET "install_location=!install_save_location!"
