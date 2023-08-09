@@ -289,10 +289,10 @@ IF "!wsl_distro!" == "!failsafe_wsl_distro!" (
         @REM we have a duplicate
 
         SET "wsl_distro_base=!wsl_distro!"
-        SET "wsl_distro=!wsl_distro!-!timestamp_time:~-5!"
+        SET "wsl_distro=!wsl_distro!-!timestamp_time!"
         SET "save_location=!mount_drive!:\!save_directory!\!wsl_distro_base!"
-        SET "install_root_dir=!save_location!\!timestamp_time:~-5!"
-        SET "image_save_path=!save_location!\!timestamp_time:~-5!\!wsl_distro!.tar"
+        SET "install_root_dir=!save_location!\!timestamp_time!"
+        SET "image_save_path=!save_location!\!timestamp_time!\backups\!wsl_distro!.tar"
         SET "install_location=!install_root_dir!"
         mkdir !save_location! > nul 2> nul
         mkdir !install_location! > nul 2> nul
@@ -680,9 +680,9 @@ wsl.exe --import !wsl_distro! !install_location! !image_save_path! --version !ws
 @REM     ECHO WSL import failure
 @REM     SET "failed_before=y"
 @REM     GOTO error_restart_prompt
-ECHO deleting !image_save_path! ...
-DEL !image_save_path!
-ECHO !image_save_path! deleted
+@REM ECHO deleting !image_save_path! ...
+@REM DEL !image_save_path!
+@REM ECHO !image_save_path! deleted
 IF "!image_service_suffix!" == "kernel" (
 	SET "wsl_default_distro="
     SET "wsl_default_kernel="
