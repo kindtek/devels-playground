@@ -294,7 +294,7 @@ IF "!wsl_distro!" == "!failsafe_wsl_distro!" (
         SET "install_root_dir=!save_location!\!timestamp_time!"
         SET "image_save_path=!save_location!\!timestamp_time!\backups\!wsl_distro!.tar"
         SET "install_location=!install_root_dir!"
-        mkdir !save_location! > nul 2> nul
+        mkdir !save_location!\!timestamp_time!\backups > nul 2> nul
         mkdir !install_location! > nul 2> nul
         IF "!DVLP_DEBUG!" == "y" (
             ECHO duplicate distro found for !wsl_distro!
