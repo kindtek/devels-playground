@@ -651,7 +651,7 @@ docker export !WSL_DOCKER_CONTAINER_ID! > !image_save_path!
 SET "module=wsl_import"
 SET "handle=set_default_wsl_distro"
 
-IF "!wsl_distro!" == "kalilinux-kali-rolling-latest" (
+IF "!wsl_distro!" == "!failsafe_wsl_distro!" (
     ECHO:
     ECHO deleting WSL distro !wsl_distro! if it exists...
     ECHO wsl.exe --unregister !wsl_distro!
