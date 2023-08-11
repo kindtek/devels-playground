@@ -385,7 +385,7 @@ ECHO:
 SET "docker_image_do="
 IF "!image_service_suffix!" == "kernel" (
     SET "image_tag_base=!image_tag!"
-    FOR /F "tokens=1* delims=-kernel" %%G IN (
+    FOR /F "tokens=1* delims=-" %%G IN (
         "!image_tag!" 
     ) DO (
         SET "image_tag_base=%%G"
