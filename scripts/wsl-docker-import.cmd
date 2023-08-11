@@ -7,7 +7,7 @@ doskey /exename docker.exe docker=C:\Program Files\Docker\Docker\Docker Desktop.
 doskey /exename wsl.exe wsl=C:\Windows\System32\wsl.exe > nul 2> nul
 SET "DVLP_DEBUG=n"
 :redo
-IF "!DVLP_DEBUG!" == "n" (
+IF "!DVLP_DEBUG!" == "y" (
     ECHO "custom image set with !image_name_tag!"
     @ECHO ON
 
