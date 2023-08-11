@@ -7,7 +7,7 @@ doskey /exename docker.exe docker=C:\Program Files\Docker\Docker\Docker Desktop.
 doskey /exename wsl.exe wsl=C:\Windows\System32\wsl.exe > nul 2> nul
 SET "DVLP_DEBUG=n"
 :redo
-IF "!DVLP_DEBUG!" == "y" (
+IF "!DVLP_DEBUG!" == "n" (
     ECHO "custom image set with !image_name_tag!"
     @ECHO ON
 
@@ -384,15 +384,15 @@ ECHO ========================================================================
 ECHO:
 SET "docker_image_do="
 IF "!image_service_suffix!" == "kernel" (
-    SET "image_name_base=!image_name!"
-    FOR /F "tokens=1* delims=-" %%G IN (
-        "!image_name!" 
+    SET "image_tag_base=!image_tag!"
+    FOR /F "tokens=1* delims=-kernel" %%G IN (
+        "!image_tag!" 
     ) DO (
-        SET "image_name_base=%%G"
+        SET "image_tag_base=%%G"
     )				
-    ECHO pulling cached image ^(!image_repo!^/!image_name_base!^:!image_tag!^)...
+    ECHO pulling cached image ^(!image_repo!^/!image_name!^:!image_tag_base!^)...
     @REM pull the image to possibly save time building
-    ECHO docker pull !image_repo!^/!image_name_base!^:!image_tag!
+    ECHO docker pull !image_repo!^/!image_name!^:!image_tag_base!
 ) ELSE (
     ECHO pulling cached image ^(!image_repo_name_tag!^)...
     ECHO docker pull !image_repo_name_tag!
