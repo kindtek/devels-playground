@@ -383,10 +383,20 @@ SET "module=docker_image_build"
 ECHO ========================================================================
 ECHO:
 SET "docker_image_do="
-ECHO pulling cached image (!image_repo_name_tag!)...
-ECHO docker pull !image_repo_name_tag!
-@REM pull the image to possibly save time building
-docker pull !image_repo_name_tag!
+IF "!image_service_suffix!" == "kernel" (
+
+    ECHO pulling cached image (!image_repo!/!image_service_base:-kernel=!:!image_tag!)...
+    ECHO docker pull !image_repo!/!image_service_base!:!image_tag!
+    @REM pull the image to possibly save time building
+    docker pull !image_repo_name_tag!
+) ELSE (
+    ECHO pulling cached image (!image_repo_name_tag!)...
+    ECHO docker pull !image_repo_name_tag!
+    @REM pull the image to possibly save time building
+    docker pull !image_repo_name_tag!
+)
+
+
 @REM re-building repo
 SET "build_args="
 SET "compose_services_nocache=repo"
