@@ -346,8 +346,18 @@ FOR /F "tokens=1* delims=-" %%G IN (
     )
     SET "image_service_base=%%G"
 )
-FOR /f "tokens=2 delims=-" %%a in ("%image_service%") do (
-  SET image_service_suffix=%%a
+FOR /f "tokens=1,2,3* delims=-" %%a in ("%image_service%") do (
+
+    IF NOT "%%b"=="" (
+        IF NOT "%%b"=="%image_service%" (
+            SET image_service_suffix=%%b
+        )
+    )
+    IF NOT "%%c"=="" (
+        IF NOT "%%c"=="%image_service%" (
+            SET image_service_suffix=%%c
+        )
+    )
 )
 IF "!DVLP_DEBUG!" == "y" (
     ECHO "parsed image service suffix: !image_service_suffix!"
@@ -384,11 +394,41 @@ ECHO ========================================================================
 ECHO:
 SET "docker_image_do="
 IF "!image_service_suffix!" == "kernel" (
-    SET "image_tag_base=!image_tag!"
-    SET "image_base=%image_tag:-=" & set "image_tag_base=%" 
-    SET image_tag > nul 2> nul			
-    echo image_tag_base^: !image_tag_base!
+    FOR /f "tokens=1,2,3,4* delims=-" %%a in ("!image_tag!") do (
+        IF "%%c"=="kernel" (
+            ECHO ccc is kernel %%d
+            SET "image_tag_base=%%a-%%b"
+        ) ELSE (
+            IF "%%d"=="kernel" (
+                ECHO ddd is kernel %%d
+                SET "image_tag_base=%%a-%%b-%%c"
+            ) ELSE (
+                IF NOT "%%d"=="" (
+                    ECHO ddd not empty  %%d
+                    SET "image_tag_base=%%a-%%b-%%c-%%d"
+                ) ELSE (
+                    IF NOT "%%c"=="" (
+                        ECHO ccc not empty  %%c
+                        SET "image_tag_base=%%a-%%b-%%c"
+                    ) ELSE (
+                        IF NOT "%%b"=="" (
+                            ECHO bbb not empty  %%b
+                            SET "image_tag_base=%%a-%%b"
+                        ) ELSE (
+                            IF NOT "%%a"=="" (
+                                ECHO aaa not empty  %%a
+                                SET "image_tag_base=%%a"
+                            ) ELSE (
+                                ECHO aaa is empty  %%a
 
+                                SET "image_tag_base="
+                            )
+                        )
+                    )
+                )
+            )
+        )
+    )
     ECHO pulling cached image ^(!image_repo!^/!image_name!^:!image_tag_base!^)...
     @REM pull the image to possibly save time building
     ECHO docker pull !image_repo!^/!image_name!^:!image_tag_base!
