@@ -275,7 +275,7 @@ IF "!wsl_distro!" == "!failsafe_wsl_distro!" (
     SET test_string=helloworld
     SET "test_string_path=%USERPROFILE%\.kali_test"
     @REM need better check for duplicate distro - use randomization for now
-    wsl.exe -d !wsl_distro! -- echo !test_string! > !test_string_path!
+    wsl.exe -d !wsl_distro! echo !test_string! > !test_string_path!
     SET /P wsl_out=<!test_string_path!
     IF "!DVLP_DEBUG!" == "y" (
         ECHO !wsl_distro! is not failsafe distro
@@ -745,7 +745,7 @@ IF "!image_service_suffix!" == "kernel" (
     @REM kindtek-kernel-6L1WZB-gf53bd0a62a32
     @REM echo 6.1.21.2-kindtek-kernel-6L1WBZ-gf53bd0a62a32-dirty > !wsl_default_kernel_path!
     @REM ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash ls -tx1 config* ^| tail -n 1 ^> %wsl_default_kernel_config_version_path%
-    wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash ls -tx1 config* ^| tail -n 1 > !wsl_default_kernel_config_version_path!
+    wsl.exe --user r00t -d %wsl_distro% cd /boot ^&^& ls -tx1 config* ^| tail -n 1 > !wsl_default_kernel_config_version_path!
     SET /P wsl_default_kernel=<!wsl_default_kernel_path!
     SET /P wsl_default_kernel_config_version=<!wsl_default_kernel_config_version_path!
     FOR /F "tokens=2* delims=-" %%a IN (        
@@ -756,17 +756,27 @@ IF "!image_service_suffix!" == "kernel" (
     )
     @REM net stop docker
     @REM net stop com.docker.service
-    wsl.exe -d %wsl_distro% --cd /hal --user agl --exec bash sudo apt-get install -y powershell dwarves initramfs-tools firmware-linux zstd
-    wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash cp System.map-!wsl_default_kernel_version! System.map-!wsl_default_kernel!
-    wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash cp config-!wsl_default_kernel_version! config-!wsl_default_kernel!
-    @REM ECHO: wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t -- update-initramfs -u -k !wsl_default_kernel!
+    @REM wsl.exe -d %wsl_distro% --cd /hal --user agl --exec bash sudo apt-get install -y powershell dwarves initramfs-tools firmware-linux zstd
+    wsl.exe -d %wsl_distro% cd ^$HOME ^&^& sudo apt-get install -y powershell dwarves initramfs-tools firmware-linux zstd
+    @REM wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash cp config-!wsl_default_kernel_version! config-!wsl_default_kernel!
+    wsl.exe --user r00t -d %wsl_distro% cd /boot ^&^& cp config-!wsl_default_kernel_version! config-!wsl_default_kernel!
+    @REM wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash cp System.map-!wsl_default_kernel_version! System.map-!wsl_default_kernel!
+    wsl.exe --user r00t -d %wsl_distro% cd /boot ^&^& cp System.map-!wsl_default_kernel_version! System.map-!wsl_default_kernel!
     @REM wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec update-initramfs -u -k !wsl_default_kernel!
-    wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec bash mkdir -p /mnt/c/users/%USERNAME%/kache
-    wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec bash cp -rf kache/. /mnt/c/users/%USERNAME%/kache/.
+    wsl.exe --user r00t -d %wsl_distro% cd /r00t/dvlw/dvlp/kernels/linux ^&^& update-initramfs -u -k !wsl_default_kernel!
+    @REM wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec bash mkdir -p /mnt/c/users/%USERNAME%/kache
+    wsl.exe --user r00t -d %wsl_distro% cd /r00t/dvlw/dvlp/kernels/linux ^&^& mkdir -p /mnt/c/users/%USERNAME%/kache
+    @REM wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec bash cp -rf kache/. /mnt/c/users/%USERNAME%/kache/.
+    wsl.exe --user r00t -d %wsl_distro% cd /r00t/dvlw/dvlp/kernels/linux ^&^& cp -rf kache/. /mnt/c/users/%USERNAME%/kache/.
+
     ECHO: default kernel !wsl_default_kernel!
     @REM wsl.exe -d %wsl_distro% --user r00t --exec bash update-initramfs -u -k !wsl_default_kernel!
-    wsl.exe -d %wsl_distro% --cd /hal --user agl --exec bash reclone-gh.sh autodel
-    wsl.exe -d %wsl_distro% --cd /hal/dvlw/dvlp/kernels/linux --user agl --exec bash install-kernel.sh %USERNAME% latest latest
+    @REM wsl.exe -d %wsl_distro% --cd /hal --user agl --exec bash reclone-gh.sh autodel
+    wsl.exe -d %wsl_distro% cd ^$HOME ^&^& reclone-gh.sh autodel
+
+    @REM wsl.exe -d %wsl_distro% --cd /hal/dvlw/dvlp/kernels/linux --user agl --exec bash install-kernel.sh %USERNAME% latest latest
+    wsl.exe -d %wsl_distro% cd ^$HOME/dvlw/dvlp/kernels/linux ^&^& install-kernel.sh %USERNAME% latest latest
+
 )
 NET STOP LxssManager >NUL
 NET START LxssManager >NUL
@@ -835,7 +845,7 @@ SET "handle=wsl_distro_test"
 SET test_string=helloworld
 SET "wsl_distro_test_pass=n"
 SET "test_string_path=%USERPROFILE%\.wsl_test"
-wsl.exe -d !wsl_distro! --exec echo !test_string! > !test_string_path!
+wsl.exe -d !wsl_distro! echo !test_string! > !test_string_path!
 SET /P wsl_out=<!test_string_path!
 DEL !test_string_path!
 @REM SET "wsl_out="
