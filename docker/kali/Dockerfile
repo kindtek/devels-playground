@@ -603,7 +603,7 @@ USER r00t
 WORKDIR /
 COPY --from=dvlp_kernel-make ./boot/ ./boot/
 COPY --from=dvlp_kernel-make ./usr/src/ ./usr/src/
-COPY --from=dvlp_kernel-make ./usr/lib/modules/ ./usr/lib/modules/
+# COPY --from=dvlp_kernel-make ./usr/lib/modules/ ./usr/lib/modules/
 COPY --from=dvlp_kernel-make ./kache/ ./kache/
 COPY --from=dvlp_kernel-make ./r00t/dvlw/ ./r00t/dvlw/
 
