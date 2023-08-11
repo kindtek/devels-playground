@@ -384,9 +384,14 @@ ECHO ========================================================================
 ECHO:
 SET "docker_image_do="
 IF "!image_service_suffix!" == "kernel" (
-
-    ECHO pulling cached image (!image_repo!/!image_service_base:-kernel=!:!image_tag!)...
-    ECHO docker pull !image_repo!/!image_service_base!:!image_tag!
+    SET "image_name_base=!image_name!"
+    FOR /F "tokens=1* delims=-" %%G IN (
+        "!image_name!" 
+    ) DO (
+        SET "image_name_base=%%G"
+    )				
+    ECHO pulling cached image (!image_repo!/!image_name_base!:!image_tag!)...
+    ECHO docker pull !image_repo!/!image_name:^-kernel=!:!image_tag!
     @REM pull the image to possibly save time building
     docker pull !image_repo_name_tag!
 ) ELSE (
