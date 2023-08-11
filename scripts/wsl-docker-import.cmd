@@ -390,10 +390,9 @@ IF "!image_service_suffix!" == "kernel" (
     ) DO (
         SET "image_name_base=%%G"
     )				
-    ECHO pulling cached image (!image_repo!/!image_name_base!:!image_tag!)...
-    ECHO docker pull !image_repo!/!image_name:^-kernel=!:!image_tag!
+    ECHO pulling cached image (!image_repo!^/!image_name_base!^:!image_tag!)...
     @REM pull the image to possibly save time building
-    docker pull !image_repo_name_tag!
+    ECHO docker pull !image_repo!^/!image_name_base!^:!image_tag!
 ) ELSE (
     ECHO pulling cached image (!image_repo_name_tag!)...
     ECHO docker pull !image_repo_name_tag!
