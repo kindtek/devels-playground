@@ -385,11 +385,10 @@ ECHO:
 SET "docker_image_do="
 IF "!image_service_suffix!" == "kernel" (
     SET "image_tag_base=!image_tag!"
-    FOR /F "tokens=1* delims=-" %%G IN (
-        "!image_tag!" 
-    ) DO (
-        SET "image_tag_base=%%G"
-    )				
+    SET "image_base=%image_tag:-=" & set "image_tag_base=%" 
+    SET image_tag > nul 2> nul			
+    echo image_tag_base^: !image_tag_base!
+
     ECHO pulling cached image ^(!image_repo!^/!image_name!^:!image_tag_base!^)...
     @REM pull the image to possibly save time building
     ECHO docker pull !image_repo!^/!image_name!^:!image_tag_base!
