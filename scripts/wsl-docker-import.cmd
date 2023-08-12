@@ -822,8 +822,8 @@ ECHO:
 SET "wsl_launch="
 IF NOT "!image_repo!" == "kalilinux" (
     IF "!image_repo!" == "kindtek" (
-        echo wsl -d !wsl_distro! cd $HOME; bash setup.sh %USERNAME%
-        wsl.exe -d !wsl_distro! cd $HOME; bash setup.sh %USERNAME%
+        echo wsl -d !wsl_distro! cd ^$HOME; bash setup.sh %USERNAME%
+        wsl.exe -d !wsl_distro! cd ^$HOME; bash setup.sh %USERNAME%
     )
     ECHO press ENTER to open terminal for newly created !wsl_distro!
     ECHO  ..or enter any character to skip 
