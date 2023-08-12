@@ -745,7 +745,7 @@ IF "!image_service_suffix!" == "kernel" (
     @REM kindtek-kernel-6L1WZB-gf53bd0a62a32
     @REM echo 6.1.21.2-kindtek-kernel-6L1WBZ-gf53bd0a62a32-dirty > !wsl_default_kernel_path!
     @REM ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash ls -tx1 config* ^| tail -n 1 ^> %wsl_default_kernel_config_version_path%
-    wsl.exe --user r00t -d %wsl_distro% cd /boot ^&^& ls -tx1 config* ^| tail -n 1 > !wsl_default_kernel_config_version_path!
+    wsl.exe --user r00t -d %wsl_distro% cd /boot; ls -tx1 config* ^| tail -n 1 > !wsl_default_kernel_config_version_path!
     SET /P wsl_default_kernel=<!wsl_default_kernel_path!
     SET /P wsl_default_kernel_config_version=<!wsl_default_kernel_config_version_path!
     FOR /F "tokens=2* delims=-" %%a IN (        
@@ -757,7 +757,7 @@ IF "!image_service_suffix!" == "kernel" (
     @REM net stop docker
     @REM net stop com.docker.service
     @REM wsl.exe -d %wsl_distro% --cd /hal --user agl --exec bash sudo apt-get install -y powershell dwarves initramfs-tools firmware-linux zstd
-    wsl.exe -d %wsl_distro% cd ^$HOME ^&^& sudo apt-get install -y powershell dwarves initramfs-tools firmware-linux zstd
+    wsl.exe -d %wsl_distro% cd ^$HOME; sudo apt-get install -y powershell dwarves initramfs-tools firmware-linux zstd
     @REM wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash cp config-!wsl_default_kernel_version! config-!wsl_default_kernel!
     wsl.exe --user r00t -d %wsl_distro% cp -f /boot/config-!wsl_default_kernel_version! /boot/config-!wsl_default_kernel!
     @REM wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash cp System.map-!wsl_default_kernel_version! System.map-!wsl_default_kernel!
@@ -772,10 +772,10 @@ IF "!image_service_suffix!" == "kernel" (
     ECHO: default kernel !wsl_default_kernel!
     @REM wsl.exe -d %wsl_distro% --user r00t --exec bash update-initramfs -u -k !wsl_default_kernel!
     @REM wsl.exe -d %wsl_distro% --cd /hal --user agl --exec bash reclone-gh.sh autodel
-    wsl.exe -d %wsl_distro% cd ^$HOME ^&^& bash reclone-gh.sh autodel
+    wsl.exe -d %wsl_distro% cd ^$HOME; bash reclone-gh.sh autodel
 
     @REM wsl.exe -d %wsl_distro% --cd /hal/dvlw/dvlp/kernels/linux --user agl --exec bash install-kernel.sh %USERNAME% latest latest
-    wsl.exe -d %wsl_distro% cd ^$HOME/dvlw/dvlp/kernels/linux ^&^& bash install-kernel.sh %USERNAME% latest latest
+    wsl.exe -d %wsl_distro% cd ^$HOME/dvlw/dvlp/kernels/linux; bash install-kernel.sh %USERNAME% latest latest
 
 )
 NET STOP LxssManager >NUL
