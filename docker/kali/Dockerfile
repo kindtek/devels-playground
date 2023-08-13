@@ -361,9 +361,8 @@ RUN \
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get purge openssh-server && \
-    apt-get install openssh-server && \
-    apt-get install --no-install-recommends -y sudo && \
+    apt-get purge -y openssh-server && \
+    apt-get install --no-install-recommends -y sudo openssh-server && \
     usermod -aG docker root && \
     usermod -aG docker r00t && \
     usermod -aG sudo ${_AGL} && \
