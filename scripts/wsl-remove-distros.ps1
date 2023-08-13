@@ -20,10 +20,10 @@ if ($?){
 
         Write-Host `r`n`r`n`r`n`t
         wsl -l -v
-        $removeDistro = Read-Host "`n`n`n`n`nDo you want to remove ${distro}? $warning_str(Y/N)"
+        $removeDistro = Read-Host "`n`n`n`n`nDo you want to remove $($distro.trim())? $warning_str(Y/N)"
 
         if ($removeDistro.ToLower() -eq "y") {
-            wsl.exe --unregister $distro
+            wsl.exe --unregister $($distro.trim())
 
             # # Remove distro
             # Write-Host "$command_str"
