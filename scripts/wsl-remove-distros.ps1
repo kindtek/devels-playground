@@ -1,7 +1,7 @@
 $env:WSL_UTF8 = 1
 $count = 0
 
-$distros = wsl.exe --list --quiet
+$distros = wsl.exe --list --quiet | Out-Null
 if ($?){
     # Loop through each distro and prompt to remove
     foreach ($distro in $distros) {
