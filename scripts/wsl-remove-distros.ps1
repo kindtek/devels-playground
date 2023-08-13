@@ -1,25 +1,20 @@
 $env:WSL_UTF8 = 1
 $count = 0
 
-$distros = wsl.exe -l -v
+$distros = wsl.exe --list --quiet
 if (($?)){
     # Loop through each distro and prompt to remove
     foreach ($distro in $distros) {
-        $count += 1
-
-        if ($count -lt 3 -Or $distro.length -le 1) { 
-            continue 
-        }
-    
+        $count += 1   
 
 
         if (($distro.IndexOf("*") -le 0) -And ($distro.IndexOf("docker-desktop") -lt 0) -And ($distro.IndexOf("kalilinux-kali-rolling-latest") -lt 0)) {
-            $index_start = 2
+            $index_start = 0
             $warning_str = ""
         }
         else {
             continue
-            $index_start = 3
+            $index_start = 0
             $warning_str = "
     WARNING: removing this distro is not a good idea
     "
@@ -56,7 +51,7 @@ if (($?)){
 
     Write-Host "`r`n`r`n`r`n"
 
-    wsl -l -v
+    wsl --l --quiet
 
     Write-Host "`r`n`r`nend of distro list`r`n`r`n"
 } else {
