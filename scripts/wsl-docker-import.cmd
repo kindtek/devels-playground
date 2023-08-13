@@ -396,30 +396,30 @@ SET "docker_image_do="
 IF "!image_service_suffix!" == "kernel" (
     FOR /f "tokens=1,2,3,4* delims=-" %%a in ("!image_tag!") do (
         IF "%%c"=="kernel" (
-            ECHO ccc is kernel %%d
+            @REM ECHO ccc is kernel %%d
             SET "image_tag_base=%%a-%%b"
         ) ELSE (
             IF "%%d"=="kernel" (
-                ECHO ddd is kernel %%d
+                @REM ECHO ddd is kernel %%d
                 SET "image_tag_base=%%a-%%b-%%c"
             ) ELSE (
                 IF NOT "%%d"=="" (
-                    ECHO ddd not empty  %%d
+                    @REM ECHO ddd not empty  %%d
                     SET "image_tag_base=%%a-%%b-%%c-%%d"
                 ) ELSE (
                     IF NOT "%%c"=="" (
-                        ECHO ccc not empty  %%c
+                        @REM ECHO ccc not empty  %%c
                         SET "image_tag_base=%%a-%%b-%%c"
                     ) ELSE (
                         IF NOT "%%b"=="" (
-                            ECHO bbb not empty  %%b
+                            @REM ECHO bbb not empty  %%b
                             SET "image_tag_base=%%a-%%b"
                         ) ELSE (
                             IF NOT "%%a"=="" (
-                                ECHO aaa not empty  %%a
+                                @REM ECHO aaa not empty  %%a
                                 SET "image_tag_base=%%a"
                             ) ELSE (
-                                ECHO aaa is empty  %%a
+                                @REM ECHO aaa is empty  %%a
 
                                 SET "image_tag_base="
                             )
