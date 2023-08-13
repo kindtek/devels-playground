@@ -35,8 +35,10 @@ if ($?){
     }
 
     Write-Host "`r`n`r`n`r`n"
-
-    wsl --l --quiet
+    wsl --list --verbose | Out-Null
+    if ($?){
+        wsl --list --verbose
+    }
 
     Write-Host "`r`n`r`nend of distro list`r`n`r`n"
 } else {
