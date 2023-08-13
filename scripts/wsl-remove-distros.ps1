@@ -6,31 +6,39 @@ if ($?){
     # Loop through each distro and prompt to remove
     foreach ($distro in $distros) {
         $count += 1   
-
-
         if (($distro.IndexOf("*") -le 0) -And ($distro.IndexOf("docker-desktop") -lt 0)) {
             $warning_str = ""
-        }
-        else {
+        } else {
             continue
             $warning_str = "
     WARNING: removing this distro is not a good idea
     "
         }
-
         Write-Host `r`n`r`n`r`n`t
         wsl -l -v
-        $removeDistro = Read-Host "`n`n`n`n`nDo you want to remove $($distro.trim())? $warning_str(Y/N)"
+        wsl.exe --distribution "$($distro.trim())" --version | out-null
+        if ($?){
+            $removeDistro = Read-Host "`n`n`n`n`nDo you want to remove $($distro.trim())? $warning_str(Y/N)"
 
-        if ($removeDistro.ToLower() -eq "y") {
-            wsl.exe --unregister $($distro.trim())
-
-            # # Remove distro
-            # Write-Host "$command_str"
-            # $wsl_exe = 'wsl.exe --unregister'.Trim()
-            # $unregister = "$distroName".Trim()
-            # $command_string = "$wsl_exe `'$unregister`'".Trim()
-            # & "$command_string"
+            if ($removeDistro.ToLower() -eq "y") {
+                # wsl.exe --unregister "$($distro.trim())"
+    
+                # # Remove distro
+                # Write-Host "$command_str"
+                # $wsl_exe = 'wsl.exe --unregister'.Trim()
+                # $unregister = "$distroName".Trim()
+                try {
+                    wsl.exe --unregister "$($distro.trim())"
+                } catch {
+                    $command_string = "wsl.exe --unregister $($distro.trim())".Trim()
+                    &$command_string = Invoke-Expression $command_string | Out-Null
+                }
+                if ($?){
+                    write-host "$($distro.trim()) distro removed successfully"
+                } else {
+                    write-host "could not remove $($distro.trim()) distro"
+                }
+            }
         }
     }
 
