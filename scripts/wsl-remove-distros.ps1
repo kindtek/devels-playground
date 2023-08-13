@@ -16,7 +16,7 @@ if ($?){
         }
         Write-Host `r`n`r`n`r`n`t
         wsl -l -v
-        wsl.exe --distribution "$($distro.trim())" --version | out-null
+        # wsl.exe --distribution "$($distro.trim())" --version | out-null
         if ($?){
             $removeDistro = Read-Host "`n`n`n`n`nDo you want to remove $($distro.trim())? $warning_str(Y/N)"
 
