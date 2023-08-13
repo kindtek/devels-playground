@@ -60,7 +60,7 @@ if (($?)){
 
     Write-Host "`r`n`r`nend of distro list`r`n`r`n"
 } else {
-    Write-Host "`r`n`r`nno distros to uninstall`r`n`r`n"
+    Write-Host "`r`n`r`nno distros to uninstall ..skipping`r`n`r`n"
 }
 
 
