@@ -759,15 +759,15 @@ IF "!image_service_suffix!" == "kernel" (
     @REM wsl.exe -d %wsl_distro% --cd /hal --user agl --exec bash sudo apt-get install -y powershell dwarves initramfs-tools firmware-linux zstd
     wsl.exe -d %wsl_distro% -- cd ^$HOME ^&^& sudo apt-get install -y powershell dwarves initramfs-tools firmware-linux zstd
     @REM wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash cp config-!wsl_default_kernel_version! config-!wsl_default_kernel!
-    wsl.exe --user r00t -d %wsl_distro% cp -f /boot/config-!wsl_default_kernel_version! /boot/config-!wsl_default_kernel!
+    wsl.exe --user r00t -d %wsl_distro% -- cp -f /boot/config-!wsl_default_kernel_version! /boot/config-!wsl_default_kernel!
     @REM wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash cp System.map-!wsl_default_kernel_version! System.map-!wsl_default_kernel!
-    wsl.exe --user r00t -d %wsl_distro% cp -f /boot/System.map-!wsl_default_kernel_version! /boot/System.map-!wsl_default_kernel!
+    wsl.exe --user r00t -d %wsl_distro% -- cp -f /boot/System.map-!wsl_default_kernel_version! /boot/System.map-!wsl_default_kernel!
     @REM wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec update-initramfs -u -k !wsl_default_kernel!
-    wsl.exe --user r00t -d %wsl_distro% update-initramfs -u -k !wsl_default_kernel!
+    wsl.exe --user r00t -d %wsl_distro% -- update-initramfs -u -k !wsl_default_kernel!
     @REM wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec bash mkdir -p /mnt/c/users/%USERNAME%/kache
-    wsl.exe --user r00t -d %wsl_distro% mkdir -p /mnt/c/users/%USERNAME%/kache
+    wsl.exe --user r00t -d %wsl_distro% -- mkdir -p /mnt/c/users/%USERNAME%/kache
     @REM wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec bash cp -rf kache/. /mnt/c/users/%USERNAME%/kache/.
-    wsl.exe --user r00t -d %wsl_distro% cp -rf /r00t/dvlw/dvlp/kernels/linuxkache/. /mnt/c/users/%USERNAME%/kache/.
+    wsl.exe --user r00t -d %wsl_distro% -- cp -rf /r00t/dvlw/dvlp/kernels/linux/kache/. /mnt/c/users/%USERNAME%/kache/.
 
     ECHO: default kernel !wsl_default_kernel!
     @REM wsl.exe -d %wsl_distro% --user r00t --exec bash update-initramfs -u -k !wsl_default_kernel!
