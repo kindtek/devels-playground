@@ -707,6 +707,7 @@ SET "handle=set_default_wsl_distro"
 IF "!wsl_distro!" == "!failsafe_wsl_distro!" (
     ECHO:
     ECHO deleting WSL distro !wsl_distro! if it exists...
+    DEL !install_location!
     ECHO wsl.exe --unregister !wsl_distro!
     wsl.exe --unregister !wsl_distro!
     ECHO DONE
