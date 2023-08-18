@@ -1113,7 +1113,7 @@ USER r00t
 WORKDIR /
 COPY --from=dvlp_skel ./ ./
 COPY --from=dvlp_base-python-build ./ ./
-COPY --from=dvlp_base-msdot-build ./ ./
+COPY --from=dvlp_base-msdot-build-lite ./ ./
 COPY --from=dvlp_base-dind-build ./ ./
 RUN systemctl start docker
 WORKDIR /hal
@@ -1137,7 +1137,7 @@ WORKDIR /
 COPY --from=dvlp_kernel-install ./ ./
 COPY --from=dvlp_skel-kernel ./ ./
 COPY --from=dvlp_base-python-build ./ ./
-COPY --from=dvlp_base-msdot-build ./ ./
+COPY --from=dvlp_base-msdot-build-lite ./ ./
 COPY --from=dvlp_base-dind-build ./ ./
 WORKDIR /hal
 USER ${_AGL}
@@ -1162,7 +1162,7 @@ ARG REFRESH_REPO=${REFRESH_REPO:-yes}
 # WORKDIR /
 COPY --from=dvlp_skel ./ ./
 COPY --from=dvlp_base-python-build-lite ./ ./
-COPY --from=dvlp_base-msdot-build ./ ./
+COPY --from=dvlp_base-msdot-build-lite ./ ./
 COPY --from=dvlp_base-dind-build ./ ./
 
 WORKDIR /
@@ -1187,7 +1187,7 @@ RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg a
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y brave-browser dolphin virtualbox vlc x11-apps  && \
+    apt-get install --no-install-recommends -y brave-browser virtualbox vlc x11-apps  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 
@@ -1215,7 +1215,7 @@ FROM scratch AS dvlp_base-gui-lite-kernel
 COPY --from=dvlp_kernel-install ./ ./
 COPY --from=dvlp_skel-kernel ./ ./
 COPY --from=dvlp_base-python-build ./ ./
-COPY --from=dvlp_base-msdot-build ./ ./
+COPY --from=dvlp_base-msdot-build-lite ./ ./
 COPY --from=dvlp_base-dind-build ./ ./
 COPY --from=dvlp_base-gui-lite ./ ./
 WORKDIR /hal
@@ -1263,11 +1263,11 @@ RUN \
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
     apt-get install -y lightdm && \
+    echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
-    # echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install --no-install-recommends -y kali-defaults kali-root-login desktop-base kali-win-kex && \
     rm -rf /var/lib/apt/lists && \
@@ -1286,7 +1286,7 @@ WORKDIR /
 COPY --from=dvlp_kernel-install ./ ./
 COPY --from=dvlp_skel-kernel ./ ./
 COPY --from=dvlp_base-python-build ./ ./
-COPY --from=dvlp_base-msdot-build ./ ./
+COPY --from=dvlp_base-msdot-build-lite ./ ./
 COPY --from=dvlp_base-dind-build ./ ./
 COPY --from=dvlp_base-gui-lite ./ ./
 COPY --from=dvlp_base-gui ./ ./
@@ -1357,7 +1357,7 @@ WORKDIR /
 COPY --from=dvlp_kernel-install ./ ./
 COPY --from=dvlp_skel-kernel ./ ./
 COPY --from=dvlp_base-python-build ./ ./
-COPY --from=dvlp_base-msdot-build ./ ./
+COPY --from=dvlp_base-msdot-build-lite ./ ./
 COPY --from=dvlp_base-dind-build ./ ./
 COPY --from=dvlp_base-gui-lite ./ ./
 COPY --from=dvlp_base-gui ./ ./
