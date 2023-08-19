@@ -11,8 +11,15 @@ ARG INTERNAL_BUILD
 ARG CONFIG_FILE=${CONFIG_FILE}
 ARG DEBIAN_FRONTEND=noninteractive
 ARG DOCKER_BUILDKIT=1
-ARG KERNEL_TYPE=${KERNEL_TYPE:-basic}
+ARG KERNEL_TYPE=${KERNEL_TYPE}
 ARG KERNEL_PACKAGE_NAME=${KERNEL_PACKAGE_NAME}
+ARG INSTALL_KERNEL="dont_install_kernel"
+ARG install=INSTALL
+ARG installkernel=${install}_KERNEL
+# $ echo ${installkernel}
+# dont_install_kernel
+# $ echo ${!installkernel}
+# INSTALL_KERNEL
 ARG REFRESH_REPO=${REFRESH_REPO:-no}
 ARG WINDOWS
 ARG LINUX
@@ -136,7 +143,6 @@ RUN \
 # dvlp_repo-build-kernel #
 ###################
 FROM dvlp_repo-build AS dvlp_repo-build-kernel
-
 WORKDIR /repos/dvlw/dvlp
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
@@ -320,7 +326,11 @@ ARG JACKET
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
 ARG CONFIG_FILE
+ARG WIN_USER
+ARG DOCKER_BUILD_TIMESTAMP
 ARG DEBIAN_FRONTEND=noninteractive
 ARG _AGL=${_AGL:-agl}
 ENV _AGL=$_AGL
@@ -386,6 +396,7 @@ RUN \
     Binary::apt-get::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
+    
 WORKDIR /
 
 ############################## SKELETON ###################################
@@ -393,6 +404,48 @@ WORKDIR /
 # dvlp_skel-build #
 ########################
 FROM dvlp_base AS dvlp_skel-build
+ARG _MNT
+ARG _AGL_USR
+ARG _DVL_USR
+ARG _ADM_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
+ENV _DVL=$_DVL_USR
+ENV _ADM=$_ADM_USR
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
+ARG CONFIG_FILE
+ARG WIN_USER
+ARG DOCKER_BUILD_TIMESTAMP
+ARG installkernel
+ARG REFRESH_REPO
+ENV DEBIAN_FRONTEND=noninteractive
+WORKDIR /
+COPY --from=dvlp_base-r00t-dirs             --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
+COPY --from=dvlp_base-devel-dirs            --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
+COPY --from=dvlp_base-angel-dirs            --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
+COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hel/
+COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hal/
+COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./r00t/
+COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./repos/dvlw/
+COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                   ./hel/dvlw/
+COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
+COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
+COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1774    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
+COPY --from=dvlp_repo                       --chown=r00t:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/   
+RUN rm -rf /var/cache/apt
+WORKDIR /
+
+########################
+# dvlp_skel-build #
+########################
+FROM dvlp_base AS dvlp_skel-build-kernel
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
+ARG CONFIG_FILE
+ARG WIN_USER
+ARG DOCKER_BUILD_TIMESTAMP
+ARG installkernel
 ARG REFRESH_REPO
 ARG _MNT
 ARG _AGL_USR
@@ -407,50 +460,25 @@ WORKDIR /
 COPY --from=dvlp_base-r00t-dirs             --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
 COPY --from=dvlp_base-devel-dirs            --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
 COPY --from=dvlp_base-angel-dirs            --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
-COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hel/
-COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hal/
-COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./r00t/
-COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./repos/dvlw/
-COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                   ./hel/dvlw/
-COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
-COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
-COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1774    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
-COPY --from=dvlp_repo                       --chown=r00t:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/
-RUN rm -rf /var/cache/apt
-WORKDIR /
-## WORKDIR /hall
-###################
-# dvlp_skel-build-kernel #
-###################
-FROM dvlp_base AS dvlp_skel-build-kernel
-ARG REFRESH_REPO
-ARG _MNT
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
-ARG _AGL=${_AGL:-agl}
-ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-ENV DEBIAN_FRONTEND=noninteractive
-WORKDIR /
-COPY --from=dvlp_base-r00t-kernel-dirs        --chown=r00t:r00t     --chmod=1770    ./admin/                     ./r00t/ 
-COPY --from=dvlp_base-devel-kernel-dirs       --chown=${_DVL}:hell  --chmod=1770    ./hel/                       ./hel/ 
-COPY --from=dvlp_base-angel-kernel-dirs       --chown=${_AGL}:halo  --chmod=1770    ./hal/                       ./hal/ 
-COPY --from=dvlp_repo-kernel                  --chown=${_DVL}:hell  --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/  ./hel/
-COPY --from=dvlp_repo-kernel                  --chown=${_AGL}:halo  --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/  ./hal/
-COPY --from=dvlp_repo-kernel                  --chown=r00t:r00t     --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/  ./r00t/
-COPY --from=dvlp_repo-kernel                  --chown=${_AGL}:halo  --chmod=1770    ./repos/dvlw/                ./repos/dvlw/
-# COPY --from=dvlp_base-angel-kernel-dirs       --chown=${_AGL}:halo --chmod=1770    ./hal/                  ./dvlw/ 
-COPY --from=dvlp_repo-kernel                  --chown=${_DVL}:hell  --chmod=1770    ./repos/dvlw/                ./hel/dvlw/
-COPY --from=dvlp_repo-kernel                  --chown=${_AGL}:halo  --chmod=1770    ./repos/dvlw/                ./hal/dvlw/
-COPY --from=dvlp_repo-kernel                  --chown=${_AGL}:halo  --chmod=1770    ./repos/dvlw/                ./r00t/dvlw/
-COPY --from=dvlp_repo-kernel                  --chown=r00t:r00t     --chmod=1774    /repos/dvlw/dvlp/mnt/etc/*   ./etc/
-WORKDIR ${_MNT}
-COPY --from=dvlp_base-r00t-kernel-dirs  --chown=r00t:r00t    --chmod=1770    ./mnt/                  ./
-COPY --from=dvlp_base-devel-kernel-dirs --chown=r00t:r00t    --chmod=1770    ./mnt/                  ./
-COPY --from=dvlp_repo-kernel            --chown=r00t:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/        ./
-RUN rm -rf /var/cache/apt
+COPY --from=dvlp_repo-kernel                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hel/
+COPY --from=dvlp_repo-kernel                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hal/
+COPY --from=dvlp_repo-kernel                       --chown=r00t:r00t       --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./r00t/
+COPY --from=dvlp_repo-kernel                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./repos/dvlw/
+COPY --from=dvlp_repo-kernel                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                   ./hel/dvlw/
+COPY --from=dvlp_repo-kernel                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
+COPY --from=dvlp_repo-kernel                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
+COPY --from=dvlp_repo-kernel                       --chown=r00t:r00t       --chmod=1774    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
+COPY --from=dvlp_repo-kernel                       --chown=r00t:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/
+COPY --from=dvlp_base-r00t-kernel-dirs             --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
+COPY --from=dvlp_base-devel-kernel-dirs            --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
+COPY --from=dvlp_base-angel-kernel-dirs            --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
+COPY --from=dvlp_kernel-make ./boot/ ./boot/
+COPY --from=dvlp_kernel-make ./usr/src/ ./usr/src/
+RUN \
+    mkdir -p /usr/lib/modules
+COPY --from=dvlp_kernel-make ./usr/lib/modules/ ./usr/lib/modules/
+COPY --from=dvlp_kernel-make ./kache/ ./kache/
+COPY --from=dvlp_kernel-make ./r00t/dvlw/ ./r00t/dvlw/
 WORKDIR /
 
 #############
@@ -461,9 +489,16 @@ ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
 ARG _AGL=${_AGL:-agl}
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
+ARG CONFIG_FILE
+ARG WIN_USER
+ARG DOCKER_BUILD_TIMESTAMP
+ARG installkernel
 ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
+ONBUILD COPY --from=dvlp_skel-build${KERNEL_TYPE:+-kernel} ./ ./
 # RUN \
 #     rm -f /etc/apt/apt.conf.d/docker-clean && \
 #     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
@@ -475,25 +510,12 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 WORKDIR /
-
-####################
-# dvlp_skel-kernel #
-####################
-FROM dvlp_skel-build-kernel AS dvlp_skel-kernel
-
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
-    rm -rf /var/cache/apt && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y apt-utils apt-transport-https curl gh git gnupg2 libssl-dev nvi ntp pigz plzip screen shellcheck ssh systemd-sysv sysvinit-utils wget && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt/archives/*.deb
     
 ############################### KERNEL #########################################
 ##########################
 # dvlp_base-kernel-build #
 ##########################
-FROM dvlp_skel-kernel AS dvlp_base-kernel-build
+FROM dvlp_skel-build-kernel AS dvlp_base-kernel-build
 USER r00t
 # RUN echo exit 0 > /usr/sbin/policy-rc.d 
 # RUN \
@@ -513,12 +535,18 @@ RUN \
 WORKDIR /hal
 USER ${_AGL}
 
+
 ######################################################################################
 ###################  dvlp_base-kernel-builder - KERNEL BUILDER  ######################
 ######################################################################################
 FROM dvlp_base-kernel-build AS dvlp_base-kernel-builder
 ARG CONFIG_FILE
 ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
+ARG CONFIG_FILE
+ARG WIN_USER
+ARG DOCKER_BUILD_TIMESTAMP
+ARG installkernel
 WORKDIR /hal
 USER ${_AGL}
 
@@ -527,16 +555,16 @@ USER ${_AGL}
 ########################  dvlp_kernel-make - KERNEL COMPILER  ########################
 ######################################################################################
 FROM dvlp_base-kernel-builder AS dvlp_kernel-make
-ARG CONFIG_FILE
-ARG KERNEL_PACKAGE_NAME
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
+ARG CONFIG_FILE
+ARG WIN_USER
 ARG DOCKER_BUILD_TIMESTAMP
 ENV DOCKER_BUILD_TIMESTAMP=${DOCKER_BUILD_TIMESTAMP}
-ARG WIN_USER
+ARG installkernel
 USER r00t
 # WORKDIR /
-# COPY --from=dvlp_skel-build-kernel ./ ./
+# ONBUILD COPY --from=dvlp_skel-build${KERNEL_TYPE:+-kernel} ./ ./
 WORKDIR /r00t/dvlw/dvlp/kernels/linux
 SHELL ["/bin/bash", "-c"]
 # RUN chmod o+x make-kernel.sh 
@@ -570,9 +598,12 @@ ARG _AGL=${_AGL:-agl}
 ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
 ARG CONFIG_FILE
-ARG KERNEL_PACKAGE_NAME
+ARG WIN_USER
 ARG DOCKER_BUILD_TIMESTAMP
+ARG KERNEL_PACKAGE_NAME
 ENV DOCKER_BUILD_TIMESTAMP=${DOCKER_BUILD_TIMESTAMP}
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
@@ -581,11 +612,8 @@ USER r00t
 WORKDIR /
 COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/kache/ ./
 
-################
-# kernel-kache #
-################
 
-FROM scratch AS dvlp_kernel-install
+FROM scratch AS dvlp_kernel_base
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -608,6 +636,9 @@ COPY --from=dvlp_kernel-make ./usr/src/ ./usr/src/
 COPY --from=dvlp_kernel-make ./kache/ ./kache/
 COPY --from=dvlp_kernel-make ./r00t/dvlw/ ./r00t/dvlw/
 
+FROM scratch AS dvlp_dont_install_kernel
+
+
 ###################################################################
 ########################### K-HOME ################################
 ###################################################################
@@ -619,13 +650,14 @@ FROM scratch AS dvlp_k-home-nix
 # ARG LINUX
 # # determine which home dir to get -- default is HOME_NIX 
 ARG HOME_DIR='HOME_NIX'
+ARG KERNEL_TYPE
 # # if WINDOWS argument is provided, use win home dir
 # ARG HOME_DIR="${WINDOWS:+'HOME_WIN'}"
 # # if LINUX argument is provided, use nix home dir
 # ARG HOME_DIR="${LINUX:+'HOME_NIX'}"
 USER r00t
 WORKDIR /
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
+COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
 # COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/${HOME_DIR}/ ./
 
 ############
@@ -643,6 +675,13 @@ FROM scratch AS dvlp_k-home-win
 ARG _AGL=${_AGL:-agl}
 ENV _AGL=$_AGL=${_AGL:-agl}
 ARG _DVL
+ARG CONFIG_FILE
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
+ARG CONFIG_FILE
+ARG WIN_USER
+ARG DOCKER_BUILD_TIMESTAMP
+ARG installkernel
 USER r00t
 WORKDIR /
 COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/mnt/HOME_WIN/ ./
@@ -653,6 +692,13 @@ COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/kernels/linux/kache/ ./
 FROM kalilinux/kali-rolling:latest AS dvlp_k-home-win-user-mod
 ARG _AGL=${_AGL:-agl}
 ENV _AGL=$_AGL=${_AGL:-agl}
+ARG CONFIG_FILE
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
+ARG CONFIG_FILE
+ARG WIN_USER
+ARG DOCKER_BUILD_TIMESTAMP
+ARG installkernel
 COPY --from=dvlp_k-home-win ./ ./build/
 WORKDIR /build
 RUN ls -al
@@ -686,6 +732,13 @@ ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
+ARG CONFIG_FILE
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
+ARG CONFIG_FILE
+ARG WIN_USER
+ARG DOCKER_BUILD_TIMESTAMP
+ARG installkernel
 USER r00t
 RUN echo "[user]" | tee /etc/wsl.conf
 RUN echo "default = ${_AGL}" | tee --append /etc/wsl.conf
@@ -693,27 +746,27 @@ WORKDIR /hal
 USER ${_AGL}
 
 
-################################### GIT #########################################
-#################
-# dvlp_base-git #
-#################
-FROM dvlp_skel AS dvlp_base-git
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
-ARG _AGL=${_AGL:-agl}
-ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-ARG REFRESH_REPO
-WORKDIR /hal
-USER ${_AGL}
+# ################################### GIT #########################################
+# #################
+# # dvlp_base-git #
+# #################
+# FROM dvlp_skel AS dvlp_base-git
+# ARG _AGL_USR
+# ARG _DVL_USR
+# ARG _ADM_USR
+# ARG _AGL=${_AGL:-agl}
+# ENV _AGL=$_AGL
+# ENV _DVL=$_DVL_USR
+# ENV _ADM=$_ADM_USR
+# ARG REFRESH_REPO
+# WORKDIR /hal
+# USER ${_AGL}
 
 ########################
-# dvlp_base-git-kernel #
+# dvlp_base-git        #
 ########################
-FROM scratch AS dvlp_base-git-kernel
-# COPY --from=dvlp_skel-build-kernel         ./      ./
+FROM dvlp_skel AS dvlp_base-git
+# COPY --from=dvlp_skel-build         ./      ./
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -722,10 +775,14 @@ ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
+ARG CONFIG_FILE
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
+ARG CONFIG_FILE
+ARG WIN_USER
+ARG DOCKER_BUILD_TIMESTAMP
+ARG installkernel
 USER r00t
-WORKDIR /
-COPY --from=dvlp_kernel-install ./ ./
-COPY --from=dvlp_skel-kernel ./ ./
 WORKDIR /hal
 USER ${_AGL}
 
@@ -820,6 +877,7 @@ ARG _AGL=${_AGL:-agl}
 ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 USER r00t
+
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
@@ -887,54 +945,19 @@ WORKDIR /
 #########################
 # dvlp_base-python-lite #
 #########################
-FROM scratch AS dvlp_base-python-lite
+FROM dvlp_skel AS dvlp_base-python-lite
+ARG CONFIG_FILE
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
+ARG CONFIG_FILE
+ARG WIN_USER
+ARG DOCKER_BUILD_TIMESTAMP
+ARG installkernel
 USER r00t
 WORKDIR / 
-COPY --from=dvlp_skel-kernel-lite ./ ./
 COPY --from=dvlp_base-python-build-lite ./ ./
 WORKDIR /hal
 USER ${_AGL}
-
-####################
-# dvlp_base-python #
-###################
-FROM scratch AS dvlp_base-python
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
-ARG _AGL=${_AGL:-agl}
-ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-USER r00t
-WORKDIR / 
-COPY --from=dvlp_skel ./ ./
-COPY --from=dvlp_skel-kernel ./ ./
-COPY --from=dvlp_base-python-build ./ ./
-COPY --from=dvlp_base-python-build-lite ./ ./
-WORKDIR /hal
-USER ${_AGL}
-
-########################
-# dvlp_base-python-kernel #
-########################
-FROM scratch AS dvlp_base-python-kernel
-# COPY --from=dvlp_skel-build-kernel         ./      ./
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
-ARG _AGL=${_AGL:-agl}
-ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-ARG REFRESH_REPO
-USER r00t
-WORKDIR /
-COPY --from=dvlp_kernel-install ./ ./
-COPY --from=dvlp_base-python-build ./ ./
-WORKDIR /hal
-USER ${_AGL}
-
 
 ############################# POWERHELL #########################################
 ##############################
@@ -992,60 +1015,45 @@ USER ${_AGL}
 ########################
 # dvlp_base-msdot-lite #
 ########################
-FROM scratch AS dvlp_base-msdot-lite
+FROM dvlp_skel AS dvlp_base-msdot-lite
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
 ARG _AGL=${_AGL:-agl}
+ARG KERNEL_TYPE
 ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 USER r00t
 WORKDIR /
-COPY --from=dvlp_skel ./ ./
 COPY --from=dvlp_base-git ./ ./
 COPY --from=dvlp_base-python-build-lite ./ ./
 COPY --from=dvlp_base-msdot-build-lite ./ ./
 WORKDIR /hal
 USER ${_AGL}
 
-###################
-# dvlp_base-msdot #
-###################
-FROM scratch AS dvlp_base-msdot
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
-ARG _AGL=${_AGL:-agl}
-ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-USER r00t
-WORKDIR /
-COPY --from=dvlp_skel ./ ./
-COPY --from=dvlp_base-git ./ ./
-COPY --from=dvlp_base-python-build ./ ./
-COPY --from=dvlp_base-msdot-build ./ ./
-WORKDIR /hal
-USER ${_AGL}
-
 ########################
 # dvlp_base-msdot-kernel #
 ########################
-FROM scratch AS dvlp_base-msdot-kernel
-# COPY --from=dvlp_skel-build-kernel         ./      ./
+FROM dvlp_skel AS dvlp_base-msdot
+# COPY --from=dvlp_skel-build         ./      ./
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
 ARG _AGL=${_AGL:-agl}
+ARG CONFIG_FILE
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
+ARG CONFIG_FILE
+ARG WIN_USER
+ARG DOCKER_BUILD_TIMESTAMP
+ARG installkernel
 ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
 USER r00t
 WORKDIR /
-COPY --from=dvlp_kernel-install ./ ./
-COPY --from=dvlp_skel-kernel ./ ./
 COPY --from=dvlp_base-python-build ./ ./
 COPY --from=dvlp_base-msdot-build ./ ./
 WORKDIR /hal
@@ -1055,7 +1063,7 @@ USER ${_AGL}
 ########################
 # dvlp_base-dind-build #
 ########################
-FROM dvlp_skel-build AS dvlp_base-dind-build
+FROM dvlp_skel AS dvlp_base-dind-build
 USER r00t
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
 RUN \
@@ -1087,11 +1095,17 @@ USER ${_AGL}
 #######################
 # dvlp_base-dind-lite #
 #######################
-FROM scratch AS dvlp_base-dind-lite
+FROM dvlp_skel AS dvlp_base-dind-lite
 USER r00t
+ARG CONFIG_FILE
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
+ARG CONFIG_FILE
+ARG WIN_USER
+ARG DOCKER_BUILD_TIMESTAMP
+ARG installkernel
 WORKDIR /
 
-COPY --from=dvlp_skel ./ ./
 COPY --from=dvlp_base-python-build ./ ./
 COPY --from=dvlp_base-msdot-build ./ ./
 COPY --from=dvlp_base-dind-build ./ ./
@@ -1101,29 +1115,7 @@ USER ${_AGL}
 ##################
 # dvlp_base-dind #
 ##################
-FROM scratch AS dvlp_base-dind
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
-ARG _AGL=${_AGL:-agl}
-ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-USER r00t
-WORKDIR /
-COPY --from=dvlp_skel ./ ./
-COPY --from=dvlp_base-python-build ./ ./
-COPY --from=dvlp_base-msdot-build-lite ./ ./
-COPY --from=dvlp_base-dind-build ./ ./
-RUN systemctl start docker
-WORKDIR /hal
-USER ${_AGL}
-
-########################
-# dvlp_base-dind-kernel #
-########################
-FROM scratch AS dvlp_base-dind-kernel
-# COPY --from=dvlp_skel-build-kernel         ./      ./
+FROM dvlp_skel AS dvlp_base-dind
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -1132,10 +1124,15 @@ ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
+ARG CONFIG_FILE
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
+ARG CONFIG_FILE
+ARG WIN_USER
+ARG DOCKER_BUILD_TIMESTAMP
+ARG installkernel
 USER r00t
 WORKDIR /
-COPY --from=dvlp_kernel-install ./ ./
-COPY --from=dvlp_skel-kernel ./ ./
 COPY --from=dvlp_base-python-build ./ ./
 COPY --from=dvlp_base-msdot-build-lite ./ ./
 COPY --from=dvlp_base-dind-build ./ ./
@@ -1147,7 +1144,7 @@ USER ${_AGL}
 # dvlp_base-gui-lite #USER ${_AGL}
 ######################
 # wsl2 required
-FROM scratch AS dvlp_base-gui-lite
+FROM dvlp_skel AS dvlp_base-gui-lite
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -1155,12 +1152,18 @@ ARG _AGL=${_AGL:-agl}
 ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
+ARG CONFIG_FILE
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
+ARG CONFIG_FILE
+ARG WIN_USER
+ARG DOCKER_BUILD_TIMESTAMP
+ARG installkernel
 USER r00t
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NONINTERACTIVE_SEEN=true
 ARG REFRESH_REPO=${REFRESH_REPO:-yes}
 # WORKDIR /
-COPY --from=dvlp_skel ./ ./
 COPY --from=dvlp_base-python-build-lite ./ ./
 COPY --from=dvlp_base-msdot-build-lite ./ ./
 COPY --from=dvlp_base-dind-build ./ ./
@@ -1203,21 +1206,6 @@ COPY --from=dvlp_repo /repos/dvlw/dvlp/mnt/opt/* /opt/
 # # # brave_old_line='\"\$HERE\/brave\"\s\"\$\@\"\s\|\|\strue' && \
 # # # brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
 # # # sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/${_DVL} && \
-WORKDIR /hal
-USER ${_AGL}
-
-#############################
-# dvlp_base-gui-lite-kernel #
-#############################
-FROM scratch AS dvlp_base-gui-lite-kernel
-# USER r00t
-# WORKDIR /
-COPY --from=dvlp_kernel-install ./ ./
-COPY --from=dvlp_skel-kernel ./ ./
-COPY --from=dvlp_base-python-build ./ ./
-COPY --from=dvlp_base-msdot-build-lite ./ ./
-COPY --from=dvlp_base-dind-build ./ ./
-COPY --from=dvlp_base-gui-lite ./ ./
 WORKDIR /hal
 USER ${_AGL}
 
@@ -1269,52 +1257,19 @@ RUN \
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y kali-defaults kali-root-login desktop-base kali-win-kex && \
+    apt-get install --no-install-recommends -y locales kali-defaults kali-root-login desktop-base kali-win-kex kali-desktop-xfce pulseaudio-module-xrdp && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 COPY --from=dvlp_repo --chmod=755 /repos/dvlw/dvlp/mnt/etc/* /etc/
 WORKDIR /hal
 USER ${_AGL}
 
-#################
-# dvlp_base-gui #
-#################
-# building this will compile a kernel saved to /kache
-FROM scratch AS dvlp_base-gui-kernel
-USER r00t
-WORKDIR /
-COPY --from=dvlp_kernel-install ./ ./
-COPY --from=dvlp_skel-kernel ./ ./
-COPY --from=dvlp_base-python-build ./ ./
-COPY --from=dvlp_base-msdot-build-lite ./ ./
-COPY --from=dvlp_base-dind-build ./ ./
-COPY --from=dvlp_base-gui-lite ./ ./
-COPY --from=dvlp_base-gui ./ ./
-WORKDIR /hal
-USER ${_AGL}
-
-# ######################
-# # dvlp_base-gui-kernel #
-# #####################
-# FROM dvlp_base-kernel-builder AS dvlp_base-gui-kernel
-# ARG _AGL_USR
-# ARG _DVL_USR
-# ARG _ADM_USR
-# ARG _AGL=${_AGL:-agl}
-ENV _AGL=$_AGL
-# ENV _DVL=$_DVL_USR
-# ENV _ADM=$_ADM_USR
-# ARG REFRESH_REPO
-# WORKDIR /
-# COPY --from=dvlp_base-gui ./ ./
-# WORKDIR /hal
-# USER ${_AGL}
 
 ############################## CUDA ###############################
 ##################
 # dvlp_base-cuda #
 ##################
-FROM dvlp_base-gui-kernel AS dvlp_base-cuda
+FROM dvlp_base-gui AS dvlp_base-cuda
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -1341,41 +1296,6 @@ RUN \
 WORKDIR /hal
 USER ${_AGL}
 
-#######################
-# dvlp_base-cuda-kernel #
-#######################
-FROM scratch AS dvlp_base-cuda-kernel
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
-ARG _AGL=${_AGL:-agl}
-ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-USER r00t
-WORKDIR /
-COPY --from=dvlp_kernel-install ./ ./
-COPY --from=dvlp_skel-kernel ./ ./
-COPY --from=dvlp_base-python-build ./ ./
-COPY --from=dvlp_base-msdot-build-lite ./ ./
-COPY --from=dvlp_base-dind-build ./ ./
-COPY --from=dvlp_base-gui-lite ./ ./
-COPY --from=dvlp_base-gui ./ ./
-COPY --from=dvlp_base-cuda ./ ./
-WORKDIR /hal
-USER ${_AGL}
-RUN \
-    rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
-    rm -rf /var/cache/apt && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y nvidia-cuda-toolkit && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt/archives/*.deb   
-WORKDIR /hal
-USER ${_AGL}
 
 #####################
 ## dvlp_jacket-kernel-kernel #
@@ -1393,22 +1313,24 @@ USER ${_AGL}
 # rm -rf /etc/ssl/certs && \
 # apt-get --reinstall -y install ca-certificates && \
 # update-ca-certificates && \
-# apt update -y && apt upgrade -y
+# apt-get update -y && apt-get upgrade -y
 
-##################
-## dvlp_gui-kernel #
-##################
-FROM dvlp_base-gui-kernel AS dvlp_gui-kernel
-USER root
-RUN rm -rf /var/cache/dvlp/archives && \
-rm -rf /etc/ssl/certs && \
-apt update -y && apt upgrade -y && \
-apt-get --reinstall -y install ca-certificates && \
-update-ca-certificates && \
-apt update -y && apt upgrade -y && \
-rm -rf /var/lib/apt/lists && \
-rm -rf /var/cache/apt/archives/*.deb
-WORKDIR /
+# ##################
+# ## dvlp_gui-kernel #
+# ##################
+# FROM dvlp_base-gui-kernel AS dvlp_gui-kernel
+# USER root
+# RUN rm -rf /var/cache/dvlp/archives && \
+# rm -rf /etc/ssl/certs && \
+# apt-get update -y && apt-get upgrade -y && \
+# apt-get --reinstall -y install ca-certificates && \
+# update-ca-certificates && \
+# apt-get update -y && apt-get upgrade -y && \
+# Binary::apt-get::APT::Install-Recommends "true" && \
+# rm -rf /var/lib/apt/lists && \
+# rm -rf /var/cache/apt/archives/*.deb
+# USER ${_AGL}
+# WORKDIR /
 
 ############
 # dvlp_gui #
@@ -1417,12 +1339,14 @@ FROM dvlp_base-gui AS dvlp_gui
 USER root
 RUN rm -rf /var/cache/dvlp/archives && \
 rm -rf /etc/ssl/certs && \
-apt update -y && apt upgrade -y && \
+apt-get update -y && apt-get upgrade -y && \
 apt-get --reinstall -y install ca-certificates && \
 update-ca-certificates && \
-apt update -y && apt upgrade -y && \
+apt-get update -y && apt-get upgrade -y && \
+echo 'Binary::apt-get::APT::Install-Recommends "true"' | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
 rm -rf /var/lib/apt/lists && \
 rm -rf /var/cache/apt/archives/*.deb
+USER ${_AGL}
 WORKDIR /
 
 #################
@@ -1432,12 +1356,14 @@ FROM dvlp_base-gui-lite AS dvlp_gui-lite
 USER root
 RUN rm -rf /var/cache/dvlp/archives && \
 rm -rf /etc/ssl/certs && \
-apt update -y && apt upgrade -y && \
+apt-get update -y && apt-get upgrade -y && \
 apt-get --reinstall -y install ca-certificates && \
 update-ca-certificates && \
-apt update -y && apt upgrade -y && \
+apt-get update -y && apt-get upgrade -y && \
+echo 'Binary::apt-get::APT::Install-Recommends "true"' | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
 rm -rf /var/lib/apt/lists && \
 rm -rf /var/cache/apt/archives/*.deb
+USER ${_AGL}
 WORKDIR /
 
 ###################
@@ -1447,12 +1373,14 @@ FROM dvlp_base-dind-lite AS dvlp_dind-lite
 USER root
 RUN rm -rf /var/cache/dvlp/archives && \
 rm -rf /etc/ssl/certs && \
-apt update -y && apt upgrade -y && \
+apt-get update -y && apt-get upgrade -y && \
 apt-get --reinstall -y install ca-certificates && \
 update-ca-certificates && \
-apt update -y && apt upgrade -y && \
+apt-get update -y && apt-get upgrade -y && \
+echo 'Binary::apt-get::APT::Install-Recommends "true"' | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
 rm -rf /var/lib/apt/lists && \
 rm -rf /var/cache/apt/archives/*.deb
+USER ${_AGL}
 WORKDIR /
 
 ############
@@ -1462,12 +1390,14 @@ FROM dvlp_base-git AS dvlp_git
 USER root
 RUN rm -rf /var/cache/dvlp/archives && \
 rm -rf /etc/ssl/certs && \
-apt update -y && apt upgrade -y && \
+apt-get update -y && apt-get upgrade -y && \
 apt-get --reinstall -y install ca-certificates && \
 update-ca-certificates && \
-apt update -y && apt upgrade -y && \
+apt-get update -y && apt-get upgrade -y && \
+echo 'Binary::apt-get::APT::Install-Recommends "true"' | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
 rm -rf /var/lib/apt/lists && \
 rm -rf /var/cache/apt/archives/*.deb
+USER ${_AGL}
 WORKDIR /
 
 ###################
@@ -1477,12 +1407,14 @@ FROM dvlp_base-git-kernel AS dvlp_git-kernel
 USER root
 RUN rm -rf /var/cache/dvlp/archives && \
 rm -rf /etc/ssl/certs && \
-apt update -y && apt upgrade -y && \
+apt-get update -y && apt-get upgrade -y && \
 apt-get --reinstall -y install ca-certificates && \
 update-ca-certificates && \
-apt update -y && apt upgrade -y && \
+apt-get update -y && apt-get upgrade -y && \
+echo 'Binary::apt-get::APT::Install-Recommends "true"' | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
 rm -rf /var/lib/apt/lists && \
 rm -rf /var/cache/apt/archives/*.deb
+USER ${_AGL}
 WORKDIR /
 
 ####################
@@ -1492,14 +1424,15 @@ FROM dvlp_base-msdot-lite AS dvlp_msdot-lite
 USER root
 RUN rm -rf /var/cache/dvlp/archives && \
 rm -rf /etc/ssl/certs && \
-apt update -y && apt upgrade -y && \
+apt-get update -y && apt-get upgrade -y && \
 apt-get --reinstall -y install ca-certificates && \
 update-ca-certificates && \
-apt update -y && apt upgrade -y && \
+apt-get update -y && apt-get upgrade -y && \
+echo 'Binary::apt-get::APT::Install-Recommends "true"' | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
 rm -rf /var/lib/apt/lists && \
 rm -rf /var/cache/apt/archives/*.deb
+USER ${_AGL}
 WORKDIR /
-
 
 ####################
 # dvlp_python-lite #
@@ -1508,12 +1441,14 @@ FROM dvlp_base-python-lite AS dvlp_python-lite
 USER root
 RUN rm -rf /var/cache/dvlp/archives && \
 rm -rf /etc/ssl/certs && \
-apt update -y && apt upgrade -y && \
+apt-get update -y && apt-get upgrade -y && \
 apt-get --reinstall -y install ca-certificates && \
 update-ca-certificates && \
-apt update -y && apt upgrade -y && \
+apt-get update -y && apt-get upgrade -y && \
+echo 'Binary::apt-get::APT::Install-Recommends "true"' | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
 rm -rf /var/lib/apt/lists && \
 rm -rf /var/cache/apt/archives/*.deb
+USER ${_AGL}
 WORKDIR /
 
 #############
@@ -1523,12 +1458,14 @@ FROM dvlp_base-bare AS dvlp_bare
 USER root
 RUN rm -rf /var/cache/dvlp/archives && \
 rm -rf /etc/ssl/certs && \
-apt update -y && apt upgrade -y && \
+apt-get update -y && apt-get upgrade -y && \
 apt-get --reinstall -y install ca-certificates && \
 update-ca-certificates && \
-apt update -y && apt upgrade -y && \
+apt-get update -y && apt-get upgrade -y && \
+echo 'Binary::apt-get::APT::Install-Recommends "true"' | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
 rm -rf /var/lib/apt/lists && \
 rm -rf /var/cache/apt/archives/*.deb
+USER ${_AGL}
 WORKDIR /
 
 #############
@@ -1538,12 +1475,14 @@ FROM dvlp_base-scan AS dvlp_scan
 USER root
 RUN rm -rf /var/cache/dvlp/archives && \
 rm -rf /etc/ssl/certs && \
-apt update -y && apt upgrade -y && \
+apt-get update -y && apt-get upgrade -y && \
 apt-get --reinstall -y install ca-certificates && \
 update-ca-certificates && \
-apt update -y && apt upgrade -y && \
+apt-get update -y && apt-get upgrade -y && \
+echo 'Binary::apt-get::APT::Install-Recommends "true"' | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
 rm -rf /var/lib/apt/lists && \
 rm -rf /var/cache/apt/archives/*.deb
+USER ${_AGL}
 WORKDIR /
 
 #############
@@ -1553,23 +1492,14 @@ FROM dvlp_base-cuda  AS dvlp_cuda
 USER root
 RUN rm -rf /var/cache/dvlp/archives && \
 rm -rf /etc/ssl/certs && \
-apt update -y && apt upgrade -y && \
+apt-get update -y && apt-get upgrade -y && \
 apt-get --reinstall -y install ca-certificates && \
 update-ca-certificates && \
-apt update -y && apt upgrade -y && \
+apt-get update -y && apt-get upgrade -y && \
+echo 'Binary::apt-get::APT::Install-Recommends "true"' | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
 rm -rf /var/lib/apt/lists && \
 rm -rf /var/cache/apt/archives/*.deb
+USER ${_AGL}
 WORKDIR /
 
-##################
-# dvlp_cuda-kernel #
-##################
-FROM dvlp_base-cuda-kernel AS dvlp_cuda-kernel
-USER root
-RUN rm -rf /var/cache/dvlp/archives && \
-apt update -y && apt upgrade -y && \
-apt-get --reinstall -y install  && \
-update-ca-certificates && \
-update-ca-certificates && \
-apt update -y && apt upgrade -y
-WORKDIR /
+
