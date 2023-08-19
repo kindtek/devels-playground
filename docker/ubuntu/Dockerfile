@@ -412,10 +412,10 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 
-####################
-# dvlp_skel-kernel #
-####################
-FROM dvlp_skel-build AS dvlp_skel-kernel
+# ####################
+# # dvlp_skel-kernel #
+# ####################
+# FROM dvlp_skel-build-kernel AS dvlp_skel-kernel
 
 #################################################################################
 ############################### IMAGE BASES #####################################
@@ -454,7 +454,7 @@ USER ${_AGL}
 ############
 # dvlp_base-git-kernel #
 ############
-FROM dvlp_skel-kernel AS dvlp_base-git-kernel
+FROM dvlp_skel-build-kernel AS dvlp_base-git-kernel
 COPY --from=dvlp_skel-build-kernel         ./      ./
 ARG _AGL_USR
 ARG _DVL_USR

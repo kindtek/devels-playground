@@ -443,8 +443,8 @@ IF "!image_service_suffix!" == "kernel" (
 @REM re-building repo
 SET "build_args="
 SET "compose_services_nocache=repo"
-SET "compose_services=!image_service!"
-ECHO building image (!image_service!)...
+SET "compose_services=!image_tag_base!"
+ECHO building image (!image_tag_base!)...
 @REM build the image
 IF "!image_service_suffix!" == "kernel" (
     @REM TODO: add prompt (when noninteractive) for kernel type/feature
