@@ -65,7 +65,7 @@ RUN \
     Acquire::Retries '3';\
     Acquire::https::Timeout '240';\
     Acquire::http::Timeout '240';\
-    Acquire::BrokenProxy='true' ;\
+    Acquire::BrokenProxy='true';\
     Acquire::http::No-Cache='true'; \ 
     Acquire::http::Pipeline-Depth='0';\
     Debug::Acquire::https 'true';\
@@ -74,7 +74,7 @@ RUN \
     Binary::apt-get::APT::Install-Suggests 'false'; \
     Binary::apt::APT::Install-Recommends 'true'; \
     Binary::apt::APT::Install-Suggests 'true';\
-    Binary::apt-get::APT::Keep-Downloaded-Packages 'true";' | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm 
+    Binary::apt-get::APT::Keep-Downloaded-Packages 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm 
     # use apt loading bar for apt-get by default
 # RUN echo 'Binary::apt-get::DPkg::Progress-Fancy "1"' | tee /etc/apt/apt.conf.d/99fancybar.conf
 # import/install basic utils from layer cache if possible and delete .deb archives from container when finished
