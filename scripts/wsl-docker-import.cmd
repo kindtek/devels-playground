@@ -311,10 +311,10 @@ SET "docker_container_id_path=!install_location!\.container_id"
 SET "diskman_file_path=!install_location!\diskman.ps1"
 SET "diskshrink_file_path=!install_location!\diskshrink.ps1"
 @REM SET "image_save_path=!save_location!\!wsl_distro!.tar"
-SET "wsl_default_distro_path=%SystemDrive%\docker2wsl\.default_distro"
-SET "wsl_default_kernel_path=%SystemDrive%\docker2wsl\.default_kernel"
-SET "wsl_default_kernel_version_path=%SystemDrive%\docker2wsl\.default_kernel_version"
-SET "wsl_default_kernel_config_version_path=%SystemDrive%\docker2wsl\.default_kernel_config_version"
+SET "wsl_default_distro_path=!mount_drive!:\!save_directory!\.default_distro"
+SET "wsl_default_kernel_path=!mount_drive!:\!save_directory!\.default_kernel"
+SET "wsl_default_kernel_version_path=!mount_drive!:\!save_directory!\.default_kernel_version"
+SET "wsl_default_kernel_config_version_path=!mount_drive!:\!save_directory!\.default_kernel_config_version"
 
 @REM directory structure: 
 @REM !mount_drive!:\!install_directory!\!save_directory!
