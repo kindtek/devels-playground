@@ -1344,6 +1344,7 @@ apt-get --reinstall -y install ca-certificates && \
 update-ca-certificates && \
 apt-get update -y && apt-get upgrade -y && \
 echo 'Binary::apt-get::APT::Install-Recommends "true"' | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
+echo 'exit 0'  | tee --append /usr/sbin/policy-rc.d  && \
 rm -rf /var/lib/apt/lists && \
 rm -rf /var/cache/apt/archives/*.deb
 USER ${_AGL}
@@ -1361,6 +1362,7 @@ apt-get --reinstall -y install ca-certificates && \
 update-ca-certificates && \
 apt-get update -y && apt-get upgrade -y && \
 echo 'Binary::apt-get::APT::Install-Recommends "true"' | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
+echo 'exit 0'  | tee --append /usr/sbin/policy-rc.d  && \
 rm -rf /var/lib/apt/lists && \
 rm -rf /var/cache/apt/archives/*.deb
 USER ${_AGL}
@@ -1378,6 +1380,7 @@ apt-get --reinstall -y install ca-certificates && \
 update-ca-certificates && \
 apt-get update -y && apt-get upgrade -y && \
 echo 'Binary::apt-get::APT::Install-Recommends "true"' | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
+echo 'exit 0'  | tee --append /usr/sbin/policy-rc.d  && \
 rm -rf /var/lib/apt/lists && \
 rm -rf /var/cache/apt/archives/*.deb
 USER ${_AGL}
@@ -1395,6 +1398,7 @@ apt-get --reinstall -y install ca-certificates && \
 update-ca-certificates && \
 apt-get update -y && apt-get upgrade -y && \
 echo 'Binary::apt-get::APT::Install-Recommends "true"' | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
+echo 'exit 0'  | tee --append /usr/sbin/policy-rc.d  && \
 rm -rf /var/lib/apt/lists && \
 rm -rf /var/cache/apt/archives/*.deb
 USER ${_AGL}
@@ -1412,6 +1416,7 @@ apt-get --reinstall -y install ca-certificates && \
 update-ca-certificates && \
 apt-get update -y && apt-get upgrade -y && \
 echo 'Binary::apt-get::APT::Install-Recommends "true"' | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
+echo 'exit 0'  | tee --append /usr/sbin/policy-rc.d  && \
 rm -rf /var/lib/apt/lists && \
 rm -rf /var/cache/apt/archives/*.deb
 USER ${_AGL}
@@ -1429,6 +1434,7 @@ apt-get --reinstall -y install ca-certificates && \
 update-ca-certificates && \
 apt-get update -y && apt-get upgrade -y && \
 echo 'Binary::apt-get::APT::Install-Recommends "true"' | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
+echo 'exit 0'  | tee --append /usr/sbin/policy-rc.d  && \
 rm -rf /var/lib/apt/lists && \
 rm -rf /var/cache/apt/archives/*.deb
 USER ${_AGL}
@@ -1446,6 +1452,7 @@ apt-get --reinstall -y install ca-certificates && \
 update-ca-certificates && \
 apt-get update -y && apt-get upgrade -y && \
 echo 'Binary::apt-get::APT::Install-Recommends "true"' | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
+echo 'exit 0'  | tee --append /usr/sbin/policy-rc.d  && \
 rm -rf /var/lib/apt/lists && \
 rm -rf /var/cache/apt/archives/*.deb
 USER ${_AGL}
@@ -1463,6 +1470,7 @@ apt-get --reinstall -y install ca-certificates && \
 update-ca-certificates && \
 apt-get update -y && apt-get upgrade -y && \
 echo 'Binary::apt-get::APT::Install-Recommends "true"' | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
+echo 'exit 0'  | tee --append /usr/sbin/policy-rc.d  && \
 rm -rf /var/lib/apt/lists && \
 rm -rf /var/cache/apt/archives/*.deb
 USER ${_AGL}
@@ -1480,6 +1488,7 @@ apt-get --reinstall -y install ca-certificates && \
 update-ca-certificates && \
 apt-get update -y && apt-get upgrade -y && \
 echo 'Binary::apt-get::APT::Install-Recommends "true"' | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
+echo 'exit 0'  | tee --append /usr/sbin/policy-rc.d  && \
 rm -rf /var/lib/apt/lists && \
 rm -rf /var/cache/apt/archives/*.deb
 USER ${_AGL}
@@ -1497,6 +1506,7 @@ apt-get --reinstall -y install ca-certificates && \
 update-ca-certificates && \
 apt-get update -y && apt-get upgrade -y && \
 echo 'Binary::apt-get::APT::Install-Recommends "true"' | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
+echo 'exit 0'  | tee --append /usr/sbin/policy-rc.d  && \
 rm -rf /var/lib/apt/lists && \
 rm -rf /var/cache/apt/archives/*.deb
 USER ${_AGL}
