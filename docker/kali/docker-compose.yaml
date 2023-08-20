@@ -230,7 +230,7 @@ services:
     extends: skel-build
     build:
       context: .
-      target: dvlp_kernel-make
+      target: dvlp_kernel-maker
       no_cache: true
     depends_on:
       skel:
@@ -240,7 +240,7 @@ services:
     extends: skel-build
     build:
       context: .
-      target: dvlp_kernel-make
+      target: dvlp_kernel-maker
       no_cache: false
     depends_on:
       skel:
