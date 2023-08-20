@@ -236,6 +236,16 @@ services:
       skel:
         # Wait for the ownership to change
         condition: service_completed_successfully
+  kernel-maker-cached:
+    extends: skel-build
+    build:
+      context: .
+      target: dvlp_kernel-make
+      no_cache: false
+    depends_on:
+      skel:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
   base-bare:
     entrypoint: /bin/bash -c
     command:
@@ -537,7 +547,7 @@ services:
   kernel-make:
     extends: jacket
     build:
-      target: dvlp_kernel-make
+      # target: dvlp_kernel-make
       no_cache: true
       args:
         - JACKET=kernel-make
