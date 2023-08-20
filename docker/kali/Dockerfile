@@ -522,8 +522,9 @@ ONBUILD COPY --from=dvlp_skel-build${KERNEL_TYPE:+-kernel} ./ ./
 #     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
-    rm -rf /var/cache/apt && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    apt-get update --fix-missing -yq && apt-get install -f && apt-get upgrade -yq && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb && \
     apt-get install --no-install-recommends -y apt-utils apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh systemd-sysv sysvinit-utils wget && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
