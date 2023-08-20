@@ -476,7 +476,8 @@ COPY --from=dvlp_base-angel-kernel-dirs            --chown=${_AGL}:halo    --chm
 ONBUILD COPY --from=dvlp_kernel-make ./boot/ ./boot/
 ONBUILD COPY --from=dvlp_kernel-make ./usr/src/ ./usr/src/
 RUN \
-    mkdir -p /usr/lib/modules
+    mkdir -p /usr/lib/modules && \
+    mkdir -p /kache
 ONBUILD COPY --from=dvlp_kernel-make ./usr/lib/modules/ ./usr/lib/modules/
 ONBUILD COPY --from=dvlp_kernel-make ./kache/ ./kache/
 ONBUILD COPY --from=dvlp_kernel-make ./r00t/dvlw/ ./r00t/dvlw/
