@@ -474,11 +474,12 @@ COPY --from=dvlp_base-r00t-kernel-dirs             --chown=r00t:r00t       --chm
 COPY --from=dvlp_base-devel-kernel-dirs            --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
 COPY --from=dvlp_base-angel-kernel-dirs            --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
 ONBUILD USER r00t
-ONBUILD COPY --from=dvlp_kernel-make ./boot/ ./boot/
-ONBUILD COPY --from=dvlp_kernel-make ./usr/src/ ./usr/src/
 ONBUILD RUN \
     mkdir -p /usr/lib/modules && \
-    mkdir -p /kache
+    mkdir -p /kache && \
+    mkdir -p /boot
+ONBUILD COPY --from=dvlp_kernel-make ./boot/ ./boot/
+ONBUILD COPY --from=dvlp_kernel-make ./usr/src/ ./usr/src/
 ONBUILD COPY --from=dvlp_kernel-make ./usr/lib/modules/ ./usr/lib/modules/
 ONBUILD COPY --from=dvlp_kernel-make ./kache/ ./kache/
 ONBUILD COPY --from=dvlp_kernel-make ./r00t/dvlw/ ./r00t/dvlw/
