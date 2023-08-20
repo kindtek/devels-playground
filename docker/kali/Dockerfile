@@ -491,7 +491,7 @@ ONBUILD RUN \
     make modules_install && \
     cd .. && \ 
     rm -rf linux-* && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    apt-get update --fix-missing -yq && apt-get install -f && apt-get upgrade -yq && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 ONBUILD WORKDIR /
