@@ -475,7 +475,7 @@ COPY --from=dvlp_base-devel-kernel-dirs            --chown=${_DVL}:hell    --chm
 COPY --from=dvlp_base-angel-kernel-dirs            --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
 ONBUILD COPY --from=dvlp_kernel-make ./boot/ ./boot/
 ONBUILD COPY --from=dvlp_kernel-make ./usr/src/ ./usr/src/
-RUN \
+ONBUILD RUN \
     mkdir -p /usr/lib/modules && \
     mkdir -p /kache
 ONBUILD COPY --from=dvlp_kernel-make ./usr/lib/modules/ ./usr/lib/modules/
@@ -490,8 +490,11 @@ ONBUILD RUN \
     make headers_install && \
     make modules_install && \
     cd .. && \ 
-    rm -rf linux-*
-WORKDIR /
+    rm -rf linux-* && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb
+ONBUILD WORKDIR /
 
 #############
 # dvlp_skel #
