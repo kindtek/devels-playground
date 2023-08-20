@@ -520,7 +520,27 @@ RUN \
     --mount=type=cache,target=/var/cache/kernel_${KERNEL_TYPE}_${KERNEL_FEATURE}_${CONFIG_FILE},sharing=private \
     rm -rf /var/cache/apt && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    bash build-import-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}" 
+    bash build-import-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}"
+ONBUILD USER r00t
+ONBUILD WORKDIR /
+ONBUILD COPY --from=dvlp_kernel-make ./boot/ ./boot/
+ONBUILD COPY --from=dvlp_kernel-make ./usr/src/ ./usr/src/
+ONBUILD COPY --from=dvlp_kernel-make ./usr/lib/modules/ ./usr/lib/modules/
+ONBUILD COPY --from=dvlp_kernel-make ./kache/ ./kache/
+ONBUILD COPY --from=dvlp_kernel-make ./r00t/dvlw/ ./r00t/dvlw/
+ONBUILD WORKDIR /r00t/dvlw/dvlp
+ONBUILD RUN \
+    git config --global --add safe.directory /r00t/dvlw/dvlp && \
+    git config --global --add safe.directory /r00t/dvlw/dvlp/kernels  && \
+    # git submodule update --init -- kernels || git submodule update -- kernels && \
+    cd kernels/linux/linux-* && \
+    make headers_install && \
+    make modules_install && \
+    cd .. && \ 
+    rm -rf linux-* && \
+    apt-get update --fix-missing -yq && apt-get install -f && apt-get upgrade -yq && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb 
     # # rm -rf /boot && \
     # rm -rf /var/lib/apt/lists && \
     # rm -rf /var/cache/apt/archives/*.deb
@@ -560,7 +580,7 @@ WORKDIR /boot
 WORKDIR /kache
 WORKDIR /usr/lib
 WORKDIR /
-COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/kache/ ./
+COPY --from=dvlp_kernel-maker ./r00t/dvlw/dvlp/kernels/linux/kache/ ./
 
 
 # FROM scratch AS dvlp_kernel_base
@@ -619,26 +639,6 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb && \
     apt-get install --no-install-recommends -y apt-utils apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh systemd-sysv sysvinit-utils wget && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt/archives/*.deb
-ONBUILD USER r00t
-ONBUILD WORKDIR /
-ONBUILD COPY --from=dvlp_kernel-make ./boot/ ./boot/
-ONBUILD COPY --from=dvlp_kernel-make ./usr/src/ ./usr/src/
-ONBUILD COPY --from=dvlp_kernel-make ./usr/lib/modules/ ./usr/lib/modules/
-ONBUILD COPY --from=dvlp_kernel-make ./kache/ ./kache/
-ONBUILD COPY --from=dvlp_kernel-make ./r00t/dvlw/ ./r00t/dvlw/
-ONBUILD WORKDIR /r00t/dvlw/dvlp
-ONBUILD RUN \
-    git config --global --add safe.directory /r00t/dvlw/dvlp && \
-    git config --global --add safe.directory /r00t/dvlw/dvlp/kernels  && \
-    # git submodule update --init -- kernels || git submodule update -- kernels && \
-    cd kernels/linux/linux-* && \
-    make headers_install && \
-    make modules_install && \
-    cd .. && \ 
-    rm -rf linux-* && \
-    apt-get update --fix-missing -yq && apt-get install -f && apt-get upgrade -yq && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 WORKDIR /
