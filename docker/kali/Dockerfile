@@ -80,7 +80,8 @@ RUN \
 # import/install basic utils from layer cache if possible and delete .deb archives from container when finished
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
-    rm -rf /var/cache/apt && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb  && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install --no-install-recommends -y git && \
     apt-get --reinstall -y install ca-certificates && \
