@@ -475,6 +475,7 @@ COPY --from=dvlp_base-r00t-kernel-dirs             --chown=r00t:r00t       --chm
 COPY --from=dvlp_base-devel-kernel-dirs            --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
 COPY --from=dvlp_base-angel-kernel-dirs            --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
 ONBUILD USER r00t
+ONBUILD WORKDIR /
 ONBUILD RUN \
     mkdir -p /usr/lib/modules && \
     mkdir -p /kache && \
@@ -497,7 +498,6 @@ ONBUILD RUN \
     apt-get update --fix-missing -yq && apt-get install -f && apt-get upgrade -yq && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-ONBUILD WORKDIR /
 
 #############
 # dvlp_skel #
