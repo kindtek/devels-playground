@@ -359,6 +359,9 @@ RUN \
     passwd -d r00t && \
     passwd -d root && \
     passwd -l root && \
+    mkdir -p /usr/lib/modules && \
+    mkdir -p /kache && \
+    mkdir -p /boot && \
     mkdir -m 1770 dls && \
     mkdir -m 1770 repos && \
     chown r00t:w0rld dls && \
@@ -438,9 +441,10 @@ COPY --from=dvlp_repo                       --chown=r00t:halo       --chmod=1770
 RUN rm -rf /var/cache/apt
 WORKDIR /
 
-########################
-# dvlp_skel-build #
-########################
+
+###################################################################
+###################### SKEL-BUILD-KERNEL ##########################
+###################################################################
 FROM dvlp_base AS dvlp_skel-build-kernel
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
@@ -474,72 +478,6 @@ COPY --from=dvlp_repo-kernel                       --chown=r00t:halo       --chm
 COPY --from=dvlp_base-r00t-kernel-dirs             --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
 COPY --from=dvlp_base-devel-kernel-dirs            --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
 COPY --from=dvlp_base-angel-kernel-dirs            --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
-ONBUILD USER r00t
-ONBUILD WORKDIR /
-ONBUILD RUN \
-    mkdir -p /usr/lib/modules && \
-    mkdir -p /kache && \
-    mkdir -p /boot
-ONBUILD COPY --from=dvlp_kernel-make ./boot/ ./boot/
-ONBUILD COPY --from=dvlp_kernel-make ./usr/src/ ./usr/src/
-ONBUILD COPY --from=dvlp_kernel-make ./usr/lib/modules/ ./usr/lib/modules/
-ONBUILD COPY --from=dvlp_kernel-make ./kache/ ./kache/
-ONBUILD COPY --from=dvlp_kernel-make ./r00t/dvlw/ ./r00t/dvlw/
-ONBUILD WORKDIR /r00t/dvlw/dvlp
-ONBUILD RUN \
-    git config --global --add safe.directory /r00t/dvlw/dvlp && \
-    git config --global --add safe.directory /r00t/dvlw/dvlp/kernels  && \
-    # git submodule update --init -- kernels || git submodule update -- kernels && \
-    cd kernels/linux/linux-* && \
-    make headers_install && \
-    make modules_install && \
-    cd .. && \ 
-    rm -rf linux-* && \
-    apt-get update --fix-missing -yq && apt-get install -f && apt-get upgrade -yq && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt/archives/*.deb
-
-#############
-# dvlp_skel #
-#############
-FROM dvlp_skel-build AS dvlp_skel
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
-ARG _AGL=${_AGL:-agl}
-ARG KERNEL_TYPE
-ARG KERNEL_FEATURE
-ARG CONFIG_FILE
-ARG WIN_USER
-ARG DOCKER_BUILD_TIMESTAMP
-ARG installkernel
-ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-ONBUILD COPY --from=dvlp_skel-build${KERNEL_TYPE:+-kernel} ./ ./
-# RUN \
-#     rm -f /etc/apt/apt.conf.d/docker-clean && \
-#     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
-    apt-get update --fix-missing -yq && apt-get install -f && apt-get upgrade -yq && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt/archives/*.deb && \
-    apt-get install --no-install-recommends -y apt-utils apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh systemd-sysv sysvinit-utils wget && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt/archives/*.deb
-WORKDIR /
-    
-############################### KERNEL #########################################
-##########################
-# dvlp_base-kernel-build #
-##########################
-FROM dvlp_skel-build-kernel AS dvlp_base-kernel-build
-USER r00t
-# RUN echo exit 0 > /usr/sbin/policy-rc.d 
-# RUN \
-#     rm -f /etc/apt/apt.conf.d/docker-clean && \
-#     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
     rm -rf /var/cache/apt && \
@@ -550,30 +488,15 @@ RUN \
     libssl-dev python3-dev python3-setuptools python3-cffi net-tools rsync snapd systemd-sysv sysvinit-utils uuid-dev zstd && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-# RUN apt-get -y install zfsutils-linux zlib1g-dev zfs-dkms zstd zsys zfs-dracut zfs-zed
-WORKDIR /hal
-USER ${_AGL}
 
 
-######################################################################################
-###################  dvlp_base-kernel-builder - KERNEL BUILDER  ######################
-######################################################################################
-FROM dvlp_base-kernel-build AS dvlp_base-kernel-builder
-ARG CONFIG_FILE
-ARG KERNEL_TYPE
-ARG KERNEL_FEATURE
-ARG CONFIG_FILE
-ARG WIN_USER
-ARG DOCKER_BUILD_TIMESTAMP
-ARG installkernel
-WORKDIR /hal
-USER ${_AGL}
-
+    
+############################### KERNEL #########################################
 
 ######################################################################################
 ########################  dvlp_kernel-make - KERNEL COMPILER  ########################
 ######################################################################################
-FROM dvlp_base-kernel-builder AS dvlp_kernel-make
+FROM dvlp_skel-build-kernel AS dvlp_kernel-make
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
 ARG CONFIG_FILE
@@ -581,6 +504,9 @@ ARG WIN_USER
 ARG DOCKER_BUILD_TIMESTAMP
 ENV DOCKER_BUILD_TIMESTAMP=${DOCKER_BUILD_TIMESTAMP}
 ARG installkernel
+WORKDIR /boot
+WORKDIR /kache
+WORKDIR /usr/lib
 USER r00t
 # WORKDIR /
 # ONBUILD COPY --from=dvlp_skel-build${KERNEL_TYPE:+-kernel} ./ ./
@@ -600,6 +526,8 @@ RUN \
     # rm -rf /var/cache/apt/archives/*.deb
 # WORKDIR /hal
 # USER ${_AGL}
+
+FROM dvlp_kernel-make AS dvlp_kernel-maker
 
 ###################################################################
 ########################### KERNEL KACHE ##########################
@@ -628,34 +556,92 @@ ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
 ARG WIN_USER
 USER r00t
+WORKDIR /boot
+WORKDIR /kache
+WORKDIR /usr/lib
 WORKDIR /
 COPY --from=dvlp_kernel-make ./r00t/dvlw/dvlp/kernels/linux/kache/ ./
 
 
-FROM scratch AS dvlp_kernel_base
+# FROM scratch AS dvlp_kernel_base
+# ARG _AGL_USR
+# ARG _DVL_USR
+# ARG _ADM_USR
+# ARG _AGL=${_AGL:-agl}
+# ENV _AGL=$_AGL
+# ENV _DVL=$_DVL_USR
+# ENV _ADM=$_ADM_USR
+# ARG CONFIG_FILE
+# ARG KERNEL_PACKAGE_NAME
+# ARG DOCKER_BUILD_TIMESTAMP
+# ENV DOCKER_BUILD_TIMESTAMP=${DOCKER_BUILD_TIMESTAMP}
+# ARG KERNEL_TYPE
+# ARG KERNEL_FEATURE
+# ARG WIN_USER
+# USER r00t
+# WORKDIR /boot
+# ONBUILD COPY --from=dvlp_kernel-make ./boot/ ./boot/
+# WORKDIR /usr/src
+# ONBUILD COPY --from=dvlp_kernel-make ./usr/src/ ./usr/src/
+# # ONBUILD COPY --from=dvlp_kernel-make ./usr/lib/modules/ ./usr/lib/modules/
+# WORKDIR /kache
+# ONBUILD COPY --from=dvlp_kernel-make ./kache/ ./kache/
+# WORKDIR /r00t/dvlw
+# ONBUILD COPY --from=dvlp_kernel-make ./r00t/dvlw/ ./r00t/dvlw/
+
+# FROM scratch AS dvlp_dont_install_kernel
+
+
+###################################################################
+######################## SKEL-BUILD ###############################
+###################################################################
+FROM dvlp_skel-build AS dvlp_skel
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
 ARG _AGL=${_AGL:-agl}
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
+ARG CONFIG_FILE
+ARG WIN_USER
+ARG DOCKER_BUILD_TIMESTAMP
+ARG installkernel
 ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
-ARG CONFIG_FILE
-ARG KERNEL_PACKAGE_NAME
-ARG DOCKER_BUILD_TIMESTAMP
-ENV DOCKER_BUILD_TIMESTAMP=${DOCKER_BUILD_TIMESTAMP}
-ARG KERNEL_TYPE
-ARG KERNEL_FEATURE
-ARG WIN_USER
-USER r00t
-WORKDIR /
+ONBUILD COPY --from=dvlp_skel-build${KERNEL_TYPE:+-kernel} ./ ./
+# RUN \
+#     rm -f /etc/apt/apt.conf.d/docker-clean && \
+#     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
+RUN \
+    --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
+    apt-get update --fix-missing -yq && apt-get install -f && apt-get upgrade -yq && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb && \
+    apt-get install --no-install-recommends -y apt-utils apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh systemd-sysv sysvinit-utils wget && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb
+ONBUILD USER r00t
+ONBUILD WORKDIR /
 ONBUILD COPY --from=dvlp_kernel-make ./boot/ ./boot/
 ONBUILD COPY --from=dvlp_kernel-make ./usr/src/ ./usr/src/
-# ONBUILD COPY --from=dvlp_kernel-make ./usr/lib/modules/ ./usr/lib/modules/
+ONBUILD COPY --from=dvlp_kernel-make ./usr/lib/modules/ ./usr/lib/modules/
 ONBUILD COPY --from=dvlp_kernel-make ./kache/ ./kache/
 ONBUILD COPY --from=dvlp_kernel-make ./r00t/dvlw/ ./r00t/dvlw/
-
-FROM scratch AS dvlp_dont_install_kernel
+ONBUILD WORKDIR /r00t/dvlw/dvlp
+ONBUILD RUN \
+    git config --global --add safe.directory /r00t/dvlw/dvlp && \
+    git config --global --add safe.directory /r00t/dvlw/dvlp/kernels  && \
+    # git submodule update --init -- kernels || git submodule update -- kernels && \
+    cd kernels/linux/linux-* && \
+    make headers_install && \
+    make modules_install && \
+    cd .. && \ 
+    rm -rf linux-* && \
+    apt-get update --fix-missing -yq && apt-get install -f && apt-get upgrade -yq && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb
+WORKDIR /
 
 
 ###################################################################
