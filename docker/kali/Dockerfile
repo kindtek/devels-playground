@@ -481,6 +481,16 @@ RUN \
 ONBUILD COPY --from=dvlp_kernel-make ./usr/lib/modules/ ./usr/lib/modules/
 ONBUILD COPY --from=dvlp_kernel-make ./kache/ ./kache/
 ONBUILD COPY --from=dvlp_kernel-make ./r00t/dvlw/ ./r00t/dvlw/
+ONBUILD WORKDIR /r00t/dvlw/dvlp
+ONBUILD RUN \
+    git config --global --add safe.directory /r00t/dvlw/dvlp && \
+    git config --global --add safe.directory /r00t/dvlw/dvlp/kernels  && \
+    # git submodule update --init -- kernels || git submodule update -- kernels && \
+    cd kernels/linux/linux-* && \
+    make headers_install && \
+    make modules_install && \
+    cd .. && \ 
+    rm -rf linux-*
 WORKDIR /
 
 #############
