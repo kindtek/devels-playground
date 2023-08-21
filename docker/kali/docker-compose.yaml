@@ -49,9 +49,7 @@ services:
     build:
       target: dvlp_base-devel-dirs
   base-build:
-    init: true
     tty: false
-    extends: repo
     build:
       target: dvlp_base-build
         # Wait for the ownership to change
@@ -199,7 +197,7 @@ services:
   base:
     # user: ${_AGL}
     extends: base-skel
-    working_dir: /hal
+    # working_dir: /hal
     cap_add:
       - AUDIT_WRITE
       - SYS_CHROOT
@@ -267,7 +265,6 @@ services:
     user: ${_AGL}
     working_dir: /hal
     restart: on-failure
-    init: true
     tty: true
     # entrypoint: /bin/bash -c
     # command:  ["bash -i chroot --userspec=dvl:dvl /fs"]
@@ -281,6 +278,7 @@ services:
       base:
         # Wait for the ownership to change
         condition: service_completed_successfully
+    init: true
     labels:
       com.devels-playground.description: "basics + git"
 
@@ -316,28 +314,15 @@ services:
         condition: service_completed_successfully
     env_file:
       - .env
-
-  # git-kernel:
-  #   entrypoint: /bin/bash -c
-  #   command:
-  #     - sleep infinity
-  #   # user: ${_AGL}
-  #   extends: kernel
-  #   working_dir: /hal
-  #   restart: on-failure
-  #   tty: true
-  #   privileged: true
-  #   image: kindtek/${HUB_REPO:-devels-playground}:kali-git-kernel
-  #   # extends: kernel
-  #   build:
-  #     context: .
-  #     target: dvlp_git-kernel
-  #   depends_on:
-  #     kernel-maker:
-  #       condition: service_completed_successfully
-  #   labels:
-  #     com.devels-playground.description: "basics + git"
-
+  git-kernel:
+    extends: git
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-git-kernel
+    build:
+      args:
+      - KERNEL_TYPE='basic'
+      - KERNEL_FEATURE='zfs'
+      - CONFIG_FILE
+      - DOCKER_TIMESTAMP
   scan-build:
     entrypoint: /bin/bash -c
     command:
@@ -415,6 +400,28 @@ services:
     build:
       context: .
       target: dvlp_python
+      args:
+      - KERNEL_TYPE='basic'
+      - KERNEL_FEATURE='zfs'
+      - CONFIG_FILE
+      - DOCKER_TIMESTAMP
+    depends_on:
+      python-build:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
+    labels:
+      com.devels-playground.description: "basics + git"
+  python-kernel:
+    extends: python
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-python-kernel
+    build:
+      context: .
+      target: dvlp_python
+      args:
+      - KERNEL_TYPE='basic'
+      - KERNEL_FEATURE='zfs'
+      - CONFIG_FILE
+      - DOCKER_TIMESTAMP
     depends_on:
       python-build:
         # Wait for the ownership to change
@@ -439,12 +446,24 @@ services:
       com.devels-playground.description: "basics + git + powerhell"
   dind:
     extends: git
-    image: kindtek/${HUB_REPO:-devels-playground}:kali-dind${KERNEL_TYPE:+-kernel}
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-dind-kernel
     build:
       context: .
       target: dvlp_dind
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker"
+  dind-kernel:
+    extends: dind
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-dind-kernel
+    build:
+      args:
+      - KERNEL_TYPE='basic'
+      - KERNEL_FEATURE='zfs'
+    depends_on:
+      dind:
+        condition: service_completed_successfully
+    labels:
+      com.devels-playground.description: "basics + git"
   dind-lite:
     extends: git
     image: kindtek/${HUB_REPO:-devels-playground}:kali-dind-lite${KERNEL_TYPE:+-kernel}
@@ -453,9 +472,21 @@ services:
       target: dvlp_dind-lite
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel"
+  dind-lite-kernel:
+    extends: dind-lite
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-dind-lite-kernel
+    build:
+      args:
+      - KERNEL_TYPE='basic'
+      - KERNEL_FEATURE='zfs'
+    depends_on:
+      dind-lite:
+        condition: service_completed_successfully
+    labels:
+      com.devels-playground.description: "basics + git"
   kernel-builder:
     extends: git
-    image: kindtek/${HUB_REPO:-devels-playground}:kernel-builder${KERNEL_TYPE:+-kernel}
+    image: kindtek/${HUB_REPO:-devels-playground}:kernel-builder
     build:
       context: .
       target: dvlp_kernel-builder
@@ -469,6 +500,18 @@ services:
       target: dvlp_gui-lite
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
+  gui-lite-kernel:
+    extends: gui-lite
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-gui-lite-kernel
+    build:
+      args:
+      - KERNEL_TYPE='basic'
+      - KERNEL_FEATURE='zfs'
+    depends_on:
+      gui-lite:
+        condition: service_completed_successfully
+    labels:
+      com.devels-playground.description: "basics + git"
   gui:
     extends: git
     image: kindtek/${HUB_REPO:-devels-playground}:kali-gui${KERNEL_TYPE:+-kernel}
@@ -492,6 +535,18 @@ services:
   #   image: kindtek/${HUB_REPO:-devels-playground}:kali-gui-kernel${KERNEL_TYPE:+-kernel}
   #   labels:
   #     com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
+  gui-kernel:
+    extends: gui
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-gui-kernel
+    build:
+      args:
+      - KERNEL_TYPE='basic'
+      - KERNEL_FEATURE='zfs'
+    depends_on:
+      gui:
+        condition: service_completed_successfully
+    labels:
+      com.devels-playground.description: "basics + git"
   cuda:
     extends: gui
     image: kindtek/${HUB_REPO:-devels-playground}:kali-cuda${KERNEL_TYPE:+-kernel}
@@ -500,6 +555,18 @@ services:
       target: dvlp_cuda
       labels:
         com.devels-playground.description: "basics + git + powerhell + docker + gui + cuda"
+  cuda-kernel:
+    extends: cuda
+    image: kindtek/${HUB_REPO:-devels-playground}:kali-cuda-kernel
+    build:
+      args:
+      - KERNEL_TYPE='basic'
+      - KERNEL_FEATURE='zfs'
+    depends_on:
+      cuda:
+        condition: service_completed_successfully
+    labels:
+      com.devels-playground.description: "basics + git"
   # cuda-kernel:
   #   extends: gui-kernel
   #   image: kindtek/${HUB_REPO:-devels-playground}:kali-cuda-kernel
