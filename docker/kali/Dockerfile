@@ -477,7 +477,10 @@ RUN \
     rm -rf /var/cache/apt/archives/*.deb && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y
 
+<<<<<<< Updated upstream
 # COPY --from=dvlp_base-dirs ./ ./
+=======
+>>>>>>> Stashed changes
 COPY --from=dvlp_base-r00t-dirs             --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
 COPY --from=dvlp_base-devel-dirs            --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
 COPY --from=dvlp_base-angel-dirs            --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
