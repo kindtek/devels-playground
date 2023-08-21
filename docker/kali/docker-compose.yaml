@@ -25,7 +25,7 @@ services:
       - echo 'helloworld'
     build:
       context: .
-      target: dvlp_repo
+      target: dvlp_repo-build
     env_file:
       - .env
     # volumes:
@@ -34,7 +34,7 @@ services:
     extends: repo
     build:
       context: .
-      target: dvlp_repo-kernel
+      target: dvlp_repo-build-kernel
     env_file:
       - .env
     # volumes:
