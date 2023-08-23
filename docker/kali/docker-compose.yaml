@@ -1,7 +1,7 @@
 version: "3.9"
 name: devels-playground-kali
 services:
-  test:
+  template:
     build:
       context: .
       target: dvlp_testing
@@ -11,7 +11,7 @@ services:
       - CONFIG_FILE
       - DOCKER_TIMESTAMP
     image: kindtek/${HUB_REPO:-devels-playground}:kali-test
-    entrypoint: /bin/bash -c
+    entrypoint: /bin/bash -c echo 'helloworld'
     command:
       - tail -F /dev/null
     # command:
@@ -20,79 +20,157 @@ services:
     #   - /dev/null
     # command: ["tail", "-f", "/dev/null"]
   repo:
-    extends: test
-    command: 
-      - echo 'helloworld'
     build:
       context: .
-      target: dvlp_repo-build
+      target: dvlp_repo-builder
+      args:
+      - KERNEL_TYPE
+      - KERNEL_FEATURE
+      - CONFIG_FILE
+      - DOCKER_TIMESTAMP
+    entrypoint: /bin/bash -c echo 'helloworld'
     env_file:
       - .env
-    # volumes:
-    #   - repo:/repos/dvlw
+    volumes:
+      - repo_agl:/repos/dvlw
+      - repo_agl:/r00t/dvlw
+      - repo_agl:/home/r00t/dvlw
+      - repo_agl:/hal/dvlw
+      - repo_agl:/home/${_AGL}/dvlw
+      - repo_dvl:/hel/dvlw
+      - repo_dvl:/home/${_DVL}/dvlw
   repo-kernel:
     extends: repo
     build:
-      context: .
       target: dvlp_repo-build-kernel
-    env_file:
-      - .env
-    # volumes:
-    #   - repo-kernel:/repos/dvlw
-  base-r00t:
+
+
+  r00t:
     build:
       target: dvlp_base-r00t-dirs
-  base-angel:
+  angel:
     build:
       target: dvlp_base-angel-dirs
-  base-devel:
+  devel:
     build:
       target: dvlp_base-devel-dirs
-  base-build:
+  skel:
+    build:
+      target: dvlp_base-skel
+      context: .
+      args:
+      - KERNEL_TYPE
+      - KERNEL_FEATURE
+      - CONFIG_FILE
+      - DOCKER_TIMESTAMP
+    # volumes:
+    #   - dls:/dls
+    init: true
+  build:
+    extends: skel
     tty: false
     build:
       target: dvlp_base-build
+        # Wait for the ownership to change
+    depends_on:
+      repo:
+        condition: service_completed_successfully
+    labels:
+      com.dvlp_base.description: "-build skeleton"
+  build-kernel:
+    extends: skel
+    tty: false
+    build:
+      target: dvlp_base-build-kernel
         # Wait for the ownership to change
     depends_on:
       repo-kernel:
         condition: service_completed_successfully
     labels:
       com.dvlp_base.description: "-build skeleton"
+  builder:
+    user: ${_AGL}
+    working_dir: /hal
+    restart: on-failure
+    # tty: true
+    # entrypoint: /bin/bash -c
+    # command:  ["bash -i chroot --userspec=dvl:dvl /fs"]
+    privileged: true
+    build:
+      target: dvlp_base-builder
+      args:
+      - KERNEL_TYPE
+      - KERNEL_FEATURE
+      - CONFIG_FILE
+      - DOCKER_TIMESTAMP
+    cap_add:
+      - AUDIT_WRITE
+      - SYS_CHROOT
+      - CHOWN
+      - DAC_OVERRIDE
+      - FSETID
+      - FOWNER
+      - MKNOD
+      - NET_RAW
+      - SETGID
+      - SETUID
+      - SETFCAP
+      - SETPCAP
+      - NET_BIND_SERVICE
+    # entrypoint: /bin/bash -c 
+    # command:
+    #   - tail -F /dev/null
+    # init: true
+    depends_on:
+      repo:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
+      skel:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
+    labels:
+      com.dvlp_base.description: "-build skeleton"
+    volumes:
+      - repo_agl:/repos/dvlw
+      - repo_agl:/r00t/dvlw
+      - repo_agl:/home/r00t/dvlw
+      - repo_agl:/hal/dvlw
+      - repo_agl:/home/${_AGL}/dvlw
+      - repo_dvl:/hel/dvlw
+      - repo_dvl:/home/${_DVL}/dvlw
+      - mnt-data:/mnt/data
+      - home_agl:/hal
+      - home_agl:/home/${_AGL}
+      - home_dvl:/hel
+      - home_dvl:/home/${_DVL}
+      - home_r00t:/r00t
+      - home_r00t:/home/r00t
+      - dls:/dls  
+
   kernel-maker:
-    extends: base-build
     build:
       context: .
       target: dvlp_kernel-maker
       no_cache: true
-    depends_on:
-      base:
-        # Wait for the ownership to change
-        condition: service_completed_successfully
+    volumes_from:
+      - builder
+    # entrypoint: /bin/bash  [ ! -f build-import-kernel.sh ] || bash build-import-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}"
+
   kernel-maker-cached:
-    extends: base-build
     build:
       context: .
       target: dvlp_kernel-maker
       no_cache: false
     depends_on:
-      base:
+      skel:
         # Wait for the ownership to change
-        condition: service_completed_successfully   
-  base-skel:
-    extends: base-build
-    build:
-      target: dvlp_base-skel
-      context: .
-      args:
-        - _AGL=${_AGL:-agl}
-        - _DVL=${_DVL_USR:-$_DVL}
-        - _MNT=${_MNT:-/mnt/data}
-        - CONFIG_FILE
-    env_file:
-      - .env
-    # volumes:
-    #   - dls:/dls
-    init: true
+        condition: service_completed_successfully
+    volumes_from:
+      - builder
+    # depends_on:
+    #   kernel-maker:
+    #     # Wait for the ownership to change
+    #     condition: service_completed_successfully 
     # alias(es) for agl
     # base-ausr:
     #   user: ${_DVL_USR}
@@ -195,25 +273,20 @@ services:
   #     com.dvlp_base-kernel.description: "skeleton"
 
   base:
-    # user: ${_AGL}
-    extends: base-skel
-    # working_dir: /hal
-    cap_add:
-      - AUDIT_WRITE
-      - SYS_CHROOT
-      - CHOWN
-      - DAC_OVERRIDE
-      - FSETID
-      - FOWNER
-      - MKNOD
-      - NET_RAW
-      - SETGID
-      - SETUID
-      - SETFCAP
-      - SETPCAP
-      - NET_BIND_SERVICE
+    extends: builder
+    entrypoint: /bin/bash -c 
+    command:
+      - tail -F /dev/null
+    init: true
+    tty: true
     build:
       target: dvlp_base
+    depends_on:
+      kernel-maker:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
+    labels:
+      com.dvlp_base.description: "skeleton"
       # args:
       #   - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
       #   - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
@@ -226,22 +299,22 @@ services:
       #   - nix_bind_tgt_user_dir_agl=${LOGNAME:+/halo/host_nix}
       #   - nix_bind_tgt_user_dir_dvl=${LOGNAME:+/hell/host_nix}:ro
       # #  - bind_src_dir=${bind_win_src_user_dir:-/dev/null}
-    volumes:
-      - repo_agl:/repos/dvlw
-      - repo_agl:/r00t/dvlw
-      - repo_agl:/home/r00t/dvlw
-      - repo_agl:/hal/dvlw
-      - repo_agl:/home/${_AGL}/dvlw
-      - repo_dvl:/hel/dvlw
-      - repo_dvl:/home/${_DVL}/dvlw
-      - mnt-data:/mnt/data
-      - home_agl:/hal
-      - home_agl:/home/${_AGL}
-      - home_dvl:/hel
-      - home_dvl:/home/${_DVL}
-      - home_r00t:/r00t
-      - home_r00t:/home/r00t
-      - dls:/dls
+    # volumes:
+    #   - repo_agl:/repos/dvlw
+    #   - repo_agl:/r00t/dvlw
+    #   - repo_agl:/home/r00t/dvlw
+    #   - repo_agl:/hal/dvlw
+    #   - repo_agl:/home/${_AGL}/dvlw
+    #   - repo_dvl:/hel/dvlw
+    #   - repo_dvl:/home/${_DVL}/dvlw
+    #   - mnt-data:/mnt/data
+    #   - home_agl:/hal
+    #   - home_agl:/home/${_AGL}
+    #   - home_dvl:/hel
+    #   - home_dvl:/home/${_DVL}
+    #   - home_r00t:/r00t
+    #   - home_r00t:/home/r00t
+    #   - dls:/dls
       # - ${nix_bind_win_src_user_dir:-/dev/foo1/null}:${win_bind_tgt_user_dir_r00t:-/dev/bar1/null}
       # # - ${nix_bind_win_src_user_dir:-/dev/foo2/null}:${win_bind_tgt_user_dir_g0d:-/dev/bar2/null}
       # - ${nix_bind_win_src_user_dir:-/dev/foo3/null}:${win_bind_tgt_user_dir_agl:-/dev/bar3/null}
@@ -250,18 +323,13 @@ services:
       # # - ${nix_bind_nix_src_user_dir:-/dev/foo6/null}:${nix_bind_tgt_user_dir_g0d:-/dev/bar6/null}
       # - ${nix_bind_nix_src_user_dir:-/dev/foo7/null}:${nix_bind_tgt_user_dir_agl:-/dev/bar7/null}
       # - ${nix_bind_nix_src_user_dir:-/dev/foo8/null}:${nix_bind_tgt_user_dir_dvl:-/dev/bar8/null}
-    depends_on:
-      base-skel:
-        # Wait for the ownership to change
-        condition: service_completed_successfully
-    labels:
-      com.dvlp_base.description: "skeleton"
+
   bare:
+    extends: base
     entrypoint: /bin/bash -c
     command:
       - sleep infinity
     # user: ${_AGL}
-    extends: base
     user: ${_AGL}
     working_dir: /hal
     restart: on-failure
@@ -301,7 +369,7 @@ services:
       - home_dvl:/home/${_DVL}
       - dls:/dls
   git:
-    extends: bare
+    extends: base
     build:
       context: .
       target: dvlp_git
@@ -365,14 +433,14 @@ services:
       com.devels-playground.description: "basics + git"
 
   python-build:
-    extends: base-build
+    extends: build
     build:
       context: .
       target: dvlp_python-build
     labels:
       com.devels-playground.description: "basics + git"
   python-build-lite:
-    extends: base-build
+    extends: build
     build:
       context: .
       target: dvlp_python-build-lite
