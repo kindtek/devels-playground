@@ -427,9 +427,9 @@ services:
 
   bare:
     extends: base
-    entrypoint: /bin/bash -c echo 'helloworld entry'
+    entrypoint: /bin/bash -c
     command:
-      - /bin/bash -c echo 'helloworld command'
+      - tail -F /dev/null
     # user: ${_AGL}
     user: ${_AGL}
     working_dir: /hal
@@ -456,9 +456,9 @@ services:
       - base
   git:
     extends: base
-    entrypoint: /bin/bash -c echo 'helloworld entry'
+    entrypoint: /bin/bash -c
     command:
-      - /bin/bash -c echo 'helloworld command'
+      - tail -F /dev/null
     build:
       context: .
       target: dvlp_git
@@ -475,7 +475,7 @@ services:
     extends: git
     entrypoint: /bin/bash -c "[ -d linux-* ] && cd linux* && find usr/include -type f ! -name '*.h' -delete && mkdir -pv /lib/modules/$(uname -r)/build && make -C /usr/lib/`uname -r`/build M=$$PWD headers_install && make -C /lib/modules/$$(uname -r)/build M=$$PWD && make -C /lib/modules/$(uname -r)/build M=$$PWD modules_install &&  bash ../linux/clean.sh r && sleep 2 || echo 'no modules/headers to install' && exit"
     command:
-      - /bin/bash -c echo 'helloworld'
+      - tail -F /dev/null
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-git-kernel
     build:
       args:
