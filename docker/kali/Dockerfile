@@ -543,7 +543,7 @@ COPY --from=dvlp_base-build-r00t-kernel-volumes     --chown=r00t:r00t       --ch
 COPY --from=dvlp_base-build-devel-kernel-volumes    --chown=${_DVL}:hell    --chmod=1770    ./hel/                         ./hel/
 COPY --from=dvlp_base-build-angel-kernel-volumes    --chown=${_AGL}:halo    --chmod=1770    ./hal/                         ./hal/
 
-FROM dvlp_base-build${KERNEL_TYPE:+-kernel}-volumes AS dvlp_base-build
+FROM dvlp_base-build-volumes AS dvlp_base-build
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
 ARG CONFIG_FILE
@@ -575,7 +575,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 ############################# BASE BUILD KERNEL ###################################
 
-FROM dvlp_base-build AS dvlp_base-build-kernel
+FROM dvlp_base-build-kernel-volumes AS dvlp_base-build-kernel
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
 ARG CONFIG_FILE
@@ -616,8 +616,8 @@ RUN \
     rm -rf /var/cache/apt/archives/*.deb && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y
 
+FROM dvlp_base-build AS dvlp_make
 
-FROM dvlp_base-built AS dvlp_make
 ################################### KERNEL ###########################################
 
 ######################################################################################
@@ -630,13 +630,17 @@ ARG KERNEL_FEATURE
 ARG CONFIG_FILE
 ARG WIN_USER
 ARG DOCKER_BUILD_TIMESTAMP
+ENV KERNEL_TYPE=${KERNEL_TYPE}
+ENV KERNEL_FEATURE=${KERNEL_FEATURE}
+ENV CONFIG_FILE=${CONFIG_FILE}
+ENV WIN_USER=${WIN_USER}
 ENV DOCKER_BUILD_TIMESTAMP=${DOCKER_BUILD_TIMESTAMP}
 ARG installkernel
 # WORKDIR /boot
 # WORKDIR /kache
 # WORKDIR /usr/lib
 # WORKDIR /r00t/dvlw
-WORKDIR /
+WORKDIR /r00t/dvlw/dvlp/kernels/linux
 USER r00t
 SHELL ["/bin/bash", "-c"]
 RUN \
@@ -648,28 +652,16 @@ RUN \
 # ONBUILD COPY --from=dvlp_base-build${KERNEL_TYPE:+-kernel} ./ ./
 SHELL ["/bin/bash", "-c"]
 RUN \
+    git config --global --add safe.directory /r00t/dvlw/dvlp && \
+    git config --global --add safe.directory /r00t/dvlw/dvlp/kernels 
+RUN \
     --mount=type=cache,target=/var/cache/kernel_${KERNEL_TYPE}_${KERNEL_FEATURE}_${CONFIG_FILE},sharing=private \
-    [ ! -f /r00t/dvlw/dvlp/kernels/linux/build-import-kernel.sh ] || bash /r00t/dvlw/dvlp/kernels/linux/build-import-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}" && \
-    [ ! -d /r00t/dvlw/dvlp ] || git config --global --add safe.directory /r00t/dvlw/dvlp && \
-    [ ! -d /r00t/dvlw/dvlp/kernels ] || git config --global --add safe.directory /r00t/dvlw/dvlp/kernels && \
-    [ -d /r00t/dvlw/dvlp/kernels/linux/linux-* ] && \
-    cd linux/linux* && \
-    find usr/include -type f ! -name '*.h' -delete && \
-    mkdir -pv /lib/modules/$(uname -r)/build && \
-    make -C /usr/lib/`uname -r`/build M=$PWD headers_install && \
-    make -C /lib/modules/$(uname -r)/build M=$PWD && \
-    make -C /lib/modules/$(uname -r)/build M=$PWD modules_install && \
-    /bin/bash -C /r00t/dvlw/dvlp/kernels/linux/clean.sh r && \
-    sleep 2 || \
-    echo 'no modules/headers to install' && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt/archives/*.deb && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y
+    bash build-import-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}" 
 WORKDIR /
 
 FROM dvlp_make-kernel AS dvlp_made-kernel
 WORKDIR /
-USER root
+USER r00t
 RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb && \
@@ -685,7 +677,7 @@ ONBUILD RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 
-FROM dvlp_make${KERNEL_TYPE:+-kernel} AS dvlp_made
+FROM dvlp_make-kernel${KERNEL_TYPE:+-kernel} AS dvlp_made
 # every onbuild command in dvlp_make-kernel will be triggered to run here
 # use COPY --from=dvlp_made-kernel instead of COPY --from=dvlp_make-kernel
 
@@ -746,7 +738,7 @@ ONBUILD RUN \
     rm -rf /var/cache/apt/archives/*.deb && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y 
 
-FROM dvlp_made-kernel AS dvlp_base-kernel
+FROM dvlp_make-kernel AS dvlp_base-kernel
 ARG _MNT
 ARG _AGL_USR
 ARG _DVL_USR
@@ -870,9 +862,8 @@ ARG installkernel
 USER r00t
 RUN echo "[user]" | tee /etc/wsl.conf
 RUN echo "default = ${_AGL}" | tee --append /etc/wsl.conf
-WORKDIR /hal
-USER ${_AGL}
-ONBUILD USER root
+ONBUILD USER r00t
+ONBUILD WORKDIR /
 ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     rm -rf /etc/ssl/certs && \
     apt-get update -y && apt-get upgrade -y && \
@@ -885,8 +876,6 @@ ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     rm -rf /var/cache/apt && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-USER ${_AGL}
-WORKDIR /
 
 
 # ################################### GIT #########################################
@@ -916,9 +905,8 @@ ARG CONFIG_FILE
 ARG WIN_USER
 ARG DOCKER_BUILD_TIMESTAMP
 ARG installkernel
-WORKDIR /hal
-USER ${_AGL}
-ONBUILD USER root
+ONBUILD USER r00t
+WORKDIR /
 ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     rm -rf /etc/ssl/certs && \
     apt-get update -y && apt-get upgrade -y && \
@@ -931,8 +919,8 @@ ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     rm -rf /var/cache/apt && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-USER ${_AGL}
-WORKDIR /
+ONBUILD USER ${_AGL}
+ONBUILD WORKDIR /
 
 ########################
 # dvlp_base-scan-build #
@@ -1045,6 +1033,7 @@ ARG _AGL=${_AGL:-agl}
 ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 USER r00t
+WORKDIR /
 
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -1112,7 +1101,7 @@ RUN rm -rf /var/cache/pip/* && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
     
-ONBUILD USER root
+ONBUILD USER r00tt
 ONBUILD RUN apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get autoremove -y && apt-get remove -y libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev apt-utils
 ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
@@ -1126,9 +1115,8 @@ ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     echo 'exit 0;' | tee /usr/sbin/policy-rc.d  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-USER ${_AGL}
-WORKDIR /
-WORKDIR /
+ONBUILD USER ${_AGL}
+ONBUILD WORKDIR /
 
 #########################
 # dvlp_python-lite #
@@ -1143,12 +1131,9 @@ ARG installkernel
 USER r00t
 WORKDIR / 
 # COPY --from=dvlp_python-build ./ ./
-WORKDIR /hal
 RUN rm -rf /var/cache/pip/* && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-USER ${_AGL}
-ONBUILD USER root
 ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     rm -rf /etc/ssl/certs && \
     apt-get update -y && apt-get upgrade -y && \
@@ -1160,8 +1145,8 @@ ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     echo 'exit 0;' | tee /usr/sbin/policy-rc.d  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-USER ${_AGL}
-WORKDIR /
+ONBUILD USER ${_AGL}
+ONBUILD WORKDIR /
 
 ######### POWERHELL ###########
 ###############################
@@ -1217,8 +1202,8 @@ ONBUILD RUN \
     rm -rf /var/cache/apt && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-WORKDIR /hal
-USER ${_AGL}
+ONBUILD WORKDIR /hal
+ONBUILD USER ${_AGL}
 
 ########################
 # dvlp_msdot-lite #
@@ -1232,13 +1217,12 @@ ARG KERNEL_TYPE
 ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
-ONBUILD USER r00t
-ONBUILD WORKDIR /
-ONBUILD COPY --from=dvlp_git ./ ./
-ONBUILD COPY --from=dvlp_python-build ./ ./
-ONBUILD COPY --from=dvlp_msdot-build-lite ./ ./
-WORKDIR /hal
-USER ${_AGL}
+USER r00t
+WORKDIR /
+COPY --from=dvlp_git ./ ./
+COPY --from=dvlp_python-build ./ ./
+COPY --from=dvlp_msdot-build-lite ./ ./
+
 ONBUILD USER root
 ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     rm -rf /etc/ssl/certs && \
@@ -1251,14 +1235,13 @@ ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     echo 'exit 0;' | tee /usr/sbin/policy-rc.d  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-USER ${_AGL}
-WORKDIR /
+ONBUILD USER ${_AGL}
+ONBUILD WORKDIR /
 
 ########################
 # dvlp_msdot-kernel #
 ########################
 FROM dvlp_base AS dvlp_msdot
-# COPY --from=dvlp_base-build         ./      ./
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -1274,9 +1257,10 @@ ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
-WORKDIR /hal
-USER ${_AGL}
-ONBUILD USER root
+USER r00t
+WORKDIR /
+COPY --from=dvlp_base-build         ./      ./
+ONBUILD USER r00t
 ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     rm -rf /etc/ssl/certs && \
     apt-get update -y && apt-get upgrade -y && \
@@ -1288,8 +1272,8 @@ ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     echo 'exit 0;' | tee /usr/sbin/policy-rc.d  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-USER ${_AGL}
-WORKDIR /
+ONBUILD USER ${_AGL}
+ONBUILD WORKDIR /
 
 ########################## DOCKER IN DOCKER ######################################
 ########################
@@ -1297,16 +1281,15 @@ WORKDIR /
 ########################
 FROM dvlp_base AS dvlp_dind-build
 USER r00t
-ONBUILD USER r00t
 WORKDIR /
-ONBUILD WORKDIR /
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-
+ONBUILD USER r00t
+ONBUILD WORKDIR /
 ONBUILD RUN \
     --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
@@ -1321,14 +1304,14 @@ ONBUILD RUN \
     --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install --no-install-recommends -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin gnupg && \
-    service docker start && \
+    echo " \
+    Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
+    echo 'exit 0;' | tee /usr/sbin/policy-rc.d  && \
     rm -rf /var/cache/apt && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-
-
-WORKDIR /hal
-USER ${_AGL}
+ONBUILD WORKDIR /hal
+ONBUILD USER ${_AGL}
 
 #######################
 # dvlp_dind-lite #
@@ -1342,13 +1325,11 @@ ARG CONFIG_FILE
 ARG WIN_USER
 ARG DOCKER_BUILD_TIMESTAMP
 ARG installkernel
+USER r00t
 WORKDIR /
-
 COPY --from=dvlp_python-build ./ ./
 COPY --from=dvlp_msdot-build ./ ./
 COPY --from=dvlp_dind-build ./ ./
-WORKDIR /hal
-USER ${_AGL}
 ONBUILD USER root
 ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     rm -rf /etc/ssl/certs && \
@@ -1361,8 +1342,8 @@ ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     echo 'exit 0;' | tee /usr/sbin/policy-rc.d  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-USER ${_AGL}
-WORKDIR /
+ONBUILD USER ${_AGL}
+ONBUILD WORKDIR /
 
 ##################
 # dvlp_dind #
@@ -1388,8 +1369,6 @@ WORKDIR /
 COPY --from=dvlp_python-build ./ ./
 COPY --from=dvlp_msdot-build-lite ./ ./
 COPY --from=dvlp_dind-build ./ ./
-WORKDIR /hal
-USER ${_AGL}
 ONBUILD USER root
 ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     rm -rf /etc/ssl/certs && \
@@ -1402,8 +1381,8 @@ ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     echo 'exit 0;' | tee /usr/sbin/policy-rc.d  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-USER ${_AGL}
-WORKDIR /
+ONBUILD USER ${_AGL}
+ONBUILD WORKDIR /
 
 #################################### GUI ######################################
 ##################
@@ -1425,15 +1404,14 @@ ARG CONFIG_FILE
 ARG WIN_USER
 ARG DOCKER_BUILD_TIMESTAMP
 ARG installkernel
-USER r00t
 ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NONINTERACTIVE_SEEN=true
 ARG REFRESH_REPO=${REFRESH_REPO:-yes}
-# WORKDIR /
+USER r00t
+WORKDIR /
 COPY --from=dvlp_python-build ./ ./
 COPY --from=dvlp_msdot-build-lite ./ ./
 COPY --from=dvlp_dind-build ./ ./
-
 WORKDIR /
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -1472,9 +1450,7 @@ COPY --from=dvlp_repo /repos/dvlw/dvlp/mnt/opt/* /opt/
 # # # brave_old_line='\"\$HERE\/brave\"\s\"\$\@\"\s\|\|\strue' && \
 # # # brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
 # # # sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/${_DVL} && \
-WORKDIR /hal
-USER ${_AGL}
-ONBUILD USER root
+ONBUILD USER r00t
 ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     rm -rf /etc/ssl/certs && \
     apt-get update -y && apt-get upgrade -y && \
@@ -1486,8 +1462,8 @@ ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     echo 'exit 0;' | tee /usr/sbin/policy-rc.d  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-USER ${_AGL}
-WORKDIR /
+ONBUILD USER ${_AGL}
+ONBUILD WORKDIR /
 
 #################
 # dvlp_gui #
@@ -1505,6 +1481,7 @@ ARG REFRESH_REPO
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
 USER r00t
+WORKDIR /
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
@@ -1541,9 +1518,7 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 COPY --from=dvlp_repo --chmod=755 /repos/dvlw/dvlp/mnt/etc/* /etc/
-WORKDIR /hal
-USER ${_AGL}
-ONBUILD USER root
+ONBUILD USER r00t
 ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     rm -rf /etc/ssl/certs && \
     apt-get update -y && apt-get upgrade -y && \
@@ -1555,8 +1530,8 @@ ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     echo 'exit 0;' | tee /usr/sbin/policy-rc.d  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-USER ${_AGL}
-WORKDIR /
+ONBUILD USER ${_AGL}
+ONBUILD WORKDIR /
 
 
 ############################## CUDA ###############################
@@ -1572,6 +1547,7 @@ ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 USER r00t
+WORKDIR /
 # COPY --from=dvlp_python-build ./ ./
 # COPY --from=dvlp_msdot-build-lite ./ ./
 # COPY --from=dvlp_dind-build ./ ./
@@ -1580,15 +1556,18 @@ USER r00t
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
-RUN \
+ONBUILD RUN \
     --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
     rm -rf /var/cache/apt && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install --no-install-recommends -y nvidia-cuda-toolkit && \
+    echo " \
+    Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
+    echo 'exit 0;' | tee /usr/sbin/policy-rc.d  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb   
-WORKDIR /hal
-USER ${_AGL}
+ONBUILD WORKDIR /hal
+ONBUILD USER ${_AGL}
 
 ###################################################################
 ########################### K-HOME ################################
