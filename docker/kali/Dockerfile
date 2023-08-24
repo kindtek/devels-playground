@@ -677,7 +677,7 @@ ONBUILD RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 
-FROM dvlp_make-${KERNEL_TYPE:+-kernel} AS dvlp_made
+FROM dvlp_make${KERNEL_TYPE:+-kernel} AS dvlp_made
 # every onbuild command in dvlp_make-kernel will be triggered to run here
 # use COPY --from=dvlp_made-kernel instead of COPY --from=dvlp_make-kernel
 
