@@ -39,6 +39,7 @@ services:
     build:
       context: .
       target: dvlp_repo
+      no_cache: true
       args:
       - KERNEL_TYPE
       - KERNEL_FEATURE
@@ -61,6 +62,7 @@ services:
     extends: repo
     build:
       target: dvlp_repo-kernel
+      no_cache: true
   r00t:
     build:
       target: dvlp_base-r00t-built-volumes
