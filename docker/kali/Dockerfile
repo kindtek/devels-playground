@@ -860,6 +860,7 @@ ARG WIN_USER
 ARG DOCKER_BUILD_TIMESTAMP
 ARG installkernel
 USER r00t
+WORKDIR /
 RUN echo "[user]" | tee /etc/wsl.conf
 RUN echo "default = ${_AGL}" | tee --append /etc/wsl.conf
 ONBUILD USER r00t
@@ -906,7 +907,7 @@ ARG WIN_USER
 ARG DOCKER_BUILD_TIMESTAMP
 ARG installkernel
 ONBUILD USER r00t
-WORKDIR /
+ONBUILD WORKDIR /
 ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     rm -rf /etc/ssl/certs && \
     apt-get update -y && apt-get upgrade -y && \
@@ -919,8 +920,7 @@ ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     rm -rf /var/cache/apt && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-ONBUILD USER ${_AGL}
-ONBUILD WORKDIR /
+
 
 ########################
 # dvlp_base-scan-build #
@@ -972,7 +972,8 @@ RUN \
 RUN \
     yes "" | ./install 
 WORKDIR /
-ONBUILD USER root
+ONBUILD USER r00t
+ONBUILD WORKDIR /
 ONBUILD RUN rm -rf /etc/ssl/certs && \
 rm -rf /var/lib/apt/lists && \
 rm -rf /var/cache/apt/archives/*.deb && \
@@ -986,8 +987,6 @@ echo 'exit 0;' | tee /usr/sbin/policy-rc.d  && \
 rm -rf /var/cache/apt && \
 rm -rf /var/lib/apt/lists && \
 rm -rf /var/cache/apt/archives/*.deb
-ONBUILD WORKDIR /hal
-ONBUILD USER ${_AGL}
 
 ##################
 # dvlp_base-scan #
@@ -1003,7 +1002,8 @@ RUN \
     rm -rf /var/cache/apt && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get --no-install-recommends -y install burpsuite finger hydra maltego metasploit-framework ncat nmap nikto rpcbind telnet wireshark
-ONBUILD USER root
+ONBUILD USER r00t
+ONBUILD WORKDIR /
 ONBUILD RUN rm -rf /etc/ssl/certs && \
 rm -rf /var/lib/apt/lists && \
 rm -rf /var/cache/apt/archives/*.deb && \
@@ -1017,10 +1017,6 @@ echo 'exit 0;' | tee /usr/sbin/policy-rc.d  && \
     rm -rf /var/cache/apt && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-ONBUILD WORKDIR /hal
-ONBUILD USER ${_AGL}
-
-
 
 ################################# PYTHON ########################################
 #####################
@@ -1040,6 +1036,8 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
+ONBUILD USER r00t
+ONBUILD WORKDIR /
 ONBUILD RUN \
     --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
     rm -rf /var/cache/apt && \
@@ -1063,6 +1061,7 @@ ONBUILD RUN \
 ###############################
 FROM dvlp_python-build AS dvlp_python-lite
 USER r00t
+WORKDIR /
 ARG angel_exists=true
 ARG devel_exists=true
 ARG r00t_exists=true
@@ -1101,7 +1100,8 @@ RUN rm -rf /var/cache/pip/* && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
     
-ONBUILD USER r00tt
+ONBUILD USER r00t
+ONBUILD WORKDIR /
 ONBUILD RUN apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get autoremove -y && apt-get remove -y libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev apt-utils
 ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
@@ -1115,8 +1115,7 @@ ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     echo 'exit 0;' | tee /usr/sbin/policy-rc.d  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-ONBUILD USER ${_AGL}
-ONBUILD WORKDIR /
+
 
 #########################
 # dvlp_python-lite #
@@ -1134,6 +1133,8 @@ WORKDIR /
 RUN rm -rf /var/cache/pip/* && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
+ONBUILD USER r00t
+ONBUILD WORKDIR /
 ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     rm -rf /etc/ssl/certs && \
     apt-get update -y && apt-get upgrade -y && \
@@ -1145,8 +1146,7 @@ ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     echo 'exit 0;' | tee /usr/sbin/policy-rc.d  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-ONBUILD USER ${_AGL}
-ONBUILD WORKDIR /
+
 
 ######### POWERHELL ###########
 ###############################
@@ -1161,8 +1161,6 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb 
-WORKDIR /hal
-USER ${_AGL}
 ONBUILD USER r00t
 ONBUILD WORKDIR /
 ONBUILD RUN \
@@ -1195,6 +1193,8 @@ RUN \
     rm -rf /var/cache/apt && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
+ONBUILD USER r00t
+ONBUILD WORKDIR /
 ONBUILD RUN \
     --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
@@ -1202,8 +1202,6 @@ ONBUILD RUN \
     rm -rf /var/cache/apt && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-ONBUILD WORKDIR /hal
-ONBUILD USER ${_AGL}
 
 ########################
 # dvlp_msdot-lite #
@@ -1223,7 +1221,8 @@ COPY --from=dvlp_git ./ ./
 COPY --from=dvlp_python-build ./ ./
 COPY --from=dvlp_msdot-build-lite ./ ./
 
-ONBUILD USER root
+ONBUILD USER r00t
+ONBUILD WORKDIR /
 ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     rm -rf /etc/ssl/certs && \
     apt-get update -y && apt-get upgrade -y && \
@@ -1235,8 +1234,6 @@ ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     echo 'exit 0;' | tee /usr/sbin/policy-rc.d  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-ONBUILD USER ${_AGL}
-ONBUILD WORKDIR /
 
 ########################
 # dvlp_msdot-kernel #
@@ -1261,6 +1258,7 @@ USER r00t
 WORKDIR /
 COPY --from=dvlp_base-build         ./      ./
 ONBUILD USER r00t
+ONBUILD WORKDIR /
 ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     rm -rf /etc/ssl/certs && \
     apt-get update -y && apt-get upgrade -y && \
@@ -1272,8 +1270,6 @@ ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     echo 'exit 0;' | tee /usr/sbin/policy-rc.d  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-ONBUILD USER ${_AGL}
-ONBUILD WORKDIR /
 
 ########################## DOCKER IN DOCKER ######################################
 ########################
@@ -1310,8 +1306,6 @@ ONBUILD RUN \
     rm -rf /var/cache/apt && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-ONBUILD WORKDIR /hal
-ONBUILD USER ${_AGL}
 
 #######################
 # dvlp_dind-lite #
@@ -1330,7 +1324,8 @@ WORKDIR /
 COPY --from=dvlp_python-build ./ ./
 COPY --from=dvlp_msdot-build ./ ./
 COPY --from=dvlp_dind-build ./ ./
-ONBUILD USER root
+ONBUILD USER r00t
+ONBUILD WORKDIR /
 ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     rm -rf /etc/ssl/certs && \
     apt-get update -y && apt-get upgrade -y && \
@@ -1342,8 +1337,6 @@ ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     echo 'exit 0;' | tee /usr/sbin/policy-rc.d  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-ONBUILD USER ${_AGL}
-ONBUILD WORKDIR /
 
 ##################
 # dvlp_dind #
@@ -1369,7 +1362,8 @@ WORKDIR /
 COPY --from=dvlp_python-build ./ ./
 COPY --from=dvlp_msdot-build-lite ./ ./
 COPY --from=dvlp_dind-build ./ ./
-ONBUILD USER root
+ONBUILD USER r00t
+ONBUILD WORKDIR /
 ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     rm -rf /etc/ssl/certs && \
     apt-get update -y && apt-get upgrade -y && \
@@ -1381,8 +1375,6 @@ ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     echo 'exit 0;' | tee /usr/sbin/policy-rc.d  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-ONBUILD USER ${_AGL}
-ONBUILD WORKDIR /
 
 #################################### GUI ######################################
 ##################
@@ -1451,6 +1443,7 @@ COPY --from=dvlp_repo /repos/dvlw/dvlp/mnt/opt/* /opt/
 # # # brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
 # # # sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/${_DVL} && \
 ONBUILD USER r00t
+ONBUILD WORKDIR /
 ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     rm -rf /etc/ssl/certs && \
     apt-get update -y && apt-get upgrade -y && \
@@ -1462,8 +1455,7 @@ ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     echo 'exit 0;' | tee /usr/sbin/policy-rc.d  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-ONBUILD USER ${_AGL}
-ONBUILD WORKDIR /
+
 
 #################
 # dvlp_gui #
@@ -1519,6 +1511,7 @@ RUN \
     rm -rf /var/cache/apt/archives/*.deb
 COPY --from=dvlp_repo --chmod=755 /repos/dvlw/dvlp/mnt/etc/* /etc/
 ONBUILD USER r00t
+ONBUILD WORKDIR /
 ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     rm -rf /etc/ssl/certs && \
     apt-get update -y && apt-get upgrade -y && \
@@ -1530,8 +1523,6 @@ ONBUILD RUN rm -rf /var/cache/dvlp/archives && \
     echo 'exit 0;' | tee /usr/sbin/policy-rc.d  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-ONBUILD USER ${_AGL}
-ONBUILD WORKDIR /
 
 
 ############################## CUDA ###############################
@@ -1556,6 +1547,8 @@ WORKDIR /
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
+ONBUILD USER r00t
+ONBUILD WORKDIR /
 ONBUILD RUN \
     --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
     rm -rf /var/cache/apt && \
@@ -1566,8 +1559,6 @@ ONBUILD RUN \
     echo 'exit 0;' | tee /usr/sbin/policy-rc.d  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb   
-ONBUILD WORKDIR /hal
-ONBUILD USER ${_AGL}
 
 ###################################################################
 ########################### K-HOME ################################
