@@ -37,9 +37,9 @@ RUN touch testing
 
 ################################### GITHUB REPO #####################################
 ########################
-# dvlp_repo-build-prep #
+# dvlp_build-repo-prep #
 ########################
-FROM kalilinux/kali-rolling:latest AS dvlp_repo-build-prep
+FROM kalilinux/kali-rolling:latest AS dvlp_build-repo-prep
 ARG _MNT
 ARG REFRESH_REPO
 ARG _AGL_USR
@@ -119,9 +119,9 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
 ########################
-# dvlp_repo-build #
+# dvlp_build-repo #
 #######################
-FROM dvlp_repo-build-prep AS dvlp_repo-build
+FROM dvlp_build-repo-prep AS dvlp_build-repo
 WORKDIR /repos
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked  \
@@ -152,35 +152,46 @@ RUN \
     chmod -R 1770 mnt/bak
 
 ###################
-# dvlp_repo-build-kernel #
+# dvlp_build-repo-kernel #
 ###################
-FROM dvlp_repo-build AS dvlp_repo-build-kernel
+FROM dvlp_build-repo AS dvlp_build-repo-kernel
 WORKDIR /repos/dvlw/dvlp
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
     # allow download of larger files (kernels)
     git submodule update --init --progress --filter=blob:limit=20m -- kernels 
 
-FROM dvlp_repo-build${KERNEL_TYPE:+-kernel} AS dvlp_repo-built
-
+FROM dvlp_build-repo${KERNEL_TYPE:+-kernel} AS dvlp_built-repo
+RUN \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y
+    
 #############
 # dvlp_repo #
 #############
 FROM scratch AS dvlp_repo
-COPY --from=dvlp_repo-built --chmod=1770 ./repos/dvlw/ ./repos/dvlw/
+COPY --from=dvlp_build-repo --chmod=1770 ./repos/dvlw/ ./repos/dvlw/
+# VOLUME . .
 FROM scratch AS dvlp_repo-kernel
-COPY --from=dvlp_repo-built --chmod=1770 ./repos/dvlw/ ./repos/dvlw/
+# VOLUME . .
+COPY --from=dvlp_build-repo-kernel --chmod=1770 ./repos/dvlw/ ./repos/dvlw/
+FROM scratch AS dvlp_repos
+COPY --from=dvlp_build-repo --chmod=1770 ./repos/dvlw/ ./repos/dvlw/
+COPY --from=dvlp_build-repo-kernel --chmod=1770 ./repos/dvlw/ ./repos/dvlw/
 
-####################### BASE DIRS AND VOLUME MOUNT POINTS ####################################
+# VOLUME . .
+
+####################### BASE volumes AND VOLUME MOUNT POINTS ####################################
 ########################
-# dvlp_base-devel-dirs #
+# dvlp_base-devel-volumes #
 ########################
-FROM kalilinux/kali-rolling:latest AS dvlp_base-devel-dirs
+FROM kalilinux/kali-rolling:latest AS dvlp_base-build-devel-volumes
 ARG _MNT
 ARG _DVL_USR
 ENV _DVL=$_DVL_USR
 WORKDIR /hel
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
+COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
 RUN mkdir -pv kache && \
     mkdir -pv dvlw && \
     mkdir -pv dls && \
@@ -201,13 +212,13 @@ RUN ln -fsv ${_MNT}/bak/${_DVL} bak
 WORKDIR /
 
 ################################
-#  dvlp_base-devel-kernel-dirs #
+#  dvlp_base-build-devel-volumes #
 ################################
-FROM dvlp_base-devel-dirs AS dvlp_base-devel-kernel-dirs
+FROM dvlp_base-build-devel-volumes AS dvlp_base-build-devel-kernel-volumes
 ARG _MNT
 ARG _DVL
 WORKDIR /hel
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
+COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
 RUN mkdir -pv /hel && \
     mkdir -pv /hel/kache && \
     mkdir -pv /home/${_DVL}/kache && \
@@ -225,15 +236,22 @@ RUN mkdir -pv /hel && \
 #     ln -fsv dvlw/dvlp/kernels kernels && \
 WORKDIR /
 
+###############################
+#  dvlp_base-built-dvl-volumes #
+###############################
+FROM dvlp_base-build-devel${KERNEL_TYPE:+-kernel}-volumes AS dvlp_base-built-devel-volumes
+WORKDIR /
+COPY --from=dvlp_repos ./repos/dvlw/ ./repos/dvlw/
+
 #########################
-#  dvlp_base-angel-dirs #
+#  dvlp_base-build-angel-volumes #
 #########################
-FROM kalilinux/kali-rolling:latest AS dvlp_base-angel-dirs
+FROM kalilinux/kali-rolling:latest AS dvlp_base-build-angel-volumes
 ARG _MNT
 ARG _AGL_USR
 ENV _AGL=${_AGL_USR:-agl}
 WORKDIR /hal
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
+COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
 RUN mkdir -pv kache && \
     mkdir -pv dvlw && \
     mkdir -pv dls && \
@@ -252,19 +270,15 @@ RUN mkdir -pv bak/${_AGL} && \
 WORKDIR /
 
 ################################
-#  dvlp_base-angel-kernel-dirs #
+#  dvlp_base-build-angel-volumes #
 ################################
-FROM dvlp_base-angel-dirs AS dvlp_base-angel-kernel-dirs
+FROM dvlp_base-build-angel-volumes AS dvlp_base-build-angel-kernel-volumes
 ARG _MNT
 ARG _AGL
 WORKDIR /hal
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
-# COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/      ./mnt/
-RUN mkdir -pv dvlw && \
-    mkdir -pv /hal && \
-    mkdir -pv /hal/kache && \
-    mkdir -pv /home/${_AGL}/kache && \
-    ln -fsv dvlw/dvlp dvlp && \
+COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
+# COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/      ./mnt/
+RUN ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
     ln -fsv "dvlw/dvlp/kernels/linux/$(uname -m | grep -o '^[^_]*')/$(echo "$(grep -Pom 1 '^vendor_id\s*:\s*\K.*' /proc/cpuinfo | grep -Eio --color=never 'intel|amd' || grep -Pom 1 '^vendor_id\s*:\s*\K.*' /proc/cpuinfo --color=never)" | tr '[:upper:]' '[:lower:]')" "$(uname -m | grep -o '^[^_]*')" && \
     ln -fsv dvlw/dvlp/kernels kernels  && \
@@ -278,15 +292,24 @@ RUN mkdir -pv dvlw && \
 #     ln -fsv dvlw/dvlp/kernels kernels
 WORKDIR /
 
+###############################
+#  dvlp_base-built-agl-volumes #
+###############################
+FROM dvlp_base-build-angel${KERNEL_TYPE:+-kernel}-volumes AS dvlp_base-built-angel-volumes
+WORKDIR /
+COPY --from=dvlp_repos ./repos/dvlw/ ./repos/dvlw/
+
+
 ########################
-#  dvlp_base-r00t-dirs #
+#  dvlp_base-build-r00t-volumes #
 ########################
-FROM kalilinux/kali-rolling:latest AS dvlp_base-r00t-dirs
+FROM kalilinux/kali-rolling:latest AS dvlp_base-build-r00t-volumes
 ARG _MNT
 ARG _ADMIN
 WORKDIR /admin
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME_NIX/    ./
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/         ./mnt/
+COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/HOME_NIX/    ./
+COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/         ./mnt/
+COPY --from=dvlp_repos ./repos/dvlw/ ./repos/dvlw/
 
 RUN mkdir -pv dvlw && \
     mkdir -pv dls && \
@@ -309,22 +332,31 @@ RUN mkdir -pv dls && \
 WORKDIR /
 
 ###############################
-#  dvlp_base-r00t-kernel-dirs #
+#  dvlp_base-build-r00t-volumes #
 ###############################
-FROM kalilinux/kali-rolling:latest AS dvlp_base-r00t-kernel-dirs
+FROM dvlp_base-build-r00t-volumes AS dvlp_base-build-r00t-kernel-volumes
 ARG _MNT
 ARG _ADMIN
 WORKDIR /admin
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
-RUN mkdir -pv /admin && mkdir -pv kache && \
-    ln -fsv dvlw/dvlp dvlp && \
+COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
+RUN ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
     ln -fsv "dvlw/dvlp/kernels/linux/$(uname -m | grep -o '^[^_]*')/$(echo "$(grep -Pom 1 '^vendor_id\s*:\s*\K.*' /proc/cpuinfo | grep -Eio --color=never 'intel|amd' || grep -Pom 1 '^vendor_id\s*:\s*\K.*' /proc/cpuinfo --color=never)" | tr '[:upper:]' '[:lower:]')" "$(uname -m | grep -o '^[^_]*')" && \
-    ln -fsv dvlw/dvlp/kernels kernels 
+    ln -fsv dvlw/dvlp/kernels kernels && \
+    mkdir -pv /admin && mkdir -pv kache
 #  && \
 # chmod -R 1770 /admin && \
 # cp -prv * /home/r00t
 WORKDIR /
+
+###############################
+#  dvlp_base-built-r00t-volumes #
+###############################
+FROM dvlp_base-build-r00t${KERNEL_TYPE:+-kernel}-volumes AS dvlp_base-built-r00t-volumes
+WORKDIR /
+COPY --from=dvlp_repos ./repos/dvlw/ ./repos/dvlw/
+
+FROM scratch AS dvlp_base-built-volumes
 
 
 
@@ -345,11 +377,11 @@ ARG WIN_USER
 ARG DOCKER_BUILD_TIMESTAMP
 ARG installkernel
 USER root
-WORKDIR /mnt
+WORKDIR /
 
-# COPY --from=dvlp_base-r00t-dirs             --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
-# COPY --from=dvlp_base-devel-dirs            --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
-# COPY --from=dvlp_base-angel-dirs            --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
+# COPY --from=dvlp_base-r00t-volumes             --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
+# COPY --from=dvlp_base-devel-volumes            --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
+# COPY --from=dvlp_base-angel-volumes            --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
 # COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hel/
 # COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hal/
 # COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./r00t/
@@ -369,9 +401,9 @@ WORKDIR /mnt
 # ONBUILD COPY --from=dvlp_repo${KERNEL_TYPE:+-kernel}                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
 # ONBUILD COPY --from=dvlp_repo${KERNEL_TYPE:+-kernel}                       --chown=r00t:r00t       --chmod=1774    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
 # ONBUILD COPY --from=dvlp_repo${KERNEL_TYPE:+-kernel}                       --chown=r00t:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/
-# ONBUILD COPY --from=dvlp_base-r00t${KERNEL_TYPE:+-kernel}-dirs             --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
-# ONBUILD COPY --from=dvlp_base-devel${KERNEL_TYPE:+-kernel}-dirs            --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
-# ONBUILD COPY --from=dvlp_base-angel${KERNEL_TYPE:+-kernel}-dirs            --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
+# ONBUILD COPY --from=dvlp_base-r00t${KERNEL_TYPE:+-kernel}-volumes             --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
+# ONBUILD COPY --from=dvlp_base-devel${KERNEL_TYPE:+-kernel}-volumes            --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
+# ONBUILD COPY --from=dvlp_base-angel${KERNEL_TYPE:+-kernel}-volumes            --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
 
 ARG _MNT
 ARG _AGL_USR
@@ -390,7 +422,7 @@ ARG DOCKER_BUILD_TIMESTAMP
 ARG installkernel
 ARG REFRESH_REPO
 USER root
-WORKDIR /
+WORKDIR /mnt
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
     # mkdir -p /usr/lib/modules && \
@@ -399,7 +431,7 @@ RUN \
     mkdir -p /boot && \
     # mkdir -p /r00t/dvlw && \
     mkdir -m 1770 dls && \
-    mkdir -m 1770 repos  && \
+    # mkdir -m 1770 repos  && \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo ':WSLInterop:M::MZ::/init:PF' > /usr/lib/binfmt.d/WSLInterop.conf && \
     echo 'Acquire::Retries "3";\
@@ -434,7 +466,7 @@ RUN \
     passwd -l root && \
     # mkdir -p /r00t/dvlw && \
     chown r00t:w0rld dls && \
-    chown ${_AGL}:halo repos  && \
+    # chown ${_AGL}:halo repos  && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb && \
     apt-get update --fix-missing -yq && apt-get install -f && apt-get upgrade -yq && \
@@ -442,47 +474,76 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y
-
+# COPY --from=dvlp_repos                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hel/
+# COPY --from=dvlp_repos                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hal/
+# COPY --from=dvlp_repos                       --chown=r00t:r00t       --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./r00t/
+# COPY --from=dvlp_repos                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./repos/dvlw/
+# COPY --from=dvlp_repos                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                   ./hel/dvlw/
+# COPY --from=dvlp_repos                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
+# COPY --from=dvlp_repos                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
+# COPY --from=dvlp_repos                       --chown=r00t:r00t       --chmod=1774    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
+# COPY --from=dvlp_repos                       --chown=r00t:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/
+# ONBUILD COPY --from=dvlp_base-r00t${KERNEL_TYPE:+-kernel}-volumes             --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
+# ONBUILD COPY --from=dvlp_base-devel${KERNEL_TYPE:+-kernel}-volumes            --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/###############################
+#  dvlp_base-volumes #
+WORKDIR /
 ###############################
-#  dvlp_base-dirs #
-###############################
 
-FROM dvlp_base-skel AS dvlp_base-dirs
-COPY --from=dvlp_base-r00t-dirs             --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
-COPY --from=dvlp_base-devel-dirs            --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
-COPY --from=dvlp_base-angel-dirs            --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
-COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hel/
-COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hal/
-COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./r00t/
+FROM dvlp_base-skel AS dvlp_base-build-volumes
+COPY --from=dvlp_base-build-r00t-volumes     --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
+COPY --from=dvlp_base-build-devel-volumes    --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
+COPY --from=dvlp_base-build-angel-volumes    --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
+COPY --from=dvlp_base-built-r00t-volumes     --chown=r00t:r00t       --chmod=1770    ./admin/                       ./r00t/
+COPY --from=dvlp_base-built-devel-volumes    --chown=${_DVL}:hell    --chmod=1770    ./hel/                         ./hel/
+COPY --from=dvlp_base-built-angel-volumes    --chown=${_AGL}:halo    --chmod=1770    ./hal/                         ./hal/
+COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./hel/
+COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./hal/
+COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./r00t/
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./repos/dvlw/
 COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                   ./hel/dvlw/
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
 COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1774    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
 COPY --from=dvlp_repo                       --chown=r00t:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/ 
+COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./ ./
+COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./ ./
+COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw                   ./hal/dvlw
+COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw                   ./r00t/dvlw
+COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                  ./dvl/dvlw
+COPY --from=dvlp_base-built-r00t-volumes     --chown=r00t:r00t       --chmod=1770    ./admin/                       ./r00t/
+COPY --from=dvlp_base-built-devel-volumes    --chown=${_DVL}:hell    --chmod=1770    ./hel/                         ./hel/
+COPY --from=dvlp_base-built-angel-volumes    --chown=${_AGL}:halo    --chmod=1770    ./hal/                         ./hal/
 
 ###############################
-#  dvlp_base-kernel-dirs #
+#  dvlp_base-build-kernel-volumes #
 ###############################
 
-FROM dvlp_base-dirs AS dvlp_base-kernel-dirs
-COPY --from=dvlp_base-r00t-dirs             --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
-COPY --from=dvlp_base-devel-dirs            --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
-COPY --from=dvlp_base-angel-dirs            --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
-COPY --from=dvlp_repo-kernel                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hel/
-COPY --from=dvlp_repo-kernel                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hal/
-COPY --from=dvlp_repo-kernel                       --chown=r00t:r00t       --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./r00t/
-COPY --from=dvlp_repo-kernel                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./repos/dvlw/
-COPY --from=dvlp_repo-kernel                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                   ./hel/dvlw/
-COPY --from=dvlp_repo-kernel                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
-COPY --from=dvlp_repo-kernel                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
-COPY --from=dvlp_repo-kernel                       --chown=r00t:r00t       --chmod=1774    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
-COPY --from=dvlp_repo-kernel                       --chown=r00t:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/
-COPY --from=dvlp_base-r00t-kernel-dirs             --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
-COPY --from=dvlp_base-devel-kernel-dirs            --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
-COPY --from=dvlp_base-angel-kernel-dirs            --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
+FROM dvlp_base-build-volumes AS dvlp_base-build-kernel-volumes
+COPY --from=dvlp_base-build-r00t-volumes            --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
+COPY --from=dvlp_base-build-devel-volumes           --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
+COPY --from=dvlp_base-build-angel-volumes           --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
+COPY --from=dvlp_base-built-r00t-volumes     --chown=r00t:r00t       --chmod=1770    ./admin/                       ./r00t/
+COPY --from=dvlp_base-built-devel-volumes    --chown=${_DVL}:hell    --chmod=1770    ./hel/                         ./hel/
+COPY --from=dvlp_base-built-angel-volumes    --chown=${_AGL}:halo    --chmod=1770    ./hal/                         ./hal/
+COPY --from=dvlp_repo-kernel                              --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./hel/
+COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./hal/
+COPY --from=dvlp_repo-kernel                              --chown=r00t:r00t       --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./r00t/
+COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./repos/dvlw/
+COPY --from=dvlp_repo-kernel                              --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                   ./hel/dvlw/
+COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
+COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
+COPY --from=dvlp_repo-kernel                              --chown=r00t:r00t       --chmod=1774    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
+COPY --from=dvlp_repo-kernel                              --chown=r00t:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/ 
+COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo    --chmod=1770    ./ ./
+COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo    --chmod=1770    ./ ./
+COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw                   ./hal/dvlw
+COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw                   ./r00t/dvlw
+COPY --from=dvlp_repo-kernel                              --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                  ./dvl/dvlw
+COPY --from=dvlp_base-build-r00t-kernel-volumes     --chown=r00t:r00t       --chmod=1770    ./admin/                       ./r00t/
+COPY --from=dvlp_base-build-devel-kernel-volumes    --chown=${_DVL}:hell    --chmod=1770    ./hel/                         ./hel/
+COPY --from=dvlp_base-build-angel-kernel-volumes    --chown=${_AGL}:halo    --chmod=1770    ./hal/                         ./hal/
 
-FROM dvlp_base-skel AS dvlp_base-build
+FROM dvlp_base-build${KERNEL_TYPE:+-kernel}-volumes AS dvlp_base-build
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
 ARG CONFIG_FILE
@@ -499,18 +560,19 @@ ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ENV DEBIAN_FRONTEND=noninteractive
-COPY --from=dvlp_base-r00t-dirs             --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
-COPY --from=dvlp_base-devel-dirs            --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
-COPY --from=dvlp_base-angel-dirs            --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
-COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hel/
-COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hal/
-COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./r00t/
-COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./repos/dvlw/
-COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                   ./hel/dvlw/
-COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
-COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
-COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1774    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
-COPY --from=dvlp_repo                       --chown=r00t:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/ 
+# COPY --from=dvlp_repos                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hel/
+# COPY --from=dvlp_repos                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hal/
+# COPY --from=dvlp_repos                       --chown=r00t:r00t       --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./r00t/
+# COPY --from=dvlp_repos                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./repos/dvlw/
+# COPY --from=dvlp_repos                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                   ./hel/dvlw/
+# COPY --from=dvlp_repos                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
+# COPY --from=dvlp_repos                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
+# COPY --from=dvlp_repos                       --chown=r00t:r00t       --chmod=1774    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
+# COPY --from=dvlp_repos                       --chown=r00t:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/
+# COPY --from=dvlp_repos                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hel/
+# COPY --from=dvlp_repos                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hal/
+# COPY --from=dvlp_repos                       --chown=r00t:r00t       --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./r00t/
+
 ############################# BASE BUILD KERNEL ###################################
 
 FROM dvlp_base-build AS dvlp_base-build-kernel
@@ -531,21 +593,6 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /
-COPY --from=dvlp_base-r00t-dirs             --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
-COPY --from=dvlp_base-devel-dirs            --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
-COPY --from=dvlp_base-angel-dirs            --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
-COPY --from=dvlp_repo-kernel                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hel/
-COPY --from=dvlp_repo-kernel                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hal/
-COPY --from=dvlp_repo-kernel                       --chown=r00t:r00t       --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./r00t/
-COPY --from=dvlp_repo-kernel                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./repos/dvlw/
-COPY --from=dvlp_repo-kernel                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                   ./hel/dvlw/
-COPY --from=dvlp_repo-kernel                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
-COPY --from=dvlp_repo-kernel                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
-COPY --from=dvlp_repo-kernel                       --chown=r00t:r00t       --chmod=1774    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
-COPY --from=dvlp_repo-kernel                       --chown=r00t:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/
-COPY --from=dvlp_base-r00t-kernel-dirs             --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
-COPY --from=dvlp_base-devel-kernel-dirs            --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
-COPY --from=dvlp_base-angel-kernel-dirs            --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/ONBUILD 
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
@@ -557,6 +604,9 @@ RUN \
     rm -rf /var/cache/apt/archives/*.deb && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y
 
+FROM dvlp_base-build${KERNEL_TYPE:+-kernel} AS dvlp_base-built
+
+
 ################################## BASE BUILDER #######################################
 
 FROM dvlp_base-build${KERNEL_TYPE:+-kernel}  AS dvlp_base-builder
@@ -565,18 +615,16 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y
-ONBUILD RUN \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt/archives/*.deb && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y
 
 
+FROM dvlp_base-built AS dvlp_make
 ################################### KERNEL ###########################################
 
 ######################################################################################
 ########################  KERNEL MAKE/R - KERNEL COMPILER  ###########################
 ######################################################################################
-FROM dvlp_base-builder AS dvlp_kernel-make
+
+FROM dvlp_base-build-kernel AS dvlp_make-kernel
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
 ARG CONFIG_FILE
@@ -590,23 +638,21 @@ ARG installkernel
 # WORKDIR /r00t/dvlw
 WORKDIR /
 USER r00t
-ONBUILD USER r00t
+SHELL ["/bin/bash", "-c"]
 RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y
+
 # WORKDIR /
 # ONBUILD COPY --from=dvlp_base-build${KERNEL_TYPE:+-kernel} ./ ./
 SHELL ["/bin/bash", "-c"]
-ONBUILD USER r00t
-ONBUILD SHELL ["/bin/bash", "-c"]
-ONBUILD RUN \
+RUN \
     --mount=type=cache,target=/var/cache/kernel_${KERNEL_TYPE}_${KERNEL_FEATURE}_${CONFIG_FILE},sharing=private \
-    [ ! -f build-import-kernel.sh ] || bash build-import-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}"
-ONBUILD RUN \
-    git config --global --add safe.directory /r00t/dvlw/dvlp && \
-    git config --global --add safe.directory /r00t/dvlw/dvlp/kernels && \
-    [ -d linux/linux-* ] && \
+    [ ! -f /r00t/dvlw/dvlp/kernels/linux/build-import-kernel.sh ] || bash /r00t/dvlw/dvlp/kernels/linux/build-import-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}" && \
+    [ ! -d /r00t/dvlw/dvlp ] || git config --global --add safe.directory /r00t/dvlw/dvlp && \
+    [ ! -d /r00t/dvlw/dvlp/kernels ] || git config --global --add safe.directory /r00t/dvlw/dvlp/kernels && \
+    [ -d /r00t/dvlw/dvlp/kernels/linux/linux-* ] && \
     cd linux/linux* && \
     find usr/include -type f ! -name '*.h' -delete && \
     mkdir -pv /lib/modules/$(uname -r)/build && \
@@ -619,14 +665,9 @@ ONBUILD RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y
-ONBUILD USER agl
-ONBUILD WORKDIR /
+WORKDIR /
 
-FROM dvlp_kernel-make AS dvlp_kernel-maker
-# WORKDIR /boot
-# WORKDIR /kache
-# WORKDIR /usr/lib
-# WORKDIR /r00t/dvlw
+FROM dvlp_make-kernel AS dvlp_made-kernel
 WORKDIR /
 USER root
 RUN \
@@ -643,8 +684,10 @@ ONBUILD RUN \
     rm -rf /var/cache/apt && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb
-# every onbuild command in dvlp_kernel-make will be triggered to run here
-# use COPY --from=dvlp_kernel-maker instead of COPY --from=dvlp_kernel-make
+
+FROM dvlp_make${KERNEL_TYPE:+-kernel} AS dvlp_made
+# every onbuild command in dvlp_make-kernel will be triggered to run here
+# use COPY --from=dvlp_made-kernel instead of COPY --from=dvlp_make-kernel
 
 ###############################################################################
 ########################  dvlp_base-xxxx (cont'd)  ############################
@@ -658,13 +701,13 @@ ONBUILD RUN \
 # OR
 # FROM dvlp_base-build AS dvlp_base-skel 
 # COPY --from=dvlp_base_build ./ ./
-# COPY --from=dvlp_kernel-maker ./boot/ ./boot/
-# COPY --from=dvlp_kernel-maker ./usr/src/ ./usr/src/
-# COPY --from=dvlp_kernel-maker ./usr/lib/modules/ ./usr/lib/modules/
-# COPY --from=dvlp_kernel-maker ./kache/ ./kache/
-# COPY --from=dvlp_kernel-maker ./r00t/dvlw/ ./r00t/dvlw/
+# COPY --from=dvlp_made-kernel ./boot/ ./boot/
+# COPY --from=dvlp_made-kernel ./usr/src/ ./usr/src/
+# COPY --from=dvlp_made-kernel ./usr/lib/modules/ ./usr/lib/modules/
+# COPY --from=dvlp_made-kernel ./kache/ ./kache/
+# COPY --from=dvlp_made-kernel ./r00t/dvlw/ ./r00t/dvlw/
 
-FROM dvlp_kernel-maker AS dvlp_base
+FROM dvlp_made AS dvlp_base
 ARG _MNT
 ARG _AGL_USR
 ARG _DVL_USR
@@ -682,37 +725,50 @@ ARG DOCKER_BUILD_TIMESTAMP
 ARG installkernel
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /
-WORKDIR /boot
-WORKDIR /kache
-WORKDIR /usr/lib
-WORKDIR /r00t/dvlw
+# WORKDIR /boot
+# WORKDIR /kache
+# WORKDIR /usr/lib
+# WORKDIR /r00t/dvlw
+WORKDIR /
+RUN \
+    --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    apt-get purge -y openssh-server && \
+    apt-get install --no-install-recommends -y sudo openssh-server && \
+    usermod -aG docker root && \
+    usermod -aG docker r00t && \
+    usermod -aG sudo ${_AGL} && \
+    usermod -aG docker ${_AGL} 
+ONBUILD RUN \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt/archives/*.deb && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y 
+
+FROM dvlp_made-kernel AS dvlp_base-kernel
+ARG _MNT
+ARG _AGL_USR
+ARG _DVL_USR
+ARG _ADM_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
+ENV _DVL=$_DVL_USR
+ENV _ADM=$_ADM_USR
+ARG REFRESH_REPO
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
+ARG CONFIG_FILE
+ARG WIN_USER
+ARG DOCKER_BUILD_TIMESTAMP
+ARG installkernel
+ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /
 RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y 
-ONBUILD RUN \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt/archives/*.deb && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y 
-ONBUILD ARG _MNT
-ONBUILD ARG _AGL_USR
-ONBUILD ARG _DVL_USR
-ONBUILD ARG _ADM_USR
-ONBUILD ARG _AGL=${_AGL:-agl}
-ONBUILD ENV _AGL=$_AGL
-ONBUILD ENV _DVL=$_DVL_USR
-ONBUILD ENV _ADM=$_ADM_USR
-ONBUILD ARG REFRESH_REPO
-ONBUILD ARG KERNEL_TYPE
-ONBUILD ARG KERNEL_FEATURE
-ONBUILD ARG CONFIG_FILE
-ONBUILD ARG WIN_USER
-ONBUILD ARG DOCKER_BUILD_TIMESTAMP
-ONBUILD ARG installkernel
-ONBUILD ENV DEBIAN_FRONTEND=noninteractive
-ONBUILD COPY --from=dvlp_base${KERNEL_TYPE:+-kernel}-dirs ./ ./    
-ONBUILD RUN \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y  
+RUN \
     --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt/archives/*.deb && \
@@ -744,16 +800,14 @@ ONBUILD RUN \
 # ENV _ADM=$_ADM_USR
 # USER root
 
-# ONBUILD COPY --from=dvlp_kernel-maker ./boot/ ./boot/
-# ONBUILD COPY --from=dvlp_kernel-maker ./usr/src/ ./usr/src/
+# ONBUILD COPY --from=dvlp_made-kernel ./boot/ ./boot/
+# ONBUILD COPY --from=dvlp_made-kernel ./usr/src/ ./usr/src/
 # WORKDIR /usr/lib/modules
-# ONBUILD COPY --from=dvlp_kernel-maker ./ ./usr/lib/modules/
+# ONBUILD COPY --from=dvlp_made-kernel ./ ./usr/lib/modules/
 # WORKDIR /
-# ONBUILD COPY --from=dvlp_kernel-maker ./kache/ ./kache/
-# ONBUILD COPY --from=dvlp_kernel-maker ./r00t/dvlw/ ./r00t/dvlw/
+# ONBUILD COPY --from=dvlp_made-kernel ./kache/ ./kache/
+# ONBUILD COPY --from=dvlp_made-kernel ./r00t/dvlw/ ./r00t/dvlw/
 # ONBUILD WORKDIR /r00t/dvlw/dvlp/kernels/linux/linux-build*
-
-WORKDIR /
 
 ###################################################################
 ######################## KERNEL KACHE #############################
@@ -786,7 +840,7 @@ WORKDIR /boot
 WORKDIR /kache
 WORKDIR /usr/lib
 WORKDIR /
-COPY --from=dvlp_kernel-maker ./r00t/dvlw/dvlp/kernels/linux/kache/ ./
+COPY --from=dvlp_made-kernel ./r00t/dvlw/dvlp/kernels/linux/kache/ ./
 
 
 #################################################################################
@@ -840,7 +894,13 @@ WORKDIR /
 ########################
 # dvlp_git        #
 ########################
-FROM dvlp_base AS dvlp_git
+FROM dvlp_base${KERNEL_TYPE:+-kernel} AS dvlp_git-build
+
+FROM dvlp_git-build AS dvlp_git-build-kernel
+
+FROM dvlp_git-build${KERNEL_TYPE:+-kernel} as dvlp_git_built
+
+FROM dvlp_git_built AS dvlp_git
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
