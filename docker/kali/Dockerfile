@@ -653,7 +653,6 @@ RUN \
 SHELL ["/bin/bash", "-c"]
 RUN \
     git config --global --add safe.directory /r00t/dvlw/dvlp && \
-    git config --global --add safe.directory /mnt/c/users/dvlw && \
     git config --global --add safe.directory /r00t/dvlw/dvlp/kernels 
 RUN \
     --mount=type=cache,target=/var/cache/kernel_${KERNEL_TYPE}_${KERNEL_FEATURE}_${CONFIG_FILE},sharing=private \
