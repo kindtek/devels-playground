@@ -453,13 +453,13 @@ IF "!image_service_suffix!" == "kernel" (
     ECHO service_suffix !service_suffix!
     SET "build_args=--build-arg WIN_USER=%USERNAME%"
     SET "build_args=!build_args! --build-arg KERNEL_TYPE=basic --build-arg KERNEL_FEATURE=zfs"
-    @REM SET "compose_services_nocache=!compose_services_nocache! repo-kernel"
-    SET "compose_services=!image_service!"
+    SET "compose_services_nocache=!compose_services_nocache! repo-kernel"
+    @REM SET "compose_services=!image_service!"
 )
-@REM IF NOT "!image_service_base!" == "test" (
-@REM     ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build --no-cache !compose_services_nocache!
-@REM     docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build --no-cache !compose_services_nocache!
-@REM )
+IF NOT "!image_service_base!" == "test" (
+    ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build --no-cache !compose_services_nocache!
+    docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build --no-cache !compose_services_nocache!
+)
 @REM force no cache when testing different kernel types
 @REM IF "!image_service_suffix!" == "kernel" (
 @REM     @REM force rebuild of kernel
