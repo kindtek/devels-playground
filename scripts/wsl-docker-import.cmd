@@ -442,7 +442,6 @@ IF "!image_service_suffix!" == "kernel" (
 
 @REM re-building repo
 SET "build_args="
-SET "compose_services_nocache=repo"
 SET "compose_services=!image_service!"
 ECHO building image (!image_service!)...
 @REM build the image
@@ -453,13 +452,15 @@ IF "!image_service_suffix!" == "kernel" (
     ECHO service_suffix !service_suffix!
     SET "build_args=--build-arg WIN_USER=%USERNAME%"
     @REM SET "build_args=!build_args! --build-arg KERNEL_TYPE=stable --build-arg KERNEL_FEATURE=zfs"
-    SET "compose_services_nocache=!compose_services_nocache! repo-kernel"
+    SET "compose_services_nocache=repo repo-kernel"
     @REM SET "compose_services=!image_service!"
+) ELSE (
+    SET "compose_services_nocache=repo"
 )
-IF NOT "!image_service_base!" == "test" (
-    ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build --no-cache !compose_services_nocache!
-    docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build --no-cache !compose_services_nocache!
-)
+@REM IF NOT "!image_service_base!" == "test" (
+@REM     ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build --no-cache !compose_services_nocache!
+@REM     docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build --no-cache !compose_services_nocache!
+@REM )
 @REM force no cache when testing different kernel types
 @REM IF "!image_service_suffix!" == "kernel" (
 @REM     @REM force rebuild of kernel
@@ -564,6 +565,8 @@ mkdir !install_location! > nul 2> nul
 ECHO:
 SET "docker_image_do="
 ECHO initializing the image container...
+ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml up --build !compose_services_nocache!
+docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml up --build !compose_services_nocache!
 ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml up --build !image_service! --detach
 docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml up --build !image_service! --detach
 @REM ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml -- !image_service! sudo rm -vrf /var/cache/dvlp/archives && sudo apt update -y && sudo apt upgrade -y
