@@ -181,7 +181,7 @@ services:
       context: .
       target: dvlp_make-kernel
       no_cache: true
-    # entrypoint: /bin/bash  [ ! -f build-import-kernel.sh ] || bash build-import-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}"
+    # entrypoint: /bin/bash  [ ! -f build-export-kernel.sh ] || bash build-export-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}"
     depends_on:
       skel:
         # Wait for the ownership to change
@@ -445,7 +445,7 @@ services:
     build:
       context: .
       target: dvlp_bare
-      no_cache: true
+      no_cache: false
     depends_on:
       base:
         # Wait for the ownership to change

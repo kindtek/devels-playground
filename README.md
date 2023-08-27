@@ -20,7 +20,7 @@
 #### all images built with a kernel (images ending in -kernel) will include:
 
 - the latest bleeding edge Linux kernel
-- a ([script](kernels/linux/build-import-kernel.sh)) that will build a kernel with your custom .config file ([example](kernels/linux/x86/amd/5_15901/.config_wsl0)) using a filepath or url or automaticlly select the best available configuration for your architecture
+- a ([script](kernels/linux/build-export-kernel.sh)) that will build a kernel with your custom .config file ([example](kernels/linux/x86/amd/5_15901/.config_wsl0)) using a filepath or url or automaticlly select the best available configuration for your architecture
 - a ([script](mnt/HOME_NIX/setup.sh)) that will import your kernel into WSL and set up your system
 - a ([script](kernels/linux/install-kernel.sh)) that will allow you to rotate through multiple kernel builds
 - powerhell scripts to do all of the above seamlessly in windows

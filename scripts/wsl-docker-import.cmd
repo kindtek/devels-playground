@@ -466,8 +466,8 @@ IF NOT "!image_service_base!" == "test" (
 @REM     @REM ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !build_args! kernel-make
 @REM     @REM docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !build_args! kernel-make
 @REM )
-ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !build_args! !compose_services!
-docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !build_args! !compose_services!
+@REM ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !build_args! !compose_services!
+@REM docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !build_args! !compose_services!
 
 SET "image_built=y"
 IF "!wsl!" == "n" (
@@ -575,15 +575,15 @@ docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose
 SET /P wsl_out=<!test_string_path!
 IF "!image_repo!" == "kindtek" (
     IF "!wsl_out!" == "!test_string!" (
-        ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
-        docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
+        @REM ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
+        @REM docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
         ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo apt update -y
         docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo apt update -y
         ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo apt upgrade -y
         docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo apt upgrade -y
     ) ELSE (
-        ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! rm -vrf /var/cache/dvlp/archives
-        docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! rm -vrf /var/cache/dvlp/archives
+        @REM ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! rm -vrf /var/cache/dvlp/archives
+        @REM docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! rm -vrf /var/cache/dvlp/archives
         ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! apt update -y
         docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! apt update -y
         ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! apt upgrade -y
@@ -601,8 +601,8 @@ SET WSL_DOCKER_CTR_ID=!WSL_DOCKER_CTR_ID_RAW!
 SET WSL_DOCKER_IMG_ID=!WSL_DOCKER_IMG_ID_RAW!
 ECHO WSL_DOCKER_IMG_ID_RAW: !WSL_DOCKER_IMG_ID_RAW!
 ECHO WSL_DOCKER_CTR_ID_RAW: !WSL_DOCKER_CTR_ID_RAW!
-ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! uname -r ^> !wsl_default_kernel_path!
-docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! uname -r > !wsl_default_kernel_path!
+@REM ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! uname -r ^> !wsl_default_kernel_path!
+@REM docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! uname -r > !wsl_default_kernel_path!
 
 
 @REM del !docker_container_id_path! > nul 2> nul
@@ -739,51 +739,51 @@ wsl.exe --import !wsl_distro! !install_location! !image_save_path! --version !ws
 @REM ECHO deleting !image_save_path! ...
 @REM DEL !image_save_path!
 @REM ECHO !image_save_path! deleted
-IF "!image_service_suffix!" == "kernel" (
-	SET "wsl_default_distro="
-    SET "wsl_default_kernel="
-    SET "wsl_default_kernel_version="
-    SET "wsl_default_kernel_config_version="
-    @REM ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash uname -r ^> !wsl_default_kernel_path!
-    @REM wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash uname -r > !wsl_default_kernel_path!
-    @REM kindtek-kernel-6L1WZB-gf53bd0a62a32
-    @REM echo 6.1.21.2-kindtek-kernel-6L1WBZ-gf53bd0a62a32-dirty > !wsl_default_kernel_path!
-    @REM ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash ls -tx1 config* ^| tail -n 1 ^> %wsl_default_kernel_config_version_path%
-    wsl.exe --user r00t -d %wsl_distro% -- cd /boot ^&^& ls -tx1 config* ^| tail -n 1 > !wsl_default_kernel_config_version_path!
-    SET /P wsl_default_kernel=<!wsl_default_kernel_path!
-    SET /P wsl_default_kernel_config_version=<!wsl_default_kernel_config_version_path!
-    FOR /F "tokens=2* delims=-" %%a IN (        
-        "!wsl_default_kernel_config_version!" 
-    ) DO (
-        SET "wsl_default_kernel_version=%%a"
-        ECHO %%a > !wsl_default_kernel_version_path! 
-    )
-    @REM net stop docker
-    @REM net stop com.docker.service
-    @REM wsl.exe -d %wsl_distro% --cd /hal --user agl --exec bash sudo apt-get install -y powershell dwarves initramfs-tools firmware-linux zstd
-    wsl.exe -d %wsl_distro% -- cd ^$HOME ^&^& sudo apt-get install -y powershell dwarves busybox-static initramfs-tools firmware-linux zstd
-    @REM wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash cp config-!wsl_default_kernel_version! config-!wsl_default_kernel!
-    wsl.exe --user r00t -d %wsl_distro% -- cp -f /boot/config-!wsl_default_kernel_version! /boot/config-!wsl_default_kernel!
-    @REM wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash cp System.map-!wsl_default_kernel_version! System.map-!wsl_default_kernel!
-    wsl.exe --user r00t -d %wsl_distro% -- cp -f /boot/System.map-!wsl_default_kernel_version! /boot/System.map-!wsl_default_kernel!
-    @REM wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec update-initramfs -u -k !wsl_default_kernel!
-    wsl.exe --user r00t -d %wsl_distro% -- update-initramfs -u -k !wsl_default_kernel!
-    @REM wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec bash mkdir -p /mnt/c/users/%USERNAME%/kache
-    wsl.exe --user r00t -d %wsl_distro% -- mkdir -p /mnt/c/users/%USERNAME%/kache
-    @REM wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec bash cp -rf kache/. /mnt/c/users/%USERNAME%/kache/.
-    wsl.exe --user r00t -d %wsl_distro% -- cp -rf /r00t/dvlw/dvlp/kernels/linux/kache/. /mnt/c/users/%USERNAME%/kache/.
+@REM IF "!image_service_suffix!" == "kernel" (
+@REM 	SET "wsl_default_distro="
+@REM     SET "wsl_default_kernel="
+@REM     SET "wsl_default_kernel_version="
+@REM     SET "wsl_default_kernel_config_version="
+@REM     @REM ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash uname -r ^> !wsl_default_kernel_path!
+@REM     @REM wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash uname -r > !wsl_default_kernel_path!
+@REM     @REM kindtek-kernel-6L1WZB-gf53bd0a62a32
+@REM     @REM echo 6.1.21.2-kindtek-kernel-6L1WBZ-gf53bd0a62a32-dirty > !wsl_default_kernel_path!
+@REM     @REM ECHO wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash ls -tx1 config* ^| tail -n 1 ^> %wsl_default_kernel_config_version_path%
+@REM     wsl.exe --user r00t -d %wsl_distro% -- cd /boot ^&^& ls -tx1 config* ^| tail -n 1 > !wsl_default_kernel_config_version_path!
+@REM     SET /P wsl_default_kernel=<!wsl_default_kernel_path!
+@REM     SET /P wsl_default_kernel_config_version=<!wsl_default_kernel_config_version_path!
+@REM     FOR /F "tokens=2* delims=-" %%a IN (        
+@REM         "!wsl_default_kernel_config_version!" 
+@REM     ) DO (
+@REM         SET "wsl_default_kernel_version=%%a"
+@REM         ECHO %%a > !wsl_default_kernel_version_path! 
+@REM     )
+@REM     @REM @REM net stop docker
+@REM     @REM @REM net stop com.docker.service
+@REM     @REM @REM wsl.exe -d %wsl_distro% --cd /hal --user agl --exec bash sudo apt-get install -y powershell dwarves initramfs-tools firmware-linux zstd
+@REM     @REM wsl.exe -d %wsl_distro% -- cd ^$HOME ^&^& sudo apt-get install -y powershell dwarves busybox-static initramfs-tools firmware-linux zstd
+@REM     @REM @REM wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash cp config-!wsl_default_kernel_version! config-!wsl_default_kernel!
+@REM     @REM wsl.exe --user r00t -d %wsl_distro% -- cp -f /boot/config-!wsl_default_kernel_version! /boot/config-!wsl_default_kernel!
+@REM     @REM @REM wsl.exe -d %wsl_distro% --cd /boot --user r00t --exec bash cp System.map-!wsl_default_kernel_version! System.map-!wsl_default_kernel!
+@REM     @REM wsl.exe --user r00t -d %wsl_distro% -- cp -f /boot/System.map-!wsl_default_kernel_version! /boot/System.map-!wsl_default_kernel!
+@REM     @REM @REM wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec update-initramfs -u -k !wsl_default_kernel!
+@REM     @REM wsl.exe --user r00t -d %wsl_distro% -- update-initramfs -u -k !wsl_default_kernel!
+@REM     @REM @REM wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec bash mkdir -p /mnt/c/users/%USERNAME%/kache
+@REM     @REM wsl.exe --user r00t -d %wsl_distro% -- mkdir -p /mnt/c/users/%USERNAME%/kache
+@REM     @REM @REM wsl.exe -d %wsl_distro% --cd /r00t/dvlw/dvlp/kernels/linux --user r00t --exec bash cp -rf kache/. /mnt/c/users/%USERNAME%/kache/.
+@REM     @REM wsl.exe --user r00t -d %wsl_distro% -- cp -rf /r00t/dvlw/dvlp/kernels/linux/kache/. /mnt/c/users/%USERNAME%/kache/.
 
-    ECHO: default kernel !wsl_default_kernel!
-    @REM wsl.exe -d %wsl_distro% --user r00t --exec bash update-initramfs -u -k !wsl_default_kernel!
-    @REM wsl.exe -d %wsl_distro% --cd /hal --user agl --exec bash reclone-gh.sh autodel
-    wsl.exe -d %wsl_distro% -- cd ^$HOME ^&^& bash reclone-gh.sh autodel
+@REM     @REM ECHO: default kernel !wsl_default_kernel!
+@REM     @REM @REM wsl.exe -d %wsl_distro% --user r00t --exec bash update-initramfs -u -k !wsl_default_kernel!
+@REM     @REM @REM wsl.exe -d %wsl_distro% --cd /hal --user agl --exec bash reclone-gh.sh autodel
+@REM     @REM wsl.exe -d %wsl_distro% -- cd ^$HOME ^&^& bash reclone-gh.sh autodel
 
-    @REM wsl.exe -d %wsl_distro% --cd /hal/dvlw/dvlp/kernels/linux --user agl --exec bash install-kernel.sh %USERNAME% latest latest
-    wsl.exe -d %wsl_distro% -- cd ^$HOME/dvlw/dvlp/kernels/linux ^&^& bash install-kernel.sh %USERNAME% latest latest
+@REM     @REM @REM wsl.exe -d %wsl_distro% --cd /hal/dvlw/dvlp/kernels/linux --user agl --exec bash install-kernel.sh %USERNAME% latest latest
+@REM     @REM wsl.exe -d %wsl_distro% -- cd ^$HOME/dvlw/dvlp/kernels/linux ^&^& bash install-kernel.sh %USERNAME% latest latest
 
-)
-NET STOP LxssManager >NUL
-NET START LxssManager >NUL
+@REM )
+@REM NET STOP LxssManager >NUL
+@REM NET START LxssManager >NUL
 ECHO DONE
 IF "!default_wsl_distro!" == "y" (
     GOTO set_default_wsl_distro

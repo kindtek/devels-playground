@@ -655,7 +655,7 @@ RUN \
     git config --global --add safe.directory /r00t/dvlw/dvlp/kernels 
 RUN \
     # --mount=type=cache,target=/var/cache/kernel_${KERNEL_TYPE}_${KERNEL_FEATURE}_${CONFIG_FILE},sharing=private \
-    bash build-import-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}" 
+    bash build-export-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}" 
 WORKDIR /
 
 FROM dvlp_make-kernel AS dvlp_made-kernel
