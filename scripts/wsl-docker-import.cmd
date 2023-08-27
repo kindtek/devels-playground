@@ -452,10 +452,10 @@ IF "!image_service_suffix!" == "kernel" (
     ECHO service_suffix !service_suffix!
     SET "build_args=--build-arg WIN_USER=%USERNAME%"
     @REM SET "build_args=!build_args! --build-arg KERNEL_TYPE=stable --build-arg KERNEL_FEATURE=zfs"
-    SET "compose_services_nocache=build-repo build-repo-kernel"
+    SET "compose_services_nocache=repo repo-kernel"
     @REM SET "compose_services=!image_service!"
 ) ELSE (
-    SET "compose_services_nocache=build-repo"
+    SET "compose_services_nocache=repo"
 )
 @REM IF NOT "!image_service_base!" == "test" (
 @REM     ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build --no-cache !compose_services_nocache!
