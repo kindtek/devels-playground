@@ -445,6 +445,7 @@ services:
     build:
       context: .
       target: dvlp_bare
+      no_cache: true
     depends_on:
       base:
         # Wait for the ownership to change
@@ -457,7 +458,7 @@ services:
     volumes_from:
       - base
   git:
-    extends: base
+    extends: bare
     entrypoint: /bin/bash -c
     command:
       - tail -F /dev/null
@@ -483,7 +484,7 @@ services:
     build:
       args:
       - KERNEL_TYPE=basic
-      - KERNEL_FEATURE=zfs
+      - KERNEL_FEATURE
       - CONFIG_FILE
       - DOCKER_TIMESTAMP
     depends_on:
