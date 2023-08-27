@@ -565,8 +565,8 @@ mkdir !install_location! > nul 2> nul
 ECHO:
 SET "docker_image_do="
 ECHO initializing the image container...
-ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml up --build !compose_services_nocache!
-docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml up --build !compose_services_nocache!
+ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml up --build !compose_services_nocache! --detach
+docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml up --build !compose_services_nocache! --detach
 ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml up --build !image_service! --detach
 docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml up --build !image_service! --detach
 @REM ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml -- !image_service! sudo rm -vrf /var/cache/dvlp/archives && sudo apt update -y && sudo apt upgrade -y

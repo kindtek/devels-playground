@@ -1492,8 +1492,8 @@ ARG KERNEL_TYPE
 # ARG HOME_DIR="${LINUX:+'HOME_NIX'}"
 USER r00t
 WORKDIR /
-COPY --from=dvlp_repo-kernel ./repos/ ./
-COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
+COPY --from=dvlp_repo-kernel --chmod=1770 ./repos/ ./
+COPY --from=dvlp_repo-kernel --chmod=1770 ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
 # COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/${HOME_DIR}/ ./
 
 ############
