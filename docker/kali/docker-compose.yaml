@@ -445,7 +445,6 @@ services:
     build:
       context: .
       target: dvlp_bare
-      no_cache: true
     depends_on:
       base:
         # Wait for the ownership to change
@@ -482,6 +481,7 @@ services:
       - tail -F /dev/null
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-git-kernel
     build:
+      no_cache: true
       args:
       - KERNEL_TYPE=stable
       - KERNEL_FEATURE
