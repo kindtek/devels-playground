@@ -452,10 +452,10 @@ IF "!image_service_suffix!" == "kernel" (
     ECHO service_suffix !service_suffix!
     SET "build_args=--build-arg WIN_USER=%USERNAME%"
     @REM SET "build_args=!build_args! --build-arg KERNEL_TYPE=stable --build-arg KERNEL_FEATURE=zfs"
-    SET "compose_services_nocache=repo repo-kernel"
+    SET "compose_services_nocache=build-repo build-repo-kernel"
     @REM SET "compose_services=!image_service!"
 ) ELSE (
-    SET "compose_services_nocache=repo"
+    SET "compose_services_nocache=build-repo"
 )
 @REM IF NOT "!image_service_base!" == "test" (
 @REM     ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build --no-cache !compose_services_nocache!
@@ -575,8 +575,8 @@ SET "wsl_distro_test_pass=n"
 SET "test_string_path=%USERPROFILE%\.distro_test"
 ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo echo !test_string!
 docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo echo !test_string! > !test_string_path!
-ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! WSL_DISTRO_NAME='!wsl_distro!^'; export WSL_DISTRO_NAME
-docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! WSL_DISTRO_NAME='!wsl_distro!^'; export WSL_DISTRO_NAME
+ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! /bin/bash -c WSL_DISTRO_NAME='!wsl_distro!^'; export WSL_DISTRO_NAME
+docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! /bin/bash -c WSL_DISTRO_NAME='!wsl_distro!^'; export WSL_DISTRO_NAME
 SET /P wsl_out=<!test_string_path!
 IF "!image_repo!" == "kindtek" (
     IF "!wsl_out!" == "!test_string!" (
