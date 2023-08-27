@@ -572,6 +572,8 @@ SET "wsl_distro_test_pass=n"
 SET "test_string_path=%USERPROFILE%\.distro_test"
 ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo echo !test_string!
 docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo echo !test_string! > !test_string_path!
+ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! WSL_DISTRO_NAME='!wsl_distro!^'; export WSL_DISTRO_NAME
+docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! WSL_DISTRO_NAME='!wsl_distro!^'; export WSL_DISTRO_NAME
 SET /P wsl_out=<!test_string_path!
 IF "!image_repo!" == "kindtek" (
     IF "!wsl_out!" == "!test_string!" (
@@ -775,8 +777,8 @@ wsl.exe --import !wsl_distro! !install_location! !image_save_path! --version !ws
 
 @REM     @REM ECHO: default kernel !wsl_default_kernel!
 @REM     @REM @REM wsl.exe -d %wsl_distro% --user r00t --exec bash update-initramfs -u -k !wsl_default_kernel!
-@REM     @REM @REM wsl.exe -d %wsl_distro% --cd /hal --user agl --exec bash reclone-gh.sh autodel
-@REM     @REM wsl.exe -d %wsl_distro% -- cd ^$HOME ^&^& bash reclone-gh.sh autodel
+@REM     @REM @REM wsl.exe -d %wsl_distro% --cd /hal --user agl --exec bash reclone-gh.sh force
+@REM     @REM wsl.exe -d %wsl_distro% -- cd ^$HOME ^&^& bash reclone-gh.sh force
 
 @REM     @REM @REM wsl.exe -d %wsl_distro% --cd /hal/dvlw/dvlp/kernels/linux --user agl --exec bash install-kernel.sh %USERNAME% latest latest
 @REM     @REM wsl.exe -d %wsl_distro% -- cd ^$HOME/dvlw/dvlp/kernels/linux ^&^& bash install-kernel.sh %USERNAME% latest latest
