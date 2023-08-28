@@ -77,8 +77,8 @@ services:
       target: dvlp_base-skel
       context: .
       args:
-      - KERNEL_TYPE
-      - KERNEL_FEATURE
+      - KERNEL_TYPE=basic
+      - KERNEL_FEATURE=zfs
       - CONFIG_FILE
       - DOCKER_TIMESTAMP
     cap_add:
@@ -353,11 +353,6 @@ services:
     build:
       target: dvlp_base    # entrypoint: /bin/bash -c
     # command:  ["bash -i chroot --userspec=dvl:dvl /fs"]
-      args:
-      - KERNEL_TYPE
-      - KERNEL_FEATURE
-      - CONFIG_FILE
-      - DOCKER_TIMESTAMP
     cap_add:
       - AUDIT_WRITE
       - SYS_CHROOT
@@ -480,13 +475,6 @@ services:
     command:
       - tail -F /dev/null
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-git-kernel
-    build:
-      # no_cache: true
-      args:
-      - KERNEL_TYPE=stable
-      - KERNEL_FEATURE
-      - CONFIG_FILE
-      - DOCKER_TIMESTAMP
     depends_on:
       base: 
         condition: service_started
