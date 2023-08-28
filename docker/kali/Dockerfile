@@ -112,7 +112,7 @@ RUN \
     git config --global --add safe.directory /root && \
     git config --global --add safe.directory /r00t && \
     git config --global --add safe.directory /repos/dvlw && \
-    git config --global --add safe.directory /var/cache/dvlp/archives && \
+    git config --global --add safe.directory /var/cache/dvlp/build-repo-prep && \
     git config --global core.autocrlf input && \
     git config --global user.name 'Snail Mail' && \
     git config --global user.email '<>' && \
@@ -722,7 +722,7 @@ WORKDIR /
 # WORKDIR /r00t/dvlw
 WORKDIR /
 RUN \
-    --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
+    --mount=type=cache,target=/var/cache/dvlp/base,sharing=locked \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
@@ -760,7 +760,7 @@ RUN \
     rm -rf /var/cache/apt && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y  
 RUN \
-    --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
+    --mount=type=cache,target=/var/cache/dvlp/base-kernel,sharing=locked \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
@@ -982,7 +982,7 @@ RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
 RUN \
-    --mount=type=cache,target=/var/cache/dvlp/archives,sharing=locked \
+    --mount=type=cache,target=/var/cache/dvlp/scan,sharing=locked \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get --no-install-recommends -y install burpsuite finger hydra maltego metasploit-framework ncat nmap nikto rpcbind telnet wireshark
