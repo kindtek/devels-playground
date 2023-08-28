@@ -265,8 +265,15 @@ RUN mkdir -pv kache && \
     chmod -R 1770 /home/${_AGL} && \
     cp -prv * /home/${_AGL} 
 WORKDIR ${_MNT}
-RUN mkdir -pv bak/${_AGL} && \
-    chmod -R 1770 bak/${_AGL}
+RUN mkdir -pv c && \
+    mkdir -pv n && \
+    mkdir -pv dls && \
+    mkdir -pv bak && \
+    mkdir -pv bak/${_AGL} && \
+    chmod -R 1770 bak/${_AGL} && \
+    chmod -R 1770 c && \
+    chmod -R 1770 n && \
+    chmod -R 1770 ${_MNT}
 WORKDIR /
 
 ################################
@@ -320,7 +327,7 @@ RUN mkdir -pv dvlw && \
     ln -fsv dvlw/dvlp/docker docker 
 # && \
 # chmod -R 1770 /admin
-WORKDIR /mnt
+WORKDIR ${_MNT}
 RUN mkdir -pv dls && \
     mkdir -pv bak && \
     mkdir -pv etc && \
@@ -328,7 +335,7 @@ RUN mkdir -pv dls && \
     # mkdir -pv opt && \
     chmod -R 1770 dls && \
     chmod -R 1770 etc && \
-    chmod -R 1770 /mnt 
+    chmod -R 1770 ${_MNT}
 WORKDIR /
 
 ###############################
@@ -422,16 +429,13 @@ ARG DOCKER_BUILD_TIMESTAMP
 ARG installkernel
 ARG REFRESH_REPO
 USER root
-WORKDIR /mnt
+WORKDIR /
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/base-skel,sharing=locked \
     # mkdir -p /usr/lib/modules && \
-    mkdir -p /usr/lib/binfmt.d && \
-    mkdir -p /kache && \
-    mkdir -p /boot && \
-    # mkdir -p /r00t/dvlw && \
-    mkdir -m 1770 dls && \
-    # mkdir -m 1770 repos  && \
+    mkdir -pv /usr/lib/binfmt.d && \
+    mkdir -pv /kache && \
+    mkdir -pv /boot && \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo ':WSLInterop:M::MZ::/init:PF' > /usr/lib/binfmt.d/WSLInterop.conf && \
     echo 'Acquire::Retries "3";\
@@ -464,16 +468,19 @@ RUN \
     passwd -d r00t && \
     passwd -d root && \
     passwd -l root && \
+    mkdir -pv /mnt/dls && \
+    mkdir -pv /mnt/c && \
+    mkdir -pv /mnt/n && \
+    mkdir -pv ${_MNT}/dls && \
     # mkdir -p /r00t/dvlw && \
-    chown r00t:w0rld dls && \
-    # chown ${_AGL}:halo repos  && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt && \
+    # mkdir -m 1770 ${_MNT}/dls && \
+    # mkdir -m 1770 repos  && \
+    chown ${_AGL}:halo /mnt && \
+    chown ${_AGL}:halo /mnt/c && \
+    chown ${_AGL}:halo /mnt/n && \
+    chown r00t:w0rld /mnt/dls && \
     apt-get update --fix-missing -yq && apt-get install -f && apt-get upgrade -yq && \
-    apt-get install --no-install-recommends -y apt-utils apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh systemd-sysv sysvinit-utils wget && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y
+    apt-get install --no-install-recommends -y apt-utils apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh systemd-sysv sysvinit-utils wget 
 # COPY --from=dvlp_repos                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hel/
 # COPY --from=dvlp_repos                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hal/
 # COPY --from=dvlp_repos                       --chown=r00t:r00t       --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./r00t/
@@ -504,12 +511,12 @@ COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
 COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1774    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
-COPY --from=dvlp_repo                       --chown=r00t:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/ 
+COPY --from=dvlp_repo                       --chown=${_AGL}:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/ 
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./ ./
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./ ./
-COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw                   ./hal/dvlw
-COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw                   ./r00t/dvlw
-COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                  ./dvl/dvlw
+COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
+COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                  ./r00t/dvlw/
+COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                  ./dvl/dvlw/
 COPY --from=dvlp_base-built-r00t-volumes     --chown=r00t:r00t       --chmod=1770    ./admin/                       ./r00t/
 COPY --from=dvlp_base-built-devel-volumes    --chown=${_DVL}:hell    --chmod=1770    ./hel/                         ./hel/
 COPY --from=dvlp_base-built-angel-volumes    --chown=${_AGL}:halo    --chmod=1770    ./hal/                         ./hal/
@@ -533,7 +540,7 @@ COPY --from=dvlp_repo-kernel                              --chown=${_DVL}:hell  
 COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
 COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
 COPY --from=dvlp_repo-kernel                              --chown=r00t:r00t       --chmod=1774    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
-COPY --from=dvlp_repo-kernel                              --chown=r00t:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/ 
+COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/ 
 COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo    --chmod=1770    ./ ./
 COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo    --chmod=1770    ./ ./
 COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw                   ./hal/dvlw
@@ -1285,9 +1292,6 @@ ARG DOCKER_BUILD_TIMESTAMP
 ARG installkernel
 USER r00t
 WORKDIR /
-COPY --from=dvlp_python-build ./ ./
-COPY --from=dvlp_msdot-build-lite ./ ./
-COPY --from=dvlp_dind-build ./ ./
 RUN rm -rf /var/lib/apt/lists && \
     rm -rf /etc/ssl/certs && \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -1324,9 +1328,6 @@ ENV DEBCONF_NONINTERACTIVE_SEEN=true
 ARG REFRESH_REPO=${REFRESH_REPO:-yes}
 USER r00t
 WORKDIR /
-COPY --from=dvlp_python-build ./ ./
-COPY --from=dvlp_msdot-build-lite ./ ./
-COPY --from=dvlp_dind-build ./ ./
 RUN rm -rf /var/lib/apt/lists && \
     rm -rf /etc/ssl/certs && \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -1521,7 +1522,7 @@ USER r00t
 WORKDIR /
 COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/mnt/HOME_WIN/ ./
 COPY --from=dvlp_repo-kernel ./repos/dvlw/ ./repos/kindtek/dvlw/
-COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/kernels/linux/kache/ ./
+COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/kernels/linux/kache/ ./kache/
 # COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/${HOME_DIR}/ ./
 
 FROM kalilinux/kali-rolling:latest AS dvlp_k-home-win-user-mod
