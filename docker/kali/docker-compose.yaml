@@ -76,11 +76,8 @@ services:
     build:
       target: dvlp_base-skel
       context: .
-      args:
-      - KERNEL_TYPE=basic
-      - KERNEL_FEATURE=zfs
-      - CONFIG_FILE
-      - DOCKER_TIMESTAMP
+    environment:
+      - WIN_USER=$USERNAME
     cap_add:
       - AUDIT_WRITE
       - SYS_CHROOT
@@ -127,6 +124,11 @@ services:
     extends: vols
     build:
       target: dvlp_base-build-kernel-volumes
+      args:
+      - KERNEL_TYPE=basic
+      - KERNEL_FEATURE=zfs
+      - CONFIG_FILE
+      - DOCKER_TIMESTAMP
     depends_on:
       vols:
         condition: service_started
@@ -159,8 +161,6 @@ services:
   build-kernel:
     extends: vols-kernel
     tty: false
-    build:
-      target: dvlp_base-build-kernel
     depends_on:
       skel:
         # Wait for the ownership to change

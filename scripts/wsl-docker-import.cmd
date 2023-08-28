@@ -461,11 +461,11 @@ IF "!image_service_suffix!" == "kernel" (
 @REM     ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build --no-cache !compose_services_nocache!
 @REM     docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build --no-cache !compose_services_nocache!
 @REM )
-@REM force no cache when testing different kernel types
+@REM @REM force WIN_USER arg to set
 @REM IF "!image_service_suffix!" == "kernel" (
 @REM     @REM force rebuild of kernel
-@REM     @REM ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !build_args! kernel-make
-@REM     @REM docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !build_args! kernel-make
+@REM     ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !build_args! skel
+@REM     docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !build_args! skel
 @REM )
 @REM ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !build_args! !compose_services!
 @REM docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !build_args! !compose_services!
@@ -596,10 +596,10 @@ IF "!image_repo!" == "kindtek" (
     )
 )
 @REM @TODO: handle WSL_DOCKER_IMG_ID case of multiple ids returned from docker images query
-ECHO "docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml images -q !image_service! > !docker_image_id_path!"
+ECHO "SET WIN_USER=%USERNAME% ^& docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml images -q !image_service! > !docker_image_id_path!"
 docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml images -q !image_service! > !docker_image_id_path!
 SET /P WSL_DOCKER_IMG_ID_RAW=< !docker_image_id_path!
-ECHO "docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml ps -q !image_service! > !docker_container_id_path!"
+ECHO "SET WIN_USER=%USERNAME% ^& docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml ps -q !image_service! > !docker_container_id_path!"
 docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml ps -q !image_service! > !docker_container_id_path!
 SET /P WSL_DOCKER_CTR_ID_RAW=< !docker_container_id_path!
 SET WSL_DOCKER_CTR_ID=!WSL_DOCKER_CTR_ID_RAW!
