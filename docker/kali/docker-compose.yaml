@@ -481,7 +481,7 @@ services:
       - tail -F /dev/null
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-git-kernel
     build:
-      no_cache: true
+      # no_cache: true
       args:
       - KERNEL_TYPE=stable
       - KERNEL_FEATURE
@@ -489,6 +489,8 @@ services:
       - DOCKER_TIMESTAMP
     depends_on:
       base: 
+        condition: service_started
+      make-kernel:
         condition: service_started
   scan-build:
     entrypoint: /bin/bash -c
