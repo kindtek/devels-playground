@@ -461,7 +461,7 @@ IF "!image_service_suffix!" == "kernel" (
 @REM     ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !compose_services!
 @REM     docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !compose_services!
 @REM )
-@REM @REM force WIN_USER arg to set
+@REM force WIN_USER arg to set
 @REM IF "!image_service_suffix!" == "kernel" (
 @REM     @REM force rebuild of kernel
 @REM     ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build  --no-cache !build_args! !compose_services!
@@ -575,8 +575,8 @@ SET "wsl_distro_test_pass=n"
 SET "test_string_path=%USERPROFILE%\.distro_test"
 ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo echo !test_string!
 docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo echo !test_string! > !test_string_path!
-ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! /bin/bash -c WSL_DISTRO_NAME='!wsl_distro!^'; export WSL_DISTRO_NAME
-docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! /bin/bash -c WSL_DISTRO_NAME='!wsl_distro!^'; export WSL_DISTRO_NAME
+ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! /bin/bash -c WSL_DISTRO_NAME='!wsl_distro!'^;WIN_USER='%USERNAME%'^;export WSL_DISTRO_NAME^;export WIN_USER^;
+docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! /bin/bash -c WSL_DISTRO_NAME='!wsl_distro!'^;WIN_USER='%USERNAME%'^;export WSL_DISTRO_NAME^;export WIN_USER^;
 SET /P wsl_out=<!test_string_path!
 IF "!image_repo!" == "kindtek" (
     IF "!wsl_out!" == "!test_string!" (
