@@ -215,6 +215,48 @@ services:
         condition: service_started
     volumes_from:
       - vols-kernel
+  make-kernel-basic:
+    extends: make-kernel
+    build:
+      target: dvlp_make-kernel
+    environment:
+      - KERNEL_TYPE=basic
+      - KERNEL_FEATURE=
+  make-kernel-basic-zfs:
+    extends: make-kernel
+    build:
+      target: dvlp_make-kernel
+    environment:
+      - KERNEL_TYPE=basic
+      - KERNEL_FEATURE=zfs
+  make-kernel-stable:
+    extends: make-kernel
+    build:
+      target: dvlp_make-kernel
+    environment:
+      - KERNEL_TYPE=stable
+      - KERNEL_FEATURE=
+  make-kernel-stable-zfs:
+    extends: make-kernel
+    build:
+      target: dvlp_make-kernel
+    environment:
+      - KERNEL_TYPE=stable
+      - KERNEL_FEATURE=zfs
+  make-kernel-latest-zfs:
+    extends: make-kernel
+    build:
+      target: dvlp_make-kernel
+    environment:
+      - KERNEL_TYPE=latest
+      - KERNEL_FEATURE=zfs
+  make-kernel-latest:
+    extends: make-kernel
+    build:
+      target: dvlp_make-kernel
+    environment:
+      - KERNEL_TYPE=latest
+      - KERNEL_FEATURE=
   made-kernel:
     extends: make-kernel
     build:
