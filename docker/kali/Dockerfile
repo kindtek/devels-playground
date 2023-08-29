@@ -1353,15 +1353,20 @@ RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg a
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/gui,sharing=locked \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y brave-browser virtualbox vlc x11-apps  && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
-
+    apt-get install --no-install-recommends -y brave-browser && \
+    rm -rf /var/lib/apt/lists 
 # change last line of this file - fix for brave-browser displaying empty windows
 RUN cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
     head -n -1 /opt/brave.com/brave/brave-browser.old | tee /opt/brave.com/brave/brave-browser > /dev/null && \
     # now no longer need to add --disable-gpu flag everytime
     echo '"$HERE/brave" "$@" " --disable-gpu " || true' | tee --append /opt/brave.com/brave/brave-browser > /dev/null
+RUN \
+    --mount=type=cache,target=/var/cache/dvlp/gui,sharing=locked \
+    rm -rf /var/lib/apt/lists  && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    apt-get install --no-install-recommends -y vlc x11-apps  && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt
 COPY --from=dvlp_repo /repos/dvlw/dvlp/mnt/opt/* /opt/
 
 # # # this is a better way to do this but needs work
