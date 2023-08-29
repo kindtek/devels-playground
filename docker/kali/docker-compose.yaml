@@ -5,11 +5,6 @@ services:
     build:
       context: .
       target: dvlp_base-volumes
-      args:
-      - KERNEL_TYPE
-      - KERNEL_FEATURE
-      - CONFIG_FILE
-      - DOCKER_TIMESTAMP
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-test
     entrypoint: /bin/bash -c
     command:
@@ -40,11 +35,6 @@ services:
       context: .
       target: dvlp_repo
       no_cache: true
-      args:
-      - KERNEL_TYPE
-      - KERNEL_FEATURE
-      - CONFIG_FILE
-      - DOCKER_TIMESTAMP
     entrypoint: /bin/bash -c echo 'helloworld'
     command:
       - echo 'helloworld'
@@ -124,11 +114,6 @@ services:
     extends: vols
     build:
       target: dvlp_base-build-kernel-volumes
-      args:
-      - KERNEL_TYPE=basic
-      - KERNEL_FEATURE=zfs
-      - CONFIG_FILE
-      - DOCKER_TIMESTAMP
     volumes_from: 
       - vols
     volumes:
@@ -180,11 +165,10 @@ services:
       context: .
       target: dvlp_make-kernel
       no_cache: true
-      args:
+    environment:
       - KERNEL_TYPE=basic
       - KERNEL_FEATURE=zfs
-      - CONFIG_FILE
-      - DOCKER_TIMESTAMP
+      - CONFIG_FILE=${CONFIG_FILE}
     # entrypoint: /bin/bash  [ ! -f build-export-kernel.sh ] || bash build-export-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}"
     depends_on:
       skel:
@@ -201,11 +185,6 @@ services:
       context: .
       target: dvlp_make-kernel
       no_cache: false
-      args:
-      - KERNEL_TYPE=basic
-      - KERNEL_FEATURE=zfs
-      - CONFIG_FILE
-      - DOCKER_TIMESTAMP
     depends_on:
       skel:
         # Wait for the ownership to change
@@ -397,7 +376,6 @@ services:
   base:
     extends: skel
     user: r00t
-    # working_dir: /r00t/dvlw/dvlp/kernels/linux
     restart: on-failure
     privileged: true
     init: true
@@ -406,8 +384,10 @@ services:
     command:
       - /bin/bash -c echo 'helloworld command'
     build:
-      target: dvlp_base    # entrypoint: /bin/bash -c
-    # command:  ["bash -i chroot --userspec=dvl:dvl /fs"]
+      target: dvlp_base   
+      args:
+        - _AGL=${_AGL:-agl}
+        - _DVL=${_DVL:-dvl}
     cap_add:
       - AUDIT_WRITE
       - SYS_CHROOT
@@ -545,12 +525,9 @@ services:
     # command:  ["bash -i chroot --userspec=dvl:dvl /fs"]
     privileged: true
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-git-kernel
-    build:
-      args:
+    environment:
       - KERNEL_TYPE=basic
       - KERNEL_FEATURE=zfs
-      - CONFIG_FILE
-      - DOCKER_TIMESTAMP
     depends_on:
       base: 
         condition: service_completed_successfully
@@ -635,11 +612,6 @@ services:
     build:
       context: .
       target: dvlp_python
-      args:
-      - KERNEL_TYPE='basic'
-      - KERNEL_FEATURE='zfs'
-      - CONFIG_FILE
-      - DOCKER_TIMESTAMP
     depends_on:
       python-build:
         # Wait for the ownership to change
@@ -652,11 +624,6 @@ services:
     build:
       context: .
       target: dvlp_python
-      args:
-      - KERNEL_TYPE='basic'
-      - KERNEL_FEATURE='zfs'
-      - CONFIG_FILE
-      - DOCKER_TIMESTAMP
     depends_on:
       python-build:
         # Wait for the ownership to change
@@ -689,11 +656,7 @@ services:
       com.devels-playground.description: "basics + git + powerhell + docker"
   dind-kernel:
     extends: dind
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-dind-kernel
-    build:
-      args:
-      - KERNEL_TYPE='basic'
-      - KERNEL_FEATURE='zfs'
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-dind-kernel'
     depends_on:
       dind:
         condition: service_started
@@ -710,10 +673,6 @@ services:
   dind-lite-kernel:
     extends: dind-lite
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-dind-lite-kernel
-    build:
-      args:
-      - KERNEL_TYPE='basic'
-      - KERNEL_FEATURE='zfs'
     depends_on:
       dind-lite:
         condition: service_completed_successfully
@@ -738,10 +697,6 @@ services:
   gui-lite-kernel:
     extends: gui-lite
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-lite-kernel
-    build:
-      args:
-      - KERNEL_TYPE='basic'
-      - KERNEL_FEATURE='zfs'
     depends_on:
       gui-lite:
         condition: service_completed_successfully
@@ -760,9 +715,6 @@ services:
     build:
       context: .
       target: dvlp_gui
-      args:
-        - _AGL=${_AGL:-agl}
-        - _DVL=${_DVL_USR:-$_DVL}
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   # gui-kernel:
@@ -773,10 +725,6 @@ services:
   gui-kernel:
     extends: gui
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-kernel
-    build:
-      args:
-      - KERNEL_TYPE='basic'
-      - KERNEL_FEATURE='zfs'
     depends_on:
       gui:
         condition: service_completed_successfully
@@ -793,10 +741,6 @@ services:
   cuda-kernel:
     extends: cuda
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cuda-kernel
-    build:
-      args:
-      - KERNEL_TYPE='basic'
-      - KERNEL_FEATURE='zfs'
     depends_on:
       cuda:
         condition: service_completed_successfully
