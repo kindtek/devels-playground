@@ -480,7 +480,11 @@ RUN \
     chown ${_AGL}:halo /mnt/n && \
     chown r00t:w0rld /mnt/dls && \
     apt-get update --fix-missing -yq && apt-get install -f && apt-get upgrade -yq && \
-    apt-get install --no-install-recommends -y apt-utils apt-transport-https curl gh git gnupg2 libssl-dev pigz plzip nvi screen shellcheck ssh systemd-sysv sysvinit-utils wget 
+    apt-get install --no-install-recommends -y apt-utils apt-transport-https curl gh git gnupg2 libssl-dev locales pigz plzip nvi screen shellcheck ssh systemd-sysv sysvinit-utils wget && \    
+    update-locale LANGUAGE="C" && \
+    update-locale LANG="C" && \
+    update-locale LC_ALL="C" && \
+    ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime  
 # COPY --from=dvlp_repos                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hel/
 # COPY --from=dvlp_repos                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hal/
 # COPY --from=dvlp_repos                       --chown=r00t:r00t       --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./r00t/
@@ -1412,13 +1416,6 @@ RUN \
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/gui,sharing=locked \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install -y locales && \    
-    update-locale LANGUAGE="C" && \
-    update-locale LANG="C" && \
-    update-locale LC_ALL="C" && \
-    ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime  
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/gui,sharing=locked \
     apt-get install -y locales && \
     dpkg-reconfigure --frontend noninteractive locales && \
     echo "/usr/sbin/lightdm" | tee /etc/X11/default-display-manager && \
