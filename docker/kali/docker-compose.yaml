@@ -511,6 +511,9 @@ services:
         condition: service_completed_successfully
     env_file:
       - .env
+    volumes:
+      - /hal:/mnt/n/hal
+      - /hel:/mnt/n/hel
   git-kernel:
     extends: base-kernel
     entrypoint: /bin/bash -c
