@@ -166,7 +166,7 @@ services:
       target: dvlp_make-kernel
       no_cache: true
     environment:
-      - KERNEL_TYPE=basic
+      - KERNEL_TYPE=stable
       - KERNEL_FEATURE=zfs
       - CONFIG_FILE=${CONFIG_FILE}
     # entrypoint: /bin/bash  [ ! -f build-export-kernel.sh ] || bash build-export-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}"
@@ -529,7 +529,7 @@ services:
     privileged: true
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-git-kernel
     environment:
-      - KERNEL_TYPE=basic
+      - KERNEL_TYPE=stable
       - KERNEL_FEATURE=zfs
     depends_on:
       base: 
