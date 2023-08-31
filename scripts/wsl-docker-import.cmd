@@ -457,10 +457,12 @@ IF "!image_service_suffix!" == "kernel" (
 ) ELSE (
     SET "compose_services_nocache=repo"
 )
-@REM IF NOT "!image_service_base!" == "test" (
-@REM     ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !compose_services!
-@REM     docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !compose_services!
-@REM )
+IF NOT "!image_service_base!" == "test" (
+    IF "!wsl!" == "n" (
+        ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !compose_services!
+        docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !compose_services!
+    )
+)
 @REM force WIN_USER arg to set
 @REM IF "!image_service_suffix!" == "kernel" (
 @REM     @REM force rebuild of kernel

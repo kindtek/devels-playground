@@ -165,6 +165,9 @@ services:
       context: .
       target: dvlp_make-kernel
       no_cache: true
+      args:
+      - KERNEL_TYPE=stable
+      - KERNEL_FEATURE=zfs
     environment:
       - KERNEL_TYPE=stable
       - KERNEL_FEATURE=zfs
@@ -198,6 +201,9 @@ services:
     extends: make-kernel
     build:
       target: dvlp_make-kernel
+      args:
+      - KERNEL_TYPE=basic
+      - KERNEL_FEATURE=
     environment:
       - KERNEL_TYPE=basic
       - KERNEL_FEATURE=
@@ -205,6 +211,9 @@ services:
     extends: make-kernel
     build:
       target: dvlp_make-kernel
+      args:
+      - KERNEL_TYPE=basic
+      - KERNEL_FEATURE=zfs
     environment:
       - KERNEL_TYPE=basic
       - KERNEL_FEATURE=zfs
@@ -212,6 +221,9 @@ services:
     extends: make-kernel
     build:
       target: dvlp_make-kernel
+      args:
+      - KERNEL_TYPE=stable
+      - KERNEL_FEATURE=
     environment:
       - KERNEL_TYPE=stable
       - KERNEL_FEATURE=
@@ -219,6 +231,9 @@ services:
     extends: make-kernel
     build:
       target: dvlp_make-kernel
+      args:
+      - KERNEL_TYPE=stable
+      - KERNEL_FEATURE=zfs
     environment:
       - KERNEL_TYPE=stable
       - KERNEL_FEATURE=zfs
@@ -226,6 +241,9 @@ services:
     extends: make-kernel
     build:
       target: dvlp_make-kernel
+      args:
+      - KERNEL_TYPE=latest
+      - KERNEL_FEATURE=zfs
     environment:
       - KERNEL_TYPE=latest
       - KERNEL_FEATURE=zfs
@@ -233,6 +251,9 @@ services:
     extends: make-kernel
     build:
       target: dvlp_make-kernel
+      args:
+      - KERNEL_TYPE=latest
+      - KERNEL_FEATURE=
     environment:
       - KERNEL_TYPE=latest
       - KERNEL_FEATURE=
@@ -528,6 +549,10 @@ services:
     # command:  ["bash -i chroot --userspec=dvl:dvl /fs"]
     privileged: true
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-git-kernel
+    build:
+      args:
+      - KERNEL_TYPE=stable
+      - KERNEL_FEATURE=zfs
     environment:
       - KERNEL_TYPE=stable
       - KERNEL_FEATURE=zfs
