@@ -533,8 +533,8 @@ services:
     env_file:
       - .env
     volumes:
-      - /hal:/mnt/n/hal
-      - /hel:/mnt/n/hel
+      - home_agl:/mnt/n/hal
+      - home_dvl:/mnt/n/hel
   git-kernel:
     extends: base-kernel
     entrypoint: /bin/bash -c
