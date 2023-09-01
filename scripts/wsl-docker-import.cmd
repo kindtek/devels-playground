@@ -464,11 +464,11 @@ IF NOT "!image_service_base!" == "test" (
     )
 )
 @REM force WIN_USER arg to set
-@REM IF "!image_service_suffix!" == "kernel" (
-@REM     @REM force rebuild of kernel
-@REM     ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build  --no-cache !build_args! !compose_services!
-@REM     docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build  --no-cache !build_args! !compose_services!
-@REM )
+IF "!image_service_suffix!" == "kernel" (
+    @REM force rebuild of kernel
+    ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build  --no-cache !build_args! !compose_services_nocache!
+    docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build  --no-cache !build_args! !compose_services_nocache!
+)
 @REM ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !build_args! !compose_services!
 @REM docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !build_args! !compose_services!
 
