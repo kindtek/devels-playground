@@ -503,7 +503,7 @@ services:
     depends_on:
       base:
         # Wait for the ownership to change
-        condition: service_started
+        condition: service_completed_successfully
     init: true
     labels:
       com.devels-playground.description: "basics + git"
@@ -581,7 +581,7 @@ services:
     depends_on:
       base:
         # Wait for the ownership to change
-        condition: service_started
+        condition: service_completed_successfully
     labels:
       com.devels-playground.description: "basics + git"
 
@@ -604,6 +604,14 @@ services:
     labels:
       com.devels-playground.description: "basics + git"
 
+  python-build-lite:
+    extends: build
+    build:
+      context: .
+      target: dvlp_python-build-lite
+
+    labels:
+      com.devels-playground.description: "basics + git"
   python-build:
     extends: build
     build:
@@ -611,17 +619,10 @@ services:
       target: dvlp_python-build
     labels:
       com.devels-playground.description: "basics + git"
-  python-build-lite:
-    extends: build
-    build:
-      context: .
-      target: dvlp_python-build-lite
     depends_on:
-      python-build:
+      python-build-lite:
         # Wait for the ownership to change
         condition: service_started
-    labels:
-      com.devels-playground.description: "basics + git"
   python-lite:
     extends: git
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-python-lite${KERNEL_TYPE:+-kernel}
@@ -629,7 +630,7 @@ services:
       context: .
       target: dvlp_python
     depends_on:
-      python-build:
+      python-build-lite:
         # Wait for the ownership to change
         condition: service_started
     labels:
@@ -647,13 +648,16 @@ services:
     labels:
       com.devels-playground.description: "basics + git"
   python-kernel:
-    extends: python
+    extends: git-kernel
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-python-kernel
     build:
       context: .
       target: dvlp_python
     depends_on:
       python-build:
+        # Wait for the ownership to change
+        condition: service_started
+      python:
         # Wait for the ownership to change
         condition: service_started
     labels:
@@ -683,7 +687,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker"
   dind-kernel:
-    extends: dind
+    extends: git-kernel
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-dind-kernel'
     depends_on:
       dind:
@@ -699,11 +703,11 @@ services:
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel"
   dind-lite-kernel:
-    extends: dind-lite
+    extends: git-kernel
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-dind-lite-kernel
     depends_on:
       dind-lite:
-        condition: service_completed_successfully
+        condition: service_started
     labels:
       com.devels-playground.description: "basics + git"
   kernel-builder:
@@ -723,11 +727,11 @@ services:
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   gui-lite-kernel:
-    extends: gui-lite
+    extends: git-kernel
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-lite-kernel
     depends_on:
       gui-lite:
-        condition: service_completed_successfully
+        condition: service_started
     labels:
       com.devels-playground.description: "basics + git"
   gui:
@@ -751,7 +755,7 @@ services:
   #   labels:
   #     com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   gui-kernel:
-    extends: gui
+    extends: git-kernel
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-kernel
     depends_on:
       gui:
@@ -767,7 +771,7 @@ services:
       labels:
         com.devels-playground.description: "basics + git + powerhell + docker + gui + cuda"
   cuda-kernel:
-    extends: cuda
+    extends: git-kernel
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cuda-kernel
     depends_on:
       cuda:

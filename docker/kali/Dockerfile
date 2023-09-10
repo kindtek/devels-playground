@@ -1081,11 +1081,8 @@ RUN \
     mv packages-microsoft-prod.deb /var/cache/apt/archives/packages-microsoft-prod.deb && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/trusted.gpg.d//microsoft-prod.gpg] https://packages.microsoft.com/repos/microsoft-debian-bullseye-prod bullseye main" | tee /etc/apt/sources.list.d/microsoft-prod.list  > /dev/null && \
     dpkg -i /var/cache/apt/archives/packages-microsoft-prod.deb && \
-    # curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
-    wget -O - https://pkg.wslutiliti.es/public.key | tee --append /etc/apt/trusted.gpg.d/wslu.asc && \
-    echo "deb [arch=$(dpkg --print-architecture)] https://pkg.wslutiliti.es/kali kali-rolling main" | tee --append /etc/apt/sources.list && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install -y powershell wslu && \
+    apt-get install -y powershell && \
     rm -rf /var/cache/apt
 
 
@@ -1099,7 +1096,13 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y dotnet-sdk-7.0 && \
+    apt-get install --no-install-recommends -y apt-utils ca-certificates curl gnupg2 apt-transport-https lsb-release wget && \
+    curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
+    wget -O - https://pkg.wslutiliti.es/public.key | tee --append /etc/apt/trusted.gpg.d/wslu.asc && \
+    echo "deb [arch=$(dpkg --print-architecture)] https://pkg.wslutiliti.es/kali kali-rolling main" | tee --append /etc/apt/sources.list && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    # apt-get install -y powershell wslu && \
+    apt-get install --no-install-recommends -y dotnet-sdk-7.0 wslu && \
     rm -rf /var/cache/apt
 
 ########################
@@ -1182,7 +1185,7 @@ RUN \
 #######################
 # dvlp_dind #
 #######################
-FROM dvlp_base AS dvlp_dind
+FROM dvlp_git AS dvlp_dind
 USER r00t
 ARG CONFIG_FILE
 ARG KERNEL_TYPE
