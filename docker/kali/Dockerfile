@@ -92,11 +92,9 @@ RUN \
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/build-repo-prep,sharing=locked \
     rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt  && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install --no-install-recommends -y git && \
     apt-get --reinstall -y install ca-certificates && \
-    rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt 
 # add safe directories
 RUN \
@@ -115,9 +113,7 @@ RUN \
     git config --global --add safe.directory /var/cache/dvlp/build-repo-prep && \
     git config --global core.autocrlf input && \
     git config --global user.name 'Snail Mail' && \
-    git config --global user.email '<>' && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
+    git config --global user.email '<>' 
 ########################
 # dvlp_build-repo #
 #######################
@@ -162,10 +158,6 @@ RUN \
     git submodule update --init --progress --filter=blob:limit=20m -- kernels 
 
 FROM dvlp_build-repo${KERNEL_TYPE:+-kernel} AS dvlp_built-repo
-RUN \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y
     
 #############
 # dvlp_repo #
@@ -610,9 +602,7 @@ RUN \
     apt-get install --install-recommends -y alien autoconf apt-utils apt-transport-https bison bc build-essential busybox cpio curl dbus-user-session daemonize dwarves fakeroot flex fontconfig \
     gawk gh git gnupg2 kmod libblkid-dev libffi-dev libudev-dev libaio-dev libattr1-dev libelf-dev libpam-systemd libncurses-dev libssl-dev libssl-dev lightdm lxcfs pigz plymouth plzip pkg-config python3-dev \
     python3-setuptools python3-cffi nvi net-tools rsync screen shellcheck ssh systemd-sysv sysvinit-utils snapd systemd-sysv sysvinit-utils uuid-dev virtualbox zstd wget && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y
+    rm -rf /var/cache/apt
 
 FROM dvlp_base-build${KERNEL_TYPE:+-kernel} AS dvlp_base-built
 
@@ -655,7 +645,6 @@ USER r00t
 SHELL ["/bin/bash", "-c"]
 RUN \
     rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y
 
 # WORKDIR /
@@ -674,18 +663,12 @@ WORKDIR /
 USER r00t
 RUN \
     rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    rm -rf /var/cache/apt && \
-    rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 ONBUILD RUN \
     rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    rm -rf /var/cache/apt && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
+    rm -rf /var/cache/apt 
 
 FROM dvlp_make${KERNEL_TYPE:+-kernel} AS dvlp_made
 # every onbuild command in dvlp_make-kernel will be triggered to run here
@@ -735,18 +718,14 @@ WORKDIR /
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/base,sharing=locked \
     rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get purge -y openssh-server && \
     apt-get install --no-install-recommends -y sudo openssh-server && \
     usermod -aG docker root && \
     usermod -aG docker r00t && \
     usermod -aG sudo ${_AGL} && \
-    usermod -aG docker ${_AGL} 
-ONBUILD RUN \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y 
+    usermod -aG docker ${_AGL} && \
+    rm -rf /var/cache/apt 
 
 FROM dvlp_make-kernel AS dvlp_base-kernel
 ARG _MNT
@@ -767,20 +746,16 @@ ARG installkernel
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /
 RUN \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y  
-RUN \
     --mount=type=cache,target=/var/cache/dvlp/base-kernel,sharing=locked \
     rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get purge -y openssh-server && \
     apt-get install --no-install-recommends -y sudo openssh-server && \
     usermod -aG docker root && \
     usermod -aG docker r00t && \
     usermod -aG sudo ${_AGL} && \
-    usermod -aG docker ${_AGL} 
+    usermod -aG docker ${_AGL} && \
+    rm -rf /var/cache/apt 
 
 
 
@@ -870,17 +845,16 @@ ARG DOCKER_BUILD_TIMESTAMP
 ARG installkernel
 USER r00t
 WORKDIR /
-RUN echo "[user]" | tee /etc/wsl.conf
-RUN echo "default = ${_AGL}" | tee --append /etc/wsl.conf
-RUN rm -rf /etc/ssl/certs && \
-    apt-get update -y && apt-get upgrade -y && \
+RUN echo "[user]" | tee /etc/wsl.conf && \
+    echo "default = ${_AGL}" | tee --append /etc/wsl.conf && \
+    rm -rf /etc/ssl/certs && \
     apt-get --reinstall -y install ca-certificates && \
     update-ca-certificates && \
-    apt-get update -y && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     echo " \
     Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
-    rm -rf /var/cache/apt && \
-    rm -rf /var/lib/apt/lists
+    rm -rf /var/cache/apt 
 
 
 # ################################### GIT #########################################
@@ -911,14 +885,13 @@ ARG WIN_USER
 ARG DOCKER_BUILD_TIMESTAMP
 ARG installkernel
 RUN rm -rf /etc/ssl/certs && \
-    apt-get update -y && apt-get upgrade -y && \
     apt-get --reinstall -y install ca-certificates && \
     update-ca-certificates && \
-    apt-get update -y && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     echo " \
     Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
-    rm -rf /var/cache/apt && \
-    rm -rf /var/lib/apt/lists
+    rm -rf /var/cache/apt
 
 
 ########################
@@ -938,7 +911,6 @@ RUN \
     apt-get install -y software-properties-common && \
     apt-get update --fix-missing && apt-get install -f && \
     apt-get install -y  --install-suggests autoconf automake build-essential espeak ethtool expect hostapd iw lame libnl-3-dev libnl-genl-3-dev libpcre2-dev libhwloc-dev libssl-dev libsqlite3-dev libtool libcmocka-dev libpcap-dev pkg-config ruby-dev rfkill shtool screen strace tcpdump usbutils wpasupplicant zlib1g-dev && \
-    rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 WORKDIR /r00t/build
 RUN git clone https://github.com/nmap/nmap 
@@ -971,16 +943,13 @@ RUN \
 WORKDIR /
 USER r00t
 RUN rm -rf /etc/ssl/certs && \
-rm -rf /var/lib/apt/lists && \
-rm -rf /var/cache/apt && \
-apt-get update -y && apt-get upgrade -y && \
 apt-get --reinstall -y install ca-certificates && \
 update-ca-certificates && \
-apt-get update -y && apt-get upgrade -y && \
+rm -rf /var/lib/apt/lists && \
+apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
 echo " \
 Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
-rm -rf /var/cache/apt && \
-rm -rf /var/lib/apt/lists 
+rm -rf /var/cache/apt 
 
 ##################
 # dvlp_base-scan #
@@ -995,13 +964,10 @@ RUN \
     --mount=type=cache,target=/var/cache/dvlp/scan,sharing=locked \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get --no-install-recommends -y install burpsuite finger hydra maltego metasploit-framework ncat nmap nikto rpcbind telnet wireshark
-RUN \
-    apt-get update -y && apt-get upgrade -y && \
+    apt-get --no-install-recommends -y install burpsuite finger hydra maltego metasploit-framework ncat nmap nikto rpcbind telnet wireshark && \
     echo " \
 Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
-    rm -rf /var/cache/apt && \
-    rm -rf /var/lib/apt/lists
+    rm -rf /var/cache/apt
 
 ################################# PYTHON ########################################
 #####################
@@ -1017,24 +983,19 @@ USER r00t
 WORKDIR /
 
 RUN \
+    --mount=type=cache,target=/var/cache/dvlp/python,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    rm -rf /var/lib/apt/lists
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/python,sharing=locked \
+    rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get --no-install-recommends -y install apt-utils jq libdbus-1-dev libcairo2-dev libgirepository1.0-dev  libpython3-dev pkg-config python3-pip python3-venv && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y 
+    apt-get --no-install-recommends -y install apt-utils jq libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv  && \
+    rm -rf /var/cache/apt
 RUN \
-    --mount=type=cache,target=/var/cache/pip,sharing=private \
+    --mount=type=cache,target=/var/cache/pip,sharing=locked \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
-    python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps  && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y
+    python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps 
 # RUN \
 #     apt-get --no-install-recommends -y remove libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev 
-RUN \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
 ###############################
 # dvlp_python-build #
 ###############################
@@ -1045,15 +1006,12 @@ ARG angel_exists=true
 ARG devel_exists=true
 ARG r00t_exists=true
 RUN \
+    --mount=type=cache,target=/var/cache/dvlp/python,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     rm -rf /var/lib/apt/lists && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/python,sharing=locked \
-    rm -rf /var/cache/apt && \
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y jq python3-pip python3-venv libgirepository1.0-dev && \
-    rm -rf /var/lib/apt/lists && \
+    apt-get install --no-install-recommends -y jq python3-pip python3-venv && \
     rm -rf /var/cache/apt
 WORKDIR /r00t
 RUN \
@@ -1076,22 +1034,10 @@ RUN \
     pip3 install cdir --user || devel_exists=false 
 
 USER r00t
-RUN rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
-    
+WORKDIR /
 # RUN apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
 #     apt-get autoremove -y && apt-get remove -y libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev apt-utils
 
-RUN rm -rf /etc/ssl/certs && \
-    apt-get update -y && apt-get upgrade -y && \
-    apt-get --reinstall -y install ca-certificates && \
-    update-ca-certificates && \
-    apt-get update -y && apt-get upgrade -y && \
-    echo " \
-    Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
-    echo 'exit 0;' | tee /usr/sbin/policy-rc.d  && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
 
 
 # #########################
@@ -1108,10 +1054,10 @@ RUN rm -rf /etc/ssl/certs && \
 # WORKDIR / 
 # COPY --from=dvlp_python-build ./ ./
 # RUN rm -rf /etc/ssl/certs && \
-#     apt-get update -y && apt-get upgrade -y && \
+#     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
 #     apt-get --reinstall -y install ca-certificates && \
 #     update-ca-certificates && \
-#     apt-get update -y && apt-get upgrade -y && \
+#     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
 #     rm -rf /var/lib/apt/lists && \
 #     rm -rf /var/cache/apt
 
@@ -1125,23 +1071,21 @@ FROM dvlp_base AS dvlp_msdot-build-lite
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
 RUN \
+    --mount=type=cache,target=/var/cache/dvlp/msdot,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    rm -rf /var/lib/apt/lists 
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/msdot,sharing=locked \
+    rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install --no-install-recommends -y apt-utils ca-certificates curl gnupg2 apt-transport-https lsb-release wget && \
     wget "https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb" && \
-    mv packages-microsoft-prod.deb /var/cache/apt/archives && \
+    mv packages-microsoft-prod.deb /var/cache/apt/archives/packages-microsoft-prod.deb && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/trusted.gpg.d//microsoft-prod.gpg] https://packages.microsoft.com/repos/microsoft-debian-bullseye-prod bullseye main" | tee /etc/apt/sources.list.d/microsoft-prod.list  > /dev/null && \
     dpkg -i /var/cache/apt/archives/packages-microsoft-prod.deb && \
     # curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
     wget -O - https://pkg.wslutiliti.es/public.key | tee --append /etc/apt/trusted.gpg.d/wslu.asc && \
-    echo "deb [arch=$(dpkg --print-architecture)] https://pkg.wslutiliti.es/kali kali-rolling main" | tee --append /etc/apt/sources.list 
-RUN \
-    apt-get update -y && apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists && \
+    echo "deb [arch=$(dpkg --print-architecture)] https://pkg.wslutiliti.es/kali kali-rolling main" | tee --append /etc/apt/sources.list && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    apt-get install -y powershell wslu && \
     rm -rf /var/cache/apt
 
 
@@ -1150,16 +1094,13 @@ RUN \
 #########################
 FROM dvlp_msdot-build-lite AS dvlp_msdot-build
 RUN \
+    --mount=type=cache,target=/var/cache/dvlp/msdot,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    rm -rf /var/lib/apt/lists
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/msdot,sharing=locked \
+    rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y dotnet-sdk-7.0  
-RUN \
-    rm -rf /var/cache/apt && \
-    rm -rf /var/lib/apt/lists
+    apt-get install --no-install-recommends -y dotnet-sdk-7.0 && \
+    rm -rf /var/cache/apt
 
 ########################
 # dvlp_msdot-lite #
@@ -1175,18 +1116,14 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 USER r00t
 WORKDIR /
-COPY --from=dvlp_git ./ ./
-COPY --from=dvlp_python-build ./ ./
-COPY --from=dvlp_msdot-build-lite ./ ./
+COPY --from=dvlp_msdot-build-lite         ./      ./
 RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    rm -rf /var/lib/apt/lists && \
     rm -rf /etc/ssl/certs && \
-    apt-get update -y && apt-get upgrade -y && \
     apt-get --reinstall -y install ca-certificates && \
     update-ca-certificates && \
-    apt-get update -y && apt-get upgrade -y && \
     rm -rf /var/lib/apt/lists && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     rm -rf /var/cache/apt
 
 ########################
@@ -1210,16 +1147,14 @@ ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
 USER r00t
 WORKDIR /
-COPY --from=dvlp_base-build         ./      ./
+COPY --from=dvlp_msdot-build         ./      ./
 RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    rm -rf /var/lib/apt/lists && \
     rm -rf /etc/ssl/certs && \
-    apt-get update -y && apt-get upgrade -y && \
     apt-get --reinstall -y install ca-certificates && \
     update-ca-certificates && \
-    apt-get update -y && apt-get upgrade -y && \
     rm -rf /var/lib/apt/lists && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     rm -rf /var/cache/apt
 
 ########################## DOCKER IN DOCKER ######################################
@@ -1227,66 +1162,28 @@ RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
 # dvlp_dind-build #
 ########################
 FROM dvlp_base AS dvlp_dind-build
-# DOCKER - https://docs.docker.com/engine/install/ubuntu/
-RUN \
-    rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    rm -rf /var/lib/apt/lists
 USER r00t
 WORKDIR /
+# DOCKER - https://docs.docker.com/engine/install/ubuntu/
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/dind,sharing=locked \
+    rm -f /etc/apt/apt.conf.d/docker-clean && \
+    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
+    rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install --no-install-recommends -y ca-certificates curl lsb-release gpg && \
     mkdir -pv /etc/apt/keyrings && \
     curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg > /dev/null && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bookworm stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin gnupg
-RUN \
-    rm -rf /var/cache/apt && \
-    rm -rf /var/lib/apt/lists
-
-#######################
-# dvlp_dind-lite #
-#######################
-FROM dvlp_base AS dvlp_dind-lite
-USER r00t
-ARG CONFIG_FILE
-ARG KERNEL_TYPE
-ARG KERNEL_FEATURE
-ARG CONFIG_FILE
-ARG WIN_USER
-ARG DOCKER_BUILD_TIMESTAMP
-ARG installkernel
-USER r00t
-WORKDIR /
-COPY --from=dvlp_python-build ./ ./
-COPY --from=dvlp_msdot-build ./ ./
-COPY --from=dvlp_dind-build ./ ./
-RUN rm -rf /var/lib/apt/lists && \
-    rm -rf /etc/ssl/certs && \
-    rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    apt-get update -y && apt-get upgrade -y && \
-    apt-get --reinstall -y install ca-certificates && \
-    update-ca-certificates && \
-    apt-get update -y && apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists && \
+    apt-get install --no-install-recommends -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin gnupg && \
     rm -rf /var/cache/apt
 
-##################
+#######################
 # dvlp_dind #
-##################
+#######################
 FROM dvlp_base AS dvlp_dind
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
-ARG _AGL=${_AGL:-agl}
-ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-ARG REFRESH_REPO
+USER r00t
 ARG CONFIG_FILE
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
@@ -1296,23 +1193,23 @@ ARG DOCKER_BUILD_TIMESTAMP
 ARG installkernel
 USER r00t
 WORKDIR /
-RUN rm -rf /var/lib/apt/lists && \
-    rm -rf /etc/ssl/certs && \
-    rm -f /etc/apt/apt.conf.d/docker-clean && \
+COPY --from=dvlp_dind-build ./ ./
+RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    apt-get update -y && apt-get upgrade -y && \
+    rm -rf /etc/ssl/certs && \
     apt-get --reinstall -y install ca-certificates && \
     update-ca-certificates && \
-    apt-get update -y && apt-get upgrade -y && \
     rm -rf /var/lib/apt/lists && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     rm -rf /var/cache/apt
+
 
 #################################### GUI ######################################
 ##################
 # dvlp_gui-lite #
 #################
 # wsl2 required
-FROM dvlp_dind-lite AS dvlp_gui-lite
+FROM dvlp_dind AS dvlp_gui-lite
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -1332,44 +1229,28 @@ ENV DEBCONF_NONINTERACTIVE_SEEN=true
 ARG REFRESH_REPO=${REFRESH_REPO:-yes}
 USER r00t
 WORKDIR /
-RUN rm -rf /var/lib/apt/lists && \
-    rm -rf /etc/ssl/certs && \
+COPY --from=dvlp_python ./ ./
+COPY --from=dvlp_msdot-build-lite ./ ./
+RUN \
+    --mount=type=cache,target=/var/cache/dvlp/gui,sharing=locked \
+    rm -rf /var/lib/apt/lists && \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    apt-get update -y && apt-get upgrade -y && \
-    apt-get --reinstall -y install ca-certificates && \
-    update-ca-certificates && \
-    apt-get update -y && apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
-
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/gui,sharing=locked \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    rm -rf /etc/ssl/certs && \
     apt-get --reinstall -y install ca-certificates && \
     update-ca-certificates && \
-    apt-get install --install-recommends -y apt-transport-https curl 
-# for brave install - https://linuxhint.com/install-brave-browser-ubuntu22-04/
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/gui,sharing=locked \
-    curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg 
-RUN echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | tee /etc/apt/sources.list.d/brave-browser-release.list 
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/gui,sharing=locked \
+    apt-get install --install-recommends -y apt-transport-https curl && \
+    curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | tee /etc/apt/sources.list.d/brave-browser-release.list && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install --no-install-recommends -y brave-browser && \
-    rm -rf /var/lib/apt/lists 
 # change last line of this file - fix for brave-browser displaying empty windows
-RUN cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
+    cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
     head -n -1 /opt/brave.com/brave/brave-browser.old | tee /opt/brave.com/brave/brave-browser > /dev/null && \
     # now no longer need to add --disable-gpu flag everytime
-    echo '"$HERE/brave" "$@" " --disable-gpu " || true' | tee --append /opt/brave.com/brave/brave-browser > /dev/null
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/gui,sharing=locked \
-    rm -rf /var/lib/apt/lists  && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y vlc x11-apps  && \
-    rm -rf /var/lib/apt/lists && \
+    echo '"$HERE/brave" "$@" " --disable-gpu " || true' | tee --append /opt/brave.com/brave/brave-browser > /dev/null && \
+    apt-get install --no-install-recommends -y vlc x11-apps qemu-system-gui qemu-kvm libvirt-clients libvirt-daemon-system bridge-utils && \
     rm -rf /var/cache/apt
 COPY --from=dvlp_repo /repos/dvlw/dvlp/mnt/opt/* /opt/
 
@@ -1378,18 +1259,6 @@ COPY --from=dvlp_repo /repos/dvlw/dvlp/mnt/opt/* /opt/
 # # # brave_old_line='\"\$HERE\/brave\"\s\"\$\@\"\s\|\|\strue' && \
 # # # brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
 # # # sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/${_DVL} && \
-USER r00t
-WORKDIR /
-RUN rm -rf /var/lib/apt/lists &&\
-    rm -rf /etc/ssl/certs && \
-    apt-get update -y && apt-get upgrade -y && \
-    apt-get --reinstall -y install ca-certificates && \
-    update-ca-certificates && \
-    apt-get update -y && apt-get upgrade -y && \
-    echo " \
-    Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
 
 
 #################
@@ -1410,41 +1279,39 @@ ARG DEBCONF_NONINTERACTIVE_SEEN
 USER r00t
 WORKDIR /
 RUN \
+    --mount=type=cache,target=/var/cache/dvlp/gui,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
     rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/gui,sharing=locked \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install -y xrdp xfce4 xfce4-goodies 
+    apt-get install -y gobject-introspection libgirepository1.0-dev xrdp xfce4 xfce4-goodies && \
+    rm -rf /var/cache/apt 
     # MUST install this separately and AFTER xfce or xfce prompting to choose default dm will hang/break build
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/gui,sharing=locked \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install -y locales && \
     dpkg-reconfigure --frontend noninteractive locales && \
     echo "/usr/sbin/lightdm" | tee /etc/X11/default-display-manager && \
-    locale-gen && update-locale 
+    locale-gen && update-locale && \
+    rm -rf /var/cache/apt 
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/gui,sharing=locked \
     apt-get install -y lightdm && \
     echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
-    rm -rf /var/lib/apt/lists 
+    rm -rf /var/cache/apt 
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/gui,sharing=locked \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y locales kali-defaults kali-root-login desktop-base kali-win-kex kali-desktop-xfce pulseaudio-module-xrdp && \
-    rm -rf /var/lib/apt/lists
+    apt-get install --no-install-recommends -y locales kali-defaults kali-root-login desktop-base kali-win-kex kali-desktop-xfce pulseaudio-module-xrdp virt-manager virtualbox && \
+    rm -rf /var/cache/apt 
 COPY --from=dvlp_repo --chmod=755 /repos/dvlw/dvlp/mnt/etc/* /etc/
 RUN rm -rf /etc/ssl/certs && \
-    apt-get update -y && apt-get upgrade -y && \
     apt-get --reinstall -y install ca-certificates && \
     update-ca-certificates && \
-    apt-get update -y && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     echo " \
     Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
-    rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 
 
@@ -1468,13 +1335,12 @@ WORKDIR /
 # COPY --from=dvlp_base-kernel-build ./ ./
 # # COPY --from=dvlp_base-kernel-lite ./ ./
 RUN rm -rf /etc/ssl/certs && \
-    apt-get update -y && apt-get upgrade -y && \
     apt-get --reinstall -y install ca-certificates && \
     update-ca-certificates && \
-    apt-get update -y && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     echo " \
     Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
-    rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 
 ###################################################################
