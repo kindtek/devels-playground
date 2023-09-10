@@ -607,9 +607,9 @@ WORKDIR /
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/build-kernel,sharing=locked \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install --install-recommends -y alien autoconf apt-utils apt-transport-https bison bc build-essential cpio curl dbus-user-session daemonize dwarves fakeroot flex fontconfig \
-    gawk gh git gnupg2 kmod libblkid-dev libffi-dev lxcfs libudev-dev libaio-dev libattr1-dev libelf-dev libpam-systemd libncurses-dev libssl-dev libssl-dev pigz plzip pkg-config python3-dev \
-    python3-setuptools python3-cffi nvi net-tools rsync screen shellcheck ssh systemd-sysv sysvinit-utils snapd systemd-sysv sysvinit-utils uuid-dev zstd wget && \
+    apt-get install --install-recommends -y alien autoconf apt-utils apt-transport-https bison bc build-essential busybox cpio curl dbus-user-session daemonize dwarves fakeroot flex fontconfig \
+    gawk gh git gnupg2 kmod libblkid-dev libffi-dev libudev-dev libaio-dev libattr1-dev libelf-dev libpam-systemd libncurses-dev libssl-dev libssl-dev lightdm lxcfs pigz plymouth plzip pkg-config python3-dev \
+    python3-setuptools python3-cffi nvi net-tools rsync screen shellcheck ssh systemd-sysv sysvinit-utils snapd systemd-sysv sysvinit-utils uuid-dev virtualbox zstd wget && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y
@@ -986,7 +986,7 @@ rm -rf /var/lib/apt/lists
 # dvlp_base-scan #
 ##################
 FROM dvlp_base-scan-build AS dvlp_base-scan
-COPY --from=dvlp_python-lite ./ ./
+COPY --from=dvlp_python ./ ./
 USER r00t
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -1038,7 +1038,7 @@ RUN \
 ###############################
 # dvlp_python-build #
 ###############################
-FROM dvlp_python-build AS dvlp_python-lite
+FROM dvlp_python-build AS dvlp_python
 USER r00t
 WORKDIR /
 ARG angel_exists=true
@@ -1052,7 +1052,7 @@ RUN \
     --mount=type=cache,target=/var/cache/dvlp/python,sharing=locked \
     rm -rf /var/cache/apt && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y jq python3-pip python3-venv && \
+    apt-get install --no-install-recommends -y jq python3-pip python3-venv libgirepository1.0-dev && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 WORKDIR /r00t
@@ -1079,8 +1079,8 @@ USER r00t
 RUN rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
     
-RUN apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get autoremove -y && apt-get remove -y libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev apt-utils
+# RUN apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+#     apt-get autoremove -y && apt-get remove -y libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev apt-utils
 
 RUN rm -rf /etc/ssl/certs && \
     apt-get update -y && apt-get upgrade -y && \
@@ -1094,26 +1094,26 @@ RUN rm -rf /etc/ssl/certs && \
     rm -rf /var/cache/apt
 
 
-#########################
-# dvlp_python-lite #
-#########################
-FROM dvlp_python-lite AS dvlp_python
-ARG CONFIG_FILE
-ARG KERNEL_TYPE
-ARG KERNEL_FEATURE
-ARG WIN_USER
-ARG DOCKER_BUILD_TIMESTAMP
-ARG installkernel
-USER r00t
-WORKDIR / 
-COPY --from=dvlp_python-build ./ ./
-RUN rm -rf /etc/ssl/certs && \
-    apt-get update -y && apt-get upgrade -y && \
-    apt-get --reinstall -y install ca-certificates && \
-    update-ca-certificates && \
-    apt-get update -y && apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
+# #########################
+# # dvlp_python-lite #
+# #########################
+# FROM dvlp_python-lite AS dvlp_python-lite
+# ARG CONFIG_FILE
+# ARG KERNEL_TYPE
+# ARG KERNEL_FEATURE
+# ARG WIN_USER
+# ARG DOCKER_BUILD_TIMESTAMP
+# ARG installkernel
+# USER r00t
+# WORKDIR / 
+# COPY --from=dvlp_python-build ./ ./
+# RUN rm -rf /etc/ssl/certs && \
+#     apt-get update -y && apt-get upgrade -y && \
+#     apt-get --reinstall -y install ca-certificates && \
+#     update-ca-certificates && \
+#     apt-get update -y && apt-get upgrade -y && \
+#     rm -rf /var/lib/apt/lists && \
+#     rm -rf /var/cache/apt
 
 
 ######### POWERHELL ###########
@@ -1412,7 +1412,13 @@ WORKDIR /
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    rm -rf /var/lib/apt/lists 
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt
+RUN \
+    --mount=type=cache,target=/var/cache/dvlp/gui,sharing=locked \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    apt-get install -y xrdp xfce4 xfce4-goodies 
+    # MUST install this separately and AFTER xfce or xfce prompting to choose default dm will hang/break build
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/gui,sharing=locked \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
@@ -1420,11 +1426,6 @@ RUN \
     dpkg-reconfigure --frontend noninteractive locales && \
     echo "/usr/sbin/lightdm" | tee /etc/X11/default-display-manager && \
     locale-gen && update-locale 
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/gui,sharing=locked \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install -y xrdp xfce4 xfce4-goodies 
-    # MUST install this separately and AFTER xfce or xfce prompting to choose default dm will hang/break build
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/gui,sharing=locked \
     apt-get install -y lightdm && \

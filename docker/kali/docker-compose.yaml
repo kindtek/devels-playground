@@ -627,9 +627,9 @@ services:
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-python-lite${KERNEL_TYPE:+-kernel}
     build:
       context: .
-      target: dvlp_python-lite
+      target: dvlp_python
     depends_on:
-      python-build-lite:
+      python-build:
         # Wait for the ownership to change
         condition: service_started
     labels:
