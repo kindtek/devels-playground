@@ -95,7 +95,8 @@ RUN \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install --no-install-recommends -y git && \
     apt-get --reinstall -y install ca-certificates && \
-    rm -rf /var/cache/apt 
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt
 # add safe directories
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/build-repo-prep,sharing=locked  \
@@ -369,49 +370,6 @@ ARG _AGL=${_AGL:-agl}
 ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
-ARG KERNEL_TYPE
-ARG KERNEL_FEATURE
-ARG CONFIG_FILE
-ARG WIN_USER
-ARG DOCKER_BUILD_TIMESTAMP
-ARG installkernel
-USER root
-WORKDIR /
-
-# COPY --from=dvlp_base-r00t-volumes             --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
-# COPY --from=dvlp_base-devel-volumes            --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
-# COPY --from=dvlp_base-angel-volumes            --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
-# COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hel/
-# COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hal/
-# COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./r00t/
-# COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./repos/dvlw/
-# COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                   ./hel/dvlw/
-# COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
-# COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
-# COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1774    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
-# COPY --from=dvlp_repo                       --chown=r00t:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/
-
-# ONBUILD COPY --from=dvlp_repo${KERNEL_TYPE:+-kernel}                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hel/
-# ONBUILD COPY --from=dvlp_repo${KERNEL_TYPE:+-kernel}                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hal/
-# ONBUILD COPY --from=dvlp_repo${KERNEL_TYPE:+-kernel}                       --chown=r00t:r00t       --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./r00t/
-# ONBUILD COPY --from=dvlp_repo${KERNEL_TYPE:+-kernel}                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./repos/dvlw/
-# ONBUILD COPY --from=dvlp_repo${KERNEL_TYPE:+-kernel}                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                   ./hel/dvlw/
-# ONBUILD COPY --from=dvlp_repo${KERNEL_TYPE:+-kernel}                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
-# ONBUILD COPY --from=dvlp_repo${KERNEL_TYPE:+-kernel}                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
-# ONBUILD COPY --from=dvlp_repo${KERNEL_TYPE:+-kernel}                       --chown=r00t:r00t       --chmod=1774    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
-# ONBUILD COPY --from=dvlp_repo${KERNEL_TYPE:+-kernel}                       --chown=r00t:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/
-# ONBUILD COPY --from=dvlp_base-r00t${KERNEL_TYPE:+-kernel}-volumes             --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
-# ONBUILD COPY --from=dvlp_base-devel${KERNEL_TYPE:+-kernel}-volumes            --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
-# ONBUILD COPY --from=dvlp_base-angel${KERNEL_TYPE:+-kernel}-volumes            --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
-
-ARG _MNT
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
-ARG _AGL=${_AGL:-agl}
-ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
@@ -419,7 +377,6 @@ ARG CONFIG_FILE
 ARG WIN_USER
 ARG DOCKER_BUILD_TIMESTAMP
 ARG installkernel
-ARG REFRESH_REPO
 USER root
 WORKDIR /
 RUN \
@@ -471,12 +428,16 @@ RUN \
     chown ${_AGL}:halo /mnt/c && \
     chown ${_AGL}:halo /mnt/n && \
     chown r00t:w0rld /mnt/dls && \
-    apt-get update --fix-missing -yq && apt-get install -f && apt-get upgrade -yq && \
-    apt-get install --no-install-recommends -y apt-utils apt-transport-https curl gh git gnupg2 libssl-dev locales pigz plzip nvi screen shellcheck ssh systemd-sysv sysvinit-utils wget && \    
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    apt-get purge -y openssh-server && \
+    apt-get install --no-install-recommends -y apt-utils apt-transport-https curl libssl-dev locales openssh-server sudo ssh systemd-sysv sysvinit-utils wget && \   
     update-locale LANGUAGE="C" && \
     update-locale LANG="C" && \
     update-locale LC_ALL="C" && \
-    ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime  
+    ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime  && \
+    apt-get update --fix-missing -yq && apt-get install -f && apt-get upgrade -yq && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt
 # COPY --from=dvlp_repos                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hel/
 # COPY --from=dvlp_repos                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hal/
 # COPY --from=dvlp_repos                       --chown=r00t:r00t       --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./r00t/
@@ -563,18 +524,6 @@ ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ENV DEBIAN_FRONTEND=noninteractive
-# COPY --from=dvlp_repos                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hel/
-# COPY --from=dvlp_repos                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hal/
-# COPY --from=dvlp_repos                       --chown=r00t:r00t       --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./r00t/
-# COPY --from=dvlp_repos                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./repos/dvlw/
-# COPY --from=dvlp_repos                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                   ./hel/dvlw/
-# COPY --from=dvlp_repos                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
-# COPY --from=dvlp_repos                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
-# COPY --from=dvlp_repos                       --chown=r00t:r00t       --chmod=1774    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
-# COPY --from=dvlp_repos                       --chown=r00t:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/
-# COPY --from=dvlp_repos                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hel/
-# COPY --from=dvlp_repos                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./hal/
-# COPY --from=dvlp_repos                       --chown=r00t:r00t       --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/     ./r00t/
 
 ############################# BASE BUILD KERNEL ###################################
 
@@ -602,6 +551,8 @@ RUN \
     apt-get install --install-recommends -y alien autoconf apt-utils apt-transport-https bison bc build-essential busybox cpio curl dbus-user-session daemonize dwarves fakeroot flex fontconfig \
     gawk gh git gnupg2 kmod libblkid-dev libffi-dev libudev-dev libaio-dev libattr1-dev libelf-dev libpam-systemd libncurses-dev libssl-dev libssl-dev lightdm lxcfs pigz plymouth plzip pkg-config python3-dev \
     python3-setuptools python3-cffi nvi net-tools rsync screen shellcheck ssh systemd-sysv sysvinit-utils snapd systemd-sysv sysvinit-utils uuid-dev virtualbox zstd wget && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 
 FROM dvlp_base-build${KERNEL_TYPE:+-kernel} AS dvlp_base-built
@@ -613,7 +564,6 @@ FROM dvlp_base-build${KERNEL_TYPE:+-kernel}  AS dvlp_base-builder
 WORKDIR /
 RUN \
     rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y
 
 FROM dvlp_base-build AS dvlp_make
@@ -656,6 +606,11 @@ RUN \
 RUN \
     # --mount=type=cache,target=/var/cache/kernel_${KERNEL_TYPE}_${KERNEL_FEATURE}_${CONFIG_FILE},sharing=private \
     bash build-export-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}" 
+RUN \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt
+
 WORKDIR /
 
 FROM dvlp_make-kernel AS dvlp_made-kernel
@@ -664,10 +619,12 @@ USER r00t
 RUN \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 ONBUILD RUN \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt 
 
 FROM dvlp_make${KERNEL_TYPE:+-kernel} AS dvlp_made
@@ -720,11 +677,13 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get purge -y openssh-server && \
-    apt-get install --no-install-recommends -y sudo openssh-server && \
+    apt-get install --no-install-recommends -y apt-utils apt-transport-https curl libssl-dev locales openssh-server sudo ssh systemd-sysv sysvinit-utils wget && \
     usermod -aG docker root && \
     usermod -aG docker r00t && \
     usermod -aG sudo ${_AGL} && \
     usermod -aG docker ${_AGL} && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt 
 
 FROM dvlp_make-kernel AS dvlp_base-kernel
@@ -750,11 +709,12 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get purge -y openssh-server && \
-    apt-get install --no-install-recommends -y sudo openssh-server && \
+    apt-get install --no-install-recommends -y apt-utils apt-transport-https curl libssl-dev locales openssh-server sudo ssh systemd-sysv sysvinit-utils wget && \    
     usermod -aG docker root && \
     usermod -aG docker r00t && \
     usermod -aG sudo ${_AGL} && \
     usermod -aG docker ${_AGL} && \
+    rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt 
 
 
@@ -847,13 +807,14 @@ USER r00t
 WORKDIR /
 RUN echo "[user]" | tee /etc/wsl.conf && \
     echo "default = ${_AGL}" | tee --append /etc/wsl.conf && \
-    rm -rf /etc/ssl/certs && \
-    apt-get --reinstall -y install ca-certificates && \
+    rm -rf /etc/ssl/certs/* && \
+    apt-get -y install ca-certificates && \
     update-ca-certificates && \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     echo " \
     Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
+    rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt 
 
 
@@ -862,11 +823,11 @@ RUN echo "[user]" | tee /etc/wsl.conf && \
 ########################
 # dvlp_git        #
 ########################
-FROM dvlp_base${KERNEL_TYPE:+-kernel} AS dvlp_git-build
+FROM dvlp_base${KERNEL_TYPE:+-kernel} AS dvlp_git-base
 
-FROM dvlp_git-build AS dvlp_git-build-kernel
+FROM dvlp_git-base AS dvlp_git-base-kernel
 
-FROM dvlp_git-build${KERNEL_TYPE:+-kernel} as dvlp_git_built
+FROM dvlp_git-base${KERNEL_TYPE:+-kernel} as dvlp_git_built
 
 FROM dvlp_git_built AS dvlp_git
 ARG _AGL_USR
@@ -884,20 +845,21 @@ ARG CONFIG_FILE
 ARG WIN_USER
 ARG DOCKER_BUILD_TIMESTAMP
 ARG installkernel
-RUN rm -rf /etc/ssl/certs && \
-    apt-get --reinstall -y install ca-certificates && \
-    update-ca-certificates && \
-    rm -rf /var/lib/apt/lists && \
+RUN rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    # rm -rf /etc/ssl/certs/* && \
+    # apt-get -y install ca-certificates && \
+    # update-ca-certificates && \
     echo " \
     Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
+    rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 
 
 ########################
 # dvlp_base-scan-build #
 ########################
-FROM dvlp_git AS dvlp_base-scan-build
+FROM dvlp_base-skel AS dvlp_base-scan-build
 USER r00t
 SHELL ["/bin/bash", "-c"]
 WORKDIR /r00t/build
@@ -911,6 +873,7 @@ RUN \
     apt-get install -y software-properties-common && \
     apt-get update --fix-missing && apt-get install -f && \
     apt-get install -y  --install-suggests autoconf automake build-essential espeak ethtool expect hostapd iw lame libnl-3-dev libnl-genl-3-dev libpcre2-dev libhwloc-dev libssl-dev libsqlite3-dev libtool libcmocka-dev libpcap-dev pkg-config ruby-dev rfkill shtool screen strace tcpdump usbutils wpasupplicant zlib1g-dev && \
+    rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 WORKDIR /r00t/build
 RUN git clone https://github.com/nmap/nmap 
@@ -942,13 +905,14 @@ RUN \
     yes "" | ./install 
 WORKDIR /
 USER r00t
-RUN rm -rf /etc/ssl/certs && \
-apt-get --reinstall -y install ca-certificates && \
+RUN rm -rf /etc/ssl/certs/* && \
+apt-get -y install ca-certificates && \
 update-ca-certificates && \
 rm -rf /var/lib/apt/lists && \
 apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
 echo " \
 Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
+rm -rf /var/lib/apt/lists && \
 rm -rf /var/cache/apt 
 
 ##################
@@ -967,13 +931,14 @@ RUN \
     apt-get --no-install-recommends -y install burpsuite finger hydra maltego metasploit-framework ncat nmap nikto rpcbind telnet wireshark && \
     echo " \
 Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
+    rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 
 ################################# PYTHON ########################################
 #####################
 # dvlp_python-build #
 #####################
-FROM dvlp_base AS dvlp_python-build
+FROM dvlp_base-skel AS dvlp_python-build
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _AGL=${_AGL:-agl}
@@ -989,6 +954,7 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get --no-install-recommends -y install apt-utils jq libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv  && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     rm -rf /var/cache/apt
 RUN \
     --mount=type=cache,target=/var/cache/pip,sharing=locked \
@@ -1012,6 +978,7 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install --no-install-recommends -y jq python3-pip python3-venv && \
+    rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 WORKDIR /r00t
 RUN \
@@ -1053,9 +1020,9 @@ WORKDIR /
 # USER r00t
 # WORKDIR / 
 # COPY --from=dvlp_python-build ./ ./
-# RUN rm -rf /etc/ssl/certs && \
+# RUN rm -rf /etc/ssl/certs/* && \
 #     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-#     apt-get --reinstall -y install ca-certificates && \
+#     apt-get -y install ca-certificates && \
 #     update-ca-certificates && \
 #     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
 #     rm -rf /var/lib/apt/lists && \
@@ -1066,7 +1033,7 @@ WORKDIR /
 ###############################
 # dvlp_msdot-build-lite #
 ##############################
-FROM dvlp_base AS dvlp_msdot-build-lite
+FROM dvlp_base-skel AS dvlp_msdot-build-lite
 
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
@@ -1083,6 +1050,8 @@ RUN \
     dpkg -i /var/cache/apt/archives/packages-microsoft-prod.deb && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install -y powershell && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 
 
@@ -1103,6 +1072,8 @@ RUN \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     # apt-get install -y powershell wslu && \
     apt-get install --no-install-recommends -y dotnet-sdk-7.0 wslu && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 
 ########################
@@ -1119,14 +1090,14 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 USER r00t
 WORKDIR /
-COPY --from=dvlp_msdot-build-lite         ./      ./
 RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    rm -rf /etc/ssl/certs && \
-    apt-get --reinstall -y install ca-certificates && \
+    rm -rf /etc/ssl/certs/* && \
+    apt-get -y install ca-certificates && \
     update-ca-certificates && \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 
 ########################
@@ -1150,21 +1121,22 @@ ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
 USER r00t
 WORKDIR /
-COPY --from=dvlp_msdot-build         ./      ./
+COPY --from=dvlp_msdot-build ./ ./
 RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    rm -rf /etc/ssl/certs && \
-    apt-get --reinstall -y install ca-certificates && \
+    rm -rf /etc/ssl/certs/* && \
+    apt-get -y install ca-certificates && \
     update-ca-certificates && \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 
 ########################## DOCKER IN DOCKER ######################################
 ########################
 # dvlp_dind-build #
 ########################
-FROM dvlp_base AS dvlp_dind-build
+FROM dvlp_base-skel AS dvlp_dind-build
 USER r00t
 WORKDIR /
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
@@ -1180,14 +1152,22 @@ RUN \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bookworm stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install --no-install-recommends -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin gnupg && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 
 #######################
 # dvlp_dind #
 #######################
-FROM dvlp_git AS dvlp_dind
+FROM dvlp_dind-build AS dvlp_dind-base
+ONBUILD COPY --from=dvlp_base${KERNEL_TYPE:+-kernel} ./ ./
+
+FROM dvlp_dind-base AS dvlp_dind-base-kernel
+
+FROM dvlp_dind-base${KERNEL_TYPE:+-kernel} as dvlp_dind_built
+
+FROM dvlp_dind_built AS dvlp_dind
 USER r00t
-ARG CONFIG_FILE
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
 ARG CONFIG_FILE
@@ -1196,14 +1176,14 @@ ARG DOCKER_BUILD_TIMESTAMP
 ARG installkernel
 USER r00t
 WORKDIR /
-COPY --from=dvlp_dind-build ./ ./
 RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    rm -rf /etc/ssl/certs && \
-    apt-get --reinstall -y install ca-certificates && \
+    rm -rf /etc/ssl/certs/* && \
+    apt-get -y install ca-certificates && \
     update-ca-certificates && \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 
 
@@ -1232,20 +1212,21 @@ ENV DEBCONF_NONINTERACTIVE_SEEN=true
 ARG REFRESH_REPO=${REFRESH_REPO:-yes}
 USER r00t
 WORKDIR /
-COPY --from=dvlp_python ./ ./
-COPY --from=dvlp_msdot-build-lite ./ ./
+# COPY --from=dvlp_python ./ ./
+# COPY --from=dvlp_msdot-build-lite ./ ./
 RUN \
-    --mount=type=cache,target=/var/cache/dvlp/gui,sharing=locked \
+    --mount=type=cache,target=/var/cache/dvlp/gui-lite,sharing=locked \
     rm -rf /var/lib/apt/lists && \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    rm -rf /etc/ssl/certs && \
-    apt-get --reinstall -y install ca-certificates && \
-    update-ca-certificates && \
+# RUN \
+#     rm -rf /etc/ssl/certs/* && \
+#     update-ca-certificates 
     apt-get install --install-recommends -y apt-transport-https curl && \
     curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | tee /etc/apt/sources.list.d/brave-browser-release.list && \
+    rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install --no-install-recommends -y brave-browser && \
 # change last line of this file - fix for brave-browser displaying empty windows
@@ -1254,6 +1235,7 @@ RUN \
     # now no longer need to add --disable-gpu flag everytime
     echo '"$HERE/brave" "$@" " --disable-gpu " || true' | tee --append /opt/brave.com/brave/brave-browser > /dev/null && \
     apt-get install --no-install-recommends -y vlc x11-apps qemu-system-gui qemu-kvm libvirt-clients libvirt-daemon-system bridge-utils && \
+    rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 COPY --from=dvlp_repo /repos/dvlw/dvlp/mnt/opt/* /opt/
 
@@ -1308,13 +1290,14 @@ RUN \
     apt-get install --no-install-recommends -y locales kali-defaults kali-root-login desktop-base kali-win-kex kali-desktop-xfce pulseaudio-module-xrdp virt-manager virtualbox && \
     rm -rf /var/cache/apt 
 COPY --from=dvlp_repo --chmod=755 /repos/dvlw/dvlp/mnt/etc/* /etc/
-RUN rm -rf /etc/ssl/certs && \
-    apt-get --reinstall -y install ca-certificates && \
+RUN rm -rf /etc/ssl/certs/* && \
+    apt-get -y install ca-certificates && \
     update-ca-certificates && \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     echo " \
     Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
+    rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 
 
@@ -1332,18 +1315,14 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 USER r00t
 WORKDIR /
-# COPY --from=dvlp_python-build ./ ./
-# COPY --from=dvlp_msdot-build-lite ./ ./
-# COPY --from=dvlp_dind-build ./ ./
-# COPY --from=dvlp_base-kernel-build ./ ./
-# # COPY --from=dvlp_base-kernel-lite ./ ./
-RUN rm -rf /etc/ssl/certs && \
-    apt-get --reinstall -y install ca-certificates && \
+RUN rm -rf /etc/ssl/certs/* && \
+    apt-get -y install ca-certificates && \
     update-ca-certificates && \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     echo " \
     Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
+    rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 
 ###################################################################
@@ -1394,7 +1373,8 @@ USER r00t
 WORKDIR /
 COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/mnt/HOME_WIN/ ./
 COPY --from=dvlp_repo-kernel ./repos/dvlw/ ./repos/kindtek/dvlw/
-COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/kernels/linux/kache/ ./kache/
+COPY --from=dvlp_repo-kernel ./kache/ ./kache/
+COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/kernels/linux/kache/wsl* ./kache/
 # COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/${HOME_DIR}/ ./
 
 FROM kalilinux/kali-rolling:latest AS dvlp_k-home-win-user-mod

@@ -164,7 +164,7 @@ services:
     build:
       context: .
       target: dvlp_make-kernel
-      no_cache: true
+      no_cache: false
       args:
       - KERNEL_TYPE=stable
       - KERNEL_FEATURE=zfs
@@ -517,11 +517,7 @@ services:
       - mnt-data:/mnt/data
   git:
     extends: bare
-    entrypoint: /bin/bash -c
-    command:
-      - tail -F /dev/null
     build:
-      context: .
       target: dvlp_git
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-git${KERNEL_TYPE:+-kernel}
     labels:
@@ -529,20 +525,17 @@ services:
     depends_on:
       base:
         # Wait for the ownership to change
-        condition: service_completed_successfully
+        condition: service_started
     env_file:
       - .env
     volumes:
       - home_agl:/mnt/n/hal
       - home_dvl:/mnt/n/hel
   git-kernel:
-    extends: base-kernel
+    extends: bare
     entrypoint: /bin/bash -c
     command:
       - tail -F /dev/null
-    # user: ${_AGL}
-    user: ${_AGL}
-    working_dir: /hal
     restart: on-failure
     tty: true
     # entrypoint: /bin/bash -c
@@ -550,6 +543,7 @@ services:
     privileged: true
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-git-kernel
     build:
+      target: dvlp_git
       args:
       - KERNEL_TYPE=stable
       - KERNEL_FEATURE=zfs
@@ -557,40 +551,40 @@ services:
       - KERNEL_TYPE=stable
       - KERNEL_FEATURE=zfs
     depends_on:
-      base: 
+      base-kernel: 
         condition: service_completed_successfully
       make-kernel:
         condition: service_completed_successfully
     volumes_from:
       - vols-kernel
-  scan-build:
-    entrypoint: /bin/bash -c
-    command:
-      - sleep infinity
-    # user: ${_AGL}
-    extends: base
-    working_dir: /hal
-    restart: on-failure
-    tty: true
-    privileged: true
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-scan-build${KERNEL_TYPE:+-kernel}
-    # extends: kernel
-    build:
-      context: .
-      target: dvlp_scan-build
-    depends_on:
-      base:
-        # Wait for the ownership to change
-        condition: service_completed_successfully
-    labels:
-      com.devels-playground.description: "basics + git"
+  # scan-build:
+  #   entrypoint: /bin/bash -c
+  #   command:
+  #     - sleep infinity
+  #   # user: ${_AGL}
+  #   extends: base
+  #   working_dir: /hal
+  #   restart: on-failure
+  #   tty: true
+  #   privileged: true
+  #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-scan-build${KERNEL_TYPE:+-kernel}
+  #   # extends: kernel
+  #   build:
+  #     context: .
+  #     target: dvlp_scan-build
+  #   depends_on:
+  #     base:
+  #       # Wait for the ownership to change
+  #       condition: service_completed_successfully
+  #   labels:
+  #     com.devels-playground.description: "basics + git"
 
   scan:
     entrypoint: /bin/bash -c
     command:
       - sleep infinity
     # user: ${_AGL}
-    extends: scan-build
+    # extends: scan-build
     privileged: true
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-scan${KERNEL_TYPE:+-kernel}
     # extends: kernel
@@ -604,35 +598,35 @@ services:
     labels:
       com.devels-playground.description: "basics + git"
 
-  python-build-lite:
-    extends: build
-    build:
-      context: .
-      target: dvlp_python-build-lite
+  # python-build-lite:
+  #   extends: build
+  #   build:
+  #     context: .
+  #     target: dvlp_python-build-lite
 
-    labels:
-      com.devels-playground.description: "basics + git"
-  python-build:
-    extends: build
-    build:
-      context: .
-      target: dvlp_python-build
-    labels:
-      com.devels-playground.description: "basics + git"
-    depends_on:
-      python-build-lite:
-        # Wait for the ownership to change
-        condition: service_started
+  #   labels:
+  #     com.devels-playground.description: "basics + git"
+  # python-build:
+  #   extends: build
+  #   build:
+  #     context: .
+  #     target: dvlp_python-build
+  #   labels:
+  #     com.devels-playground.description: "basics + git"
+  #   depends_on:
+  #     python-build-lite:
+  #       # Wait for the ownership to change
+  #       condition: service_started
   python-lite:
     extends: git
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-python-lite${KERNEL_TYPE:+-kernel}
     build:
       context: .
       target: dvlp_python
-    depends_on:
-      python-build-lite:
-        # Wait for the ownership to change
-        condition: service_started
+    # depends_on:
+    #   python-build-lite:
+    #     # Wait for the ownership to change
+    #     condition: service_started
     labels:
       com.devels-playground.description: "basics + git"
   python:
@@ -641,25 +635,24 @@ services:
     build:
       context: .
       target: dvlp_python
-    depends_on:
-      python-build:
-        # Wait for the ownership to change
-        condition: service_started
+    # depends_on:
+    #   python-build:
+    #     # Wait for the ownership to change
+    #     condition: service_started
     labels:
       com.devels-playground.description: "basics + git"
   python-kernel:
     extends: git-kernel
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-python-kernel
     build:
-      context: .
       target: dvlp_python
-    depends_on:
-      python-build:
-        # Wait for the ownership to change
-        condition: service_started
-      python:
-        # Wait for the ownership to change
-        condition: service_started
+    # depends_on:
+    #   python-build:
+    #     # Wait for the ownership to change
+    #     condition: service_started
+      # python:
+      #   # Wait for the ownership to change
+      #   condition: service_started
     labels:
       com.devels-playground.description: "basics + git"
   msdot-lite:
@@ -688,10 +681,12 @@ services:
       com.devels-playground.description: "basics + git + powerhell + docker"
   dind-kernel:
     extends: git-kernel
+    build:
+      target: dvlp_dind
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-dind-kernel'
-    depends_on:
-      dind:
-        condition: service_started
+    # depends_on:
+    #   dind:
+    #     condition: service_started
     labels:
       com.devels-playground.description: "basics + git"
   dind-lite:
@@ -704,14 +699,16 @@ services:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel"
   dind-lite-kernel:
     extends: git-kernel
+    build:
+      target: dvlp_dind-lite
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-dind-lite-kernel
-    depends_on:
-      dind-lite:
-        condition: service_started
+    # depends_on:
+    #   dind-lite:
+    #     condition: service_started
     labels:
       com.devels-playground.description: "basics + git"
   kernel-builder:
-    extends: git
+    extends: git-kernel
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kernel-builder
     build:
       context: .
@@ -728,10 +725,12 @@ services:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   gui-lite-kernel:
     extends: git-kernel
+    build:
+      target: dvlp_gui-lite
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-lite-kernel
-    depends_on:
-      gui-lite:
-        condition: service_started
+    # depends_on:
+    #   gui-lite:
+    #     condition: service_started
     labels:
       com.devels-playground.description: "basics + git"
   gui:
@@ -756,14 +755,16 @@ services:
   #     com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
   gui-kernel:
     extends: git-kernel
+    build:
+      target: dvlp_gui
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-kernel
-    depends_on:
-      gui:
-        condition: service_completed_successfully
+    # depends_on:
+    #   gui:
+    #     condition: service_started
     labels:
       com.devels-playground.description: "basics + git"
   cuda:
-    extends: gui
+    extends: git
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cuda${KERNEL_TYPE:+-kernel}
     build:
       context: .
@@ -775,7 +776,7 @@ services:
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cuda-kernel
     depends_on:
       cuda:
-        condition: service_completed_successfully
+        condition: service_started
     labels:
       com.devels-playground.description: "basics + git"
   # cuda-kernel:
