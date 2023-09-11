@@ -430,7 +430,7 @@ RUN \
     chown r00t:w0rld /mnt/dls && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get purge -y openssh-server && \
-    apt-get install --no-install-recommends -y apt-utils apt-transport-https curl libssl-dev locales openssh-server sudo ssh systemd-sysv sysvinit-utils wget && \   
+    apt-get install --no-install-recommends -y curl locales openssh-server ssh systemd-sysv sysvinit-utils wget && \   
     update-locale LANGUAGE="C" && \
     update-locale LANG="C" && \
     update-locale LC_ALL="C" && \
@@ -827,9 +827,9 @@ FROM dvlp_base${KERNEL_TYPE:+-kernel} AS dvlp_git-base
 
 FROM dvlp_git-base AS dvlp_git-base-kernel
 
-FROM dvlp_git-base${KERNEL_TYPE:+-kernel} as dvlp_git_built
+FROM dvlp_git-base${KERNEL_TYPE:+-kernel} as dvlp_git-built
 
-FROM dvlp_git_built AS dvlp_git
+FROM dvlp_git-built AS dvlp_git
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -1160,13 +1160,14 @@ RUN \
 # dvlp_dind #
 #######################
 FROM dvlp_dind-build AS dvlp_dind-base
-ONBUILD COPY --from=dvlp_base${KERNEL_TYPE:+-kernel} ./ ./
+COPY --from=dvlp_base ./ ./
 
-FROM dvlp_dind-base AS dvlp_dind-base-kernel
+FROM dvlp_dind-build AS dvlp_dind-base-kernel
+COPY --from=dvlp_base-kernel ./ ./
 
 FROM dvlp_dind-base${KERNEL_TYPE:+-kernel} as dvlp_dind_built
 
-FROM dvlp_dind_built AS dvlp_dind
+FROM dvlp_dind-built AS dvlp_dind
 USER r00t
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
@@ -1191,8 +1192,19 @@ RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
 ##################
 # dvlp_gui-lite #
 #################
-# wsl2 required
-FROM dvlp_dind AS dvlp_gui-lite
+FROM scratch AS dvlp_gui-lite-base
+COPY --from=dvlp_python ./ ./
+COPY --from=dvlp_msdot-build-lite ./ ./
+COPY --from=dvlp_base ./ ./
+
+FROM scratch AS dvlp_gui-lite-base-kernel
+COPY --from=dvlp_python ./ ./
+COPY --from=dvlp_msdot-build-lite ./ ./
+COPY --from=dvlp_base-kernel ./ ./
+
+FROM dvlp_gui-lite-base${KERNEL_TYPE:+-kernel} as dvlp_gui-lite-built
+
+FROM dvlp_gui-lite-built AS dvlp_gui-lite
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -1212,8 +1224,6 @@ ENV DEBCONF_NONINTERACTIVE_SEEN=true
 ARG REFRESH_REPO=${REFRESH_REPO:-yes}
 USER r00t
 WORKDIR /
-# COPY --from=dvlp_python ./ ./
-# COPY --from=dvlp_msdot-build-lite ./ ./
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/gui-lite,sharing=locked \
     rm -rf /var/lib/apt/lists && \

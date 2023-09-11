@@ -495,6 +495,8 @@ services:
     # entrypoint: /bin/bash -c
     # command:  ["bash -i chroot --userspec=dvl:dvl /fs"]
     privileged: true
+    expose:
+      - "3390"
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-bare${KERNEL_TYPE:+-kernel}
     # extends: kernel
     build:
