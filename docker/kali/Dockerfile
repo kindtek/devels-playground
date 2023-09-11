@@ -1179,9 +1179,9 @@ USER r00t
 WORKDIR /
 RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    # rm -rf /etc/ssl/certs/* && \
-    # apt-get -y install ca-certificates && \
-    # update-ca-certificates && \
+    rm -rf /etc/ssl/certs/* && \
+    apt-get -y install ca-certificates && \
+    update-ca-certificates && \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     rm -rf /var/lib/apt/lists && \
@@ -1194,13 +1194,37 @@ RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
 #################
 FROM scratch AS dvlp_gui-lite-base
 COPY --from=dvlp_python ./ ./
+RUN rm -rf /var/lib/apt/lists && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt
 COPY --from=dvlp_msdot-build-lite ./ ./
+RUN rm -rf /var/lib/apt/lists && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt
 COPY --from=dvlp_base ./ ./
+RUN rm -rf /var/lib/apt/lists && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt
 
 FROM scratch AS dvlp_gui-lite-base-kernel
 COPY --from=dvlp_python ./ ./
+RUN rm -rf /var/lib/apt/lists && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt
 COPY --from=dvlp_msdot-build-lite ./ ./
+RUN rm -rf /var/lib/apt/lists && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt
 COPY --from=dvlp_base-kernel ./ ./
+RUN rm -rf /var/lib/apt/lists && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt
 
 FROM dvlp_gui-lite-base${KERNEL_TYPE:+-kernel} as dvlp_gui-lite-built
 
@@ -1280,27 +1304,15 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install -y gobject-introspection libgirepository1.0-dev xrdp xfce4 xfce4-goodies && \
-    rm -rf /var/cache/apt 
-    # MUST install this separately and AFTER xfce or xfce prompting to choose default dm will hang/break build
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/gui,sharing=locked \
     apt-get install -y locales && \
     dpkg-reconfigure --frontend noninteractive locales && \
     echo "/usr/sbin/lightdm" | tee /etc/X11/default-display-manager && \
     locale-gen && update-locale && \
-    rm -rf /var/cache/apt 
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/gui,sharing=locked \
     apt-get install -y lightdm && \
     echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
-    rm -rf /var/cache/apt 
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/gui,sharing=locked \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install --no-install-recommends -y locales kali-defaults kali-root-login desktop-base kali-win-kex kali-desktop-xfce pulseaudio-module-xrdp virt-manager virtualbox && \
-    rm -rf /var/cache/apt 
-COPY --from=dvlp_repo --chmod=755 /repos/dvlw/dvlp/mnt/etc/* /etc/
-RUN rm -rf /etc/ssl/certs/* && \
+    rm -rf /etc/ssl/certs/* && \
     apt-get -y install ca-certificates && \
     update-ca-certificates && \
     rm -rf /var/lib/apt/lists && \
@@ -1309,6 +1321,8 @@ RUN rm -rf /etc/ssl/certs/* && \
     Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
+COPY --from=dvlp_repo --chmod=755 /repos/dvlw/dvlp/mnt/etc/* /etc/
+
 
 
 ############################## CUDA ###############################
