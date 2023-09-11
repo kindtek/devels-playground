@@ -1374,7 +1374,7 @@ WORKDIR /
 COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/mnt/HOME_WIN/ ./
 COPY --from=dvlp_repo-kernel ./repos/dvlw/ ./repos/kindtek/dvlw/
 COPY --from=dvlp_repo-kernel ./kache/ ./kache/
-COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/kernels/linux/kache/wsl* ./kache/
+COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/kernels/linux/kache/wsl* ./
 # COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/${HOME_DIR}/ ./
 
 FROM kalilinux/kali-rolling:latest AS dvlp_k-home-win-user-mod
