@@ -1165,9 +1165,9 @@ COPY --from=dvlp_base ./ ./
 FROM dvlp_dind-build AS dvlp_dind-base-kernel
 COPY --from=dvlp_base-kernel ./ ./
 
-FROM dvlp_dind-base${KERNEL_TYPE:+-kernel} as dvlp_dind_built
+FROM dvlp_dind-base${KERNEL_TYPE:+-kernel} AS dvlp_dind_built
 
-FROM dvlp_dind-built AS dvlp_dind
+FROM dvlp_dind_built AS dvlp_dind
 USER r00t
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
@@ -1179,9 +1179,9 @@ USER r00t
 WORKDIR /
 RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    rm -rf /etc/ssl/certs/* && \
-    apt-get -y install ca-certificates && \
-    update-ca-certificates && \
+    # rm -rf /etc/ssl/certs/* && \
+    # apt-get -y install ca-certificates && \
+    # update-ca-certificates && \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     rm -rf /var/lib/apt/lists && \
