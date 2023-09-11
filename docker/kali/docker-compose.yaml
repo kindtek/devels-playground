@@ -164,7 +164,7 @@ services:
     build:
       context: .
       target: dvlp_make-kernel
-      no_cache: false
+      no_cache: true
       args:
       - KERNEL_TYPE=stable
       - KERNEL_FEATURE=zfs
