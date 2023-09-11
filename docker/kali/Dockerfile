@@ -1383,7 +1383,6 @@ USER r00t
 WORKDIR /
 COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/mnt/HOME_WIN/ ./
 COPY --from=dvlp_repo-kernel ./repos/dvlw/ ./repos/kindtek/dvlw/
-COPY --from=dvlp_repo-kernel ./kache/ ./kache/
 COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/kernels/linux/kache/wsl* ./
 # COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/${HOME_DIR}/ ./
 
