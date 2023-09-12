@@ -1203,6 +1203,11 @@ RUN rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
+COPY --from=dvlp_docker-build ./ ./
+RUN rm -rf /var/lib/apt/lists && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt
 COPY --from=dvlp_base ./ ./
 RUN rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
@@ -1216,6 +1221,11 @@ RUN rm -rf /var/lib/apt/lists && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 COPY --from=dvlp_msdot-build-lite ./ ./
+RUN rm -rf /var/lib/apt/lists && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt
+COPY --from=dvlp_docker-build ./ ./
 RUN rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     rm -rf /var/lib/apt/lists && \
