@@ -467,7 +467,7 @@ COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770
 COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                   ./hel/dvlw/
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
-COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1774    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
+COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1775    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/ 
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./ ./
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./ ./
@@ -496,7 +496,7 @@ COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo  
 COPY --from=dvlp_repo-kernel                              --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                   ./hel/dvlw/
 COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
 COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
-COPY --from=dvlp_repo-kernel                              --chown=r00t:r00t       --chmod=1774    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
+COPY --from=dvlp_repo-kernel                              --chown=r00t:r00t       --chmod=1775    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
 COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/ 
 COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo    --chmod=1770    ./ ./
 COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo    --chmod=1770    ./ ./
