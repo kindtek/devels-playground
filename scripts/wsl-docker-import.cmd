@@ -277,13 +277,13 @@ IF "!wsl_distro!" == "!failsafe_wsl_distro!" (
     @REM need better check for duplicate distro - use randomization for now
     wsl.exe -d !wsl_distro! echo !test_string! > !test_string_path!
     SET /P wsl_out=<!test_string_path!
+    DEL !test_string_path!
     IF "!DVLP_DEBUG!" == "y" (
         ECHO !wsl_distro! is not failsafe distro
         ECHO image_save_path: !image_save_path!
         ECHO image_install_location: !install_location!
         ECHO wsl test string: !wsl_out! ^(!test_string_path!^)
     )
-    DEL !test_string_path!
 
     @REM IF "!wsl_out!" == "!test_string!" (
     @REM     @REM we have a duplicate
@@ -579,6 +579,7 @@ docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose
 ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! /bin/bash -c WSL_DISTRO_NAME='!wsl_distro!'^;WIN_USER='%USERNAME%'^;export WSL_DISTRO_NAME^;export WIN_USER^;
 docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! /bin/bash -c WSL_DISTRO_NAME='!wsl_distro!'^;WIN_USER='%USERNAME%'^;export WSL_DISTRO_NAME^;export WIN_USER^;
 SET /P wsl_out=<!test_string_path!
+DEL !test_string_path!
 IF "!image_repo!" == "kindtek" (
     IF "!wsl_out!" == "!test_string!" (
         @REM ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
@@ -832,8 +833,8 @@ ECHO:
 SET "wsl_launch="
 IF NOT "!image_repo!" == "kalilinux" (
     IF "!image_repo!" == "kindtek" (
-        echo wsl -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh %USERNAME%
-        wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh %USERNAME%
+        echo wsl -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh %USERNAME% import
+        wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh %USERNAME% import
     )
     IF NOT "!image_service_suffix!" == "kernel" (
         ECHO press ENTER to open terminal for newly created !wsl_distro!
