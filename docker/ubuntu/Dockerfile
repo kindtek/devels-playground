@@ -819,9 +819,6 @@ ARG DEBCONF_NONINTERACTIVE_SEEN
 USER r00t
 RUN apt-get -y update && apt-get -y upgrade && \
     apt-get install -y locales && \    
-    update-locale LANGUAGE="C" && \
-    update-locale LANG="C" && \
-    update-locale LC_ALL="C" && \
     ln -fs /usr/share/zoneinfo/America/Los_Angeles /etc/localtime  
 # RUN apt-get install -y locales && \
 #     dpkg-reconfigure --frontend noninteractive locales && \

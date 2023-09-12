@@ -1319,6 +1319,7 @@ RUN \
     echo "/usr/sbin/lightdm" | tee /etc/X11/default-display-manager && \
     locale-gen && update-locale && \
     apt-get install -y lightdm && \
+    mkdir -pv /var/lib/lightdm/data && \
     echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install --no-install-recommends -y locales kali-defaults kali-root-login desktop-base kali-win-kex kali-desktop-xfce pulseaudio-module-xrdp virt-manager virtualbox && \
