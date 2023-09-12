@@ -835,7 +835,7 @@ IF NOT "!image_repo!" == "kalilinux" (
         echo wsl -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh %USERNAME%
         wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh %USERNAME%
     )
-    IF NOT "!image_service_suffix!" == "kernel" ()
+    IF NOT "!image_service_suffix!" == "kernel" (
         ECHO press ENTER to open terminal for newly created !wsl_distro!
         ECHO  ..or enter any character to skip 
         ECHO|set /p="(open !wsl_distro! terminal):"
