@@ -8,7 +8,7 @@ doskey /exename wsl.exe wsl=C:\Windows\System32\wsl.exe > nul 2> nul
 SET "DVLP_DEBUG=n"
 :redo
 IF "!DVLP_DEBUG!" == "y" (
-    ECHO custom image set with !image_name_tag!
+    ECHO "custom image set with !image_name_tag!"
     @ECHO ON
 
 )
@@ -40,7 +40,7 @@ SET "image_tag=kali-git-kernel"
 SET "image_name=devels-playground"
 IF "%~1" == "default" (
     IF "!DVLP_DEBUG!" == "y" (
-        ECHO default image set
+        ECHO "default image set"
     )
     SET "image_repo=kalilinux"
     SET "image_repo_mask=kalilinux"
@@ -55,7 +55,7 @@ IF "%~1" == "default" (
 ) ELSE (
     IF NOT "%~1" == "" (
         IF "!DVLP_DEBUG!" == "y" (
-            ECHO non_interactive_distro_name set to !non_interactive_distro_name!
+            ECHO "non_interactive_distro_name set to !non_interactive_distro_name!"
         )
         @REM SET "image_tag="
         @REM SET "image_name="
@@ -69,7 +69,7 @@ IF "%~1" == "default" (
                 "!image_name_tag!" 
                 ) DO (
                     IF "!DVLP_DEBUG!" == "y" (
-                        ECHO parsed image name: %%a
+                        ECHO "parsed image name: %%a"
                     )
                     SET "image_name=%%a"
                 )
@@ -77,7 +77,7 @@ IF "%~1" == "default" (
                 "!image_name_tag!" 
                 ) DO (
                     IF "!DVLP_DEBUG!" == "y" (
-                        ECHO parsed tag: %%a
+                        ECHO "parsed tag: %%a"
                     )
                     SET "image_tag=%%a"
                 )
@@ -87,7 +87,7 @@ IF "%~1" == "default" (
             "%image_name_tag%" 
             ) DO (
                 IF "!DVLP_DEBUG!" == "y" (
-                    ECHO parsed image repo: %%a
+                    ECHO "parsed image repo: %%a"
                 )
                 SET "image_repo=%%a"
                 SET "image_repo_mask=%%a"
@@ -105,7 +105,7 @@ IF "%~1" == "default" (
                 "!image_name_tag!" 
                 ) DO (
                     IF "!DVLP_DEBUG!" == "y" (
-                        ECHO parsed tag: %%a
+                        ECHO "parsed tag: %%a"
                     )
                     SET "image_tag=%%a"
                 )
@@ -115,7 +115,7 @@ IF "%~1" == "default" (
             "!image_name_tag!" 
             ) DO (
                 IF "!DVLP_DEBUG!" == "y" (
-                    ECHO parsed image/tag: %%a
+                    ECHO "parsed image/tag: %%a"
                 )
                 SET "name_tag=%%a"
             )
@@ -129,7 +129,7 @@ IF "%~1" == "default" (
             "!name_tag!" 
             ) DO (
                 IF "!DVLP_DEBUG!" == "y" (
-                    ECHO parsed tag: %%a
+                    ECHO "parsed tag: %%a"
                 )
                 SET "image_tag=%%a"
             )
@@ -138,7 +138,7 @@ IF "%~1" == "default" (
                 "!name_tag!" 
             ) DO (
                 IF "!DVLP_DEBUG!" == "y" (
-                    ECHO parsed image name: %%a
+                    ECHO "parsed image name: %%a"
                 )
                 SET "image_name=%%a"
             )
@@ -146,14 +146,14 @@ IF "%~1" == "default" (
     )
     IF "!DVLP_DEBUG!" == "y" (
         ECHO ARGS: %*
-        ECHO image_name_tag currently is !image_name_tag!
+        ECHO "image_name_tag currently is !image_name_tag!"
         ECHO IMG_NAME !image_name!
         ECHO IMG_TAG !image_tag!
         ECHO IMG_NAME_TAG !image_name_tag!
         ECHO IMG_REPO_NAME_TAG !image_repo_name_tag!
         ECHO WSL_DISTRO_NAME %~2
         ECHO DOCKER_HUB %~1
-        @REM ECHO image_tag set to arg: '%1'  ('%~1') as !image_tag!
+        @REM ECHO "image_tag set to arg: '%1'  ('%~1') as !image_tag!"
     )
     @REM set image attribute strings using parsed args
     IF "!image_repo!" == "" (
@@ -180,14 +180,14 @@ IF "%~1" == "default" (
 
     IF "!image_name_tag!" == "" (
         IF "!DVLP_DEBUG!" == "y" (
-            ECHO default kindtek image set
+            ECHO "default kindtek image set"
         )
 
         @REM SET "non_interactive_distro_name="
         SET "default_wsl_distro=n"
     ) ELSE ( 
         IF "!DVLP_DEBUG!" == "y" (
-            ECHO custom image set as !image_name_tag! using args '%~1%'
+            ECHO "custom image set as !image_name_tag! using args '%~1%'"
         )
         @REM SET "image_tag=%~1"
         @REM ECHO IMG_NAME_TAG !image_name_tag!
@@ -198,7 +198,7 @@ IF "%~1" == "default" (
 
 IF "!DVLP_DEBUG!" == "y" (
     ECHO ARGS: %*
-    ECHO image_name_tag set to !image_name_tag!
+    ECHO "image_name_tag set to !image_name_tag!"
     ECHO IMG_NAME !image_name!
     ECHO IMG_TAG !image_tag!
     ECHO IMG_REPO !image_repo!
@@ -206,12 +206,12 @@ IF "!DVLP_DEBUG!" == "y" (
     ECHO IMG_REPO_NAME_TAG !image_repo_name_tag!
     ECHO WSL_DISTRO_NAME %~2 / !non_interactive_distro_name!
     ECHO DOCKER_HUB %~1
-    @REM ECHO image_tag set to arg: '%1'  ('%~1') as !image_tag!
+    @REM ECHO "image_tag set to arg: '%1'  ('%~1') as !image_tag!"
 )
 
 IF "!non_interactive_distro_name!" == "" (
     IF "!DVLP_DEBUG!" == "y" (
-        ECHO interactive session
+        ECHO "interactive session"
     )
     SET "interactive=y"
     IF "!image_repo!" == "kindtek" (
@@ -221,8 +221,8 @@ IF "!non_interactive_distro_name!" == "" (
     )
 ) ELSE (
     IF "!DVLP_DEBUG!" == "y" (
-        ECHO NON-interactive session
-        ECHO !non_interactive_distro_name!
+        ECHO "NON-interactive session"
+        ECHO "!non_interactive_distro_name!"
     )
     SET "interactive=n"
     @REM SET "wsl_distro=!non_interactive_distro_name!"
@@ -240,7 +240,7 @@ GOTO config
 :set_paths
 SET "module=set_paths"
 SET "go2=home_banner"
-@REM ECHO entering module !module!
+@REM ECHO "entering module !module!"
 FOR /F %%x IN (
     'wmic PATH win32_utctime get /Format:list ^| findstr "="'
 ) DO SET %%x
@@ -297,11 +297,11 @@ IF "!wsl_distro!" == "!failsafe_wsl_distro!" (
     mkdir !install_location! > nul 2> nul
     IF "!DVLP_DEBUG!" == "y" (
         ECHO duplicate distro found for !wsl_distro!
-        ECHO install location: !install_location!
+        ECHO "install location: !install_location!"
     )
     @REM ) 
     IF "!DVLP_DEBUG!" == "y" (
-        ECHO install location: !install_location!
+        ECHO "install location: !install_location!"
     )
 )
 @REM SET "save_location=!save_location!"
@@ -325,7 +325,7 @@ FOR /F "tokens=1* delims=-" %%a IN (
     "%image_tag%" 
 ) DO (
     IF "!DVLP_DEBUG!" == "y" (
-        ECHO parsed image distro: %%a
+        ECHO "parsed image distro: %%a"
     )
     SET "image_distro=%%a"
 )
@@ -333,7 +333,7 @@ FOR /F "tokens=1* delims=-" %%G IN (
     "%image_tag%" 
 ) DO (
     IF "!DVLP_DEBUG!" == "y" (
-        ECHO parsed image service: %%H
+        ECHO "parsed image service: %%H"
     )
     SET "image_service=%%H"
 )
@@ -342,7 +342,7 @@ FOR /F "tokens=1* delims=-" %%G IN (
     "%image_service%" 
 ) DO (
     IF "!DVLP_DEBUG!" == "y" (
-        ECHO parsed image service base: %%G
+        ECHO "parsed image service base: %%G"
     )
     SET "image_service_base=%%G"
 )
@@ -360,14 +360,14 @@ FOR /f "tokens=1,2,3* delims=-" %%a in ("%image_service%") do (
     )
 )
 IF "!DVLP_DEBUG!" == "y" (
-    ECHO parsed image service suffix: !image_service_suffix!
+    ECHO "parsed image service suffix: !image_service_suffix!"
 )
 @REM do not try to build sources that are not kindtek
 IF NOT "!image_repo!" == "kindtek" (
-    ECHO not kindtek go to docker image pull
+    ECHO "not kindtek go to docker image pull"
     SET "docker_image_do=docker_image_pull"
 ) 
-@REM ECHO DOCKER_IMG_DO: !docker_image_do!
+@REM ECHO "DOCKER_IMG_DO: !docker_image_do!"
 SET "docker_image_doing=!docker_image_do!"
 SET "docker_image_do="
 GOTO !docker_image_doing!
@@ -494,15 +494,15 @@ GOTO home_banner
 
 :docker_image_run_from_pull
 SET "module=docker_image_run_from_pull"
-@REM ECHO mkdir save: !save_location!
+@REM ECHO "mkdir save: !save_location!"
 mkdir !save_location! > nul 2> nul
-@REM ECHO mkdir install: !install_location!
+@REM ECHO "mkdir install: !install_location!"
 mkdir !install_location! > nul 2> nul
 ECHO:
 SET "docker_image_do="
 ECHO initializing the image container...
 @REM save id to file and then set wsl_docker_img_id with file contents
-ECHO docker images -aq !image_repo_name_tag! > !docker_image_id_path!
+ECHO "docker images -aq !image_repo_name_tag! > !docker_image_id_path!"
 docker images -aq !image_repo_name_tag! > !docker_image_id_path!
 SET /P WSL_DOCKER_IMG_ID_RAW=< !docker_image_id_path!
 @REM ECHO WSL_DOCKER_IMG_ID_RAW: !WSL_DOCKER_IMG_ID_RAW!
@@ -560,9 +560,9 @@ IF "!wsl!" == "n" (
 
 :docker_image_run_from_build
 SET "module=docker_image_run_from_build"
-@REM ECHO mkdir save: !save_location!
+@REM ECHO "mkdir save: !save_location!"
 mkdir !save_location! > nul 2> nul
-@REM ECHO mkdir install: !install_location!
+@REM ECHO "mkdir install: !install_location!"
 mkdir !install_location! > nul 2> nul
 ECHO:
 SET "docker_image_do="
@@ -581,27 +581,28 @@ ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-co
 docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! /bin/bash -c WSL_DISTRO_NAME='!wsl_distro!'^;WIN_USER='%USERNAME%'^;export WSL_DISTRO_NAME^;export WIN_USER^;
 SET /P wsl_out=<!test_string_path!
 DEL !test_string_path!
-IF "!wsl_out!" == "!test_string!" (
-    @REM ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
-    @REM docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
-    ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo apt update -y
-    docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo apt update -y
-    ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo apt upgrade -y
-    docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo apt upgrade -y
-) ELSE (
-    @REM ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! rm -vrf /var/cache/dvlp/archives
-    @REM docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! rm -vrf /var/cache/dvlp/archives
-    ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! apt update -y
-    docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! apt update -y
-    ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! apt upgrade -y
-    docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! apt upgrade -y
+IF "!image_repo!" == "kindtek" (
+    IF "!wsl_out!" == "!test_string!" (
+        @REM ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
+        @REM docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
+        ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo apt update -y
+        docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo apt update -y
+        ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo apt upgrade -y
+        docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo apt upgrade -y
+    ) ELSE (
+        @REM ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! rm -vrf /var/cache/dvlp/archives
+        @REM docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! rm -vrf /var/cache/dvlp/archives
+        ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! apt update -y
+        docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! apt update -y
+        ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! apt upgrade -y
+        docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! apt upgrade -y
+    )
 )
-
 @REM @TODO: handle WSL_DOCKER_IMG_ID case of multiple ids returned from docker images query
-ECHO SET WIN_USER=%USERNAME% ^& docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml images -q !image_service! > !docker_image_id_path!
+ECHO "SET WIN_USER=%USERNAME% ^& docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml images -q !image_service! > !docker_image_id_path!"
 docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml images -q !image_service! > !docker_image_id_path!
 SET /P WSL_DOCKER_IMG_ID_RAW=< !docker_image_id_path!
-ECHO SET WIN_USER=%USERNAME% ^& docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml ps -q !image_service! > !docker_container_id_path!
+ECHO "SET WIN_USER=%USERNAME% ^& docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml ps -q !image_service! > !docker_container_id_path!"
 docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml ps -q !image_service! > !docker_container_id_path!
 SET /P WSL_DOCKER_CTR_ID_RAW=< !docker_container_id_path!
 SET WSL_DOCKER_CTR_ID=!WSL_DOCKER_CTR_ID_RAW!
@@ -831,31 +832,27 @@ ECHO:
 wsl.exe --status
 ECHO:
 SET "wsl_launch="
-wsl.exe -- sudo apt-get update -y ^&^& sudo apt-get upgrade -y
-IF errorlevel 1 (
-    wsl.exe -- apt-get update -y ^&^& apt-get upgrade -y    
-)    
-
-IF NOT "!image_repo!" == "kindtek" (
-    IF "!wsl_out!" == "!test_string!" (
-        echo             wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& wget -P "^$HOME" - https://raw.githubusercontent.com/kindtek/k-home/main/HOME_NIX/k-home.sh^; bash k-home.sh
-        wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& wget -P "^$HOME" - https://raw.githubusercontent.com/kindtek/k-home/main/HOME_NIX/k-home.sh^; bash k-home.sh
-    ) 
-)
-IF NOT "!image_service_suffix!" == "kernel" (
-    ECHO press ENTER to open terminal for newly created !wsl_distro!
-    ECHO  ..or enter any character to skip 
-    ECHO|set /p="(open !wsl_distro! terminal):"
-    @REM make sure windows paths transfer
-    SET /P "wsl_launch=> "
-    IF /I "!wsl_launch!" == "" (
-        wsl.exe -d !wsl_distro! -- cd / ^&^& bash
-    ) ELSE (
-        ECHO skipping preview for !wsl_distro! ...
+IF NOT "!image_repo!" == "kalilinux" (
+    IF NOT "!image_repo!" == "kindtek" (
+        IF "!wsl_out!" == "!test_string!" (
+            wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& wget -P "`$HOME" - https://raw.githubusercontent.com/kindtek/k-home/main/HOME_NIX/k-home.sh`; bash k-home.sh
+        )
     )
-) ELSE (
-    echo wsl -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" "import"
-    wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" "import"
+    IF NOT "!image_service_suffix!" == "kernel" (
+        ECHO press ENTER to open terminal for newly created !wsl_distro!
+        ECHO  ..or enter any character to skip 
+        ECHO|set /p="(open !wsl_distro! terminal):"
+        @REM make sure windows paths transfer
+        SET /P "wsl_launch=> "
+        IF /I "!wsl_launch!" == "" (
+            wsl.exe -d !wsl_distro! -- cd / ^&^& bash
+        ) ELSE (
+            ECHO "skipping preview for !wsl_distro! ..."
+        )
+    ) ELSE (
+        echo wsl -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" "import"
+        wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" "import"
+    )
 )
 
 :wsl_distro_test
@@ -873,9 +870,9 @@ DEL !test_string_path!
 @REM FOR /F %%g IN (!wsl_in!) DO (
 @REM     @SET "wsl_out=%%g"
 @REM     IF "!DVLP_DEBUG!" == "y" (
-@REM         ECHO wsl_in: !wsl_in!
-@REM         ECHO wsl_out: : !wsl_out!
-@REM         ECHO test_string: !test_string!
+@REM         ECHO "wsl_in: !wsl_in!"
+@REM         ECHO "wsl_out: : !wsl_out!"
+@REM         ECHO "test_string: !test_string!"
 @REM     )
 @REM )
 
@@ -898,7 +895,7 @@ IF "!wsl_out!" == "!test_string!" (
     ECHO !wsl_distro! did not boot.
 )
 IF "!DVLP_DEBUG!" == "y" (
-    ECHO wsl_distro_test_pass: !wsl_distro_test_pass!
+    ECHO "wsl_distro_test_pass: !wsl_distro_test_pass!"
 )
 
 :wsl_set_conversion_version
@@ -1187,8 +1184,8 @@ IF "!interactive!" == "n" (
         @REM official repo has no repo name in address/url
         SET "options=build"
         IF "!DVLP_DEBUG!" == "y" (
-            ECHO options0: !options!
-            ECHO image_name_tag: !image_name_tag!
+            ECHO "options0: !options!"
+            ECHO "image_name_tag: !image_name_tag!"
         )
         GOTO options_parse
     )
@@ -1231,10 +1228,8 @@ IF "!interactive!" == "n" (
         ECHO: 
     )
 )
-SET "home_default_option=pull"
-IF "!image_repo!" == "kindtek" (
-    SET "home_default_option=build"
-) 
+
+SET "home_default_option=build"
 
 IF "!wsl!" == "y" (
     IF "!image_repo!" == "kindtek" (
@@ -1274,8 +1269,8 @@ IF "!quiet_home_prompt!" == "n" (
 ECHO:
 @REM IF "!options!" == "options" (
 IF "!DVLP_DEBUG!" == "y" (
-    ECHO options1: !options!
-    ECHO home_default_option1: !home_default_option!
+    ECHO "options1: !options!"
+    ECHO "home_default_option1: !home_default_option!"
 )
 @REM avoid building official sources
 IF "!image_repo!" == "_" (
@@ -1283,7 +1278,7 @@ IF "!image_repo!" == "_" (
 )
 @REM IF "!quiet_home_prompt!" == "n" (
 @REM     IF "!DVLP_DEBUG!" == "y" (
-@REM         ECHO no quiet prompt
+@REM         ECHO "no quiet prompt"
 @REM     )
 @REM     SET "options=!home_default_option!"
 @REM     SET "confirm="
@@ -1291,19 +1286,19 @@ IF "!image_repo!" == "_" (
 @REM     IF NOT "!confirm!" == "" (
 @REM         SET "options=!confirm!"
 @REM         IF "!DVLP_DEBUG!" == "y" (
-@REM             ECHO options set to !confirm! (confirm)
+@REM             ECHO "options set to !confirm! (confirm)"
 @REM         )
 @REM         @REM SET "confirm="
 @REM     ) ELSE (
 @REM         SET "options=!home_default_option!"
 @REM         IF "!DVLP_DEBUG!" == "y" (
-@REM             ECHO options set to !home_default_option! (home_default_option)
+@REM             ECHO "options set to !home_default_option! (home_default_option)"
 @REM         )
 @REM     )
 @REM )
 IF "!DVLP_DEBUG!" == "y" (
-    ECHO options2: !options!
-    ECHO home_default_option2: !home_default_option!
+    ECHO "options2: !options!"
+    ECHO "home_default_option2: !home_default_option!"
 )
 
 :options_prompt
@@ -1320,8 +1315,8 @@ IF /I "!options!" == "options" (
 )
 IF "!interactive!" == "y" (
     IF "!DVLP_DEBUG!" == "y" (
-        ECHO interactive session
-        ECHO options3: !options!
+        ECHO "interactive session"
+        ECHO "options3: !options!"
     )
     IF "!display_options!" == "y" (
         ECHO   options:
@@ -1367,7 +1362,7 @@ IF "!interactive!" == "y" (
         IF /I "!options!" == "options" (
             IF NOT "!home_default_option!" == "" (
                 IF "DVLP_DEBUG" == "y" (
-                    ECHO options=home_default_option: !options!
+                    ECHO "options=home_default_option: !options!"
                 )
                 @REM post option (don't discard)
                 SET "options=!home_default_option!"
@@ -1375,8 +1370,8 @@ IF "!interactive!" == "y" (
             )
         ) 
         IF "DVLP_DEBUG" == "y" (
-            ECHO MAIN OPTS: !home_default_option!
-            ECHO OPTIONS: !options!
+            ECHO "MAIN OPTS: !home_default_option!"
+            ECHO "OPTIONS: !options!"
         )
         SET "display_options=n"
     ) 
@@ -1386,13 +1381,13 @@ IF "!interactive!" == "y" (
     IF NOT "!confirm!" == "" (
         SET "options=!confirm!"
         IF "!DVLP_DEBUG!" == "y" (
-            ECHO options set to !confirm! (confirm)
+            ECHO "options set to !confirm! (confirm)"
         )
         @REM SET "confirm="
     ) ELSE (
         SET "options=!home_default_option!"
         IF "!DVLP_DEBUG!" == "y" (
-            ECHO options set to !home_default_option! (home_default_option)
+            ECHO "options set to !home_default_option! (home_default_option)"
         )
     )
     IF "!options!" == "o" (
@@ -1413,13 +1408,13 @@ color 0F
 SET "handle=options_parse"
 SET "opti0ns=!options!"
 IF "!DVLP_DEBUG!" == "y" (
-    ECHO OPTIONS PARSE: !options!
-    ECHO OPTI0NS PARSE: !opti0ns!
-    ECHO go2 PARSE: !go2!
-    ECHO MOD: !module!
-    ECHO EXIT_MOD: !exit_module!
+    ECHO "OPTIONS PARSE: !options!"
+    ECHO "OPTI0NS PARSE: !opti0ns!"
+    ECHO "go2 PARSE: !go2!"
+    ECHO "MOD: !module!"
+    ECHO "EXIT_MOD: !exit_module!"
     ECHO HANDLE !handle!
-    ECHO WSL: !wsl!
+    ECHO "WSL: !wsl!"
 )
 
 IF /I "!opti0ns!" == "b" (
@@ -1428,20 +1423,13 @@ IF /I "!opti0ns!" == "b" (
 IF /I "!opti0ns!" == "build" (
     IF /I "!image_name_tag!" == "default" (
         SET "docker_image_do=docker_image_pull"
+        @REM ECHO option 'build' selected
         SET "opti0ns=pull"
-        ECHO option '!opti0ns!' selected
         SET "go2=set_paths"
         GOTO switchboard
     ) ELSE (
-        IF /I NOT "!image_repo!" == "kindtek" (
-            SET "docker_image_do=docker_image_pull"
-            ECHO option '!opti0ns!' selected
-            SET "opti0ns=pull"
-            SET "go2=set_paths"
-            GOTO switchboard
-        ) 
         SET "docker_image_do=docker_image_build"
-        ECHO option '!opti0ns!' selected
+        @REM ECHO option 'build' selected
         SET "go2=set_paths"
         GOTO switchboard
     )
@@ -1510,7 +1498,7 @@ IF /I "!opti0ns!" == "home" (
             SET "default_wsl_distro=n"
             ECHO " [ON]  default distro
         ) ELSE (
-            ECHO  [OFF] default distro
+            ECHO " [OFF] default distro"
             SET "default_wsl_distro=y"
         )
         
@@ -1542,11 +1530,11 @@ IF /I "!opti0ns!" == "options" (
     )
 )
 IF /I "!opti0ns!" == "r" (
-    ECHO RESTART COMPUTER 1
+    ECHO "RESTART COMPUTER 1"
     SET "opti0ns=restart"
 )
 IF /I "!opti0ns!" == "restart" (
-    ECHO RESTART COMPUTER 2
+    ECHO "RESTART COMPUTER 2"
 
     ECHO option 'restart' selected
     SET "go2=computer_restart_prompt"
@@ -1555,8 +1543,8 @@ IF /I "!opti0ns!" == "restart" (
 IF /I "!opti0ns!" == "w" (
     SET "opti0ns=wsl"
     IF "!DVLP_DEBUG!" == "y" (
-        ECHO opti0ns: !opti0ns!
-        ECHO wsl: !wsl!
+        ECHO "opti0ns: !opti0ns!"
+        ECHO "wsl: !wsl!"
     )
 )
 IF /I "!opti0ns!" == "wsl" (
@@ -1564,17 +1552,17 @@ IF /I "!opti0ns!" == "wsl" (
     ECHO default flag changed
     IF "!wsl!" == "y" (
         SET "wsl=n"
-        ECHO toggle wsl import [OFF]
+        ECHO "toggle wsl import [OFF]"
     ) ELSE (
-        ECHO toggle wsl import [ON]
+        ECHO "toggle wsl import [ON]"
         SET "wsl=y"
     )
     SET "opti0ns=options"
     @REM SET "go2=docker_image_pull"
     SET "go2=home_banner"
     IF "!DVLP_DEBUG!" == "y" (
-        ECHO opti0ns: !opti0ns!
-        ECHO wsl: !wsl!
+        ECHO "opti0ns: !opti0ns!"
+        ECHO "wsl: !wsl!"
     )
     GOTO switchboard
 )
@@ -1583,9 +1571,9 @@ IF /I "!opti0ns!" == "debug" (
     SET "DVLP_DEBUG=n"
     IF "!DVLP_DEBUG!" == "y" (
         SET "DVLP_DEBUG=n"
-        ECHO toggle debug output [OFF]
+        ECHO "toggle debug output [OFF]"
     ) ELSE (
-        ECHO toggle debug output [ON]
+        ECHO "toggle debug output [ON]"
         SET "DVLP_DEBUG=y"
     )
     SET "opti0ns=options"
@@ -1597,14 +1585,14 @@ IF /I "!opti0ns!" == "debug" (
 IF /I "!opti0ns!" == "x" (
     SET "go2=program_restart_prompt"
     IF "!DVLP_DEBUG!" == "y" (
-        ECHO x-opti0ns: !opti0ns!
+        ECHO "x-opti0ns: !opti0ns!"
     )
     GOTO switchboard
 )
 IF /I "!opti0ns!" == "exit" (
     SET "go2=quit"
     IF "!DVLP_DEBUG!" == "y" (
-        ECHO exit-opti0ns: !opti0ns!
+        ECHO "exit-opti0ns: !opti0ns!"
     )
     GOTO switchboard
 )
@@ -1614,11 +1602,11 @@ IF /I "!opti0ns!" == "exit" (
 @REM SET "exit_module=switchboard"
 SET "handle=switchboard"
 IF "!DVLP_DEBUG!" == "y" (
-    ECHO OPTIONS PARSE: !options!
-    ECHO OPTI0NS PARSE: !opti0ns!
-    ECHO go2 PARSE: !go2!
-    ECHO MOD: !module!
-    ECHO EXIT_MOD: !exit_module!
+    ECHO "OPTIONS PARSE: !options!"
+    ECHO "OPTI0NS PARSE: !opti0ns!"
+    ECHO "go2 PARSE: !go2!"
+    ECHO "MOD: !module!"
+    ECHO "EXIT_MOD: !exit_module!"
     ECHO HANDLE !handle!
 )
 IF NOT "!opti0ns!" == "" (
@@ -1707,7 +1695,7 @@ ECHO:
 SET /P "options=> "
 IF "!options!" == "" (
 @REM dism /Online /Cleanup-Image /RestoreHealth
-    ECHO initializing restart ...
+    ECHO "initializing restart ..."
     SET "options=restart_now"
     @REM shutdown /r
     @REM GOTO quit
