@@ -144,9 +144,9 @@ services:
       - repo_dvl-kernel:/hel/dvlw/dvlp/kernels
       - repo_dvl-kernel:/home/${_DVL}/dvlw/dvlp/kernels
   k-home-win:
-    entrypoint: dummy='entrypoint'
+    entrypoint: entrypoint='dummy'
     command:
-      - dummy='command'
+      - command='dummy'
     build:
       target: dvlp_k-home-win
       no_cache: true
