@@ -445,17 +445,16 @@ SET "build_args="
 SET "compose_services=!image_service!"
 ECHO building image (!image_service!)...
 @REM build the image
-ECHO service_suffix !service_suffix!
 
 IF "!image_service_suffix!" == "kernel" (
     @REM TODO: add prompt (when noninteractive) for kernel type/feature
     ECHO service_suffix !service_suffix!
     SET "build_args=--build-arg WIN_USER=%USERNAME%"
     @REM SET "build_args=!build_args! --build-arg KERNEL_TYPE=stable --build-arg KERNEL_FEATURE=zfs"
-    SET "compose_services_nocache=repo repo-kernel"
+    SET "compose_services_nocache=repo repo-kernel skel"
     @REM SET "compose_services=!image_service!"
 ) ELSE (
-    SET "compose_services_nocache=repo"
+    SET "compose_services_nocache=repo skel"
 )
 IF NOT "!image_service_base!" == "test" (
     IF "!wsl!" == "n" (
@@ -463,11 +462,11 @@ IF NOT "!image_service_base!" == "test" (
         docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !compose_services!
     )
 )
-@REM IF "!image_service_suffix!" == "kernel" (
-@REM     @REM force rebuild of kernel
-@REM     ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build  --no-cache !build_args! !compose_services_nocache!
-@REM     docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build  --no-cache !build_args! !compose_services_nocache!
-@REM )
+IF "!image_service_suffix!" == "kernel" (
+    @REM force rebuild of kernel
+    ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build  --no-cache !build_args! !compose_services_nocache!
+    docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build  --no-cache !build_args! !compose_services_nocache!
+)
 @REM ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !build_args! !compose_services!
 @REM docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !build_args! !compose_services!
 

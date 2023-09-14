@@ -37,9 +37,9 @@ RUN touch testing
 
 ################################### GITHUB REPO #####################################
 ########################
-# dvlp_build-repo-prep #
+# dvlp_build-repo-git #
 ########################
-FROM kalilinux/kali-rolling:latest AS dvlp_build-repo-prep
+FROM kalilinux/kali-rolling:latest AS dvlp_build-repo-git
 ARG _MNT
 ARG REFRESH_REPO
 ARG _AGL_USR
@@ -90,7 +90,7 @@ RUN \
 # RUN echo 'Binary::apt-get::DPkg::Progress-Fancy "1"' | tee /etc/apt/apt.conf.d/99fancybar.conf
 # import/install basic utils from layer cache if possible and delete .deb archives from container when finished
 RUN \
-    --mount=type=cache,target=/var/cache/dvlp/build-repo-prep,sharing=locked \
+    --mount=type=cache,target=/var/cache/dvlp/build-repo-git,sharing=locked \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install --no-install-recommends -y git && \
@@ -99,7 +99,7 @@ RUN \
     rm -rf /var/cache/apt
 # add safe directories
 RUN \
-    --mount=type=cache,target=/var/cache/dvlp/build-repo-prep,sharing=locked  \
+    --mount=type=cache,target=/var/cache/dvlp/build-repo-git,sharing=locked  \
     # if [ "$fresh_repo" != no ]; then rm -rf /var/cache/dvlp/archives/dvlw; fi && \
     # git config --global --add safe.directory /home/${_DVL} && \
     # git config --global --add safe.directory /home/${_AGL} && \
@@ -111,14 +111,14 @@ RUN \
     git config --global --add safe.directory /root && \
     git config --global --add safe.directory /r00t && \
     git config --global --add safe.directory /repos/dvlw && \
-    git config --global --add safe.directory /var/cache/dvlp/build-repo-prep && \
+    git config --global --add safe.directory /var/cache/dvlp/build-repo-git && \
     git config --global core.autocrlf input && \
     git config --global user.name 'Snail Mail' && \
     git config --global user.email '<>' 
 ########################
 # dvlp_build-repo #
 #######################
-FROM dvlp_build-repo-prep AS dvlp_build-repo
+FROM kindtek/devels-playground:repo-build AS dvlp_build-repo
 WORKDIR /repos
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/build-repo,sharing=locked  \
@@ -453,7 +453,16 @@ RUN \
 WORKDIR /
 ###############################
 
-FROM dvlp_base-skel AS dvlp_base-build-volumes
+FROM kindtek/devels-playground:kali-skel AS dvlp_base-build-volumes
+ARG _MNT
+ARG _AGL_USR
+ARG _DVL_USR
+ARG _ADM_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
+ENV _DVL=$_DVL_USR
+ENV _ADM=$_ADM_USR
+
 COPY --from=dvlp_base-build-r00t-volumes     --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
 COPY --from=dvlp_base-build-devel-volumes    --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
 COPY --from=dvlp_base-build-angel-volumes    --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
@@ -468,9 +477,7 @@ COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
 COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1775    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
-COPY --from=dvlp_repo                       --chown=${_AGL}:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/ 
-COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./ ./
-COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./ ./
+COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/ 
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                  ./r00t/dvlw/
 COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                  ./dvl/dvlw/
@@ -498,8 +505,6 @@ COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo  
 COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
 COPY --from=dvlp_repo-kernel                              --chown=r00t:r00t       --chmod=1775    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
 COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/ 
-COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo    --chmod=1770    ./ ./
-COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo    --chmod=1770    ./ ./
 COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw                   ./hal/dvlw
 COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw                   ./r00t/dvlw
 COPY --from=dvlp_repo-kernel                              --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                  ./dvl/dvlw
@@ -524,6 +529,14 @@ ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 ENV DEBIAN_FRONTEND=noninteractive
+WORKDIR /
+RUN \
+    --mount=type=cache,target=/var/cache/dvlp/build-kernel,sharing=locked \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt
 
 ############################# BASE BUILD KERNEL ###################################
 
@@ -555,18 +568,41 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 
-FROM dvlp_base-build${KERNEL_TYPE:+-kernel} AS dvlp_base-built
-
-
-################################## BASE BUILDER #######################################
-
-FROM dvlp_base-build${KERNEL_TYPE:+-kernel}  AS dvlp_base-builder
+FROM kindtek/devels-playground:kali-build${KERNEL_TYPE:+-kernel} AS dvlp_base-built
+ARG _MNT
+ARG _AGL_USR
+ARG _DVL_USR
+ARG _ADM_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
+ENV _DVL=$_DVL_USR
+ENV _ADM=$_ADM_USR
+ARG REFRESH_REPO
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
+ARG CONFIG_FILE
+ARG WIN_USER
+ARG DOCKER_BUILD_TIMESTAMP
+ARG installkernel
+ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /
 RUN \
+    --mount=type=cache,target=/var/cache/dvlp/base-kernel,sharing=locked \
     rm -rf /var/lib/apt/lists && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    apt-get purge -y openssh-server
+RUN \
+    apt-get install --no-install-recommends -y apt-utils apt-transport-https curl libssl-dev locales openssh-server sudo ssh systemd-sysv sysvinit-utils wget && \    
+    usermod -aG docker root && \
+    usermod -aG docker r00t && \
+    usermod -aG sudo ${_AGL} && \
+    usermod -aG docker ${_AGL} && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt 
 
-FROM dvlp_base-build AS dvlp_make
+################################## MAKE #######################################
+
+FROM dvlp_base-built AS dvlp_make
 
 ################################### KERNEL ###########################################
 
@@ -574,7 +610,7 @@ FROM dvlp_base-build AS dvlp_make
 ########################  KERNEL MAKE/R - KERNEL COMPILER  ###########################
 ######################################################################################
 
-FROM dvlp_base-build-kernel AS dvlp_make-kernel
+FROM dvlp_base-built AS dvlp_make-kernel
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
 ARG CONFIG_FILE
@@ -650,78 +686,13 @@ FROM dvlp_make${KERNEL_TYPE:+-kernel} AS dvlp_made
 # COPY --from=dvlp_made-kernel ./r00t/dvlw/ ./r00t/dvlw/
 
 FROM dvlp_made AS dvlp_base
-ARG _MNT
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
-ARG _AGL=${_AGL:-agl}
-ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-ARG REFRESH_REPO
-ARG KERNEL_TYPE
-ARG KERNEL_FEATURE
-ARG CONFIG_FILE
-ARG WIN_USER
-ARG DOCKER_BUILD_TIMESTAMP
-ARG installkernel
-ENV DEBIAN_FRONTEND=noninteractive
-WORKDIR /
-# WORKDIR /boot
-# WORKDIR /kache
-# WORKDIR /usr/lib
-# WORKDIR /r00t/dvlw
-WORKDIR /
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/base,sharing=locked \
-    rm -rf /var/lib/apt/lists && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get purge -y openssh-server && \
-    apt-get install --no-install-recommends -y apt-utils apt-transport-https curl libssl-dev locales openssh-server sudo ssh systemd-sysv sysvinit-utils wget && \
-    usermod -aG docker root && \
-    usermod -aG docker r00t && \
-    usermod -aG sudo ${_AGL} && \
-    usermod -aG docker ${_AGL} && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt 
 
 FROM dvlp_make-kernel AS dvlp_base-kernel
-ARG _MNT
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
-ARG _AGL=${_AGL:-agl}
-ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-ARG REFRESH_REPO
-ARG KERNEL_TYPE
-ARG KERNEL_FEATURE
-ARG CONFIG_FILE
-ARG WIN_USER
-ARG DOCKER_BUILD_TIMESTAMP
-ARG installkernel
-ENV DEBIAN_FRONTEND=noninteractive
-WORKDIR /
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/base-kernel,sharing=locked \
-    rm -rf /var/lib/apt/lists && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get purge -y openssh-server && \
-    apt-get install --no-install-recommends -y apt-utils apt-transport-https curl libssl-dev locales openssh-server sudo ssh systemd-sysv sysvinit-utils wget && \    
-    usermod -aG docker root && \
-    usermod -aG docker r00t && \
-    usermod -aG sudo ${_AGL} && \
-    usermod -aG docker ${_AGL} && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt 
-
 
 
 ################################# BASE #######################################
 
-# FROM dvlp_base-skel AS dvlp_base
+# FROM kindtek/devels-playground:kali-skel AS dvlp_base
 # ARG _AGL_USR
 # ARG _DVL_USR
 # ARG _ADM_USR
@@ -859,7 +830,7 @@ RUN rm -rf /var/lib/apt/lists && \
 ########################
 # dvlp_base-scan-build #
 ########################
-FROM dvlp_base-skel AS dvlp_base-scan-build
+FROM kindtek/devels-playground:kali-skel AS dvlp_base-scan-build
 USER r00t
 SHELL ["/bin/bash", "-c"]
 WORKDIR /r00t/build
@@ -938,7 +909,7 @@ Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.co
 #####################
 # dvlp_python-build #
 #####################
-FROM dvlp_base-skel AS dvlp_python-build
+FROM kindtek/devels-playground:kali-skel AS dvlp_python-build
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _AGL=${_AGL:-agl}
@@ -1033,7 +1004,7 @@ WORKDIR /
 ###############################
 # dvlp_msdot-build-lite #
 ##############################
-FROM dvlp_base-skel AS dvlp_msdot-build-lite
+FROM kindtek/devels-playground:kali-skel AS dvlp_msdot-build-lite
 
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
@@ -1046,7 +1017,7 @@ RUN \
     apt-get install --no-install-recommends -y apt-utils ca-certificates curl gnupg2 apt-transport-https lsb-release wget && \
     wget "https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb" && \
     mv packages-microsoft-prod.deb /var/cache/apt/archives/packages-microsoft-prod.deb && \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/trusted.gpg.d//microsoft-prod.gpg] https://packages.microsoft.com/repos/microsoft-debian-bullseye-prod bullseye main" | tee /etc/apt/sources.list.d/microsoft-prod.list  > /dev/null && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/trusted.gpg.d/microsoft-prod.gpg] https://packages.microsoft.com/repos/microsoft-debian-bullseye-prod bullseye main" | tee /etc/apt/sources.list.d/microsoft-prod.list  > /dev/null && \
     dpkg -i /var/cache/apt/archives/packages-microsoft-prod.deb && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install -y powershell && \
@@ -1136,7 +1107,7 @@ RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
 ########################
 # dvlp_dind-build #
 ########################
-FROM dvlp_base-skel AS dvlp_dind-build
+FROM kindtek/devels-playground:kali-skel AS dvlp_dind-build
 USER r00t
 WORKDIR /
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
@@ -1194,47 +1165,17 @@ RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
 #################
 FROM scratch AS dvlp_gui-lite-base
 COPY --from=dvlp_python ./ ./
-RUN rm -rf /var/lib/apt/lists && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
 COPY --from=dvlp_msdot-build-lite ./ ./
-RUN rm -rf /var/lib/apt/lists && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
 COPY --from=dvlp_dind-build ./ ./
-RUN rm -rf /var/lib/apt/lists && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
 COPY --from=dvlp_base ./ ./
-RUN rm -rf /var/lib/apt/lists && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
+COPY --from=dvlp_msdot-build-lite ./etc/apt/trusted.gpg.d/microsoft-prod.gpg ./etc/apt/trusted.gpg.d/microsoft-prod.gpg
 
 FROM scratch AS dvlp_gui-lite-base-kernel
 COPY --from=dvlp_python ./ ./
-RUN rm -rf /var/lib/apt/lists && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
 COPY --from=dvlp_msdot-build-lite ./ ./
-RUN rm -rf /var/lib/apt/lists && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
 COPY --from=dvlp_dind-build ./ ./
-RUN rm -rf /var/lib/apt/lists && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
 COPY --from=dvlp_base-kernel ./ ./
-RUN rm -rf /var/lib/apt/lists && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
+COPY --from=dvlp_msdot-build-lite ./etc/apt/trusted.gpg.d/microsoft-prod.gpg ./etc/apt/trusted.gpg.d/microsoft-prod.gpg
 
 FROM dvlp_gui-lite-base${KERNEL_TYPE:+-kernel} as dvlp_gui-lite-built
 
@@ -1260,9 +1201,11 @@ USER r00t
 WORKDIR /
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/gui-lite,sharing=locked \
-    rm -rf /var/lib/apt/lists && \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
+    rm -rf /var/lib/apt/lists && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
+    # echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/trusted.gpg.d/microsoft-prod.gpg] https://packages.microsoft.com/repos/microsoft-debian-bullseye-prod bullseye main" | tee /etc/apt/sources.list.d/microsoft-prod.list  > /dev/null && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bookworm stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
 # RUN \
 #     rm -rf /etc/ssl/certs/* && \
@@ -1311,6 +1254,9 @@ RUN \
     --mount=type=cache,target=/var/cache/dvlp/gui,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
+    rm -rf /etc/ssl/certs/* && \
+    apt-get -y install ca-certificates && \
+    update-ca-certificates && \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install -y gobject-introspection libgirepository1.0-dev xrdp xfce4 xfce4-goodies && \
@@ -1366,6 +1312,8 @@ RUN rm -rf /etc/ssl/certs/* && \
 ############
 # get-home #
 ############
+
+
 FROM scratch AS dvlp_k-home-nix
 # ARG WINDOWS
 # ARG LINUX
@@ -1378,10 +1326,42 @@ ARG KERNEL_TYPE
 # ARG HOME_DIR="${LINUX:+'HOME_NIX'}"
 USER r00t
 WORKDIR /
-# COPY --from=dvlp_base-build-angel-volumes    --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
 COPY --from=dvlp_repo-kernel --chmod=1770 ./repos/ ./
-COPY --from=dvlp_repo-kernel --chmod=1770 ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
-# COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/${HOME_DIR}/ ./
+COPY --from=dvlp_base-build-angel-volumes ./hal/ ./
+
+FROM dvlp_k-home-nix AS dvlp_k-home-nix-angel
+
+
+FROM scratch AS dvlp_k-home-nix-devel
+# ARG WINDOWS
+# ARG LINUX
+# # determine which home dir to get -- default is HOME_NIX 
+ARG HOME_DIR='HOME_NIX'
+ARG KERNEL_TYPE
+# # if WINDOWS argument is provided, use win home dir
+# ARG HOME_DIR="${WINDOWS:+'HOME_WIN'}"
+# # if LINUX argument is provided, use nix home dir
+# ARG HOME_DIR="${LINUX:+'HOME_NIX'}"
+USER r00t
+WORKDIR /
+COPY --from=dvlp_repo-kernel --chmod=1770 ./repos/ ./
+COPY --from=dvlp_base-build-devel-volumes ./hel/ ./
+
+FROM scratch AS dvlp_k-home-nix-r00t
+# ARG WINDOWS
+# ARG LINUX
+# # determine which home dir to get -- default is HOME_NIX 
+ARG HOME_DIR='HOME_NIX'
+ARG KERNEL_TYPE
+# # if WINDOWS argument is provided, use win home dir
+# ARG HOME_DIR="${WINDOWS:+'HOME_WIN'}"
+# # if LINUX argument is provided, use nix home dir
+# ARG HOME_DIR="${LINUX:+'HOME_NIX'}"
+USER r00t
+WORKDIR /
+COPY --from=dvlp_repo-kernel --chmod=1770 ./repos/ ./
+COPY --from=dvlp_base-build-r00t-volumes ./r00t/ ./
+
 
 ############
 # get-home #
@@ -1410,6 +1390,7 @@ WORKDIR /
 COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/mnt/HOME_WIN/ ./
 COPY --from=dvlp_repo-kernel ./repos/dvlw/ ./repos/kindtek/dvlw/
 COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/kernels/linux/kache/wsl* ./
+
 # COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/${HOME_DIR}/ ./
 
 FROM kalilinux/kali-rolling:latest AS dvlp_k-home-win-user-mod
