@@ -1168,14 +1168,14 @@ COPY --from=dvlp_python ./ ./
 COPY --from=dvlp_msdot-build-lite ./ ./
 COPY --from=dvlp_dind-build ./ ./
 COPY --from=dvlp_base ./ ./
-COPY --from=dvlp_msdot-build-lite ./etc/apt/trusted.gpg.d/microsoft-prod.gpg ./etc/apt/trusted.gpg.d/microsoft-prod.gpg
+# COPY --from=dvlp_msdot-build-lite ./etc/apt/trusted.gpg.d/microsoft-prod.gpg ./etc/apt/trusted.gpg.d/microsoft-prod.gpg
 
 FROM scratch AS dvlp_gui-lite-base-kernel
 COPY --from=dvlp_python ./ ./
 COPY --from=dvlp_msdot-build-lite ./ ./
 COPY --from=dvlp_dind-build ./ ./
 COPY --from=dvlp_base-kernel ./ ./
-COPY --from=dvlp_msdot-build-lite ./etc/apt/trusted.gpg.d/microsoft-prod.gpg ./etc/apt/trusted.gpg.d/microsoft-prod.gpg
+# COPY --from=dvlp_msdot-build-lite ./etc/apt/trusted.gpg.d/microsoft-prod.gpg ./etc/apt/trusted.gpg.d/microsoft-prod.gpg
 
 FROM dvlp_gui-lite-base${KERNEL_TYPE:+-kernel} as dvlp_gui-lite-built
 

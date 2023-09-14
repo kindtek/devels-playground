@@ -462,11 +462,13 @@ IF NOT "!image_service_base!" == "test" (
         docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !compose_services!
     )
 )
-IF "!image_service_suffix!" == "kernel" (
-    @REM force rebuild of kernel
-    ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build  --no-cache !build_args! !compose_services_nocache!
-    docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build  --no-cache !build_args! !compose_services_nocache!
-)
+@REM IF "!image_service_suffix!" == "kernel" (
+@REM     @REM force rebuild of kernel
+@REM     ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build  --no-cache !build_args! !compose_services_nocache!
+@REM     docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build  --no-cache !build_args! !compose_services_nocache!
+@REM     @REM ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml push !compose_services_nocache!
+@REM     @REM docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build push !compose_services_nocache!
+@REM )
 @REM ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !build_args! !compose_services!
 @REM docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml build !build_args! !compose_services!
 
@@ -831,9 +833,10 @@ wsl.exe --status
 ECHO:
 SET "wsl_launch="
 IF NOT "!image_repo!" == "kalilinux" (
-    IF "!image_repo!" == "kindtek" (
-        echo wsl -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" "import"
-        wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" "import"
+    IF NOT "!image_repo!" == "kindtek" (
+        IF "!wsl_out!" == "!test_string!" (
+            wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& wget -P "`$HOME" - https://raw.githubusercontent.com/kindtek/k-home/main/HOME_NIX/k-home.sh`; bash k-home.sh
+        )
     )
     IF NOT "!image_service_suffix!" == "kernel" (
         ECHO press ENTER to open terminal for newly created !wsl_distro!
@@ -846,6 +849,9 @@ IF NOT "!image_repo!" == "kalilinux" (
         ) ELSE (
             ECHO "skipping preview for !wsl_distro! ..."
         )
+    ) ELSE (
+        echo wsl -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" "import"
+        wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" "import"
     )
 )
 
