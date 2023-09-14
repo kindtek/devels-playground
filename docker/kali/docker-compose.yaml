@@ -150,7 +150,7 @@ services:
     env_file:
       - .env
   k-home-nix:
-    extends: k-home-nix
+    extends: k-home-win
     build:
       target: dvlp_k-home-nix-angel
   k-home-nix-angel:
