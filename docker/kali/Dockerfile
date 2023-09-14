@@ -835,70 +835,72 @@ RUN rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 
 
+FROM dvlp_git AS dvlp_gui-lite
+
 ########################
 # dvlp_base-scan-build #
 ########################
-FROM kindtek/devels-playground:kali-skel AS dvlp_base-scan-build
-USER r00t
-SHELL ["/bin/bash", "-c"]
-WORKDIR /r00t/build
-RUN \
-    rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/scan,sharing=locked \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install -y --reinstall ca-certificates && \
-    apt-get install -y software-properties-common && \
-    apt-get update --fix-missing && apt-get install -f && \
-    apt-get install -y  --install-suggests autoconf automake build-essential espeak ethtool expect hostapd iw lame libnl-3-dev libnl-genl-3-dev libpcre2-dev libhwloc-dev libssl-dev libsqlite3-dev libtool libcmocka-dev libpcap-dev pkg-config ruby-dev rfkill shtool screen strace tcpdump usbutils wpasupplicant zlib1g-dev && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
-WORKDIR /r00t/build
-RUN git clone https://github.com/nmap/nmap 
-WORKDIR /r00t/build/nmap
-RUN \
-    ./configure && \
-    make && \
-    make install && \
-    rm -rf /r00t/build/nmap
-WORKDIR /r00t/build
-RUN git clone https://github.com/aircrack-ng/aircrack-ng aircrack
-WORKDIR /r00t/build/aircrack
-ENV NOCONFIGURE=1
-RUN \
-    ./autogen.sh && \
-    ./configure  && \
-    make  && \
-    make check && \
-    make install
-WORKDIR /usr/share
-RUN git clone https://github.com/beefproject/beef beef
-WORKDIR /usr/share/beef
-USER agl
-RUN \
-    gem install bundler
+# FROM kindtek/devels-playground:kali-skel AS dvlp_base-scan-build
+# USER r00t
+# SHELL ["/bin/bash", "-c"]
+# WORKDIR /r00t/build
 # RUN \
-#     bundle config set --local with 'test' 
-RUN \
-    yes "" | ./install 
-WORKDIR /
-USER r00t
-RUN rm -rf /etc/ssl/certs/* && \
-apt-get -y install ca-certificates && \
-update-ca-certificates && \
-rm -rf /var/lib/apt/lists && \
-apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-echo " \
-Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
-rm -rf /var/lib/apt/lists && \
-rm -rf /var/cache/apt 
+#     rm -f /etc/apt/apt.conf.d/docker-clean && \
+#     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
+# RUN \
+#     --mount=type=cache,target=/var/cache/dvlp/scan,sharing=locked \
+#     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+#     apt-get install -y --reinstall ca-certificates && \
+#     apt-get install -y software-properties-common && \
+#     apt-get update --fix-missing && apt-get install -f && \
+#     apt-get install -y  --install-suggests autoconf automake build-essential espeak ethtool expect hostapd iw lame libnl-3-dev libnl-genl-3-dev libpcre2-dev libhwloc-dev libssl-dev libsqlite3-dev libtool libcmocka-dev libpcap-dev pkg-config ruby-dev rfkill shtool screen strace tcpdump usbutils wpasupplicant zlib1g-dev && \
+#     rm -rf /var/lib/apt/lists && \
+#     rm -rf /var/cache/apt
+# WORKDIR /r00t/build
+# RUN git clone https://github.com/nmap/nmap 
+# WORKDIR /r00t/build/nmap
+# RUN \
+#     ./configure && \
+#     make && \
+#     make install && \
+#     rm -rf /r00t/build/nmap
+# WORKDIR /r00t/build
+# RUN git clone https://github.com/aircrack-ng/aircrack-ng aircrack
+# WORKDIR /r00t/build/aircrack
+# ENV NOCONFIGURE=1
+# RUN \
+#     ./autogen.sh && \
+#     ./configure  && \
+#     make  && \
+#     make check && \
+#     make install
+# WORKDIR /usr/share
+# RUN git clone https://github.com/beefproject/beef beef
+# WORKDIR /usr/share/beef
+# USER agl
+# RUN \
+#     gem install bundler
+# # RUN \
+# #     bundle config set --local with 'test' 
+# RUN \
+#     yes "" | ./install 
+# WORKDIR /
+# USER r00t
+# RUN rm -rf /etc/ssl/certs/* && \
+# apt-get -y install ca-certificates && \
+# update-ca-certificates && \
+# rm -rf /var/lib/apt/lists && \
+# apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+# echo " \
+# Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
+# rm -rf /var/lib/apt/lists && \
+# rm -rf /var/cache/apt 
 
 ##################
 # dvlp_base-scan #
 ##################
-FROM dvlp_base-scan-build AS dvlp_base-scan
-COPY --from=dvlp_python ./ ./
+# FROM dvlp_base-scan-build AS dvlp_base-scan
+# COPY --from=dvlp_python ./ ./
 USER r00t
 RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -917,7 +919,7 @@ Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.co
 #####################
 # dvlp_python-build #
 #####################
-FROM kindtek/devels-playground:kali-skel AS dvlp_python-build
+# FROM kindtek/devels-playground:kali-skel AS dvlp_python-build
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _AGL=${_AGL:-agl}
@@ -944,7 +946,7 @@ RUN \
 ###############################
 # dvlp_python-build #
 ###############################
-FROM dvlp_python-build AS dvlp_python
+# FROM dvlp_python-build AS dvlp_python
 USER r00t
 WORKDIR /
 ARG angel_exists=true
@@ -1012,7 +1014,7 @@ WORKDIR /
 ###############################
 # dvlp_msdot-build-lite #
 ##############################
-FROM kindtek/devels-playground:kali-skel AS dvlp_msdot-build-lite
+# FROM kindtek/devels-playground:kali-skel AS dvlp_msdot-build-lite
 
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
@@ -1037,7 +1039,7 @@ RUN \
 #########################
 # dvlp_msdot-build #
 #########################
-FROM dvlp_msdot-build-lite AS dvlp_msdot-build
+# FROM dvlp_msdot-build-lite AS dvlp_msdot-build
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/msdot,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -1058,7 +1060,7 @@ RUN \
 ########################
 # dvlp_msdot-lite #
 ########################
-FROM dvlp_msdot-build-lite AS dvlp_msdot-lite
+# FROM dvlp_msdot-build-lite AS dvlp_msdot-lite
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -1069,20 +1071,20 @@ ENV _DVL=$_DVL_USR
 ENV _ADM=$_ADM_USR
 USER r00t
 WORKDIR /
-RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    rm -rf /etc/ssl/certs/* && \
-    apt-get -y install ca-certificates && \
-    update-ca-certificates && \
-    rm -rf /var/lib/apt/lists && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
+# RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
+#     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
+#     rm -rf /etc/ssl/certs/* && \
+#     apt-get -y install ca-certificates && \
+#     update-ca-certificates && \
+#     rm -rf /var/lib/apt/lists && \
+#     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+#     rm -rf /var/lib/apt/lists && \
+#     rm -rf /var/cache/apt
 
 ########################
 # dvlp_msdot-kernel #
 ########################
-FROM dvlp_base AS dvlp_msdot
+# FROM dvlp_base AS dvlp_msdot
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -1100,22 +1102,22 @@ ENV _ADM=$_ADM_USR
 ARG REFRESH_REPO
 USER r00t
 WORKDIR /
-COPY --from=dvlp_msdot-build ./ ./
-RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    rm -rf /etc/ssl/certs/* && \
-    apt-get -y install ca-certificates && \
-    update-ca-certificates && \
-    rm -rf /var/lib/apt/lists && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
+# COPY --from=dvlp_msdot-build ./ ./
+# RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
+#     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
+#     rm -rf /etc/ssl/certs/* && \
+#     apt-get -y install ca-certificates && \
+#     update-ca-certificates && \
+#     rm -rf /var/lib/apt/lists && \
+#     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+#     rm -rf /var/lib/apt/lists && \
+#     rm -rf /var/cache/apt
 
 ########################## DOCKER IN DOCKER ######################################
 ########################
 # dvlp_dind-build #
 ########################
-FROM kindtek/devels-playground:kali-skel AS dvlp_dind-build
+# FROM kindtek/devels-playground:kali-skel AS dvlp_dind-build
 USER r00t
 WORKDIR /
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
@@ -1138,15 +1140,15 @@ RUN \
 #######################
 # dvlp_dind #
 #######################
-FROM dvlp_dind-build AS dvlp_dind-base
-COPY --from=dvlp_base ./ ./
+# FROM dvlp_dind-build AS dvlp_dind-base
+# COPY --from=dvlp_base ./ ./
 
-FROM dvlp_dind-build AS dvlp_dind-base-kernel
-COPY --from=dvlp_base-kernel ./ ./
+# FROM dvlp_dind-build AS dvlp_dind-base-kernel
+# COPY --from=dvlp_base-kernel ./ ./
 
-FROM dvlp_dind-base${KERNEL_TYPE:+-kernel} AS dvlp_dind_built
+# FROM dvlp_dind-base${KERNEL_TYPE:+-kernel} AS dvlp_dind_built
 
-FROM dvlp_dind_built AS dvlp_dind
+# FROM dvlp_dind_built AS dvlp_dind
 USER r00t
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
@@ -1156,38 +1158,38 @@ ARG DOCKER_BUILD_TIMESTAMP
 ARG installkernel
 USER r00t
 WORKDIR /
-RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    rm -rf /etc/ssl/certs/* && \
-    apt-get -y install ca-certificates && \
-    update-ca-certificates && \
-    rm -rf /var/lib/apt/lists && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
+# RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
+#     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
+#     rm -rf /etc/ssl/certs/* && \
+#     apt-get -y install ca-certificates && \
+#     update-ca-certificates && \
+#     rm -rf /var/lib/apt/lists && \
+#     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+#     rm -rf /var/lib/apt/lists && \
+#     rm -rf /var/cache/apt
 
 
 #################################### GUI ######################################
 ##################
 # dvlp_gui-lite #
 #################
-FROM scratch AS dvlp_gui-lite-base
-COPY --from=dvlp_python ./ ./
-COPY --from=dvlp_msdot-build-lite ./ ./
-COPY --from=dvlp_dind-build ./ ./
-COPY --from=dvlp_base ./ ./
-# COPY --from=dvlp_msdot-build-lite ./etc/apt/trusted.gpg.d/microsoft-prod.gpg ./etc/apt/trusted.gpg.d/microsoft-prod.gpg
+# FROM scratch AS dvlp_gui-lite-base
+# COPY --from=dvlp_python ./ ./
+# COPY --from=dvlp_msdot-build-lite ./ ./
+# COPY --from=dvlp_dind-build ./ ./
+# COPY --from=dvlp_base ./ ./
+# # COPY --from=dvlp_msdot-build-lite ./etc/apt/trusted.gpg.d/microsoft-prod.gpg ./etc/apt/trusted.gpg.d/microsoft-prod.gpg
 
-FROM scratch AS dvlp_gui-lite-base-kernel
-COPY --from=dvlp_python ./ ./
-COPY --from=dvlp_msdot-build-lite ./ ./
-COPY --from=dvlp_dind-build ./ ./
-COPY --from=dvlp_base-kernel ./ ./
-# COPY --from=dvlp_msdot-build-lite ./etc/apt/trusted.gpg.d/microsoft-prod.gpg ./etc/apt/trusted.gpg.d/microsoft-prod.gpg
+# FROM scratch AS dvlp_gui-lite-base-kernel
+# COPY --from=dvlp_python ./ ./
+# COPY --from=dvlp_msdot-build-lite ./ ./
+# COPY --from=dvlp_dind-build ./ ./
+# COPY --from=dvlp_base-kernel ./ ./
+# # COPY --from=dvlp_msdot-build-lite ./etc/apt/trusted.gpg.d/microsoft-prod.gpg ./etc/apt/trusted.gpg.d/microsoft-prod.gpg
 
-FROM dvlp_gui-lite-base${KERNEL_TYPE:+-kernel} as dvlp_gui-lite-built
+# FROM dvlp_gui-lite-base${KERNEL_TYPE:+-kernel} as dvlp_gui-lite-built
 
-FROM dvlp_gui-lite-built AS dvlp_gui-lite
+# FROM dvlp_gui-lite-built AS dvlp_gui-lite
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _ADM_USR
@@ -1262,10 +1264,10 @@ RUN \
     --mount=type=cache,target=/var/cache/dvlp/gui,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    rm -rf /etc/ssl/certs/* && \
-    apt-get -y install ca-certificates && \
+    # rm -rf /etc/ssl/certs/* && \
+    # apt-get -y install ca-certificates && \
     update-ca-certificates && \
-    rm -rf /var/lib/apt/lists && \
+    # rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install -y gobject-introspection libgirepository1.0-dev xrdp xfce4 xfce4-goodies && \
     apt-get install -y locales && \
@@ -1277,10 +1279,10 @@ RUN \
     echo "set shared/default-x-display-manager lightdm" | debconf-communicate && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install --no-install-recommends -y locales kali-defaults kali-root-login desktop-base kali-win-kex kali-desktop-xfce pulseaudio-module-xrdp virt-manager virtualbox && \
-    rm -rf /etc/ssl/certs/* && \
-    apt-get -y install ca-certificates && \
-    update-ca-certificates && \
-    rm -rf /var/lib/apt/lists && \
+    # rm -rf /etc/ssl/certs/* && \
+    # apt-get -y install ca-certificates && \
+    # update-ca-certificates && \
+    # rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     echo " \
     Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
