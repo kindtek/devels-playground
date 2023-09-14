@@ -143,12 +143,16 @@ services:
       - repo_agl-kernel:/home/${_AGL}/dvlw/dvlp/kernels
       - repo_dvl-kernel:/hel/dvlw/dvlp/kernels
       - repo_dvl-kernel:/home/${_DVL}/dvlw/dvlp/kernels
-  k-home-nix:
+  k-home-win:
     build:
-      target: dvlp_k-home-nix-angel
+      target: dvlp_k-home-win
       no_cache: true
     env_file:
       - .env
+  k-home-nix:
+    extends: k-home-nix
+    build:
+      target: dvlp_k-home-nix-angel
   k-home-nix-angel:
     extends: k-home-nix
   k-home-nix-devel:
