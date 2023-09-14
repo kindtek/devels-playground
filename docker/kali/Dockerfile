@@ -212,8 +212,8 @@ WORKDIR /
 FROM dvlp_base-build-devel-volumes AS dvlp_base-build-devel-kernel-volumes
 ARG _MNT
 ARG _DVL
-ARG _ARCH
-ARG _ARCH_VENDOR
+ENV _ARCH
+ENV _ARCH_VENDOR
 WORKDIR /hel
 COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
 RUN mkdir -pv /hel && \
@@ -279,8 +279,8 @@ WORKDIR /
 FROM dvlp_base-build-angel-volumes AS dvlp_base-build-angel-kernel-volumes
 ARG _MNT
 ARG _AGL
-ARG _ARCH
-ARG _ARCH_VENDOR
+ENV _ARCH
+ENV _ARCH_VENDOR
 WORKDIR /hal
 COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
 # COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/      ./mnt/
@@ -343,8 +343,8 @@ WORKDIR /
 FROM dvlp_base-build-r00t-volumes AS dvlp_base-build-r00t-kernel-volumes
 ARG _MNT
 ARG _ADMIN
-ARG _ARCH
-ARG _ARCH_VENDOR
+ENV _ARCH
+ENV _ARCH_VENDOR
 WORKDIR /admin
 COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
 RUN ln -fsv dvlw/dvlp dvlp && \
