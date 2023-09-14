@@ -63,12 +63,18 @@ services:
   r00t:
     build:
       target: dvlp_base-built-r00t-volumes
+    env_file:
+      - .env
   angel:
     build:
       target: dvlp_base-built-angel-volumes
+    env_file:
+      - .env
   devel:
     build:
       target: dvlp_base-built-devel-volumes
+    env_file:
+      - .env
   skel:
     init: true
     # command:
