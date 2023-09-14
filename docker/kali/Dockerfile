@@ -1332,7 +1332,6 @@ ARG KERNEL_TYPE
 # ARG HOME_DIR="${WINDOWS:+'HOME_WIN'}"
 # # if LINUX argument is provided, use nix home dir
 # ARG HOME_DIR="${LINUX:+'HOME_NIX'}"
-USER r00t
 WORKDIR /
 COPY --from=dvlp_repo-kernel --chmod=1770 ./repos/ ./
 COPY --from=dvlp_base-build-angel-kernel-volumes ./hal/ ./
@@ -1350,7 +1349,6 @@ ARG KERNEL_TYPE
 # ARG HOME_DIR="${WINDOWS:+'HOME_WIN'}"
 # # if LINUX argument is provided, use nix home dir
 # ARG HOME_DIR="${LINUX:+'HOME_NIX'}"
-USER r00t
 WORKDIR /
 COPY --from=dvlp_repo-kernel --chmod=1770 ./repos/ ./
 COPY --from=dvlp_base-build-devel-kernel-volumes ./hel/ ./
@@ -1365,7 +1363,6 @@ ARG KERNEL_TYPE
 # ARG HOME_DIR="${WINDOWS:+'HOME_WIN'}"
 # # if LINUX argument is provided, use nix home dir
 # ARG HOME_DIR="${LINUX:+'HOME_NIX'}"
-USER r00t
 WORKDIR /
 COPY --from=dvlp_repo-kernel --chmod=1770 ./repos/ ./
 COPY --from=dvlp_base-build-r00t-kernel-volumes ./r00t/ ./
