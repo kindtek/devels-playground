@@ -21,6 +21,9 @@ ARG installkernel=${install}_KERNEL
 # $ echo ${!installkernel}
 # INSTALL_KERNEL
 ARG REFRESH_REPO=${REFRESH_REPO:-no}
+ARG ARCH
+ARG ARCH
+ARG _ARCH
 ARG WINDOWS
 ARG LINUX
 ARG _AGL_USR=${_AGL:-agl}
@@ -210,6 +213,7 @@ WORKDIR /
 FROM dvlp_base-build-devel-volumes AS dvlp_base-build-devel-kernel-volumes
 ARG _MNT
 ARG _DVL
+ARG ARCH
 WORKDIR /hel
 COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
 RUN mkdir -pv /hel && \
@@ -217,7 +221,7 @@ RUN mkdir -pv /hel && \
     mkdir -pv /home/${_DVL}/kache && \
     ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
-    ln -fsv "dvlw/dvlp/kernels/linux/$(uname -m | grep -o '^[^_]*')/$(echo "$(grep -Pom 1 '^vendor_id\s*:\s*\K.*' /proc/cpuinfo | grep -Eio --color=never 'intel|amd' || grep -Pom 1 '^vendor_id\s*:\s*\K.*' /proc/cpuinfo --color=never)" | tr '[:upper:]' '[:lower:]')" "$(uname -m | grep -o '^[^_]*')" && \
+    ln -fsv "dvlw/dvlp/kernels/linux/$ARCH" && \
     ln -fsv dvlw/dvlp/kernels kernels && \
     chmod -R 1770 /hel && \
     chmod -R 1770 /home/${_DVL} && \
@@ -275,12 +279,13 @@ WORKDIR /
 FROM dvlp_base-build-angel-volumes AS dvlp_base-build-angel-kernel-volumes
 ARG _MNT
 ARG _AGL
+ARG ARCH
 WORKDIR /hal
 COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
 # COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/      ./mnt/
 RUN ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
-    ln -fsv "dvlw/dvlp/kernels/linux/$(uname -m | grep -o '^[^_]*')/$(echo "$(grep -Pom 1 '^vendor_id\s*:\s*\K.*' /proc/cpuinfo | grep -Eio --color=never 'intel|amd' || grep -Pom 1 '^vendor_id\s*:\s*\K.*' /proc/cpuinfo --color=never)" | tr '[:upper:]' '[:lower:]')" "$(uname -m | grep -o '^[^_]*')" && \
+    ln -fsv "dvlw/dvlp/kernels/linux/$ARCH" && \
     ln -fsv dvlw/dvlp/kernels kernels  && \
     chmod -R 1770 /hal && \
     chmod -R 1770 /home/${_AGL} && \
@@ -337,11 +342,12 @@ WORKDIR /
 FROM dvlp_base-build-r00t-volumes AS dvlp_base-build-r00t-kernel-volumes
 ARG _MNT
 ARG _ADMIN
+ARG ARCH
 WORKDIR /admin
 COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
 RUN ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
-    ln -fsv "dvlw/dvlp/kernels/linux/$(uname -m | grep -o '^[^_]*')/$(echo "$(grep -Pom 1 '^vendor_id\s*:\s*\K.*' /proc/cpuinfo | grep -Eio --color=never 'intel|amd' || grep -Pom 1 '^vendor_id\s*:\s*\K.*' /proc/cpuinfo --color=never)" | tr '[:upper:]' '[:lower:]')" "$(uname -m | grep -o '^[^_]*')" && \
+    ln -fsv "dvlw/dvlp/kernels/linux/$ARCH" && \
     ln -fsv dvlw/dvlp/kernels kernels && \
     mkdir -pv /admin && mkdir -pv kache
 #  && \
