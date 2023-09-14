@@ -581,23 +581,22 @@ ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-co
 docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! /bin/bash -c WSL_DISTRO_NAME='!wsl_distro!'^;WIN_USER='%USERNAME%'^;export WSL_DISTRO_NAME^;export WIN_USER^;
 SET /P wsl_out=<!test_string_path!
 DEL !test_string_path!
-IF "!image_repo!" == "kindtek" (
-    IF "!wsl_out!" == "!test_string!" (
-        @REM ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
-        @REM docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
-        ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo apt update -y
-        docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo apt update -y
-        ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo apt upgrade -y
-        docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo apt upgrade -y
-    ) ELSE (
-        @REM ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! rm -vrf /var/cache/dvlp/archives
-        @REM docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! rm -vrf /var/cache/dvlp/archives
-        ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! apt update -y
-        docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! apt update -y
-        ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! apt upgrade -y
-        docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! apt upgrade -y
-    )
+IF "!wsl_out!" == "!test_string!" (
+    @REM ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
+    @REM docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo rm -vrf /var/cache/dvlp/archives
+    ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo apt update -y
+    docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo apt update -y
+    ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo apt upgrade -y
+    docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo apt upgrade -y
+) ELSE (
+    @REM ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! rm -vrf /var/cache/dvlp/archives
+    @REM docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! rm -vrf /var/cache/dvlp/archives
+    ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! apt update -y
+    docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! apt update -y
+    ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! apt upgrade -y
+    docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! apt upgrade -y
 )
+
 @REM @TODO: handle WSL_DOCKER_IMG_ID case of multiple ids returned from docker images query
 ECHO "SET WIN_USER=%USERNAME% ^& docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml images -q !image_service! > !docker_image_id_path!"
 docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml images -q !image_service! > !docker_image_id_path!
@@ -832,27 +831,31 @@ ECHO:
 wsl.exe --status
 ECHO:
 SET "wsl_launch="
-IF NOT "!image_repo!" == "kalilinux" (
-    IF NOT "!image_repo!" == "kindtek" (
-        IF "!wsl_out!" == "!test_string!" (
-            wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& wget -P "`$HOME" - https://raw.githubusercontent.com/kindtek/k-home/main/HOME_NIX/k-home.sh`; bash k-home.sh
-        )
-    )
-    IF NOT "!image_service_suffix!" == "kernel" (
-        ECHO press ENTER to open terminal for newly created !wsl_distro!
-        ECHO  ..or enter any character to skip 
-        ECHO|set /p="(open !wsl_distro! terminal):"
-        @REM make sure windows paths transfer
-        SET /P "wsl_launch=> "
-        IF /I "!wsl_launch!" == "" (
-            wsl.exe -d !wsl_distro! -- cd / ^&^& bash
-        ) ELSE (
-            ECHO "skipping preview for !wsl_distro! ..."
-        )
+wsl.exe -- sudo apt-get update -y ^&^& sudo apt-get upgrade -y
+IF errorlevel 1 (
+    wsl.exe -- apt-get update -y ^&^& apt-get upgrade -y    
+)    
+
+IF NOT "!image_repo!" == "kindtek" (
+    IF "!wsl_out!" == "!test_string!" (
+        echo             wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& wget -P "^$HOME" - https://raw.githubusercontent.com/kindtek/k-home/main/HOME_NIX/k-home.sh^; bash k-home.sh
+        wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& wget -P "^$HOME" - https://raw.githubusercontent.com/kindtek/k-home/main/HOME_NIX/k-home.sh^; bash k-home.sh
+    ) 
+)
+IF NOT "!image_service_suffix!" == "kernel" (
+    ECHO press ENTER to open terminal for newly created !wsl_distro!
+    ECHO  ..or enter any character to skip 
+    ECHO|set /p="(open !wsl_distro! terminal):"
+    @REM make sure windows paths transfer
+    SET /P "wsl_launch=> "
+    IF /I "!wsl_launch!" == "" (
+        wsl.exe -d !wsl_distro! -- cd / ^&^& bash
     ) ELSE (
-        echo wsl -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" "import"
-        wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" "import"
+        ECHO "skipping preview for !wsl_distro! ..."
     )
+) ELSE (
+    echo wsl -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" "import"
+    wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" "import"
 )
 
 :wsl_distro_test
@@ -1228,8 +1231,10 @@ IF "!interactive!" == "n" (
         ECHO: 
     )
 )
-
-SET "home_default_option=build"
+SET "home_default_option=pull"
+IF "!image_repo!" == "kindtek" (
+    SET "home_default_option=build"
+) 
 
 IF "!wsl!" == "y" (
     IF "!image_repo!" == "kindtek" (
@@ -1423,13 +1428,20 @@ IF /I "!opti0ns!" == "b" (
 IF /I "!opti0ns!" == "build" (
     IF /I "!image_name_tag!" == "default" (
         SET "docker_image_do=docker_image_pull"
-        @REM ECHO option 'build' selected
         SET "opti0ns=pull"
+        ECHO option '!opti0ns!' selected
         SET "go2=set_paths"
         GOTO switchboard
     ) ELSE (
+        IF /I NOT "!image_repo!" == "kindtek" (
+            SET "docker_image_do=docker_image_pull"
+            ECHO option '!opti0ns!' selected
+            SET "opti0ns=pull"
+            SET "go2=set_paths"
+            GOTO switchboard
+        ) 
         SET "docker_image_do=docker_image_build"
-        @REM ECHO option 'build' selected
+        ECHO option '!opti0ns!' selected
         SET "go2=set_paths"
         GOTO switchboard
     )
@@ -1571,9 +1583,9 @@ IF /I "!opti0ns!" == "debug" (
     SET "DVLP_DEBUG=n"
     IF "!DVLP_DEBUG!" == "y" (
         SET "DVLP_DEBUG=n"
-        ECHO "toggle debug output [OFF]"
+        ECHO toggle debug output [OFF]
     ) ELSE (
-        ECHO "toggle debug output [ON]"
+        ECHO toggle debug output [ON]
         SET "DVLP_DEBUG=y"
     )
     SET "opti0ns=options"
