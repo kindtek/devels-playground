@@ -1327,7 +1327,7 @@ ARG KERNEL_TYPE
 USER r00t
 WORKDIR /
 COPY --from=dvlp_repo-kernel --chmod=1770 ./repos/ ./
-COPY --from=dvlp_base-build-angel-volumes ./hal/ ./
+COPY --from=dvlp_base-build-angel-kernel-volumes ./hal/ ./
 
 FROM dvlp_k-home-nix AS dvlp_k-home-nix-angel
 
@@ -1345,7 +1345,7 @@ ARG KERNEL_TYPE
 USER r00t
 WORKDIR /
 COPY --from=dvlp_repo-kernel --chmod=1770 ./repos/ ./
-COPY --from=dvlp_base-build-devel-volumes ./hel/ ./
+COPY --from=dvlp_base-build-devel-kernel-volumes ./hel/ ./
 
 FROM scratch AS dvlp_k-home-nix-r00t
 # ARG WINDOWS
@@ -1360,7 +1360,7 @@ ARG KERNEL_TYPE
 USER r00t
 WORKDIR /
 COPY --from=dvlp_repo-kernel --chmod=1770 ./repos/ ./
-COPY --from=dvlp_base-build-r00t-volumes ./r00t/ ./
+COPY --from=dvlp_base-build-r00t-kernel-volumes ./r00t/ ./
 
 
 ############
