@@ -319,7 +319,7 @@ COPY --from=dvlp_repos ./repos/dvlw/ ./repos/dvlw/
 FROM kalilinux/kali-rolling:latest AS dvlp_base-r00t-volumes-builder
 ARG _MNT
 ARG _R00T
-WORKDIR /admin
+WORKDIR /r00t
 COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/HOME_NIX/    ./
 COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/         ./mnt/
 COPY --from=dvlp_repos ./repos/dvlw/ ./repos/dvlw/
@@ -332,7 +332,7 @@ RUN mkdir -pv dvlw && \
     ln -fsv dvlw/dvlp/docker/kali kdock && \
     ln -fsv dvlw/dvlp/docker docker 
 # && \
-# chmod -R 1770 /admin
+# chmod -R 1770 /r00t
 WORKDIR ${_MNT}
 RUN mkdir -pv dls && \
     mkdir -pv bak && \
@@ -352,15 +352,15 @@ ARG _MNT
 ARG _R00T
 ARG _ARCH
 ARG _ARCH_VENDOR
-WORKDIR /admin
+WORKDIR /r00t
 COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
 RUN ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
     ln -fsv "dvlw/dvlp/kernels/linux/$_ARCH/$_ARCH_VENDOR" && \
     ln -fsv dvlw/dvlp/kernels kernels && \
-    mkdir -pv /admin && mkdir -pv kache
+    mkdir -pv /r00t && mkdir -pv kache
 #  && \
-# chmod -R 1770 /admin && \
+# chmod -R 1770 /r00t && \
 # cp -prv * /home/r00t
 WORKDIR /
 
@@ -457,7 +457,7 @@ RUN \
 # COPY --from=dvlp_repos                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
 # COPY --from=dvlp_repos                       --chown=r00t:r00t       --chmod=1774    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
 # COPY --from=dvlp_repos                       --chown=r00t:halo       --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/
-# ONBUILD COPY --from=dvlp_base-r00t${KERNEL_TYPE:+-kernel}-volumes             --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
+# ONBUILD COPY --from=dvlp_base-r00t${KERNEL_TYPE:+-kernel}-volumes             --chown=r00t:r00t       --chmod=1770    ./r00t/                        ./r00t/
 # ONBUILD COPY --from=dvlp_base-devel${KERNEL_TYPE:+-kernel}-volumes            --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/###############################
 #  dvlp_base-volumes #
 WORKDIR /
@@ -473,10 +473,10 @@ ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
 ENV _R00T=$_R00T_USR
 
-COPY --from=dvlp_base-r00t-volumes-builder     --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
+COPY --from=dvlp_base-r00t-volumes-builder     --chown=r00t:r00t       --chmod=1770    ./r00t/                        ./r00t/
 COPY --from=dvlp_base-devel-volumes-builder    --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
 COPY --from=dvlp_base-angel-volumes-builder    --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
-COPY --from=dvlp_base-r00t-volumes-built     --chown=r00t:r00t       --chmod=1770    ./admin/                       ./r00t/
+COPY --from=dvlp_base-r00t-volumes-built     --chown=r00t:r00t       --chmod=1770    ./r00t/                       ./r00t/
 COPY --from=dvlp_base-devel-volumes-built    --chown=${_DVL}:hell    --chmod=1770    ./hel/                         ./hel/
 COPY --from=dvlp_base-angel-volumes-built    --chown=${_AGL}:halo    --chmod=1770    ./hal/                         ./hal/
 COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./hel/
@@ -491,7 +491,7 @@ COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                  ./r00t/dvlw/
 COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                  ./dvl/dvlw/
-COPY --from=dvlp_base-r00t-volumes-built     --chown=r00t:r00t       --chmod=1770    ./admin/                       ./r00t/
+COPY --from=dvlp_base-r00t-volumes-built     --chown=r00t:r00t       --chmod=1770    ./r00t/                       ./r00t/
 COPY --from=dvlp_base-devel-volumes-built    --chown=${_DVL}:hell    --chmod=1770    ./hel/                         ./hel/
 COPY --from=dvlp_base-angel-volumes-built    --chown=${_AGL}:halo    --chmod=1770    ./hal/                         ./hal/
 
@@ -500,10 +500,10 @@ COPY --from=dvlp_base-angel-volumes-built    --chown=${_AGL}:halo    --chmod=177
 ###############################
 
 FROM dvlp_base-volumes-build AS dvlp_base-kernel-volumes-build
-COPY --from=dvlp_base-r00t-volumes-builder            --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
+COPY --from=dvlp_base-r00t-volumes-builder            --chown=r00t:r00t       --chmod=1770    ./r00t/                        ./r00t/
 COPY --from=dvlp_base-devel-volumes-builder           --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
 COPY --from=dvlp_base-angel-volumes-builder           --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
-COPY --from=dvlp_base-r00t-volumes-built     --chown=r00t:r00t       --chmod=1770    ./admin/                       ./r00t/
+COPY --from=dvlp_base-r00t-volumes-built     --chown=r00t:r00t       --chmod=1770    ./r00t/                       ./r00t/
 COPY --from=dvlp_base-devel-volumes-built    --chown=${_DVL}:hell    --chmod=1770    ./hel/                         ./hel/
 COPY --from=dvlp_base-angel-volumes-built    --chown=${_AGL}:halo    --chmod=1770    ./hal/                         ./hal/
 COPY --from=dvlp_repo-kernel                              --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./hel/
@@ -518,7 +518,7 @@ COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo  
 COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw                   ./hal/dvlw
 COPY --from=dvlp_repo-kernel                              --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw                   ./r00t/dvlw
 COPY --from=dvlp_repo-kernel                              --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                  ./dvl/dvlw
-COPY --from=dvlp_base-r00t-kernel-volumes-builder     --chown=r00t:r00t       --chmod=1770    ./admin/                       ./r00t/
+COPY --from=dvlp_base-r00t-kernel-volumes-builder     --chown=r00t:r00t       --chmod=1770    ./r00t/                       ./r00t/
 COPY --from=dvlp_base-devel-kernel-volumes-builder    --chown=${_DVL}:hell    --chmod=1770    ./hel/                         ./hel/
 COPY --from=dvlp_base-angel-kernel-volumes-builder    --chown=${_AGL}:halo    --chmod=1770    ./hal/                         ./hal/
 
@@ -750,7 +750,7 @@ RUN echo "[user]" | tee /etc/wsl.conf && \
     rm -rf /var/cache/apt 
 
 
-# ################################### GIT #########################################
+# ################################### CLI #########################################
 
 ########################
 # dvlp_cli        #
@@ -879,19 +879,19 @@ USER r00t
 WORKDIR /
 
 RUN \
-    --mount=type=cache,target=/var/cache/dvlp/python,sharing=locked \
-    rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    rm -rf /var/lib/apt/lists && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get --no-install-recommends -y install apt-utils jq libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev python3-pip python3-venv pkg-config  
+    # --mount=type=cache,target=/var/cache/dvlp/python,sharing=locked \
+    # rm -f /etc/apt/apt.conf.d/docker-clean && \
+    # echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
+    # rm -rf /var/lib/apt/lists && \
+    # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    apt-get --no-install-recommends -y install apt-utils jq libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev python3-pip python3-venv pkg-config  && \
 # && \
 # # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
 # rm -rf /var/cache/apt
-RUN \
-    --mount=type=cache,target=/var/cache/pip,sharing=locked \
+# RUN \
+    # --mount=type=cache,target=/var/cache/pip,sharing=locked \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
-    python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps 
+    python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps && \
 # RUN \
 #     apt-get --no-install-recommends -y remove libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev 
 ###############################
@@ -913,29 +913,28 @@ RUN \
 # && \
 # rm -rf /var/lib/apt/lists && \
 # rm -rf /var/cache/apt
-
-WORKDIR /r00t
-RUN \
-    --mount=type=cache,target=/var/cache/pip,sharing=private \
-    $r00t_exists && pip3 install pip --upgrade --no-warn-script-location --no-deps && \
-    pip3 install cdir --user --target=/r00t || r00t_exists=false
-# RUN ( $devel_exists && (chown -R ${_DVL}:hell /hel || chown -R ${_DVL}:hell /hel/.local || devel_exists=false )) 
+# WORKDIR /r00t
+# RUN \
+    # --mount=type=cache,target=/var/cache/pip,sharing=private \
+    # $r00t_exists && pip3 install pip --upgrade --no-warn-script-location --no-deps && \
+    pip3 install cdir --user --target=/r00t && \
+    # rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt
 USER ${_DVL}
 WORKDIR /hel
 RUN \
-    --mount=type=cache,target=/var/cache/pip,sharing=private \
-    $devel_exists && pip3 install pip --upgrade --no-warn-script-location --no-deps && \
-    pip3 install cdir --user || devel_exists=false
+    # --mount=type=cache,target=/var/cache/pip,sharing=private \
+    pip3 install pip --upgrade --no-warn-script-location --no-deps && \
+    pip3 install cdir --user 
 USER ${_AGL}
 WORKDIR /hal
 # RUN  ( $angel_exists && (chown -R ${_AGL}:halo /hal || chown -R ${_AGL}:halo /hal/.local || angel_exists=false )) 
 RUN \
-    --mount=type=cache,target=/var/cache/pip,sharing=private \
-    pip3 install pip --upgrade --no-warn-script-location --no-deps || angel_exists=false && \
-    pip3 install cdir --user || devel_exists=false 
-
-# USER r00t
-# WORKDIR /
+    # --mount=type=cache,target=/var/cache/pip,sharing=private \
+    pip3 install pip --upgrade --no-warn-script-location --no-deps && \
+    pip3 install cdir --user
+USER r00t
+WORKDIR /
 
 
 # RUN apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
@@ -974,7 +973,7 @@ RUN \
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
 RUN \
-    --mount=type=cache,target=/var/cache/dvlp/msdot,sharing=locked \
+    # --mount=type=cache,target=/var/cache/dvlp/msdot,sharing=locked \
     # rm -f /etc/apt/apt.conf.d/docker-clean && \
     # echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
     # rm -rf /var/lib/apt/lists && \
@@ -984,9 +983,9 @@ RUN \
     # mv packages-microsoft-prod.deb /var/cache/apt/archives/packages-microsoft-prod.deb && \
     # echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/trusted.gpg.d/microsoft-prod.gpg] https://packages.microsoft.com/repos/microsoft-debian-bullseye-prod bullseye main" | tee /etc/apt/sources.list.d/microsoft-prod.list  > /dev/null && \
     # dpkg -i /var/cache/apt/archives/packages-microsoft-prod.deb && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-# rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
+#     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+# # rm -rf /var/lib/apt/lists && \
+#     rm -rf /var/cache/apt
 #########################
 # dvlp_msdot-build #
 #########################
@@ -1007,7 +1006,7 @@ RUN \
 # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
 # rm -rf /var/lib/apt/lists && \
 # rm -rf /var/cache/apt
-
+# 
 ########################
 # dvlp_msdot-lite #
 ########################
@@ -1031,7 +1030,7 @@ RUN \
 #     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
 #     rm -rf /var/lib/apt/lists && \
 #     rm -rf /var/cache/apt
-
+# 
 ########################## DOCKER IN DOCKER ######################################
 ########################
 # dvlp_dind-build #
@@ -1040,19 +1039,19 @@ RUN \
 # USER r00t
 # WORKDIR /
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/dind,sharing=locked \
-    rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    rm -rf /var/lib/apt/lists && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y ca-certificates curl lsb-release gpg && \
+# RUN \
+#     --mount=type=cache,target=/var/cache/dvlp/dind,sharing=locked \
+#     rm -f /etc/apt/apt.conf.d/docker-clean && \
+#     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
+#     rm -rf /var/lib/apt/lists && \
+#     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+#     apt-get install --no-install-recommends -y ca-certificates curl lsb-release gpg && \
     mkdir -pv /etc/apt/keyrings && \
     curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg > /dev/null && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bookworm stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install --no-install-recommends -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin gnupg && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     # rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 
@@ -1175,7 +1174,6 @@ COPY --from=dvlp_repo /repos/dvlw/dvlp/mnt/opt/* /opt/
 #     Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
 #     rm -rf /var/lib/apt/lists && \
 #     rm -rf /var/cache/apt
-
 
 #################
 # dvlp_gui #
