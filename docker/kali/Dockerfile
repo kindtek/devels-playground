@@ -901,19 +901,20 @@ FROM dvlp_git AS dvlp_gui-lite
 ##################
 # FROM dvlp_base-scan-build AS dvlp_base-scan
 # COPY --from=dvlp_python ./ ./
-USER r00t
-RUN \
-    rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/scan,sharing=locked \
-    rm -rf /var/lib/apt/lists && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get --no-install-recommends -y install burpsuite finger hydra maltego metasploit-framework ncat nmap nikto rpcbind telnet wireshark && \
-    echo " \
-Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
+# USER r00t
+# RUN \
+#     rm -f /etc/apt/apt.conf.d/docker-clean && \
+#     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache
+# RUN \
+#     --mount=type=cache,target=/var/cache/dvlp/scan,sharing=locked \
+#     # rm -rf /var/lib/apt/lists && \
+#     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+#     apt-get --no-install-recommends -y install burpsuite finger hydra maltego metasploit-framework ncat nmap nikto rpcbind telnet wireshark && \
+#     echo " \
+# Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm 
+# # && \
+# #     rm -rf /var/lib/apt/lists && \
+# #     rm -rf /var/cache/apt
 
 ################################# PYTHON ########################################
 #####################
@@ -934,9 +935,10 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get --no-install-recommends -y install apt-utils jq libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv  && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    rm -rf /var/cache/apt
+    apt-get --no-install-recommends -y install apt-utils jq libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv  
+    # && \
+    # # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    # rm -rf /var/cache/apt
 RUN \
     --mount=type=cache,target=/var/cache/pip,sharing=locked \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
@@ -955,18 +957,19 @@ ARG r00t_exists=true
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/python,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
-    rm -rf /var/lib/apt/lists && \
+    # rm -rf /var/lib/apt/lists && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y jq python3-pip python3-venv && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
+    apt-get install --no-install-recommends -y jq python3-pip python3-venv 
+    # && \
+    # rm -rf /var/lib/apt/lists && \
+    # rm -rf /var/cache/apt
 WORKDIR /r00t
 RUN \
     --mount=type=cache,target=/var/cache/pip,sharing=private \
     $r00t_exists && pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     pip3 install cdir --user --target=/r00t || r00t_exists=false
-RUN ( $devel_exists && (chown -R ${_DVL}:hell /hel || chown -R ${_DVL}:hell /hel/.local || devel_exists=false )) 
+# RUN ( $devel_exists && (chown -R ${_DVL}:hell /hel || chown -R ${_DVL}:hell /hel/.local || devel_exists=false )) 
 USER ${_DVL}
 WORKDIR /hel
 RUN \
@@ -975,7 +978,7 @@ RUN \
     pip3 install cdir --user || devel_exists=false
 USER ${_AGL}
 WORKDIR /hal
-RUN  ( $angel_exists && (chown -R ${_AGL}:halo /hal || chown -R ${_AGL}:halo /hal/.local || angel_exists=false )) 
+# RUN  ( $angel_exists && (chown -R ${_AGL}:halo /hal || chown -R ${_AGL}:halo /hal/.local || angel_exists=false )) 
 RUN \
     --mount=type=cache,target=/var/cache/pip,sharing=private \
     pip3 install pip --upgrade --no-warn-script-location --no-deps || angel_exists=false && \
@@ -1020,10 +1023,10 @@ WORKDIR /
 ## Download the Microsoft repository GPG keys
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/msdot,sharing=locked \
-    rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    rm -rf /var/lib/apt/lists && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    # rm -f /etc/apt/apt.conf.d/docker-clean && \
+    # echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
+    # rm -rf /var/lib/apt/lists && \
+    # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install --no-install-recommends -y apt-utils ca-certificates curl gnupg2 apt-transport-https lsb-release wget && \
     wget "https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb" && \
     mv packages-microsoft-prod.deb /var/cache/apt/archives/packages-microsoft-prod.deb && \
@@ -1031,46 +1034,44 @@ RUN \
     dpkg -i /var/cache/apt/archives/packages-microsoft-prod.deb && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install -y powershell && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
-
-
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y 
+    # rm -rf /var/lib/apt/lists && \
+    # rm -rf /var/cache/apt
 #########################
 # dvlp_msdot-build #
 #########################
 # FROM dvlp_msdot-build-lite AS dvlp_msdot-build
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/msdot,sharing=locked \
-    rm -f /etc/apt/apt.conf.d/docker-clean && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    rm -rf /var/lib/apt/lists && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y apt-utils ca-certificates curl gnupg2 apt-transport-https lsb-release wget && \
-    curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
-    wget -O - https://pkg.wslutiliti.es/public.key | tee --append /etc/apt/trusted.gpg.d/wslu.asc && \
-    echo "deb [arch=$(dpkg --print-architecture)] https://pkg.wslutiliti.es/kali kali-rolling main" | tee --append /etc/apt/sources.list && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    # apt-get install -y powershell wslu && \
-    apt-get install --no-install-recommends -y dotnet-sdk-7.0 wslu && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
+# RUN \
+    # --mount=type=cache,target=/var/cache/dvlp/msdot,sharing=locked \
+    # rm -f /etc/apt/apt.conf.d/docker-clean && \
+    # echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
+    # rm -rf /var/lib/apt/lists && \
+    # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    # apt-get install --no-install-recommends -y apt-utils ca-certificates curl gnupg2 apt-transport-https lsb-release wget && \
+    # curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
+    # wget -O - https://pkg.wslutiliti.es/public.key | tee --append /etc/apt/trusted.gpg.d/wslu.asc && \
+    # echo "deb [arch=$(dpkg --print-architecture)] https://pkg.wslutiliti.es/kali kali-rolling main" | tee --append /etc/apt/sources.list && \
+    # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    # # apt-get install -y powershell wslu && \
+    # apt-get install --no-install-recommends -y dotnet-sdk-7.0 wslu && \
+    # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    # rm -rf /var/lib/apt/lists && \
+    # rm -rf /var/cache/apt
 
 ########################
 # dvlp_msdot-lite #
 ########################
 # FROM dvlp_msdot-build-lite AS dvlp_msdot-lite
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
-ARG _AGL=${_AGL:-agl}
-ARG KERNEL_TYPE
-ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-USER r00t
-WORKDIR /
+# ARG _AGL_USR
+# ARG _DVL_USR
+# ARG _ADM_USR
+# ARG _AGL=${_AGL:-agl}
+# ARG KERNEL_TYPE
+# ENV _AGL=$_AGL
+# ENV _DVL=$_DVL_USR
+# ENV _ADM=$_ADM_USR
+# USER r00t
+# WORKDIR /
 # RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
 #     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
 #     rm -rf /etc/ssl/certs/* && \
@@ -1085,23 +1086,23 @@ WORKDIR /
 # dvlp_msdot-kernel #
 ########################
 # FROM dvlp_base AS dvlp_msdot
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
-ARG _AGL=${_AGL:-agl}
-ARG CONFIG_FILE
-ARG KERNEL_TYPE
-ARG KERNEL_FEATURE
-ARG CONFIG_FILE
-ARG WIN_USER
-ARG DOCKER_BUILD_TIMESTAMP
-ARG installkernel
-ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-ARG REFRESH_REPO
-USER r00t
-WORKDIR /
+# ARG _AGL_USR
+# ARG _DVL_USR
+# ARG _ADM_USR
+# ARG _AGL=${_AGL:-agl}
+# ARG CONFIG_FILE
+# ARG KERNEL_TYPE
+# ARG KERNEL_FEATURE
+# ARG CONFIG_FILE
+# ARG WIN_USER
+# ARG DOCKER_BUILD_TIMESTAMP
+# ARG installkernel
+# ENV _AGL=$_AGL
+# ENV _DVL=$_DVL_USR
+# ENV _ADM=$_ADM_USR
+# ARG REFRESH_REPO
+# USER r00t
+# WORKDIR /
 # COPY --from=dvlp_msdot-build ./ ./
 # RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
 #     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
@@ -1118,8 +1119,8 @@ WORKDIR /
 # dvlp_dind-build #
 ########################
 # FROM kindtek/devels-playground:kali-skel AS dvlp_dind-build
-USER r00t
-WORKDIR /
+# USER r00t
+# WORKDIR /
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/dind,sharing=locked \
@@ -1149,15 +1150,15 @@ RUN \
 # FROM dvlp_dind-base${KERNEL_TYPE:+-kernel} AS dvlp_dind_built
 
 # FROM dvlp_dind_built AS dvlp_dind
-USER r00t
-ARG KERNEL_TYPE
-ARG KERNEL_FEATURE
-ARG CONFIG_FILE
-ARG WIN_USER
-ARG DOCKER_BUILD_TIMESTAMP
-ARG installkernel
-USER r00t
-WORKDIR /
+# USER r00t
+# ARG KERNEL_TYPE
+# ARG KERNEL_FEATURE
+# ARG CONFIG_FILE
+# ARG WIN_USER
+# ARG DOCKER_BUILD_TIMESTAMP
+# ARG installkernel
+# USER r00t
+# WORKDIR /
 # RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
 #     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
 #     rm -rf /etc/ssl/certs/* && \
@@ -1190,25 +1191,25 @@ WORKDIR /
 # FROM dvlp_gui-lite-base${KERNEL_TYPE:+-kernel} as dvlp_gui-lite-built
 
 # FROM dvlp_gui-lite-built AS dvlp_gui-lite
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
-ARG _AGL=${_AGL:-agl}
-ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-ARG CONFIG_FILE
-ARG KERNEL_TYPE
-ARG KERNEL_FEATURE
-ARG CONFIG_FILE
-ARG WIN_USER
-ARG DOCKER_BUILD_TIMESTAMP
-ARG installkernel
-ENV DEBIAN_FRONTEND=noninteractive
-ENV DEBCONF_NONINTERACTIVE_SEEN=true
-ARG REFRESH_REPO=${REFRESH_REPO:-yes}
-USER r00t
-WORKDIR /
+# ARG _AGL_USR
+# ARG _DVL_USR
+# ARG _ADM_USR
+# ARG _AGL=${_AGL:-agl}
+# ENV _AGL=$_AGL
+# ENV _DVL=$_DVL_USR
+# ENV _ADM=$_ADM_USR
+# ARG CONFIG_FILE
+# ARG KERNEL_TYPE
+# ARG KERNEL_FEATURE
+# ARG CONFIG_FILE
+# ARG WIN_USER
+# ARG DOCKER_BUILD_TIMESTAMP
+# ARG installkernel
+# ENV DEBIAN_FRONTEND=noninteractive
+# ENV DEBCONF_NONINTERACTIVE_SEEN=true
+# ARG REFRESH_REPO=${REFRESH_REPO:-yes}
+# USER r00t
+# WORKDIR /
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/gui-lite,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -1232,7 +1233,7 @@ RUN \
     # now no longer need to add --disable-gpu flag everytime
     echo '"$HERE/brave" "$@" " --disable-gpu " || true' | tee --append /opt/brave.com/brave/brave-browser > /dev/null && \
     apt-get install --no-install-recommends -y vlc x11-apps qemu-system-gui qemu-kvm libvirt-clients libvirt-daemon-system bridge-utils && \
-    rm -rf /var/lib/apt/lists && \
+    # rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 COPY --from=dvlp_repo /repos/dvlw/dvlp/mnt/opt/* /opt/
 
@@ -1265,10 +1266,10 @@ RUN \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
     # rm -rf /etc/ssl/certs/* && \
-    # apt-get -y install ca-certificates && \
-    update-ca-certificates && \
-    # rm -rf /var/lib/apt/lists && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    # # apt-get -y install ca-certificates && \
+    # update-ca-certificates && \
+    # # rm -rf /var/lib/apt/lists && \
+    # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install -y gobject-introspection libgirepository1.0-dev xrdp xfce4 xfce4-goodies && \
     apt-get install -y locales && \
     dpkg-reconfigure --frontend noninteractive locales && \
@@ -1284,9 +1285,9 @@ RUN \
     # update-ca-certificates && \
     # rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    echo " \
-    Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
-    rm -rf /var/lib/apt/lists && \
+    # echo " \
+    # Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
+    # rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 COPY --from=dvlp_repo --chmod=755 /repos/dvlw/dvlp/mnt/etc/* /etc/
 
