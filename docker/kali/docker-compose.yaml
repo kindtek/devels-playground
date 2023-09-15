@@ -75,6 +75,11 @@ services:
       - repo_dvl:/hel/dvlw
       - repo_dvl:/home/${_DVL}/dvlw
 
+  get-kernel:
+    build:
+      context: .
+      target: dvlp_get-kernel
+
   build-repo-kernel:
     extends: build-repo
     build:

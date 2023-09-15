@@ -694,10 +694,29 @@ WORKDIR /
 ###################################################################
 
 ################
-# kernel-kache #
+# get-kernel #
 ################
 
-FROM scratch AS dvlp_kernel-kache
+FROM scratch AS dvlp_get-kernel
+ARG _R00T=${_R00T:-r00t}
+ARG _DVL=${_DVL:-dvl}
+ARG _AGL=${_AGL:-agl}
+ENV _R00T=$_R00T
+ENV _DVL=$_DVL
+ENV _AGL=$_AGL
+ARG DEBIAN_FRONTEND
+ARG DEBCONF_NONINTERACTIVE_SEEN
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
+ARG CONFIG_FILE
+ARG _WIN_USER
+ARG DOCKER_BUILD_TIMESTAMP
+ARG KERNEL_PACKAGE_NAME
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
+ENV KERNEL_TYPE=${KERNEL_TYPE}
+ENV KERNEL_FEATURE=${KERNEL_FEATURE}
+ENV CONFIG_FILE=${CONFIG_FILE}
 USER r00t
 WORKDIR /boot
 WORKDIR /kache
@@ -967,7 +986,7 @@ RUN \
     # echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
     # rm -rf /var/lib/apt/lists && \
     # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y apt-utils ca-certificates curl gnupg2 apt-transport-https lsb-release powershell wget && \
+    apt-get install --no-install-recommends -y powershell && \
     # wget "https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb" && \
     # mv packages-microsoft-prod.deb /var/cache/apt/archives/packages-microsoft-prod.deb && \
     # echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/trusted.gpg.d/microsoft-prod.gpg] https://packages.microsoft.com/repos/microsoft-debian-bullseye-prod bullseye main" | tee /etc/apt/sources.list.d/microsoft-prod.list  > /dev/null && \
