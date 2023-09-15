@@ -649,7 +649,7 @@ RUN \
     git config --global --add safe.directory /r00t/dvlw/dvlp/kernels 
 RUN \
     # --mount=type=cache,target=/var/cache/kernel_${KERNEL_TYPE}_${KERNEL_FEATURE}_${CONFIG_FILE},sharing=private \
-    bash build-export-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}" 
+    bash build-export-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${DOCKER_BUILD_TIMESTAMP}" 
 RUN \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     rm -rf /var/lib/apt/lists && \
@@ -665,11 +665,6 @@ RUN \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
-ONBUILD RUN \
-    rm -rf /var/lib/apt/lists && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt 
 
 FROM dvlp_make${KERNEL_TYPE:+-kernel} AS dvlp_made
 # every onbuild command in dvlp_make-kernel will be triggered to run here
@@ -755,7 +750,7 @@ WORKDIR /boot
 WORKDIR /kache
 WORKDIR /usr/lib
 WORKDIR /
-COPY --from=dvlp_made-kernel ./r00t/dvlw/dvlp/kernels/linux/kache/ ./
+COPY --from=dvlp_madk-kernel ./r00t/dvlw/dvlp/kernels/linux/kache/ ./
 
 
 #################################################################################
@@ -826,16 +821,13 @@ ARG DOCKER_BUILD_TIMESTAMP
 ARG installkernel
 RUN rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    # rm -rf /etc/ssl/certs/* && \
-    # apt-get -y install ca-certificates && \
-    # update-ca-certificates && \
+    rm -rf /etc/ssl/certs/* && \
+    apt-get -y install ca-certificates && \
+    update-ca-certificates && \
     echo " \
     Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
-
-
-FROM dvlp_git AS dvlp_gui-lite
 
 ########################
 # dvlp_base-scan-build #
@@ -921,6 +913,8 @@ FROM dvlp_git AS dvlp_gui-lite
 # dvlp_python-build #
 #####################
 # FROM kindtek/devels-playground:kali-skel AS dvlp_python-build
+FROM dvlp_git-built AS dvlp_gui-lite-built
+
 ARG _AGL_USR
 ARG _DVL_USR
 ARG _AGL=${_AGL:-agl}
@@ -935,7 +929,7 @@ RUN \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get --no-install-recommends -y install apt-utils jq libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev pkg-config python3-pip python3-venv  
+    apt-get --no-install-recommends -y install apt-utils jq libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev python3-pip python3-venv pkg-config  
     # && \
     # # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     # rm -rf /var/cache/apt
@@ -949,18 +943,18 @@ RUN \
 # dvlp_python-build #
 ###############################
 # FROM dvlp_python-build AS dvlp_python
-USER r00t
-WORKDIR /
-ARG angel_exists=true
-ARG devel_exists=true
-ARG r00t_exists=true
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/python,sharing=locked \
-    rm -f /etc/apt/apt.conf.d/docker-clean && \
-    # rm -rf /var/lib/apt/lists && \
-    echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y jq python3-pip python3-venv 
+# USER r00t
+# WORKDIR /
+# ARG angel_exists=true
+# ARG devel_exists=true
+# ARG r00t_exists=true
+# RUN \
+#     --mount=type=cache,target=/var/cache/dvlp/python,sharing=locked \
+#     rm -f /etc/apt/apt.conf.d/docker-clean && \
+#     # rm -rf /var/lib/apt/lists && \
+#     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
+#     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+#     apt-get install --no-install-recommends -y jq python3-pip python3-venv 
     # && \
     # rm -rf /var/lib/apt/lists && \
     # rm -rf /var/cache/apt
@@ -1135,7 +1129,7 @@ RUN \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install --no-install-recommends -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin gnupg && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists && \
+    # rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 
 #######################
@@ -1226,13 +1220,13 @@ RUN \
     echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | tee /etc/apt/sources.list.d/brave-browser-release.list && \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y brave-browser && \
+    apt-get install --no-install-recommends -y brave-browser bridge-utils libvirt-clients libvirt-daemon-system qemu-system-gui qemu-kvm vlc x11-apps && \
 # change last line of this file - fix for brave-browser displaying empty windows
     cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
     head -n -1 /opt/brave.com/brave/brave-browser.old | tee /opt/brave.com/brave/brave-browser > /dev/null && \
     # now no longer need to add --disable-gpu flag everytime
     echo '"$HERE/brave" "$@" " --disable-gpu " || true' | tee --append /opt/brave.com/brave/brave-browser > /dev/null && \
-    apt-get install --no-install-recommends -y vlc x11-apps qemu-system-gui qemu-kvm libvirt-clients libvirt-daemon-system bridge-utils && \
+    # apt-get install --no-install-recommends -y vlc x11-apps qemu-system-gui qemu-kvm libvirt-clients libvirt-daemon-system bridge-utils && \
     # rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 COPY --from=dvlp_repo /repos/dvlw/dvlp/mnt/opt/* /opt/
@@ -1242,6 +1236,31 @@ COPY --from=dvlp_repo /repos/dvlw/dvlp/mnt/opt/* /opt/
 # # # brave_old_line='\"\$HERE\/brave\"\s\"\$\@\"\s\|\|\strue' && \
 # # # brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
 # # # sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/${_DVL} && \
+FROM dvlp_gui-lite-built AS dvlp_gui-lite
+ARG _AGL_USR
+ARG _DVL_USR
+ARG _ADM_USR
+ARG _AGL=${_AGL:-agl}
+ENV _AGL=$_AGL
+ENV _DVL=$_DVL_USR
+ENV _ADM=$_ADM_USR
+ARG REFRESH_REPO
+ARG CONFIG_FILE
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
+ARG CONFIG_FILE
+ARG WIN_USER
+ARG DOCKER_BUILD_TIMESTAMP
+ARG installkernel
+RUN rm -rf /var/lib/apt/lists && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    rm -rf /etc/ssl/certs/* && \
+    apt-get -y install ca-certificates && \
+    update-ca-certificates && \
+    echo " \
+    Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt
 
 
 #################
@@ -1268,8 +1287,8 @@ RUN \
     # rm -rf /etc/ssl/certs/* && \
     # # apt-get -y install ca-certificates && \
     # update-ca-certificates && \
-    # # rm -rf /var/lib/apt/lists && \
-    # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    # rm -rf /var/lib/apt/lists && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install -y gobject-introspection libgirepository1.0-dev xrdp xfce4 xfce4-goodies && \
     apt-get install -y locales && \
     dpkg-reconfigure --frontend noninteractive locales && \

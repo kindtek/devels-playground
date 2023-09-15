@@ -86,8 +86,8 @@ services:
       context: .
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-skel
     # command: apt-get update -y && apt-get upgrade -y && tail -F > /dev/null
-    environment:
-      - WIN_USER=$USERNAME
+    # environment:
+    #   - WIN_USER=$WIN_USER
     env_file:
       - .env
     cap_add:
