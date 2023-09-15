@@ -19,6 +19,7 @@ ARG DEBCONF_NONINTERACTIVE_SEEN
 ARG _WIN_USER
 ARG _ARCH
 ARG _ARCH_VENDOR
+ARG __ARCH__VENDOR
 ARG WINDOWS
 ARG LINUX
 ARG KERNEL_TYPE=${KERNEL_TYPE}
@@ -221,6 +222,7 @@ ARG _MNT
 ARG _DVL
 ARG _ARCH
 ARG _ARCH_VENDOR
+ARG __ARCH__VENDOR
 WORKDIR /hel
 COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
 RUN mkdir -pv /hel && \
@@ -288,6 +290,7 @@ ARG _MNT
 ARG _AGL
 ARG _ARCH
 ARG _ARCH_VENDOR
+ARG __ARCH__VENDOR
 WORKDIR /hal
 COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
 # COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/      ./mnt/
@@ -352,6 +355,7 @@ ARG _MNT
 ARG _R00T
 ARG _ARCH
 ARG _ARCH_VENDOR
+ARG __ARCH__VENDOR
 WORKDIR /r00t
 COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./
 RUN ln -fsv dvlw/dvlp dvlp && \
@@ -541,7 +545,7 @@ RUN \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get purge -y openssh-server
 RUN \
-    apt-get install --no-install-recommends -y apt-utils apt-transport-https curl libssl-dev locales openssh-server sudo ssh systemd-sysv sysvinit-utils wget && \    
+    apt-get install --no-install-recommends -y apt-utils apt-transport-https curl libssl-dev locales openssh-server sudo ssh systemd-sysv sysvinit-utils vim wget && \    
     usermod -aG docker root && \
     usermod -aG docker r00t && \
     usermod -aG sudo ${_AGL} && \
@@ -884,7 +888,6 @@ ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
 ARG _WIN_USER
 USER r00t
-WORKDIR /
 
 RUN \
     # --mount=type=cache,target=/var/cache/dvlp/python,sharing=locked \
@@ -924,8 +927,9 @@ RUN \
     # WORKDIR /r00t
     # RUN \
     # --mount=type=cache,target=/var/cache/pip,sharing=private \
-    # $r00t_exists && pip3 install pip --upgrade --no-warn-script-location --no-deps && \
-    pip3 install cdir --user --target=/r00t && \
+    # $r00t_exists && 
+    # pip3 install pip --upgrade --no-warn-script-location --no-deps && \
+    # pip3 install cdir --user --target=/r00t && \
     # rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 USER ${_DVL}
@@ -1051,13 +1055,13 @@ RUN \
     #     --mount=type=cache,target=/var/cache/dvlp/dind,sharing=locked \
     #     rm -f /etc/apt/apt.conf.d/docker-clean && \
     #     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    #     rm -rf /var/lib/apt/lists && \
-    #     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    #     apt-get install --no-install-recommends -y ca-certificates curl lsb-release gpg && \
+    rm -rf /var/lib/apt/lists && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    apt-get install --no-install-recommends -y ca-certificates curl lsb-release gpg && \
     mkdir -pv /etc/apt/keyrings && \
     curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg > /dev/null && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bookworm stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
-    # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install --no-install-recommends -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin gnupg && \
     # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     # rm -rf /var/lib/apt/lists && \
