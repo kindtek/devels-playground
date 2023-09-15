@@ -39,9 +39,9 @@ RUN touch testing
 
 ################################### GITHUB REPO #####################################
 ########################
-# dvlp_build-repo-git #
+# dvlp_repo-builder #
 ########################
-FROM kalilinux/kali-rolling:latest AS dvlp_build-repo-git
+FROM kalilinux/kali-rolling:latest AS dvlp_repo-builder
 ARG _MNT
 ARG REFRESH_REPO
 ARG _AGL_USR
@@ -88,7 +88,7 @@ RUN \
     Binary::apt::APT::Install-Recommends 'true'; \
     Binary::apt::APT::Install-Suggests 'true';\
     Binary::apt-get::APT::Keep-Downloaded-Packages 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm 
-    # use apt loading bar for apt-get by default
+# use apt loading bar for apt-get by default
 # RUN echo 'Binary::apt-get::DPkg::Progress-Fancy "1"' | tee /etc/apt/apt.conf.d/99fancybar.conf
 # import/install basic utils from layer cache if possible and delete .deb archives from container when finished
 RUN \
@@ -120,7 +120,7 @@ RUN \
 ########################
 # dvlp_build-repo #
 #######################
-FROM kindtek/devels-playground:repo-build AS dvlp_build-repo
+FROM kindtek/devels-playground:repo-builder-image AS dvlp_build-repo
 WORKDIR /repos
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/build-repo,sharing=locked  \
@@ -161,7 +161,7 @@ RUN \
     git submodule update --init --progress --filter=blob:limit=20m -- kernels 
 
 FROM dvlp_build-repo${KERNEL_TYPE:+-kernel} AS dvlp_built-repo
-    
+
 #############
 # dvlp_repo #
 #############
@@ -461,7 +461,7 @@ RUN \
 WORKDIR /
 ###############################
 
-FROM kindtek/devels-playground:kali-skel AS dvlp_base-build-volumes
+FROM kindtek/devels-playground:kali-skel-image AS dvlp_base-build-volumes
 ARG _MNT
 ARG _AGL_USR
 ARG _DVL_USR
@@ -695,7 +695,7 @@ FROM dvlp_make-kernel AS dvlp_base-kernel
 
 ################################# BASE #######################################
 
-# FROM kindtek/devels-playground:kali-skel AS dvlp_base
+# FROM kindtek/devels-playground:kali-skel-image AS dvlp_base
 # ARG _AGL_USR
 # ARG _DVL_USR
 # ARG _ADM_USR
@@ -832,7 +832,7 @@ RUN rm -rf /var/lib/apt/lists && \
 ########################
 # dvlp_base-scan-build #
 ########################
-# FROM kindtek/devels-playground:kali-skel AS dvlp_base-scan-build
+# FROM kindtek/devels-playground:kali-skel-image AS dvlp_base-scan-build
 # USER r00t
 # SHELL ["/bin/bash", "-c"]
 # WORKDIR /r00t/build
@@ -912,7 +912,7 @@ RUN rm -rf /var/lib/apt/lists && \
 #####################
 # dvlp_python-build #
 #####################
-# FROM kindtek/devels-playground:kali-skel AS dvlp_python-build
+# FROM kindtek/devels-playground:kali-skel-image AS dvlp_python-build
 FROM dvlp_git-built AS dvlp_gui-lite-built
 
 ARG _AGL_USR
@@ -930,9 +930,9 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get --no-install-recommends -y install apt-utils jq libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev python3-pip python3-venv pkg-config  
-    # && \
-    # # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    # rm -rf /var/cache/apt
+# && \
+# # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+# rm -rf /var/cache/apt
 RUN \
     --mount=type=cache,target=/var/cache/pip,sharing=locked \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
@@ -955,9 +955,9 @@ RUN \
 #     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
 #     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
 #     apt-get install --no-install-recommends -y jq python3-pip python3-venv 
-    # && \
-    # rm -rf /var/lib/apt/lists && \
-    # rm -rf /var/cache/apt
+# && \
+# rm -rf /var/lib/apt/lists && \
+# rm -rf /var/cache/apt
 WORKDIR /r00t
 RUN \
     --mount=type=cache,target=/var/cache/pip,sharing=private \
@@ -1011,7 +1011,7 @@ WORKDIR /
 ###############################
 # dvlp_msdot-build-lite #
 ##############################
-# FROM kindtek/devels-playground:kali-skel AS dvlp_msdot-build-lite
+# FROM kindtek/devels-playground:kali-skel-image AS dvlp_msdot-build-lite
 
 # for powerhell install - https://learn.microsoft.com/en-us/powershell/scripting/install/install-ubuntu?view=powershell-7.3
 ## Download the Microsoft repository GPG keys
@@ -1029,28 +1029,28 @@ RUN \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install -y powershell && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y 
-    # rm -rf /var/lib/apt/lists && \
-    # rm -rf /var/cache/apt
+# rm -rf /var/lib/apt/lists && \
+# rm -rf /var/cache/apt
 #########################
 # dvlp_msdot-build #
 #########################
 # FROM dvlp_msdot-build-lite AS dvlp_msdot-build
 # RUN \
-    # --mount=type=cache,target=/var/cache/dvlp/msdot,sharing=locked \
-    # rm -f /etc/apt/apt.conf.d/docker-clean && \
-    # echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-    # rm -rf /var/lib/apt/lists && \
-    # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    # apt-get install --no-install-recommends -y apt-utils ca-certificates curl gnupg2 apt-transport-https lsb-release wget && \
-    # curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
-    # wget -O - https://pkg.wslutiliti.es/public.key | tee --append /etc/apt/trusted.gpg.d/wslu.asc && \
-    # echo "deb [arch=$(dpkg --print-architecture)] https://pkg.wslutiliti.es/kali kali-rolling main" | tee --append /etc/apt/sources.list && \
-    # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    # # apt-get install -y powershell wslu && \
-    # apt-get install --no-install-recommends -y dotnet-sdk-7.0 wslu && \
-    # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    # rm -rf /var/lib/apt/lists && \
-    # rm -rf /var/cache/apt
+# --mount=type=cache,target=/var/cache/dvlp/msdot,sharing=locked \
+# rm -f /etc/apt/apt.conf.d/docker-clean && \
+# echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
+# rm -rf /var/lib/apt/lists && \
+# apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+# apt-get install --no-install-recommends -y apt-utils ca-certificates curl gnupg2 apt-transport-https lsb-release wget && \
+# curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
+# wget -O - https://pkg.wslutiliti.es/public.key | tee --append /etc/apt/trusted.gpg.d/wslu.asc && \
+# echo "deb [arch=$(dpkg --print-architecture)] https://pkg.wslutiliti.es/kali kali-rolling main" | tee --append /etc/apt/sources.list && \
+# apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+# # apt-get install -y powershell wslu && \
+# apt-get install --no-install-recommends -y dotnet-sdk-7.0 wslu && \
+# apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+# rm -rf /var/lib/apt/lists && \
+# rm -rf /var/cache/apt
 
 ########################
 # dvlp_msdot-lite #
@@ -1112,7 +1112,7 @@ RUN \
 ########################
 # dvlp_dind-build #
 ########################
-# FROM kindtek/devels-playground:kali-skel AS dvlp_dind-build
+# FROM kindtek/devels-playground:kali-skel-image AS dvlp_dind-build
 # USER r00t
 # WORKDIR /
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
@@ -1212,16 +1212,16 @@ RUN \
     # echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/trusted.gpg.d/microsoft-prod.gpg] https://packages.microsoft.com/repos/microsoft-debian-bullseye-prod bullseye main" | tee /etc/apt/sources.list.d/microsoft-prod.list  > /dev/null && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bookworm stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-# RUN \
-#     rm -rf /etc/ssl/certs/* && \
-#     update-ca-certificates 
+    # RUN \
+    #     rm -rf /etc/ssl/certs/* && \
+    #     update-ca-certificates 
     apt-get install --install-recommends -y apt-transport-https curl && \
     curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg && \
     echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg arch=$(dpkg --print-architecture)] https://brave-browser-apt-release.s3.brave.com/ stable main" | tee /etc/apt/sources.list.d/brave-browser-release.list && \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get install --no-install-recommends -y brave-browser bridge-utils libvirt-clients libvirt-daemon-system qemu-system-gui qemu-kvm vlc x11-apps && \
-# change last line of this file - fix for brave-browser displaying empty windows
+    # change last line of this file - fix for brave-browser displaying empty windows
     cp /opt/brave.com/brave/brave-browser /opt/brave.com/brave/brave-browser.old && \
     head -n -1 /opt/brave.com/brave/brave-browser.old | tee /opt/brave.com/brave/brave-browser > /dev/null && \
     # now no longer need to add --disable-gpu flag everytime
