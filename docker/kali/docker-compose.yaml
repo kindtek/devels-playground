@@ -4,8 +4,10 @@ services:
   template:
     build:
       context: .
-      target: dvlp_base-volumes-builder
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-test
+      target: dvlp_base-volumes-build
+    env_file:
+      - .env
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-template
     entrypoint: /bin/bash -c
     command:
       - tail -F /dev/null
@@ -36,6 +38,8 @@ services:
     build:
       context: .
       target: dvlp_repo-builder
+    env_file:
+      - .env
 
   build-repo-builder-image:
     extends: build-repo-builder
@@ -70,26 +74,31 @@ services:
       - repo_agl:/home/${_AGL}/dvlw
       - repo_dvl:/hel/dvlw
       - repo_dvl:/home/${_DVL}/dvlw
+
   build-repo-kernel:
     extends: build-repo
     build:
       target: dvlp_repo-kernel
       no_cache: true
+
   build-r00t:
     build:
       target: dvlp_base-r00t-volumes-built
     env_file:
       - .env
+
   build-angel:
     build:
       target: dvlp_base-angel-volumes-built
     env_file:
       - .env
+
   build-devel:
     build:
       target: dvlp_base-devel-volumes-built
     env_file:
       - .env
+
   build-skel:
     init: true
     # command: /bin/bash -c apt-get update -y && apt-get upgrade -y
@@ -147,7 +156,7 @@ services:
     command:
       - /bin/bash -c echo 'helloworld command'
     build:
-      target: dvlp_base-volumes-builder
+      target: dvlp_base-volumes-build
     volumes:
       - repo_agl:/repos/dvlw
       - repo_agl:/r00t/dvlw
@@ -168,7 +177,7 @@ services:
   build-vols-kernel:
     extends: build-vols
     build:
-      target: dvlp_base-kernel-volumes-builder
+      target: dvlp_base-kernel-volumes-build
     volumes_from: 
       - build-vols
     volumes:
@@ -603,10 +612,12 @@ services:
       - win_c:/mnt/c
       - win_n:/mnt/n
       - mnt-data:/mnt/data
-  git:
+    env_file:
+      - .env
+  cli:
     extends: bare
     build:
-      target: dvlp_git
+      target: dvlp_cli
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-git${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
     labels:
       com.devels-playground.description: "basics + git"
@@ -614,12 +625,10 @@ services:
       build-base:
         # Wait for the ownership to change
         condition: service_started
-    env_file:
-      - .env
     volumes:
       - home_agl:/mnt/n/hal
       - home_dvl:/mnt/n/hel
-  git-kernel:
+  cli-kernel:
     extends: bare
     entrypoint: /bin/bash -c
     command:
@@ -631,7 +640,7 @@ services:
     privileged: true
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-git${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
     build:
-      target: dvlp_git
+      target: dvlp_cli
       args:
       - KERNEL_TYPE=stable
       - KERNEL_FEATURE=zfs
@@ -705,124 +714,117 @@ services:
   #     python-build-lite:
   #       # Wait for the ownership to change
   #       condition: service_started
-  python-lite:
-    extends: git
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-python-lite${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
+  # python-lite:
+  #   extends: cli
+  #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-python-lite${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
+  #   build:
+  #     context: .
+  #     target: dvlp_python
+  #   # depends_on:
+  #   #   python-build-lite:
+  #   #     # Wait for the ownership to change
+  #   #     condition: service_started
+  #   labels:
+  #     com.devels-playground.description: "basics + git"
+  # python:
+  #   extends: cli
+  #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-python${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
+  #   build:
+  #     context: .
+  #     target: dvlp_python
+  #   # depends_on:
+  #   #   python-build:
+  #   #     # Wait for the ownership to change
+  #   #     condition: service_started
+  #   labels:
+  #     com.devels-playground.description: "basics + git"
+  # python-kernel:
+  #   extends: cli-kernel
+  #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-python${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
+  #   build:
+  #     target: dvlp_python
+  #   # depends_on:
+  #   #   python-build:
+  #   #     # Wait for the ownership to change
+  #   #     condition: service_started
+  #     # python:
+  #     #   # Wait for the ownership to change
+  #     #   condition: service_started
+  #   labels:
+  #     com.devels-playground.description: "basics + git"
+  # msdot-lite:
+  #   extends: cli
+  #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-msdot-lite${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
+  #   build:
+  #     context: .
+  #     target: dvlp_msdot-lite
+  #   labels:
+  #     com.devels-playground.description: "basics + git + powerhell"
+  # msdot:
+  #   extends: cli
+  #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-msdot${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
+  #   build:
+  #     context: .
+  #     target: dvlp_msdot
+  #   labels:
+  #     com.devels-playground.description: "basics + git + powerhell"
+  cli-goodies:
+    extends: cli
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-dind${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
     build:
       context: .
-      target: dvlp_python
-    # depends_on:
-    #   python-build-lite:
-    #     # Wait for the ownership to change
-    #     condition: service_started
-    labels:
-      com.devels-playground.description: "basics + git"
-  python:
-    extends: git
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-python${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
-    build:
-      context: .
-      target: dvlp_python
-    # depends_on:
-    #   python-build:
-    #     # Wait for the ownership to change
-    #     condition: service_started
-    labels:
-      com.devels-playground.description: "basics + git"
-  python-kernel:
-    extends: git-kernel
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-python-kernel
-    build:
-      target: dvlp_python
-    # depends_on:
-    #   python-build:
-    #     # Wait for the ownership to change
-    #     condition: service_started
-      # python:
-      #   # Wait for the ownership to change
-      #   condition: service_started
-    labels:
-      com.devels-playground.description: "basics + git"
-  msdot-lite:
-    extends: git
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-msdot-lite${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
-    build:
-      context: .
-      target: dvlp_msdot-lite
-    labels:
-      com.devels-playground.description: "basics + git + powerhell"
-  msdot:
-    extends: git
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-msdot${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
-    build:
-      context: .
-      target: dvlp_msdot
-    labels:
-      com.devels-playground.description: "basics + git + powerhell"
-  dind:
-    extends: git
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-dind-kernel
-    build:
-      context: .
-      target: dvlp_dind
+      target: dvlp_cli-goodies
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker"
-  dind-kernel:
-    extends: git-kernel
+  cli-goodies-kernel:
+    extends: cli-kernel
     build:
-      target: dvlp_dind
+      target: dvlp_cli-goodies
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-dind-kernel'
     # depends_on:
-    #   dind:
+    #   cli-goodies:
     #     condition: service_started
     labels:
       com.devels-playground.description: "basics + git"
-  dind-lite:
-    extends: git
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-dind-lite${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
-    build:
-      context: .
-      target: dvlp_dind-lite
-    labels:
-      com.devels-playground.description: "basics + git + powerhell + docker + kernel"
-  dind-lite-kernel:
-    extends: git-kernel
-    build:
-      target: dvlp_dind-lite
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-dind-lite-kernel
+  # cli-goodies-lite:
+  #   extends: cli
+  #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-dind-lite${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
+  #   build:
+  #     context: .
+  #     target: dvlp_cli-goodies-lite
+  #   labels:
+  #     com.devels-playground.description: "basics + git + powerhell + docker + kernel"
+  # cli-goodies-lite-kernel:
+  #   extends: cli-kernel
+  #   build:
+  #     target: dvlp_cli-goodies-lite
+  #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-dind-lite${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
     # depends_on:
-    #   dind-lite:
+    #   cli-goodies-lite:
     #     condition: service_started
-    labels:
-      com.devels-playground.description: "basics + git"
-  kernel-builder:
-    extends: git-kernel
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kernel-builder
-    build:
-      context: .
-      target: dvlp_kernel-builder
-    labels:
-      com.devels-playground.description: "basics + git + powerhell + docker + kernel"
-  gui-lite:
-    extends: git
+    # labels:
+    #   com.devels-playground.description: "basics + git"
+
+  gui:
+    extends: cli
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
     build:
       context: .
-      target: dvlp_gui-lite
+      target: dvlp_gui
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
-  gui-lite-kernel:
-    extends: git-kernel
+  gui-kernel:
+    extends: cli-kernel
     build:
-      target: dvlp_gui-lite
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-lite-kernel
+      target: dvlp_gui
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-lite${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
     # depends_on:
-    #   gui-lite:
+    #   gui:
     #     condition: service_started
     labels:
       com.devels-playground.description: "basics + git"
-  gui:
-    extends: git
+  gui-goodies:
+    extends: cli
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
     # user: ${_AGL}
     # entrypoint:
@@ -833,238 +835,40 @@ services:
     # command: bash /home/${_AGL}/start-kde.sh
     build:
       context: .
-      target: dvlp_gui
+      target: dvlp_gui-goodies
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
-  # gui-kernel:
-  #   extends: git-kernel
+  # gui-goodies-kernel:
+  #   extends: cli-kernel
   #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-kernel${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
   #   labels:
   #     com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
-  gui-kernel:
-    extends: git-kernel
+  gui-goodies-kernel:
+    extends: cli-kernel
     build:
-      target: dvlp_gui
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-kernel
+      target: dvlp_gui-goodies
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-kernel${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
     # depends_on:
-    #   gui:
+    #   gui-goodies:
     #     condition: service_started
     labels:
       com.devels-playground.description: "basics + git"
-  cuda:
-    extends: git
+  gui-goodies-cuda:
+    extends: cli
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cuda${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
     build:
       context: .
-      target: dvlp_cuda
+      target: dvlp_gui-goodies-cuda
       labels:
         com.devels-playground.description: "basics + git + powerhell + docker + gui + cuda"
-  cuda-kernel:
-    extends: git-kernel
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cuda-kernel
+  gui-goodies-cuda-kernel:
+    extends: cli-kernel
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cuda${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
     depends_on:
-      cuda:
+      gui-goodies-cuda:
         condition: service_started
     labels:
       com.devels-playground.description: "basics + git"
-  # cuda-kernel:
-  #   extends: gui-kernel
-  #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cuda-kernel
-  #   build:
-  #     context: .
-  #     target: dvlp_cuda-kernel
-  #     labels:
-  #       com.devels-playground.description: "basics + git + powerhell + docker + gui + cuda"
-
-  # jacket:
-  #   user: ${_AGL}
-  #   working_dir: /hal
-  #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-${JACKET:-bare}
-  #   entrypoint: /bin/bash -c
-  #   command:
-  #     - sleep infinity
-  #   build:
-  #     context: .
-  #     target: dvlp_jacket-kernel-${JACKET:-bare}
-  #     args:
-  #       - JACKET=bare
-  #       - _AGL=${_AGL:-agl}
-  #       - _DVL=${_DVL_USR:-$_DVL}
-  #       - _MNT=${_MNT_USR:-$_MNT}
-  #     labels:
-  #       com.devels-playground.description: "hello jacket-kernel"
-  #   env_file:
-  #     - .env
-  #   volumes:
-  #     - repo_agl-kernel:/repos/dvlw
-  #     - repo_agl-kernel:/r00t/dvlw
-  #     - repo_agl-kernel:/home/r00t/dvlw
-  #     - repo_agl-kernel:/hal/dvlw
-  #     - repo_agl-kernel:/home/${_AGL}/dvlw
-  #     - repo_dvl-kernel:/hel/dvlw
-  #     - repo_dvl-kernel:/home/${_DVL}/dvlw
-  #     - mnt-data:${_MNT}
-  #     - home_r00t:/r00t
-  #     - home_r00t:/home/r00t
-  #     - home_agl:/hal
-  #     - home_agl:/home/${_AGL}
-  #     - home_dvl:/hel
-  #     - home_dvl:/home/${_DVL}
-  #     - dls:/dls
-  #   depends_on:
-  #     build-base:
-  #       condition: service_completed_successfully
-  # jacket:
-  #   user: ${_AGL}
-  #   working_dir: /hal
-  #   volumes:
-  #     - repo_agl:/repos/dvlw
-  #     - repo_agl:/r00t/dvlw
-  #     - repo_agl:/home/r00t/dvlw
-  #     - repo_agl:/hal/dvlw
-  #     - repo_agl:/home/${_AGL}/dvlw
-  #     - repo_dvl:/hel/dvlw
-  #     - repo_dvl:/home/${_DVL}/dvlw
-  #     - mnt-data:${_MNT}
-  #     - home_r00t:/r00t
-  #     - home_r00t:/home/r00t
-  #     - home_agl:/hal
-  #     - home_agl:/home/${_AGL}
-  #     - home_dvl:/hel
-  #     - home_dvl:/home/${_DVL}
-  #     - dls:/dls
-
-  # build-base-bare:
-  #   extends: jacket
-  #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-bare${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
-  #   build:
-  #     target: dvlp_bare
-  #     args:
-  #       - JACKET=bare
-  # make-kernel:
-  #   extends: jacket
-  #   build:
-  #     target: dvlp_make-kernel
-  #     no_cache: true
-  #     args:
-  #       - JACKET=make-kernel
-  #   entrypoint: /bin/bash -c
-  #   command: 
-  #   - sleep infinity
-    # command: "if [ -f 'start-kde.sh'' ]; then bash start.sh; fi; && sleep infinity;"
-    # - "if [ -f \"start-kde.sh\" ]; then bash start.sh; mv -vf start-kde.sh start.sh; else bash start.sh; fi; && sleep infinity;"
-    # - ["if [ -f \"start-kde.sh\" ]; then bash start.sh; mv -vf start-kde.sh start.sh; else bash start.sh; fi;", "sleep infinity"]
-    # image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-make-kernel
-
-  # build-base-git:
-  #   extends: jacket
-  #   user: ${_AGL}
-  #   working_dir: /hal
-  #   # entrypoint: /bin/bash -c
-  #   # command: "if [ -f \"start-kde.sh\" ]; then bash start.sh; fi; && sleep infinity;"
-  #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-git${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
-  #   build:
-  #     target: dvlp_git
-  #     args:
-  #       - JACKET=git
-  # git-kernel:
-  #   extends: jacket-kernel
-  #   entrypoint: /bin/bash -c
-  #   # command: 
-  #   # - sleep infinity
-  #   # command: "if [ -f 'start-kde.sh'' ]; then bash start.sh; fi; && sleep infinity;"
-  #   # - "if [ -f \"start-kde.sh\" ]; then bash start.sh; mv -vf start-kde.sh start.sh; else bash start.sh; fi; && sleep infinity;"
-  #   # - ["if [ -f \"start-kde.sh\" ]; then bash start.sh; mv -vf start-kde.sh start.sh; else bash start.sh; fi;", "sleep infinity"]
-  #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-git-kernel
-  #   build:
-  #     target: dvlp_git-kernel
-  #     args:
-  #       - JACKET=git-kernel
-
-  # build-base-scan:
-  #   extends: jacket
-  #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-scan${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
-  #   build:
-  #     target: dvlp_scan
-  #     args:
-  #       - JACKET=scan
-  # build-base-python-lite:
-  #   extends: jacket
-  #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-python-lite${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
-  #   build:
-  #     target: dvlp_python-lite
-  #     args:
-  #       - JACKET=python-lite
-  # build-base-dind-lite:
-  #   extends: jacket
-  #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-dind-lite${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
-  #   build:
-  #     target: dvlp_dind-lite
-  #     args:
-  #       - JACKET=dind-lite
-  # build-base-msdot-lite:
-  #   extends: jacket
-  #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-msdot-lite${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
-  #   build:
-  #     target: dvlp_msdot-lite
-  #     args:
-  #       - JACKET=msdot-lite
-  # gui-lite-kernel:
-  #   working_dir: /hal
-  #   extends: jacket-kernel
-  #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-lite-kernel${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
-  #   # command: bash start-kde.sh
-  #   build:
-  #     target: dvlp_gui-lite-kernel
-  #     args:
-  #       - JACKET=gui-lite-kernel
-  # build-base-gui-lite:
-  #   extends: jacket
-  #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-lite${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
-  #   # command: bash start.sh && mv -fv start-kde.sh || export FIRST_LOGIN=false
-  #   build:
-  #     target: dvlp_gui-lite
-  #     args:
-  #       - JACKET=gui-lite
-  # gui-kernel:
-  #   working_dir: /hal
-  #   extends: jacket-kernel
-  #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-kernel${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
-  #   # command: bash start-kde.sh
-  #   build:
-  #     target: dvlp_gui-kernel
-  #     args:
-  #       - JACKET=gui-kernel
-  # build-base-gui:
-  #   extends: jacket
-  #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
-  #   # command: bash start-kde.sh
-  #   build:
-  #     target: dvlp_gui
-  #     args:
-  #       - JACKET=gui
-  #   volumes_from:
-  #     - jacket
-  # build-base-cuda:
-  #   extends: gui
-  #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cuda${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
-  #   # command: bash start-kde.sh
-  #   build:
-  #     target: dvlp_cuda
-  #     args:
-  #       - JACKET=cuda
-  #   volumes_from:
-  #     - jacket
-  # cuda-kernel:
-  #   extends: cuda
-  #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cuda-kernel${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
-  #   # command: bash start-kde.sh
-  #   build:
-  #     target: dvlp_cuda-kernel
-  #     args:
-  #       - JACKET=cuda-kernel
-  #   volumes_from:
-  #     - jacket-kernel
 
 volumes:
   root:

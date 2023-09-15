@@ -5,12 +5,22 @@
 ## `docker compose build && docker compose up`
 # to remove all volumes:
 ## docker compose down && docker volume rm $(docker volume ls -q)
+
 ARG BUILD_TARGET=${INTERNAL_BUILD:+INTERNAL}
 ARG BUILD_TARGET=${BUILD_TARGET:-EXTERNAL}
 ARG INTERNAL_BUILD
-ARG CONFIG_FILE=${CONFIG_FILE}
-ARG DEBIAN_FRONTEND=noninteractive
 ARG DOCKER_BUILDKIT=1
+ARG _MNT=${_MNT:-/mnt/data}
+ARG _R00T=${_R00T:-r00t}
+ARG _DVL=${_DVL:-dvl}
+ARG _AGL=${_AGL:-agl}
+ARG DEBIAN_FRONTEND
+ARG DEBCONF_NONINTERACTIVE_SEEN
+ARG WIN_USER
+ARG _ARCH
+ARG _ARCH_VENDOR
+ARG WINDOWS
+ARG LINUX
 ARG KERNEL_TYPE=${KERNEL_TYPE}
 ARG KERNEL_PACKAGE_NAME=${KERNEL_PACKAGE_NAME}
 ARG INSTALL_KERNEL="dont_install_kernel"
@@ -20,15 +30,9 @@ ARG installkernel=${install}_KERNEL
 # dont_install_kernel
 # $ echo ${!installkernel}
 # INSTALL_KERNEL
-ARG REFRESH_REPO=${REFRESH_REPO:-no}
-ARG _ARCH
-ARG _ARCH_VENDOR
-ARG WINDOWS
-ARG LINUX
-ARG _AGL_USR=${_AGL:-agl}
-ARG _DVL_USR=${_DVL:-dvl}
-ARG _MNT=${_MNT:-/mnt/data}
-ARG JACKET=bare
+ARG CONFIG_FILE
+ARG DOCKER_TIMESTAMP
+ARG KERNEL_PACKAGE_NAME
 
 ################
 # kali_testing #
@@ -43,17 +47,20 @@ RUN touch testing
 ########################
 FROM kalilinux/kali-rolling:latest AS dvlp_repo-builder
 ARG _MNT
-ARG REFRESH_REPO
-ARG _AGL_USR
-ARG _DVL_USR
+ARG _R00T=${_R00T:-r00t}
+ARG _DVL=${_DVL:-dvl}
 ARG _AGL=${_AGL:-agl}
+ENV _R00T=$_R00T
+ENV _DVL=$_DVL
+ENV _AGL=$_AGL
+ARG DEBIAN_FRONTEND
+ARG DEBCONF_NONINTERACTIVE_SEEN
+ARG WIN_USER
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
 ARG CONFIG_FILE
 ARG DOCKER_TIMESTAMP
 ARG KERNEL_PACKAGE_NAME
-ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
 ENV KERNEL_TYPE=${KERNEL_TYPE}
 ENV KERNEL_FEATURE=${KERNEL_FEATURE}
 ENV CONFIG_FILE=${CONFIG_FILE}
@@ -311,7 +318,7 @@ COPY --from=dvlp_repos ./repos/dvlw/ ./repos/dvlw/
 ########################
 FROM kalilinux/kali-rolling:latest AS dvlp_base-r00t-volumes-builder
 ARG _MNT
-ARG _ADMIN
+ARG _R00T
 WORKDIR /admin
 COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/HOME_NIX/    ./
 COPY --from=dvlp_repos ./repos/dvlw/dvlp/mnt/         ./mnt/
@@ -342,7 +349,7 @@ WORKDIR /
 ###############################
 FROM dvlp_base-r00t-volumes-builder AS dvlp_base-r00t-kernel-volumes-builder
 ARG _MNT
-ARG _ADMIN
+ARG _R00T
 ARG _ARCH
 ARG _ARCH_VENDOR
 WORKDIR /admin
@@ -371,20 +378,15 @@ FROM scratch AS dvlp_base-volumes-built
 ############################# BASE BUILD (part 1 ) ###################################
 FROM kalilinux/kali-rolling:latest AS dvlp_base-skel
 ARG _MNT
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
+ARG _R00T=${_R00T:-r00t}
+ARG _DVL=${_DVL:-dvl}
 ARG _AGL=${_AGL:-agl}
+ENV _R00T=$_R00T
+ENV _DVL=$_DVL
 ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-ARG REFRESH_REPO
-ARG KERNEL_TYPE
-ARG KERNEL_FEATURE
-ARG CONFIG_FILE
+ARG DEBIAN_FRONTEND
+ARG DEBCONF_NONINTERACTIVE_SEEN
 ARG WIN_USER
-ARG DOCKER_BUILD_TIMESTAMP
-ARG installkernel
 USER root
 WORKDIR /
 RUN \
@@ -461,15 +463,15 @@ RUN \
 WORKDIR /
 ###############################
 
-FROM kindtek/devels-playground:kali-skel AS dvlp_base-volumes-builder
+FROM kindtek/devels-playground:kali-skel AS dvlp_base-volumes-build
 ARG _MNT
 ARG _AGL_USR
 ARG _DVL_USR
-ARG _ADM_USR
+ARG _R00T_USR
 ARG _AGL=${_AGL:-agl}
 ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
+ENV _R00T=$_R00T_USR
 
 COPY --from=dvlp_base-r00t-volumes-builder     --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
 COPY --from=dvlp_base-devel-volumes-builder    --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
@@ -494,10 +496,10 @@ COPY --from=dvlp_base-devel-volumes-built    --chown=${_DVL}:hell    --chmod=177
 COPY --from=dvlp_base-angel-volumes-built    --chown=${_AGL}:halo    --chmod=1770    ./hal/                         ./hal/
 
 ###############################
-#  dvlp_base-kernel-volumes-builder #
+#  dvlp_base-kernel-volumes-build #
 ###############################
 
-FROM dvlp_base-volumes-builder AS dvlp_base-kernel-volumes-builder
+FROM dvlp_base-volumes-build AS dvlp_base-kernel-volumes-build
 COPY --from=dvlp_base-r00t-volumes-builder            --chown=r00t:r00t       --chmod=1770    ./admin/                        ./r00t/
 COPY --from=dvlp_base-devel-volumes-builder           --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
 COPY --from=dvlp_base-angel-volumes-builder           --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
@@ -520,50 +522,23 @@ COPY --from=dvlp_base-r00t-kernel-volumes-builder     --chown=r00t:r00t       --
 COPY --from=dvlp_base-devel-kernel-volumes-builder    --chown=${_DVL}:hell    --chmod=1770    ./hel/                         ./hel/
 COPY --from=dvlp_base-angel-kernel-volumes-builder    --chown=${_AGL}:halo    --chmod=1770    ./hal/                         ./hal/
 
-FROM dvlp_base-volumes-builder AS dvlp_base-builder
-ARG KERNEL_TYPE
-ARG KERNEL_FEATURE
-ARG CONFIG_FILE
-ARG WIN_USER
-ARG DOCKER_BUILD_TIMESTAMP
-ARG installkernel
-ARG REFRESH_REPO
-ARG _MNT
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
-ARG _AGL=${_AGL:-agl}
-ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-ENV DEBIAN_FRONTEND=noninteractive
-WORKDIR /
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/build-kernel,sharing=locked \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
-
 ############################# BASE BUILD KERNEL ###################################
 
-FROM dvlp_base-kernel-volumes-builder AS dvlp_base-kernel-builder
+FROM dvlp_base-kernel-volumes-build AS dvlp_base-kernel-builder
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
 ARG CONFIG_FILE
 ARG WIN_USER
 ARG DOCKER_BUILD_TIMESTAMP
 ARG installkernel
-ARG REFRESH_REPO
 ARG _MNT
 ARG _AGL_USR
 ARG _DVL_USR
-ARG _ADM_USR
+ARG _R00T_USR
 ARG _AGL=${_AGL:-agl}
 ENV _AGL=$_AGL
 ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
+ENV _R00T=$_R00T_USR
 ENV DEBIAN_FRONTEND=noninteractive
 WORKDIR /
 RUN \
@@ -576,23 +551,17 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 
-FROM kindtek/devels-playground:kali-build${KERNEL_TYPE:+-kernel} AS dvlp_base-built
-ARG _MNT
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
+FROM kindtek/devels-playground:kali-build${KERNEL_TYPE:+-kernel} AS dvlp_base-builder
+ARG _R00T=${_R00T:-r00t}
+ARG _DVL=${_DVL:-dvl}
 ARG _AGL=${_AGL:-agl}
+ENV _R00T=$_R00T
+ENV _DVL=$_DVL
 ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-ARG REFRESH_REPO
-ARG KERNEL_TYPE
-ARG KERNEL_FEATURE
-ARG CONFIG_FILE
+ARG DEBIAN_FRONTEND
+ARG DEBCONF_NONINTERACTIVE_SEEN
 ARG WIN_USER
-ARG DOCKER_BUILD_TIMESTAMP
-ARG installkernel
-ENV DEBIAN_FRONTEND=noninteractive
+
 WORKDIR /
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/base-kernel,sharing=locked \
@@ -610,7 +579,7 @@ RUN \
 
 ################################## MAKE #######################################
 
-FROM dvlp_base-built AS dvlp_make
+FROM dvlp_base-builder AS dvlp_make
 
 ################################### KERNEL ###########################################
 
@@ -618,12 +587,23 @@ FROM dvlp_base-built AS dvlp_make
 ########################  KERNEL MAKE/R - KERNEL COMPILER  ###########################
 ######################################################################################
 
-FROM dvlp_base-built AS dvlp_make-kernel
+FROM dvlp_base-builder AS dvlp_make-kernel
+ARG _R00T=${_R00T:-r00t}
+ARG _DVL=${_DVL:-dvl}
+ARG _AGL=${_AGL:-agl}
+ENV _R00T=$_R00T
+ENV _DVL=$_DVL
+ENV _AGL=$_AGL
+ARG DEBIAN_FRONTEND
+ARG DEBCONF_NONINTERACTIVE_SEEN
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
 ARG CONFIG_FILE
 ARG WIN_USER
 ARG DOCKER_BUILD_TIMESTAMP
+ARG KERNEL_PACKAGE_NAME
+ARG KERNEL_TYPE
+ARG KERNEL_FEATURE
 ENV KERNEL_TYPE=${KERNEL_TYPE}
 ENV KERNEL_FEATURE=${KERNEL_FEATURE}
 ENV CONFIG_FILE=${CONFIG_FILE}
@@ -698,7 +678,7 @@ FROM dvlp_make-kernel AS dvlp_base-kernel
 # FROM kindtek/devels-playground:kali-skel-image AS dvlp_base
 # ARG _AGL_USR
 # ARG _DVL_USR
-# ARG _ADM_USR
+# ARG _R00T_USR
 # ARG _AGL=${_AGL:-agl}
 # ARG KERNEL_TYPE
 # ARG KERNEL_FEATURE
@@ -708,7 +688,7 @@ FROM dvlp_make-kernel AS dvlp_base-kernel
 # ARG installkernel
 # ENV _AGL=$_AGL
 # ENV _DVL=$_DVL_USR
-# ENV _ADM=$_ADM_USR
+# ENV _R00T=$_R00T_USR
 # USER root
 
 # ONBUILD COPY --from=dvlp_made-kernel ./boot/ ./boot/
@@ -729,22 +709,6 @@ FROM dvlp_make-kernel AS dvlp_base-kernel
 ################
 
 FROM scratch AS dvlp_kernel-kache
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
-ARG _AGL=${_AGL:-agl}
-ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-ARG KERNEL_TYPE
-ARG KERNEL_FEATURE
-ARG CONFIG_FILE
-ARG WIN_USER
-ARG DOCKER_BUILD_TIMESTAMP
-ARG KERNEL_PACKAGE_NAME
-ENV DOCKER_BUILD_TIMESTAMP=${DOCKER_BUILD_TIMESTAMP}
-ARG KERNEL_TYPE
-ARG KERNEL_FEATURE
 USER r00t
 WORKDIR /boot
 WORKDIR /kache
@@ -759,24 +723,18 @@ COPY --from=dvlp_madk-kernel ./r00t/dvlw/dvlp/kernels/linux/kache/ ./
 
 ################################## BARE #########################################
 ############
-# dvlp_bare #
+# dvlp_cli-bare #
 ############
-FROM dvlp_base AS dvlp_bare
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
+FROM dvlp_base AS dvlp_cli-bare
+ARG _R00T=${_R00T:-r00t}
+ARG _DVL=${_DVL:-dvl}
 ARG _AGL=${_AGL:-agl}
+ENV _R00T=$_R00T
+ENV _DVL=$_DVL
 ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-ARG REFRESH_REPO
-ARG CONFIG_FILE
-ARG KERNEL_TYPE
-ARG KERNEL_FEATURE
-ARG CONFIG_FILE
+ARG DEBIAN_FRONTEND
+ARG DEBCONF_NONINTERACTIVE_SEEN
 ARG WIN_USER
-ARG DOCKER_BUILD_TIMESTAMP
-ARG installkernel
 USER r00t
 WORKDIR /
 RUN echo "[user]" | tee /etc/wsl.conf && \
@@ -795,30 +753,24 @@ RUN echo "[user]" | tee /etc/wsl.conf && \
 # ################################### GIT #########################################
 
 ########################
-# dvlp_git        #
+# dvlp_cli        #
 ########################
-FROM dvlp_base${KERNEL_TYPE:+-kernel} AS dvlp_git-base
+FROM dvlp_base${KERNEL_TYPE:+-kernel} AS dvlp_cli-base
 
-FROM dvlp_git-base AS dvlp_git-base-kernel
+FROM dvlp_cli-base AS dvlp_cli-base-kernel
 
-FROM dvlp_git-base${KERNEL_TYPE:+-kernel} as dvlp_git-built
+FROM dvlp_cli-base${KERNEL_TYPE:+-kernel} AS dvlp_cli-builder
 
-FROM dvlp_git-built AS dvlp_git
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
+FROM dvlp_cli-builder AS dvlp_cli
+ARG _R00T=${_R00T:-r00t}
+ARG _DVL=${_DVL:-dvl}
 ARG _AGL=${_AGL:-agl}
+ENV _R00T=$_R00T
+ENV _DVL=$_DVL
 ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-ARG REFRESH_REPO
-ARG CONFIG_FILE
-ARG KERNEL_TYPE
-ARG KERNEL_FEATURE
-ARG CONFIG_FILE
+ARG DEBIAN_FRONTEND
+ARG DEBCONF_NONINTERACTIVE_SEEN
 ARG WIN_USER
-ARG DOCKER_BUILD_TIMESTAMP
-ARG installkernel
 RUN rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     rm -rf /etc/ssl/certs/* && \
@@ -832,7 +784,7 @@ RUN rm -rf /var/lib/apt/lists && \
 ########################
 # dvlp_base-scan-build #
 ########################
-# FROM kindtek/devels-playground:kali-skel-image AS dvlp_base-scan-build
+# FROM kindtek/devels-playground:kali-skel-image AS dvlp_base-scan-builder
 # USER r00t
 # SHELL ["/bin/bash", "-c"]
 # WORKDIR /r00t/build
@@ -891,7 +843,7 @@ RUN rm -rf /var/lib/apt/lists && \
 ##################
 # dvlp_base-scan #
 ##################
-# FROM dvlp_base-scan-build AS dvlp_base-scan
+# FROM dvlp_base-scan-builder AS dvlp_base-scan
 # COPY --from=dvlp_python ./ ./
 # USER r00t
 # RUN \
@@ -913,13 +865,16 @@ RUN rm -rf /var/lib/apt/lists && \
 # dvlp_python-build #
 #####################
 # FROM kindtek/devels-playground:kali-skel-image AS dvlp_python-build
-FROM dvlp_git-built AS dvlp_gui-lite-built
-
-ARG _AGL_USR
-ARG _DVL_USR
+FROM dvlp_cli-builder AS dvlp_cli-goodies
+ARG _R00T=${_R00T:-r00t}
+ARG _DVL=${_DVL:-dvl}
 ARG _AGL=${_AGL:-agl}
+ENV _R00T=$_R00T
+ENV _DVL=$_DVL
 ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
+ARG DEBIAN_FRONTEND
+ARG DEBCONF_NONINTERACTIVE_SEEN
+ARG WIN_USER
 USER r00t
 WORKDIR /
 
@@ -958,6 +913,7 @@ RUN \
 # && \
 # rm -rf /var/lib/apt/lists && \
 # rm -rf /var/cache/apt
+
 WORKDIR /r00t
 RUN \
     --mount=type=cache,target=/var/cache/pip,sharing=private \
@@ -978,8 +934,10 @@ RUN \
     pip3 install pip --upgrade --no-warn-script-location --no-deps || angel_exists=false && \
     pip3 install cdir --user || devel_exists=false 
 
-USER r00t
-WORKDIR /
+# USER r00t
+# WORKDIR /
+
+
 # RUN apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
 #     apt-get autoremove -y && apt-get remove -y libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev apt-utils
 
@@ -1021,16 +979,14 @@ RUN \
     # echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
     # rm -rf /var/lib/apt/lists && \
     # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y apt-utils ca-certificates curl gnupg2 apt-transport-https lsb-release wget && \
-    wget "https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb" && \
-    mv packages-microsoft-prod.deb /var/cache/apt/archives/packages-microsoft-prod.deb && \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/trusted.gpg.d/microsoft-prod.gpg] https://packages.microsoft.com/repos/microsoft-debian-bullseye-prod bullseye main" | tee /etc/apt/sources.list.d/microsoft-prod.list  > /dev/null && \
-    dpkg -i /var/cache/apt/archives/packages-microsoft-prod.deb && \
+    apt-get install --no-install-recommends -y apt-utils ca-certificates curl gnupg2 apt-transport-https lsb-release powershell wget && \
+    # wget "https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb" && \
+    # mv packages-microsoft-prod.deb /var/cache/apt/archives/packages-microsoft-prod.deb && \
+    # echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/trusted.gpg.d/microsoft-prod.gpg] https://packages.microsoft.com/repos/microsoft-debian-bullseye-prod bullseye main" | tee /etc/apt/sources.list.d/microsoft-prod.list  > /dev/null && \
+    # dpkg -i /var/cache/apt/archives/packages-microsoft-prod.deb && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get install -y powershell && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y 
 # rm -rf /var/lib/apt/lists && \
-# rm -rf /var/cache/apt
+    rm -rf /var/cache/apt
 #########################
 # dvlp_msdot-build #
 #########################
@@ -1055,49 +1011,17 @@ RUN \
 ########################
 # dvlp_msdot-lite #
 ########################
-# FROM dvlp_msdot-build-lite AS dvlp_msdot-lite
+# FROM dvlp_msdot-builder-lite AS dvlp_msdot-builder
 # ARG _AGL_USR
 # ARG _DVL_USR
-# ARG _ADM_USR
+# ARG _R00T_USR
 # ARG _AGL=${_AGL:-agl}
 # ARG KERNEL_TYPE
 # ENV _AGL=$_AGL
 # ENV _DVL=$_DVL_USR
-# ENV _ADM=$_ADM_USR
+# ENV _R00T=$_R00T_USR
 # USER r00t
 # WORKDIR /
-# RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
-#     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-#     rm -rf /etc/ssl/certs/* && \
-#     apt-get -y install ca-certificates && \
-#     update-ca-certificates && \
-#     rm -rf /var/lib/apt/lists && \
-#     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-#     rm -rf /var/lib/apt/lists && \
-#     rm -rf /var/cache/apt
-
-########################
-# dvlp_msdot-kernel #
-########################
-# FROM dvlp_base AS dvlp_msdot
-# ARG _AGL_USR
-# ARG _DVL_USR
-# ARG _ADM_USR
-# ARG _AGL=${_AGL:-agl}
-# ARG CONFIG_FILE
-# ARG KERNEL_TYPE
-# ARG KERNEL_FEATURE
-# ARG CONFIG_FILE
-# ARG WIN_USER
-# ARG DOCKER_BUILD_TIMESTAMP
-# ARG installkernel
-# ENV _AGL=$_AGL
-# ENV _DVL=$_DVL_USR
-# ENV _ADM=$_ADM_USR
-# ARG REFRESH_REPO
-# USER r00t
-# WORKDIR /
-# COPY --from=dvlp_msdot-build ./ ./
 # RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
 #     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
 #     rm -rf /etc/ssl/certs/* && \
@@ -1112,7 +1036,7 @@ RUN \
 ########################
 # dvlp_dind-build #
 ########################
-# FROM kindtek/devels-playground:kali-skel-image AS dvlp_dind-build
+# FROM dvlp_msdot-builder AS dvlp_dind-builder
 # USER r00t
 # WORKDIR /
 # DOCKER - https://docs.docker.com/engine/install/ubuntu/
@@ -1143,7 +1067,7 @@ RUN \
 
 # FROM dvlp_dind-base${KERNEL_TYPE:+-kernel} AS dvlp_dind_built
 
-# FROM dvlp_dind_built AS dvlp_dind
+# FROM dvlp_dind-builder AS dvlp_dind
 # USER r00t
 # ARG KERNEL_TYPE
 # ARG KERNEL_FEATURE
@@ -1182,28 +1106,18 @@ RUN \
 # COPY --from=dvlp_base-kernel ./ ./
 # # COPY --from=dvlp_msdot-build-lite ./etc/apt/trusted.gpg.d/microsoft-prod.gpg ./etc/apt/trusted.gpg.d/microsoft-prod.gpg
 
-# FROM dvlp_gui-lite-base${KERNEL_TYPE:+-kernel} as dvlp_gui-lite-built
-
-# FROM dvlp_gui-lite-built AS dvlp_gui-lite
-# ARG _AGL_USR
-# ARG _DVL_USR
-# ARG _ADM_USR
-# ARG _AGL=${_AGL:-agl}
-# ENV _AGL=$_AGL
-# ENV _DVL=$_DVL_USR
-# ENV _ADM=$_ADM_USR
-# ARG CONFIG_FILE
-# ARG KERNEL_TYPE
-# ARG KERNEL_FEATURE
-# ARG CONFIG_FILE
-# ARG WIN_USER
-# ARG DOCKER_BUILD_TIMESTAMP
-# ARG installkernel
-# ENV DEBIAN_FRONTEND=noninteractive
-# ENV DEBCONF_NONINTERACTIVE_SEEN=true
-# ARG REFRESH_REPO=${REFRESH_REPO:-yes}
-# USER r00t
-# WORKDIR /
+# FROM dvlp_gui-lite-base${KERNEL_TYPE:+-kernel} as dvlp_gui-lite-builder
+FROM dvlp_cli-goodies AS dvlp_gui-builder
+ARG _R00T=${_R00T:-r00t}
+ARG _DVL=${_DVL:-dvl}
+ARG _AGL=${_AGL:-agl}
+ENV _R00T=$_R00T
+ENV _DVL=$_DVL
+ENV _AGL=$_AGL
+ARG DEBIAN_FRONTEND
+ARG DEBCONF_NONINTERACTIVE_SEEN
+ARG WIN_USER
+WORKDIR /
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/gui-lite,sharing=locked \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
@@ -1236,48 +1150,47 @@ COPY --from=dvlp_repo /repos/dvlw/dvlp/mnt/opt/* /opt/
 # # # brave_old_line='\"\$HERE\/brave\"\s\"\$\@\"\s\|\|\strue' && \
 # # # brave_new_line='"\$HERE/brave" "\$@" " " --disable-gpu " || true' && \
 # # # sed -i 's/$brave_old_line/$brave_new_line/g' /opt/brave.com/brave/brave-browser && cd /home/${_DVL} && \
-FROM dvlp_gui-lite-built AS dvlp_gui-lite
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
-ARG _AGL=${_AGL:-agl}
-ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-ARG REFRESH_REPO
-ARG CONFIG_FILE
-ARG KERNEL_TYPE
-ARG KERNEL_FEATURE
-ARG CONFIG_FILE
-ARG WIN_USER
-ARG DOCKER_BUILD_TIMESTAMP
-ARG installkernel
-RUN rm -rf /var/lib/apt/lists && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    rm -rf /etc/ssl/certs/* && \
-    apt-get -y install ca-certificates && \
-    update-ca-certificates && \
-    echo " \
-    Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
+# FROM dvlp_gui-lite-builder AS dvlp_gui-lite
+# ARG _AGL_USR
+# ARG _DVL_USR
+# ARG _R00T_USR
+# ARG _AGL=${_AGL:-agl}
+# ENV _AGL=$_AGL
+# ENV _DVL=$_DVL_USR
+# ENV _R00T=$_R00T_USR
+# ARG REFRESH_REPO
+# ARG CONFIG_FILE
+# ARG KERNEL_TYPE
+# ARG KERNEL_FEATURE
+# ARG CONFIG_FILE
+# ARG WIN_USER
+# ARG DOCKER_BUILD_TIMESTAMP
+# ARG installkernel
+# RUN rm -rf /var/lib/apt/lists && \
+#     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+#     rm -rf /etc/ssl/certs/* && \
+#     apt-get -y install ca-certificates && \
+#     update-ca-certificates && \
+#     echo " \
+#     Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
+#     rm -rf /var/lib/apt/lists && \
+#     rm -rf /var/cache/apt
 
 
 #################
 # dvlp_gui #
 #################
 # wsl2 required
-FROM dvlp_gui-lite AS dvlp_gui
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
+FROM dvlp_gui-builder AS dvlp_gui
+ARG _R00T=${_R00T:-r00t}
+ARG _DVL=${_DVL:-dvl}
 ARG _AGL=${_AGL:-agl}
+ENV _R00T=$_R00T
+ENV _DVL=$_DVL
 ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
-ARG REFRESH_REPO
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
+ARG WIN_USER
 USER r00t
 WORKDIR /
 RUN \
@@ -1311,19 +1224,40 @@ RUN \
 COPY --from=dvlp_repo --chmod=755 /repos/dvlw/dvlp/mnt/etc/* /etc/
 
 
+FROM dvlp_gui-builder AS dvlp_gui-goodies
+ARG _R00T=${_R00T:-r00t}
+ARG _DVL=${_DVL:-dvl}
+ARG _AGL=${_AGL:-agl}
+ENV _R00T=$_R00T
+ENV _DVL=$_DVL
+ENV _AGL=$_AGL
+ARG DEBIAN_FRONTEND
+ARG DEBCONF_NONINTERACTIVE_SEEN
+ARG WIN_USER
+RUN rm -rf /var/lib/apt/lists && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    rm -rf /etc/ssl/certs/* && \
+    apt-get -y install ca-certificates && \
+    update-ca-certificates && \
+    echo " \
+    Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt
 
 ############################## CUDA ###############################
 ##################
 # dvlp_cuda #
 ##################
-FROM dvlp_gui AS dvlp_cuda
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _ADM_USR
+FROM dvlp_gui-goodies-builder AS dvlp_gui-goodies-cuda
+ARG _R00T=${_R00T:-r00t}
+ARG _DVL=${_DVL:-dvl}
 ARG _AGL=${_AGL:-agl}
+ENV _R00T=$_R00T
+ENV _DVL=$_DVL
 ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _ADM=$_ADM_USR
+ARG DEBIAN_FRONTEND
+ARG DEBCONF_NONINTERACTIVE_SEEN
+ARG WIN_USER
 USER r00t
 WORKDIR /
 RUN rm -rf /etc/ssl/certs/* && \
@@ -1331,9 +1265,10 @@ RUN rm -rf /etc/ssl/certs/* && \
     update-ca-certificates && \
     rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    apt-get install --no-install-recommends -y nvidia-cuda-toolkit && \
     echo " \
     Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
-    rm -rf /var/lib/apt/lists && \
+    # rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 
 ###################################################################
