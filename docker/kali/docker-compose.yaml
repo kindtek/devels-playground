@@ -4,7 +4,7 @@ services:
   template:
     build:
       context: .
-      target: dvlp_base-build-volumes
+      target: dvlp_base-volumes-builder
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-test
     entrypoint: /bin/bash -c
     command:
@@ -31,27 +31,27 @@ services:
       - home_r00t:/home/r00t
       - dls:/dls  
 
-  repo-builder:
+  build-repo-builder:
     # command: /bin/bash -c apt-get update -y && apt-get upgrade -y
     build:
       context: .
       target: dvlp_repo-builder
 
-  repo-builder-image:
-    extends: repo-builder
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:repo-builder-image-only
+  build-repo-builder-image:
+    extends: build-repo-builder
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:repo-builder
     depends_on:
-      repo-builder:
+      build-repo-builder:
         # Wait for the ownership to change
         condition: service_completed_successfully
 
-  repo-builder-image-only:
-    extends: repo-builder-image
+  repo-builder-image:
+    extends: build-repo-builder-image
     build:
       context: ''
       target: ''
 
-  repo:
+  build-repo:
     build:
       context: .
       target: dvlp_repo
@@ -70,32 +70,33 @@ services:
       - repo_agl:/home/${_AGL}/dvlw
       - repo_dvl:/hel/dvlw
       - repo_dvl:/home/${_DVL}/dvlw
-  repo-kernel:
-    extends: repo
+  build-repo-kernel:
+    extends: build-repo
     build:
       target: dvlp_repo-kernel
       no_cache: true
-  r00t:
+  build-r00t:
     build:
-      target: dvlp_base-built-r00t-volumes
+      target: dvlp_base-r00t-volumes-built
     env_file:
       - .env
-  angel:
+  build-angel:
     build:
-      target: dvlp_base-built-angel-volumes
+      target: dvlp_base-angel-volumes-built
     env_file:
       - .env
-  devel:
+  build-devel:
     build:
-      target: dvlp_base-built-devel-volumes
+      target: dvlp_base-devel-volumes-built
     env_file:
       - .env
-  skel:
+  build-skel:
     init: true
     # command: /bin/bash -c apt-get update -y && apt-get upgrade -y
     # command:
     #   - /bin/bash -c apt-get update -y 
     #   - /bin/bash -c apt-get upgrade -y
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-skel
     build:
       target: dvlp_base-skel
       context: .
@@ -124,29 +125,29 @@ services:
       - SETPCAP
       - NET_BIND_SERVICE
 
-  skel-image:
-    extends: skel
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-skel-image-only
+  build-skel-image:
+    extends: build-skel
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-skel
     depends_on:
-      skel:
+      build-skel:
         # Wait for the ownership to change
         condition: service_completed_successfully
   
-  skel-image-only:
-    extends: skel-image
+  skel-image:
+    extends: build-skel-image
     build:
       target: ''
       context: ''
 
-  vols:
-    extends: skel
+  build-vols:
+    extends: build-skel
     tty: false
     init: true
     entrypoint: /bin/bash -c echo 'helloworld entry'
     command:
       - /bin/bash -c echo 'helloworld command'
     build:
-      target: dvlp_base-build-volumes
+      target: dvlp_base-volumes-builder
     volumes:
       - repo_agl:/repos/dvlw
       - repo_agl:/r00t/dvlw
@@ -163,12 +164,13 @@ services:
       - home_r00t:/r00t
       - home_r00t:/home/r00t
       - dls:/dls 
-  vols-kernel:
-    extends: vols
+
+  build-vols-kernel:
+    extends: build-vols
     build:
-      target: dvlp_base-build-kernel-volumes
+      target: dvlp_base-kernel-volumes-builder
     volumes_from: 
-      - vols
+      - build-vols
     volumes:
       - repo_agl-kernel:/repos/dvlw/dvlp/kernels
       - repo_agl-kernel:/r00t/dvlw/dvlp/kernels
@@ -177,62 +179,94 @@ services:
       - repo_agl-kernel:/home/${_AGL}/dvlw/dvlp/kernels
       - repo_dvl-kernel:/hel/dvlw/dvlp/kernels
       - repo_dvl-kernel:/home/${_DVL}/dvlw/dvlp/kernels
-  k-home-win:
+
+  build-k-home-win:
     build:
       target: dvlp_k-home-win
       no_cache: true
     env_file:
       - .env
-  k-home-nix:
-    extends: k-home-win
+
+  build-k-home-nix:
+    extends: build-k-home-win
     build:
       target: dvlp_k-home-nix-angel
-  k-home-nix-angel:
-    extends: k-home-nix
-  k-home-nix-devel:
-    extends: k-home-nix
+
+  build-k-home-nix-angel:
+    extends: build-k-home-nix
+
+  build-k-home-nix-devel:
+    extends: build-k-home-nix
     build:  
       target: dvlp_k-home-nix-devel
-  k-home-nix-r00t:
-    extends: k-home-nix
+
+  build-k-home-nix-r00t:
+    extends: build-k-home-nix
     build:  
       target: dvlp_k-home-nix-r00t
-  build:
-    extends: vols
+
+  build-base-builder:
+    extends: build-vols
     tty: false
     build:
-      target: dvlp_base-build
+      target: dvlp_base-builder
+    depends_on:
+      build-skel:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
+      build-vols:
+        # Wait for the ownership to change
+        condition: service_started
+    labels:
+      com.dvlp_base.description: "-build skeleton"
+    volumes_from:
+      - build-vols
+
+  build-base-builder-image:
+    extends: build-base-builder
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-build
     depends_on:
-      skel:
-        # Wait for the ownership to change
+      build-base-builder:
         condition: service_completed_successfully
-      vols:
-        # Wait for the ownership to change
-        condition: service_started
-    labels:
-      com.dvlp_base.description: "-build skeleton"
-    volumes_from:
-      - vols
-  build-kernel:
-    extends: vols-kernel
+
+  base-builder-image:
+    extends: build-base-builder-image
+    build:
+      target: ''
+      context: ''
+
+  build-base-kernel-builder:
+    extends: build-vols-kernel
     tty: false
     build:
-      target: dvlp_base-build-kernel
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-build-kernel
+      target: dvlp_base-kernel-builder
     depends_on:
-      skel:
+      build-skel:
         # Wait for the ownership to change
         condition: service_completed_successfully
-      vols-kernel:
+      build-vols-kernel:
         # Wait for the ownership to change
         condition: service_started
     labels:
       com.dvlp_base.description: "-build skeleton"
     volumes_from:
-      - vols-kernel
+      - build-vols-kernel
+
+  build-base-kernel-builder-image:
+    extends: build-base-kernel-builder
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-build-kernel
+    depends_on:
+      build-base-kernel-builder:
+        condition: service_completed_successfully
+
+  base-kernel-builder-image:
+    extends: build-base-kernel-builder
+    build:
+      target: ''
+      context: ''
+
   make-kernel:
-    extends: vols-kernel
+    extends: build-vols-kernel
     entrypoint: /bin/bash -c echo 'helloworld'
     command:
       - tail -F /dev/null
@@ -249,14 +283,15 @@ services:
       - CONFIG_FILE=${CONFIG_FILE}
     # entrypoint: /bin/bash  [ ! -f build-export-kernel.sh ] || bash build-export-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${WIN_USER}" "${DOCKER_BUILD_TIMESTAMP}"
     depends_on:
-      skel:
+      build-skel:
         # Wait for the ownership to change
         condition: service_started
-      vols-kernel:
+      build-vols-kernel:
         # Wait for the ownership to change
         condition: service_started
     volumes_from:
-      - vols-kernel
+      - build-vols-kernel
+
   make-kernel-cached:
     extends: make-kernel
     build:
@@ -264,14 +299,15 @@ services:
       target: dvlp_make-kernel
       no_cache: false
     depends_on:
-      skel:
+      build-skel:
         # Wait for the ownership to change
         condition: service_started
-      vols-kernel:
+      build-vols-kernel:
         # Wait for the ownership to change
         condition: service_started
     volumes_from:
-      - vols-kernel
+      - build-vols-kernel
+
   make-kernel-basic:
     extends: make-kernel
     build:
@@ -282,6 +318,7 @@ services:
     environment:
       - KERNEL_TYPE=basic
       - KERNEL_FEATURE=
+
   make-kernel-basic-zfs:
     extends: make-kernel
     build:
@@ -292,6 +329,7 @@ services:
     environment:
       - KERNEL_TYPE=basic
       - KERNEL_FEATURE=zfs
+
   make-kernel-stable:
     extends: make-kernel
     build:
@@ -302,6 +340,7 @@ services:
     environment:
       - KERNEL_TYPE=stable
       - KERNEL_FEATURE=
+
   make-kernel-stable-zfs:
     extends: make-kernel
     build:
@@ -312,6 +351,7 @@ services:
     environment:
       - KERNEL_TYPE=stable
       - KERNEL_FEATURE=zfs
+
   make-kernel-latest-zfs:
     extends: make-kernel
     build:
@@ -322,6 +362,7 @@ services:
     environment:
       - KERNEL_TYPE=latest
       - KERNEL_FEATURE=zfs
+      
   make-kernel-latest:
     extends: make-kernel
     build:
@@ -332,6 +373,7 @@ services:
     environment:
       - KERNEL_TYPE=latest
       - KERNEL_FEATURE=
+
   made-kernel:
     extends: make-kernel
     build:
@@ -340,14 +382,14 @@ services:
     command:
       - /bin/bash -c echo 'helloworld command'
     depends_on:
-      skel:
+      build-skel:
         # Wait for the ownership to change
         condition: service_started
-      vols-kernel:
+      build-vols-kernel:
         # Wait for the ownership to change
         condition: service_started
     volumes_from:
-      - vols-kernel
+      - build-vols-kernel
         
   made-kernel-cached:
     extends: made-kernel
@@ -356,14 +398,14 @@ services:
       target: dvlp_made-kernel
       no_cache: false
     depends_on:
-      skel:
+      build-skel:
         # Wait for the ownership to change
         condition: service_started
-      vols-kernel:
+      build-vols-kernel:
         # Wait for the ownership to change
         condition: service_started
     volumes_from:
-      - vols-kernel
+      - build-vols-kernel
     # depends_on:
     #   made-kernel:
     #     # Wait for the ownership to change
@@ -407,7 +449,7 @@ services:
     #   com.dvlp_base-kernel.description: "-build skeleton"
   # base-kernel:
   #   user: ${_AGL}
-  #   extends: dvlp_base-build-kernel
+  #   extends: dvlp_base-kernel-builder
   #   working_dir: /hal
   #   cap_add:
   #     - AUDIT_WRITE
@@ -463,13 +505,13 @@ services:
   #     # - ${nix_bind_nix_src_user_dir:-/dev/foo7/null}:${nix_bind_tgt_user_dir_agl:-/dev/bar7/null}
   #     # - ${nix_bind_nix_src_user_dir:-/dev/foo8/null}:${nix_bind_tgt_user_dir_dvl:-/dev/bar8/null}
   #   depends_on:
-  #     dvlp_base-build-kernel:
+  #     dvlp_base-kernel:-builder
   #       # Wait for the ownership to change
   #       condition: service_completed_successfully
   #   labels:
   #     com.dvlp_base-kernel.description: "skeleton"
-  base:
-    extends: skel
+  build-base:
+    extends: build-skel
     tty: true
     entrypoint: /bin/bash -c echo 'helloworld entry'
     command:
@@ -486,24 +528,24 @@ services:
     # command:
     #   - tail -F /dev/null
     depends_on:
-      vols:
+      build-vols:
         # Wait for the ownership to change
         condition: service_started
-      vols-kernel:
+      build-vols-kernel:
         # Wait for the ownership to change
         condition: service_started
-      skel:
+      build-skel:
         # Wait for the ownership to change
         condition: service_completed_successfully
     labels:
       com.dvlp_base.description: "-build skeleton"
     volumes_from:
-      - vols
-  base-kernel:
+      - build-vols
+  build-base-kernel:
     extends:
-      base
+      build-base
     volumes_from:
-      - vols-kernel
+      - build-vols-kernel
       # args:
       #   - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
       #   - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
@@ -545,18 +587,18 @@ services:
     entrypoint: /bin/bash -c 
     command:
       - tail -F /dev/null
-    extends: base    # extends: kernel
+    extends: build-base    # extends: kernel
     build:
       context: .
       target: dvlp_bare
     depends_on:
-      base:
+      build-base:
         # Wait for the ownership to change
         condition: service_completed_successfully
     labels:
       com.devels-playground.description: "basics + git"
     volumes_from:
-      - base
+      - build-base
     volumes: 
       - win_c:/mnt/c
       - win_n:/mnt/n
@@ -569,7 +611,7 @@ services:
     labels:
       com.devels-playground.description: "basics + git"
     depends_on:
-      base:
+      build-base:
         # Wait for the ownership to change
         condition: service_started
     env_file:
@@ -597,18 +639,18 @@ services:
       - KERNEL_TYPE=stable
       - KERNEL_FEATURE=zfs
     depends_on:
-      base-kernel: 
+      build-base-kernel: 
         condition: service_completed_successfully
       make-kernel:
         condition: service_completed_successfully
     volumes_from:
-      - vols-kernel
+      - build-vols-kernel
   # scan-build:
   #   entrypoint: /bin/bash -c
   #   command:
   #     - sleep infinity
   #   # user: ${_AGL}
-  #   extends: base
+  #   extends: build-base
   #   working_dir: /hal
   #   restart: on-failure
   #   tty: true
@@ -619,7 +661,7 @@ services:
   #     context: .
   #     target: dvlp_scan-build
   #   depends_on:
-  #     base:
+  #     build-base:
   #       # Wait for the ownership to change
   #       condition: service_completed_successfully
   #   labels:
@@ -870,7 +912,7 @@ services:
   #     - home_dvl:/home/${_DVL}
   #     - dls:/dls
   #   depends_on:
-  #     base:
+  #     build-base:
   #       condition: service_completed_successfully
   # jacket:
   #   user: ${_AGL}
@@ -892,7 +934,7 @@ services:
   #     - home_dvl:/home/${_DVL}
   #     - dls:/dls
 
-  # base-bare:
+  # build-base-bare:
   #   extends: jacket
   #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-bare${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
   #   build:
@@ -914,7 +956,7 @@ services:
     # - ["if [ -f \"start-kde.sh\" ]; then bash start.sh; mv -vf start-kde.sh start.sh; else bash start.sh; fi;", "sleep infinity"]
     # image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-make-kernel
 
-  # base-git:
+  # build-base-git:
   #   extends: jacket
   #   user: ${_AGL}
   #   working_dir: /hal
@@ -939,28 +981,28 @@ services:
   #     args:
   #       - JACKET=git-kernel
 
-  # base-scan:
+  # build-base-scan:
   #   extends: jacket
   #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-scan${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
   #   build:
   #     target: dvlp_scan
   #     args:
   #       - JACKET=scan
-  # base-python-lite:
+  # build-base-python-lite:
   #   extends: jacket
   #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-python-lite${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
   #   build:
   #     target: dvlp_python-lite
   #     args:
   #       - JACKET=python-lite
-  # base-dind-lite:
+  # build-base-dind-lite:
   #   extends: jacket
   #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-dind-lite${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
   #   build:
   #     target: dvlp_dind-lite
   #     args:
   #       - JACKET=dind-lite
-  # base-msdot-lite:
+  # build-base-msdot-lite:
   #   extends: jacket
   #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-msdot-lite${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
   #   build:
@@ -976,7 +1018,7 @@ services:
   #     target: dvlp_gui-lite-kernel
   #     args:
   #       - JACKET=gui-lite-kernel
-  # base-gui-lite:
+  # build-base-gui-lite:
   #   extends: jacket
   #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-lite${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
   #   # command: bash start.sh && mv -fv start-kde.sh || export FIRST_LOGIN=false
@@ -993,7 +1035,7 @@ services:
   #     target: dvlp_gui-kernel
   #     args:
   #       - JACKET=gui-kernel
-  # base-gui:
+  # build-base-gui:
   #   extends: jacket
   #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
   #   # command: bash start-kde.sh
@@ -1003,7 +1045,7 @@ services:
   #       - JACKET=gui
   #   volumes_from:
   #     - jacket
-  # base-cuda:
+  # build-base-cuda:
   #   extends: gui
   #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cuda${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$_ARCH}${KERNEL_TYPE:+--}${KERNEL_TYPE:+-$_ARCH_VENDOR}
   #   # command: bash start-kde.sh
