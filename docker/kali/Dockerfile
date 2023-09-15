@@ -16,7 +16,7 @@ ARG _DVL=${_DVL:-dvl}
 ARG _AGL=${_AGL:-agl}
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
-ARG WIN_USER
+ARG _WIN_USER
 ARG _ARCH
 ARG _ARCH_VENDOR
 ARG WINDOWS
@@ -55,7 +55,7 @@ ENV _DVL=$_DVL
 ENV _AGL=$_AGL
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
-ARG WIN_USER
+ARG _WIN_USER
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
 ARG CONFIG_FILE
@@ -386,7 +386,7 @@ ENV _DVL=$_DVL
 ENV _AGL=$_AGL
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
-ARG WIN_USER
+ARG _WIN_USER
 USER root
 WORKDIR /
 RUN \
@@ -465,20 +465,19 @@ WORKDIR /
 
 FROM kindtek/devels-playground:kali-skel AS dvlp_base-volumes-build
 ARG _MNT
-ARG _AGL_USR
-ARG _DVL_USR
-ARG _R00T_USR
+ARG _R00T=${_R00T:-r00t}
+ARG _DVL=${_DVL:-dvl}
 ARG _AGL=${_AGL:-agl}
+ENV _R00T=$_R00T
+ENV _DVL=$_DVL
 ENV _AGL=$_AGL
-ENV _DVL=$_DVL_USR
-ENV _R00T=$_R00T_USR
 
-COPY --from=dvlp_base-r00t-volumes-builder     --chown=r00t:r00t       --chmod=1770    ./r00t/                        ./r00t/
-COPY --from=dvlp_base-devel-volumes-builder    --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
-COPY --from=dvlp_base-angel-volumes-builder    --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
-COPY --from=dvlp_base-r00t-volumes-built     --chown=r00t:r00t       --chmod=1770    ./r00t/                       ./r00t/
-COPY --from=dvlp_base-devel-volumes-built    --chown=${_DVL}:hell    --chmod=1770    ./hel/                         ./hel/
-COPY --from=dvlp_base-angel-volumes-built    --chown=${_AGL}:halo    --chmod=1770    ./hal/                         ./hal/
+COPY --from=dvlp_base-r00t-volumes-builder  --chown=r00t:r00t       --chmod=1770    ./r00t/                         ./r00t/
+COPY --from=dvlp_base-devel-volumes-builder --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
+COPY --from=dvlp_base-angel-volumes-builder --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
+COPY --from=dvlp_base-r00t-volumes-built    --chown=r00t:r00t       --chmod=1770    ./r00t/                         ./r00t/
+COPY --from=dvlp_base-devel-volumes-built   --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
+COPY --from=dvlp_base-angel-volumes-built   --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
 COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./hel/
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./hal/
 COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./r00t/
@@ -486,14 +485,14 @@ COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770
 COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                   ./hel/dvlw/
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
-COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1775    /repos/dvlw/dvlp/mnt/etc/*      ./etc/
+COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1775     /repos/dvlw/dvlp/mnt/etc/*     ./etc/
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/ 
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./hal/dvlw/
-COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                  ./r00t/dvlw/
-COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                  ./dvl/dvlw/
-COPY --from=dvlp_base-r00t-volumes-built     --chown=r00t:r00t       --chmod=1770    ./r00t/                       ./r00t/
-COPY --from=dvlp_base-devel-volumes-built    --chown=${_DVL}:hell    --chmod=1770    ./hel/                         ./hel/
-COPY --from=dvlp_base-angel-volumes-built    --chown=${_AGL}:halo    --chmod=1770    ./hal/                         ./hal/
+COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1770    ./repos/dvlw/                   ./r00t/dvlw/
+COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1770    ./repos/dvlw/                   ./dvl/dvlw/
+COPY --from=dvlp_base-r00t-volumes-built    --chown=r00t:r00t       --chmod=1770    ./r00t/                         ./r00t/
+COPY --from=dvlp_base-devel-volumes-built   --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
+COPY --from=dvlp_base-angel-volumes-built   --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
 
 ###############################
 #  dvlp_base-kernel-volumes-build #
@@ -528,7 +527,7 @@ FROM dvlp_base-kernel-volumes-build AS dvlp_base-kernel-builder
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
 ARG CONFIG_FILE
-ARG WIN_USER
+ARG _WIN_USER
 ARG DOCKER_BUILD_TIMESTAMP
 ARG installkernel
 ARG _MNT
@@ -560,7 +559,7 @@ ENV _DVL=$_DVL
 ENV _AGL=$_AGL
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
-ARG WIN_USER
+ARG _WIN_USER
 
 WORKDIR /
 RUN \
@@ -599,7 +598,7 @@ ARG DEBCONF_NONINTERACTIVE_SEEN
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
 ARG CONFIG_FILE
-ARG WIN_USER
+ARG _WIN_USER
 ARG DOCKER_BUILD_TIMESTAMP
 ARG KERNEL_PACKAGE_NAME
 ARG KERNEL_TYPE
@@ -607,7 +606,7 @@ ARG KERNEL_FEATURE
 ENV KERNEL_TYPE=${KERNEL_TYPE}
 ENV KERNEL_FEATURE=${KERNEL_FEATURE}
 ENV CONFIG_FILE=${CONFIG_FILE}
-# ENV WIN_USER=${WIN_USER}
+# ENV _WIN_USER=${_WIN_USER}
 ENV DOCKER_BUILD_TIMESTAMP=${DOCKER_BUILD_TIMESTAMP}
 ARG installkernel
 # WORKDIR /boot
@@ -683,7 +682,7 @@ FROM dvlp_make-kernel AS dvlp_base-kernel
 # ARG KERNEL_TYPE
 # ARG KERNEL_FEATURE
 # ARG CONFIG_FILE
-# ARG WIN_USER
+# ARG _WIN_USER
 # ARG DOCKER_BUILD_TIMESTAMP
 # ARG installkernel
 # ENV _AGL=$_AGL
@@ -734,7 +733,7 @@ ENV _DVL=$_DVL
 ENV _AGL=$_AGL
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
-ARG WIN_USER
+ARG _WIN_USER
 USER r00t
 WORKDIR /
 RUN echo "[user]" | tee /etc/wsl.conf && \
@@ -770,7 +769,7 @@ ENV _DVL=$_DVL
 ENV _AGL=$_AGL
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
-ARG WIN_USER
+ARG _WIN_USER
 RUN rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     rm -rf /etc/ssl/certs/* && \
@@ -874,7 +873,7 @@ ENV _DVL=$_DVL
 ENV _AGL=$_AGL
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
-ARG WIN_USER
+ARG _WIN_USER
 USER r00t
 WORKDIR /
 
@@ -885,36 +884,36 @@ RUN \
     # rm -rf /var/lib/apt/lists && \
     # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get --no-install-recommends -y install apt-utils jq libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev python3-pip python3-venv pkg-config  && \
-# && \
-# # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-# rm -rf /var/cache/apt
-# RUN \
+    # && \
+    # # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    # rm -rf /var/cache/apt
+    # RUN \
     # --mount=type=cache,target=/var/cache/pip,sharing=locked \
     pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     python3 -m pip list --outdated --format=json | jq -r '.[] | "\(.name)==\(.latest_version)"' | xargs -n1 pip3 install --upgrade --no-warn-script-location --no-deps && \
-# RUN \
-#     apt-get --no-install-recommends -y remove libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev 
-###############################
-# dvlp_python-build #
-###############################
-# FROM dvlp_python-build AS dvlp_python
-# USER r00t
-# WORKDIR /
-# ARG angel_exists=true
-# ARG devel_exists=true
-# ARG r00t_exists=true
-# RUN \
-#     --mount=type=cache,target=/var/cache/dvlp/python,sharing=locked \
-#     rm -f /etc/apt/apt.conf.d/docker-clean && \
-#     # rm -rf /var/lib/apt/lists && \
-#     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-#     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-#     apt-get install --no-install-recommends -y jq python3-pip python3-venv 
-# && \
-# rm -rf /var/lib/apt/lists && \
-# rm -rf /var/cache/apt
-# WORKDIR /r00t
-# RUN \
+    # RUN \
+    #     apt-get --no-install-recommends -y remove libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev 
+    ###############################
+    # dvlp_python-build #
+    ###############################
+    # FROM dvlp_python-build AS dvlp_python
+    # USER r00t
+    # WORKDIR /
+    # ARG angel_exists=true
+    # ARG devel_exists=true
+    # ARG r00t_exists=true
+    # RUN \
+    #     --mount=type=cache,target=/var/cache/dvlp/python,sharing=locked \
+    #     rm -f /etc/apt/apt.conf.d/docker-clean && \
+    #     # rm -rf /var/lib/apt/lists && \
+    #     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
+    #     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    #     apt-get install --no-install-recommends -y jq python3-pip python3-venv 
+    # && \
+    # rm -rf /var/lib/apt/lists && \
+    # rm -rf /var/cache/apt
+    # WORKDIR /r00t
+    # RUN \
     # --mount=type=cache,target=/var/cache/pip,sharing=private \
     # $r00t_exists && pip3 install pip --upgrade --no-warn-script-location --no-deps && \
     pip3 install cdir --user --target=/r00t && \
@@ -949,7 +948,7 @@ WORKDIR /
 # ARG CONFIG_FILE
 # ARG KERNEL_TYPE
 # ARG KERNEL_FEATURE
-# ARG WIN_USER
+# ARG _WIN_USER
 # ARG DOCKER_BUILD_TIMESTAMP
 # ARG installkernel
 # USER r00t
@@ -983,69 +982,69 @@ RUN \
     # mv packages-microsoft-prod.deb /var/cache/apt/archives/packages-microsoft-prod.deb && \
     # echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/trusted.gpg.d/microsoft-prod.gpg] https://packages.microsoft.com/repos/microsoft-debian-bullseye-prod bullseye main" | tee /etc/apt/sources.list.d/microsoft-prod.list  > /dev/null && \
     # dpkg -i /var/cache/apt/archives/packages-microsoft-prod.deb && \
-#     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-# # rm -rf /var/lib/apt/lists && \
-#     rm -rf /var/cache/apt
-#########################
-# dvlp_msdot-build #
-#########################
-# FROM dvlp_msdot-build-lite AS dvlp_msdot-build
-# RUN \
-# --mount=type=cache,target=/var/cache/dvlp/msdot,sharing=locked \
-# rm -f /etc/apt/apt.conf.d/docker-clean && \
-# echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-# rm -rf /var/lib/apt/lists && \
-# apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-# apt-get install --no-install-recommends -y apt-utils ca-certificates curl gnupg2 apt-transport-https lsb-release wget && \
-# curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
-# wget -O - https://pkg.wslutiliti.es/public.key | tee --append /etc/apt/trusted.gpg.d/wslu.asc && \
-# echo "deb [arch=$(dpkg --print-architecture)] https://pkg.wslutiliti.es/kali kali-rolling main" | tee --append /etc/apt/sources.list && \
-# apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-# # apt-get install -y powershell wslu && \
-# apt-get install --no-install-recommends -y dotnet-sdk-7.0 wslu && \
-# apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-# rm -rf /var/lib/apt/lists && \
-# rm -rf /var/cache/apt
-# 
-########################
-# dvlp_msdot-lite #
-########################
-# FROM dvlp_msdot-builder-lite AS dvlp_msdot-builder
-# ARG _AGL_USR
-# ARG _DVL_USR
-# ARG _R00T_USR
-# ARG _AGL=${_AGL:-agl}
-# ARG KERNEL_TYPE
-# ENV _AGL=$_AGL
-# ENV _DVL=$_DVL_USR
-# ENV _R00T=$_R00T_USR
-# USER r00t
-# WORKDIR /
-# RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
-#     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-#     rm -rf /etc/ssl/certs/* && \
-#     apt-get -y install ca-certificates && \
-#     update-ca-certificates && \
-#     rm -rf /var/lib/apt/lists && \
-#     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-#     rm -rf /var/lib/apt/lists && \
-#     rm -rf /var/cache/apt
-# 
-########################## DOCKER IN DOCKER ######################################
-########################
-# dvlp_dind-build #
-########################
-# FROM dvlp_msdot-builder AS dvlp_dind-builder
-# USER r00t
-# WORKDIR /
-# DOCKER - https://docs.docker.com/engine/install/ubuntu/
-# RUN \
-#     --mount=type=cache,target=/var/cache/dvlp/dind,sharing=locked \
-#     rm -f /etc/apt/apt.conf.d/docker-clean && \
-#     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
-#     rm -rf /var/lib/apt/lists && \
-#     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-#     apt-get install --no-install-recommends -y ca-certificates curl lsb-release gpg && \
+    #     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    # # rm -rf /var/lib/apt/lists && \
+    #     rm -rf /var/cache/apt
+    #########################
+    # dvlp_msdot-build #
+    #########################
+    # FROM dvlp_msdot-build-lite AS dvlp_msdot-build
+    # RUN \
+    # --mount=type=cache,target=/var/cache/dvlp/msdot,sharing=locked \
+    # rm -f /etc/apt/apt.conf.d/docker-clean && \
+    # echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
+    # rm -rf /var/lib/apt/lists && \
+    # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    # apt-get install --no-install-recommends -y apt-utils ca-certificates curl gnupg2 apt-transport-https lsb-release wget && \
+    # curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - && \
+    # wget -O - https://pkg.wslutiliti.es/public.key | tee --append /etc/apt/trusted.gpg.d/wslu.asc && \
+    # echo "deb [arch=$(dpkg --print-architecture)] https://pkg.wslutiliti.es/kali kali-rolling main" | tee --append /etc/apt/sources.list && \
+    # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    # # apt-get install -y powershell wslu && \
+    # apt-get install --no-install-recommends -y dotnet-sdk-7.0 wslu && \
+    # apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    # rm -rf /var/lib/apt/lists && \
+    # rm -rf /var/cache/apt
+    # 
+    ########################
+    # dvlp_msdot-lite #
+    ########################
+    # FROM dvlp_msdot-builder-lite AS dvlp_msdot-builder
+    # ARG _AGL_USR
+    # ARG _DVL_USR
+    # ARG _R00T_USR
+    # ARG _AGL=${_AGL:-agl}
+    # ARG KERNEL_TYPE
+    # ENV _AGL=$_AGL
+    # ENV _DVL=$_DVL_USR
+    # ENV _R00T=$_R00T_USR
+    # USER r00t
+    # WORKDIR /
+    # RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
+    #     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
+    #     rm -rf /etc/ssl/certs/* && \
+    #     apt-get -y install ca-certificates && \
+    #     update-ca-certificates && \
+    #     rm -rf /var/lib/apt/lists && \
+    #     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    #     rm -rf /var/lib/apt/lists && \
+    #     rm -rf /var/cache/apt
+    # 
+    ########################## DOCKER IN DOCKER ######################################
+    ########################
+    # dvlp_dind-build #
+    ########################
+    # FROM dvlp_msdot-builder AS dvlp_dind-builder
+    # USER r00t
+    # WORKDIR /
+    # DOCKER - https://docs.docker.com/engine/install/ubuntu/
+    # RUN \
+    #     --mount=type=cache,target=/var/cache/dvlp/dind,sharing=locked \
+    #     rm -f /etc/apt/apt.conf.d/docker-clean && \
+    #     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' | tee --append /etc/apt/apt.conf.d/keep-cache && \
+    #     rm -rf /var/lib/apt/lists && \
+    #     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    #     apt-get install --no-install-recommends -y ca-certificates curl lsb-release gpg && \
     mkdir -pv /etc/apt/keyrings && \
     curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg > /dev/null && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian bookworm stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
@@ -1071,7 +1070,7 @@ RUN \
 # ARG KERNEL_TYPE
 # ARG KERNEL_FEATURE
 # ARG CONFIG_FILE
-# ARG WIN_USER
+# ARG _WIN_USER
 # ARG DOCKER_BUILD_TIMESTAMP
 # ARG installkernel
 # USER r00t
@@ -1115,7 +1114,7 @@ ENV _DVL=$_DVL
 ENV _AGL=$_AGL
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
-ARG WIN_USER
+ARG _WIN_USER
 WORKDIR /
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/gui-lite,sharing=locked \
@@ -1162,7 +1161,7 @@ COPY --from=dvlp_repo /repos/dvlw/dvlp/mnt/opt/* /opt/
 # ARG KERNEL_TYPE
 # ARG KERNEL_FEATURE
 # ARG CONFIG_FILE
-# ARG WIN_USER
+# ARG _WIN_USER
 # ARG DOCKER_BUILD_TIMESTAMP
 # ARG installkernel
 # RUN rm -rf /var/lib/apt/lists && \
@@ -1188,7 +1187,7 @@ ENV _DVL=$_DVL
 ENV _AGL=$_AGL
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
-ARG WIN_USER
+ARG _WIN_USER
 USER r00t
 WORKDIR /
 RUN \
@@ -1231,7 +1230,7 @@ ENV _DVL=$_DVL
 ENV _AGL=$_AGL
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
-ARG WIN_USER
+ARG _WIN_USER
 RUN rm -rf /var/lib/apt/lists && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     rm -rf /etc/ssl/certs/* && \
@@ -1255,7 +1254,7 @@ ENV _DVL=$_DVL
 ENV _AGL=$_AGL
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
-ARG WIN_USER
+ARG _WIN_USER
 USER r00t
 WORKDIR /
 RUN rm -rf /etc/ssl/certs/* && \
@@ -1342,7 +1341,7 @@ ARG CONFIG_FILE
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
 ARG CONFIG_FILE
-ARG WIN_USER
+ARG _WIN_USER
 ARG DOCKER_BUILD_TIMESTAMP
 ARG installkernel
 USER r00t
@@ -1360,7 +1359,7 @@ ARG CONFIG_FILE
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
 ARG CONFIG_FILE
-ARG WIN_USER
+ARG _WIN_USER
 ARG DOCKER_BUILD_TIMESTAMP
 ARG installkernel
 COPY --from=dvlp_k-home-win ./ ./build/

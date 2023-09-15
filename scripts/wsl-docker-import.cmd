@@ -449,7 +449,7 @@ ECHO building image (!image_service!)...
 IF "!image_service_suffix!" == "kernel" (
     @REM TODO: add prompt (when noninteractive) for kernel type/feature
     ECHO service_suffix !service_suffix!
-    SET "build_args=--build-arg WIN_USER=%USERNAME%"
+    SET "build_args=--build-arg _WIN_USER=%USERNAME%"
     @REM SET "build_args=!build_args! --build-arg KERNEL_TYPE=stable --build-arg KERNEL_FEATURE=zfs"
     SET "compose_services_nocache=repo repo-kernel skel"
     @REM SET "compose_services=!image_service!"
@@ -577,8 +577,8 @@ SET "wsl_distro_test_pass=n"
 SET "test_string_path=%USERPROFILE%\.distro_test"
 ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo echo !test_string!
 docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! sudo echo !test_string! > !test_string_path!
-ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! /bin/bash -c WSL_DISTRO_NAME='!wsl_distro!'^;WIN_USER='%USERNAME%'^;export WSL_DISTRO_NAME^;export WIN_USER^;
-docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! /bin/bash -c WSL_DISTRO_NAME='!wsl_distro!'^;WIN_USER='%USERNAME%'^;export WSL_DISTRO_NAME^;export WIN_USER^;
+ECHO docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! /bin/bash -c WSL_DISTRO_NAME='!wsl_distro!'^;_WIN_USER='%USERNAME%'^;export WSL_DISTRO_NAME^;export _WIN_USER^;
+docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml exec !image_service! /bin/bash -c WSL_DISTRO_NAME='!wsl_distro!'^;_WIN_USER='%USERNAME%'^;export WSL_DISTRO_NAME^;export _WIN_USER^;
 SET /P wsl_out=<!test_string_path!
 DEL !test_string_path!
 IF "!image_repo!" == "kindtek" (
@@ -599,10 +599,10 @@ IF "!image_repo!" == "kindtek" (
     )
 )
 @REM @TODO: handle WSL_DOCKER_IMG_ID case of multiple ids returned from docker images query
-ECHO "SET WIN_USER=%USERNAME% ^& docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml images -q !image_service! > !docker_image_id_path!"
+ECHO "SET _WIN_USER=%USERNAME% ^& docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml images -q !image_service! > !docker_image_id_path!"
 docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml images -q !image_service! > !docker_image_id_path!
 SET /P WSL_DOCKER_IMG_ID_RAW=< !docker_image_id_path!
-ECHO "SET WIN_USER=%USERNAME% ^& docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml ps -q !image_service! > !docker_container_id_path!"
+ECHO "SET _WIN_USER=%USERNAME% ^& docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml ps -q !image_service! > !docker_container_id_path!"
 docker compose -f %USERPROFILE%\!dvlp_path!\docker\!image_distro!\docker-compose.yaml ps -q !image_service! > !docker_container_id_path!
 SET /P WSL_DOCKER_CTR_ID_RAW=< !docker_container_id_path!
 SET WSL_DOCKER_CTR_ID=!WSL_DOCKER_CTR_ID_RAW!
