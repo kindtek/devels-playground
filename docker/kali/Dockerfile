@@ -206,11 +206,11 @@ RUN mkdir -pv kache && \
     chmod -R 1770 /hel && \
     chmod -R 1770 /home/${_DVL} && \
     cp -prv * /home/${_DVL}
-WORKDIR ${_MNT}
-RUN ln -fsv ${_MNT}/bak/${_DVL} bak 
+WORKDIR ${_MNT}/data
+RUN ln -fsv ${_MNT}/data/bak/${_DVL} bak 
 # && \
 #     chmod -R 1770 ${_MNT}/bak/${_DVL}
-# ln -fsv ${_MNT}/bak/${_DVL} /home/${_DVL}/bak 
+# ln -fsv ${_MNT}/data/bak/${_DVL} /home/${_DVL}/bak 
 WORKDIR /
 
 ################################
@@ -268,7 +268,7 @@ RUN mkdir -pv kache && \
     chmod -R 1770 /hal && \
     chmod -R 1770 /home/${_AGL} && \
     cp -prv * /home/${_AGL} 
-WORKDIR ${_MNT}
+WORKDIR ${_MNT}/data
 RUN mkdir -pv c && \
     mkdir -pv n && \
     mkdir -pv dls && \
@@ -277,7 +277,7 @@ RUN mkdir -pv c && \
     chmod -R 1770 bak/${_AGL} && \
     chmod -R 1770 c && \
     chmod -R 1770 n && \
-    chmod -R 1770 ${_MNT}
+    chmod -R 1770 ${_MNT}/data
 WORKDIR /
 
 ################################
@@ -333,7 +333,7 @@ RUN mkdir -pv dvlw && \
     ln -fsv dvlw/dvlp/docker docker 
 # && \
 # chmod -R 1770 /r00t
-WORKDIR ${_MNT}
+WORKDIR ${_MNT}/data
 RUN mkdir -pv dls && \
     mkdir -pv bak && \
     mkdir -pv etc && \
@@ -341,7 +341,7 @@ RUN mkdir -pv dls && \
     # mkdir -pv opt && \
     chmod -R 1770 dls && \
     chmod -R 1770 etc && \
-    chmod -R 1770 ${_MNT}
+    chmod -R 1770 ${_MNT}/data
 WORKDIR /
 
 ###############################
@@ -463,7 +463,7 @@ RUN \
 WORKDIR /
 ###############################
 
-FROM kindtek/devels-playground:kali-skel AS dvlp_base-volumes-build
+FROM kindtek/devels-playground:kali-skel AS dvlp_base-volumes-builder
 ARG _MNT
 ARG _R00T=${_R00T:-r00t}
 ARG _DVL=${_DVL:-dvl}
@@ -495,10 +495,10 @@ COPY --from=dvlp_base-devel-volumes-built   --chown=${_DVL}:hell    --chmod=1770
 COPY --from=dvlp_base-angel-volumes-built   --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
 
 ###############################
-#  dvlp_base-kernel-volumes-build #
+#  dvlp_base-kernel-volumes-builder #
 ###############################
 
-FROM dvlp_base-volumes-build AS dvlp_base-kernel-volumes-build
+FROM dvlp_base-volumes-builder AS dvlp_base-kernel-volumes-builder
 COPY --from=dvlp_base-r00t-volumes-builder            --chown=r00t:r00t       --chmod=1770    ./r00t/                        ./r00t/
 COPY --from=dvlp_base-devel-volumes-builder           --chown=${_DVL}:hell    --chmod=1770    ./hel/                          ./hel/
 COPY --from=dvlp_base-angel-volumes-builder           --chown=${_AGL}:halo    --chmod=1770    ./hal/                          ./hal/
@@ -521,9 +521,37 @@ COPY --from=dvlp_base-r00t-kernel-volumes-builder     --chown=r00t:r00t       --
 COPY --from=dvlp_base-devel-kernel-volumes-builder    --chown=${_DVL}:hell    --chmod=1770    ./hel/                         ./hel/
 COPY --from=dvlp_base-angel-kernel-volumes-builder    --chown=${_AGL}:halo    --chmod=1770    ./hal/                         ./hal/
 
+############################# BASE BUILD ###################################
+
+FROM dvlp_base${KERNEL_TYPE:+-kernel}-volumes-builder AS dvlp_base-builder
+ARG _R00T=${_R00T:-r00t}
+ARG _DVL=${_DVL:-dvl}
+ARG _AGL=${_AGL:-agl}
+ENV _R00T=$_R00T
+ENV _DVL=$_DVL
+ENV _AGL=$_AGL
+ARG DEBIAN_FRONTEND
+ARG DEBCONF_NONINTERACTIVE_SEEN
+ARG _WIN_USER
+
+WORKDIR /
+RUN \
+    --mount=type=cache,target=/var/cache/dvlp/base-kernel,sharing=locked \
+    rm -rf /var/lib/apt/lists && \
+    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
+    apt-get purge -y openssh-server
+RUN \
+    apt-get install --no-install-recommends -y apt-utils apt-transport-https curl libssl-dev locales openssh-server sudo ssh systemd-sysv sysvinit-utils wget && \    
+    usermod -aG docker root && \
+    usermod -aG docker r00t && \
+    usermod -aG sudo ${_AGL} && \
+    usermod -aG docker ${_AGL} && \
+    rm -rf /var/lib/apt/lists && \
+    rm -rf /var/cache/apt 
+
 ############################# BASE BUILD KERNEL ###################################
 
-FROM dvlp_base-kernel-volumes-build AS dvlp_base-kernel-builder
+FROM dvlp_base-builder AS dvlp_base-kernel-builder
 ARG KERNEL_TYPE
 ARG KERNEL_FEATURE
 ARG CONFIG_FILE
@@ -550,35 +578,11 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 
-FROM kindtek/devels-playground:kali-build${KERNEL_TYPE:+-kernel} AS dvlp_base-builder
-ARG _R00T=${_R00T:-r00t}
-ARG _DVL=${_DVL:-dvl}
-ARG _AGL=${_AGL:-agl}
-ENV _R00T=$_R00T
-ENV _DVL=$_DVL
-ENV _AGL=$_AGL
-ARG DEBIAN_FRONTEND
-ARG DEBCONF_NONINTERACTIVE_SEEN
-ARG _WIN_USER
 
-WORKDIR /
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/base-kernel,sharing=locked \
-    rm -rf /var/lib/apt/lists && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    apt-get purge -y openssh-server
-RUN \
-    apt-get install --no-install-recommends -y apt-utils apt-transport-https curl libssl-dev locales openssh-server sudo ssh systemd-sysv sysvinit-utils wget && \    
-    usermod -aG docker root && \
-    usermod -aG docker r00t && \
-    usermod -aG sudo ${_AGL} && \
-    usermod -aG docker ${_AGL} && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt 
 
 ################################## MAKE #######################################
 
-FROM dvlp_base-builder AS dvlp_make
+FROM dvlp_base-builder AS dvlp_base
 
 ################################### KERNEL ###########################################
 
@@ -586,7 +590,7 @@ FROM dvlp_base-builder AS dvlp_make
 ########################  KERNEL MAKE/R - KERNEL COMPILER  ###########################
 ######################################################################################
 
-FROM dvlp_base-builder AS dvlp_make-kernel
+FROM dvlp_base-kernel-builder AS dvlp_base-kernel
 ARG _R00T=${_R00T:-r00t}
 ARG _DVL=${_DVL:-dvl}
 ARG _AGL=${_AGL:-agl}
@@ -631,21 +635,11 @@ RUN \
     bash build-export-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${DOCKER_BUILD_TIMESTAMP}" 
 RUN \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists && \
+    # rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 
 WORKDIR /
 
-FROM dvlp_make-kernel AS dvlp_made-kernel
-WORKDIR /
-USER r00t
-RUN \
-    rm -rf /var/lib/apt/lists && \
-    apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
-    rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
-
-FROM dvlp_make${KERNEL_TYPE:+-kernel} AS dvlp_made
 # every onbuild command in dvlp_make-kernel will be triggered to run here
 # use COPY --from=dvlp_made-kernel instead of COPY --from=dvlp_make-kernel
 
@@ -666,10 +660,6 @@ FROM dvlp_make${KERNEL_TYPE:+-kernel} AS dvlp_made
 # COPY --from=dvlp_made-kernel ./usr/lib/modules/ ./usr/lib/modules/
 # COPY --from=dvlp_made-kernel ./kache/ ./kache/
 # COPY --from=dvlp_made-kernel ./r00t/dvlw/ ./r00t/dvlw/
-
-FROM dvlp_made AS dvlp_base
-
-FROM dvlp_make-kernel AS dvlp_base-kernel
 
 
 ################################# BASE #######################################
@@ -777,7 +767,7 @@ RUN rm -rf /var/lib/apt/lists && \
     update-ca-certificates && \
     echo " \
     Binary::apt-get::APT::Install-Recommends 'true';" | tee --append /etc/apt/apt.conf.d/98aptsuggrecomm && \
-    rm -rf /var/lib/apt/lists && \
+    # rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 
 ########################

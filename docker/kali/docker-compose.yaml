@@ -4,7 +4,7 @@ services:
   template:
     build:
       context: .
-      target: dvlp_base-volumes-build
+      target: dvlp_base-volumes-builder
     env_file:
       - .env
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-template
@@ -156,7 +156,7 @@ services:
     command:
       - /bin/bash -c echo 'helloworld command'
     build:
-      target: dvlp_base-volumes-build
+      target: dvlp_base-volumes-builder
     volumes:
       - repo_agl:/repos/dvlw
       - repo_agl:/r00t/dvlw
@@ -177,7 +177,7 @@ services:
   build-vols-kernel:
     extends: build-vols
     build:
-      target: dvlp_base-kernel-volumes-build
+      target: dvlp_base-kernel-volumes-builder
     volumes_from:
       - build-vols
     volumes:
@@ -281,7 +281,7 @@ services:
       - tail -F /dev/null
     build:
       context: .
-      target: dvlp_make-kernel
+      target: dvlp_base-kernel
       no_cache: false
       args:
         - KERNEL_TYPE=stable
@@ -305,7 +305,7 @@ services:
     extends: make-kernel
     build:
       context: .
-      target: dvlp_make-kernel
+      target: dvlp_base-kernel
       no_cache: false
     depends_on:
       build-skel:
@@ -320,7 +320,7 @@ services:
   make-kernel-basic:
     extends: make-kernel
     build:
-      target: dvlp_make-kernel
+      target: dvlp_base-kernel
       args:
         - KERNEL_TYPE=basic
         - KERNEL_FEATURE=
@@ -331,7 +331,7 @@ services:
   make-kernel-basic-zfs:
     extends: make-kernel
     build:
-      target: dvlp_make-kernel
+      target: dvlp_base-kernel
       args:
         - KERNEL_TYPE=basic
         - KERNEL_FEATURE=zfs
@@ -342,7 +342,7 @@ services:
   make-kernel-stable:
     extends: make-kernel
     build:
-      target: dvlp_make-kernel
+      target: dvlp_base-kernel
       args:
         - KERNEL_TYPE=stable
         - KERNEL_FEATURE=
@@ -353,7 +353,7 @@ services:
   make-kernel-stable-zfs:
     extends: make-kernel
     build:
-      target: dvlp_make-kernel
+      target: dvlp_base-kernel
       args:
         - KERNEL_TYPE=stable
         - KERNEL_FEATURE=zfs
@@ -364,7 +364,7 @@ services:
   make-kernel-latest-zfs:
     extends: make-kernel
     build:
-      target: dvlp_make-kernel
+      target: dvlp_base-kernel
       args:
         - KERNEL_TYPE=latest
         - KERNEL_FEATURE=zfs
@@ -375,7 +375,7 @@ services:
   make-kernel-latest:
     extends: make-kernel
     build:
-      target: dvlp_make-kernel
+      target: dvlp_base-kernel
       args:
         - KERNEL_TYPE=latest
         - KERNEL_FEATURE=
