@@ -451,10 +451,10 @@ IF "!image_service_suffix!" == "kernel" (
     ECHO service_suffix !service_suffix!
     SET "build_args=--build-arg _WIN_USER=%USERNAME%"
     @REM SET "build_args=!build_args! --build-arg KERNEL_TYPE=stable --build-arg KERNEL_FEATURE=zfs"
-    SET "compose_services_nocache=repo repo-kernel skel"
+    SET "compose_services_nocache=repo repo-kernel build-skel"
     @REM SET "compose_services=!image_service!"
 ) ELSE (
-    SET "compose_services_nocache=repo skel"
+    SET "compose_services_nocache=repo build-skel"
 )
 IF NOT "!image_service_base!" == "test" (
     IF "!wsl!" == "n" (

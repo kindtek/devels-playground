@@ -2,15 +2,33 @@ version: "3.9"
 name: devels-playground-kali
 services:
   template:
+    init: true
     build:
       context: .
       target: dvlp_base-volumes-builder
+      args:
+        - __ARCH__VENDOR
     env_file:
       - .env
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-template
     entrypoint: /bin/bash -c
+    restart: on-failure
     command:
       - tail -F /dev/null
+    cap_add:
+      - AUDIT_WRITE
+      - SYS_CHROOT
+      - CHOWN
+      - DAC_OVERRIDE
+      - FSETID
+      - FOWNER
+      - MKNOD
+      - NET_RAW
+      - SETGID
+      - SETUID
+      - SETFCAP
+      - SETPCAP
+      - NET_BIND_SERVICE
     # command:
     #   - tail
     #   - -f
@@ -32,6 +50,7 @@ services:
       - home_r00t:/r00t
       - home_r00t:/home/r00t
       - dls:/dls
+
 
   build-repo-builder:
     # command: /bin/bash -c apt-get update -y && apt-get upgrade -y
@@ -84,7 +103,6 @@ services:
     extends: build-repo
     build:
       target: dvlp_repo-kernel
-      no_cache: true
 
   build-r00t:
     build:
@@ -103,6 +121,48 @@ services:
       target: dvlp_base-devel-volumes-built
     env_file:
       - .env
+
+  build-vols:
+    extends: template
+    tty: false
+    init: true
+    entrypoint: /bin/bash -c echo 'helloworld entry'
+    command:
+      - /bin/bash -c echo 'helloworld command'
+    build:
+      target: dvlp_base-volumes-builder
+      no_cache: true
+    volumes:
+      - repo_agl:/repos/dvlw
+      - repo_agl:/r00t/dvlw
+      - repo_agl:/home/r00t/dvlw
+      - repo_agl:/hal/dvlw
+      - repo_agl:/home/${_AGL}/dvlw
+      - repo_dvl:/hel/dvlw
+      - repo_dvl:/home/${_DVL}/dvlw
+      - mnt-data:/mnt/data
+      - home_agl:/hal
+      - home_agl:/home/${_AGL}
+      - home_dvl:/hel
+      - home_dvl:/home/${_DVL}
+      - home_r00t:/r00t
+      - home_r00t:/home/r00t
+      - dls:/dls
+
+  build-vols-kernel:
+    extends: build-vols
+    build:
+      target: dvlp_base-kernel-volumes-builder
+    volumes_from:
+      - build-vols
+    volumes:
+      - repo_agl-kernel:/repos/dvlw/dvlp/kernels
+      - repo_agl-kernel:/r00t/dvlw/dvlp/kernels
+      - repo_agl-kernel:/home/r00t/dvlw/dvlp/kernels
+      - repo_agl-kernel:/hal/dvlw/dvlp/kernels
+      - repo_agl-kernel:/home/${_AGL}/dvlw/dvlp/kernels
+      - repo_dvl-kernel:/hel/dvlw/dvlp/kernels
+      - repo_dvl-kernel:/home/${_DVL}/dvlw/dvlp/kernels
 
   build-skel:
     init: true
@@ -140,6 +200,13 @@ services:
       - SETFCAP
       - SETPCAP
       - NET_BIND_SERVICE
+    depends_on:
+      build-vols:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
+      build-vols-kernel:
+        # Wait for the ownership to change
+        condition: service_completed_successfully
 
   build-skel-image:
     extends: build-skel
@@ -154,47 +221,6 @@ services:
     build:
       target: ""
       context: ""
-
-  build-vols:
-    extends: build-skel
-    tty: false
-    init: true
-    entrypoint: /bin/bash -c echo 'helloworld entry'
-    command:
-      - /bin/bash -c echo 'helloworld command'
-    build:
-      target: dvlp_base-volumes-builder
-    volumes:
-      - repo_agl:/repos/dvlw
-      - repo_agl:/r00t/dvlw
-      - repo_agl:/home/r00t/dvlw
-      - repo_agl:/hal/dvlw
-      - repo_agl:/home/${_AGL}/dvlw
-      - repo_dvl:/hel/dvlw
-      - repo_dvl:/home/${_DVL}/dvlw
-      - mnt-data:/mnt/data
-      - home_agl:/hal
-      - home_agl:/home/${_AGL}
-      - home_dvl:/hel
-      - home_dvl:/home/${_DVL}
-      - home_r00t:/r00t
-      - home_r00t:/home/r00t
-      - dls:/dls
-
-  build-vols-kernel:
-    extends: build-vols
-    build:
-      target: dvlp_base-kernel-volumes-builder
-    volumes_from:
-      - build-vols
-    volumes:
-      - repo_agl-kernel:/repos/dvlw/dvlp/kernels
-      - repo_agl-kernel:/r00t/dvlw/dvlp/kernels
-      - repo_agl-kernel:/home/r00t/dvlw/dvlp/kernels
-      - repo_agl-kernel:/hal/dvlw/dvlp/kernels
-      - repo_agl-kernel:/home/${_AGL}/dvlw/dvlp/kernels
-      - repo_dvl-kernel:/hel/dvlw/dvlp/kernels
-      - repo_dvl-kernel:/home/${_DVL}/dvlw/dvlp/kernels
 
   build-k-home-win:
     build:
