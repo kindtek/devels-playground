@@ -2,19 +2,13 @@ version: "3.9"
 name: devels-playground-kali
 services:
   template:
-    init: true
     build:
       context: .
-      target: dvlp_base-volumes-builder
       args:
         - __ARCH__VENDOR
     env_file:
       - .env
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-template
-    entrypoint: /bin/bash -c
     restart: on-failure
-    command:
-      - tail -F /dev/null
     cap_add:
       - AUDIT_WRITE
       - SYS_CHROOT
@@ -166,6 +160,7 @@ services:
 
   build-skel:
     init: true
+    extends: template
     # command: /bin/bash -c apt-get update -y && apt-get upgrade -y
     # command:
     #   - /bin/bash -c apt-get update -y
@@ -173,9 +168,6 @@ services:
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-skel
     build:
       target: dvlp_base-skel
-      context: .
-      args:
-        - __ARCH__VENDOR
     restart: on-failure
     # build:
     #   target: dvlp_base-skel
@@ -184,22 +176,22 @@ services:
     # command: apt-get update -y && apt-get upgrade -y && tail -F > /dev/null
     # environment:
     #   - _WIN_USER=$_WIN_USER
-    env_file:
-      - .env
-    cap_add:
-      - AUDIT_WRITE
-      - SYS_CHROOT
-      - CHOWN
-      - DAC_OVERRIDE
-      - FSETID
-      - FOWNER
-      - MKNOD
-      - NET_RAW
-      - SETGID
-      - SETUID
-      - SETFCAP
-      - SETPCAP
-      - NET_BIND_SERVICE
+    # env_file:
+    #   - .env
+    # cap_add:
+    #   - AUDIT_WRITE
+    #   - SYS_CHROOT
+    #   - CHOWN
+    #   - DAC_OVERRIDE
+    #   - FSETID
+    #   - FOWNER
+    #   - MKNOD
+    #   - NET_RAW
+    #   - SETGID
+    #   - SETUID
+    #   - SETFCAP
+    #   - SETPCAP
+    #   - NET_BIND_SERVICE
     depends_on:
       build-vols:
         # Wait for the ownership to change
@@ -625,10 +617,10 @@ services:
     # - ${nix_bind_nix_src_user_dir:-/dev/foo8/null}:${nix_bind_tgt_user_dir_dvl:-/dev/bar8/null}
 
   bare:
+    extends: build-base 
     entrypoint: /bin/bash -c
     command:
       - tail -F /dev/null
-    extends: build-base # extends: kernel
     build:
       context: .
       target: dvlp_bare
