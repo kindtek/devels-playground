@@ -240,7 +240,7 @@ services:
       target: dvlp_k-home-nix-r00t
 
   build-base-builder:
-    extends: build-vols
+    extends: build-skel
     tty: false
     build:
       target: dvlp_base-builder
@@ -248,9 +248,6 @@ services:
       build-skel:
         # Wait for the ownership to change
         condition: service_completed_successfully
-      build-vols:
-        # Wait for the ownership to change
-        condition: service_started
     labels:
       com.dvlp_base.description: "-build skeleton"
     volumes_from:
@@ -270,7 +267,7 @@ services:
       context: ""
 
   build-base-kernel-builder:
-    extends: build-vols-kernel
+    extends: build-base-builder
     tty: false
     build:
       target: dvlp_base-kernel-builder
@@ -300,7 +297,7 @@ services:
       context: ""
 
   make-kernel:
-    extends: build-vols-kernel
+    extends: build-base-builder
     entrypoint: /bin/bash -c echo 'helloworld'
     command:
       - tail -F /dev/null
@@ -545,7 +542,7 @@ services:
   #   labels:
   #     com.dvlp_base-kernel.description: "skeleton"
   build-base:
-    extends: build-skel
+    extends: build-base-builder
     tty: true
     entrypoint: /bin/bash -c echo 'helloworld entry'
     command:
@@ -562,23 +559,14 @@ services:
     # command:
     #   - tail -F /dev/null
     depends_on:
-      build-vols:
-        # Wait for the ownership to change
-        condition: service_started
-      build-vols-kernel:
-        # Wait for the ownership to change
-        condition: service_started
-      build-skel:
+      build-base-builder:
         # Wait for the ownership to change
         condition: service_completed_successfully
     labels:
       com.dvlp_base.description: "-build skeleton"
-    volumes_from:
-      - build-vols
+
   build-base-kernel:
-    extends: build-base
-    volumes_from:
-      - build-vols-kernel
+    extends: build-base-kernel-builder
       # args:
       #   - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
       #   - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
@@ -624,14 +612,8 @@ services:
     build:
       context: .
       target: dvlp_bare
-    depends_on:
-      build-base:
-        # Wait for the ownership to change
-        condition: service_completed_successfully
     labels:
       com.devels-playground.description: "basics + git"
-    volumes_from:
-      - build-base
     volumes:
       - win_c:/mnt/c
       - win_n:/mnt/n
@@ -648,10 +630,11 @@ services:
     depends_on:
       build-base:
         # Wait for the ownership to change
-        condition: service_started
+        condition: service_completed_successfully
     volumes:
       - home_agl:/mnt/n/hal
       - home_dvl:/mnt/n/hel
+
   cli-kernel:
     extends: bare
     entrypoint: /bin/bash -c
@@ -674,10 +657,7 @@ services:
     depends_on:
       build-base-kernel:
         condition: service_completed_successfully
-      make-kernel:
-        condition: service_completed_successfully
-    volumes_from:
-      - build-vols-kernel
+
   # scan-build:
   #   entrypoint: /bin/bash -c
   #   command:

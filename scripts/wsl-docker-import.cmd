@@ -539,9 +539,14 @@ IF /I "!options!" == "config" (
     docker run -dit --cidfile !docker_container_id_path! !WSL_DOCKER_IMG_ID! 
 )
 SET /P WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path! > nul
+IF errorlevel 1 (
+    ECHO ERROR: import failed.
+    exit /b 1
+)
 IF "!WSL_DOCKER_CONTAINER_ID!" == "" (
-    ECHO An error occurred. Missing container ID. Please try again
+    ECHO ERROR: missing container ID
     docker pull !image_repo_name_tag!
+    exit /b 1
     SET above=previous
     SET failed_before=y
     SET "options=options"
@@ -643,9 +648,14 @@ IF /I "!options!" == "config" (
 )
 
 SET /P WSL_DOCKER_CONTAINER_ID=<!docker_container_id_path! > nul
+IF errorlevel 1 (
+    ECHO ERROR: import failed.
+    exit /b 1
+)
 IF "!WSL_DOCKER_CONTAINER_ID!" == "" (
-    ECHO An error occurred. Missing container ID. Please try again
+    ECHO ERROR: missing container ID
     docker pull !image_repo_name_tag!
+    exit /b 1
     SET above=previous
     SET failed_before=y
     SET "options=options"
@@ -832,28 +842,43 @@ ECHO:
 wsl.exe --status
 ECHO:
 SET "wsl_launch="
-IF NOT "!image_repo!" == "kalilinux" (
+wsl.exe -d !wsl_distro! -- apt-get update -y ^&^& apt-get upgrade -y ^&^& apt-get install -y sudo wget 2> NUL
+wsl.exe -d !wsl_distro! -- sudo apt-get update -y ^&^& sudo apt-get upgrade -y ^&^& sudo apt-get install -y wget 2> NUL
+IF "!image_repo!" == "kalilinux" (
+    @REM special case for failsafe install
+    IF NOT "!default_wsl_distro!" == "y" (
+        wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& wget -O - https://raw.githubusercontent.com/kindtek/k-home/main/HOME_NIX/reclone-gh.sh ^| bash ^&^& wget -P "^$HOME" - https://raw.githubusercontent.com/kindtek/k-home/main/HOME_NIX/k-home.sh^; bash k-home.sh
+    )
+) ELSE (
     IF NOT "!image_repo!" == "kindtek" (
         IF "!wsl_out!" == "!test_string!" (
-            wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& wget -P "`$HOME" - https://raw.githubusercontent.com/kindtek/k-home/main/HOME_NIX/k-home.sh`; bash k-home.sh
-        )
-    )
-    IF NOT "!image_service_suffix!" == "kernel" (
-        ECHO press ENTER to open terminal for newly created !wsl_distro!
-        ECHO  ..or enter any character to skip 
-        ECHO|set /p="(open !wsl_distro! terminal):"
-        @REM make sure windows paths transfer
-        SET /P "wsl_launch=> "
-        IF /I "!wsl_launch!" == "" (
-            wsl.exe -d !wsl_distro! -- cd / ^&^& bash
-        ) ELSE (
-            ECHO "skipping preview for !wsl_distro! ..."
-        )
+            wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& wget -O - https://raw.githubusercontent.com/kindtek/k-home/main/HOME_NIX/reclone-gh.sh ^| bash ^&^& wget -P "^$HOME" - https://raw.githubusercontent.com/kindtek/k-home/main/HOME_NIX/k-home.sh^; bash k-home.sh
+        ) 
     ) ELSE (
-        echo wsl -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" "import"
-        wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" "import"
+        IF "!image_service_suffix!" == "kernel" (
+            echo wsl -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" "import"
+            wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" "import"
+        )
+        ELSE (
+            IF NOT "!image_service_suffix!" == "kernel" (
+                echo wsl -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" 
+                wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" 
+            )
+        )
     )
 )
+
+    ECHO press ENTER to open terminal for newly created !wsl_distro!
+    ECHO  ..or enter any character to skip 
+    ECHO|set /p="(open !wsl_distro! terminal):"
+    @REM make sure windows paths transfer
+    SET /P "wsl_launch=> "
+    IF /I "!wsl_launch!" == "" (
+        wsl.exe -d !wsl_distro! -- cd / ^&^& bash
+    ) ELSE (
+        ECHO "skipping preview for !wsl_distro! ..."
+    )
+
 
 :wsl_distro_test
 ECHO testing !wsl_distro! ...
