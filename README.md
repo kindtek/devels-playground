@@ -206,9 +206,9 @@ wget -O - https://raw.githubusercontent.com/kindtek/k-home/main/HOME_NIX/reclone
 
 ### [**kali-cli**](https://hub.docker.com/repository/docker/kindtek/devels-playground/tags?name=kali-cli)
 
-apt-get install apt-utils apt-transport-https curl libssl-dev locales openssh-server sudo ssh systemd-sysv sysvinit-utils wget
+_apt-get install apt-utils apt-transport-https curl libssl-dev locales openssh-server sudo ssh systemd-sysv sysvinit-utils wget_
 
-#### At a very portable 300MB, this lightweight Kali image will fit on the smallest of hard drives and packs a punch with all the basic essentials and comes with the [devels-workshop repo](https://github.com/kindtek/devels-workshop#idle-hands-are-the-developers-workshop)
+#### At a very portable 300MB, this lightweight Kali image will fit on the smallest of hard drives and packs a punch with all the basic essentials. It comes with the [devels-workshop repo](https://github.com/kindtek/devels-workshop#idle-hands-are-the-developers-workshop) preloaded
 
 ```bash
 # windows kali-cli cheat code
@@ -219,19 +219,19 @@ powershell.exe -Command "Invoke-WebRequest https://raw.githubusercontent.com/kin
 
 ### [**kali-cli-goodies**](https://hub.docker.com/repository/docker/kindtek/devels-playground/tags?name=cli-goodies)
 
-apt-get install apt-utils jq libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev python3-pip python3-venv pkg-configpip3
-install pip --upgrade
-pip3 install cdir --user
+_apt-get install apt-utils jq libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev python3-pip python3-venv pkg-configpip3_
+_install pip --upgrade_
+_pip3 install cdir --user_
 
-#### This adds Python and installs a very handy tool called [cdir](https://github.com/kindtek/cdir) which is a must-have (especially if you're unfamiliary with a command prompt) and is partially the inspiration for this whole project
+#### This adds Python and installs a very handy tool called [cdir](https://github.com/kindtek/cdir) which is a must-have (especially if you're unfamiliar with a command prompt) and is partially the inspiration for this whole project
 
-apt-get install powershell
+_apt-get install powershell_
 
 #### This adds powershell which is needed for bridging the gap between Windows and the rest of the world. Be also advised that it is referred to as 'powerhell' within this repo and has earned the nickname for good reason. It is a necessary evil
 
-apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin gnupg
+_apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin gnupg_
 
-#### You will now be able to run nested virtual systems with Docker-in-Docker. This is not easy to set up on your own. To utilize the full capabilities of nested vm, install a kernel. This has most everything you need as a developer
+#### You will now be able to run nested virtual systems with Docker-in-Docker. This is not easy to set up on your own. To utilize the full capabilities of nested docker instance, pick an image ending in '-kernel'
 
 ```bash
 # windows kali-cli-goodies cheat code
@@ -241,7 +241,7 @@ powershell.exe -Command "Invoke-WebRequest https://raw.githubusercontent.com/kin
 ---
 # [**kali-gui**](https://hub.docker.com/repository/docker/kindtek/devels-playground/tags?name=kali-gui)
 
-apt-get install brave-browser bridge-utils libvirt-clients libvirt-daemon-system qemu-system-gui qemu-kvm vlc x11-apps
+_apt-get install brave-browser bridge-utils libvirt-clients libvirt-daemon-system qemu-system-gui qemu-kvm vlc x11-apps_
 
 This is a lightweight Graphical User Interface by most standards but still weighs in at ~1.3GB. It also requires WSL 2. It has a few applications that have a graphical interface such as Brave Browser (aka privacy focused Google-less Chrome) and KVM. Type `brave-browser` into your terminal and watch a browser window pop up out of the void
 
