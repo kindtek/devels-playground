@@ -21,8 +21,8 @@
 
 #### all images built with a kernel (images ending in -kernel) will include:
 
-- the latest bleeding edge Linux kernel
-- a ([script](kernels/linux/build-export-kernel.sh)) that will build a kernel with your custom .config file ([example](kernels/linux/x86/amd/5_15901/.config_wsl0)) using a filepath or url or automaticlly select the best available configuration for your architecture
+- the latest bleeding edge versions of Linux kernel
+- a ([script](kernels/linux/build-export-kernel.sh)) that will build a kernel using a given filepath/url for a configuration file ([example](kernels/dvlp/linux/x86/generic/6_412/.config_6L412WZS)) or it will automatically select the best known configuration for your architecture
 - a ([script](mnt/HOME_NIX/setup.sh)) that will import your kernel into WSL and set up your system
 - a ([script](kernels/linux/install-kernel.sh)) that will allow you to rotate through multiple kernel builds
 - powerhell scripts to do all of the above seamlessly in windows
@@ -35,10 +35,10 @@
 
 ## **INSTRUCTIONS**
 
-
 ---
 
-### For all Linux users (easy)
+### For all Linux users 
+#### (easy)
 
 Paste one line into a bash shell
 
@@ -75,11 +75,11 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 ---
 
-### For all users 
+### For all Windows users 
 #### (harder)
 
 - WITH these installed
-  - WSL2 (if using Windows)
+  - WSL2
   - Github
   - Docker
 
@@ -161,7 +161,7 @@ docker compose cp get-kernel:/ /
 
 ## Why you should care about the devel
 
-### [Having root powers can be dangerous.](https://www.quora.com/What-is-the-power-of-sudo-in-Linux) When logged in as the `dvl`, you have unlimited power and freedom... but only in `/hel`. Since the devel does not have sudo powers, the ability for you to accidentally corrupt your system while logged into that account are nearly nonexistant. When you need to make changes to your system and are listening to the angel on your shoulder, you can **s**witch **u**sers to `agl` (no password required - just type `su agl`). Any consequential changes you make will need to be always prefaced by `sudo` and even inconsequential changes in `/hel` will require sudo so your incentive is to remain logged in as the `dvl` as much as possible
+### [Having root privileges can be dangerous.](https://www.quora.com/What-is-the-power-of-sudo-in-Linux) When logged in as the `dvl` user, you have unlimited power and freedom... but only in `/hel` - its home directory. Since the devel is not a member of the sudo group, the ability for you to accidentally corrupt your system while logged into that account are nonexistant without first modifying the system and/or file permissions from another account. The `agl` user is the default user and its home directory is in `/hal`. Use it for everyday usage or whenever you are listening to the angel on your shoulder and need to make changes to your system with sudo. For when you are feeling devel-ish, go to `/hel` (ie: `cd /hel`) and switch to the dvl user (`su dvl`). No passwords are required are enabled by default for any user (including root so be careful). To add password to an account, log into the account and run the  `passwd` command 
 ---
 
 ## dvl details
@@ -190,17 +190,18 @@ _Note: Each image is a base layer for the image below it. For instance, kali-gui
 
 ---
 
-For Linux, you won't be using Docker to import the images directly but this script gives you the option to import everything detailed below with a bit more control. This script will also automatically run after the Docker images are imported so you will have the same result but one method may be faster. The only real difference is everything is installed into an existing user account and there are no agl/dvl/r00t users  
+For Linux, you won't be using Docker to import the images directly but this script gives you the option to import everything detailed below with a bit more control. This script will also automatically run after the Docker images are imported so you will have the same result but one method may be faster. The only real difference at this time is everything is installed into an existing user account. There are also no agl/dvl/r00t users but this will be added soon 
 
-
+This is very handy if you have an existing Linux installation that you need to modify or repair  
 
 **Linux cheat code:**
+
 ```bash
+
 # linux cheat code
 wget -O - https://raw.githubusercontent.com/kindtek/k-home/main/HOME_NIX/reclone-gh.sh | bash && wget -O - https://raw.githubusercontent.com/kindtek/k-home/main/HOME_NIX/k-home.sh | bash && bash setup.sh full
 
 ```
-
 
 ---
 
@@ -219,8 +220,8 @@ powershell.exe -Command "Invoke-WebRequest https://raw.githubusercontent.com/kin
 
 ### [**kali-cli-goodies**](https://hub.docker.com/repository/docker/kindtek/devels-playground/tags?name=cli-goodies)
 
-_apt-get install apt-utils jq libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev python3-pip python3-venv pkg-configpip3_
-_install pip --upgrade_
+_apt-get install apt-utils jq libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev python3-pip python3-venv pkg-configpip3_ /&& \\_
+_install pip --upgrade && \\_
 _pip3 install cdir --user_
 
 #### This adds Python and installs a very handy tool called [cdir](https://github.com/kindtek/cdir) which is a must-have (especially if you're unfamiliar with a command prompt) and is partially the inspiration for this whole project
