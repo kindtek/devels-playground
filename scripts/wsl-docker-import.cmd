@@ -856,13 +856,22 @@ IF "!image_repo!" == "kalilinux" (
         ) 
     ) ELSE (
         IF "!image_service_suffix!" == "kernel" (
-            echo wsl -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" "import"
+            @REM 
+            SET "cd_orig=%cd%"
+            cd %USERPROFILE%
+            COPY .wslconfig .wslconfig.orig            
             wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" "import"
+            fc /b .wslconfig .wslconfig.orig > nul
+            IF errorlevel 1 (
+                @REM if .wslconfig was updated during setup run setup again or else quit
+                wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" "full"
+            ) 
+            DEL .wslconfig.orig
+            cd %cd_orig%
         )
         ELSE (
             IF NOT "!image_service_suffix!" == "kernel" (
-                echo wsl -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" 
-                wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" 
+                wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" "full"
             )
         )
     )

@@ -475,28 +475,18 @@ ARG _AGL=${_AGL:-agl}
 ENV _R00T=$_R00T
 ENV _DVL=$_DVL
 ENV _AGL=$_AGL
-
-COPY --from=dvlp_base-r00t-volumes-builder  --chown=r00t:r00t       --chmod=1750    ./r00t/                         ./r00t/
-COPY --from=dvlp_base-devel-volumes-builder --chown=${_DVL}:hell    --chmod=1750    ./hel/                          ./hel/
-COPY --from=dvlp_base-angel-volumes-builder --chown=${_AGL}:halo    --chmod=1750    ./hal/                          ./hal/
-COPY --from=dvlp_base-r00t-volumes-built    --chown=r00t:r00t       --chmod=1750    ./r00t/                         ./r00t/
+COPY --from=dvlp_base-devel-volumes-built   --chown=${_DVL}:hell    --chmod=1750    ./home/                         ./home/
+COPY --from=dvlp_base-angel-volumes-built   --chown=${_AGL}:halo    --chmod=1750    ./home/                         ./home/
+COPY --from=dvlp_base-r00t-volumes-built    --chown=r00t:r00t       --chmod=1750    ./home/                         ./home/
 COPY --from=dvlp_base-devel-volumes-built   --chown=${_DVL}:hell    --chmod=1750    ./hel/                          ./hel/
 COPY --from=dvlp_base-angel-volumes-built   --chown=${_AGL}:halo    --chmod=1750    ./hal/                          ./hal/
+COPY --from=dvlp_base-r00t-volumes-built    --chown=r00t:r00t       --chmod=1750    ./r00t/                         ./r00t/
 COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1750    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./hel/
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1750    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./hal/
 COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1750    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./r00t/
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1750    ./repos/dvlw/                   ./repos/dvlw/
-COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1750    ./repos/dvlw/                   ./hel/dvlw/
-COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1750    ./repos/dvlw/                   ./hal/dvlw/
-COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1750    ./repos/dvlw/                   ./r00t/dvlw/
 COPY --from=dvlp_repo                       --chown=r00t:r00t       --chmod=1755     /repos/dvlw/dvlp/mnt/etc/*     ./etc/
 COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1750    ./repos/dvlw/dvlp/mnt/          .${_MNT}/ 
-COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1750    ./repos/dvlw/                   ./hal/dvlw/
-COPY --from=dvlp_repo                       --chown=${_AGL}:halo    --chmod=1750    ./repos/dvlw/                   ./r00t/dvlw/
-COPY --from=dvlp_repo                       --chown=${_DVL}:hell    --chmod=1750    ./repos/dvlw/                   ./hel/dvlw/
-COPY --from=dvlp_base-r00t-volumes-built    --chown=r00t:r00t       --chmod=1750    ./r00t/                         ./r00t/
-COPY --from=dvlp_base-devel-volumes-built   --chown=${_DVL}:hell    --chmod=1750    ./hel/                          ./hel/
-COPY --from=dvlp_base-angel-volumes-built   --chown=${_AGL}:halo    --chmod=1750    ./hal/                          ./hal/
 
 ###############################
 #  dvlp_base-kernel-volumes-builder #
@@ -510,27 +500,18 @@ ARG _AGL=${_AGL:-agl}
 ENV _R00T=$_R00T
 ENV _DVL=$_DVL
 ENV _AGL=$_AGL
-COPY --from=dvlp_base-r00t-volumes-builder   --chown=r00t:r00t       --chmod=1750    ./r00t/                        ./r00t/
-COPY --from=dvlp_base-devel-volumes-builder  --chown=${_DVL}:hell    --chmod=1750    ./hel/                         ./hel/
-COPY --from=dvlp_base-angel-volumes-builder  --chown=${_AGL}:halo    --chmod=1750    ./hal/                         ./hal/
-COPY --from=dvlp_base-r00t-volumes-built     --chown=r00t:r00t       --chmod=1750    ./r00t/                        ./r00t/
-COPY --from=dvlp_base-devel-volumes-built    --chown=${_DVL}:hell    --chmod=1750    ./hel/                         ./hel/
-COPY --from=dvlp_base-angel-volumes-built    --chown=${_AGL}:halo    --chmod=1750    ./hal/                         ./hal/
-COPY --from=dvlp_repo-kernel                 --chown=${_DVL}:hell    --chmod=1750    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./hel/
-COPY --from=dvlp_repo-kernel                 --chown=${_AGL}:halo    --chmod=1750    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./hal/
-COPY --from=dvlp_repo-kernel                 --chown=r00t:r00t       --chmod=1750    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./r00t/
-COPY --from=dvlp_repo-kernel                 --chown=${_AGL}:halo    --chmod=1750    ./repos/dvlw/                   ./repos/dvlw/
-COPY --from=dvlp_repo-kernel                 --chown=${_DVL}:hell    --chmod=1750    ./repos/dvlw/                   ./hel/dvlw/
-COPY --from=dvlp_repo-kernel                 --chown=${_AGL}:halo    --chmod=1750    ./repos/dvlw/                   ./hal/dvlw/
-COPY --from=dvlp_repo-kernel                 --chown=${_AGL}:halo    --chmod=1750    ./repos/dvlw/                   ./r00t/dvlw/
-COPY --from=dvlp_repo-kernel                 --chown=r00t:r00t       --chmod=1755     /repos/dvlw/dvlp/mnt/etc/*     ./etc/
-COPY --from=dvlp_repo-kernel                 --chown=${_AGL}:halo    --chmod=1750    ./repos/dvlw/dvlp/mnt/          .${_MNT}/ 
-COPY --from=dvlp_repo-kernel                 --chown=${_AGL}:halo    --chmod=1750    ./repos/dvlw                    ./hal/dvlw
-COPY --from=dvlp_repo-kernel                 --chown=${_AGL}:halo    --chmod=1750    ./repos/dvlw                    ./r00t/dvlw
-COPY --from=dvlp_repo-kernel                 --chown=${_DVL}:hell    --chmod=1750    ./repos/dvlw/                   ./hel/dvlw
-COPY --from=dvlp_base-r00t-kernel-volumes-builder     --chown=r00t:r00t       --chmod=1750    ./r00t/                ./r00t/
-COPY --from=dvlp_base-devel-kernel-volumes-builder    --chown=${_DVL}:hell    --chmod=1750    ./hel/                 ./hel/
-COPY --from=dvlp_base-angel-kernel-volumes-builder    --chown=${_AGL}:halo    --chmod=1750    ./hal/                 ./hal/
+COPY --from=dvlp_base-devel-volumes-built   --chown=${_DVL}:hell    --chmod=1750    ./home/                         ./home/
+COPY --from=dvlp_base-angel-volumes-built   --chown=${_AGL}:halo    --chmod=1750    ./home/                         ./home/
+COPY --from=dvlp_base-r00t-volumes-built    --chown=r00t:r00t       --chmod=1750    ./home/                         ./home/
+COPY --from=dvlp_base-devel-volumes-built   --chown=${_DVL}:hell    --chmod=1750    ./hel/                          ./hel/
+COPY --from=dvlp_base-angel-volumes-built   --chown=${_AGL}:halo    --chmod=1750    ./hal/                          ./hal/
+COPY --from=dvlp_base-r00t-volumes-built    --chown=r00t:r00t       --chmod=1750    ./r00t/                         ./r00t/
+COPY --from=dvlp_repo-kernel                --chown=${_DVL}:hell    --chmod=1750    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./hel/
+COPY --from=dvlp_repo-kernel                --chown=${_AGL}:halo    --chmod=1750    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./hal/
+COPY --from=dvlp_repo-kernel                --chown=r00t:r00t       --chmod=1750    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./r00t/
+COPY --from=dvlp_repo-kernel                --chown=${_AGL}:halo    --chmod=1750    ./repos/dvlw/                   ./repos/dvlw/
+COPY --from=dvlp_repo-kernel                --chown=r00t:r00t       --chmod=1755     /repos/dvlw/dvlp/mnt/etc/*     ./etc/
+COPY --from=dvlp_repo-kernel                --chown=${_AGL}:halo    --chmod=1750    ./repos/dvlw/dvlp/mnt/          .${_MNT}/ 
 
 ############################# BASE BUILD ###################################
 

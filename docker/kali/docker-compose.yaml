@@ -297,7 +297,7 @@ services:
       context: ""
 
   make-kernel:
-    extends: build-base-builder
+    extends: build-base-kernel-builder
     entrypoint: /bin/bash -c echo 'helloworld'
     command:
       - tail -F /dev/null
@@ -320,8 +320,6 @@ services:
       build-vols-kernel:
         # Wait for the ownership to change
         condition: service_started
-    volumes_from:
-      - build-vols-kernel
 
   make-kernel-cached:
     extends: make-kernel
@@ -336,8 +334,6 @@ services:
       build-vols-kernel:
         # Wait for the ownership to change
         condition: service_started
-    volumes_from:
-      - build-vols-kernel
 
   make-kernel-basic:
     extends: make-kernel
@@ -419,8 +415,6 @@ services:
       build-vols-kernel:
         # Wait for the ownership to change
         condition: service_started
-    volumes_from:
-      - build-vols-kernel
 
   made-kernel-cached:
     extends: made-kernel
@@ -435,8 +429,6 @@ services:
       build-vols-kernel:
         # Wait for the ownership to change
         condition: service_started
-    volumes_from:
-      - build-vols-kernel
     # depends_on:
     #   made-kernel:
     #     # Wait for the ownership to change
