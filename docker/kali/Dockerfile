@@ -38,7 +38,7 @@ ARG KERNEL_PACKAGE_NAME
 ################
 # kali_testing #
 ################
-FROM kalilinux/kali-rolling:latest AS dvlp_testing
+FROM kindtek/devels-playground:kali-skel AS dvlp_testing
 WORKDIR /
 RUN touch testing
 
@@ -46,7 +46,7 @@ RUN touch testing
 ########################
 # dvlp_repo-builder #
 ########################
-FROM kalilinux/kali-rolling:latest AS dvlp_repo-builder
+FROM kindtek/devels-playground:kali-skel AS dvlp_repo-builder
 ARG _MNT
 ARG _R00T=${_R00T:-r00t}
 ARG _DVL=${_DVL:-dvl}
@@ -155,7 +155,6 @@ RUN \
     # get default user files
     echo "git submodule update --init --progress -- mnt" && \
     git submodule update --init --progress -- mnt && \
-    chmod -R 1770 mnt/HOME_NIX && \
     chmod -R 1770 mnt/bak
 
 ###################
@@ -189,7 +188,7 @@ COPY --from=dvlp_build-repo-kernel --chmod=1750 ./repos/dvlw/ ./repos/dvlw/
 ########################
 # dvlp_base-devel-volumes #
 ########################
-FROM kalilinux/kali-rolling:latest AS dvlp_base-devel-volumes-builder
+FROM kindtek/devels-playground:kali-skel AS dvlp_base-devel-volumes-builder
 ARG _MNT
 ARG _DVL_USR
 ENV _DVL=$_DVL_USR
@@ -252,7 +251,7 @@ COPY --from=dvlp_repos ./repos/dvlw/ ./repos/dvlw/
 #########################
 #  dvlp_base-angel-volumes-builder #
 #########################
-FROM kalilinux/kali-rolling:latest AS dvlp_base-angel-volumes-builder
+FROM kindtek/devels-playground:kali-skel AS dvlp_base-angel-volumes-builder
 ARG _MNT
 ARG _AGL_USR
 ENV _AGL=${_AGL_USR:-agl}
@@ -319,7 +318,7 @@ COPY --from=dvlp_repos ./repos/dvlw/ ./repos/dvlw/
 ########################
 #  dvlp_base-r00t-volumes-builder #
 ########################
-FROM kalilinux/kali-rolling:latest AS dvlp_base-r00t-volumes-builder
+FROM kindtek/devels-playground:kali-skel AS dvlp_base-r00t-volumes-builder
 ARG _MNT
 ARG _R00T
 WORKDIR /r00t
@@ -380,7 +379,7 @@ FROM scratch AS dvlp_base-volumes-built
 
 
 ############################# BASE BUILD (part 1 ) ###################################
-FROM kalilinux/kali-rolling:latest AS dvlp_base-skel
+FROM kindtek/devels-playground:kali-skel AS dvlp_base-skel
 ARG _MNT
 ARG _R00T=${_R00T:-r00t}
 ARG _DVL=${_DVL:-dvl}
@@ -1367,7 +1366,7 @@ COPY --from=dvlp_repo-kernel ./repos/dvlw/dvlp/kernels/linux/kache/wsl* ./
 
 # COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/${HOME_DIR}/ ./
 
-FROM kalilinux/kali-rolling:latest AS dvlp_k-home-win-user-mod
+FROM kindtek/devels-playground:kali-skel AS dvlp_k-home-win-user-mod
 ARG _AGL=${_AGL:-agl}
 ENV _AGL=$_AGL=${_AGL:-agl}
 ARG CONFIG_FILE
