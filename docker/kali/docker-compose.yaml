@@ -45,7 +45,6 @@ services:
       - home_r00t:/home/r00t
       - dls:/dls
 
-
   build-repo-builder:
     # command: /bin/bash -c apt-get update -y && apt-get upgrade -y
     build:
@@ -157,6 +156,20 @@ services:
       - repo_agl-kernel:/home/${_AGL}/dvlw/dvlp/kernels
       - repo_dvl-kernel:/hel/dvlw/dvlp/kernels
       - repo_dvl-kernel:/home/${_DVL}/dvlw/dvlp/kernels
+
+  vols:
+    extends: build-vols
+    entrypoint: ["/bin/bash", "echo 'helloworldentry'"]
+    command: ["/bin/bash", "echo 'helloworld'command"]
+    volumes_from:
+      - build-vols
+
+  vols-kernel:
+    extends: build-vols-kernel
+    entrypoint: ["/bin/bash", "echo 'helloworldentry'"]
+    command: ["/bin/bash", "echo 'helloworld'command"]
+    volumes_from:
+      - build-vols-kernel
 
   build-skel:
     init: true
@@ -558,7 +571,8 @@ services:
       com.dvlp_base.description: "-build skeleton"
 
   build-base-kernel:
-    extends: build-base-kernel-builder
+    extends:
+      build-base-kernel-builder
       # args:
       #   - nix_bind_nix_src_user_dir=${LOGNAME:+/home/$LOGNAME}
       #   - nix_bind_win_src_user_dir=${USERNAME:+/mnt/c/users/$USERNAME}
@@ -597,7 +611,7 @@ services:
     # - ${nix_bind_nix_src_user_dir:-/dev/foo8/null}:${nix_bind_tgt_user_dir_dvl:-/dev/bar8/null}
 
   bare:
-    extends: build-base 
+    extends: build-base
     entrypoint: /bin/bash -c
     command:
       - tail -F /dev/null
@@ -626,6 +640,9 @@ services:
     volumes:
       - home_agl:/mnt/n/hal
       - home_dvl:/mnt/n/hel
+    volumes_from:
+      - vols
+      - bare
 
   cli-kernel:
     extends: bare
@@ -649,6 +666,12 @@ services:
     depends_on:
       build-base-kernel:
         condition: service_completed_successfully
+    volumes:
+      - home_agl:/mnt/n/hal
+      - home_dvl:/mnt/n/hel
+    volumes_from:
+      - vols-kernel
+      - bare
 
   # scan-build:
   #   entrypoint: /bin/bash -c
@@ -766,22 +789,30 @@ services:
   #     com.devels-playground.description: "basics + git + powerhell"
   cli-goodies:
     extends: cli
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cli-goodies${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$__ARCH__VENDOR}
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cli${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$__ARCH__VENDOR}-goodies
     build:
       context: .
       target: dvlp_cli-goodies
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker"
-  cli-goodies-kernel:
+    volumes_from:
+      - vols
+      - bare
+      - cli
+  cli-kernel-goodies:
     extends: cli-kernel
     build:
       target: dvlp_cli-goodies
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cli-goodies${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$__ARCH__VENDOR}
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cli${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$__ARCH__VENDOR}-goodies
     # depends_on:
     #   cli-goodies:
     #     condition: service_started
     labels:
       com.devels-playground.description: "basics + git"
+    volumes_from:
+      - vols-kernel
+      - bare
+      - cli
   # cli-goodies-lite:
   #   extends: cli
   #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-dind-lite${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$__ARCH__VENDOR}
@@ -821,7 +852,7 @@ services:
       com.devels-playground.description: "basics + git"
   gui-goodies:
     extends: cli
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-goodies${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$__ARCH__VENDOR}
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$__ARCH__VENDOR}-goodies
     # user: ${_AGL}
     # entrypoint:
     #   - /bin/bash
@@ -834,16 +865,16 @@ services:
       target: dvlp_gui-goodies
     labels:
       com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
-  # gui-goodies-kernel:
+  # gui-kernel-goodies:
   #   extends: cli-kernel
   #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-kernel${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$__ARCH__VENDOR}
   #   labels:
   #     com.devels-playground.description: "basics + git + powerhell + docker + kernel + gui"
-  gui-goodies-kernel:
+  gui-kernel-goodies:
     extends: cli-kernel
     build:
       target: dvlp_gui-goodies
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-goodies-kernel${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$__ARCH__VENDOR}
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-kernel${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$__ARCH__VENDOR}-goodies
     # depends_on:
     #   gui-goodies:
     #     condition: service_started

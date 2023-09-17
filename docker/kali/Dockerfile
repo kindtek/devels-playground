@@ -1260,7 +1260,7 @@ RUN rm -rf /var/lib/apt/lists && \
 ##################
 # dvlp_cuda #
 ##################
-FROM dvlp_gui-goodies-builder AS dvlp_gui-goodies-cuda
+FROM dvlp_gui-goodies-builder AS dvlp_gui-cuda-goodies
 ARG _R00T=${_R00T:-r00t}
 ARG _DVL=${_DVL:-dvl}
 ARG _AGL=${_AGL:-agl}

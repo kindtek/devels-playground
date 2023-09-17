@@ -13,7 +13,7 @@
 
 ### Build a kernel and pop into a Kali GUI
 
-### Build and customize your own kernel 
+### Build and customize your own kernel
 
 ### images are built using a Dockerfile, Docker compose file, and various shell scripts
 
@@ -28,7 +28,6 @@
 - powerhell scripts to do all of the above seamlessly in windows
 - enterprise grade ZFS compression/decompression tool and volume manager built into the kernel (Advanced: Even mount your Linux filesystem from a ZFS partition!)
 
-
 ---
 
 ---
@@ -37,7 +36,8 @@
 
 ---
 
-### For all Linux users 
+### For all Linux users
+
 #### (easy)
 
 Paste one line into a bash shell
@@ -50,7 +50,8 @@ wget -O - https://raw.githubusercontent.com/kindtek/k-home/main/HOME_NIX/reclone
 
 ---
 
-### For all Windows users 
+### For all Windows users
+
 #### (easy)
 
 If you want to easily install or already have installed
@@ -75,7 +76,8 @@ powershell.exe -executionpolicy remotesigned -Command "Invoke-WebRequest https:/
 
 ---
 
-### For all Windows users 
+### For all Windows users
+
 #### (harder)
 
 - WITH these installed
@@ -88,8 +90,8 @@ git clone https://github.com/kindtek/devels-playground
 scripts/wsl-docker-import
 ```
 
+### For all users
 
-### For all users 
 #### (advanced)
 
 To open a Docker container containing the [kali-cli](#kali-cli) image:
@@ -100,7 +102,7 @@ Run the following in a terminal on any operating system with Docker installed:
 
 ```shell
 
-docker pull kindtek/devels-playground:kali-cli 
+docker pull kindtek/devels-playground:kali-cli
 docker run -it $(docker images -aq kindtek/devels-playground:kali-cli)
 
 ```
@@ -161,7 +163,8 @@ docker compose cp get-kernel:/ /
 
 ## Why you should care about the devel
 
-### [Having root privileges can be dangerous.](https://www.quora.com/What-is-the-power-of-sudo-in-Linux) When logged in as the `dvl` user, you have unlimited power and freedom... but only in `/hel` - its home directory. Since the devel is not a member of the sudo group, the ability for you to accidentally corrupt your system while logged into that account are nonexistant without first modifying the system and/or file permissions from another account. The `agl` user is the default user and its home directory is in `/hal`. Use it for everyday usage or whenever you are listening to the angel on your shoulder and need to make changes to your system with sudo. For when you are feeling devel-ish, go to `/hel` (ie: `cd /hel`) and switch to the dvl user (`su dvl`). No passwords are required are enabled by default for any user (including root so be careful). To add password to an account, log into the account and run the  `passwd` command 
+### [Having root privileges can be dangerous.](https://www.quora.com/What-is-the-power-of-sudo-in-Linux) When logged in as the `dvl` user, you have unlimited power and freedom... but only in `/hel` - its home directory. Since the devel is not a member of the sudo group, the ability for you to accidentally corrupt your system while logged into that account are nonexistant without first modifying the system and/or file permissions from another account. The `agl` user is the default user and its home directory is in `/hal`. Use it for everyday usage or whenever you are listening to the angel on your shoulder and need to make changes to your system with sudo. For when you are feeling devel-ish, go to `/hel` (ie: `cd /hel`) and switch to the dvl user (`su dvl`). No passwords are required are enabled by default for any user (including root so be careful). To add password to an account, log into the account and run the `passwd` command
+
 ---
 
 ## dvl details
@@ -171,13 +174,19 @@ docker compose cp get-kernel:/ /
 #### [In theory](https://softprom.com/sites/default/files/materials/cyberark-sb-to-SUDO-or-not-to-SUDO-06-11-2015-en.pdf), the gates of sudo should restrict the devel to only making changes in `/hel` and any mounted drives - leaving only `agl` to make changes at the root level
 
 ##### More notes: All of `/hel` is mounted as a volume in Docker and the data stored in `/hel` will persist throughout all images when running in Docker. When in WSL, the volume will be stored in a WSL instance called Docker-Data.The directory located at `/mnt/data/agl` contains backup scripts (`backup-devel.sh`) and automatically generates restore scripts when the backups are ran. The `/mnt/data/agl` directory is safe from the devel as the devel has no write priveleges there
+
 ---
+
 ### TLDR
+
 #### the default user accounts are agl, dvl, and r00t. agl needs sudo to make changes to system files, r00t does not, and dvl is sandboxed in `/hel`
 
 ---
+
 ---
+
 ---
+
 ### How big are the images?
 
 #### Choices range from having practically nothing but sudo installed [kali-bare](https://hub.docker.com/repository/docker/kindtek/devels-playground/tags?name=kali-bare) (~90MB) to having everything AND the kitchen sink installed [kali-gui-kernel](https://hub.docker.com/repository/docker/kindtek/devels-playground/tags?name=kali-gui-goodies) (16GB). All -kernel builds will be around 10GB but can be reduced to around 2GB after install
@@ -190,9 +199,9 @@ _Note: Each image is a base layer for the image below it. For instance, kali-gui
 
 ---
 
-For Linux, you won't be using Docker to import the images directly but this script gives you the option to import everything detailed below with a bit more control. This script will also automatically run after the Docker images are imported so you will have the same result but one method may be faster. The only real difference at this time is everything is installed into an existing user account. There are also no agl/dvl/r00t users but this will be added soon 
+For Linux, you won't be using Docker to import the images directly but this script gives you the option to import everything detailed below with a bit more control. This script will also automatically run after the Docker images are imported so you will have the same result but one method may be faster. The only real difference at this time is everything is installed into an existing user account. There are also no agl/dvl/r00t users but this will be added soon
 
-This is very handy if you have an existing Linux installation that you need to modify or repair  
+This is very handy if you have an existing Linux installation that you need to modify or repair
 
 **Linux cheat code:**
 
@@ -220,7 +229,7 @@ powershell.exe -Command "Invoke-WebRequest https://raw.githubusercontent.com/kin
 
 ### [**kali-cli-goodies**](https://hub.docker.com/repository/docker/kindtek/devels-playground/tags?name=cli-goodies)
 
-_apt-get install apt-utils jq libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev python3-pip python3-venv pkg-configpip3_ /&& \\_
+_apt-get install apt-utils jq libdbus-1-dev libcairo2-dev libgirepository1.0-dev libpython3-dev python3-pip python3-venv pkg-configpip3_ /&& \\\_
 _install pip --upgrade && \\_
 _pip3 install cdir --user_
 
@@ -240,6 +249,7 @@ powershell.exe -Command "Invoke-WebRequest https://raw.githubusercontent.com/kin
 ```
 
 ---
+
 # [**kali-gui**](https://hub.docker.com/repository/docker/kindtek/devels-playground/tags?name=kali-gui)
 
 _apt-get install brave-browser bridge-utils libvirt-clients libvirt-daemon-system qemu-system-gui qemu-kvm vlc x11-apps_
@@ -256,34 +266,45 @@ powershell.exe -Command "Invoke-WebRequest https://raw.githubusercontent.com/kin
 _apt-get install lightdm xrdp xfce4 xfce4-goodies_
 _apt-get install locales kali-defaults kali-root-login desktop-base kali-win-kex kali-desktop-xfce pulseaudio-module-xrdp_
 
-The GUI is locked, loaded, and ready to go once installed into WSL2 with the devel's playground. Kali has too many features and packages to list. See them [here](https://www.kali.org/docs/tools/). 
+The GUI is locked, loaded, and ready to go once installed into WSL2 with the devel's playground. Kali has too many features and packages to list. See them [here](https://www.kali.org/docs/tools/).
 
 ```bash
 # windows kali-gui-goodies cheat code
 powershell.exe -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell/dvl-works/devel-spawn.ps1 -OutFile $env:USERPROFILE/dvlp.ps1;powershell.exe -ExecutionPolicy RemoteSigned -File $env:USERPROFILE/dvlp.ps1 kali-gui-goodies"
 ```
+
 ---
 
 ## **kali-X?X?X?X?X-kernel:**
+
 ### ( you will be prompted to import a pre-built kernel during setup )
+
 _apt-get install --install-recommends -y alien autoconf apt-utils apt-transport-https bison bc build-essential busybox cpio curl dbus-user-session daemonize dwarves fakeroot flex fontconfig awk gh git gnupg2 kmod libblkid-dev libffi-dev libudev-dev libaio-dev libattr1-dev libelf-dev libpam-systemd libncurses-dev libssl-dev libssl-dev lightdm lxcfs pigz plymouth plzip pkg-config python3-dev python3-setuptools python3-cffi nvi net-tools rsync screen shellcheck ssh systemd-sysv sysvinit-utils snapd systemd-sysv sysvinit-utils uuid-dev virtualbox zstd wget_
 
 #### kali-cli-kernel:
+
 ```bash
 powershell.exe -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell/dvl-works/devel-spawn.ps1 -OutFile $env:USERPROFILE/dvlp.ps1;powershell.exe -ExecutionPolicy RemoteSigned -File $env:USERPROFILE/dvlp.ps1 kali-cli-kernel"
 ```
-#### kali-cli-goodies-kernel:
+
+#### kali-cli-kernel-goodies:
+
 ```bash
-powershell.exe -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell/dvl-works/devel-spawn.ps1 -OutFile $env:USERPROFILE/dvlp.ps1;powershell.exe -ExecutionPolicy RemoteSigned -File $env:USERPROFILE/dvlp.ps1 kali-cli-goodies-kernel"
+powershell.exe -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell/dvl-works/devel-spawn.ps1 -OutFile $env:USERPROFILE/dvlp.ps1;powershell.exe -ExecutionPolicy RemoteSigned -File $env:USERPROFILE/dvlp.ps1 kali-cli-kernel-goodies"
 ```
+
 #### kali-gui-kernel:
+
 ```bash
 powershell.exe -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell/dvl-works/devel-spawn.ps1 -OutFile $env:USERPROFILE/dvlp.ps1;powershell.exe -ExecutionPolicy RemoteSigned -File $env:USERPROFILE/dvlp.ps1 kali-gui-kernel"
 ```
-#### kali-gui-goodies-kernel:
+
+#### kali-gui-kernel-goodies:
+
 ```bash
-powershell.exe -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell/dvl-works/devel-spawn.ps1 -OutFile $env:USERPROFILE/dvlp.ps1;powershell.exe -ExecutionPolicy RemoteSigned -File $env:USERPROFILE/dvlp.ps1 kali-gui-goodies-kernel"
+powershell.exe -Command "Invoke-WebRequest https://raw.githubusercontent.com/kindtek/powerhell/dvl-works/devel-spawn.ps1 -OutFile $env:USERPROFILE/dvlp.ps1;powershell.exe -ExecutionPolicy RemoteSigned -File $env:USERPROFILE/dvlp.ps1 kali-gui-kernel-goodies"
 ```
+
 ---
 
 ---
