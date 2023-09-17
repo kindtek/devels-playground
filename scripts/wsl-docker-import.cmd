@@ -868,11 +868,8 @@ IF "!image_repo!" == "kalilinux" (
             ) 
             DEL .wslconfig.orig
             cd %cd_orig%
-        )
-        ELSE (
-            IF NOT "!image_service_suffix!" == "kernel" (
-                wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" "full"
-            )
+        ) ELSE (
+            wsl.exe -d !wsl_distro! -- cd ^$HOME ^&^& bash setup.sh "%USERNAME%" "full"
         )
     )
 )
