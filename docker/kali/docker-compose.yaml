@@ -10,21 +10,21 @@ services:
       context: .
       target: dvlp_testing
       args:
-        - _AGL=$${_AGL:-agl}
-        - _DVL=$${_DVL:-dvl}
+        - _AGL=${_AGL:-agl}
+        - _DVL=${_DVL:-dvl}
         - _CPU_ARCH=$${_CPU_ARCH}
         - _CPU_VENDOR=$${_CPU_VENDOR}
-        - DOCKER_HUB_IMG=$${HUB_IMG}
-        - DOCKER_HUB_REPO=$${HUB_REPO}
+        - DOCKER_HUB_IMG=${HUB_IMG}
+        - DOCKER_HUB_REPO=${HUB_REPO}
     env_file:
       - .env
     environment:
-      - _AGL=$${_AGL:-agl}
-      - _DVL=$${_DVL:-dvl}
+      - _AGL=${_AGL:-agl}
+      - _DVL=${_DVL:-dvl}
       - _CPU_ARCH=$${_CPU_ARCH}
       - _CPU_VENDOR=$${_CPU_VENDOR}
-      - DOCKER_HUB_IMG=$${HUB_IMG}
-      - DOCKER_HUB_REPO=$${HUB_REPO}
+      - DOCKER_HUB_IMG=${HUB_IMG}
+      - DOCKER_HUB_REPO=${HUB_REPO}
     restart: on-failure
     cap_add:
       - AUDIT_WRITE
@@ -288,13 +288,13 @@ services:
     extends: build-skel
     build:
       target: dvlp_base-builder
-    depends_on:
+    # depends_on:
       # build-skel:
       #   condition: service_completed_successfully
       # build-vols:
       #   condition: service_completed_successfully
-      vols:
-        condition: service_healthy
+      # vols:
+      #   condition: service_healthy
     volumes_from:
       - vols
 
@@ -302,13 +302,13 @@ services:
     extends: build-skel
     build:
       target: dvlp_base-kernel-builder
-    depends_on:
+    # depends_on:
       # build-skel:
       #   condition: service_completed_successfully
       # build-vols-kernel:
       #   condition: service_completed_successfully
-      vols-kernel:
-        condition: service_healthy
+      # vols-kernel:
+      #   condition: service_healthy
     volumes_from:
       - vols-kernel
 
