@@ -23,8 +23,8 @@ services:
       - _AGL=${_AGL:-agl}
       - _DVL=${_DVL:-dvl}
       - _ARCH=${_ARCH}
-      - _ARCH_VENDOR=${_ARCH_VENDOR}
-      - __ARCH__VENDOR=${__ARCH__VENDOR}
+      - _ARCH_VENDOR=$${_ARCH_VENDOR}
+      - __ARCH__VENDOR=$${__ARCH__VENDOR}
       - DOCKER_HUB_IMG=${HUB_IMG}
       - DOCKER_HUB_REPO=${HUB_REPO}
     restart: on-failure
@@ -48,8 +48,8 @@ services:
     # entrypoint: /bin/bash -c 'helloworld'
     command:
       - tail -F /dev/null
-    expose:
-      - "3390"
+    # expose:
+    #   - "3390"
     tty: true
     privileged: true
     volumes:
@@ -481,7 +481,7 @@ services:
       
   cli:
     extends: base-template
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cli${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$__ARCH__VENDOR}
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cli
     build:
       target: dvlp_cli
     depends_on:
@@ -495,7 +495,7 @@ services:
 
   cli-kernel:
     extends: base-kernel-template
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cli${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$__ARCH__VENDOR}
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cli-${KERNEL_TYPE:+-$__ARCH__VENDOR}kernel
     build:
       target: dvlp_cli
       args:
@@ -541,7 +541,7 @@ services:
     # user: ${_AGL}
     # extends: scan-build
     privileged: true
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-scan${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$__ARCH__VENDOR}
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-scan
     build:
       context: .
       target: dvlp_base-scan
@@ -550,7 +550,7 @@ services:
 
   cli-goodies:
     extends: cli
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cli${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$__ARCH__VENDOR}-goodies
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cli
     build:
       context: .
       target: dvlp_cli-goodies
@@ -564,7 +564,7 @@ services:
     extends: cli-kernel
     build:
       target: dvlp_cli-goodies
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cli${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$__ARCH__VENDOR}-goodies
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cli-${KERNEL_TYPE:+-$__ARCH__VENDOR}kernel-goodies
     # depends_on:
     #   vols-kernel:
     #     condition: service_healthy
@@ -592,7 +592,7 @@ services:
 
   gui:
     extends: cli
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$__ARCH__VENDOR}
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui
     build:
       target: dvlp_gui
     # depends_on:
@@ -605,7 +605,7 @@ services:
     extends: cli-kernel
     build:
       target: dvlp_gui
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$__ARCH__VENDOR}
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-${KERNEL_TYPE:+-$__ARCH__VENDOR}kernel
     # depends_on:
     #   vols-kernel:
     #     condition: service_healthy
@@ -614,7 +614,7 @@ services:
 
   gui-goodies:
     extends: gui
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$__ARCH__VENDOR}-goodies
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-goodies
     build:
       context: .
       target: dvlp_gui-goodies
@@ -627,7 +627,7 @@ services:
 
   gui-kernel-goodies:
     extends: cli-kernel-goodies
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-kernel${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$__ARCH__VENDOR}-goodies
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-${KERNEL_TYPE:+-$__ARCH__VENDOR}kernel-goodies
     build:
       target: dvlp_gui-goodies
     # depends_on:
@@ -638,7 +638,7 @@ services:
 
   gui-goodies-cuda:
     extends: gui-goodies
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-goodies-cuda${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$__ARCH__VENDOR}
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-goodies-cuda
     build:
       target: dvlp_gui-goodies-cuda
     # depends_on:
@@ -649,7 +649,7 @@ services:
 
   gui-goodies-cuda-kernel:
     extends: gui-kernel-goodies
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-goodies-cuda-kernel${KERNEL_TYPE:+-kernel}${KERNEL_TYPE:+-$__ARCH__VENDOR}
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-goodies-cuda-${KERNEL_TYPE:+-$__ARCH__VENDOR}kernel
     build:
       target: dvlp_gui-cuda-goodies
     # depends_on:
