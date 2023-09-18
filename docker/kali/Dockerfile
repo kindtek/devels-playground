@@ -25,8 +25,8 @@ ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
 ARG _WIN_USER
 ARG _ARCH
-ARG _ARCH_VENDOR
-ARG __ARCH__VENDOR
+ARG _CPU_ARCHVENDOR
+ARG _CPU_ARCH_VENDOR
 ARG WINDOWS
 ARG LINUX
 ARG KERNEL_TYPE=${KERNEL_TYPE}
@@ -118,8 +118,8 @@ RUN \
     apt-get --reinstall -y install ca-certificates && \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt && \
-# add safe directories
-# RUN \
+    # add safe directories
+    # RUN \
     # --mount=type=cache,target=/var/cache/dvlp/build-repo-git,sharing=locked  \
     # if [ "$fresh_repo" != no ]; then rm -rf /var/cache/dvlp/archives/dvlw; fi && \
     # git config --global --add safe.directory /home/${_DVL} && \
@@ -222,17 +222,17 @@ ADD .env .${_DVL_HOME}/.env
 ################################
 FROM dvlp_base-devel-volumes-builder AS dvlp_base-devel-kernel-volumes-builder
 ARG _ARCH
-ARG _ARCH_VENDOR
-ARG __ARCH__VENDOR
+ARG _CPU_ARCHVENDOR
+ARG _CPU_ARCH_VENDOR
 WORKDIR ${_DVL_HOME}
 RUN ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
-    ln -fsv "dvlw/dvlp/kernels/linux/${_ARCH}/${_ARCH_VENDOR}" && \
+    ln -fsv "dvlw/dvlp/kernels/linux/${_ARCH}/${_CPU_ARCHVENDOR}" && \
     ln -fsv dvlw/dvlp/kernels kernels 
 # WORKDIR /home/${_DVL}
 # RUN ln -fsv dvlw/dvlp dvlp && \
 #     ln -fsv dvlw/dvlp/kernels/linux linux && \
-#     ln -fsv dvlw/dvlp/kernels/linux/$(echo "${cpu_ARCH_VENDOR%%_*}")/amd x64amd && \
+#     ln -fsv dvlw/dvlp/kernels/linux/$(echo "${cpu_CPU_ARCHVENDOR%%_*}")/amd x64amd && \
 #     ln -fsv dvlw/dvlp/kernels kernels && \
 WORKDIR /
 
@@ -284,13 +284,13 @@ ADD .env .${_AGL_HOME}/.env
 ################################
 FROM dvlp_base-angel-volumes-builder AS dvlp_base-angel-kernel-volumes-builder
 ARG _ARCH
-ARG _ARCH_VENDOR
-ARG __ARCH__VENDOR
+ARG _CPU_ARCHVENDOR
+ARG _CPU_ARCH_VENDOR
 WORKDIR ${_AGL_HOME}
 # COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/      ./mnt/
 RUN ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
-    ln -fsv "dvlw/dvlp/kernels/linux/${_ARCH}/${_ARCH_VENDOR}" && \
+    ln -fsv "dvlw/dvlp/kernels/linux/${_ARCH}/${_CPU_ARCHVENDOR}" && \
     ln -fsv dvlw/dvlp/kernels kernels  
 # WORKDIR /home/${_AGL}
 # RUN ln -fsv dvlw/dvlp dvlp && \
@@ -360,12 +360,12 @@ ADD .env .${R00T_HOME}/.env
 FROM dvlp_base-r00t-volumes-builder AS dvlp_base-r00t-kernel-volumes-builder
 ARG _MNT
 ARG _ARCH
-ARG _ARCH_VENDOR
-ARG __ARCH__VENDOR
+ARG _CPU_ARCHVENDOR
+ARG _CPU_ARCH_VENDOR
 WORKDIR /${_R00T}
 RUN ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
-    ln -fsv "dvlw/dvlp/kernels/linux/${_ARCH}/${_ARCH_VENDOR}" && \
+    ln -fsv "dvlw/dvlp/kernels/linux/${_ARCH}/${_CPU_ARCHVENDOR}" && \
     ln -fsv dvlw/dvlp/kernels kernels && \
     mkdir -pv /${_R00T} && mkdir -pv kache
 #  && \
@@ -533,6 +533,12 @@ COPY --from=dvlp_repo-kernel                               --chown=${_AGL}:${_AG
 COPY --from=dvlp_repo-kernel                               --chown=${_R00T}:${_R00T}       --chmod=770    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./${_R00T}/
 COPY --from=dvlp_repo-kernel                               --chown=${_R00T}:${_R00T}       --chmod=755     /repos/dvlw/dvlp/mnt/etc/*     ./etc/
 COPY --from=dvlp_repo-kernel                               --chown=${_AGL}:${_AGL_GRP}     --chmod=770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/ 
+
+############################# volumes-built ##################################
+FROM dvlp_base-volumes-builder AS dvlp_base-volumes-built
+
+FROM dvlp_base-kernel-volumes-builder AS dvlp_base-kernel-volumes-built
+
 
 ############################# BASE BUILD ###################################
 
