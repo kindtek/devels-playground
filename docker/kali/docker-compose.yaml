@@ -12,8 +12,8 @@ services:
       args:
         - _AGL=${_AGL:-agl}
         - _DVL=${_DVL:-dvl}
-        - _CPU_ARCH=$${_CPU_ARCH}
-        - _CPU_VENDOR=$${_CPU_VENDOR}
+        - _CPU_ARCH="${_CPU_ARCH}"
+        - _CPU_VENDOR="${_CPU_VENDOR}"
         - DOCKER_HUB_IMG=${HUB_IMG}
         - DOCKER_HUB_REPO=${HUB_REPO}
     env_file:
@@ -21,8 +21,8 @@ services:
     environment:
       - _AGL=${_AGL:-agl}
       - _DVL=${_DVL:-dvl}
-      - _CPU_ARCH=$${_CPU_ARCH}
-      - _CPU_VENDOR=$${_CPU_VENDOR}
+      - _CPU_ARCH="${_CPU_ARCH}"
+      - _CPU_VENDOR="${_CPU_VENDOR}"
       - DOCKER_HUB_IMG=${HUB_IMG}
       - DOCKER_HUB_REPO=${HUB_REPO}
     restart: on-failure
