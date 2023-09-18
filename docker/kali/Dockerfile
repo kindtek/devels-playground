@@ -20,7 +20,7 @@ ARG _DVL_HOME=${_DVL_HOME:-'/hel'}
 ARG _AGL=${_AGL:-'agl'}
 ARG _AGL_GRP=${_AGL_GRP:-'halo'}
 ARG _AGL_HOME=${_AGL_HOME:-'/hal'}
-ARG _W0RLD_GRP=${W0RLD_GRP:-'w0rld'}
+ARG _W0RLD_GRP=${_W0RLD_GRP:-'w0rld'}
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
 ARG _WIN_USER
@@ -64,7 +64,7 @@ ARG _DVL_HOME=${_DVL_HOME:-'/hel'}
 ARG _AGL=${_AGL:-'agl'}
 ARG _AGL_GRP=${_AGL_GRP:-'halo'}
 ARG _AGL_HOME=${_AGL_HOME:-'/hal'}
-ARG _W0RLD_GRP=${W0RLD_GRP:-'w0rld'}
+ARG _W0RLD_GRP=${_W0RLD_GRP:-'w0rld'}
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
 ARG _WIN_USER
@@ -117,10 +117,10 @@ RUN \
     apt-get install --no-install-recommends -y git && \
     apt-get --reinstall -y install ca-certificates && \
     rm -rf /var/lib/apt/lists && \
-    rm -rf /var/cache/apt
+    rm -rf /var/cache/apt && \
 # add safe directories
-RUN \
-    --mount=type=cache,target=/var/cache/dvlp/build-repo-git,sharing=locked  \
+# RUN \
+    # --mount=type=cache,target=/var/cache/dvlp/build-repo-git,sharing=locked  \
     # if [ "$fresh_repo" != no ]; then rm -rf /var/cache/dvlp/archives/dvlw; fi && \
     # git config --global --add safe.directory /home/${_DVL} && \
     # git config --global --add safe.directory /home/${_AGL} && \
@@ -140,7 +140,7 @@ RUN \
 # dvlp_build-repo #
 #######################
 FROM kindtek/devels-playground:repo-builder AS dvlp_build-repo
-WORKDIR /repos
+WORKDIR /
 RUN \
     --mount=type=cache,target=/var/cache/dvlp/build-repo,sharing=locked  \
     repo_owner=kindtek && \
@@ -153,14 +153,15 @@ RUN \
     echo repo_url: $repo_url && \
     echo repo_path: $repo_path && \
     echo repo_branch: $repo_branch && \
-    mkdir -pv dvlw && \
-    chmod -R 1770 dvlw && \
+    mkdir -pv /repos/dvlw && \
+    chmod -R 770 /repos && \
+    cd repos || exit 1 && \
     # echo "git clone $repo_url --single-branch --branch $repo_branch --filter=blob:limit=13k --progress -- $repo_path 2>/dev/null" && \
-    git clone "$repo_url" --single-branch --branch $repo_branch --filter=blob:limit=13k --progress -- $repo_path 2>/dev/null && \
+    git clone "$repo_url" --single-branch --branch $repo_branch --filter=blob:limit=13k --progress -- $repo_path  && \
     cd dvlw || exit 1 && \
     # echo  "git submodule update --init --remote --filter=blob:limit=13k --progress -- dvlp dvl-adv powerhell 2>/dev/null" && \
-    git submodule update --init --remote --filter=blob:limit=13k --progress -- dvlp dvl-adv powerhell 2>/dev/null && \
-    cd dvlp || exit && \
+    git submodule update --init --remote --filter=blob:limit=13k --progress -- dvlp dvl-adv powerhell && \
+    cd dvlp || exit 1 && \
     # echo "git submodule update --init --progress -- mnt" && \
     git submodule update --init --progress -- mnt
 
@@ -180,10 +181,10 @@ FROM dvlp_build-repo${KERNEL_TYPE:+-kernel} AS dvlp_built-repo
 # dvlp_repo #
 #############
 FROM scratch AS dvlp_repo
-COPY --from=dvlp_built-repo --chmod=1770 ./repos/dvlw/ ./repos/dvlw/
+COPY --from=dvlp_build-repo --chmod=770 ./repos/dvlw/ ./repos/dvlw/
 
 FROM scratch AS dvlp_repo-kernel
-COPY --from=dvlp_build-repo-kernel --chmod=1770 ./repos/dvlw/ ./repos/dvlw/
+COPY --from=dvlp_build-repo-kernel --chmod=770 ./repos/dvlw/ ./repos/dvlw/
 
 ####################### BASE volumes AND VOLUME MOUNT POINTS ####################################
 ########################
@@ -208,14 +209,13 @@ RUN mkdir -pv dvlw && \
 WORKDIR ${_MNT}/data
 RUN ln -fsv ${_MNT}/data/bak/${_DVL} bak 
 # && \
-#     chmod -R 1770 ${_MNT}/bak/${_DVL}
+#     chmod -R 770 ${_MNT}/bak/${_DVL}
 # ln -fsv ${_MNT}/data/bak/${_DVL} /home/${_DVL}/bak 
 WORKDIR /
 COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME_NIX/ .${_DVL_HOME}
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME_NIX/ .${_DVL_HOME}
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/docker/kali/docker-compose.yaml .${_DVL_HOME}/docker-compose.yaml
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/docker/kali/Dockerfile .${_DVL_HOME}/Dockerfile
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/docker/kali/.env .${_DVL_HOME}/.env
+ADD ./Dockerfile .${_DVL_HOME}/Dockerfile
+ADD ./docker-compose.yaml .${_DVL_HOME}/docker-compose.yaml
+ADD .env .${_DVL_HOME}/.env
 
 ################################
 #  dvlp_base-devel-volumes-builder #
@@ -275,10 +275,9 @@ RUN mkdir -pv c && \
     mkdir -pv bak/${_AGL} 
 WORKDIR /
 COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME_NIX/ .${_AGL_HOME}
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME_NIX/ .${_AGL_HOME}
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/docker/kali/docker-compose.yaml .${_AGL_HOME}/docker-compose.yaml
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/docker/kali/Dockerfile .${_AGL_HOME}/Dockerfile
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/docker/kali/.env .${_AGL_HOME}/.env
+ADD ./Dockerfile .${_AGL_HOME}/Dockerfile
+ADD ./docker-compose.yaml .${_AGL_HOME}/docker-compose.yaml
+ADD .env .${_AGL_HOME}/.env
 
 ################################
 #  dvlp_base-angel-volumes-builder #
@@ -336,21 +335,22 @@ RUN mkdir -pv dvlw && \
     ln -fsv dvlw/dvlp/docker docker && \
     ln -fsv ${_R00T_HOME} /home/${_R00T} 
 # && \
-# chmod -R 1770 /${_R00T}
+# chmod -R 770 /${_R00T}
 WORKDIR ${_MNT}/data
 RUN mkdir -pv dls && \
     mkdir -pv bak && \
     mkdir -pv etc && \
     # mkdir -pv home && \
     # mkdir -pv opt && \
-    chmod -R 1770 dls && \
-    chmod -R 1770 etc && \
-    chmod -R 1770 ${_MNT}/data
+    chmod -R 770 dls && \
+    chmod -R 770 etc && \
+    chmod -R 770 ${_MNT}/data
 WORKDIR /
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME_NIX/ .${_R00T_HOME}
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/docker/kali/docker-compose.yaml .${_R00T_HOME}/docker-compose.yaml
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/docker/kali/Dockerfile .${_R00T_HOME}/Dockerfile
-COPY --from=dvlp_repo ./repos/dvlw/dvlp/docker/kali/.env .${_R00T_HOME}/.env
+COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/HOME_NIX/ .${R00T_HOME}
+ADD ./Dockerfile .${R00T_HOME}/Dockerfile
+ADD ./docker-compose.yaml .${R00T_HOME}/docker-compose.yaml
+ADD .env .${R00T_HOME}/.env
+
 
 
 
@@ -369,7 +369,7 @@ RUN ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels kernels && \
     mkdir -pv /${_R00T} && mkdir -pv kache
 #  && \
-# chmod -R 1770 /${_R00T} && \
+# chmod -R 770 /${_R00T} && \
 # cp -prv * /home/${_R00T}
 WORKDIR /
 
@@ -397,7 +397,7 @@ ARG _DVL_HOME=${_DVL_HOME:-'/hel'}
 ARG _AGL=${_AGL:-'agl'}
 ARG _AGL_GRP=${_AGL_GRP:-'halo'}
 ARG _AGL_HOME=${_AGL_HOME:-'/hal'}
-ARG _W0RLD_GRP=${W0RLD_GRP:-'w0rld'}
+ARG _W0RLD_GRP=${_W0RLD_GRP:-'w0rld'}
 ENV _MNT=${_MNT}
 ENV _R00T=${_R00T}
 ENV _R00T_GRP=${_AGL_GRP}
@@ -408,7 +408,7 @@ ENV _DVL_HOME=${_DVL_HOME}
 ENV _AGL=${_AGL}
 ENV _AGL_GRP=${_AGL_GRP}
 ENV _AGL_HOME=${_AGL_HOME}
-ENV _W0RLD_GRP=${W0RLD_GRP}
+ENV _W0RLD_GRP=${_W0RLD_GRP}
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
 ARG _WIN_USER
@@ -418,8 +418,6 @@ RUN \
     --mount=type=cache,target=/var/cache/dvlp/base-skel,sharing=locked \
     # mkdir -p /usr/lib/modules && \
     mkdir -pv /usr/lib/binfmt.d && \
-    mkdir -pv /kache && \
-    mkdir -pv /boot && \
     rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo ':WSLInterop:M::MZ::/init:PF' > /usr/lib/binfmt.d/WSLInterop.conf && \
     echo 'Acquire::Retries "3";\
@@ -443,26 +441,20 @@ RUN \
     groupadd            ${_R00T}    && \
     groupadd            ${_AGL_GRP}    && \
     groupadd            ${_DVL_GRP}    && \
-    groupadd            w0rld  && \
-    useradd -s /bin/bash -u 0   -o  -g root            -G ${_R00T},w0rld        -d /${_R00T}        ${_R00T} && \
-    useradd -s /bin/bash            -g ${_AGL_GRP}     -G w0rld,${_DVL_GRP}     -d ${_AGL_HOME}     ${_AGL} && \
-    useradd -s /bin/bash            -g ${_DVL_GRP}     -G w0rld                 -d ${_DVL_HOME}     ${_DVL} && \
+    groupadd            ${_W0RLD_GRP}  && \
+    useradd -s /bin/bash -u 0   -o  -g root            -G ${_R00T},${_W0RLD_GRP}        -d /${_R00T}        ${_R00T} && \
+    useradd -s /bin/bash            -g ${_AGL_GRP}     -G ${_W0RLD_GRP},${_DVL_GRP}     -d ${_AGL_HOME}     ${_AGL} && \
+    useradd -s /bin/bash            -g ${_DVL_GRP}     -G ${_W0RLD_GRP}                 -d ${_DVL_HOME}     ${_DVL} && \
     passwd -d ${_AGL} && \
     passwd -d ${_DVL} && \
     passwd -d ${_R00T} && \
     passwd -d root && \
     passwd -l root && \
-    mkdir -pv /mnt/dls && \
-    mkdir -pv /mnt/c && \
-    mkdir -pv /mnt/n && \
-    mkdir -pv ${_MNT}/dls && \
+    install -d -m 0750 -o ${_AGL} -g ${_AGL_GRP} /mnt/dls ${_MNT}/dls /kache /repos/dvlw /kache /mnt/c /mnt/n && \
+    install -d -m 0777 -o ${_R00T} -g ${_W0RLD_GRP} /mnt/dls && \
     # mkdir -p /${_R00T}/dvlw && \
-    # mkdir -m 1770 ${_MNT}/dls && \
-    # mkdir -m 1770 repos  && \
-    chown ${_AGL}:${_AGL_GRP} /mnt && \
-    chown ${_AGL}:${_AGL_GRP} /mnt/c && \
-    chown ${_AGL}:${_AGL_GRP} /mnt/n && \
-    chown ${_R00T}:w0rld /mnt/dls && \
+    # mkdir -m 770 ${_MNT}/dls && \
+    # mkdir -m 770 repos  && \
     apt-get update --fix-missing -y && apt-get install -f && apt-get upgrade -y && \
     apt-get purge -y openssh-server && \
     apt-get install --no-install-recommends -y curl locales openssh-server ssh systemd-sysv sysvinit-utils wget && \   
@@ -474,10 +466,9 @@ RUN \
     rm -rf /var/lib/apt/lists && \
     rm -rf /var/cache/apt
 
-WORKDIR /
 ###############################
 
-FROM kindtek/devels-playground:kali-skel AS dvlp_base-volumes-builder
+FROM dvlp_base-skel AS dvlp_base-volumes-builder
 ARG _MNT=${_MNT:-/mnt/data}
 ARG _R00T=${_R00T:-'r00t'}
 ARG _R00T_GRP=${_R00T_GRP:-'r00t'}
@@ -488,28 +479,31 @@ ARG _DVL_HOME=${_DVL_HOME:-'/hel'}
 ARG _AGL=${_AGL:-'agl'}
 ARG _AGL_GRP=${_AGL_GRP:-'halo'}
 ARG _AGL_HOME=${_AGL_HOME:-'/hal'}
-ARG _W0RLD_GRP=${W0RLD_GRP:-'w0rld'}
-COPY --from=dvlp_base-devel-volumes-builder           --chown=${_DVL}:${_DVL_GRP}     --chmod=1770    ./home/${_DVL}/                 ./home/${_DVL}/
-COPY --from=dvlp_base-angel-volumes-builder           --chown=${_AGL}:${_AGL_GRP}     --chmod=1770    ./home/${_AGL}/                 ./home/${_AGL}/
-COPY --from=dvlp_base-r00t-volumes-builder            --chown=${_R00T}:${_R00T}       --chmod=1770    ./home/${_R00T}/                ./home/${_R00T}/ 
-COPY --from=dvlp_base-devel-volumes-builder           --chown=${_DVL}:${_DVL_GRP}     --chmod=1770    .${_DVL_HOME}/                  .${_DVL_HOME}/
-COPY --from=dvlp_base-angel-volumes-builder           --chown=${_AGL}:${_AGL_GRP}     --chmod=1770    .${_AGL_HOME}/                  .${_AGL_HOME}/
-COPY --from=dvlp_base-r00t-volumes-builder            --chown=${_R00T}:${_R00T}       --chmod=1770    ./${_R00T}/                     ./${_R00T}/
-COPY --from=dvlp_base-r00t-volumes-builder            --chown=${_AGL}:${_AGL_GRP}     --chmod=1770    ./${_R00T}/dvlw/                     ./${_R00T}/dvlw/
-COPY --from=dvlp_repo                                   --chown=${_DVL}:${_DVL_GRP}     --chmod=1770    ./repos/dvlw/                  .${_DVL_HOME}/dvlw/
-COPY --from=dvlp_base-angel-volumes-builder           --chown=${_AGL}:${_AGL_GRP}     --chmod=1770    .${_AGL_HOME}/dvlw/                  .${_AGL_HOME}/dvlw/
-COPY --from=dvlp_repo                               --chown=${_DVL}:${_DVL_GRP}     --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/ .${_DVL_HOME}/
-COPY --from=dvlp_repo                               --chown=${_AGL}:${_AGL_GRP}     --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/ .${_AGL_HOME}/
-COPY --from=dvlp_repo                               --chown=${_R00T}:${_R00T}       --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./${_R00T}/
-COPY --from=dvlp_repo                               --chown=${_AGL}:${_AGL_GRP}     --chmod=1770    ./repos/dvlw/                   ./repos/dvlw/
-COPY --from=dvlp_repo                               --chown=${_R00T}:${_R00T}       --chmod=1755     /repos/dvlw/dvlp/mnt/etc/*     ./etc/
-COPY --from=dvlp_repo                               --chown=${_AGL}:${_AGL_GRP}     --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/ 
+ARG _W0RLD_GRP=${_W0RLD_GRP:-'w0rld'}
+COPY --from=dvlp_base-devel-volumes-builder           --chown=${_DVL}:${_DVL_GRP}     --chmod=770    ./home/${_DVL}/                 ./home/${_DVL}/
+COPY --from=dvlp_base-angel-volumes-builder           --chown=${_AGL}:${_AGL_GRP}     --chmod=770    ./home/${_AGL}/                 ./home/${_AGL}/
+COPY --from=dvlp_base-r00t-volumes-builder            --chown=${_R00T}:${_R00T}       --chmod=770    ./home/${_R00T}/                ./home/${_R00T}/ 
+COPY --from=dvlp_base-devel-volumes-builder           --chown=${_DVL}:${_DVL_GRP}     --chmod=770    .${_DVL_HOME}/                  .${_DVL_HOME}/
+COPY --from=dvlp_base-angel-volumes-builder           --chown=${_AGL}:${_AGL_GRP}     --chmod=770    .${_AGL_HOME}/                  .${_AGL_HOME}/
+COPY --from=dvlp_base-r00t-volumes-builder            --chown=${_R00T}:${_R00T}       --chmod=770    ./${_R00T}/                     ./${_R00T}/
+COPY --from=dvlp_repo                                  --chown=${_AGL}:${_AGL_GRP}     --chmod=770    ./repos/   ./repos/
+# COPY --from=dvlp_repo                               --chown=${_AGL}:${_AGL_GRP}     --chmod=770    ./repos/dvlw/                   .${_AGL_HOME}/dvlw/
+# COPY --from=dvlp_repo                               --chown=${_R00T}:${_R00T}     --chmod=770    ./repos/dvlw/                     ./${_R00T}/dvlw/
+# special copy to give ownership of /r00t/dvlw to r00t
+COPY --from=dvlp_base-r00t-volumes-builder            --chown=${_R00T}:${_R00T}     --chmod=770    ./${_R00T}/dvlw/                     ./${_R00T}/dvlw/
+# COPY --from=dvlp_base-angel-volumes-builder           --chown=${_AGL}:${_AGL_GRP}     --chmod=770    .${_AGL_HOME}/dvlw/                  .${_AGL_HOME}/dvlw/
+# COPY --from=dvlp_base-devel-volumes-builder           --chown=${_DVL}:${_DVL_GRP}     --chmod=770    .${_DVL_HOME}/dvlw/                  .${_DVL_HOME}/dvlw/
+COPY --from=dvlp_repo                               --chown=${_DVL}:${_DVL_GRP}     --chmod=770    ./repos/dvlw/dvlp/mnt/HOME_NIX/ .${_DVL_HOME}/
+COPY --from=dvlp_repo                               --chown=${_AGL}:${_AGL_GRP}     --chmod=770    ./repos/dvlw/dvlp/mnt/HOME_NIX/ .${_AGL_HOME}/
+COPY --from=dvlp_repo                               --chown=${_R00T}:${_R00T}       --chmod=770    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./${_R00T}/
+COPY --from=dvlp_repo                               --chown=${_R00T}:${_R00T}       --chmod=755     /repos/dvlw/dvlp/mnt/etc/*     ./etc/
+COPY --from=dvlp_repo                               --chown=${_AGL}:${_AGL_GRP}     --chmod=770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/ 
 
 ###############################
 #  dvlp_base-kernel-volumes-builder #
 ###############################
 
-FROM kindtek/devels-playground:kali-skel AS dvlp_base-kernel-volumes-builder
+FROM dvlp_base-skel AS dvlp_base-kernel-volumes-builder
 ARG _MNT=${_MNT:-/mnt/data}
 ARG _R00T=${_R00T:-'r00t'}
 ARG _R00T_GRP=${_R00T_GRP:-'r00t'}
@@ -520,22 +514,25 @@ ARG _DVL_HOME=${_DVL_HOME:-'/hel'}
 ARG _AGL=${_AGL:-'agl'}
 ARG _AGL_GRP=${_AGL_GRP:-'halo'}
 ARG _AGL_HOME=${_AGL_HOME:-'/hal'}
-ARG _W0RLD_GRP=${W0RLD_GRP:-'w0rld'}
-COPY --from=dvlp_base-devel-kernel-volumes-builder           --chown=${_DVL}:${_DVL_GRP}     --chmod=1770    ./home/${_DVL}/                 ./home/${_DVL}/
-COPY --from=dvlp_base-angel-kernel-volumes-builder           --chown=${_AGL}:${_AGL_GRP}     --chmod=1770    ./home/${_AGL}/                 ./home/${_AGL}/
-COPY --from=dvlp_base-r00t-kernel-volumes-builder            --chown=${_R00T}:${_R00T}       --chmod=1770    ./home/${_R00T}/                ./home/${_R00T}/ 
-COPY --from=dvlp_base-r00t-kernel-volumes-builder            --chown=${_R00T}:${_R00T}       --chmod=1770    ./${_R00T}/                     ./${_R00T}/
-COPY --from=dvlp_base-devel-kernel-volumes-builder           --chown=${_DVL}:${_DVL_GRP}     --chmod=1770    .${_DVL_HOME}/                  .${_DVL_HOME}/
-COPY --from=dvlp_base-angel-kernel-volumes-builder           --chown=${_AGL}:${_AGL_GRP}     --chmod=1770    .${_AGL_HOME}/                  .${_AGL_HOME}/
-COPY --from=dvlp_base-r00t-kernel-volumes-builder            --chown=${_AGL}:${_AGL_GRP}     --chmod=1770    ./${_R00T}/dvlw/                     ./${_R00T}/dvlw/
-COPY --from=dvlp_repo-kernel                          --chown=${_DVL}:${_DVL_GRP}     --chmod=1770    ./repos/dvlw/                  .${_DVL_HOME}/dvlw/
-COPY --from=dvlp_base-angel-kernel-volumes-builder    --chown=${_AGL}:${_AGL_GRP}     --chmod=1770    .${_AGL_HOME}/dvlw/                  .${_AGL_HOME}/dvlw/
-COPY --from=dvlp_repo-kernel                        --chown=${_DVL}:${_DVL_GRP}     --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/ .${_DVL_HOME}/
-COPY --from=dvlp_repo-kernel                        --chown=${_AGL}:${_AGL_GRP}     --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/ .${_AGL_HOME}/
-COPY --from=dvlp_repo-kernel                        --chown=${_R00T}:${_R00T_GRP}    --chmod=1770    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./${_R00T}/
-COPY --from=dvlp_repo-kernel                        --chown=${_AGL}:${_AGL_GRP}     --chmod=1770    ./repos/dvlw/                   ./repos/dvlw/
-COPY --from=dvlp_repo-kernel                        --chown=${_R00T}:${_R00T_GRP}    --chmod=1755     /repos/dvlw/dvlp/mnt/etc/*     ./etc/
-COPY --from=dvlp_repo-kernel                        --chown=${_AGL}:${_AGL_GRP}     --chmod=1770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/ 
+ARG _W0RLD_GRP=${_W0RLD_GRP:-'w0rld'}
+COPY --from=dvlp_base-devel-kernel-volumes-builder           --chown=${_DVL}:${_DVL_GRP}     --chmod=770    ./home/${_DVL}/                 ./home/${_DVL}/
+COPY --from=dvlp_base-angel-kernel-volumes-builder           --chown=${_AGL}:${_AGL_GRP}     --chmod=770    ./home/${_AGL}/                 ./home/${_AGL}/
+COPY --from=dvlp_base-r00t-kernel-volumes-builder            --chown=${_R00T}:${_R00T}       --chmod=770    ./home/${_R00T}/                ./home/${_R00T}/ 
+COPY --from=dvlp_base-devel-kernel-volumes-builder           --chown=${_DVL}:${_DVL_GRP}     --chmod=770    .${_DVL_HOME}/                  .${_DVL_HOME}/
+COPY --from=dvlp_base-angel-kernel-volumes-builder           --chown=${_AGL}:${_AGL_GRP}     --chmod=770    .${_AGL_HOME}/                  .${_AGL_HOME}/
+COPY --from=dvlp_base-r00t-kernel-volumes-builder            --chown=${_R00T}:${_R00T}       --chmod=770    ./${_R00T}/                     ./${_R00T}/
+COPY --from=dvlp_repo-kernel                               --chown=${_AGL}:${_AGL_GRP}     --chmod=770    ./repos/                          ./repos/
+COPY --from=dvlp_repo-kernel                               --chown=${_AGL}:${_AGL_GRP}     --chmod=770    ./repos/dvlw/                   .${_AGL_HOME}/dvlw/
+COPY --from=dvlp_repo-kernel                               --chown=${_R00T}:${_R00T}     --chmod=770    ./repos/dvlw/                     ./${_R00T}/dvlw/
+# # special copy to give ownership of /r00t/dvlw to agl
+# COPY --from=dvlp_base-r00t-kernel-volumes-builder            --chown=${_AGL}:${_AGL_GRP}     --chmod=770    ./${_R00T}/dvlw/                     ./${_R00T}/dvlw/
+# COPY --from=dvlp_base-angel-volumes-builder           --chown=${_AGL}:${_AGL_GRP}     --chmod=770    .${_AGL_HOME}/dvlw/                  .${_AGL_HOME}/dvlw/
+# COPY --from=dvlp_base-devel-volumes-builder           --chown=${_DVL}:${_DVL_GRP}     --chmod=770    .${_DVL_HOME}/dvlw/                  .${_DVL_HOME}/dvlw/
+COPY --from=dvlp_repo-kernel                               --chown=${_DVL}:${_DVL_GRP}     --chmod=770    ./repos/dvlw/dvlp/mnt/HOME_NIX/ .${_DVL_HOME}/
+COPY --from=dvlp_repo-kernel                               --chown=${_AGL}:${_AGL_GRP}     --chmod=770    ./repos/dvlw/dvlp/mnt/HOME_NIX/ .${_AGL_HOME}/
+COPY --from=dvlp_repo-kernel                               --chown=${_R00T}:${_R00T}       --chmod=770    ./repos/dvlw/dvlp/mnt/HOME_NIX/ ./${_R00T}/
+COPY --from=dvlp_repo-kernel                               --chown=${_R00T}:${_R00T}       --chmod=755     /repos/dvlw/dvlp/mnt/etc/*     ./etc/
+COPY --from=dvlp_repo-kernel                               --chown=${_AGL}:${_AGL_GRP}     --chmod=770    ./repos/dvlw/dvlp/mnt/          .${_MNT}/ 
 
 ############################# BASE BUILD ###################################
 
@@ -550,7 +547,7 @@ ARG _DVL_HOME=${_DVL_HOME:-'/hel'}
 ARG _AGL=${_AGL:-'agl'}
 ARG _AGL_GRP=${_AGL_GRP:-'halo'}
 ARG _AGL_HOME=${_AGL_HOME:-'/hal'}
-ARG _W0RLD_GRP=${W0RLD_GRP:-'w0rld'}
+ARG _W0RLD_GRP=${_W0RLD_GRP:-'w0rld'}
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
 ENV DEBIAN_FRONTEND=noninteractive
@@ -584,7 +581,7 @@ ARG _DVL_HOME=${_DVL_HOME:-'/hel'}
 ARG _AGL=${_AGL:-'agl'}
 ARG _AGL_GRP=${_AGL_GRP:-'halo'}
 ARG _AGL_HOME=${_AGL_HOME:-'/hal'}
-ARG _W0RLD_GRP=${W0RLD_GRP:-'w0rld'}
+ARG _W0RLD_GRP=${_W0RLD_GRP:-'w0rld'}
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
 ARG KERNEL_TYPE
@@ -641,7 +638,7 @@ ARG _DVL_HOME=${_DVL_HOME:-'/hel'}
 ARG _AGL=${_AGL:-'agl'}
 ARG _AGL_GRP=${_AGL_GRP:-'halo'}
 ARG _AGL_HOME=${_AGL_HOME:-'/hal'}
-ARG _W0RLD_GRP=${W0RLD_GRP:-'w0rld'}
+ARG _W0RLD_GRP=${_W0RLD_GRP:-'w0rld'}
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
 ARG KERNEL_TYPE
@@ -753,7 +750,7 @@ ARG _DVL_HOME=${_DVL_HOME:-'/hel'}
 ARG _AGL=${_AGL:-'agl'}
 ARG _AGL_GRP=${_AGL_GRP:-'halo'}
 ARG _AGL_HOME=${_AGL_HOME:-'/hal'}
-ARG _W0RLD_GRP=${W0RLD_GRP:-'w0rld'}
+ARG _W0RLD_GRP=${_W0RLD_GRP:-'w0rld'}
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
 ARG KERNEL_TYPE
@@ -794,7 +791,7 @@ COPY --from=dvlp_madk-kernel ./${_R00T}/dvlw/dvlp/kernels/linux/kache/ ./
 # ARG _AGL=${_AGL:-'agl'}
 # ARG _AGL_GRP=${_AGL_GRP:-'halo'}
 # ARG _AGL_HOME=${_AGL_HOME:-'/hal'}
-# ARG _W0RLD_GRP=${W0RLD_GRP:-'w0rld'}
+# ARG _W0RLD_GRP=${_W0RLD_GRP:-'w0rld'}
 # ARG DEBIAN_FRONTEND
 # ARG DEBCONF_NONINTERACTIVE_SEEN
 # USER ${_R00T}
@@ -834,7 +831,7 @@ ARG _DVL_HOME=${_DVL_HOME:-'/hel'}
 ARG _AGL=${_AGL:-'agl'}
 ARG _AGL_GRP=${_AGL_GRP:-'halo'}
 ARG _AGL_HOME=${_AGL_HOME:-'/hal'}
-ARG _W0RLD_GRP=${W0RLD_GRP:-'w0rld'}
+ARG _W0RLD_GRP=${_W0RLD_GRP:-'w0rld'}
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
 ARG _WIN_USER
@@ -943,7 +940,7 @@ ARG _DVL_HOME=${_DVL_HOME:-'/hel'}
 ARG _AGL=${_AGL:-'agl'}
 ARG _AGL_GRP=${_AGL_GRP:-'halo'}
 ARG _AGL_HOME=${_AGL_HOME:-'/hal'}
-ARG _W0RLD_GRP=${W0RLD_GRP:-'w0rld'}
+ARG _W0RLD_GRP=${_W0RLD_GRP:-'w0rld'}
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
 ARG _WIN_USER
@@ -1189,7 +1186,7 @@ ARG _DVL_HOME=${_DVL_HOME:-'/hel'}
 ARG _AGL=${_AGL:-'agl'}
 ARG _AGL_GRP=${_AGL_GRP:-'halo'}
 ARG _AGL_HOME=${_AGL_HOME:-'/hal'}
-ARG _W0RLD_GRP=${W0RLD_GRP:-'w0rld'}
+ARG _W0RLD_GRP=${_W0RLD_GRP:-'w0rld'}
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
 ARG _WIN_USER
@@ -1267,7 +1264,7 @@ ARG _DVL_HOME=${_DVL_HOME:-'/hel'}
 ARG _AGL=${_AGL:-'agl'}
 ARG _AGL_GRP=${_AGL_GRP:-'halo'}
 ARG _AGL_HOME=${_AGL_HOME:-'/hal'}
-ARG _W0RLD_GRP=${W0RLD_GRP:-'w0rld'}
+ARG _W0RLD_GRP=${_W0RLD_GRP:-'w0rld'}
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
 ARG _WIN_USER
@@ -1315,7 +1312,7 @@ ARG _DVL_HOME=${_DVL_HOME:-'/hel'}
 ARG _AGL=${_AGL:-'agl'}
 ARG _AGL_GRP=${_AGL_GRP:-'halo'}
 ARG _AGL_HOME=${_AGL_HOME:-'/hal'}
-ARG _W0RLD_GRP=${W0RLD_GRP:-'w0rld'}
+ARG _W0RLD_GRP=${_W0RLD_GRP:-'w0rld'}
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
 ARG _WIN_USER
@@ -1344,7 +1341,7 @@ ARG _DVL_HOME=${_DVL_HOME:-'/hel'}
 ARG _AGL=${_AGL:-'agl'}
 ARG _AGL_GRP=${_AGL_GRP:-'halo'}
 ARG _AGL_HOME=${_AGL_HOME:-'/hal'}
-ARG _W0RLD_GRP=${W0RLD_GRP:-'w0rld'}
+ARG _W0RLD_GRP=${_W0RLD_GRP:-'w0rld'}
 ARG DEBIAN_FRONTEND
 ARG DEBCONF_NONINTERACTIVE_SEEN
 ARG _WIN_USER
@@ -1381,7 +1378,7 @@ ARG KERNEL_TYPE
 # # if LINUX argument is provided, use nix home dir
 # ARG HOME_DIR="${LINUX:+'HOME_NIX'}"
 WORKDIR /
-COPY --from=dvlp_repo-kernel --chmod=1770 ./repos/ ./
+COPY --from=dvlp_repo-kernel --chmod=770 ./repos/ ./
 COPY --from=dvlp_base-angel-kernel-volumes-builder .${_AGL_HOME}/ ./
 
 FROM dvlp_k-home-nix AS dvlp_k-home-nix-angel
@@ -1399,7 +1396,7 @@ ARG KERNEL_TYPE
 # # if LINUX argument is provided, use nix home dir
 # ARG HOME_DIR="${LINUX:+'HOME_NIX'}"
 WORKDIR /
-COPY --from=dvlp_repo-kernel --chmod=1770 ./repos/ ./
+COPY --from=dvlp_repo-kernel --chmod=770 ./repos/ ./
 COPY --from=dvlp_base-devel-kernel-volumes-builder .${_DVL_HOME}/ ./
 
 FROM scratch AS dvlp_k-home-nix-r00t
@@ -1413,7 +1410,7 @@ ARG KERNEL_TYPE
 # # if LINUX argument is provided, use nix home dir
 # ARG HOME_DIR="${LINUX:+'HOME_NIX'}"
 WORKDIR /
-COPY --from=dvlp_repo-kernel --chmod=1770 ./repos/ ./
+COPY --from=dvlp_repo-kernel --chmod=770 ./repos/ ./
 COPY --from=dvlp_base-r00t-kernel-volumes-builder ./${_R00T}/ ./
 
 
