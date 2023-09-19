@@ -199,9 +199,6 @@ services:
     extends: vols
     build:
       target: dvlp_base-kernel-volumes-built
-    # depends_on:
-    #   build-vols-kernel:
-    #     condition: service_completed_successfully
     volumes_from:
       - build-template
     volumes:
@@ -237,27 +234,10 @@ services:
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-skel
     build:
       target: dvlp_base-skel
-      # no_cache: true
-    # depends_on:
-    #   build-vols:
-    #     condition: service_completed_successfully
-    #   build-vols-kernel:
-    #     condition: service_completed_successfully
 
   build-skel-image:
     extends: build-template
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-skel
-    # depends_on:
-    #   skel-image:
-    #     condition: service_completed_successfully
-
-  # skel-image:
-  #   extends: build-template
-  #   image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-skel
-
-  # depends_on:
-  #   build-skel-image:
-  #     condition: service_completed_successfully
 
   build-k-home-win:
     build:
@@ -288,13 +268,6 @@ services:
     extends: build-skel
     build:
       target: dvlp_base-builder
-    # depends_on:
-      # build-skel:
-      #   condition: service_completed_successfully
-      # build-vols:
-      #   condition: service_completed_successfully
-      # vols:
-      #   condition: service_healthy
     volumes_from:
       - vols
 
@@ -302,13 +275,6 @@ services:
     extends: build-skel
     build:
       target: dvlp_base-kernel-builder
-    # depends_on:
-      # build-skel:
-      #   condition: service_completed_successfully
-      # build-vols-kernel:
-      #   condition: service_completed_successfully
-      # vols-kernel:
-      #   condition: service_healthy
     volumes_from:
       - vols-kernel
 
@@ -316,8 +282,6 @@ services:
     extends: build-template
     entrypoint: /bin/bash -c echo 'helloworld'
     # entrypoint: /bin/bash  [ ! -f build-export-kernel.sh ] || bash build-export-kernel.sh "${KERNEL_TYPE}" "${CONFIG_FILE}" "${KERNEL_FEATURE}" "${DOCKER_BUILD_TIMESTAMP}"
-    # command:
-    #   - /bin/bash -c echo 'helloworld'
     build:
       context: .
       target: dvlp_base-kernel
@@ -468,11 +432,6 @@ services:
     # entrypoint: /bin/bash -c echo 'helloworld'
     command:
       - /bin/bash -c echo 'helloworld'
-    # depends_on:
-    #   make-kernel:
-    #     condition: service_completed_successfully
-    #   vols-kernel:
-    #     condition: service_healthy
     volumes_from:
       - vols-kernel
       - base-kernel-template
@@ -485,8 +444,6 @@ services:
     depends_on:
       vols:
         condition: service_healthy
-    #   build-base:
-    #     condition: service_completed_successfully
     volumes_from:
       - vols
       - base-template
@@ -505,8 +462,6 @@ services:
     depends_on:
       vols-kernel:
         condition: service_healthy
-    #   make-kernel:
-    #     condition: service_completed_successfully
     volumes_from:
       - vols-kernel
       - base-kernel-template
@@ -552,9 +507,6 @@ services:
     build:
       context: .
       target: dvlp_cli-goodies
-    # depends_on:
-    #   vols:
-    #     condition: service_healthy
     volumes_from:
       - cli
 
@@ -563,9 +515,6 @@ services:
     build:
       target: dvlp_cli-goodies
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cli-${KERNEL_TYPE:+-$_CPU_ARCH}${KERNEL_TYPE:+-$_CPU_VENDOR}kernel-goodies
-    # depends_on:
-    #   vols-kernel:
-    #     condition: service_healthy
     volumes_from:
       - cli-kernel
 
@@ -593,9 +542,6 @@ services:
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui
     build:
       target: dvlp_gui
-    # depends_on:
-    #   vols:
-    #     condition: service_healthy
     volumes_from:
       - cli
 
@@ -604,9 +550,6 @@ services:
     build:
       target: dvlp_gui
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-${KERNEL_TYPE:+-$_CPU_ARCH}${KERNEL_TYPE:+-$_CPU_VENDOR}kernel
-    # depends_on:
-    #   vols-kernel:
-    #     condition: service_healthy
     volumes_from:
       - cli-kernel
 
@@ -616,9 +559,6 @@ services:
     build:
       context: .
       target: dvlp_gui-goodies
-    # depends_on:
-    #   vols:
-    #     condition: service_healthy
     volumes_from:
       - gui
 
@@ -627,9 +567,6 @@ services:
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-${KERNEL_TYPE:+-$_CPU_ARCH}${KERNEL_TYPE:+-$_CPU_VENDOR}kernel-goodies
     build:
       target: dvlp_gui-goodies
-    # depends_on:
-    #   vols-kernel:
-    #     condition: service_healthy
     volumes_from:
       - cli-kernel-goodies
 
@@ -638,9 +575,6 @@ services:
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-goodies-cuda
     build:
       target: dvlp_gui-goodies-cuda
-    # depends_on:
-    #   vols:
-    #     condition: service_healthy
     volumes_from:
       - gui-goodies
 
@@ -649,9 +583,6 @@ services:
     image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-gui-goodies-cuda-${KERNEL_TYPE:+-$_CPU_ARCH}${KERNEL_TYPE:+-$_CPU_VENDOR}kernel
     build:
       target: dvlp_gui-cuda-goodies
-    # depends_on:
-    #   vols-kernel:
-    #     condition: service_healthy
     volumes_from:
       - gui-kernel-goodies
 
