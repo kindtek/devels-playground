@@ -224,7 +224,7 @@ FROM dvlp_base-devel-volumes-builder AS dvlp_base-devel-kernel-volumes-builder
 ARG _CPU_ARCH
 ARG _CPU_VENDOR
 WORKDIR ${_DVL_HOME}
-RUN ln -fsv dvlw/dvlp dvlp &&ln -fsv dvlw/dvlp/kernels/linux linux && \
+RUN ln -fsv dvlw/dvlp dvlp &&ln -fsv dvlw/dvlp/kernels/linux linux
     # # parse vars from .env
     # _CPU_ARCH=${_CPU_ARCH} && _CPU_VENDOR=${_CPU_VENDOR} && \
     # ln -fsv "dvlw/dvlp/kernels/linux/${_CPU_ARCH}/${_CPU_VENDOR}" && ln -fsv dvlw/dvlp/kernels kernels 
