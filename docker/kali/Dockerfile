@@ -186,6 +186,7 @@ FROM scratch AS dvlp_repo-kernel
 COPY --from=dvlp_build-repo-kernel --chmod=770 ./repos/dvlw/ ./repos/dvlw/
 
 ####################### BASE volumes AND VOLUME MOUNT POINTS ####################################
+# build home directory structure
 ########################
 # dvlp_base-devel-volumes #
 ########################
@@ -223,10 +224,10 @@ FROM dvlp_base-devel-volumes-builder AS dvlp_base-devel-kernel-volumes-builder
 ARG _CPU_ARCH
 ARG _CPU_VENDOR
 WORKDIR ${_DVL_HOME}
-RUN ln -fsv dvlw/dvlp dvlp && \
-    ln -fsv dvlw/dvlp/kernels/linux linux && \
-    ln -fsv "dvlw/dvlp/kernels/linux/${_CPU_ARCH}/${_CPU_VENDOR}" && \
-    ln -fsv dvlw/dvlp/kernels kernels 
+RUN ln -fsv dvlw/dvlp dvlp &&ln -fsv dvlw/dvlp/kernels/linux linux && \
+    # parse vars from .env
+    _CPU_ARCH=${_CPU_ARCH} && _CPU_VENDOR=${_CPU_VENDOR} && \
+    ln -fsv "dvlw/dvlp/kernels/linux/${_CPU_ARCH}/${_CPU_VENDOR}" && ln -fsv dvlw/dvlp/kernels kernels 
 # WORKDIR /home/${_DVL}
 # RUN ln -fsv dvlw/dvlp dvlp && \
 #     ln -fsv dvlw/dvlp/kernels/linux linux && \
@@ -287,6 +288,8 @@ WORKDIR ${_AGL_HOME}
 # COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/      ./mnt/
 RUN ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
+    # parse vars from .env
+    _CPU_ARCH=${_CPU_ARCH} && _CPU_VENDOR=${_CPU_VENDOR} && \
     ln -fsv "dvlw/dvlp/kernels/linux/${_CPU_ARCH}/${_CPU_VENDOR}" ${_CPU_ARCH}${_CPU_VENDOR}" && \
     ln -fsv dvlw/dvlp/kernels kernels  
 # WORKDIR /home/${_AGL}
@@ -361,6 +364,8 @@ ARG _CPU_VENDOR
 WORKDIR /${_R00T}
 RUN ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
+    # parse vars from .env
+    _CPU_ARCH=${_CPU_ARCH} && _CPU_VENDOR=${_CPU_VENDOR} && \
     ln -fsv "dvlw/dvlp/kernels/linux/${_CPU_ARCH}/${_CPU_VENDOR}" && \
     ln -fsv dvlw/dvlp/kernels kernels && \
     mkdir -pv /${_R00T} && mkdir -pv kache
