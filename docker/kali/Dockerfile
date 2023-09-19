@@ -225,9 +225,9 @@ ARG _CPU_ARCH
 ARG _CPU_VENDOR
 WORKDIR ${_DVL_HOME}
 RUN ln -fsv dvlw/dvlp dvlp &&ln -fsv dvlw/dvlp/kernels/linux linux && \
-    # parse vars from .env
-    _CPU_ARCH=${_CPU_ARCH} && _CPU_VENDOR=${_CPU_VENDOR} && \
-    ln -fsv "dvlw/dvlp/kernels/linux/${_CPU_ARCH}/${_CPU_VENDOR}" && ln -fsv dvlw/dvlp/kernels kernels 
+    # # parse vars from .env
+    # _CPU_ARCH=${_CPU_ARCH} && _CPU_VENDOR=${_CPU_VENDOR} && \
+    # ln -fsv "dvlw/dvlp/kernels/linux/${_CPU_ARCH}/${_CPU_VENDOR}" && ln -fsv dvlw/dvlp/kernels kernels 
 # WORKDIR /home/${_DVL}
 # RUN ln -fsv dvlw/dvlp dvlp && \
 #     ln -fsv dvlw/dvlp/kernels/linux linux && \
@@ -288,9 +288,9 @@ WORKDIR ${_AGL_HOME}
 # COPY --from=dvlp_repo ./repos/dvlw/dvlp/mnt/      ./mnt/
 RUN ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
-    # parse vars from .env
-    _CPU_ARCH=${_CPU_ARCH} && _CPU_VENDOR=${_CPU_VENDOR} && \
-    ln -fsv "dvlw/dvlp/kernels/linux/${_CPU_ARCH}/${_CPU_VENDOR}" ${_CPU_ARCH}${_CPU_VENDOR}" && \
+    # # parse vars from .env
+    # _CPU_ARCH=${_CPU_ARCH} && _CPU_VENDOR=${_CPU_VENDOR} && \
+    # ln -fsv "dvlw/dvlp/kernels/linux/${_CPU_ARCH}/${_CPU_VENDOR}" ${_CPU_ARCH}${_CPU_VENDOR}" && \
     ln -fsv dvlw/dvlp/kernels kernels  
 # WORKDIR /home/${_AGL}
 # RUN ln -fsv dvlw/dvlp dvlp && \
@@ -365,8 +365,8 @@ WORKDIR /${_R00T}
 RUN ln -fsv dvlw/dvlp dvlp && \
     ln -fsv dvlw/dvlp/kernels/linux linux && \
     # parse vars from .env
-    _CPU_ARCH=${_CPU_ARCH} && _CPU_VENDOR=${_CPU_VENDOR} && \
-    ln -fsv "dvlw/dvlp/kernels/linux/${_CPU_ARCH}/${_CPU_VENDOR}" && \
+    # _CPU_ARCH=${_CPU_ARCH} && _CPU_VENDOR=${_CPU_VENDOR} && \
+    # ln -fsv "dvlw/dvlp/kernels/linux/${_CPU_ARCH}/${_CPU_VENDOR}" && \
     ln -fsv dvlw/dvlp/kernels kernels && \
     mkdir -pv /${_R00T} && mkdir -pv kache
 #  && \
