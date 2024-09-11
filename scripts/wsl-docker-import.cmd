@@ -36,7 +36,7 @@ IF "!options!" == "default" (
 
 SET "image_repo=kindtek"
 SET "image_repo_mask=kindtek"
-SET "image_tag=kali-git-kernel"
+SET "image_tag=kali-cli-kernel"
 SET "image_name=devels-playground"
 IF "%~1" == "default" (
     IF "!DVLP_DEBUG!" == "y" (
