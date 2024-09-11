@@ -503,7 +503,7 @@ services:
 
   cli-goodies:
     extends: cli
-    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cli
+    image: ${HUB_REPO:-kindtek}/${HUB_IMG:-devels-playground}:kali-cli-goodies
     build:
       context: .
       target: dvlp_cli-goodies
